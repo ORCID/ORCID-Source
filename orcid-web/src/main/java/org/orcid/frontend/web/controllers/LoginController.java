@@ -1,16 +1,20 @@
 package org.orcid.frontend.web.controllers;
 
 import java.io.UnsupportedEncodingException;
+import java.util.Enumeration;
 
 import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 import org.orcid.core.constants.OrcidOauth2Constants;
+import org.orcid.core.manager.impl.OrcidUrlManager;
 import org.orcid.core.manager.v3.read_only.RecordNameManagerReadOnly;
 import org.orcid.jaxb.model.v3.release.common.Visibility;
 import org.orcid.jaxb.model.v3.release.record.Name;
 import org.orcid.pojo.ajaxForm.Names;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -20,6 +24,8 @@ import org.springframework.web.servlet.ModelAndView;
 
 @Controller("loginController")
 public class LoginController extends BaseController {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(LoginController.class);
 
     @Resource(name = "recordNameManagerV3")
     private RecordNameManagerReadOnly recordNameManager;
@@ -40,8 +46,7 @@ public class LoginController extends BaseController {
     }
 
     @RequestMapping(value = { "/signin", "/login" }, method = RequestMethod.GET)
-    public ModelAndView loginGetHandler(HttpServletRequest request, HttpServletResponse response) throws UnsupportedEncodingException {
-        String query = request.getQueryString();
+    public ModelAndView loginGetHandler(HttpServletRequest request, HttpServletResponse response) {
         ModelAndView mav = new ModelAndView("login");
         if (!domainsAllowingRobots.contains(orcidUrlManager.getBaseDomainRmProtocall())) {
             mav.addObject("noIndex", true);
@@ -52,18 +57,30 @@ public class LoginController extends BaseController {
     // We should go back to regular spring sign out with CSRF protection
     @RequestMapping(value = { "/signout" }, method = RequestMethod.GET)
     public ModelAndView signout(HttpServletRequest request, HttpServletResponse response) {
-        String query = request.getQueryString();
-        
         String redirectString = "redirect:" + calculateRedirectUrl("/login");
         Boolean isOauth2ScreensRequest = (Boolean) request.getSession().getAttribute(OrcidOauth2Constants.OAUTH_2SCREENS);
-        
+        LOGGER.error("---------------------------------------------");
+        LOGGER.error("Signout");
+        LOGGER.error("---------------------------------------------");
+        LOGGER.error("isOauth2ScreensRequest: {}", isOauth2ScreensRequest);
+
+        Enumeration<String> sessionAttributeNames = request.getSession(false).getAttributeNames();
+        if(sessionAttributeNames != null) {
+            while (sessionAttributeNames.hasMoreElements()) {
+                String attributeName = sessionAttributeNames.nextElement();
+                LOGGER.error("session attribute {} = {}", attributeName, request.getSession(false).getAttribute(attributeName));
+            }
+        }
+
         if(isOauth2ScreensRequest != null && isOauth2ScreensRequest) {
             // Just redirect to the authorization screen
             String queryString = (String) request.getSession().getAttribute(OrcidOauth2Constants.OAUTH_QUERY_STRING);
             redirectString += '?' + queryString; 
         }
         
-        logoutCurrentUser(request, response);         
+        logoutCurrentUser(request, response);
+        LOGGER.error("redirectString: {}", redirectString);
+        LOGGER.error("---------------------------------------------");
         return new ModelAndView(redirectString);
     }
 
