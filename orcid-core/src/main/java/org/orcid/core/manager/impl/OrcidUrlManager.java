@@ -2,6 +2,7 @@ package org.orcid.core.manager.impl;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.Enumeration;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -219,6 +220,27 @@ public class OrcidUrlManager {
     }
 
     public String determineFullTargetUrlFromSavedRequest(HttpServletRequest request, HttpServletResponse response) {
+        LOGGER.warn("--------------------------------------------------------------------");
+        LOGGER.warn("determineFullTargetUrlFromSavedRequest request attributes:");
+        Enumeration<String> requestAttributeNames = request.getAttributeNames();
+        while (requestAttributeNames.hasMoreElements()) {
+            String attributeName = requestAttributeNames.nextElement();
+            LOGGER.warn("request attribute {} = {}", attributeName, request.getAttribute(attributeName));
+        }
+
+        LOGGER.warn("determineFullTargetUrlFromSavedRequest request parameters:");
+        request.getParameterMap().forEach((parameterName, parameterValues) -> LOGGER.debug("request parameter {} = {}", parameterName, parameterValues == null ? null : String.join(",", parameterValues)));
+
+        if (request.getSession(false) != null) {
+            LOGGER.warn("determineFullTargetUrlFromSavedRequest session attributes:");
+            Enumeration<String> sessionAttributeNames = request.getSession(false).getAttributeNames();
+            while (sessionAttributeNames.hasMoreElements()) {
+                String attributeName = sessionAttributeNames.nextElement();
+                LOGGER.warn("session attribute {} = {}", attributeName, request.getSession(false).getAttribute(attributeName));
+            }
+        }
+        LOGGER.warn("--------------------------------------------------------------------");
+
         boolean isOauthRequest = request.getParameter("oauthRequest") == null ? false : Boolean.valueOf(request.getParameter("oauthRequest"));
         if (!isOauthRequest && request.getSession(false) != null) {
             Boolean isOauth2ScreensRequest = (Boolean) request.getSession().getAttribute(OrcidOauth2Constants.OAUTH_2SCREENS);
