@@ -1,6 +1,5 @@
 package org.orcid.api.common.security.oauth;
 
-import org.orcid.jaxb.model.v3.release.error.OrcidError;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.AuthenticationEntryPoint;
@@ -11,7 +10,6 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
@@ -40,18 +38,11 @@ public class APIAuthenticationEntryPoint implements AuthenticationEntryPoint {
             response.setStatus(status.value());
             response.setContentType("application/json;charset=UTF-8");
 
-            OrcidError orcidError = new OrcidError();
-            orcidError.setResponseCode(status.value());
-            if(HttpStatus.FORBIDDEN.equals(status)) {
-                orcidError.setDeveloperMessage("Forbidden: " + developerMessage);
-            } 
-            else {
-                orcidError.setDeveloperMessage( developerMessage);
-            }
+            String token = OAuthErrorResponseHelper.extractToken(request);
+            String error = HttpStatus.FORBIDDEN.equals(status) ? "forbidden" : "invalid_token";
+            String description = buildErrorDescription(status, developerMessage, token);
 
-            Map<String, Object> payload = new LinkedHashMap<>();
-            payload.put("response-code", orcidError.getResponseCode());
-            payload.put("developer-message", orcidError.getDeveloperMessage());
+            Map<String, Object> payload = OAuthErrorResponseHelper.buildPayload(status.value(), error, description);
             response.getWriter().write(objectMapper.writeValueAsString(payload));
             response.flushBuffer();
         } catch (IOException e) {
@@ -62,5 +53,19 @@ public class APIAuthenticationEntryPoint implements AuthenticationEntryPoint {
             // Wrap other Exceptions. These are not expected to happen
             throw new RuntimeException(e);
         }
+    }
+
+    private String buildErrorDescription(HttpStatus status, String message, String token) {
+        String baseMessage;
+        if (HttpStatus.FORBIDDEN.equals(status)) {
+            baseMessage = "Forbidden: The server understood the request but refuses to authorize it.";
+            if (message != null && !message.isBlank() && !FORBIDDEN_MSG.equals(message)) {
+                baseMessage = baseMessage + " " + message;
+            }
+        } else {
+            baseMessage = (message == null || message.isBlank()) ? "Invalid access token" : message;
+        }
+
+        return OAuthErrorResponseHelper.appendTokenIfPresent(baseMessage, token);
     }
 }
