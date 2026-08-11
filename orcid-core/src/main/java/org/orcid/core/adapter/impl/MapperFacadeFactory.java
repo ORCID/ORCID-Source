@@ -17,6 +17,7 @@ import org.orcid.core.adapter.converter.FamilyNameConverter;
 import org.orcid.core.adapter.converter.FundingContributorsConverter;
 import org.orcid.core.adapter.converter.GivenNamesConverter;
 import org.orcid.core.adapter.converter.PeerReviewSubjectTypeConverter;
+import org.orcid.core.adapter.converter.Iso3166CountryConverter;
 import org.orcid.core.adapter.converter.VisibilityConverter;
 import org.orcid.core.adapter.converter.WorkContributorsConverter;
 import org.orcid.core.adapter.jsonidentifier.converter.ExternalIdentifierTypeConverter;
@@ -166,7 +167,9 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
 
     private MapperFactory getNewMapperFactory() {
         // dumpStateOnException(false): prevents RamUsageEstimator from crashing on JDK17+ hidden classes (lambdas)
-        return new DefaultMapperFactory.Builder().dumpStateOnException(false).build();
+        MapperFactory factory = new DefaultMapperFactory.Builder().dumpStateOnException(false).build();
+        factory.getConverterFactory().registerConverter(new Iso3166CountryConverter());
+        return factory;
     }
 
     @Override
