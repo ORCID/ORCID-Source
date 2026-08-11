@@ -7,6 +7,7 @@ import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.orcid.core.oauth.OrcidBearerTokenAuthentication;
 import org.orcid.core.oauth.authorizationServer.AuthorizationServerUtil;
+import org.orcid.utils.OrcidStringUtils;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -39,6 +40,7 @@ public class OrcidBearerTokenFilter implements Filter {
     private static final String ACTIVE = "active";
     private static final String USERNAME = "username";
     private static final String ORCID = "orcid";
+    private static final String SUB = "sub";
 
     @Resource
     private AuthorizationServerUtil authorizationServerUtil;
@@ -194,6 +196,12 @@ public class OrcidBearerTokenFilter implements Filter {
         String orcid = extractOptionalString(tokenInfo, ORCID);
         if(StringUtils.isNotBlank(orcid)) {
             return orcid;
+        }
+
+        // Some providers place subject in "sub"; only use it when it is a valid ORCID iD.
+        String sub = extractOptionalString(tokenInfo, SUB);
+        if(StringUtils.isNotBlank(sub) && OrcidStringUtils.isValidOrcid(sub)) {
+            return sub;
         }
 
         return null;
