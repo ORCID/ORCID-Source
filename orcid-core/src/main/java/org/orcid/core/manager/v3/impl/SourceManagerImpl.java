@@ -76,8 +76,11 @@ public class SourceManagerImpl implements SourceManager {
                 source.setAssertionOriginName(new SourceName(oboClientDetails.getClientName()));
             } else if(clientDetails.isUserOBOEnabled()){
                 // Check user OBO
-                source.setAssertionOriginOrcid(new SourceOrcid(authDetails.getUserOrcid()));
-                source.setAssertionOriginName(new SourceName(sourceNameCacheManager.retrieve(authDetails.getUserOrcid())));
+                String userOrcid = authDetails.getUserOrcid();
+                if (StringUtils.isNotBlank(userOrcid)) {
+                    source.setAssertionOriginOrcid(new SourceOrcid(userOrcid));
+                    source.setAssertionOriginName(new SourceName(sourceNameCacheManager.retrieve(userOrcid)));
+                }
             }
         } else {
             // User authentication
