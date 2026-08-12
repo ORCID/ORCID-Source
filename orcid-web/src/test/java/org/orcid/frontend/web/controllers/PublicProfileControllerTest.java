@@ -487,4 +487,23 @@ public class PublicProfileControllerTest extends DBUnitTest {
         when(profileEntityManagerReadOnlyMock.hasToken(eq(userOrcid), anyLong())).thenReturn(true);
         when(profileEntityCacheManagerMock.retrieve(userOrcid)).thenReturn(allOk);        
     }
+
+    @Test
+    public void publicPreview_getInvalidRecordGenerateRedirectTest() {
+        // Test non-existing record
+        ModelAndView mv = publicProfileController.publicPreview(null, null, 0, 0, 0, "0000-0000-0000-0000");
+        assertEquals("redirect:https://testserver.orcid.org/404", mv.getViewName());
+
+        // Test invalid id
+        mv = publicProfileController.publicPreview(null, null, 0, 0, 0, "0000-0000-0000-0000-0000");
+        assertEquals("redirect:https://testserver.orcid.org/404", mv.getViewName());
+
+        // Test trailing invalid charcter
+        mv = publicProfileController.publicPreview(null, null, 0, 0, 0, " 0000-0000-0000-0000");
+        assertEquals("redirect:https://testserver.orcid.org/404", mv.getViewName());
+
+        // Test leading invalid charcter
+        mv = publicProfileController.publicPreview(null, null, 0, 0, 0, "0000-0000-0000-0000 ");
+        assertEquals("redirect:https://testserver.orcid.org/404", mv.getViewName());
+    }
 }
