@@ -12,7 +12,6 @@ final class OAuthErrorResponseHelper {
 
     static Map<String, Object> buildPayload(int responseCode, String error, String errorDescription) {
         Map<String, Object> payload = new LinkedHashMap<>();
-        payload.put("response-code", responseCode);
         payload.put("error", error);
         payload.put("error_description", errorDescription);
         return payload;
