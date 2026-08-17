@@ -237,13 +237,14 @@ public class ShibbolethController extends BaseController {
                 if(userLoggedIn) {
                     // Update the last login time
                     String ip = OrcidRequestUtil.getIpAddress(request);
-                    String orcid = userConnectionEntity.getOrcid();
+                    String orcid = SecurityContextHolder.getContext().getAuthentication().getName();
+                    LOGGER.trace("Updating last login details for user {}", orcid);
                     profileEntityManager.updateLastLoginDetails(orcid, ip);
                 }
             } catch (AuthenticationException e) {
                 // this should never happen
                 SecurityContextHolder.getContext().setAuthentication(null);
-                LOGGER.warn("User {0} should have been logged-in via Shibboleth, but was unable to due to a problem", remoteUser, e);
+                LOGGER.warn("User {} should have been logged-in via Shibboleth, but was unable to due to a problem", remoteUser, e);
             }
             codes.setRedirectUrl(calculateRedirectUrl(request, response, false, false, "shibboleth"));
             return codes;
