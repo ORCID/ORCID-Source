@@ -22,6 +22,7 @@ import org.orcid.core.manager.v3.read_only.EmailManagerReadOnly;
 import org.orcid.core.security.OrcidUserDetailsService;
 import org.orcid.core.togglz.Features;
 import org.orcid.core.utils.JsonUtils;
+import org.orcid.core.utils.OrcidRequestUtil;
 import org.orcid.frontend.web.exception.FeatureDisabledException;
 import org.orcid.persistence.jpa.entities.EventType;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
@@ -232,7 +233,13 @@ public class ShibbolethController extends BaseController {
             
             try {
                 notifyUser(shibIdentityProvider, userConnectionEntity);
-                processAuthentication(remoteUser, userConnectionEntity, request, response);
+                boolean userLoggedIn = processAuthentication(remoteUser, userConnectionEntity, request, response);
+                if(userLoggedIn) {
+                    // Update the last login time
+                    String ip = OrcidRequestUtil.getIpAddress(request);
+                    String orcid = userConnectionEntity.getOrcid();
+                    profileEntityManager.updateLastLoginDetails(orcid, ip);
+                }
             } catch (AuthenticationException e) {
                 // this should never happen
                 SecurityContextHolder.getContext().setAuthentication(null);
@@ -257,7 +264,7 @@ public class ShibbolethController extends BaseController {
         }
     }
     
-    private void processAuthentication(RemoteUser remoteUser, UserconnectionEntity userConnectionEntity, HttpServletRequest request, HttpServletResponse response) {
+    private boolean processAuthentication(RemoteUser remoteUser, UserconnectionEntity userConnectionEntity, HttpServletRequest request, HttpServletResponse response) {
         String orcidId = userConnectionEntity.getOrcid();
         try {
             PreAuthenticatedAuthenticationToken token = new PreAuthenticatedAuthenticationToken(userConnectionEntity.getOrcid(), remoteUser.getUserId());
@@ -274,11 +281,13 @@ public class ShibbolethController extends BaseController {
             // Update the institutional sign in last login date
             userConnectionEntity.setLastLogin(new Date());
             userConnectionManager.update(userConnectionEntity);
+            return true;
         } catch (AuthenticationException e) {
             // this should never happen
             SecurityContextHolder.clearContext();
             LOGGER.warn("User '" + orcidId +  "' should have been logged-in, but we unable to due to a problem", e);
         }
+        return false;
     }
 
     private void validate2FACodes(String orcid, TwoFactorAuthenticationCodes codes) {
