@@ -148,6 +148,7 @@ import ma.glasnost.orika.MapperFactory;
 import ma.glasnost.orika.MappingContext;
 import ma.glasnost.orika.converter.ConverterFactory;
 import ma.glasnost.orika.impl.DefaultMapperFactory;
+import ma.glasnost.orika.impl.generator.EclipseJdtCompilerStrategy;
 import ma.glasnost.orika.metadata.ClassMapBuilder;
 import ma.glasnost.orika.metadata.TypeFactory;
 
@@ -197,8 +198,10 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
     private ContributorsRolesAndSequencesConverter contributorsRolesAndSequencesConverter;
 
     private MapperFactory getNewMapperFactory() {
-        // dumpStateOnException(false): prevents RamUsageEstimator from crashing on JDK17+ hidden classes (lambdas)
-        return new DefaultMapperFactory.Builder().dumpStateOnException(false).build();
+        // Keep a fresh MapperFactory per facade build to avoid shared mutable Orika registrations.
+        return new DefaultMapperFactory.Builder().compilerStrategy(new EclipseJdtCompilerStrategy())
+                .dumpStateOnException(false)
+                .build();
     }
 
     @Override
