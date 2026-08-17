@@ -4,14 +4,12 @@ import org.orcid.core.adapter.JpaJaxbNameAdapter;
 import org.orcid.jaxb.model.record_v2.Name;
 import org.orcid.persistence.jpa.entities.RecordNameEntity;
 
-import ma.glasnost.orika.MapperFacade;
-
 public class JpaJaxbNameAdapterImpl implements JpaJaxbNameAdapter {
 
-    private MapperFacade mapperFacade;
+    private final MapperFacadeSupport mapperFacade = new MapperFacadeSupport();
 
-    public void setMapperFacade(MapperFacade mapperFacade) {
-        this.mapperFacade = mapperFacade;
+    public void setMapperFacade(Object mapperFacade) {
+        this.mapperFacade.setMapperFacade(mapperFacade);
     }
     
     @Override

@@ -6,7 +6,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import ma.glasnost.orika.converter.BidirectionalConverter;
 import ma.glasnost.orika.metadata.Type;
 import org.orcid.core.contributors.roles.ContributorRoleConverter;
-import org.orcid.core.contributors.roles.ContributorRoleConverterImpl;
 import org.orcid.core.contributors.roles.credit.CreditRole;
 import org.orcid.core.utils.JsonUtils;
 import org.orcid.core.utils.v3.ContributorUtils;

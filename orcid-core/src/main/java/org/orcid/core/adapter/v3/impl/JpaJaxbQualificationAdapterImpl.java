@@ -3,8 +3,7 @@ package org.orcid.core.adapter.v3.impl;
 import java.util.Collection;
 import java.util.List;
 
-import ma.glasnost.orika.MapperFacade;
-
+import org.orcid.core.adapter.impl.MapperFacadeSupport;
 import org.orcid.core.adapter.v3.JpaJaxbQualificationAdapter;
 import org.orcid.jaxb.model.v3.release.record.Qualification;
 import org.orcid.jaxb.model.v3.release.record.summary.QualificationSummary;
@@ -17,10 +16,10 @@ import org.orcid.persistence.jpa.entities.OrgAffiliationRelationEntity;
  */
 public class JpaJaxbQualificationAdapterImpl implements JpaJaxbQualificationAdapter {
 
-    private MapperFacade mapperFacade;
+    private final MapperFacadeSupport mapperFacade = new MapperFacadeSupport();
 
-    public void setMapperFacade(MapperFacade mapperFacade) {
-        this.mapperFacade = mapperFacade;
+    public void setMapperFacade(Object mapperFacade) {
+        this.mapperFacade.setMapperFacade(mapperFacade);
     }
 
     @Override

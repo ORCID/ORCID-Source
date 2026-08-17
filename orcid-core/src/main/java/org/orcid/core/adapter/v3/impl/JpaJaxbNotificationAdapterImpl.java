@@ -25,7 +25,7 @@ import org.orcid.persistence.jpa.entities.NotificationInstitutionalConnectionEnt
 import org.orcid.persistence.jpa.entities.NotificationServiceAnnouncementEntity;
 import org.orcid.persistence.jpa.entities.NotificationTipEntity;
 
-import ma.glasnost.orika.MapperFacade;
+import org.orcid.core.adapter.impl.MapperFacadeSupport;
 
 /**
  * 
@@ -34,7 +34,7 @@ import ma.glasnost.orika.MapperFacade;
  */
 public class JpaJaxbNotificationAdapterImpl implements JpaJaxbNotificationAdapter {
 
-    private MapperFacade mapperFacade;
+    private final MapperFacadeSupport mapperFacade = new MapperFacadeSupport();
 
     private static final Map<Class<? extends Notification>, Class<? extends NotificationEntity>> JAXB2JPA_CLASS_MAP = new HashMap<>();
     static {
@@ -48,8 +48,8 @@ public class JpaJaxbNotificationAdapterImpl implements JpaJaxbNotificationAdapte
         JAXB2JPA_CLASS_MAP.put(NotificationFindMyStuff.class, NotificationFindMyStuffEntity.class);
     }
 
-    public void setMapperFacade(MapperFacade mapperFacade) {
-        this.mapperFacade = mapperFacade;
+    public void setMapperFacade(Object mapperFacade) {
+        this.mapperFacade.setMapperFacade(mapperFacade);
     }
 
     @Override

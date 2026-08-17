@@ -3,18 +3,16 @@ package org.orcid.core.adapter.impl;
 import java.util.Collection;
 import java.util.List;
 
-import ma.glasnost.orika.MapperFacade;
-
 import org.orcid.core.adapter.JpaJaxbGroupIdRecordAdapter;
 import org.orcid.jaxb.model.groupid_v2.GroupIdRecord;
 import org.orcid.persistence.jpa.entities.GroupIdRecordEntity;
 
 public class JpaJaxbGroupIdRecordAdapterImpl implements JpaJaxbGroupIdRecordAdapter {
 
-    private MapperFacade mapperFacade;
+    private final MapperFacadeSupport mapperFacade = new MapperFacadeSupport();
 
-    public void setMapperFacade(MapperFacade mapperFacade) {
-        this.mapperFacade = mapperFacade;
+    public void setMapperFacade(Object mapperFacade) {
+        this.mapperFacade.setMapperFacade(mapperFacade);
     }
 
     @Override

@@ -3,8 +3,6 @@ package org.orcid.core.adapter.impl;
 import java.util.Collection;
 import java.util.List;
 
-import ma.glasnost.orika.MapperFacade;
-
 import org.orcid.core.adapter.JpaJaxbEducationAdapter;
 import org.orcid.jaxb.model.record.summary_v2.EducationSummary;
 import org.orcid.jaxb.model.record_v2.Education;
@@ -17,10 +15,10 @@ import org.orcid.persistence.jpa.entities.OrgAffiliationRelationEntity;
  */
 public class JpaJaxbEducationAdapterImpl implements JpaJaxbEducationAdapter {
 
-    private MapperFacade mapperFacade;
+    private final MapperFacadeSupport mapperFacade = new MapperFacadeSupport();
 
-    public void setMapperFacade(MapperFacade mapperFacade) {
-        this.mapperFacade = mapperFacade;
+    public void setMapperFacade(Object mapperFacade) {
+        this.mapperFacade.setMapperFacade(mapperFacade);
     }
 
     @Override
