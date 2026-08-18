@@ -71,7 +71,7 @@ export class ResetPasswordComponent implements AfterViewInit, OnDestroy, OnInit 
 
             },
             error => {
-                console.log('error posting to reset-password-email.json');
+                console.log('error posting to reset-password-email-v2.json');
             } 
         );
     }

@@ -39,7 +39,7 @@ export class PasswordService {
         let encoded_data = JSON.stringify(obj);
         
         return this.http.post( 
-            getBaseUri() + '/reset-password-email.json', 
+            getBaseUri() + '/reset-password-email-v2.json', 
             encoded_data, 
             { headers: this.headers }
         )
