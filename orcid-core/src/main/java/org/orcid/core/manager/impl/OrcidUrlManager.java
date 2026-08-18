@@ -2,6 +2,7 @@ package org.orcid.core.manager.impl;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.Enumeration;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;

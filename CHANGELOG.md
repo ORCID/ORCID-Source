@@ -1,3 +1,55 @@
+## v3.0.37 - 2026-08-18
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.0.36...v3.0.37)
+
+## v3.0.36 - 2026-08-18
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.0.35...v3.0.36)
+
+### Feature
+
+- add member_id column to client_details table (#7631)
+
+## v3.0.35 - 2026-08-18
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.0.34...v3.0.35)
+
+## v3.0.34 - 2026-08-18
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.0.33...v3.0.34)
+
+## v3.0.33 - 2026-08-18
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.0.32...v3.0.33)
+
+## v3.0.32 - 2026-08-17
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.0.31...v3.0.32)
+
+## v3.0.31 - 2026-08-17
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.0.30...v3.0.31)
+
+## v3.0.30 - 2026-08-13
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.0.29...v3.0.30)
+
+## v3.0.29 - 2026-08-11
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.0.28...v3.0.29)
+
+## v3.0.28 - 2026-08-11
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.0.27...v3.0.28)
+
+## v3.0.27 - 2026-08-11
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.0.26...v3.0.27)
+
+## v3.0.26 - 2026-08-11
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.0.25...v3.0.26)
+
 ## v3.0.25 - 2026-08-11
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.0.24...v3.0.25)
