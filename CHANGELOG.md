@@ -1,3 +1,11 @@
+## v3.0.36 - 2026-08-18
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.0.35...v3.0.36)
+
+### Feature
+
+- add member_id column to client_details table (#7631)
+
 ## v3.0.35 - 2026-08-18
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.0.34...v3.0.35)
