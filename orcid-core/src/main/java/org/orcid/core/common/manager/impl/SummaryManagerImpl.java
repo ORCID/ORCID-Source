@@ -584,8 +584,10 @@ public class SummaryManagerImpl implements SummaryManager {
         org.orcid.jaxb.model.v3.release.record.summary.AffiliationSummary defaultAffiliation = null;
         Long maxDisplayIndex = null;
         for (org.orcid.jaxb.model.v3.release.record.summary.AffiliationSummary as : group.getActivities()) {
-            if (maxDisplayIndex == null || (as.getDisplayIndex() != null && Long.valueOf(as.getDisplayIndex()) > maxDisplayIndex)) {
-                maxDisplayIndex = Long.valueOf(as.getDisplayIndex());
+            String displayIndexStr = as.getDisplayIndex();
+            Long displayIndex = displayIndexStr == null ? 0L : Long.parseLong(displayIndexStr);
+            if (maxDisplayIndex == null || displayIndex > maxDisplayIndex) {
+                maxDisplayIndex = displayIndex;
                 defaultAffiliation = as;
             }
         }
