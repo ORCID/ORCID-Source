@@ -8,6 +8,8 @@ import org.orcid.persistence.jpa.entities.MinimizedExtendedWorkEntity;
 import org.orcid.persistence.jpa.entities.WorkBaseEntity;
 import org.orcid.persistence.jpa.entities.WorkEntity;
 import org.orcid.persistence.jpa.entities.WorkLastModifiedEntity;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * 
@@ -27,6 +29,7 @@ public interface WorkDao extends GenericDao<WorkEntity, Long> {
      *            The new visibility value for the profile work relationship
      * @return true if the relationship was updated
      * */
+    @Transactional(propagation = Propagation.REQUIRED)
     boolean updateVisibilities(String orcid, List<Long> workIds, String visibility);
     
     /**
@@ -39,6 +42,7 @@ public interface WorkDao extends GenericDao<WorkEntity, Long> {
      *            The client orcid
      * @return true if the work was deleted
      * */
+    @Transactional(propagation = Propagation.REQUIRED)
     boolean removeWorks(String clientOrcid, List<Long> workIds);        
     
     /**
@@ -48,6 +52,7 @@ public interface WorkDao extends GenericDao<WorkEntity, Long> {
      *          The id of the work that should be deleted
      * @return true if the work was correctly deleted         
      * */
+    @Transactional(propagation = Propagation.REQUIRED)
     boolean removeWork(String orcid, Long workId);
     
     /**
@@ -57,6 +62,7 @@ public interface WorkDao extends GenericDao<WorkEntity, Long> {
      *            The ORCID iD of the record from which all works will be
      *            removed.
      */
+    @Transactional(propagation = Propagation.REQUIRED)
     void removeWorks(String orcid);
     
     /**
@@ -67,6 +73,7 @@ public interface WorkDao extends GenericDao<WorkEntity, Long> {
      *          The work owner                         
      * @return true if the work index was correctly set                  
      * */
+    @Transactional(propagation = Propagation.REQUIRED)
     boolean updateToMaxDisplay(String orcid, Long workId);
     
     /**
@@ -103,6 +110,7 @@ public interface WorkDao extends GenericDao<WorkEntity, Long> {
 
     void detach(WorkBaseEntity workBaseEntity);
     
+    @Transactional(propagation = Propagation.REQUIRED)
     boolean increaseDisplayIndexOnAllElements(String orcid);
 
     List<MinimizedWorkEntity> getMinimizedWorkEntities(List<Long> ids);
@@ -120,18 +128,22 @@ public interface WorkDao extends GenericDao<WorkEntity, Long> {
 
     List<BigInteger> getIdsForClientSourceCorrection(int limit, List<String> nonPublicClientIds);
 
+    @Transactional(propagation = Propagation.REQUIRED)
     void correctClientSource(List<BigInteger> ids);
 
     List<BigInteger> getIdsForUserSourceCorrection(int limit, List<String> publicClientIds);
 
+    @Transactional(propagation = Propagation.REQUIRED)
     void correctUserSource(List<BigInteger> ids);
 
     List<BigInteger> getIdsForUserOBOUpdate(String clientDetailsId, int max);
 
+    @Transactional(propagation = Propagation.REQUIRED)
     void updateUserOBODetails(List<BigInteger> ids);
 
     List<BigInteger> getIdsForUserOBORecords(String clientDetailsId, int max);
 
+    @Transactional(propagation = Propagation.REQUIRED)
     void revertUserOBODetails(List<BigInteger> ids);
 
     List<BigInteger> getIdsForUserOBORecords(int max);
@@ -149,5 +161,6 @@ public interface WorkDao extends GenericDao<WorkEntity, Long> {
 
     List<Object[]> getWorksStartingFromWorkId(Long WorkId, int numberOfWorks);
 
+    @Transactional(propagation = Propagation.REQUIRED)
     boolean updateFeaturedDisplayIndex(String orcid, Long id, Integer featuredDisplayIndex);
 }

@@ -113,7 +113,6 @@ public class ResearcherUrlManagerImpl extends ResearcherUrlManagerReadOnlyImpl i
                     // Add the new ones
                     ResearcherUrlEntity newResearcherUrl = jpaJaxbResearcherUrlAdapter.toResearcherUrlEntity(updatedOrNew);
                     Source activeSource = sourceManager.retrieveActiveSource();
-                    ProfileEntity profile = new ProfileEntity(orcid);
                     newResearcherUrl.setOrcid(orcid);
 
                     sourceEntityUtils.populateSourceAwareEntityFromSource(activeSource, newResearcherUrl);
@@ -163,6 +162,7 @@ public class ResearcherUrlManagerImpl extends ResearcherUrlManagerReadOnlyImpl i
     }
 
     @Override
+    @Transactional
     public ResearcherUrl createResearcherUrl(String orcid, ResearcherUrl researcherUrl, boolean isApiRequest) {
         Source activeSource = sourceManager.retrieveActiveSource();
         // Validate the researcher url

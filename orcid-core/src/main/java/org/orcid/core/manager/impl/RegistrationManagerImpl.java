@@ -197,7 +197,7 @@ public class RegistrationManagerImpl implements RegistrationManager {
                         emailManager.removeUnclaimedEmail(unclaimedOrcid01, emailAddress);
                         checkAutoDeprecateIsEnabledForEmail(duplicateAdditionalAddress);
                         String unclaimedOrcid02 = getOrcidIdFromEmail(duplicateAdditionalAddress);
-                        emailManager.removeUnclaimedEmail(unclaimedOrcid02, emailAddress);
+                        emailManager.removeUnclaimedEmail(unclaimedOrcid02, duplicateAdditionalAddress);
                         String newUserOrcid = createMinimalProfile(registration, usedCaptcha, locale, ip);
                         ProfileDeprecationRequest result01 = new ProfileDeprecationRequest();
                         adminManager.autoDeprecateProfile(result01, unclaimedOrcid01, newUserOrcid);

@@ -1,6 +1,5 @@
 package org.orcid.api.common.security.oauth;
 
-import org.orcid.jaxb.model.v3.release.error.OrcidError;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.web.access.AccessDeniedHandler;
@@ -11,7 +10,6 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.LinkedHashMap;
 import java.util.Map;
 
 public class OrcidAPIAccessDeniedHandler implements AccessDeniedHandler {
@@ -22,23 +20,18 @@ public class OrcidAPIAccessDeniedHandler implements AccessDeniedHandler {
         try {
             response.setStatus(HttpStatus.FORBIDDEN.value());
             response.setContentType("application/json;charset=UTF-8");
-
-            OrcidError orcidError = new OrcidError();
-            orcidError.setResponseCode(HttpStatus.FORBIDDEN.value());
             
-            // Determine the developer message based on the exception type
             String developerMessage;
             if (accessDeniedException != null && accessDeniedException.getMessage() != null) {
                 developerMessage = accessDeniedException.getMessage();
             } else {
-                developerMessage = "Access denied";
+                developerMessage = "Forbidden: The server understood the request but refuses to authorize it.";
             }
-            
-            orcidError.setDeveloperMessage(developerMessage);
 
-            Map<String, Object> payload = new LinkedHashMap<>();
-            payload.put("response-code", orcidError.getResponseCode());
-            payload.put("developer-message", orcidError.getDeveloperMessage());
+            String token = OAuthErrorResponseHelper.extractToken(request);
+            String description = OAuthErrorResponseHelper.appendTokenIfPresent(developerMessage, token);
+
+            Map<String, Object> payload = OAuthErrorResponseHelper.buildPayload(HttpStatus.FORBIDDEN.value(), "forbidden", description);
             response.getWriter().write(objectMapper.writeValueAsString(payload));
             response.flushBuffer();
         } catch (IOException e) {
