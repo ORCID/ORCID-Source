@@ -1,3 +1,9 @@
+## v3.0.40 - 2026-08-18
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.0.39...v3.0.40)
+
+- [#7623](https://github.com/ORCID/ORCID-Source/pull/7623): PD-5888 Fix the redirect in the PublicProfileController
+
 ## v3.0.39 - 2026-08-18
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.0.38...v3.0.39)
