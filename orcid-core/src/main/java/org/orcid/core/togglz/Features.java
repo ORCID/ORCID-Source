@@ -46,6 +46,9 @@ public enum Features implements Feature {
     @Label("OAUTH - domains interstitial")
     OAUTH_DOMAINS_INTERSTITIAL,
 
+    @Label("Login - backup email interstitial")
+    LOGIN_BACKUP_EMAIL_INTERSTITIAL,
+
     @Label("Homepage Headless WordPress")
     WORDPRESS_HOME_PAGE,
 
