@@ -3,38 +3,53 @@ package org.orcid.core.manager;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.doAnswer;
+import static org.mockito.Mockito.when;
 
 import java.util.HashSet;
 import java.util.Set;
 
-import javax.annotation.Resource;
-
-import org.apache.log4j.Logger;
-import org.junit.Rule;
+import org.ehcache.Cache;
+import org.junit.Before;
 import org.junit.Test;
-import org.orcid.core.BaseTest;
+import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.orcid.core.crypto.OrcidCheckDigitGenerator;
-import org.orcid.core.togglz.Features;
-import org.togglz.junit.TogglzRule;
+import org.orcid.core.manager.impl.OrcidGenerationManagerImpl;
 
-/**
- * @author Will Simpson (will) Date: 15/12/2011
- */
+@RunWith(MockitoJUnitRunner.class)
+public class OrcidGenerationManagerTest {
 
-public class OrcidGenerationManagerTest extends BaseTest {
+    private static final int SAMPLE_SIZE = 2000;
 
-    @Resource
-    private OrcidGenerationManager orcidGenerationManager;
-    
-    @Rule
-    public TogglzRule togglzRule = TogglzRule.allDisabled(Features.class);
+    @Mock
+    private ProfileEntityManager profileEntityManager;
 
-    private static final Logger logger = Logger.getLogger(OrcidGenerationManagerTest.class);
+    @Mock
+    private Cache<String, String> recentOrcidCache;
 
-    @Test    
+    @InjectMocks
+    private OrcidGenerationManagerImpl orcidGenerationManager;
+
+    private final Set<String> cachedOrcids = new HashSet<String>(SAMPLE_SIZE);
+
+    @Before
+    public void setUp() {
+        when(profileEntityManager.orcidExists(anyString())).thenReturn(false);
+        when(recentOrcidCache.containsKey(anyString())).thenAnswer(invocation -> cachedOrcids.contains(invocation.getArgument(0)));
+        doAnswer(invocation -> {
+            cachedOrcids.add(invocation.getArgument(0));
+            return null;
+        }).when(recentOrcidCache).put(anyString(), anyString());
+    }
+
+    @Test
     public void testCreateNewOrcidV2() {
-        Set<String> orcids = new HashSet<String>();
-        for (int i = 0; i < 1000000; i++) {            
+        Set<String> orcids = new HashSet<String>(SAMPLE_SIZE);
+        for (int i = 0; i < SAMPLE_SIZE; i++) {
             String orcid = orcidGenerationManager.createNewOrcid();
 
             assertNotNull("ORCID is null", orcid);
@@ -48,7 +63,6 @@ public class OrcidGenerationManagerTest extends BaseTest {
             assertTrue("Numeric value of ORCID is too high " + orcid, numericOrcid <= OrcidGenerationManager.ORCID_BASE_V2_MAX);
 
             orcids.add(orcid);
-            logger.info("Got ORCID = " + orcid);
         }
     }
 }

@@ -6,7 +6,7 @@ import org.orcid.core.manager.v3.read_only.WorkManagerReadOnly;
 import org.orcid.pojo.ActivityTitle;
 import org.orcid.pojo.WorkSummaryExtended;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 import java.util.List;
 
 public class WorksTitleRetriever implements Retriever<OrcidString, List<ActivityTitle>> {

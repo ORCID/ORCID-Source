@@ -11,8 +11,8 @@ import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import javax.annotation.Resource;
-import javax.ws.rs.core.Response;
+import jakarta.annotation.Resource;
+import jakarta.ws.rs.core.Response;
 
 import org.orcid.api.common.util.ActivityUtils;
 import org.orcid.api.common.util.ApiUtils;
@@ -104,6 +104,8 @@ import org.orcid.jaxb.model.search_v2.Search;
 import org.orcid.persistence.jpa.entities.EmailDomainEntity;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Component;
+
+import org.apache.hc.core5.http.ParseException;
 
 /**
  * <p/>
@@ -1070,7 +1072,7 @@ public class MemberV2ApiServiceDelegatorImpl implements
     }
 
     @Override
-    public Response searchByQuery(Map<String, List<String>> solrParams) {
+    public Response searchByQuery(Map<String, List<String>> solrParams) throws ParseException {
         orcidSecurityManager.checkScopes(ScopePathType.READ_PUBLIC);
         validateSearchParams(solrParams);
         Search search = orcidSearchManager.findOrcidIds(solrParams);

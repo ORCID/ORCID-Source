@@ -2,10 +2,10 @@ package org.orcid.persistence.dao.impl;
 
 import java.util.List;
 
-import javax.annotation.Resource;
-import javax.persistence.EntityManager;
-import javax.persistence.Query;
-import javax.persistence.TypedQuery;
+import jakarta.annotation.Resource;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.Query;
+import jakarta.persistence.TypedQuery;
 
 import org.orcid.persistence.dao.InvalidRecordDataChangeDao;
 import org.orcid.persistence.jpa.entities.InvalidRecordDataChangeEntity;

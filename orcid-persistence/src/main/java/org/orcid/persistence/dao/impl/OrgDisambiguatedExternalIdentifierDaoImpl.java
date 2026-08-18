@@ -2,9 +2,9 @@ package org.orcid.persistence.dao.impl;
 
 import java.util.List;
 
-import javax.persistence.NoResultException;
-import javax.persistence.Query;
-import javax.persistence.TypedQuery;
+import jakarta.persistence.NoResultException;
+import jakarta.persistence.Query;
+import jakarta.persistence.TypedQuery;
 
 import org.orcid.persistence.dao.OrgDisambiguatedExternalIdentifierDao;
 import org.orcid.persistence.jpa.entities.OrgDisambiguatedExternalIdentifierEntity;
@@ -56,7 +56,7 @@ public class OrgDisambiguatedExternalIdentifierDaoImpl extends GenericDaoImpl<Or
     @Override
     public boolean exists(Long orgDisambiguatedId, String identifier, String identifierType) {
         try {
-            TypedQuery<Long> query = entityManager.createQuery("SELECT count(identifier) FROM OrgDisambiguatedExternalIdentifierEntity WHERE orgDisambiguated.id = :orgDisambiguatedId AND identifier = :identifier AND identifierType = :identifierType",
+            TypedQuery<Long> query = entityManager.createQuery("SELECT count(e) FROM OrgDisambiguatedExternalIdentifierEntity e WHERE e.orgDisambiguated.id = :orgDisambiguatedId AND e.identifier = :identifier AND e.identifierType = :identifierType",
                     Long.class);
             query.setParameter("orgDisambiguatedId", orgDisambiguatedId);
             query.setParameter("identifier", identifier);

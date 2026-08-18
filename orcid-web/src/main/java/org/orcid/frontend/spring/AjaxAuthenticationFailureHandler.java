@@ -3,9 +3,9 @@ package org.orcid.frontend.spring;
 import java.io.IOException;
 import java.io.PrintWriter;
 
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 import org.orcid.core.security.DeprecatedProfileException;
 import org.orcid.core.security.InvalidUserTypeException;
@@ -26,6 +26,8 @@ import org.springframework.security.web.authentication.SimpleUrlAuthenticationFa
 public class AjaxAuthenticationFailureHandler extends SimpleUrlAuthenticationFailureHandler {
 
     public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) throws IOException, ServletException {
+        response.setHeader("X-ORCID-AUTH-DEBUG", "ajax-auth-failure-handler");
+        response.setHeader("X-ORCID-AUTH-EXCEPTION", exception.getClass().getSimpleName());
         response.setContentType("application/json");
         PrintWriter writer = response.getWriter();
         writer.println("{");

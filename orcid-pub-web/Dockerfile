@@ -1,7 +1,8 @@
 # dependencies docker build
 
 # match version from .tool-versions
-FROM maven:3.6.3-jdk-11 AS maven
+# FROM maven:3.6.3-jdk-11 AS maven
+FROM maven:3.9.9-eclipse-temurin-21-noble AS maven
 
 ARG tag_numeric
 
@@ -67,7 +68,8 @@ RUN mvn -T 1C --batch-mode -DgenerateBackupPoms=false \
 -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn
 
 # For Java 11 and Tomcat 9
-FROM tomcat:9.0.93-jdk11-temurin-jammy
+# FROM tomcat:9.0.93-jdk11-temurin-jammy
+FROM tomcat:10.1.57-jdk21-temurin-noble
 
 # Focal has no j2cli support
 # FROM tomcat:9.0.91-jdk11-temurin-focal

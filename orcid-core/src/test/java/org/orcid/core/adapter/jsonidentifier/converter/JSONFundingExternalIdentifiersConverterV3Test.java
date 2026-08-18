@@ -6,9 +6,9 @@ import static org.junit.Assert.assertNotNull;
 import java.io.InputStream;
 import java.math.BigDecimal;
 
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.Unmarshaller;
+import jakarta.xml.bind.JAXBContext;
+import jakarta.xml.bind.JAXBException;
+import jakarta.xml.bind.Unmarshaller;
 
 import org.junit.Test;
 import org.orcid.jaxb.model.common_v2.Visibility;
@@ -70,7 +70,7 @@ public class JSONFundingExternalIdentifiersConverterV3Test {
     }
 
     private Funding getFunding() throws JAXBException {
-        JAXBContext context = JAXBContext.newInstance(new Class[] { Funding.class });
+        JAXBContext context = JAXBContext.newInstance(Funding.class);
         Unmarshaller unmarshaller = context.createUnmarshaller();
         String name = "/record_3.0/samples/read_samples/funding-full-3.0.xml";
         InputStream inputStream = getClass().getResourceAsStream(name);

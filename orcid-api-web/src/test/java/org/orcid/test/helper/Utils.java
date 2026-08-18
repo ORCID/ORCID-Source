@@ -8,7 +8,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
-import javax.ws.rs.core.Response;
+import jakarta.ws.rs.core.Response;
 
 import org.orcid.jaxb.model.common_v2.Country;
 import org.orcid.jaxb.model.common_v2.Filterable;

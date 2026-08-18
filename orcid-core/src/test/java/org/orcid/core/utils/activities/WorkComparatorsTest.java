@@ -48,7 +48,7 @@ public class WorkComparatorsTest {
         yesterday.add(Calendar.DAY_OF_YEAR, -1);
         CreatedDate compare = new CreatedDate(DatatypeFactory.newInstance().newXMLGregorianCalendar(yesterday));// assumes list is size 10, see comment above
         for (WorkSummary summary : summaries) {
-            System.out.println(compare.getValue().toGregorianCalendar() + " should be before " + summary.getCreatedDate().getValue().toGregorianCalendar());
+            System.out.println(compare.getValue().toGregorianCalendar().toString() + " should be before " + summary.getCreatedDate().getValue().toGregorianCalendar().toString());
             assertTrue(compare.getValue().toGregorianCalendar().before(summary.getCreatedDate().getValue().toGregorianCalendar()));
             compare = summary.getCreatedDate();
         }
@@ -102,17 +102,14 @@ public class WorkComparatorsTest {
         WorkTitle title = new WorkTitle();
         title.setTitle(new Title("summary" + displayIndex));
         summary.setTitle(title);
-        waitABit();
-        summary.setCreatedDate(new CreatedDate(DatatypeFactory.newInstance().newXMLGregorianCalendar(new GregorianCalendar())));
+        summary.setCreatedDate(new CreatedDate(DatatypeFactory.newInstance().newXMLGregorianCalendar(getTimePlusRandomSeconds())));
         return summary;
     }
 
-    private void waitABit() {
-        try {
-            Thread.sleep(100);
-        } catch (InterruptedException e) {
-            throw new RuntimeException("Thread shouldn't be interrupted", e);
-        }
+    private GregorianCalendar getTimePlusRandomSeconds() {
+        GregorianCalendar c = new GregorianCalendar();
+        c.add(Calendar.SECOND, (int) (Math.random() * 1000));
+        return c;
     }
 
 }

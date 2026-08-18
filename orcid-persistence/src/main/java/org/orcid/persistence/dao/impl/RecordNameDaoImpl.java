@@ -4,8 +4,8 @@ import java.math.BigInteger;
 import java.util.Date;
 import java.util.List;
 
-import javax.persistence.Query;
-import javax.persistence.TypedQuery;
+import jakarta.persistence.Query;
+import jakarta.persistence.TypedQuery;
 
 import org.apache.commons.lang.StringUtils;
 import org.orcid.persistence.aop.UpdateProfileLastModifiedAndIndexingStatus;
@@ -64,13 +64,13 @@ public class RecordNameDaoImpl extends GenericDaoImpl<RecordNameEntity, Long> im
     public boolean exists(String orcid) {
         Query query = entityManager.createNativeQuery("select count(*) from record_name where orcid=:orcid");
         query.setParameter("orcid", orcid);
-        Long result = ((BigInteger)query.getSingleResult()).longValue();
+        Long result = ((Number)query.getSingleResult()).longValue();
         return (result != null && result > 0);
     }   
     
     @Override
     public Date getLastModified(String orcid) {
-        TypedQuery<Date> query = entityManager.createQuery("SELECT lastModified FROM RecordNameEntity WHERE orcid = :orcid", Date.class);
+        TypedQuery<Date> query = entityManager.createQuery("SELECT r.lastModified FROM RecordNameEntity r WHERE r.orcid = :orcid", Date.class);
         query.setParameter("orcid", orcid);
         return query.getSingleResult();
     }

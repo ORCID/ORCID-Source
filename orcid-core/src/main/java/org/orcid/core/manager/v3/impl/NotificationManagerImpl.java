@@ -16,9 +16,9 @@ import org.orcid.core.manager.v3.FindMyStuffManager;
 import org.orcid.core.manager.v3.NotificationManager;
 import org.orcid.core.manager.v3.RecordNameManager;
 import org.orcid.core.manager.v3.SourceManager;
+import org.orcid.core.manager.v3.read_only.ClientDetailsManagerReadOnly;
 import org.orcid.core.manager.v3.read_only.EmailManagerReadOnly;
 import org.orcid.core.manager.v3.read_only.impl.ManagerReadOnlyBaseImpl;
-import org.orcid.core.oauth.OrcidOauth2TokenDetailService;
 import org.orcid.core.togglz.Features;
 import org.orcid.core.utils.ReleaseNameUtils;
 import org.orcid.core.utils.SourceEntityUtils;
@@ -42,14 +42,12 @@ import org.orcid.persistence.dao.ProfileEventDao;
 import org.orcid.persistence.jpa.entities.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Required;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 import java.io.UnsupportedEncodingException;
-import java.math.BigInteger;
 import java.net.URLEncoder;
 import java.text.MessageFormat;
 import java.time.Instant;
@@ -103,9 +101,6 @@ public class NotificationManagerImpl extends ManagerReadOnlyBaseImpl implements 
     private SourceManager sourceManager;
 
     @Resource
-    private OrcidOauth2TokenDetailService orcidOauth2TokenDetailService;
-
-    @Resource
     private ClientDetailsEntityCacheManager clientDetailsEntityCacheManager;
 
     @Resource
@@ -129,6 +124,9 @@ public class NotificationManagerImpl extends ManagerReadOnlyBaseImpl implements 
     @Resource(name = "recordNameManagerV3")
     private RecordNameManager recordNameManagerV3;
 
+    @Resource(name = "clientDetailsManagerReadOnlyV3")
+    private ClientDetailsManagerReadOnly clientDetailsManagerReadOnly;
+
     @Value("${org.orcid.notifications.auto.archive.days:181}")
     private Integer autoArchiveDays;
 
@@ -141,12 +139,12 @@ public class NotificationManagerImpl extends ManagerReadOnlyBaseImpl implements 
     @Value("${org.orcid.notifications.auto.delete.batchsize:25000}")
     private Integer autoDeleteBatchSize;
 
-    @Required
+
     public void setTemplateManager(TemplateManager templateManager) {
         this.templateManager = templateManager;
     }
 
-    @Required
+
     public void setEncryptionManager(EncryptionManager encryptionManager) {
         this.encryptionManager = encryptionManager;
     }
@@ -543,7 +541,7 @@ public class NotificationManagerImpl extends ManagerReadOnlyBaseImpl implements 
         return notifications.stream().filter(n -> {
             // Filter only INSTITUTIONAL_CONNECTION notifications
             if (NotificationType.INSTITUTIONAL_CONNECTION.equals(n.getNotificationType())) {
-                boolean alreadyConnected = orcidOauth2TokenDetailService.doesClientKnowUser(n.getSource().retrieveSourcePath(), userOrcid);
+                boolean alreadyConnected = clientDetailsManagerReadOnly.doesClientKnowUser(n.getSource().retrieveSourcePath(), userOrcid);
                 if (alreadyConnected) {
                     flagAsArchived(userOrcid, n.getPutCode(), false);
                 }
@@ -783,8 +781,7 @@ public class NotificationManagerImpl extends ManagerReadOnlyBaseImpl implements 
             toDelete = notificationDao.findNotificationsToDeleteByOffset((notificationDeleteOffset == null ? 10000 : notificationDeleteOffset), recordsPerBatch);
             LOGGER.info("Got batch of {} notifications to delete", toDelete.size());
             for (Object[] o : toDelete) {
-                BigInteger big = (BigInteger) o[0];
-                Long id = big.longValue();
+                Long id = ((Number) o[0]).longValue();
                 String orcid = (String) o[1];
                 LOGGER.info("About to delete old notification: id={}, orcid={}", new Object[] { id, orcid });
                 notificationDao.deleteNotificationItemByNotificationId(id);

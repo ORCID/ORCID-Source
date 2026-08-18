@@ -10,7 +10,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import org.apache.commons.lang.StringUtils;

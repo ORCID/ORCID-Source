@@ -5,9 +5,9 @@ import static org.junit.Assert.assertNotNull;
 
 import java.io.InputStream;
 
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.Unmarshaller;
+import jakarta.xml.bind.JAXBContext;
+import jakarta.xml.bind.JAXBException;
+import jakarta.xml.bind.Unmarshaller;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -65,7 +65,7 @@ public class JSONExternalIdentifiersConverterV3Test {
 
    
     private Education getEducation() throws JAXBException {
-        JAXBContext context = JAXBContext.newInstance(new Class[] { Education.class });
+        JAXBContext context = JAXBContext.newInstance(Education.class);
         Unmarshaller unmarshaller = context.createUnmarshaller();
         String name = "/record_3.0/samples/read_samples/education-full-3.0.xml";
         InputStream inputStream = getClass().getResourceAsStream(name);

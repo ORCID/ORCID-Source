@@ -26,13 +26,13 @@
 	xmlns:util="http://www.springframework.org/schema/util"
 	xmlns:tx="http://www.springframework.org/schema/tx"
 	xsi:schemaLocation="
-        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.3.xsd
-        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.3.xsd
+        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
         http://www.springframework.org/schema/cache http://www.springframework.org/schema/cache/spring-cache.xsd
-        http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.3.xsd 
-        http://www.springframework.org/schema/jms http://www.springframework.org/schema/jms/spring-jms-4.3.xsd
-        http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-4.3.xsd
-        http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-4.3.xsd">
+        http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd 
+        http://www.springframework.org/schema/jms http://www.springframework.org/schema/jms/spring-jms.xsd
+        http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd
+        http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd">
 	
 	<tx:annotation-driven />
 	
@@ -64,12 +64,7 @@
         <constructor-arg ref="jerseyProperties" />
     </bean>
 
-    <util:map id="jerseyProperties">
-        <entry key="com.sun.jersey.client.apache4.config.ApacheHttpClient4Config.PROPERTY_CONNECTION_MANAGER"
-               value-ref="multiThreadedConnectionManager"/>
-    </util:map>
-
-    <bean id="multiThreadedConnectionManager" class="org.apache.http.impl.conn.PoolingClientConnectionManager"/>
+    <util:map id="jerseyProperties" />
 
 	<bean id="jpaVendorAdapter" class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter">
         <property name="databasePlatform" value="${org.orcid.message-listener.db.dialect}" />
@@ -93,19 +88,18 @@
         <property name="changeLog" value="classpath:activities-indexer-db-master.xml" />
     </bean>
     
-    <bean id="pooledDataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource" destroy-method="close">
-        <property name="driverClass" value="${org.orcid.message-listener.db.class}" />
+    <bean id="pooledDataSource" class="com.zaxxer.hikari.HikariDataSource" destroy-method="close">
+        <property name="poolName" value="${org.orcid.activities-indexer.db.poolName:orcid-activities-indexer}" />
+        <property name="driverClassName" value="${org.orcid.message-listener.db.class}" />
         <property name="jdbcUrl" value="${org.orcid.message-listener.db.url}" />
-        <property name="user" value="${org.orcid.message-listener.db.username}" />
+        <property name="username" value="${org.orcid.message-listener.db.username}" />
         <property name="password" value="${org.orcid.message-listener.db.password}" />
-        <property name="initialPoolSize" value="${org.orcid.message-listener.db.initialPoolSize}" />
-        <property name="minPoolSize" value="${org.orcid.message-listener.db.minPoolSize}" />
-        <property name="maxPoolSize" value="${org.orcid.message-listener.db.maxPoolSize}" />
-        <property name="maxStatements" value="${org.orcid.message-listener.db.maxStatements}" />
-        <property name="idleConnectionTestPeriod" value="${org.orcid.message-listener.db.idleConnectionTestPeriod}" />
-        <property name="testConnectionOnCheckin" value="${org.orcid.message-listener.db.testConnectionOnCheckin}" />
-        <property name="preferredTestQuery" value="${org.orcid.message-listener.db.preferredTestQuery}" />
-        <property name="numHelperThreads" value="${org.orcid.message-listener.db.numHelperThreads:10}"/>
+        <property name="minimumIdle" value="${org.orcid.message-listener.db.minPoolSize}" />
+        <property name="maximumPoolSize" value="${org.orcid.message-listener.db.maxPoolSize}" />
+        <property name="connectionTestQuery" value="${org.orcid.message-listener.db.preferredTestQuery}" />
+        <property name="connectionTimeout" value="${org.orcid.activities-indexer.db.hikari.connectionTimeout:30000}" />
+        <property name="idleTimeout" value="${org.orcid.activities-indexer.db.hikari.idleTimeout:600000}" />
+        <property name="maxLifetime" value="${org.orcid.activities-indexer.db.hikari.maxLifetime:1800000}" />
     </bean>
     
     <bean id="mqEntityManagerFactory" class="org.orcid.activitiesindexer.persistence.spring.OrcidEntityManagerFactory">

@@ -2,13 +2,13 @@ package org.orcid.api.common.security.oauth;
 
 import java.io.IOException;
 
-import javax.annotation.Resource;
-import javax.servlet.FilterChain;
-import javax.servlet.ServletException;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.annotation.Resource;
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.ServletRequest;
+import jakarta.servlet.ServletResponse;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 import org.orcid.core.locale.LocaleManager;
 import org.orcid.utils.OrcidStringUtils;
@@ -20,6 +20,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.web.filter.GenericFilterBean;
 
+@Deprecated(since = "Since the authorization server is made the default, we dont need this filter", forRemoval = true)
 public class RevokeTokenEndpointFilter extends GenericFilterBean {
 
     @Resource

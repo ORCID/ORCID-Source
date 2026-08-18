@@ -3,8 +3,8 @@ package org.orcid.core.utils.v3.identifiers.resolvers;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.annotation.PostConstruct;
-import javax.annotation.Resource;
+import jakarta.annotation.PostConstruct;
+import jakarta.annotation.Resource;
 
 import org.apache.commons.lang3.StringUtils;
 import org.orcid.core.utils.v3.identifiers.PIDNormalizationService;

@@ -3,7 +3,7 @@ package org.orcid.core.manager.impl;
 import java.io.Writer;
 import java.util.List;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 
 import org.orcid.core.exception.InvalidDisambiguatedOrgException;
 import org.orcid.core.manager.OrgManager;

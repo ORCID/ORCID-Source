@@ -8,7 +8,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.TreeSet;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 
 import org.apache.commons.lang3.StringUtils;
 import org.orcid.core.adapter.converter.CreditNameConverter;
@@ -17,6 +17,7 @@ import org.orcid.core.adapter.converter.FamilyNameConverter;
 import org.orcid.core.adapter.converter.FundingContributorsConverter;
 import org.orcid.core.adapter.converter.GivenNamesConverter;
 import org.orcid.core.adapter.converter.PeerReviewSubjectTypeConverter;
+import org.orcid.core.adapter.converter.Iso3166CountryConverter;
 import org.orcid.core.adapter.converter.VisibilityConverter;
 import org.orcid.core.adapter.converter.WorkContributorsConverter;
 import org.orcid.core.adapter.jsonidentifier.converter.ExternalIdentifierTypeConverter;
@@ -150,7 +151,7 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
     @Resource
     private IdentityProviderManager identityProviderManager;
 
-    @Resource
+    @Resource(name = "encryptionManager")
     private EncryptionManager encryptionManager;
 
     @Resource
@@ -165,7 +166,10 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
     }
 
     private MapperFactory getNewMapperFactory() {
-        return new DefaultMapperFactory.Builder().build();
+        // dumpStateOnException(false): prevents RamUsageEstimator from crashing on JDK17+ hidden classes (lambdas)
+        MapperFactory factory = new DefaultMapperFactory.Builder().dumpStateOnException(false).build();
+        factory.getConverterFactory().registerConverter(new Iso3166CountryConverter());
+        return factory;
     }
 
     @Override
@@ -1063,7 +1067,11 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
                 if (b.getClientSecrets() != null) {
                     for (ClientSecretEntity entity : b.getClientSecrets()) {
                         if (entity.isPrimary()) {
-                            a.setDecryptedSecret(encryptionManager.decryptForInternalUse(entity.getClientSecret()));
+                            String clientSecret = entity.getClientSecret();
+                            if (encryptionManager != null) {
+                                clientSecret = encryptionManager.decryptForInternalUse(clientSecret);
+                            }
+                            a.setDecryptedSecret(clientSecret);
                         }
                     }
                 }

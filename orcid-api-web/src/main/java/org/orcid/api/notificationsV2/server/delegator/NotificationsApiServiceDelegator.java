@@ -1,7 +1,7 @@
 package org.orcid.api.notificationsV2.server.delegator;
 
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.UriInfo;
+import jakarta.ws.rs.core.Response;
+import jakarta.ws.rs.core.UriInfo;
 
 import org.orcid.core.exception.OrcidNotificationAlreadyReadException;
 

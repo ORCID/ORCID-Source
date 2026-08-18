@@ -6,8 +6,8 @@ import static org.junit.Assert.assertNull;
 
 import java.util.Date;
 
-import javax.annotation.Resource;
-import javax.xml.bind.JAXBException;
+import jakarta.annotation.Resource;
+import jakarta.xml.bind.JAXBException;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;

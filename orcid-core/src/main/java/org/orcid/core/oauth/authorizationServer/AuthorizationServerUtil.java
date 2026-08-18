@@ -2,21 +2,20 @@ package org.orcid.core.oauth.authorizationServer;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.orcid.core.constants.OrcidOauth2Constants;
 import org.orcid.core.togglz.Features;
 import org.orcid.core.utils.http.HttpRequestUtils;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.oauth2.common.exceptions.InvalidTokenException;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.Resource;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
+import jakarta.annotation.Resource;
+import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.net.URISyntaxException;
 import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
@@ -26,7 +25,7 @@ import java.util.Set;
 
 @Component
 public class AuthorizationServerUtil {
-    private static final Logger logger = Logger.getLogger(AuthorizationServerUtil.class);
+    private static final Logger logger = LoggerFactory.getLogger(AuthorizationServerUtil.class);
 
     public static final Set<String> AUTH_SERVER_ALLOWED_GRANT_TYPES = Set.of("authorization_code", "refresh_token", "client_credentials", "urn:ietf:params:oauth:grant-type:token-exchange");
 
@@ -283,10 +282,23 @@ public class AuthorizationServerUtil {
 
         Response response = this.doPost(this.authorizationServerIntrospectionEndpoint, basicAuthorizationHeaderForTokenIntrospection, parameters);
 
-        if (response != null && (response.getStatus() == 200)) {
+        if (response == null) {
+            logger.warn("Token introspection returned null response from endpoint=" + authorizationServerIntrospectionEndpoint);
+            return null;
+        }
+
+        if (response.getStatus() == 200) {
             String responseString = (String) response.getEntity();
             return new JSONObject(responseString);
         }
+
+        String responseBody = response.getEntity() == null ? "<empty>" : String.valueOf(response.getEntity());
+        if (responseBody.length() > 300) {
+            responseBody = responseBody.substring(0, 300) + "...";
+        }
+        logger.warn("Token introspection non-200 response. endpoint=" + authorizationServerIntrospectionEndpoint
+                + " status=" + response.getStatus()
+                + " body=" + responseBody);
 
         return null;
     }

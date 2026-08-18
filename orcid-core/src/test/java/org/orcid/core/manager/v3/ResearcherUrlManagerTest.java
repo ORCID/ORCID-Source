@@ -12,7 +12,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 
 import org.junit.After;
 import org.junit.AfterClass;
@@ -40,6 +40,8 @@ import org.orcid.persistence.jpa.entities.IndexingStatus;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.test.TargetProxyHelper;
 import org.springframework.test.util.ReflectionTestUtils;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.support.TransactionTemplate;
 
 public class ResearcherUrlManagerTest extends BaseTest {
     private static final List<String> DATA_FILES = Arrays.asList("/data/SourceClientDetailsEntityData.xml",
@@ -69,6 +71,9 @@ public class ResearcherUrlManagerTest extends BaseTest {
     
     @Resource
     private ProfileDao profileDao;
+
+    @Resource
+    private PlatformTransactionManager transactionManager;
     
     @Resource
     private ClientDetailsManager clientDetailsManager;
@@ -137,12 +142,13 @@ public class ResearcherUrlManagerTest extends BaseTest {
     @Test
     public void testAddResearcherUrToClaimedRecordPreserveUserDefaultVisibility() {
         when(mockSourceManager.retrieveActiveSource()).thenReturn(Source.forClient(CLIENT_1_ID));
-        
+
+        new TransactionTemplate(transactionManager).execute(status -> {
+            profileDao.updateIndexingStatus(claimedOrcid, IndexingStatus.DONE);
+            return null;
+        });
+
         ProfileEntity profile = profileDao.find(claimedOrcid);
-        profile.setIndexingStatus(IndexingStatus.DONE);
-        profileDao.merge(profile);
-        
-        profile = profileDao.find(claimedOrcid);
         Date lastModified = profile.getLastModified();
         
         ResearcherUrl rUrl = getResearcherUrl();

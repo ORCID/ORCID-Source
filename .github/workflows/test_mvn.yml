@@ -36,7 +36,7 @@ on:
       java_version:
         description: 'JDK version to build with'
         required: false
-        default: '11'
+        default: '21'
         type: string
 
   workflow_dispatch:
@@ -69,7 +69,7 @@ on:
       java_version:
         description: 'JDK version to build with'
         required: false
-        default: '11'
+        default: '21'
         type: choice
         options:
           - '11'

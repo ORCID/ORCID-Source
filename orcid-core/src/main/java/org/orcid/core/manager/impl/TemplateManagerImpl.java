@@ -5,7 +5,7 @@ import java.io.StringWriter;
 import java.util.Locale;
 import java.util.Map;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 
 import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.TemplateManager;

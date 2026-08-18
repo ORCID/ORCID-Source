@@ -16,7 +16,7 @@ import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,9 +26,6 @@ public class ContributorsRolesAndSequencesConverter extends BidirectionalConvert
 
     @Resource(name = "workContributorRoleConverter")
     private ContributorRoleConverter workContributorRoleConverter;
-
-    @Resource(name = "contributorUtilsV3")
-    private ContributorUtils contributorUtils;
 
     @Override
     public String convertTo(List<ContributorsRolesAndSequences> source, Type<String> destinationType) {
@@ -55,7 +52,7 @@ public class ContributorsRolesAndSequencesConverter extends BidirectionalConvert
                                 if (cr != null) {
                                     providedRoleValue = cr.name();
                                 }
-                                crs.setContributorRole(contributorUtils.getCreditRole(workContributorRoleConverter.toRoleValue(providedRoleValue)));
+                                crs.setContributorRole(ContributorUtils.getCreditRole(workContributorRoleConverter.toRoleValue(providedRoleValue)));
                             }
                         }
                     }

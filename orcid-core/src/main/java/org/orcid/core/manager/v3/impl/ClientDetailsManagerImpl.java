@@ -11,7 +11,7 @@ import java.util.SortedSet;
 import java.util.TreeSet;
 import java.util.UUID;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 
 import org.apache.commons.lang.time.DateUtils;
 import org.orcid.core.exception.ClientAlreadyActiveException;
@@ -112,6 +112,7 @@ public class ClientDetailsManagerImpl extends ClientDetailsManagerReadOnlyImpl i
      * @return
      */
     @Override
+    @Transactional
     public ClientDetailsEntity createClientDetails(String memberId, String name, String description, String idp, String website, ClientType clientType, Set<String> clientScopes,
             Set<String> clientResourceIds, Set<String> clientAuthorizedGrantTypes, Set<RedirectUri> clientRegisteredRedirectUris, List<String> clientGrantedAuthorities, Boolean allowAutoDeprecate) {        
         if (!profileEntityManager.orcidExists(memberId)) {
@@ -125,12 +126,14 @@ public class ClientDetailsManagerImpl extends ClientDetailsManagerReadOnlyImpl i
     }   
 
     @Override
+    @Transactional
     public void addClientRedirectUri(String clientId, String uri) {
         clientRedirectDao.addClientRedirectUri(clientId, uri);
         clientDetailsDao.updateLastModified(clientId);
     }
     
     @Override
+    @Transactional
     public void addClientRedirectUri(String clientId, String uri, RedirectUriType uriType, ScopePathType scope) {
         clientRedirectDao.addClientRedirectUri(clientId, uri,uriType.value(),scope.value());
         clientDetailsDao.updateLastModified(clientId);
@@ -198,6 +201,7 @@ public class ClientDetailsManagerImpl extends ClientDetailsManagerReadOnlyImpl i
     }
 
     @Override
+    @Transactional
     public ClientDetailsEntity populateClientDetailsEntity(String clientId, String memberId, String name, String description, String idp, String website,
             String clientSecret, ClientType clientType, Set<String> clientScopes, Set<String> clientResourceIds, Set<String> clientAuthorizedGrantTypes,
             Set<RedirectUri> clientRegisteredRedirectUris, List<String> clientGrantedAuthorities, Boolean allowAutoDeprecate) {
@@ -223,11 +227,13 @@ public class ClientDetailsManagerImpl extends ClientDetailsManagerReadOnlyImpl i
     }    
 
     @Override
+    @Transactional
     public void removeByClientId(String clientId) {
         clientDetailsDao.remove(clientId);
     }    
 
     @Override
+    @Transactional
     public ClientDetailsEntity merge(ClientDetailsEntity clientDetails) {
         ClientDetailsEntity result = clientDetailsDao.merge(clientDetails);
         clientDetailsDao.updateLastModified(result.getId());
@@ -237,6 +243,7 @@ public class ClientDetailsManagerImpl extends ClientDetailsManagerReadOnlyImpl i
     }       
 
     @Override
+    @Transactional
     public void updateLastModified(String clientId) {
         clientDetailsDao.updateLastModified(clientId);
     }
@@ -348,6 +355,7 @@ public class ClientDetailsManagerImpl extends ClientDetailsManagerReadOnlyImpl i
     }
 
     @Override
+    @Transactional
     public void addScopesToClient(Set<String> scopes, ClientDetailsEntity clientDetails) {
         for (String scope : scopes) {
             if (!clientDetails.getScope().contains(scope)) {
@@ -357,6 +365,7 @@ public class ClientDetailsManagerImpl extends ClientDetailsManagerReadOnlyImpl i
     }
     
     @Override
+    @Transactional
     public void addAuthorizedGrantTypeToClient(Set<String> types, ClientDetailsEntity clientDetails) {
         for (String type : types) {
             if (!clientDetails.getAuthorizedGrantTypes().contains(type)) {
@@ -366,6 +375,7 @@ public class ClientDetailsManagerImpl extends ClientDetailsManagerReadOnlyImpl i
     }
 
     @Override
+    @Transactional
     public void deactivateClientDetails(String clientDetailsId, String orcid) throws ClientAlreadyDeactivatedException {
         ClientDetailsEntity entity = clientDetailsDaoReadOnly.find(clientDetailsId);
         if (entity.getDeactivatedDate() != null) {
@@ -376,6 +386,7 @@ public class ClientDetailsManagerImpl extends ClientDetailsManagerReadOnlyImpl i
     }
 
     @Override
+    @Transactional
     public void activateClientDetails(String clientDetailsId) throws ClientAlreadyActiveException {
         ClientDetailsEntity entity = clientDetailsDaoReadOnly.find(clientDetailsId);
         if (entity.getDeactivatedDate() == null) {

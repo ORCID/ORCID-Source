@@ -5,8 +5,8 @@ import org.orcid.core.cache.Retriever;
 import org.orcid.core.manager.v3.read_only.WorkManagerReadOnly;
 import org.orcid.pojo.WorksExtended;
 
-import javax.annotation.Resource;
-import javax.transaction.Transactional;
+import jakarta.annotation.Resource;
+import jakarta.transaction.Transactional;
 
 public class GroupedWorksExtendedRetriever implements Retriever<OrcidString, WorksExtended> {
 

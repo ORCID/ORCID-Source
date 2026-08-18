@@ -3,9 +3,9 @@ package org.orcid.persistence.dao.impl;
 import java.util.Date;
 import java.util.List;
 
-import javax.persistence.NoResultException;
-import javax.persistence.Query;
-import javax.persistence.TypedQuery;
+import jakarta.persistence.NoResultException;
+import jakarta.persistence.Query;
+import jakarta.persistence.TypedQuery;
 
 import org.hibernate.NonUniqueResultException;
 import org.orcid.persistence.dao.CustomEmailDao;
@@ -121,7 +121,7 @@ public class CustomEmailDaoImpl extends GenericDaoImpl<CustomEmailEntity, Custom
      * */
     @Override
     public boolean exists(String clientDetailsId, EmailType emailType) {
-        TypedQuery<Long> query = entityManager.createQuery("SELECT count(*) FROM CustomEmailEntity WHERE clientDetailsEntity.id=:clientDetailsId and emailType=:emailType", Long.class);
+        TypedQuery<Long> query = entityManager.createQuery("SELECT count(c) FROM CustomEmailEntity c WHERE c.clientDetailsEntity.id=:clientDetailsId and c.emailType=:emailType", Long.class);
         query.setParameter("clientDetailsId", clientDetailsId);
         query.setParameter("emailType", emailType);
         Long result = query.getSingleResult();
@@ -136,7 +136,7 @@ public class CustomEmailDaoImpl extends GenericDaoImpl<CustomEmailEntity, Custom
      * */
     @Override
     public Date getLastModified(String clientDetailsId, EmailType emailType) {
-        TypedQuery<Date> query = entityManager.createQuery("SELECT lastModified FROM CustomEmailEntity WHERE clientDetailsEntity.id=:clientDetailsId and emailType=:emailType", Date.class);
+        TypedQuery<Date> query = entityManager.createQuery("SELECT c.lastModified FROM CustomEmailEntity c WHERE c.clientDetailsEntity.id=:clientDetailsId and c.emailType=:emailType", Date.class);
         query.setParameter("clientDetailsId", clientDetailsId);
         query.setParameter("emailType", emailType);
         Date result = null;

@@ -9,8 +9,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 
+import org.apache.hc.core5.http.ParseException;
 import org.apache.solr.common.SolrDocument;
 import org.junit.After;
 import org.junit.Before;
@@ -73,7 +74,7 @@ public class OrcidSearchManagerTest {
     }
 
     @Test
-    public void testFindOrcidIds() {
+    public void testFindOrcidIds() throws ParseException {
         when(mockOrcidSolrProfileClient.findByDocumentCriteria(any())).thenReturn(multipleResultsForQuery());
         Search search = orcidSearchManager.findOrcidIds(new HashMap<>());
         assertNotNull(search);
@@ -84,7 +85,7 @@ public class OrcidSearchManagerTest {
     }
 
     @Test
-    public void testFindOrcidIdsNoResults() {
+    public void testFindOrcidIdsNoResults() throws ParseException {
         when(mockOrcidSolrProfileClient.findByDocumentCriteria(any())).thenReturn(new OrcidSolrResults());
         Search search = orcidSearchManager.findOrcidIds(new HashMap<>());
         assertNotNull(search);
@@ -93,7 +94,7 @@ public class OrcidSearchManagerTest {
     }
 
     @Test
-    public void orcidMultipleOrcidsIndexed() {
+    public void orcidMultipleOrcidsIndexed() throws ParseException {
         when(mockOrcidSolrProfileClient.findByDocumentCriteria("rndQuery", 0, 0)).thenReturn(multipleResultsForQuery());
         Search search = orcidSearchManager.findOrcidsByQuery("rndQuery", 0, 0);
         assertNotNull(search);
@@ -108,7 +109,7 @@ public class OrcidSearchManagerTest {
     }
 
     @Test
-    public void allFineTest() {
+    public void allFineTest() throws ParseException {
         when(mockOrcidSolrProfileClient.findByDocumentCriteria("rndQuery", 0, 0)).thenReturn(invalidRecordSearchResult());
 
         Search search = orcidSearchManager.findOrcidsByQuery("rndQuery", 0, 0);
@@ -118,7 +119,7 @@ public class OrcidSearchManagerTest {
     }
 
     @Test
-    public void numFoundTest() {
+    public void numFoundTest() throws ParseException {
         OrcidSolrResults osr = multipleResultsForQuery();
         osr.setNumFound(500);
         when(mockOrcidSolrProfileClient.findByDocumentCriteria("rndQuery", 0, 0)).thenReturn(osr);

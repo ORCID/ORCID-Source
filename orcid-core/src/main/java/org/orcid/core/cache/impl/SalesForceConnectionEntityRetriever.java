@@ -18,7 +18,7 @@ package org.orcid.core.cache.impl;
 
 import java.util.List;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 
 import org.orcid.core.cache.OrcidString;
 import org.orcid.core.cache.Retriever;

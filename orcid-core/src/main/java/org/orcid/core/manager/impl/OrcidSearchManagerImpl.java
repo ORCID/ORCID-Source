@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 
 import org.orcid.core.manager.OrcidSearchManager;
 import org.orcid.core.manager.OrcidSecurityManager;
@@ -14,6 +14,7 @@ import org.orcid.core.solr.OrcidSolrResults;
 import org.orcid.jaxb.model.common_v2.OrcidIdentifier;
 import org.orcid.jaxb.model.search_v2.Result;
 import org.orcid.jaxb.model.search_v2.Search;
+import org.apache.hc.core5.http.ParseException;
 
 public class OrcidSearchManagerImpl implements OrcidSearchManager {
 
@@ -27,7 +28,7 @@ public class OrcidSearchManagerImpl implements OrcidSearchManager {
     private OrcidSolrProfileClient orcidSolrProfileClient;
     
     @Override
-    public Search findOrcidIds(Map<String, List<String>> queryParameters) {
+    public Search findOrcidIds(Map<String, List<String>> queryParameters) throws ParseException{
         Search search = new Search();
         OrcidSolrResults orcidSolrResults = orcidSolrProfileClient.findByDocumentCriteria(queryParameters);
         if (orcidSolrResults != null && orcidSolrResults.getResults() != null) {

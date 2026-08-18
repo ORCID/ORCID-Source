@@ -13,8 +13,14 @@ import org.orcid.persistence.jpa.entities.OrcidGrantedAuthority;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.ProfileEventEntity;
 import org.orcid.persistence.jpa.entities.ProfileEventType;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 public interface ProfileDao extends GenericDao<ProfileEntity, String> {
+
+    @Override
+    @Transactional(propagation = Propagation.REQUIRED)
+    ProfileEntity merge(ProfileEntity entity);
 
     List<String> findByMissingEventTypes(int maxResults, List<ProfileEventType> pet, Collection<String> orcidsToExclude, boolean not);
 

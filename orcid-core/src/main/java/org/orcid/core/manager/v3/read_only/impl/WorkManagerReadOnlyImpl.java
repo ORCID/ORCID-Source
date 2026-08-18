@@ -1,6 +1,22 @@
 package org.orcid.core.manager.v3.read_only.impl;
 
+import java.math.BigInteger;
+import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.concurrent.ForkJoinPool;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+import jakarta.annotation.PostConstruct;
+import jakarta.annotation.Resource;
+
 import org.apache.commons.lang3.StringUtils;
+
 import org.orcid.core.adapter.jsonidentifier.converter.JSONWorkExternalIdentifiersConverterV3;
 import org.orcid.core.adapter.v3.JpaJaxbWorkAdapter;
 import org.orcid.core.adapter.v3.converter.ContributorsRolesAndSequencesConverter;
@@ -37,12 +53,6 @@ import org.orcid.pojo.grouping.WorkGroupingSuggestion;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
-
-import javax.annotation.Resource;
-import java.math.BigInteger;
-import java.sql.Timestamp;
-import java.util.*;
-import java.util.stream.Collectors;
 
 import static org.orcid.pojo.ajaxForm.PojoUtil.getWorkForm;
 

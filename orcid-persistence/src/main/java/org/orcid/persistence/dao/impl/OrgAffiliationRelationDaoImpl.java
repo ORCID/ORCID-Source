@@ -2,12 +2,13 @@ package org.orcid.persistence.dao.impl;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
-import javax.annotation.Resource;
-import javax.persistence.Query;
-import javax.persistence.TypedQuery;
+import jakarta.annotation.Resource;
+import jakarta.persistence.Query;
+import jakarta.persistence.TypedQuery;
 
 import org.orcid.utils.panoply.PanoplyDeletedItem;
 import org.orcid.utils.panoply.PanoplyRedshiftClient;
@@ -65,7 +66,7 @@ public class OrgAffiliationRelationDaoImpl extends GenericDaoImpl<OrgAffiliation
     @Transactional
     @UpdateProfileLastModifiedAndIndexingStatus
     public boolean removeOrgAffiliationRelation(String userOrcid, Long orgAffiliationRelationId) {
-        Query query = entityManager.createQuery("delete from OrgAffiliationRelationEntity where orcid=:userOrcid and id=:orgAffiliationRelationId");
+        Query query = entityManager.createQuery("delete from OrgAffiliationRelationEntity o where o.orcid=:userOrcid and o.id=:orgAffiliationRelationId");
         query.setParameter("userOrcid", userOrcid);
         query.setParameter("orgAffiliationRelationId", orgAffiliationRelationId);
         if (query.executeUpdate() > 0) {
@@ -119,10 +120,11 @@ public class OrgAffiliationRelationDaoImpl extends GenericDaoImpl<OrgAffiliation
     @UpdateProfileLastModifiedAndIndexingStatus
     public boolean updateVisibilityOnOrgAffiliationRelation(String userOrcid, Long orgAffiliationRelationId, String visibility) {
         Query query = entityManager.createQuery(
-                "update OrgAffiliationRelationEntity set visibility=:visibility, lastModified=now() where orcid=:userOrcid and id=:orgAffiliationRelationId");
+            "update OrgAffiliationRelationEntity o set o.visibility=:visibility, o.lastModified=:lastModified where o.orcid=:userOrcid and o.id=:orgAffiliationRelationId");
         query.setParameter("userOrcid", userOrcid);
         query.setParameter("orgAffiliationRelationId", orgAffiliationRelationId);
         query.setParameter("visibility", visibility);
+        query.setParameter("lastModified", new Date());
         boolean updated = query.executeUpdate() > 0 ? true : false;
         // If changing to PRIVATE or LIMITED, clear featured flag on that affiliation
         if (updated && !"PUBLIC".equals(visibility)) {
@@ -156,10 +158,11 @@ public class OrgAffiliationRelationDaoImpl extends GenericDaoImpl<OrgAffiliation
     @Transactional
     public boolean updateVisibilitiesOnOrgAffiliationRelation(String userOrcid, ArrayList<Long> orgAffiliationRelationIds, String visibility) {
         Query query = entityManager.createQuery(
-                "update OrgAffiliationRelationEntity set visibility=:visibility, lastModified=now() where orcid=:userOrcid and id in (:orgAffiliationRelationIds)");
+            "update OrgAffiliationRelationEntity o set o.visibility=:visibility, o.lastModified=:lastModified where o.orcid=:userOrcid and o.id in (:orgAffiliationRelationIds)");
         query.setParameter("userOrcid", userOrcid);
         query.setParameter("orgAffiliationRelationIds", orgAffiliationRelationIds);
         query.setParameter("visibility", visibility);
+        query.setParameter("lastModified", new Date());
         boolean updated = query.executeUpdate() > 0 ? true : false;
         // If changing to PRIVATE or LIMITED, clear featured flag on affected affiliations
         if (updated && !"PUBLIC".equals(visibility)) {
@@ -348,7 +351,7 @@ public class OrgAffiliationRelationDaoImpl extends GenericDaoImpl<OrgAffiliation
     @Transactional
     @UpdateProfileLastModifiedAndIndexingStatus
     public void removeAllAffiliations(String orcid) {
-        Query query = entityManager.createQuery("delete from OrgAffiliationRelationEntity where orcid = :orcid");
+        Query query = entityManager.createQuery("delete from OrgAffiliationRelationEntity o where o.orcid = :orcid");
         query.setParameter("orcid", orcid);
         query.executeUpdate();
         if (query.executeUpdate() > 0) {
@@ -377,7 +380,7 @@ public class OrgAffiliationRelationDaoImpl extends GenericDaoImpl<OrgAffiliation
     public Boolean hasPublicAffiliations(String orcid) {
         Query query = entityManager.createNativeQuery("SELECT count(*) FROM org_affiliation_relation WHERE orcid=:orcid AND visibility='PUBLIC'");
         query.setParameter("orcid", orcid);
-        Long result = ((BigInteger) query.getSingleResult()).longValue();
+        Long result = ((Number) query.getSingleResult()).longValue();
         return (result != null && result > 0);
     }
 

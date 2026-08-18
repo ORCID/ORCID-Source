@@ -4,11 +4,11 @@ import java.math.BigInteger;
 import java.util.Date;
 import java.util.List;
 
-import javax.persistence.EntityExistsException;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
-import javax.persistence.TypedQuery;
+import jakarta.persistence.EntityExistsException;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.Query;
+import jakarta.persistence.TypedQuery;
 
 import org.orcid.listener.persistence.entities.Api30RecordStatusEntity;
 import org.orcid.listener.persistence.entities.SearchEngineRecordStatusEntity;
@@ -21,16 +21,18 @@ public class SearchEngineRecordStatusDao {
     protected EntityManager entityManager;
 
     public SearchEngineRecordStatusEntity get(String orcid) {
-        Query query = entityManager.createNativeQuery("SELECT * FROM search_engine_record_status WHERE orcid = :orcid", Api30RecordStatusEntity.class);
+        Query query = entityManager.createNativeQuery("SELECT * FROM search_engine_record_status WHERE orcid = :orcid", SearchEngineRecordStatusEntity.class);
         query.setParameter("orcid", orcid);
         return (SearchEngineRecordStatusEntity) query.getSingleResult();
     }
 
     public boolean exists(String orcid) {
-        Query query = entityManager.createNativeQuery("SELECT count(*) FROM search_engine_record_status WHERE orcid=:orcid");
-        query.setParameter("orcid", orcid);
-        Long result = ((BigInteger) query.getSingleResult()).longValue();
-        return (result != null && result > 0);
+        Long count = entityManager.createQuery(
+                        "SELECT COUNT(s) FROM SearchEngineRecordStatusEntity s WHERE s.id = :orcid",
+                        Long.class)
+                .setParameter("orcid", orcid)
+                .getSingleResult();
+        return count > 0;
     }
 
     @Transactional

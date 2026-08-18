@@ -4,8 +4,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.annotation.Resource;
-import javax.transaction.Transactional;
+import jakarta.annotation.Resource;
+import jakarta.transaction.Transactional;
 
 import org.orcid.core.exception.ApplicationException;
 import org.orcid.core.exception.OrcidDuplicatedElementException;
@@ -83,6 +83,7 @@ public class AddressManagerImpl extends AddressManagerReadOnlyImpl implements Ad
     }
 
     @Override
+    @Transactional
     public Address createAddress(String orcid, Address address, boolean isApiRequest) {
         SourceEntity sourceEntity = sourceManager.retrieveSourceEntity();
         // Validate the address
@@ -133,7 +134,7 @@ public class AddressManagerImpl extends AddressManagerReadOnlyImpl implements Ad
         if (!existing.getId().equals(address.getPutCode())) {
             // If they have the same source
             String existingSourceId = existing.getElementSourceId();
-            if (!PojoUtil.isEmpty(existingSourceId) && existingSourceId.equals(sourceEntityUtils.getSourceId(source))) {
+            if (!PojoUtil.isEmpty(existingSourceId) && existingSourceId.equals(SourceEntityUtils.getSourceId(source))) {
                 if (existing.getIso2Country().equals(address.getCountry().getValue())) {
                     return true;
                 }

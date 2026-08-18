@@ -2,10 +2,12 @@ package org.orcid.test;
 
 import static org.junit.Assert.fail;
 
+import java.io.File;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.List;
+import java.util.UUID;
 
 import org.dbunit.DatabaseUnitException;
 import org.dbunit.database.AmbiguousTableNameException;
@@ -50,10 +52,13 @@ public class DBUnitTest {
 
     private static ApplicationContext context;
 
-    static {        
+    static {
+        String ehcacheTestDir = System.getProperty("java.io.tmpdir") + File.separator + "ehcache-tests" + File.separator + UUID.randomUUID();
+        System.setProperty("org.orcid.ehcache.dir", ehcacheTestDir);
+
         try {
             context = new ClassPathXmlApplicationContext(TEST_CORE_CONTEXT);
-        } catch (Exception e) {            
+        } catch (Exception e) {
             try {
                 context = new ClassPathXmlApplicationContext(TEST_DB_CONTEXT);
             } catch (Exception e2) {
@@ -66,7 +71,7 @@ public class DBUnitTest {
                 e2.printStackTrace();
                 fail();
             }
-        }                      
+        }
     }
 
     public static void initDBUnitData(List<String> flatXMLDataFiles) throws Exception {

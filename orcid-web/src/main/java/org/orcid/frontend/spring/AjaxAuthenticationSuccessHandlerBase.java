@@ -1,8 +1,8 @@
 package org.orcid.frontend.spring;
 
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.annotation.Resource;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang3.LocaleUtils;
 import org.orcid.core.manager.SourceManager;

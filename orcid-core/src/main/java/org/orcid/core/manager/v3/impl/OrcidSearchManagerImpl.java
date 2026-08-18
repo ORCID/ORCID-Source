@@ -7,9 +7,9 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 
-import org.apache.http.client.ClientProtocolException;
+import org.apache.hc.client5.http.ClientProtocolException;
 import org.orcid.core.exception.ApplicationException;
 import org.orcid.core.manager.v3.OrcidSearchManager;
 import org.orcid.core.manager.v3.OrcidSecurityManager;
@@ -24,6 +24,9 @@ import org.orcid.core.solr.OrcidSolrResult;
 import org.orcid.core.solr.OrcidSolrResults;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import org.apache.hc.core5.http.ParseException;
+
 
 public class OrcidSearchManagerImpl implements OrcidSearchManager {
 
@@ -42,7 +45,7 @@ public class OrcidSearchManagerImpl implements OrcidSearchManager {
     private CSVSolrClient csvSolrClient;
 
     @Override
-    public Search findOrcidIds(Map<String, List<String>> queryParameters) {
+    public Search findOrcidIds(Map<String, List<String>> queryParameters) throws ParseException {
         Search search = new Search();
         OrcidSolrResults orcidSolrResults = orcidSolrProfileClient.findByDocumentCriteria(queryParameters);
         setSearchResults(orcidSolrResults, search);
@@ -50,7 +53,7 @@ public class OrcidSearchManagerImpl implements OrcidSearchManager {
     }
 
     @Override
-    public Search findOrcidsByQuery(String query, Integer start, Integer rows) {
+    public Search findOrcidsByQuery(String query, Integer start, Integer rows) throws ParseException {
         Search search = new Search();
         OrcidSolrResults orcidSolrResults = orcidSolrProfileClient.findByDocumentCriteria(query, start, rows);
         setSearchResults(orcidSolrResults, search);
@@ -71,7 +74,7 @@ public class OrcidSearchManagerImpl implements OrcidSearchManager {
     }
 
     @Override
-    public String findOrcidIdsAsCSV(Map<String, List<String>> solrParams) {
+    public String findOrcidIdsAsCSV(Map<String, List<String>> solrParams) throws ParseException {
         try {
             return csvSolrClient.findCSVByDocumentCriteria(solrParams);
         } catch (ClientProtocolException e) {

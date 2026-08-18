@@ -1,6 +1,6 @@
 package org.orcid.scheduler.loader.manager.impl;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 
 import org.orcid.scheduler.loader.manager.IssnLoadManager;
 import org.orcid.scheduler.loader.source.issn.IssnLoadSource;

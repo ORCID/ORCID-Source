@@ -18,7 +18,7 @@ package org.orcid.core.cache;
 
 import java.io.Serializable;
 
-import javax.mail.MethodNotSupportedException;
+import jakarta.mail.MethodNotSupportedException;
 
 import org.orcid.persistence.jpa.entities.OrcidAware;
 

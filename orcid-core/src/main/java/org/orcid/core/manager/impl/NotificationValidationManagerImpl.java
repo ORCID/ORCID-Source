@@ -3,7 +3,7 @@ package org.orcid.core.manager.impl;
 import java.net.URI;
 import java.net.URISyntaxException;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 
 import org.apache.commons.lang3.StringUtils;
 import org.orcid.core.exception.OrcidValidationException;

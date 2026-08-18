@@ -29,6 +29,7 @@ import org.orcid.jaxb.model.v3.release.record.summary.*;
 import org.orcid.jaxb.model.v3.release.record.summary.Educations;
 import org.orcid.jaxb.model.v3.release.record.summary.Employments;
 import org.orcid.jaxb.model.v3.release.record.summary.Works;
+import org.orcid.jaxb.model.v3.release.record.Record;
 import org.orcid.jaxb.model.v3.release.search.Search;
 import org.orcid.jaxb.model.v3.release.search.expanded.ExpandedSearch;
 import org.slf4j.Logger;
@@ -36,10 +37,12 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.Resource;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.Status;
+import jakarta.annotation.Resource;
+import jakarta.ws.rs.core.Response;
+import jakarta.ws.rs.core.Response.Status;
 import java.util.*;
+
+import org.apache.hc.core5.http.ParseException;
 
 @Component
 public class MemberV3ApiServiceDelegatorImpl implements
@@ -1077,7 +1080,7 @@ public class MemberV3ApiServiceDelegatorImpl implements
     }
 
     @Override
-    public Response searchByQuery(Map<String, List<String>> solrParams) {
+    public Response searchByQuery(Map<String, List<String>> solrParams) throws ParseException {
         orcidSecurityManager.checkScopes(ScopePathType.READ_PUBLIC);
         validateSearchParams(solrParams);
         Search search = orcidSearchManager.findOrcidIds(solrParams);
@@ -1085,7 +1088,7 @@ public class MemberV3ApiServiceDelegatorImpl implements
     }
     
     @Override
-    public Response searchByQueryCSV(Map<String, List<String>> solrParams) {
+    public Response searchByQueryCSV(Map<String, List<String>> solrParams) throws ParseException {
         validateSearchParams(solrParams);
         String search = orcidSearchManager.findOrcidIdsAsCSV(solrParams);
         return Response.ok(search).build();

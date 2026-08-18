@@ -1,6 +1,8 @@
 package org.orcid.persistence.dao.impl;
 
-import javax.persistence.Query;
+import java.util.Date;
+
+import jakarta.persistence.Query;
 
 import org.orcid.persistence.aop.UpdateProfileLastModified;
 import org.orcid.persistence.constants.SendEmailFrequency;
@@ -32,9 +34,10 @@ public class EmailFrequencyDaoImpl extends GenericDaoImpl<EmailFrequencyEntity, 
     @Transactional
     @UpdateProfileLastModified
     public boolean updateSendChangeNotifications(String orcid, SendEmailFrequency frequency) {
-        Query query = entityManager.createQuery("UPDATE EmailFrequencyEntity SET sendChangeNotifications = :frequency, lastModified=now() WHERE orcid = :orcid");
+        Query query = entityManager.createQuery("UPDATE EmailFrequencyEntity ef SET ef.sendChangeNotifications = :frequency, ef.lastModified = :lastModified WHERE ef.orcid = :orcid");
         query.setParameter("frequency", Float.valueOf(frequency.value()));
         query.setParameter("orcid", orcid);
+        query.setParameter("lastModified", new Date());
         return query.executeUpdate() > 0;
     }
 
@@ -42,9 +45,10 @@ public class EmailFrequencyDaoImpl extends GenericDaoImpl<EmailFrequencyEntity, 
     @Transactional
     @UpdateProfileLastModified
     public boolean updateSendAdministrativeChangeNotifications(String orcid, SendEmailFrequency frequency) {
-        Query query = entityManager.createQuery("UPDATE EmailFrequencyEntity SET sendAdministrativeChangeNotifications = :frequency, lastModified=now() WHERE orcid = :orcid");
+        Query query = entityManager.createQuery("UPDATE EmailFrequencyEntity ef SET ef.sendAdministrativeChangeNotifications = :frequency, ef.lastModified = :lastModified WHERE ef.orcid = :orcid");
         query.setParameter("frequency", Float.valueOf(frequency.value()));
         query.setParameter("orcid", orcid);
+        query.setParameter("lastModified", new Date());
         return query.executeUpdate() > 0;
     }
 
@@ -52,9 +56,10 @@ public class EmailFrequencyDaoImpl extends GenericDaoImpl<EmailFrequencyEntity, 
     @Transactional
     @UpdateProfileLastModified
     public boolean updateSendMemberUpdateRequests(String orcid, SendEmailFrequency frequency) {
-        Query query = entityManager.createQuery("UPDATE EmailFrequencyEntity SET sendMemberUpdateRequests = :frequency, lastModified=now() WHERE orcid = :orcid");
+        Query query = entityManager.createQuery("UPDATE EmailFrequencyEntity ef SET ef.sendMemberUpdateRequests = :frequency, ef.lastModified = :lastModified WHERE ef.orcid = :orcid");
         query.setParameter("frequency", Float.valueOf(frequency.value()));
         query.setParameter("orcid", orcid);
+        query.setParameter("lastModified", new Date());
         return query.executeUpdate() > 0;
     }
 
@@ -62,9 +67,10 @@ public class EmailFrequencyDaoImpl extends GenericDaoImpl<EmailFrequencyEntity, 
     @Transactional
     @UpdateProfileLastModified
     public boolean updateSendQuarterlyTips(String orcid, boolean enabled) {
-        Query query = entityManager.createQuery("UPDATE EmailFrequencyEntity SET sendQuarterlyTips = :enabled, lastModified=now() WHERE orcid = :orcid");
+        Query query = entityManager.createQuery("UPDATE EmailFrequencyEntity ef SET ef.sendQuarterlyTips = :enabled, ef.lastModified = :lastModified WHERE ef.orcid = :orcid");
         query.setParameter("enabled", enabled);
         query.setParameter("orcid", orcid);
+        query.setParameter("lastModified", new Date());
         return query.executeUpdate() > 0;
     }
 

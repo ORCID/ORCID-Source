@@ -4,8 +4,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.annotation.Resource;
-import javax.transaction.Transactional;
+import jakarta.annotation.Resource;
+import jakarta.transaction.Transactional;
 
 import org.orcid.core.exception.ApplicationException;
 import org.orcid.core.exception.OrcidDuplicatedElementException;
@@ -85,6 +85,7 @@ public class AddressManagerImpl extends AddressManagerReadOnlyImpl implements Ad
     }
 
     @Override
+    @Transactional
     public Address createAddress(String orcid, Address address, boolean isApiRequest) {
         Source activeSource = sourceManager.retrieveActiveSource();
         // Validate the address

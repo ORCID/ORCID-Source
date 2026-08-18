@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 
 import org.orcid.jaxb.model.clientgroup.ClientType;
 import org.orcid.persistence.dao.AddressDao;

@@ -16,7 +16,7 @@
  */
 package org.orcid.activitiesindexer.listener;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 
 import org.orcid.activitiesindexer.s3.S3MessageProcessor;
 import org.orcid.utils.listener.LastModifiedMessage;

@@ -10,7 +10,7 @@ on:
       java_version:
         description: 'JDK version to build with'
         required: false
-        default: '11'
+        default: '21'
         type: choice
         options:
           - '11'
@@ -29,7 +29,7 @@ jobs:
       - name: Set up JDK
         uses: actions/setup-java@c1e323688fd81a25caa38c78aa6df2d33d3e20d9 # v4.8.0
         with:
-          java-version: ${{ inputs.java_version || '11' }}
+          java-version: ${{ inputs.java_version || '21' }}
           distribution: 'temurin'
           cache: 'maven'
       - name: Generate dependency tree

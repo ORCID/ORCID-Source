@@ -5,5 +5,5 @@
 // Generated on: 2018.08.17 at 03:19:13 PM BST 
 //
 
-@javax.xml.bind.annotation.XmlSchema(namespace = "http://www.crossref.org/qrschema/3.0", elementFormDefault = javax.xml.bind.annotation.XmlNsForm.QUALIFIED)
+@jakarta.xml.bind.annotation.XmlSchema(namespace = "http://www.crossref.org/qrschema/3.0", elementFormDefault = jakarta.xml.bind.annotation.XmlNsForm.QUALIFIED)
 package org.crossref.qrschema._3;

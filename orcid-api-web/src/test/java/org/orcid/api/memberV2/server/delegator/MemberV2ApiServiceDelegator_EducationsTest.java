@@ -13,9 +13,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.annotation.Resource;
-import javax.persistence.NoResultException;
-import javax.ws.rs.core.Response;
+import jakarta.annotation.Resource;
+import jakarta.persistence.NoResultException;
+import jakarta.ws.rs.core.Response;
 
 import org.junit.After;
 import org.junit.AfterClass;

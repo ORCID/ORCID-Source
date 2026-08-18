@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 
 import org.ehcache.Cache;
 import org.orcid.core.manager.v3.GroupingSuggestionsCacheManager;

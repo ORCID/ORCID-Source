@@ -1,9 +1,8 @@
 package org.orcid.core.utils;
 
-import java.util.Optional;
+import jakarta.annotation.Resource;
 
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
+import java.util.Optional;
 
 import org.apache.commons.lang3.StringUtils;
 import org.orcid.core.manager.ClientDetailsEntityCacheManager;
@@ -77,8 +76,10 @@ public class SourceEntityUtils {
         }
         if (sourceEntity.getSourceProfile() != null) {
             String orcid = sourceEntity.getSourceProfile().getId();
-            // Set the source name
-            return recordNameManagerReadOnlyV3.fetchDisplayablePublicName(orcid);
+            // Set the source name - only if orcid is not null
+            if (orcid != null) {
+                return recordNameManagerReadOnlyV3.fetchDisplayablePublicName(orcid);
+            }
         }
         return null;
     }
@@ -152,6 +153,38 @@ public class SourceEntityUtils {
         Source s = extractSourceFromEntity(b);
         populateSource(s);
         return s;
+    }
+
+    /**
+     * Build a canonical Source for an entity by merging any provided source with
+     * entity-derived identifiers, then populating host/uri/source names.
+     */
+    public Source mergeAndPopulateSource(Source source, SourceAwareEntity<?> entity) {
+        Source fallback = extractSourceFromEntity(entity);
+        Source merged = source == null ? fallback : mergeMissingSourcePaths(source, fallback);
+        populateSource(merged);
+        return merged;
+    }
+
+    private Source mergeMissingSourcePaths(Source target, Source fallback) {
+        if (target == null || fallback == null) {
+            return target;
+        }
+
+        if (target.getSourceOrcid() == null || StringUtils.isBlank(target.getSourceOrcid().getPath())) {
+            target.setSourceOrcid(fallback.getSourceOrcid());
+        }
+        if (target.getSourceClientId() == null || StringUtils.isBlank(target.getSourceClientId().getPath())) {
+            target.setSourceClientId(fallback.getSourceClientId());
+        }
+        if (target.getAssertionOriginOrcid() == null || StringUtils.isBlank(target.getAssertionOriginOrcid().getPath())) {
+            target.setAssertionOriginOrcid(fallback.getAssertionOriginOrcid());
+        }
+        if (target.getAssertionOriginClientId() == null || StringUtils.isBlank(target.getAssertionOriginClientId().getPath())) {
+            target.setAssertionOriginClientId(fallback.getAssertionOriginClientId());
+        }
+
+        return target;
     }
 
     private void populateSource(Source s) {

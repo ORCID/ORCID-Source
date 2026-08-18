@@ -2,7 +2,7 @@ package org.orcid.core.aop;
 
 import java.util.Date;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 
 import org.apache.commons.lang.StringUtils;
 import org.aspectj.lang.JoinPoint;
@@ -17,6 +17,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.PriorityOrdered;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.support.TransactionTemplate;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
@@ -46,6 +48,9 @@ public class ProfileLastModifiedAspect implements PriorityOrdered {
     
     @Resource
     private RedisClient redisClient;    
+
+    @Resource
+    private PlatformTransactionManager transactionManager;
     
     @Value("${org.orcid.core.utils.cache.redis.summary.enabled:false}") 
     private boolean isSummaryCacheEnabled;
@@ -66,9 +71,14 @@ public class ProfileLastModifiedAspect implements PriorityOrdered {
         this.name = name;
     }
     
-    @AfterReturning(UPDATE_PROFILE_LAST_MODIFIED + " && args(orcid, ..)")
-    public void updateProfileLastModified(JoinPoint joinPoint, String orcid) {
+    @AfterReturning(UPDATE_PROFILE_LAST_MODIFIED)
+    public void updateProfileLastModified(JoinPoint joinPoint) {
         if (!enabled) {
+            return;
+        }
+        String orcid = resolveOrcid(joinPoint.getArgs());
+        if (StringUtils.isEmpty(orcid)) {
+            LOGGER.debug("Skipping last modified update: no ORCID argument found for join point={}", joinPoint);
             return;
         }
         if (LOGGER.isDebugEnabled()) {
@@ -76,23 +86,21 @@ public class ProfileLastModifiedAspect implements PriorityOrdered {
                 LOGGER.debug("Invalid ORCID for last modified date update: orcid={}, join point={}", orcid, joinPoint);
             }
         }
+        Date before = safeRetrieveLastModifiedDate(orcid);
         this.updateLastModifiedDate(orcid);
-    }    
-
-    @AfterReturning(UPDATE_PROFILE_LAST_MODIFIED + " && args(orcidAware, ..)")
-    public void updateProfileLastModified(JoinPoint joinPoint, OrcidAware orcidAware) {
-        if (!enabled) {
-            return;
-        }
-        String orcid = orcidAware.getOrcid();
-        if(!StringUtils.isEmpty(orcid)) {
-            updateProfileLastModified(joinPoint, orcid);
-        }
+        Date after = safeRetrieveLastModifiedDate(orcid);
+        LOGGER.info("ProfileLastModifiedAspect updateLastModifiedDate source={} orcid={} before={} after={}",
+                joinPoint.getSignature().toShortString(), orcid, before, after);
     }
     
-    @AfterReturning(UPDATE_PROFILE_LAST_MODIFIED_AND_INDEXING_STATUS + " && args(orcid, ..)")
-    public void updateProfileLastModifiedAndIndexingStatus(JoinPoint joinPoint, String orcid) {
+    @AfterReturning(UPDATE_PROFILE_LAST_MODIFIED_AND_INDEXING_STATUS)
+    public void updateProfileLastModifiedAndIndexingStatus(JoinPoint joinPoint) {
         if (!enabled) {
+            return;
+        }
+        String orcid = resolveOrcid(joinPoint.getArgs());
+        if (StringUtils.isEmpty(orcid)) {
+            LOGGER.debug("Skipping last modified/indexing update: no ORCID argument found for join point={}", joinPoint);
             return;
         }
         if (LOGGER.isDebugEnabled()) {
@@ -100,18 +108,11 @@ public class ProfileLastModifiedAspect implements PriorityOrdered {
                 LOGGER.debug("Invalid ORCID for last modified date update: orcid={}, join point={}", orcid, joinPoint);
             }
         }
+        Date before = safeRetrieveLastModifiedDate(orcid);
         this.updateLastModifiedDateAndIndexingStatus(orcid);
-    }
-
-    @AfterReturning(UPDATE_PROFILE_LAST_MODIFIED_AND_INDEXING_STATUS + " && args(orcidAware, ..)")
-    public void updateProfileLastModifiedAndIndexingStatus(JoinPoint joinPoint, OrcidAware orcidAware) {
-        if (!enabled) {
-            return;
-        }
-        String orcid = orcidAware.getOrcid();
-        if(!StringUtils.isEmpty(orcid)) {
-            updateProfileLastModifiedAndIndexingStatus(joinPoint, orcid);
-        }
+        Date after = safeRetrieveLastModifiedDate(orcid);
+        LOGGER.info("ProfileLastModifiedAspect updateLastModifiedDateAndIndexingStatus source={} orcid={} before={} after={}",
+                joinPoint.getSignature().toShortString(), orcid, before, after);
     }
     
     @Override
@@ -128,7 +129,8 @@ public class ProfileLastModifiedAspect implements PriorityOrdered {
             return;
         }
         try {
-            profileLastModifiedDao.updateLastModifiedDateAndIndexingStatus(orcid, IndexingStatus.PENDING);
+            new TransactionTemplate(transactionManager)
+                    .executeWithoutResult(status -> profileLastModifiedDao.updateLastModifiedDateAndIndexingStatus(orcid, IndexingStatus.PENDING));
         } catch(Exception e) {
             LOGGER.error("Unable to update last modified and indexing status for " + orcid, e);
         }
@@ -150,7 +152,8 @@ public class ProfileLastModifiedAspect implements PriorityOrdered {
             return;
         }
         try {
-            profileLastModifiedDao.updateLastModifiedDateWithoutResult(orcid);
+            new TransactionTemplate(transactionManager)
+                    .executeWithoutResult(status -> profileLastModifiedDao.updateLastModifiedDateWithoutResult(orcid));
         } catch(Exception e) {
             LOGGER.error("Unable to update last modified for " + orcid, e);
         }
@@ -184,6 +187,30 @@ public class ProfileLastModifiedAspect implements PriorityOrdered {
 
     private String sraKey(String orcid) {
         return REQUEST_PROFILE_LAST_MODIFIED + '_' + name + '_' + orcid;
+    }
+
+    private Date safeRetrieveLastModifiedDate(String orcid) {
+        try {
+            return profileLastModifiedDao.retrieveLastModifiedDate(orcid);
+        } catch (Exception e) {
+            LOGGER.warn("Unable to read last modified date for diagnostics. orcid={}", orcid, e);
+            return null;
+        }
+    }
+
+    private String resolveOrcid(Object[] args) {
+        if (args == null) {
+            return null;
+        }
+        for (Object arg : args) {
+            if (arg instanceof String str && OrcidStringUtils.isValidOrcid(str)) {
+                return str;
+            }
+            if (arg instanceof OrcidAware orcidAware && !StringUtils.isEmpty(orcidAware.getOrcid())) {
+                return orcidAware.getOrcid();
+            }
+        }
+        return null;
     }
     
     public void evictCaches(String orcid) {        
