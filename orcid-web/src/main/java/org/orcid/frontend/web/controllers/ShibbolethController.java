@@ -173,7 +173,8 @@ public class ShibbolethController extends BaseController {
             
             try {
                 notifyUser(shibIdentityProvider, userConnectionEntity);
-                processAuthentication(remoteUser, userConnectionEntity, request, response);
+                boolean userLoggedIn = processAuthentication(remoteUser, userConnectionEntity, request, response);
+                setLoggedInStatus(request, userLoggedIn);
                 if (Features.EVENTS.isActive()) {
                     eventManager.createEvent(EventType.SIGN_IN, request);
                 }
@@ -234,13 +235,7 @@ public class ShibbolethController extends BaseController {
             try {
                 notifyUser(shibIdentityProvider, userConnectionEntity);
                 boolean userLoggedIn = processAuthentication(remoteUser, userConnectionEntity, request, response);
-                if(userLoggedIn) {
-                    // Update the last login time
-                    String ip = OrcidRequestUtil.getIpAddress(request);
-                    String orcid = SecurityContextHolder.getContext().getAuthentication().getName();
-                    LOGGER.trace("Updating last login details for user {}", orcid);
-                    profileEntityManager.updateLastLoginDetails(orcid, ip);
-                }
+                setLoggedInStatus(request, userLoggedIn);
             } catch (AuthenticationException e) {
                 // this should never happen
                 SecurityContextHolder.getContext().setAuthentication(null);
@@ -252,6 +247,18 @@ public class ShibbolethController extends BaseController {
             codes.setRedirectUrl(orcidUrlManager.getBaseUrl() + "/2fa-signin");
             return codes;
         }
+    }
+
+    private boolean setLoggedInStatus(HttpServletRequest request, Boolean userLoggedIn) {
+        if(userLoggedIn) {
+            // Update the last login time
+            String ip = OrcidRequestUtil.getIpAddress(request);
+            String orcid = SecurityContextHolder.getContext().getAuthentication().getName();
+            LOGGER.trace("Updating last login details for user {}", orcid);
+            profileEntityManager.updateLastLoginDetails(orcid, ip);
+            return true;
+        }
+        return false;
     }
 
     private void notifyUser(String shibIdentityProvider, UserconnectionEntity userConnectionEntity) {
