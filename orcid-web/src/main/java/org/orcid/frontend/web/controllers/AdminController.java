@@ -1,33 +1,20 @@
 package org.orcid.frontend.web.controllers;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
-import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.StringTokenizer;
-import java.util.stream.Collectors;
-
 import jakarta.annotation.Resource;
 import jakarta.persistence.NoResultException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
-
-import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.math3.util.Pair;
 import org.orcid.core.manager.AdminManager;
-import org.orcid.core.manager.EncryptionManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.TwoFactorAuthenticationManager;
-import org.orcid.core.manager.v3.*;
+import org.orcid.core.manager.v3.ClientDetailsManager;
+import org.orcid.core.manager.v3.ClientManager;
+import org.orcid.core.manager.v3.ProfileEntityManager;
+import org.orcid.core.manager.v3.SpamManager;
 import org.orcid.core.manager.v3.read_only.ClientManagerReadOnly;
 import org.orcid.core.manager.v3.read_only.RecordNameManagerReadOnly;
 import org.orcid.core.togglz.Features;
@@ -46,15 +33,7 @@ import org.orcid.jaxb.model.v3.release.record.Name;
 import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
-import org.orcid.pojo.AdminChangePassword;
-import org.orcid.pojo.AdminDelegatesRequest;
-import org.orcid.pojo.AdminResetPasswordLink;
-import org.orcid.pojo.ConvertClient;
-import org.orcid.pojo.LockAccounts;
-import org.orcid.pojo.ProfileDeprecationRequest;
-import org.orcid.pojo.ProfileDetails;
-import org.orcid.pojo.RemoveEmailsResponse;
-import org.orcid.pojo.RemoveEmailsRequest;
+import org.orcid.pojo.*;
 import org.orcid.pojo.ajaxForm.Client;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.pojo.ajaxForm.RedirectUri;
@@ -66,14 +45,15 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 import com.nimbusds.jose.JOSEException;
+
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * @author Angel Montenegro

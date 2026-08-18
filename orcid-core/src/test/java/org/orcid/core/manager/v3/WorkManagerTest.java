@@ -98,8 +98,10 @@ import org.orcid.pojo.ajaxForm.Text;
 import org.orcid.pojo.ajaxForm.WorkForm;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.test.util.ReflectionTestUtils;
+import org.springframework.transaction.annotation.Transactional;
 import org.togglz.junit.TogglzRule;
 
+@Transactional
 public class WorkManagerTest extends BaseTest {
     private static final List<String> DATA_FILES = Arrays.asList("/data/SourceClientDetailsEntityData.xml",
             "/data/ProfileEntityData.xml", "/data/ClientDetailsEntityData.xml", "/data/WorksEntityData.xml", "/data/RecordNameEntityData.xml");
@@ -2041,6 +2043,7 @@ public class WorkManagerTest extends BaseTest {
         assertTrue(result);
         
         // Verify that featured display index was reset to 0
+        workDao.detach(workBefore);
         WorkEntity workAfter = workDao.getWork(orcid, 11L);
         assertEquals(Integer.valueOf(0), workAfter.getFeaturedDisplayIndex());
         assertEquals("PRIVATE", workAfter.getVisibility());

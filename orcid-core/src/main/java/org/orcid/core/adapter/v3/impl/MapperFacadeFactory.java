@@ -50,8 +50,6 @@ import org.orcid.jaxb.model.v3.release.common.Organization;
 import org.orcid.jaxb.model.v3.release.common.OrganizationAddress;
 import org.orcid.jaxb.model.v3.release.common.PublicationDate;
 import org.orcid.jaxb.model.v3.release.common.Source;
-import org.orcid.jaxb.model.v3.release.common.SourceClientId;
-import org.orcid.jaxb.model.v3.release.common.SourceOrcid;
 import org.orcid.jaxb.model.v3.release.common.Title;
 import org.orcid.jaxb.model.v3.release.common.Year;
 import org.orcid.jaxb.model.v3.release.groupid.GroupIdRecord;
@@ -189,15 +187,23 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
     @Resource
     private FundingContributorRoleConverter fundingContributorsRoleConverter;
 
-    @Resource(name = "sourceEntityUtils")
-    private SourceEntityUtils sourceEntityUtils;
+    private final SourceEntityUtils sourceEntityUtils;
+
+    public MapperFacadeFactory(SourceEntityUtils sourceEntityUtils) {
+        this.sourceEntityUtils = sourceEntityUtils;
+    }
 
     @Resource
     private ContributorsRolesAndSequencesConverter contributorsRolesAndSequencesConverter;
 
+    private MapperFactory getNewMapperFactory() {
+        // dumpStateOnException(false): prevents RamUsageEstimator from crashing on JDK17+ hidden classes (lambdas)
+        return new DefaultMapperFactory.Builder().dumpStateOnException(false).build();
+    }
+
     @Override
     public MapperFacade getObject() throws Exception {
-        MapperFactory mapperFactory = new DefaultMapperFactory.Builder().build();
+        MapperFactory mapperFactory = getNewMapperFactory();
 
         // Register converters
         ConverterFactory converterFactory = mapperFactory.getConverterFactory();
@@ -396,37 +402,15 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
                 source = sourceMap.get(SourceEntityUtils.getSourceKey(b));
             }
 
-            if (source == null) {
-                // Fall back to direct extraction when no source map is available.
-                if (sourceEntityUtils != null) {
-                    source = sourceEntityUtils.extractSourceFromEntityComplete(b);
-                } else {
-                    source = extractSourceFromEntityWithoutUtils(b);
-                }
-            }
+            // Canonical path: merge context source with entity-derived IDs and normalize host/uri.
+            source = sourceEntityUtils.mergeAndPopulateSource(source, b);
 
             a.setSource(source);
         }
     }
 
-    private Source extractSourceFromEntityWithoutUtils(SourceAwareEntity<?> entity) {
-        Source source = new Source();
-
-        if (StringUtils.isNotBlank(entity.getSourceId())) {
-            source.setSourceOrcid(new SourceOrcid(entity.getSourceId()));
-        }
-        if (StringUtils.isNotBlank(entity.getClientSourceId())) {
-            source.setSourceClientId(new SourceClientId(entity.getClientSourceId()));
-        }
-        if (StringUtils.isNotBlank(entity.getAssertionOriginClientSourceId())) {
-            source.setAssertionOriginClientId(new SourceClientId(entity.getAssertionOriginClientSourceId()));
-        }
-
-        return source;
-    }
-
     public MapperFacade getExternalIdentifierMapperFacade() {
-        MapperFactory mapperFactory = new DefaultMapperFactory.Builder().build();
+        MapperFactory mapperFactory = getNewMapperFactory();
         mapperFactory.getConverterFactory().registerConverter("visibilityConverter", new VisibilityConverter());
 
         ClassMapBuilder<PersonExternalIdentifier, ExternalIdentifierEntity> externalIdentifierClassMap = mapperFactory.classMap(PersonExternalIdentifier.class,
@@ -456,7 +440,7 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
     }
 
     public MapperFacade getResearcherUrlMapperFacade() {
-        MapperFactory mapperFactory = new DefaultMapperFactory.Builder().build();
+        MapperFactory mapperFactory = getNewMapperFactory();
         mapperFactory.getConverterFactory().registerConverter("visibilityConverter", new VisibilityConverter());
         mapperFactory.getConverterFactory().registerConverter("emptyStringToNullConverter", new EmptyStringToNullConverter());
 
@@ -474,7 +458,7 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
     }
 
     public MapperFacade getOtherNameMapperFacade() {
-        MapperFactory mapperFactory = new DefaultMapperFactory.Builder().build();
+        MapperFactory mapperFactory = getNewMapperFactory();
         mapperFactory.getConverterFactory().registerConverter("visibilityConverter", new VisibilityConverter());
 
         ClassMapBuilder<OtherName, OtherNameEntity> otherNameClassMap = mapperFactory.classMap(OtherName.class, OtherNameEntity.class);
@@ -490,7 +474,7 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
     }
 
     public MapperFacade getKeywordMapperFacade() {
-        MapperFactory mapperFactory = new DefaultMapperFactory.Builder().build();
+        MapperFactory mapperFactory = getNewMapperFactory();
         mapperFactory.getConverterFactory().registerConverter("visibilityConverter", new VisibilityConverter());
 
         ClassMapBuilder<Keyword, ProfileKeywordEntity> keywordClassMap = mapperFactory.classMap(Keyword.class, ProfileKeywordEntity.class);
@@ -506,7 +490,7 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
     }
 
     public MapperFacade getAddressMapperFacade() {
-        MapperFactory mapperFactory = new DefaultMapperFactory.Builder().build();
+        MapperFactory mapperFactory = getNewMapperFactory();
         mapperFactory.getConverterFactory().registerConverter("visibilityConverter", new VisibilityConverter());
 
         ClassMapBuilder<Address, AddressEntity> addressClassMap = mapperFactory.classMap(Address.class, AddressEntity.class);
@@ -523,7 +507,7 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
     }
 
     public MapperFacade getEmailMapperFacade() {
-        MapperFactory mapperFactory = new DefaultMapperFactory.Builder().build();
+        MapperFactory mapperFactory = getNewMapperFactory();
         mapperFactory.getConverterFactory().registerConverter("visibilityConverter", new VisibilityConverter());
         ClassMapBuilder<Email, EmailEntity> emailClassMap = mapperFactory.classMap(Email.class, EmailEntity.class);
         emailClassMap.byDefault();
@@ -564,7 +548,7 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
     }
     
     public MapperFacade getWorkMapperFacade() {
-        MapperFactory mapperFactory = new DefaultMapperFactory.Builder().build();
+        MapperFactory mapperFactory = getNewMapperFactory();
 
         WorkContributorsConverter wcc = new WorkContributorsConverter(workContributorsRoleConverter);
         ConverterFactory converterFactory = mapperFactory.getConverterFactory();
@@ -832,7 +816,7 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
     }
 
     public MapperFacade getFundingMapperFacade() {
-        MapperFactory mapperFactory = new DefaultMapperFactory.Builder().build();
+        MapperFactory mapperFactory = getNewMapperFactory();
         
         ConverterFactory converterFactory = mapperFactory.getConverterFactory();
         converterFactory.registerConverter("fundingExternalIdentifiersConverterId", new JSONFundingExternalIdentifiersConverterV3());
@@ -898,7 +882,7 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
     }
 
     public MapperFacade getEducationMapperFacade() {
-        MapperFactory mapperFactory = new DefaultMapperFactory.Builder().build();
+        MapperFactory mapperFactory = getNewMapperFactory();
 
         ClassMapBuilder<Education, OrgAffiliationRelationEntity> classMap = mapperFactory.classMap(Education.class, OrgAffiliationRelationEntity.class);
 
@@ -909,7 +893,7 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
     }
 
     public MapperFacade getEmploymentMapperFacade() {
-        MapperFactory mapperFactory = new DefaultMapperFactory.Builder().build();
+        MapperFactory mapperFactory = getNewMapperFactory();
 
         ClassMapBuilder<Employment, OrgAffiliationRelationEntity> classMap = mapperFactory.classMap(Employment.class, OrgAffiliationRelationEntity.class);
 
@@ -920,7 +904,7 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
     }
 
     public MapperFacade getDistinctionMapperFacade() {
-        MapperFactory mapperFactory = new DefaultMapperFactory.Builder().build();
+        MapperFactory mapperFactory = getNewMapperFactory();
 
         ClassMapBuilder<Distinction, OrgAffiliationRelationEntity> classMap = mapperFactory.classMap(Distinction.class, OrgAffiliationRelationEntity.class);
 
@@ -931,7 +915,7 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
     }
 
     public MapperFacade getInvitedPositionMapperFacade() {
-        MapperFactory mapperFactory = new DefaultMapperFactory.Builder().build();
+        MapperFactory mapperFactory = getNewMapperFactory();
 
         ClassMapBuilder<InvitedPosition, OrgAffiliationRelationEntity> classMap = mapperFactory.classMap(InvitedPosition.class, OrgAffiliationRelationEntity.class);
 
@@ -942,7 +926,7 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
     }
 
     public MapperFacade getMembershipMapperFacade() {
-        MapperFactory mapperFactory = new DefaultMapperFactory.Builder().build();
+        MapperFactory mapperFactory = getNewMapperFactory();
 
         ClassMapBuilder<Membership, OrgAffiliationRelationEntity> classMap = mapperFactory.classMap(Membership.class, OrgAffiliationRelationEntity.class);
 
@@ -953,7 +937,7 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
     }
 
     public MapperFacade getQualificationMapperFacade() {
-        MapperFactory mapperFactory = new DefaultMapperFactory.Builder().build();
+        MapperFactory mapperFactory = getNewMapperFactory();
 
         ClassMapBuilder<Qualification, OrgAffiliationRelationEntity> classMap = mapperFactory.classMap(Qualification.class, OrgAffiliationRelationEntity.class);
 
@@ -964,7 +948,7 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
     }
 
     public MapperFacade getServiceMapperFacade() {
-        MapperFactory mapperFactory = new DefaultMapperFactory.Builder().build();
+        MapperFactory mapperFactory = getNewMapperFactory();
 
         ClassMapBuilder<Service, OrgAffiliationRelationEntity> classMap = mapperFactory.classMap(Service.class, OrgAffiliationRelationEntity.class);
 
@@ -1030,7 +1014,7 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
     }
 
     public MapperFacade getPeerReviewMapperFacade() {
-        MapperFactory mapperFactory = new DefaultMapperFactory.Builder().build();
+        MapperFactory mapperFactory = getNewMapperFactory();
 
         ConverterFactory converterFactory = mapperFactory.getConverterFactory();
         converterFactory.registerConverter("workExternalIdentifiersConverterId", new JSONWorkExternalIdentifiersConverterV3(norm, resolverService, localeManager));
@@ -1093,7 +1077,7 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
     }
 
     public MapperFacade getResearchResourceMapperFacade() {
-        MapperFactory mapperFactory = new DefaultMapperFactory.Builder().build();
+        MapperFactory mapperFactory = getNewMapperFactory();
         registerOrgClassMappings(mapperFactory);
         
         ConverterFactory converterFactory = mapperFactory.getConverterFactory();
@@ -1161,7 +1145,7 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
     }
 
     public MapperFacade getGroupIdRecordMapperFacade() {
-        MapperFactory mapperFactory = new DefaultMapperFactory.Builder().build();
+        MapperFactory mapperFactory = getNewMapperFactory();
 
         ClassMapBuilder<GroupIdRecord, GroupIdRecordEntity> classMap = mapperFactory.classMap(GroupIdRecord.class, GroupIdRecordEntity.class);
         addV3CommonFields(classMap);
@@ -1177,7 +1161,7 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
     }
 
     public MapperFacade getClientMapperFacade() {
-        MapperFactory mapperFactory = new DefaultMapperFactory.Builder().build();
+        MapperFactory mapperFactory = getNewMapperFactory();
         ClassMapBuilder<ClientSummary, ClientDetailsEntity> clientSummaryClassMap = mapperFactory.classMap(ClientSummary.class, ClientDetailsEntity.class);
         clientSummaryClassMap.field("name", "clientName");
         clientSummaryClassMap.field("description", "clientDescription");
@@ -1283,7 +1267,7 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
     }
 
     public MapperFacade getNameMapperFacade() {
-        MapperFactory mapperFactory = new DefaultMapperFactory.Builder().build();
+        MapperFactory mapperFactory = getNewMapperFactory();
         mapperFactory.getConverterFactory().registerConverter("visibilityConverter", new VisibilityConverter());
         mapperFactory.getConverterFactory().registerConverter("familyNameConverter", new FamilyNameConverter());
         mapperFactory.getConverterFactory().registerConverter("givenNamesConverter", new GivenNamesConverter());
@@ -1306,7 +1290,7 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
     }
 
     public MapperFacade getInvalidRecordDataChangeMapperFacade() {
-        MapperFactory mapperFactory = new DefaultMapperFactory.Builder().build();
+        MapperFactory mapperFactory = getNewMapperFactory();
         ClassMapBuilder<RecordCorrection, InvalidRecordDataChangeEntity> classMap = mapperFactory.classMap(RecordCorrection.class, InvalidRecordDataChangeEntity.class);
         classMap.fieldBToA("id", "sequence");
         classMap.fieldBToA("sqlUsedToUpdate", "sqlUsedToUpdate");
@@ -1320,7 +1304,7 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
 
 
     public MapperFacade getSpamMapperFacade() {
-        MapperFactory mapperFactory = new DefaultMapperFactory.Builder().build();
+        MapperFactory mapperFactory = getNewMapperFactory();
         ClassMapBuilder<Spam, SpamEntity> classMap = mapperFactory.classMap(Spam.class, SpamEntity.class);                       
         classMap.fieldBToA("sourceType", "sourceType");
         classMap.fieldBToA("spamCounter", "spamCounter");

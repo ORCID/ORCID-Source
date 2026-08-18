@@ -43,7 +43,7 @@ public class BackupCodeDaoImpl extends GenericDaoImpl<BackupCodeEntity, Long> im
 
     @Override
     public Date getBackupCodesCreationDate(String orcid) {
-        Query query = entityManager.createQuery("SELECT MAX(dateCreated) FROM BackupCodeEntity WHERE orcid = :orcid");
+        Query query = entityManager.createQuery("SELECT MAX(b.dateCreated) FROM BackupCodeEntity b WHERE b.orcid = :orcid");
         query.setParameter("orcid", orcid);
         return (Date) query.getSingleResult();
     }

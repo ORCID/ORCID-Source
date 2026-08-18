@@ -162,6 +162,7 @@ public class ResearcherUrlManagerImpl extends ResearcherUrlManagerReadOnlyImpl i
     }
 
     @Override
+    @Transactional
     public ResearcherUrl createResearcherUrl(String orcid, ResearcherUrl researcherUrl, boolean isApiRequest) {
         SourceEntity sourceEntity = sourceManager.retrieveSourceEntity();
         // Validate the researcher url
