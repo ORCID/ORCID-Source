@@ -431,4 +431,5 @@
   <include file="/db/updates/add_oauth2_auth_code_detail_state_idx.xml" />
   <include file="/db/updates/add_spring_authorization_code_request_id_idx.xml" />
   <include file="/db/updates/add_member_id_to_client_details.xml" />
+  <include file="/db/updates/dw_profile_last_login_idx_and_view.xml" />
 </databaseChangeLog>

@@ -58,29 +58,6 @@ public class LoginController extends BaseController {
     @RequestMapping(value = { "/signout" }, method = RequestMethod.GET)
     public ModelAndView signout(HttpServletRequest request, HttpServletResponse response) {
         String redirectString = "redirect:" + calculateRedirectUrl("/login");
-        Boolean isOauth2ScreensRequest = (Boolean) request.getSession().getAttribute(OrcidOauth2Constants.OAUTH_2SCREENS);
-        LOGGER.error("---------------------------------------------");
-        LOGGER.error("Signout");
-        LOGGER.error("---------------------------------------------");
-        LOGGER.error("isOauth2ScreensRequest: {}", isOauth2ScreensRequest);
-
-        Enumeration<String> sessionAttributeNames = request.getSession(false).getAttributeNames();
-        if(sessionAttributeNames != null) {
-            while (sessionAttributeNames.hasMoreElements()) {
-                String attributeName = sessionAttributeNames.nextElement();
-                LOGGER.error("session attribute {} = {}", attributeName, request.getSession(false).getAttribute(attributeName));
-            }
-        }
-
-        if(isOauth2ScreensRequest != null && isOauth2ScreensRequest) {
-            // Just redirect to the authorization screen
-            String queryString = (String) request.getSession().getAttribute(OrcidOauth2Constants.OAUTH_QUERY_STRING);
-            redirectString += '?' + queryString; 
-        }
-        
-        logoutCurrentUser(request, response);
-        LOGGER.error("redirectString: {}", redirectString);
-        LOGGER.error("---------------------------------------------");
         return new ModelAndView(redirectString);
     }
 
