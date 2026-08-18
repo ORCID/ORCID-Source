@@ -244,6 +244,7 @@ public class SummaryManagerTest {
         assertEquals(Integer.valueOf(0), rs.getProfessionalActivities().getCount());
         assertNull(rs.getProfessionalActivities().getProfessionalActivities());
     }
+
     
     @Test
     public void generateAffiliationsSummary_EducationOnlyTest() {
@@ -691,6 +692,36 @@ public class SummaryManagerTest {
         source.setSourceClientId(new SourceClientId(sourceId));
         summary.setSource(source);
         return summary;
+    }
+
+    @Test
+    public void generateAffiliationsSummaryWithNullDisplayIndexTest() {
+        RecordSummary rs = new RecordSummary();
+        Map<AffiliationType, List<AffiliationGroup<AffiliationSummary>>> affiliations = new HashMap<>();
+        List<AffiliationGroup<AffiliationSummary>> employmentGroups = new ArrayList<>();
+        AffiliationGroup<AffiliationSummary> group = new AffiliationGroup<>();
+
+        AffiliationSummary summary = new EmploymentSummary();
+        summary.setDisplayIndex(null); // This should be treated as 0L
+        Organization org = new Organization();
+        org.setName("Test Org");
+        summary.setOrganization(org);
+        summary.setPutCode(1L);
+        Source source = new Source();
+        source.setSourceClientId(new SourceClientId(CLIENT1));
+        summary.setSource(source);
+
+        group.getActivities().add(summary);
+        employmentGroups.add(group);
+        affiliations.put(AffiliationType.EMPLOYMENT, employmentGroups);
+
+        Mockito.when(affiliationsManagerReadOnlyMock.getGroupedAffiliations(Mockito.eq(ORCID), Mockito.eq(true))).thenReturn(affiliations);
+
+        manager.generateAffiliationsSummary(rs, ORCID);
+        assertNotNull(rs.getEmployments());
+        assertEquals(Integer.valueOf(1), rs.getEmployments().getCount());
+        assertEquals(1, rs.getEmployments().getEmployments().size());
+        assertEquals("Test Org", rs.getEmployments().getEmployments().get(0).getOrganizationName());
     }
 
     private Works getWorkGroups() {

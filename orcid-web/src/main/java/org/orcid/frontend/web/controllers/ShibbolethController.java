@@ -22,6 +22,7 @@ import org.orcid.core.manager.v3.read_only.EmailManagerReadOnly;
 import org.orcid.core.security.OrcidUserDetailsService;
 import org.orcid.core.togglz.Features;
 import org.orcid.core.utils.JsonUtils;
+import org.orcid.core.utils.OrcidRequestUtil;
 import org.orcid.frontend.web.exception.FeatureDisabledException;
 import org.orcid.persistence.jpa.entities.EventType;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
@@ -172,7 +173,8 @@ public class ShibbolethController extends BaseController {
             
             try {
                 notifyUser(shibIdentityProvider, userConnectionEntity);
-                processAuthentication(remoteUser, userConnectionEntity, request, response);
+                boolean userLoggedIn = processAuthentication(remoteUser, userConnectionEntity, request, response);
+                setLoggedInStatus(request, userLoggedIn);
                 if (Features.EVENTS.isActive()) {
                     eventManager.createEvent(EventType.SIGN_IN, request);
                 }
@@ -232,11 +234,12 @@ public class ShibbolethController extends BaseController {
             
             try {
                 notifyUser(shibIdentityProvider, userConnectionEntity);
-                processAuthentication(remoteUser, userConnectionEntity, request, response);
+                boolean userLoggedIn = processAuthentication(remoteUser, userConnectionEntity, request, response);
+                setLoggedInStatus(request, userLoggedIn);
             } catch (AuthenticationException e) {
                 // this should never happen
                 SecurityContextHolder.getContext().setAuthentication(null);
-                LOGGER.warn("User {0} should have been logged-in via Shibboleth, but was unable to due to a problem", remoteUser, e);
+                LOGGER.warn("User {} should have been logged-in via Shibboleth, but was unable to due to a problem", remoteUser, e);
             }
             codes.setRedirectUrl(calculateRedirectUrl(request, response, false, false, "shibboleth"));
             return codes;
@@ -244,6 +247,18 @@ public class ShibbolethController extends BaseController {
             codes.setRedirectUrl(orcidUrlManager.getBaseUrl() + "/2fa-signin");
             return codes;
         }
+    }
+
+    private boolean setLoggedInStatus(HttpServletRequest request, Boolean userLoggedIn) {
+        if(userLoggedIn) {
+            // Update the last login time
+            String ip = OrcidRequestUtil.getIpAddress(request);
+            String orcid = SecurityContextHolder.getContext().getAuthentication().getName();
+            LOGGER.trace("Updating last login details for user {}", orcid);
+            profileEntityManager.updateLastLoginDetails(orcid, ip);
+            return true;
+        }
+        return false;
     }
 
     private void notifyUser(String shibIdentityProvider, UserconnectionEntity userConnectionEntity) {
@@ -257,7 +272,7 @@ public class ShibbolethController extends BaseController {
         }
     }
     
-    private void processAuthentication(RemoteUser remoteUser, UserconnectionEntity userConnectionEntity, HttpServletRequest request, HttpServletResponse response) {
+    private boolean processAuthentication(RemoteUser remoteUser, UserconnectionEntity userConnectionEntity, HttpServletRequest request, HttpServletResponse response) {
         String orcidId = userConnectionEntity.getOrcid();
         try {
             PreAuthenticatedAuthenticationToken token = new PreAuthenticatedAuthenticationToken(userConnectionEntity.getOrcid(), remoteUser.getUserId());
@@ -274,11 +289,13 @@ public class ShibbolethController extends BaseController {
             // Update the institutional sign in last login date
             userConnectionEntity.setLastLogin(new Date());
             userConnectionManager.update(userConnectionEntity);
+            return true;
         } catch (AuthenticationException e) {
             // this should never happen
             SecurityContextHolder.clearContext();
             LOGGER.warn("User '" + orcidId +  "' should have been logged-in, but we unable to due to a problem", e);
         }
+        return false;
     }
 
     private void validate2FACodes(String orcid, TwoFactorAuthenticationCodes codes) {
