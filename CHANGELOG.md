@@ -1,3 +1,9 @@
+## v3.0.41 - 2026-08-19
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.0.40...v3.0.41)
+
+- [#7593](https://github.com/ORCID/ORCID-Source/pull/7593): Aromanovv/pd 5943 make pw reset link one time use
+
 ## v3.0.40 - 2026-08-18
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.0.39...v3.0.40)
