@@ -1,3 +1,23 @@
+## v3.0.40 - 2026-08-18
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.0.39...v3.0.40)
+
+- [#7623](https://github.com/ORCID/ORCID-Source/pull/7623): PD-5888 Fix the redirect in the PublicProfileController
+
+## v3.0.39 - 2026-08-18
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.0.38...v3.0.39)
+
+- [#7620](https://github.com/ORCID/ORCID-Source/pull/7620): Bump org.springframework.security:spring-security-web from 6.5.9 to 6.5.11
+
+## v3.0.38 - 2026-08-18
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.0.37...v3.0.38)
+
+## v3.0.37 - 2026-08-18
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.0.36...v3.0.37)
+
 ## v3.0.36 - 2026-08-18
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.0.35...v3.0.36)

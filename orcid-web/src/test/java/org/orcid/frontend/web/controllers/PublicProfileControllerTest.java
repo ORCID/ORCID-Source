@@ -487,4 +487,33 @@ public class PublicProfileControllerTest extends DBUnitTest {
         when(profileEntityManagerReadOnlyMock.hasToken(eq(userOrcid), anyLong())).thenReturn(true);
         when(profileEntityCacheManagerMock.retrieve(userOrcid)).thenReturn(allOk);        
     }
+
+    @Test
+    public void publicPreview_getInvalidRecordGenerateRedirectTest() {
+        String a = "0000-0000-0000-0000";
+        String b = "0000-0000-0000-0000-0000";
+        String c = " 0000-0000-0000-0000";
+        String d = "0000-0000-0000-0000 ";
+        TargetProxyHelper.injectIntoProxy(publicProfileController, "profileEntityCacheManager", profileEntityCacheManagerMock);
+        when(profileEntityCacheManagerMock.retrieve(a)).thenThrow(new IllegalArgumentException());
+        when(profileEntityCacheManagerMock.retrieve(b)).thenThrow(new IllegalArgumentException());
+        when(profileEntityCacheManagerMock.retrieve(c)).thenThrow(new IllegalArgumentException());
+        when(profileEntityCacheManagerMock.retrieve(d)).thenThrow(new IllegalArgumentException());
+
+        // Test non-existing record
+        ModelAndView mv = publicProfileController.publicPreview(request, response, 0, 0, 0, a);
+        assertEquals("redirect:https://testserver.orcid.org/404", mv.getViewName());
+
+        // Test invalid id
+        mv = publicProfileController.publicPreview(request, response, 0, 0, 0, b);
+        assertEquals("redirect:https://testserver.orcid.org/404", mv.getViewName());
+
+        // Test trailing invalid charcter
+        mv = publicProfileController.publicPreview(request, response, 0, 0, 0, c);
+        assertEquals("redirect:https://testserver.orcid.org/404", mv.getViewName());
+
+        // Test leading invalid charcter
+        mv = publicProfileController.publicPreview(request, response, 0, 0, 0, d);
+        assertEquals("redirect:https://testserver.orcid.org/404", mv.getViewName());
+    }
 }
