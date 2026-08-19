@@ -1,3 +1,9 @@
+## v3.0.42 - 2026-08-19
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.0.41...v3.0.42)
+
+- [#7644](https://github.com/ORCID/ORCID-Source/pull/7644): Add back the code to log the user out
+
 ## v3.0.41 - 2026-08-19
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.0.40...v3.0.41)
