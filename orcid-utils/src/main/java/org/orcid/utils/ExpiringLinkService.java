@@ -23,7 +23,7 @@ public class ExpiringLinkService {
     private final JWSAlgorithm algorithm = JWSAlgorithm.HS256;
 
     public enum ExpiringLinkType {
-        ACCOUNT_DEACTIVATION
+        ACCOUNT_DEACTIVATION, PASSWORD_RESET
     }
 
     public enum VerificationStatus {
