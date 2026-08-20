@@ -176,8 +176,7 @@ public class PublicProfileController extends BaseWorkspaceController {
         try {
             profile = profileEntityCacheManager.retrieve(orcid);
         } catch (Exception e) {
-            response.setStatus(HttpStatus.NOT_FOUND.value());
-            return new ModelAndView("error-404");
+            return new ModelAndView("redirect:" + calculateRedirectUrl("/404"));
         }
 
         Long lastModifiedTime = getLastModifiedTime(orcid);
