@@ -357,10 +357,10 @@
         <property name="password" value="\${org.orcid.persistence.db.password}" />
         <property name="minimumIdle" value="\${org.orcid.persistence.db.minPoolSize}" />
         <property name="maximumPoolSize" value="\${org.orcid.persistence.db.maxPoolSize}" />
-        <property name="connectionTestQuery" value="\${org.orcid.persistence.db.preferredTestQuery}" />
         <property name="connectionTimeout" value="\${org.orcid.persistence.db.hikari.connectionTimeout:30000}" />
         <property name="idleTimeout" value="\${org.orcid.persistence.db.hikari.idleTimeout:600000}" />
         <property name="maxLifetime" value="\${org.orcid.persistence.db.hikari.maxLifetime:1800000}" />
+        <property name="keepaliveTime" value="\${org.orcid.persistence.db.hikari.keepaliveTime:120000}" />
     </bean>
     
     <bean id="pooledDataSourceReadOnly" class="com.zaxxer.hikari.HikariDataSource" destroy-method="close">
@@ -371,10 +371,10 @@
         <property name="password" value="\${org.orcid.persistence.db.readonly.password}" />
         <property name="minimumIdle" value="\${org.orcid.persistence.db.readonly.minPoolSize}" />
         <property name="maximumPoolSize" value="\${org.orcid.persistence.db.readonly.maxPoolSize}" />
-        <property name="connectionTestQuery" value="\${org.orcid.persistence.db.readonly.preferredTestQuery}" />
         <property name="connectionTimeout" value="\${org.orcid.persistence.db.readonly.hikari.connectionTimeout:30000}" />
         <property name="idleTimeout" value="\${org.orcid.persistence.db.readonly.hikari.idleTimeout:600000}" />
         <property name="maxLifetime" value="\${org.orcid.persistence.db.readonly.hikari.maxLifetime:1800000}" />
+        <property name="keepaliveTime" value="\${org.orcid.persistence.db.readonly.hikari.keepaliveTime:120000}" />
         <property name="readOnly" value="true" />
     </bean>
 
@@ -401,10 +401,10 @@
         <property name="password" value="\${org.orcid.persistence.togglz.db.password}" />
         <property name="minimumIdle" value="\${org.orcid.persistence.togglz.db.minPoolSize}" />
         <property name="maximumPoolSize" value="\${org.orcid.persistence.togglz.db.maxPoolSize}" />
-        <property name="connectionTestQuery" value="\${org.orcid.persistence.togglz.db.preferredTestQuery}" />
         <property name="connectionTimeout" value="\${org.orcid.persistence.togglz.db.hikari.connectionTimeout:30000}" />
         <property name="idleTimeout" value="\${org.orcid.persistence.togglz.db.hikari.idleTimeout:600000}" />
         <property name="maxLifetime" value="\${org.orcid.persistence.togglz.db.hikari.maxLifetime:1800000}" />
+        <property name="keepaliveTime" value="\${org.orcid.persistence.togglz.db.hikari.keepaliveTime:120000}" />
     </bean>        
     
     <bean id="externalEncryptor" class="org.jasypt.encryption.pbe.PooledPBEStringEncryptor">
