@@ -10,6 +10,8 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import org.junit.Test;
+import org.orcid.core.adapter.mapstruct.AdditionalInfoJsonMapper;
+import org.orcid.core.adapter.mapstruct.NotificationMapperV2;
 import org.orcid.core.manager.impl.OrcidUrlManager;
 import org.orcid.jaxb.model.notification.amended_v2.NotificationAmended;
 import org.orcid.jaxb.model.notification.permission_v2.Item;

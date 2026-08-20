@@ -7,24 +7,24 @@ import java.util.Map;
 import jakarta.annotation.Resource;
 
 import org.apache.commons.lang3.StringUtils;
-import org.orcid.core.adapter.jsonidentifier.converter.ExternalIdentifierTypeConverter;
-import org.orcid.core.adapter.jsonidentifier.converter.JSONExternalIdentifiersConverterV3;
-import org.orcid.core.adapter.jsonidentifier.converter.JSONFundingExternalIdentifiersConverterV3;
-import org.orcid.core.adapter.jsonidentifier.converter.JSONPeerReviewWorkExternalIdentifierConverterV3;
-import org.orcid.core.adapter.jsonidentifier.converter.JSONWorkExternalIdentifiersConverterV3;
 import org.orcid.core.adapter.mapstruct.AdditionalInfoJsonMapper;
 import org.orcid.core.adapter.mapstruct.ClientMapperV3;
-import org.orcid.core.adapter.mapstruct.FuzzyDateMapperV3;
+import org.orcid.core.adapter.mapstruct.ExternalIdentifierTypeMapper;
+import org.orcid.core.adapter.mapstruct.FundingContributorsMapperV3;
 import org.orcid.core.adapter.mapstruct.FundingMapperV3;
+import org.orcid.core.adapter.mapstruct.FuzzyDateMapperV3;
+import org.orcid.core.adapter.mapstruct.JSONExternalIdentifiersMapperV3;
+import org.orcid.core.adapter.mapstruct.JSONFundingExternalIdentifiersMapperV3;
+import org.orcid.core.adapter.mapstruct.JSONPeerReviewWorkExternalIdentifierMapperV3;
+import org.orcid.core.adapter.mapstruct.JSONWorkExternalIdentifiersMapperV3;
 import org.orcid.core.adapter.mapstruct.MiscMapperV3;
 import org.orcid.core.adapter.mapstruct.NotificationMapperV3;
+import org.orcid.core.adapter.mapstruct.OrgMapperV3;
 import org.orcid.core.adapter.mapstruct.PeerReviewMapperV3;
 import org.orcid.core.adapter.mapstruct.SourceMapperV3;
+import org.orcid.core.adapter.mapstruct.VisibilityMapperV3;
 import org.orcid.core.adapter.mapstruct.WorkMapperV3;
 import org.orcid.core.adapter.v3.converter.ContributorsRolesAndSequencesConverter;
-import org.orcid.core.adapter.v3.converter.FundingContributorsConverter;
-import org.orcid.core.adapter.v3.converter.OrgConverter;
-import org.orcid.core.adapter.v3.converter.VisibilityConverter;
 import org.orcid.core.adapter.v3.converter.WorkContributorsConverter;
 import org.orcid.core.contributors.roles.fundings.FundingContributorRoleConverter;
 import org.orcid.core.contributors.roles.works.WorkContributorRoleConverter;
@@ -191,6 +191,21 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
     @Resource
     private ContributorsRolesAndSequencesConverter contributorsRolesAndSequencesConverter;
 
+    @Resource
+    private JSONFundingExternalIdentifiersMapperV3 jsonFundingExternalIdentifiersMapperV3;
+
+    @Resource
+    private JSONExternalIdentifiersMapperV3 jsonExternalIdentifiersMapperV3;
+
+    @Resource
+    private JSONPeerReviewWorkExternalIdentifierMapperV3 jsonPeerReviewWorkExternalIdentifierMapperV3;
+
+    @Resource
+    private JSONWorkExternalIdentifiersMapperV3 jsonWorkExternalIdentifiersMapperV3;
+
+    @Resource
+    private org.orcid.core.adapter.v3.converter.WorkContributorsConverter workContributorsConverter;
+
     private MapperFactory getNewMapperFactory() {
         // Keep a fresh MapperFactory per facade build to avoid shared mutable Orika registrations.
         return new DefaultMapperFactory.Builder().compilerStrategy(new EclipseJdtCompilerStrategy())
@@ -204,7 +219,7 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
 
         // Register converters
         ConverterFactory converterFactory = mapperFactory.getConverterFactory();
-        converterFactory.registerConverter("externalIdentifierIdConverter", new ExternalIdentifierTypeConverter());
+        converterFactory.registerConverter("externalIdentifierIdConverter", externalIdentifierIdConverter());
 
         // Register factories
         mapperFactory.registerObjectFactory(new ObjectFactory<NotificationWorkEntity>() {
@@ -394,7 +409,7 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
 
     public MapperFacade getExternalIdentifierMapperFacade() {
         MapperFactory mapperFactory = getNewMapperFactory();
-        mapperFactory.getConverterFactory().registerConverter("visibilityConverter", new VisibilityConverter());
+        mapperFactory.getConverterFactory().registerConverter("visibilityConverter", visibilityConverter());
 
         ClassMapBuilder<PersonExternalIdentifier, ExternalIdentifierEntity> externalIdentifierClassMap = mapperFactory.classMap(PersonExternalIdentifier.class,
                 ExternalIdentifierEntity.class);
@@ -424,7 +439,7 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
 
     public MapperFacade getResearcherUrlMapperFacade() {
         MapperFactory mapperFactory = getNewMapperFactory();
-        mapperFactory.getConverterFactory().registerConverter("visibilityConverter", new VisibilityConverter());
+        mapperFactory.getConverterFactory().registerConverter("visibilityConverter", visibilityConverter());
 
         ClassMapBuilder<ResearcherUrl, ResearcherUrlEntity> researcherUrlClassMap = mapperFactory.classMap(ResearcherUrl.class, ResearcherUrlEntity.class);
         addV3DateFields(researcherUrlClassMap);
@@ -452,7 +467,7 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
 
     public MapperFacade getOtherNameMapperFacade() {
         MapperFactory mapperFactory = getNewMapperFactory();
-        mapperFactory.getConverterFactory().registerConverter("visibilityConverter", new VisibilityConverter());
+        mapperFactory.getConverterFactory().registerConverter("visibilityConverter", visibilityConverter());
 
         ClassMapBuilder<OtherName, OtherNameEntity> otherNameClassMap = mapperFactory.classMap(OtherName.class, OtherNameEntity.class);
         addV3DateFields(otherNameClassMap);
@@ -468,7 +483,7 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
 
     public MapperFacade getKeywordMapperFacade() {
         MapperFactory mapperFactory = getNewMapperFactory();
-        mapperFactory.getConverterFactory().registerConverter("visibilityConverter", new VisibilityConverter());
+        mapperFactory.getConverterFactory().registerConverter("visibilityConverter", visibilityConverter());
 
         ClassMapBuilder<Keyword, ProfileKeywordEntity> keywordClassMap = mapperFactory.classMap(Keyword.class, ProfileKeywordEntity.class);
         addV3DateFields(keywordClassMap);
@@ -484,7 +499,7 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
 
     public MapperFacade getAddressMapperFacade() {
         MapperFactory mapperFactory = getNewMapperFactory();
-        mapperFactory.getConverterFactory().registerConverter("visibilityConverter", new VisibilityConverter());
+        mapperFactory.getConverterFactory().registerConverter("visibilityConverter", visibilityConverter());
 
         ClassMapBuilder<Address, AddressEntity> addressClassMap = mapperFactory.classMap(Address.class, AddressEntity.class);
         addV3DateFields(addressClassMap);
@@ -501,7 +516,7 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
 
     public MapperFacade getEmailMapperFacade() {
         MapperFactory mapperFactory = getNewMapperFactory();
-        mapperFactory.getConverterFactory().registerConverter("visibilityConverter", new VisibilityConverter());
+        mapperFactory.getConverterFactory().registerConverter("visibilityConverter", visibilityConverter());
         ClassMapBuilder<Email, EmailEntity> emailClassMap = mapperFactory.classMap(Email.class, EmailEntity.class);
         emailClassMap.byDefault();
         emailClassMap.field("email", "email");
@@ -538,12 +553,11 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
     public MapperFacade getWorkMapperFacade() {
         MapperFactory mapperFactory = getNewMapperFactory();
 
-        WorkContributorsConverter wcc = new WorkContributorsConverter(workContributorsRoleConverter);
         ConverterFactory converterFactory = mapperFactory.getConverterFactory();
-        converterFactory.registerConverter("workExternalIdentifiersConverterId", new JSONWorkExternalIdentifiersConverterV3(norm, resolverService, localeManager));
-        converterFactory.registerConverter("workContributorsConverterId", wcc);
-        converterFactory.registerConverter("contributorsRolesAndSequencesConverter", contributorsRolesAndSequencesConverter);
-        converterFactory.registerConverter("visibilityConverter", new VisibilityConverter());
+        converterFactory.registerConverter("workExternalIdentifiersConverterId", workExternalIdentifiersV3Converter());
+        converterFactory.registerConverter("workContributorsConverterId", workContributorsConverterGlue());
+        converterFactory.registerConverter("contributorsRolesAndSequencesConverter", contributorsRolesAndSequencesConverterGlue());
+        converterFactory.registerConverter("visibilityConverter", visibilityConverter());
 
         ClassMapBuilder<Work, WorkEntity> workClassMap = mapperFactory.classMap(Work.class, WorkEntity.class);
         workClassMap.field("putCode", "id");
@@ -771,10 +785,11 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
         MapperFactory mapperFactory = getNewMapperFactory();
         
         ConverterFactory converterFactory = mapperFactory.getConverterFactory();
-        converterFactory.registerConverter("fundingExternalIdentifiersConverterId", new JSONFundingExternalIdentifiersConverterV3());
-        converterFactory.registerConverter("fundingContributorsConverterId", new FundingContributorsConverter(fundingContributorsRoleConverter));
-        converterFactory.registerConverter("visibilityConverter", new VisibilityConverter());
-        converterFactory.registerConverter("orgConverter", new OrgConverter());
+        converterFactory.registerConverter("fundingExternalIdentifiersConverterId", fundingExternalIdentifiersConverter());
+        FundingContributorsMapperV3 fundingContributorsMapper = new FundingContributorsMapperV3(fundingContributorsRoleConverter);
+        converterFactory.registerConverter("fundingContributorsConverterId", fundingContributorsConverter(fundingContributorsMapper));
+        converterFactory.registerConverter("visibilityConverter", visibilityConverter());
+        converterFactory.registerConverter("orgConverter", orgConverter());
 
         ClassMapBuilder<Funding, ProfileFundingEntity> fundingClassMap = mapperFactory.classMap(Funding.class, ProfileFundingEntity.class);
         addV3CommonFields(fundingClassMap);
@@ -910,9 +925,9 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
             ClassMapBuilder<? extends AffiliationSummary, OrgAffiliationRelationEntity> summaryClassMap) {
         
         ConverterFactory converterFactory = mapperFactory.getConverterFactory();
-        converterFactory.registerConverter("externalIdentifiersConverterId", new JSONExternalIdentifiersConverterV3(norm, localeManager));
-        converterFactory.registerConverter("visibilityConverter", new VisibilityConverter());
-        converterFactory.registerConverter("orgConverter", new OrgConverter());
+        converterFactory.registerConverter("externalIdentifiersConverterId", externalIdentifiersConverter());
+        converterFactory.registerConverter("visibilityConverter", visibilityConverter());
+        converterFactory.registerConverter("orgConverter", orgConverter());
         
         // Configure element class map
         addV3CommonFields(classMap);
@@ -952,10 +967,10 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
         MapperFactory mapperFactory = getNewMapperFactory();
 
         ConverterFactory converterFactory = mapperFactory.getConverterFactory();
-        converterFactory.registerConverter("workExternalIdentifiersConverterId", new JSONWorkExternalIdentifiersConverterV3(norm, resolverService, localeManager));
-        converterFactory.registerConverter("workExternalIdentifierConverterId", new JSONPeerReviewWorkExternalIdentifierConverterV3());
-        converterFactory.registerConverter("visibilityConverter", new VisibilityConverter());
-        converterFactory.registerConverter("orgConverter", new OrgConverter());
+        converterFactory.registerConverter("workExternalIdentifiersConverterId", workExternalIdentifiersV3Converter());
+        converterFactory.registerConverter("workExternalIdentifierConverterId", peerReviewWorkExternalIdentifierConverter());
+        converterFactory.registerConverter("visibilityConverter", visibilityConverter());
+        converterFactory.registerConverter("orgConverter", orgConverter());
 
         // do same as work
 
@@ -1008,8 +1023,8 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
         registerOrgClassMappings(mapperFactory);
         
         ConverterFactory converterFactory = mapperFactory.getConverterFactory();
-        converterFactory.registerConverter("workExternalIdentifiersConverterId", new JSONWorkExternalIdentifiersConverterV3(norm, resolverService, localeManager));
-        converterFactory.registerConverter("visibilityConverter", new VisibilityConverter());
+        converterFactory.registerConverter("workExternalIdentifiersConverterId", workExternalIdentifiersV3Converter());
+        converterFactory.registerConverter("visibilityConverter", visibilityConverter());
         mapFuzzyDateToStartDateEntityAndEndDateEntity(mapperFactory);
 
         ClassMapBuilder<ResearchResource, ResearchResourceEntity> classMap = mapperFactory.classMap(ResearchResource.class, ResearchResourceEntity.class);
@@ -1130,7 +1145,7 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
 
     public MapperFacade getNameMapperFacade() {
         MapperFactory mapperFactory = getNewMapperFactory();
-        mapperFactory.getConverterFactory().registerConverter("visibilityConverter", new VisibilityConverter());
+        mapperFactory.getConverterFactory().registerConverter("visibilityConverter", visibilityConverter());
 
         ClassMapBuilder<Name, RecordNameEntity> nameClassMap = mapperFactory.classMap(Name.class, RecordNameEntity.class);
         addV3DateFields(nameClassMap);
@@ -1275,10 +1290,202 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
         }
         return new org.orcid.jaxb.model.v3.release.record.FamilyName(normalized);
     }
+
+    /**
+     * Inline Orika glue wrapping the Orika-free {@link VisibilityMapperV3}; kept local to this
+     * (already Orika-based) factory rather than the mapstruct package.
+     */
+    private static ma.glasnost.orika.converter.BidirectionalConverter<org.orcid.jaxb.model.v3.release.common.Visibility, String> visibilityConverter() {
+        return new ma.glasnost.orika.converter.BidirectionalConverter<org.orcid.jaxb.model.v3.release.common.Visibility, String>() {
+            @Override
+            public String convertTo(org.orcid.jaxb.model.v3.release.common.Visibility source, ma.glasnost.orika.metadata.Type<String> destinationType) {
+                return VisibilityMapperV3.INSTANCE.convertTo(source);
+            }
+
+            @Override
+            public org.orcid.jaxb.model.v3.release.common.Visibility convertFrom(String source, ma.glasnost.orika.metadata.Type<org.orcid.jaxb.model.v3.release.common.Visibility> destinationType) {
+                return VisibilityMapperV3.INSTANCE.convertFrom(source);
+            }
+        };
+    }
+
+    /**
+     * Inline Orika glue wrapping the Orika-free {@link OrgMapperV3}; kept local to this
+     * (already Orika-based) factory rather than the mapstruct package.
+     */
+    private static ma.glasnost.orika.converter.BidirectionalConverter<Organization, OrgEntity> orgConverter() {
+        return new ma.glasnost.orika.converter.BidirectionalConverter<Organization, OrgEntity>() {
+            @Override
+            public OrgEntity convertTo(Organization source, ma.glasnost.orika.metadata.Type<OrgEntity> destinationType) {
+                return OrgMapperV3.INSTANCE.convertTo(source);
+            }
+
+            @Override
+            public Organization convertFrom(OrgEntity source, ma.glasnost.orika.metadata.Type<Organization> destinationType) {
+                return OrgMapperV3.INSTANCE.convertFrom(source);
+            }
+        };
+    }
+
+    /**
+     * Inline Orika glue wrapping the Orika-free {@link FundingContributorsMapperV3}; kept local
+     * to this (already Orika-based) factory rather than the mapstruct package.
+     */
+    private static ma.glasnost.orika.converter.BidirectionalConverter<org.orcid.jaxb.model.v3.release.record.FundingContributors, String> fundingContributorsConverter(
+            FundingContributorsMapperV3 mapper) {
+        return new ma.glasnost.orika.converter.BidirectionalConverter<org.orcid.jaxb.model.v3.release.record.FundingContributors, String>() {
+            @Override
+            public String convertTo(org.orcid.jaxb.model.v3.release.record.FundingContributors source, ma.glasnost.orika.metadata.Type<String> destinationType) {
+                return mapper.convertTo(source);
+            }
+
+            @Override
+            public org.orcid.jaxb.model.v3.release.record.FundingContributors convertFrom(String source,
+                    ma.glasnost.orika.metadata.Type<org.orcid.jaxb.model.v3.release.record.FundingContributors> destinationType) {
+                return mapper.convertFrom(source);
+            }
+        };
+    }
+
+    /**
+     * Inline Orika glue wrapping the Spring-managed {@link JSONWorkExternalIdentifiersMapperV3}
+     * (needs real Spring injection for its ExternalIdentifierTypeMapper/PIDNormalizationService/
+     * PIDResolverService/LocaleManager dependencies).
+     */
+    private ma.glasnost.orika.converter.BidirectionalConverter<org.orcid.jaxb.model.v3.release.record.ExternalIDs, String> workExternalIdentifiersV3Converter() {
+        return new ma.glasnost.orika.converter.BidirectionalConverter<org.orcid.jaxb.model.v3.release.record.ExternalIDs, String>() {
+            @Override
+            public String convertTo(org.orcid.jaxb.model.v3.release.record.ExternalIDs source, ma.glasnost.orika.metadata.Type<String> destinationType) {
+                return jsonWorkExternalIdentifiersMapperV3.convertTo(source);
+            }
+
+            @Override
+            public org.orcid.jaxb.model.v3.release.record.ExternalIDs convertFrom(String source,
+                    ma.glasnost.orika.metadata.Type<org.orcid.jaxb.model.v3.release.record.ExternalIDs> destinationType) {
+                return jsonWorkExternalIdentifiersMapperV3.convertFrom(source);
+            }
+        };
+    }
+
+    /**
+     * Inline Orika glue wrapping the Spring-managed {@link ContributorsRolesAndSequencesConverter}
+     * (needs real Spring injection for its workContributorRoleConverter dependency).
+     */
+    private ma.glasnost.orika.converter.BidirectionalConverter<java.util.List<org.orcid.pojo.ContributorsRolesAndSequences>, String> contributorsRolesAndSequencesConverterGlue() {
+        return new ma.glasnost.orika.converter.BidirectionalConverter<java.util.List<org.orcid.pojo.ContributorsRolesAndSequences>, String>() {
+            @Override
+            public String convertTo(java.util.List<org.orcid.pojo.ContributorsRolesAndSequences> source, ma.glasnost.orika.metadata.Type<String> destinationType) {
+                return contributorsRolesAndSequencesConverter.convertTo(source);
+            }
+
+            @Override
+            public java.util.List<org.orcid.pojo.ContributorsRolesAndSequences> convertFrom(String source,
+                    ma.glasnost.orika.metadata.Type<java.util.List<org.orcid.pojo.ContributorsRolesAndSequences>> destinationType) {
+                return contributorsRolesAndSequencesConverter.convertFrom(source);
+            }
+        };
+    }
+
+    /**
+     * Inline Orika glue wrapping the Spring-managed {@link org.orcid.core.adapter.v3.converter.WorkContributorsConverter}
+     * (needs real Spring injection for its ContributorRoleConverter dependency).
+     */
+    private ma.glasnost.orika.converter.BidirectionalConverter<org.orcid.jaxb.model.v3.release.record.WorkContributors, String> workContributorsConverterGlue() {
+        return new ma.glasnost.orika.converter.BidirectionalConverter<org.orcid.jaxb.model.v3.release.record.WorkContributors, String>() {
+            @Override
+            public String convertTo(org.orcid.jaxb.model.v3.release.record.WorkContributors source, ma.glasnost.orika.metadata.Type<String> destinationType) {
+                return workContributorsConverter.convertTo(source);
+            }
+
+            @Override
+            public org.orcid.jaxb.model.v3.release.record.WorkContributors convertFrom(String source,
+                    ma.glasnost.orika.metadata.Type<org.orcid.jaxb.model.v3.release.record.WorkContributors> destinationType) {
+                return workContributorsConverter.convertFrom(source);
+            }
+        };
+    }
+
     @Override
     public Class<?> getObjectType() {
         return MapperFacade.class;
     }
+
+    /**
+     * Inline Orika glue wrapping the Orika-free {@link org.orcid.core.adapter.mapstruct.jsonidentifier.ExternalIdentifierTypeMapper};
+     * kept local to this (already Orika-based) factory rather than the mapstruct package.
+     */
+    private static ma.glasnost.orika.converter.BidirectionalConverter<String, String> externalIdentifierIdConverter() {
+        return new ma.glasnost.orika.converter.BidirectionalConverter<String, String>() {
+            @Override
+            public String convertTo(String source, ma.glasnost.orika.metadata.Type<String> destinationType) {
+                return ExternalIdentifierTypeMapper.INSTANCE.convertTo(source);
+            }
+
+            @Override
+            public String convertFrom(String source, ma.glasnost.orika.metadata.Type<String> destinationType) {
+                return ExternalIdentifierTypeMapper.INSTANCE.convertFrom(source);
+            }
+        };
+    }
+
+    /**
+     * Inline Orika glue wrapping the Spring-managed {@link JSONFundingExternalIdentifiersMapperV3}
+     * (needs real Spring injection for its ExternalIdentifierTypeMapper dependency).
+     */
+    private ma.glasnost.orika.converter.BidirectionalConverter<org.orcid.jaxb.model.v3.release.record.ExternalIDs, String> fundingExternalIdentifiersConverter() {
+        return new ma.glasnost.orika.converter.BidirectionalConverter<org.orcid.jaxb.model.v3.release.record.ExternalIDs, String>() {
+            @Override
+            public String convertTo(org.orcid.jaxb.model.v3.release.record.ExternalIDs source, ma.glasnost.orika.metadata.Type<String> destinationType) {
+                return jsonFundingExternalIdentifiersMapperV3.convertTo(source);
+            }
+
+            @Override
+            public org.orcid.jaxb.model.v3.release.record.ExternalIDs convertFrom(String source,
+                    ma.glasnost.orika.metadata.Type<org.orcid.jaxb.model.v3.release.record.ExternalIDs> destinationType) {
+                return jsonFundingExternalIdentifiersMapperV3.convertFrom(source);
+            }
+        };
+    }
+
+    /**
+     * Inline Orika glue wrapping the Spring-managed {@link JSONExternalIdentifiersMapperV3}
+     * (needs real Spring injection for its ExternalIdentifierTypeMapper/PIDNormalizationService/
+     * LocaleManager dependencies).
+     */
+    private ma.glasnost.orika.converter.BidirectionalConverter<org.orcid.jaxb.model.v3.release.record.ExternalIDs, String> externalIdentifiersConverter() {
+        return new ma.glasnost.orika.converter.BidirectionalConverter<org.orcid.jaxb.model.v3.release.record.ExternalIDs, String>() {
+            @Override
+            public String convertTo(org.orcid.jaxb.model.v3.release.record.ExternalIDs source, ma.glasnost.orika.metadata.Type<String> destinationType) {
+                return jsonExternalIdentifiersMapperV3.convertTo(source);
+            }
+
+            @Override
+            public org.orcid.jaxb.model.v3.release.record.ExternalIDs convertFrom(String source,
+                    ma.glasnost.orika.metadata.Type<org.orcid.jaxb.model.v3.release.record.ExternalIDs> destinationType) {
+                return jsonExternalIdentifiersMapperV3.convertFrom(source);
+            }
+        };
+    }
+
+    /**
+     * Inline Orika glue wrapping the Spring-managed {@link JSONPeerReviewWorkExternalIdentifierMapperV3}
+     * (needs real Spring injection for its ExternalIdentifierTypeMapper dependency).
+     */
+    private ma.glasnost.orika.converter.BidirectionalConverter<org.orcid.jaxb.model.v3.release.record.ExternalID, String> peerReviewWorkExternalIdentifierConverter() {
+        return new ma.glasnost.orika.converter.BidirectionalConverter<org.orcid.jaxb.model.v3.release.record.ExternalID, String>() {
+            @Override
+            public String convertTo(org.orcid.jaxb.model.v3.release.record.ExternalID source, ma.glasnost.orika.metadata.Type<String> destinationType) {
+                return jsonPeerReviewWorkExternalIdentifierMapperV3.convertTo(source);
+            }
+
+            @Override
+            public org.orcid.jaxb.model.v3.release.record.ExternalID convertFrom(String source,
+                    ma.glasnost.orika.metadata.Type<org.orcid.jaxb.model.v3.release.record.ExternalID> destinationType) {
+                return jsonPeerReviewWorkExternalIdentifierMapperV3.convertFrom(source);
+            }
+        };
+    }
+
 
     @Override
     public boolean isSingleton() {

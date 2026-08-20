@@ -31,7 +31,7 @@ import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.orcid.core.aop.ProfileLastModifiedAspect;
-import org.orcid.core.adapter.jsonidentifier.converter.JSONWorkExternalIdentifiersConverterV3;
+import org.orcid.core.adapter.mapstruct.jsonidentifier.JSONWorkExternalIdentifiersMapperV3;
 import org.orcid.core.adapter.v3.JpaJaxbWorkAdapter;
 import org.orcid.core.adapter.v3.converter.ContributorsRolesAndSequencesConverter;
 import org.orcid.core.adapter.v3.converter.WorkContributorsConverter;
@@ -103,7 +103,7 @@ public class WorkManagerReadOnlyImplTest {
     private WorkContributorsConverter workContributorsConverter;
 
     @Mock
-    private JSONWorkExternalIdentifiersConverterV3 jsonWorkExternalIdentifiersConverterV3;
+    private JSONWorkExternalIdentifiersMapperV3 jsonWorkExternalIdentifiersConverterV3;
 
     @Mock
     private ClientDetailsEntityCacheManager clientDetailsEntityCacheManager;

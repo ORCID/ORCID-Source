@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import org.orcid.core.adapter.jsonidentifier.JSONWorkExternalIdentifier;
 import org.orcid.core.adapter.jsonidentifier.JSONWorkExternalIdentifier.WorkExternalIdentifierId;
+import org.orcid.core.adapter.mapstruct.ExternalIdentifierTypeMapper;
 import org.orcid.core.adapter.jsonidentifier.JSONWorkExternalIdentifiers;
 import org.orcid.core.utils.JsonUtils;
 import org.orcid.jaxb.model.common.Relationship;

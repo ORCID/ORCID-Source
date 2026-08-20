@@ -1,53 +1,84 @@
 package org.orcid.core.adapter.mapstruct;
 
 import org.mapstruct.Mapper;
-import org.mapstruct.factory.Mappers;
+import org.mapstruct.Mapping;
 import org.orcid.jaxb.model.common_v2.Day;
 import org.orcid.jaxb.model.common_v2.FuzzyDate;
 import org.orcid.jaxb.model.common_v2.Month;
 import org.orcid.jaxb.model.common_v2.Year;
+import org.orcid.persistence.jpa.entities.CompletionDateEntity;
 import org.orcid.persistence.jpa.entities.EndDateEntity;
 import org.orcid.persistence.jpa.entities.PublicationDateEntity;
 import org.orcid.persistence.jpa.entities.StartDateEntity;
 
-@Mapper
+@Mapper(componentModel = "spring")
 public interface FuzzyDateMapperV2 {
 
-    FuzzyDateMapperV2 INSTANCE = Mappers.getMapper(FuzzyDateMapperV2.class);
+    @Mapping(source = "year.value", target = "year")
+    @Mapping(source = "month.value", target = "month")
+    @Mapping(source = "day.value", target = "day")
+    StartDateEntity toStartDateEntity(FuzzyDate fuzzyDate);
 
-    default void fuzzyDateToPublicationDateEntity(FuzzyDate fuzzyDate, PublicationDateEntity entity) {
-        entity.setYear(fuzzyDate.getYear() != null ? Integer.valueOf(fuzzyDate.getYear().getValue()) : null);
-        entity.setMonth(fuzzyDate.getMonth() != null ? Integer.valueOf(fuzzyDate.getMonth().getValue()) : null);
-        entity.setDay(fuzzyDate.getDay() != null ? Integer.valueOf(fuzzyDate.getDay().getValue()) : null);
+    @Mapping(source = "year.value", target = "year")
+    @Mapping(source = "month.value", target = "month")
+    @Mapping(source = "day.value", target = "day")
+    EndDateEntity toEndDateEntity(FuzzyDate fuzzyDate);
+
+    @Mapping(source = "year.value", target = "year")
+    @Mapping(source = "month.value", target = "month")
+    @Mapping(source = "day.value", target = "day")
+    PublicationDateEntity toPublicationDateEntity(FuzzyDate fuzzyDate);
+
+    @Mapping(source = "year.value", target = "year")
+    @Mapping(source = "month.value", target = "month")
+    @Mapping(source = "day.value", target = "day")
+    CompletionDateEntity toCompletionDateEntity(FuzzyDate fuzzyDate);
+
+
+
+    @Mapping(source = "year", target = "year")
+    @Mapping(source = "month", target = "month")
+    @Mapping(source = "day", target = "day")
+    FuzzyDate toFuzzyDate(StartDateEntity entity);
+
+    @Mapping(source = "year", target = "year")
+    @Mapping(source = "month", target = "month")
+    @Mapping(source = "day", target = "day")
+    FuzzyDate toFuzzyDate(EndDateEntity entity);
+
+    @Mapping(source = "year", target = "year")
+    @Mapping(source = "month", target = "month")
+    @Mapping(source = "day", target = "day")
+    FuzzyDate toFuzzyDate(PublicationDateEntity entity);
+
+    @Mapping(source = "year", target = "year")
+    @Mapping(source = "month", target = "month")
+    @Mapping(source = "day", target = "day")
+    FuzzyDate toFuzzyDate(CompletionDateEntity entity);
+
+
+    
+    default Year mapYear(Integer year) {
+        return year == null ? null : new Year(year);
     }
-
-    default void publicationDateEntityToFuzzyDate(PublicationDateEntity entity, FuzzyDate fuzzyDate) {
-        fuzzyDate.setYear(entity.getYear() != null ? new Year(entity.getYear()) : null);
-        fuzzyDate.setMonth(entity.getMonth() != null ? new Month(entity.getMonth()) : null);
-        fuzzyDate.setDay(entity.getDay() != null ? new Day(entity.getDay()) : null);
+    
+    default Month mapMonth(Integer month) {
+        return month == null ? null : new Month(month);
     }
-
-    default void fuzzyDateToStartDateEntity(FuzzyDate fuzzyDate, StartDateEntity entity) {
-        entity.setYear(fuzzyDate.getYear() != null ? Integer.valueOf(fuzzyDate.getYear().getValue()) : null);
-        entity.setMonth(fuzzyDate.getMonth() != null ? Integer.valueOf(fuzzyDate.getMonth().getValue()) : null);
-        entity.setDay(fuzzyDate.getDay() != null ? Integer.valueOf(fuzzyDate.getDay().getValue()) : null);
+    
+    default Day mapDay(Integer day) {
+        return day == null ? null : new Day(day);
     }
-
-    default void startDateEntityToFuzzyDate(StartDateEntity entity, FuzzyDate fuzzyDate) {
-        fuzzyDate.setYear(entity.getYear() != null ? new Year(entity.getYear()) : null);
-        fuzzyDate.setMonth(entity.getMonth() != null ? new Month(entity.getMonth()) : null);
-        fuzzyDate.setDay(entity.getDay() != null ? new Day(entity.getDay()) : null);
+    
+    default Integer map(Year year) {
+        return (year == null || year.getValue() == null) ? null : Integer.valueOf(year.getValue());
     }
-
-    default void fuzzyDateToEndDateEntity(FuzzyDate fuzzyDate, EndDateEntity entity) {
-        entity.setYear(fuzzyDate.getYear() != null ? Integer.valueOf(fuzzyDate.getYear().getValue()) : null);
-        entity.setMonth(fuzzyDate.getMonth() != null ? Integer.valueOf(fuzzyDate.getMonth().getValue()) : null);
-        entity.setDay(fuzzyDate.getDay() != null ? Integer.valueOf(fuzzyDate.getDay().getValue()) : null);
+    
+    default Integer map(Month month) {
+        return (month == null || month.getValue() == null) ? null : Integer.valueOf(month.getValue());
     }
-
-    default void endDateEntityToFuzzyDate(EndDateEntity entity, FuzzyDate fuzzyDate) {
-        fuzzyDate.setYear(entity.getYear() != null ? new Year(entity.getYear()) : null);
-        fuzzyDate.setMonth(entity.getMonth() != null ? new Month(entity.getMonth()) : null);
-        fuzzyDate.setDay(entity.getDay() != null ? new Day(entity.getDay()) : null);
+    
+    default Integer map(Day day) {
+        return (day == null || day.getValue() == null) ? null : Integer.valueOf(day.getValue());
     }
 }

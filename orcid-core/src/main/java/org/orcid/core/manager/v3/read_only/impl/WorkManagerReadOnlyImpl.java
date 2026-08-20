@@ -17,7 +17,7 @@ import jakarta.annotation.Resource;
 
 import org.apache.commons.lang3.StringUtils;
 
-import org.orcid.core.adapter.jsonidentifier.converter.JSONWorkExternalIdentifiersConverterV3;
+import org.orcid.core.adapter.mapstruct.jsonidentifier.JSONWorkExternalIdentifiersMapperV3;
 import org.orcid.core.adapter.v3.JpaJaxbWorkAdapter;
 import org.orcid.core.adapter.v3.converter.ContributorsRolesAndSequencesConverter;
 import org.orcid.core.adapter.v3.converter.WorkContributorsConverter;
@@ -87,7 +87,7 @@ public class WorkManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements 
     private WorkContributorsConverter workContributorsConverter;
 
     @Resource
-    private JSONWorkExternalIdentifiersConverterV3 jsonWorkExternalIdentifiersConverterV3;
+    private JSONWorkExternalIdentifiersMapperV3 jsonWorkExternalIdentifiersConverterV3;
 
     @Resource
     protected ClientDetailsEntityCacheManager clientDetailsEntityCacheManager;
@@ -258,7 +258,7 @@ public class WorkManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements 
             int featuredDisplayIndex = (int) q1[17];
             ExternalIDs externalIDs = null;
             if (externalIdsJson != null) {
-                externalIDs = jsonWorkExternalIdentifiersConverterV3.convertFrom(externalIdsJson, null);
+                externalIDs = jsonWorkExternalIdentifiersConverterV3.convertFrom(externalIdsJson);
             }
             String sourceName = null;
             String assertionOriginName = null;

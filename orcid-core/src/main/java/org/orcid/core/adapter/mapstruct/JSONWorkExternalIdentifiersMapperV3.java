@@ -1,4 +1,4 @@
-package org.orcid.core.adapter.mapstruct.jsonidentifier;
+package org.orcid.core.adapter.mapstruct;
 
 import org.apache.commons.lang3.StringUtils;
 import org.mapstruct.Mapper;

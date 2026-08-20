@@ -9,6 +9,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.junit.Test;
+import org.orcid.core.adapter.mapstruct.SourceMapperV3;
 import org.orcid.core.utils.SourceEntityUtils;
 import org.orcid.jaxb.model.v3.release.common.Source;
 import org.orcid.persistence.jpa.entities.ExternalIdentifierEntity;

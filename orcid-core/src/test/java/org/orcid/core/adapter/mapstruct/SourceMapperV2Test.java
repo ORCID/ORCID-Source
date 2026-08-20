@@ -7,6 +7,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import org.junit.Test;
+import org.orcid.core.adapter.mapstruct.SourceMapperV2;
 import org.orcid.core.manager.SourceNameCacheManager;
 import org.orcid.core.manager.impl.OrcidUrlManager;
 import org.orcid.core.manager.read_only.ClientDetailsManagerReadOnly;

@@ -9,6 +9,7 @@ import static org.mockito.Mockito.when;
 import java.math.BigDecimal;
 
 import org.junit.Test;
+import org.orcid.core.adapter.mapstruct.FundingMapperV3;
 import org.orcid.jaxb.model.v3.release.record.Funding;
 import org.orcid.persistence.jpa.entities.ProfileFundingEntity;
 

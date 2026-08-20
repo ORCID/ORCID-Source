@@ -28,19 +28,25 @@ import org.orcid.utils.DateUtils;
 
 public class JSONWorkExternalIdentifiersConverterV2Test {
 
-    private JSONWorkExternalIdentifiersConverterV2 converter = new JSONWorkExternalIdentifiersConverterV2();
+    private final org.orcid.core.adapter.mapstruct.jsonidentifier.JSONWorkExternalIdentifiersMapperV2 converter = newConverter();
+
+    private static org.orcid.core.adapter.mapstruct.jsonidentifier.JSONWorkExternalIdentifiersMapperV2 newConverter() {
+        org.orcid.core.adapter.mapstruct.jsonidentifier.JSONWorkExternalIdentifiersMapperV2 mapper = org.mapstruct.factory.Mappers.getMapper(org.orcid.core.adapter.mapstruct.jsonidentifier.JSONWorkExternalIdentifiersMapperV2.class);
+        org.springframework.test.util.ReflectionTestUtils.setField(mapper, "typeMapper", org.orcid.core.adapter.mapstruct.jsonidentifier.ExternalIdentifierTypeMapper.INSTANCE);
+        return mapper;
+    }
 
     @Test
     public void testConvertTo() throws JAXBException {
         Work work = getWork();
         assertEquals("{\"workExternalIdentifier\":[{\"relationship\":\"SELF\",\"url\":{\"value\":\"http://orcid.org\"},\"workExternalIdentifierType\":\"AGR\",\"workExternalIdentifierId\":{\"content\":\"work:external-identifier-id\"}}]}",
-                converter.convertTo(work.getExternalIdentifiers(), null));
+                converter.convertTo(work.getExternalIdentifiers()));
     }
 
     @Test
     public void testConvertFrom() throws IllegalAccessException {
         WorkEntity workEntity = getWorkEntity();
-        ExternalIDs entityIDs = converter.convertFrom(workEntity.getExternalIdentifiersJson(), null);
+        ExternalIDs entityIDs = converter.convertFrom(workEntity.getExternalIdentifiersJson());
         assertEquals(1, entityIDs.getExternalIdentifier().size());
         
         ExternalID externalID = entityIDs.getExternalIdentifier().get(0);
@@ -52,7 +58,7 @@ public class JSONWorkExternalIdentifiersConverterV2Test {
     @Test
     public void testConvertWithIdThatBreaksUrlValidation() {
         String extIds = "{\"workExternalIdentifier\":[{\"workExternalIdentifierType\":\"DOI\",\"workExternalIdentifierId\":{\"content\":\"10.00000/test.v%vi%i.0000\"}}]}";
-        ExternalIDs entityIDs = converter.convertFrom(extIds, null);
+        ExternalIDs entityIDs = converter.convertFrom(extIds);
         assertNotNull(entityIDs.getExternalIdentifier());
         ExternalID eid0 = entityIDs.getExternalIdentifier().get(0);
         assertNotNull(eid0);
@@ -71,10 +77,10 @@ public class JSONWorkExternalIdentifiersConverterV2Test {
         ids.getExternalIdentifier().add(eid0);
         String expected1 = "{\"workExternalIdentifier\":[{\"relationship\":\"SELF\",\"url\":null,\"workExternalIdentifierType\":\"DOI\",\"workExternalIdentifierId\":{\"content\":\"10.00000/test.v%vi%i.0000\"}}]}";
         String expected2 = "{\"workExternalIdentifier\":[{\"relationship\":\"SELF\",\"url\":{\"value\":\"http://doi.org/10.00000/test.v%vi%i.0000\"},\"workExternalIdentifierType\":\"DOI\",\"workExternalIdentifierId\":{\"content\":\"10.00000/test.v%vi%i.0000\"}}]}";
-        assertEquals(expected1, converter.convertTo(ids, null));
+        assertEquals(expected1, converter.convertTo(ids));
         // Set the URL
         eid0.setUrl(new Url("http://doi.org/10.00000/test.v%vi%i.0000"));
-        assertEquals(expected2, converter.convertTo(ids, null));        
+        assertEquals(expected2, converter.convertTo(ids));        
     }
     
     private Work getWork() throws JAXBException {

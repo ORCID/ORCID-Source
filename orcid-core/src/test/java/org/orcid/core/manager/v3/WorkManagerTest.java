@@ -1627,7 +1627,7 @@ public class WorkManagerTest extends BaseTest {
         Work work = workManager.createWork(orcid, getWorkWith100Contributors(), true);
 
         ArgumentCaptor<List<ContributorsRolesAndSequences>> captor = ArgumentCaptor.forClass((Class) List.class);
-        Mockito.verify(mockContributorsRolesAndSequencesConverter).convertTo(captor.capture(), any());
+        Mockito.verify(mockContributorsRolesAndSequencesConverter).convertTo(captor.capture());
 
         List<ContributorsRolesAndSequences> topContributors = captor.getValue();
 

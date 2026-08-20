@@ -36,7 +36,7 @@ public class ContributorsRolesAndSequencesConverterTest {
 
     @Test
     public void convertTo() {
-        assertEquals(contributorsJson, contributorsRolesAndSequencesConverter.convertTo(getContributorsRolesAndSequences(), null));
+        assertEquals(contributorsJson, contributorsRolesAndSequencesConverter.convertTo(getContributorsRolesAndSequences()));
     }
 
     @Test
@@ -48,7 +48,7 @@ public class ContributorsRolesAndSequencesConverterTest {
     public void convertToContributorsWithoutRolesAndSequence() {
         List<ContributorsRolesAndSequences> contributors = getContributorsRolesAndSequences();
         contributors.get(0).setRolesAndSequences(null);
-        assertEquals(contributorsJsonWithoutRoles, contributorsRolesAndSequencesConverter.convertTo(contributors, null));
+        assertEquals(contributorsJsonWithoutRoles, contributorsRolesAndSequencesConverter.convertTo(contributors));
     }
 
     @Test

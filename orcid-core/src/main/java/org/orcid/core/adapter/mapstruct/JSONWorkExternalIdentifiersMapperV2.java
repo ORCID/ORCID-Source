@@ -1,5 +1,6 @@
-package org.orcid.core.adapter.mapstruct.jsonidentifier;
+package org.orcid.core.adapter.mapstruct;
 
+import org.apache.commons.lang3.StringUtils;
 import org.mapstruct.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -33,12 +34,11 @@ public abstract class JSONWorkExternalIdentifiersMapperV2 {
         }
 
         JSONWorkExternalIdentifiers jsonWorkExternalIdentifiers = new JSONWorkExternalIdentifiers();
-        
+
         for (ExternalID externalID : source.getExternalIdentifier()) {
             JSONWorkExternalIdentifier jsonWorkExternalIdentifier = new JSONWorkExternalIdentifier();
-            
+
             if (externalID.getType() != null) {
-                // Route through the injected MapStruct typeMapper instead of Orika
                 jsonWorkExternalIdentifier.setWorkExternalIdentifierType(typeMapper.convertTo(externalID.getType()));
             }
 
@@ -50,14 +50,13 @@ public abstract class JSONWorkExternalIdentifiersMapperV2 {
                 jsonWorkExternalIdentifier.setWorkExternalIdentifierId(new WorkExternalIdentifierId(externalID.getValue()));
             }
 
-            if (externalID.getRelationship() != null) {
-                // Route relationship translation through typeMapper
+            if (externalID.getRelationship() != null && externalID.getRelationship().value() != null) {
                 jsonWorkExternalIdentifier.setRelationship(typeMapper.convertTo(externalID.getRelationship().value()));
             }
-            
+
             jsonWorkExternalIdentifiers.getWorkExternalIdentifier().add(jsonWorkExternalIdentifier);
         }
-        
+
         return JsonUtils.convertToJsonString(jsonWorkExternalIdentifiers);
     }
 
@@ -65,7 +64,7 @@ public abstract class JSONWorkExternalIdentifiersMapperV2 {
      * Converts the database JSON String back into the JAXB ExternalIDs object.
      */
     public ExternalIDs convertFrom(String source) {
-        if (source == null || source.trim().isEmpty()) {
+        if (StringUtils.isBlank(source)) {
             return null;
         }
 
@@ -75,35 +74,43 @@ public abstract class JSONWorkExternalIdentifiersMapperV2 {
         }
 
         ExternalIDs externalIDs = new ExternalIDs();
-        
-        for (JSONWorkExternalIdentifier workExternalIdentifier : workExternalIdentifiers.getWorkExternalIdentifier()) {            
+
+        for (JSONWorkExternalIdentifier workExternalIdentifier : workExternalIdentifiers.getWorkExternalIdentifier()) {
             // Filter out VERSION_OF relationships
             if (workExternalIdentifier.getRelationship() == null || !org.orcid.jaxb.model.common.Relationship.VERSION_OF.name().equals(workExternalIdentifier.getRelationship())) {
                 ExternalID id = new ExternalID();
-                
+
                 if (workExternalIdentifier.getWorkExternalIdentifierType() == null) {
                     id.setType(WorkExternalIdentifierType.OTHER_ID.value());
                 } else {
-                    id.setType(typeMapper.convertTo(workExternalIdentifier.getWorkExternalIdentifierType()));
+                    // Corrected: direction changed from convertTo to convertFrom
+                    id.setType(typeMapper.convertFrom(workExternalIdentifier.getWorkExternalIdentifierType()));
                 }
-                
+
                 if (workExternalIdentifier.getWorkExternalIdentifierId() != null) {
                     id.setValue(workExternalIdentifier.getWorkExternalIdentifierId().content);
-                } 
-                
+                }
+
                 if (workExternalIdentifier.getUrl() != null && workExternalIdentifier.getUrl().getValue() != null) {
                     id.setUrl(new Url(workExternalIdentifier.getUrl().getValue()));
                 }
-                
+
                 if (workExternalIdentifier.getRelationship() != null) {
-                    String rel = typeMapper.convertTo(workExternalIdentifier.getRelationship());
-                    id.setRelationship(Relationship.fromValue(rel));
+                    // Corrected: direction changed from convertTo to convertFrom
+                    String rel = typeMapper.convertFrom(workExternalIdentifier.getRelationship());
+                    if (StringUtils.isNotBlank(rel)) {
+                        try {
+                            id.setRelationship(Relationship.fromValue(rel));
+                        } catch (IllegalArgumentException e) {
+                            id.setRelationship(null);
+                        }
+                    }
                 }
-                
+
                 externalIDs.getExternalIdentifier().add(id);
-            }                        
+            }
         }
-        
+
         return externalIDs;
     }
 }

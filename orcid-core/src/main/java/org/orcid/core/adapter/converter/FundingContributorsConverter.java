@@ -9,10 +9,11 @@ import org.orcid.jaxb.model.record_v2.FundingContributors;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
-import ma.glasnost.orika.converter.BidirectionalConverter;
-import ma.glasnost.orika.metadata.Type;
-
-public class FundingContributorsConverter extends BidirectionalConverter<FundingContributors, String> {
+/**
+ * Plain, Orika-free converter for v2 FundingContributors.
+ * Converts FundingContributors <-> JSON string for DB storage.
+ */
+public class FundingContributorsConverter {
 
     private FundingContributorRoleConverter roleConverter;
     
@@ -20,13 +21,11 @@ public class FundingContributorsConverter extends BidirectionalConverter<Funding
         this.roleConverter = fundingContributorsRoleConverter;
     }
 
-    @Override
-    public String convertTo(FundingContributors source, Type<String> destinationType) {
+    public String convertTo(FundingContributors source) {
         return JsonUtils.convertToJsonString(source);
     }
 
-    @Override
-    public FundingContributors convertFrom(String source, Type<FundingContributors> destinationType) {
+    public FundingContributors convertFrom(String source) {
         // examine json tree before converting to funding contributors
         JsonNode tree = JsonUtils.readTree(source);
         Iterator<JsonNode> contributors = tree.get("contributor").elements();

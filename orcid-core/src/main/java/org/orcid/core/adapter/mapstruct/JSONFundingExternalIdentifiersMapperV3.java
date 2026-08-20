@@ -1,4 +1,4 @@
-package org.orcid.core.adapter.mapstruct.jsonidentifier;
+package org.orcid.core.adapter.mapstruct;
 
 import org.apache.commons.lang3.StringUtils;
 import org.mapstruct.Mapper;
@@ -8,25 +8,25 @@ import org.orcid.core.adapter.jsonidentifier.JSONExternalIdentifier;
 import org.orcid.core.adapter.jsonidentifier.JSONFundingExternalIdentifiers;
 import org.orcid.core.adapter.jsonidentifier.JSONUrl;
 import org.orcid.core.utils.JsonUtils;
-import org.orcid.jaxb.model.common_v2.Url;
+import org.orcid.jaxb.model.common.Relationship;
 import org.orcid.jaxb.model.message.FundingExternalIdentifierType;
-import org.orcid.jaxb.model.record_v2.ExternalID;
-import org.orcid.jaxb.model.record_v2.ExternalIDs;
-import org.orcid.jaxb.model.record_v2.Relationship;
+import org.orcid.jaxb.model.v3.release.common.Url;
+import org.orcid.jaxb.model.v3.release.record.ExternalID;
+import org.orcid.jaxb.model.v3.release.record.ExternalIDs;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 
 /**
- * Custom MapStruct Mapper for converting V2 FundingExternalIdentifiers to and from JSON.
+ * Custom MapStruct Mapper for converting V3 FundingExternalIdentifiers to and from JSON.
  */
 @Mapper(componentModel = "spring")
-public abstract class JSONFundingExternalIdentifiersMapperV2 {
+public abstract class JSONFundingExternalIdentifiersMapperV3 {
 
     // Automatically inject the thread-safe MapStruct type mapper
     @Autowired
     protected ExternalIdentifierTypeMapper typeMapper;
 
     /**
-     * Converts the JAXB V2 ExternalIDs object into a JSON String for the database.
+     * Converts the JAXB V3 ExternalIDs object into a JSON String for the database.
      */
     public String convertTo(ExternalIDs source) {
         if (source == null || source.getExternalIdentifier() == null) {
@@ -63,7 +63,7 @@ public abstract class JSONFundingExternalIdentifiersMapperV2 {
     }
 
     /**
-     * Converts the database JSON String back into the JAXB V2 ExternalIDs object.
+     * Converts the database JSON String back into the JAXB V3 ExternalIDs object.
      */
     public ExternalIDs convertFrom(String source) {
         if (StringUtils.isBlank(source)) {

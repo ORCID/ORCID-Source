@@ -2,7 +2,8 @@ package org.orcid.core.adapter.mapstruct;
 
 import org.apache.commons.lang3.StringUtils;
 import org.mapstruct.Mapper;
-import org.mapstruct.factory.Mappers;
+import org.springframework.beans.factory.annotation.Autowired;
+
 import org.orcid.core.manager.SourceNameCacheManager;
 import org.orcid.core.manager.impl.OrcidUrlManager;
 import org.orcid.core.manager.read_only.ClientDetailsManagerReadOnly;
@@ -13,13 +14,24 @@ import org.orcid.jaxb.model.common_v2.SourceOrcid;
 import org.orcid.persistence.jpa.entities.SourceAwareEntity;
 import org.orcid.utils.OrcidStringUtils;
 
-@Mapper
-public interface SourceMapperV2 {
+@Mapper(componentModel = "spring")
+public abstract class SourceMapperV2 {
 
-    SourceMapperV2 INSTANCE = Mappers.getMapper(SourceMapperV2.class);
+    @Autowired
+    protected OrcidUrlManager orcidUrlManager;
 
-    default Source toSource(SourceAwareEntity<?> entity, OrcidUrlManager orcidUrlManager, ClientDetailsManagerReadOnly clientDetailsManagerReadOnly,
-            SourceNameCacheManager sourceNameCacheManager) {
+    @Autowired
+    protected ClientDetailsManagerReadOnly clientDetailsManagerReadOnly;
+
+    @Autowired
+    protected SourceNameCacheManager sourceNameCacheManager;
+
+
+    public Source toSource(SourceAwareEntity<?> entity) {
+        if (entity == null) {
+            return null;
+        }
+        
         String sourceId = entity.getElementSourceId();
         if (StringUtils.isEmpty(sourceId)) {
             return null;
@@ -27,16 +39,16 @@ public interface SourceMapperV2 {
 
         Source source;
         if (OrcidStringUtils.isClientId(sourceId) || clientDetailsManagerReadOnly.isLegacyClientId(sourceId)) {
-            source = createClientSource(sourceId, orcidUrlManager);
+            source = createClientSource(sourceId);
         } else {
-            source = createOrcidSource(sourceId, orcidUrlManager);
+            source = createOrcidSource(sourceId);
         }
 
         source.setSourceName(new SourceName(sourceNameCacheManager.retrieve(sourceId)));
         return source;
     }
 
-    private Source createClientSource(String sourceId, OrcidUrlManager orcidUrlManager) {
+    private Source createClientSource(String sourceId) {
         Source source = new Source();
         SourceClientId sourceClientId = new SourceClientId();
         source.setSourceClientId(sourceClientId);
@@ -46,7 +58,7 @@ public interface SourceMapperV2 {
         return source;
     }
 
-    private Source createOrcidSource(String sourceId, OrcidUrlManager orcidUrlManager) {
+    private Source createOrcidSource(String sourceId) {
         Source source = new Source();
         SourceOrcid sourceOrcid = new SourceOrcid();
         source.setSourceOrcid(sourceOrcid);

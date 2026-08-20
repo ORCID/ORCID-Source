@@ -291,7 +291,7 @@ public class AnonymizeWorksFromGetMyData {
                 }
                 List<ContributorsRolesAndSequences> topContributors = contributorUtils.getContributorsGroupedByOrcid(anonymizedWork.getWorkContributors().getContributor(), maxContributorsForUI);
                 if (topContributors.size() > 0) {
-                    workEntity.setTopContributorsJson(contributorsRolesAndSequencesConverter.convertTo(topContributors, null));
+                    workEntity.setTopContributorsJson(contributorsRolesAndSequencesConverter.convertTo(topContributors));
                 }
             } else {
                 workEntity.setContributorsJson("{\"contributor\":[]}");

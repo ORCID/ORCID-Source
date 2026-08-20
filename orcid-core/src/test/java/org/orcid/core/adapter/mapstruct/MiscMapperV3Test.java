@@ -8,6 +8,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import org.junit.Test;
+import org.orcid.core.adapter.mapstruct.MiscMapperV3;
 import org.orcid.jaxb.model.v3.release.common.Organization;
 import org.orcid.jaxb.model.v3.release.common.Url;
 import org.orcid.jaxb.model.v3.release.record.Education;

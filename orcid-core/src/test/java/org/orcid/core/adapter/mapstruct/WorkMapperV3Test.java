@@ -5,6 +5,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
 import org.junit.Test;
+import org.orcid.core.adapter.mapstruct.WorkMapperV3;
 import org.orcid.core.adapter.v3.converter.ContributorsRolesAndSequencesConverter;
 import org.orcid.jaxb.model.common.WorkType;
 import org.orcid.jaxb.model.v3.release.record.Work;

@@ -12,6 +12,7 @@ import java.util.SortedSet;
 import java.util.TreeSet;
 
 import org.junit.Test;
+import org.orcid.core.adapter.mapstruct.ClientMapperV3;
 import org.orcid.core.manager.EncryptionManager;
 import org.orcid.jaxb.model.v3.release.client.Client;
 import org.orcid.persistence.jpa.entities.ClientAuthorisedGrantTypeEntity;

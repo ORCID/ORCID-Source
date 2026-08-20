@@ -15,7 +15,7 @@ import jakarta.annotation.Resource;
 
 import org.apache.commons.collections4.trie.PatriciaTrie;
 import org.orcid.core.adapter.impl.IdentifierTypePOJOConverter;
-import org.orcid.core.adapter.jsonidentifier.converter.ExternalIdentifierTypeConverter;
+import org.orcid.core.adapter.mapstruct.jsonidentifier.ExternalIdentifierTypeMapper;
 import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.IdentifierTypeManager;
 import org.orcid.core.manager.OrcidSecurityManager;
@@ -59,7 +59,7 @@ public class IdentifierTypeManagerImpl implements IdentifierTypeManager {
     private LocaleManager localeManager;
 
     private IdentifierTypePOJOConverter adapter = new IdentifierTypePOJOConverter();
-    private ExternalIdentifierTypeConverter externalIdentifierTypeConverter = new ExternalIdentifierTypeConverter();    
+    private ExternalIdentifierTypeMapper externalIdentifierTypeConverter = ExternalIdentifierTypeMapper.INSTANCE;    
     
     /**
      * Null locale will result in Locale.ENGLISH
@@ -107,7 +107,7 @@ public class IdentifierTypeManagerImpl implements IdentifierTypeManager {
     @Override
     @CacheEvict(value = { "identifier-types", "identifier-types-map" }, allEntries = true)
     public IdentifierType updateIdentifierType(IdentifierType id) {
-        IdentifierTypeEntity entity = idTypeDao.getEntityByName(externalIdentifierTypeConverter.convertTo(id.getName(), null));
+        IdentifierTypeEntity entity = idTypeDao.getEntityByName(externalIdentifierTypeConverter.convertTo(id.getName()));
         SourceEntity sourceEntity = new SourceEntity();
         sourceEntity.setSourceClient(entity.getSourceClient());
         securityManager.checkSource(entity);

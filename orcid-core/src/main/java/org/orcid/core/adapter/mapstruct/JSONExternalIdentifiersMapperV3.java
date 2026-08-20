@@ -1,45 +1,54 @@
-package org.orcid.core.adapter.mapstruct.jsonidentifier;
+package org.orcid.core.adapter.mapstruct;
 
 import org.apache.commons.lang3.StringUtils;
 import org.mapstruct.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import org.orcid.core.adapter.jsonidentifier.JSONExternalIdentifier;
-import org.orcid.core.adapter.jsonidentifier.JSONFundingExternalIdentifiers;
+import org.orcid.core.adapter.jsonidentifier.JSONExternalIdentifiers;
 import org.orcid.core.adapter.jsonidentifier.JSONUrl;
+import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.utils.JsonUtils;
+import org.orcid.core.utils.v3.identifiers.PIDNormalizationService;
 import org.orcid.jaxb.model.common.Relationship;
 import org.orcid.jaxb.model.message.FundingExternalIdentifierType;
+import org.orcid.jaxb.model.v3.release.common.TransientError;
+import org.orcid.jaxb.model.v3.release.common.TransientNonEmptyString;
 import org.orcid.jaxb.model.v3.release.common.Url;
 import org.orcid.jaxb.model.v3.release.record.ExternalID;
 import org.orcid.jaxb.model.v3.release.record.ExternalIDs;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 
 /**
- * Custom MapStruct Mapper for converting V3 FundingExternalIdentifiers to and from JSON.
+ * Custom MapStruct Mapper for converting general V3 ExternalIDs to and from JSON, 
+ * including PID normalization and localized error handling.
  */
 @Mapper(componentModel = "spring")
-public abstract class JSONFundingExternalIdentifiersMapperV3 {
+public abstract class JSONExternalIdentifiersMapperV3 {
 
-    // Automatically inject the thread-safe MapStruct type mapper
     @Autowired
     protected ExternalIdentifierTypeMapper typeMapper;
+
+    @Autowired
+    protected PIDNormalizationService norm;
+
+    @Autowired
+    protected LocaleManager localeManager;
 
     /**
      * Converts the JAXB V3 ExternalIDs object into a JSON String for the database.
      */
-    public String convertToDb(ExternalIDs source) {
+    public String convertTo(ExternalIDs source) {
         if (source == null || source.getExternalIdentifier() == null) {
             return null;
         }
 
-        JSONFundingExternalIdentifiers jsonFundingExternalIdentifiers = new JSONFundingExternalIdentifiers();
+        JSONExternalIdentifiers jsonExternalIdentifiers = new JSONExternalIdentifiers();
         
         for (ExternalID externalID : source.getExternalIdentifier()) {
             JSONExternalIdentifier jsonExternalIdentifier = new JSONExternalIdentifier();
             
             if (externalID.getType() != null) {
-                // Route through the injected MapStruct typeMapper
                 jsonExternalIdentifier.setType(typeMapper.convertTo(externalID.getType()));
             }
 
@@ -51,15 +60,14 @@ public abstract class JSONFundingExternalIdentifiersMapperV3 {
                 jsonExternalIdentifier.setValue(externalID.getValue());
             }
 
-            if (externalID.getRelationship() != null) {
-                // Route relationship translation through typeMapper
+            if (externalID.getRelationship() != null && externalID.getRelationship().value() != null) {
                 jsonExternalIdentifier.setRelationship(typeMapper.convertTo(externalID.getRelationship().value()));
             }
             
-            jsonFundingExternalIdentifiers.getFundingExternalIdentifier().add(jsonExternalIdentifier);
+            jsonExternalIdentifiers.getExternalIdentifier().add(jsonExternalIdentifier);
         }
         
-        return JsonUtils.convertToJsonString(jsonFundingExternalIdentifiers);
+        return JsonUtils.convertToJsonString(jsonExternalIdentifiers);
     }
 
     /**
@@ -70,20 +78,19 @@ public abstract class JSONFundingExternalIdentifiersMapperV3 {
             return null;
         }
 
-        JSONFundingExternalIdentifiers fundingExternalIdentifiers = JsonUtils.readObjectFromJsonString(source, JSONFundingExternalIdentifiers.class);
-        if (fundingExternalIdentifiers == null || fundingExternalIdentifiers.getFundingExternalIdentifier() == null) {
+        JSONExternalIdentifiers externalIdentifiers = JsonUtils.readObjectFromJsonString(source, JSONExternalIdentifiers.class);
+        if (externalIdentifiers == null || externalIdentifiers.getExternalIdentifier() == null) {
             return null;
         }
 
         ExternalIDs externalIDs = new ExternalIDs();
         
-        for (JSONExternalIdentifier externalIdentifier : fundingExternalIdentifiers.getFundingExternalIdentifier()) {
+        for (JSONExternalIdentifier externalIdentifier : externalIdentifiers.getExternalIdentifier()) {
             ExternalID id = new ExternalID();
             
             if (externalIdentifier.getType() == null) {
                 id.setType(FundingExternalIdentifierType.GRANT_NUMBER.value());
             } else {
-                // Maintained original logic: bypass typeMapper and lower-case directly
                 id.setType(externalIdentifier.getType().toLowerCase());
             }
             
@@ -94,12 +101,27 @@ public abstract class JSONFundingExternalIdentifiersMapperV3 {
 
             if (!PojoUtil.isEmpty(externalIdentifier.getValue())) {
                 id.setValue(externalIdentifier.getValue());
+                String normalised = norm.normalise(id.getType(), externalIdentifier.getValue());
+                
+                if (StringUtils.isNotBlank(normalised)) {
+                    id.setNormalized(new TransientNonEmptyString(normalised));
+                } else {
+                    id.setNormalizedError(new TransientError(
+                        localeManager.resolveMessage("transientError.normalization_failed.code"),
+                        localeManager.resolveMessage("transientError.normalization_failed.message", id.getType(), externalIdentifier.getValue())
+                    ));
+                }
             }
-
+            
             if (externalIdentifier.getRelationship() != null) {
-                // Re-engages the typeMapper for relationship resolution
                 String rel = typeMapper.convertFrom(externalIdentifier.getRelationship());
-                id.setRelationship(Relationship.fromValue(rel));
+                if (StringUtils.isNotBlank(rel)) {
+                    try {
+                        id.setRelationship(Relationship.fromValue(rel));
+                    } catch (IllegalArgumentException e) {
+                        id.setRelationship(null);
+                    }
+                }
             }
             
             externalIDs.getExternalIdentifier().add(id);

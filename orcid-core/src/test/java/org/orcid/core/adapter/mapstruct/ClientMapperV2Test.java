@@ -10,6 +10,7 @@ import java.util.SortedSet;
 import java.util.TreeSet;
 
 import org.junit.Test;
+import org.orcid.core.adapter.mapstruct.ClientMapperV2;
 import org.orcid.core.manager.EncryptionManager;
 import org.orcid.jaxb.model.client_v2.Client;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;

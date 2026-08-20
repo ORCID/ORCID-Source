@@ -6,6 +6,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import org.junit.Test;
+import org.orcid.core.adapter.mapstruct.PeerReviewMapperV3;
 import org.orcid.jaxb.model.v3.release.record.PeerReview;
 import org.orcid.persistence.jpa.entities.PeerReviewEntity;
 

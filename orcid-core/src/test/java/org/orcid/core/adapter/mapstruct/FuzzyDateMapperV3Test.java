@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 
 import org.junit.Test;
+import org.orcid.core.adapter.mapstruct.FuzzyDateMapperV3;
 import org.orcid.jaxb.model.v3.release.common.Day;
 import org.orcid.jaxb.model.v3.release.common.FuzzyDate;
 import org.orcid.jaxb.model.v3.release.common.Month;

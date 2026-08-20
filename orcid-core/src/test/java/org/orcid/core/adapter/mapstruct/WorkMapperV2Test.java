@@ -5,6 +5,7 @@ import static org.mockito.Mockito.RETURNS_DEEP_STUBS;
 import static org.mockito.Mockito.mock;
 
 import org.junit.Test;
+import org.orcid.core.adapter.mapstruct.WorkMapperV2;
 import org.orcid.jaxb.model.record.summary_v2.WorkSummary;
 import org.orcid.jaxb.model.record_v2.Work;
 import org.orcid.jaxb.model.record_v2.WorkType;

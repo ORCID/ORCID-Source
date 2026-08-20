@@ -9,10 +9,11 @@ import org.orcid.jaxb.model.record_v2.WorkContributors;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
-import ma.glasnost.orika.converter.BidirectionalConverter;
-import ma.glasnost.orika.metadata.Type;
-
-public class WorkContributorsConverter extends BidirectionalConverter<WorkContributors, String> {
+/**
+ * Plain, Orika-free converter for v2 WorkContributors.
+ * Converts WorkContributors <-> JSON string for DB storage.
+ */
+public class WorkContributorsConverter {
 
     private ContributorRoleConverter roleConverter;
 
@@ -20,13 +21,11 @@ public class WorkContributorsConverter extends BidirectionalConverter<WorkContri
         this.roleConverter = roleConverter;
     }
 
-    @Override
-    public String convertTo(WorkContributors source, Type<String> destinationType) {
+    public String convertTo(WorkContributors source) {
         return JsonUtils.convertToJsonString(source);
     }
 
-    @Override
-    public WorkContributors convertFrom(String source, Type<WorkContributors> destinationType) {
+    public WorkContributors convertFrom(String source) {
         // examine json tree before converting to work contributors
         JsonNode tree = JsonUtils.readTree(source);
         Iterator<JsonNode> contributors = tree.get("contributor").elements();

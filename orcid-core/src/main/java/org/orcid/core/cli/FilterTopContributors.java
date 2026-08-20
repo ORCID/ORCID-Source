@@ -72,7 +72,7 @@ public class FilterTopContributors {
         List<ContributorsRolesAndSequences> contributors = contributorUtils.getContributorsGroupedByOrcid(wse.getContributors().getContributor(), MAX_CONTRIBUTORS_FOR_UI);
         if (contributors.size() > 0) {
             try {
-                workEntity.setTopContributorsJson(contributorsRolesAndSequencesConverter.convertTo(contributors, null));
+                workEntity.setTopContributorsJson(contributorsRolesAndSequencesConverter.convertTo(contributors));
                 workDao.merge(workEntity);
                 logger.info(workEntity.getId() + " was processed");
                 workDao.flush();

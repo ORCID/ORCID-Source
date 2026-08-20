@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.junit.Test;
+import org.orcid.core.adapter.mapstruct.AdditionalInfoJsonMapper;
 
 public class AdditionalInfoJsonMapperTest {
 
