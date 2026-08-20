@@ -43,7 +43,7 @@ public class WorkContributorsConverterTest {
     @Test
     public void testConvertTo() {
         WorkContributors workContributors = getWorkContributors();
-        String json = workContributorsConverter.convertTo(workContributors, null);
+        String json = workContributorsConverter.convertTo(workContributors);
         assertTrue(json.contains("AUTHOR"));
         assertTrue(json.contains("CO_INVENTOR"));
         
@@ -61,7 +61,7 @@ public class WorkContributorsConverterTest {
     public void testConvertFrom() {
         // imagine all roles converted to author
         Mockito.when(mockContributorRoleConverter.toLegacyRoleName(Mockito.anyString())).thenReturn("AUTHOR");
-        WorkContributors workContributors = workContributorsConverter.convertFrom(getWorkContributorsJson(), null);
+        WorkContributors workContributors = workContributorsConverter.convertFrom(getWorkContributorsJson());
         assertNotNull(workContributors.getContributor());
         assertEquals(2, workContributors.getContributor().size());
         assertEquals(ContributorRole.AUTHOR, workContributors.getContributor().get(0).getContributorAttributes().getContributorRole());
@@ -69,7 +69,7 @@ public class WorkContributorsConverterTest {
         
         // imagine all roles not convertible
         Mockito.when(mockContributorRoleConverter.toLegacyRoleName(Mockito.anyString())).thenReturn(null);
-        workContributors = workContributorsConverter.convertFrom(getWorkContributorsJson(), null);
+        workContributors = workContributorsConverter.convertFrom(getWorkContributorsJson());
         assertNotNull(workContributors.getContributor());
         assertEquals(2, workContributors.getContributor().size());
         assertNull(workContributors.getContributor().get(0).getContributorAttributes().getContributorRole());

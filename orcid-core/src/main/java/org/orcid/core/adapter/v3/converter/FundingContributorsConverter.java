@@ -12,10 +12,11 @@ import org.orcid.core.contributors.roles.fundings.LegacyFundingContributorRole;
 import org.orcid.core.utils.JsonUtils;
 import org.orcid.jaxb.model.v3.release.record.FundingContributors;
 
-import ma.glasnost.orika.converter.BidirectionalConverter;
-import ma.glasnost.orika.metadata.Type;
-
-public class FundingContributorsConverter extends BidirectionalConverter<FundingContributors, String> {
+/**
+ * Plain, Orika-free converter for v3 FundingContributors.
+ * Converts FundingContributors <-> JSON string for DB storage.
+ */
+public class FundingContributorsConverter {
 
     private ContributorRoleConverter roleConverter;
     
@@ -23,8 +24,7 @@ public class FundingContributorsConverter extends BidirectionalConverter<Funding
         this.roleConverter = roleConverter;
     }
 
-    @Override
-    public String convertTo(FundingContributors source, Type<String> destinationType) {
+    public String convertTo(FundingContributors source) {
         // convert role to db format
         source.getContributor().forEach(c -> {
             if (c.getContributorAttributes() != null && c.getContributorAttributes().getContributorRole() != null) {
@@ -51,8 +51,7 @@ public class FundingContributorsConverter extends BidirectionalConverter<Funding
         return JsonUtils.convertToJsonString(source);
     }
 
-    @Override
-    public FundingContributors convertFrom(String source, Type<FundingContributors> destinationType) {
+    public FundingContributors convertFrom(String source) {
         FundingContributors fundingContributors = JsonUtils.readObjectFromJsonString(source, FundingContributors.class);
         fundingContributors.getContributor().forEach(c -> c.setCreditName("".equals(c.getCreditName()) ? null : c.getCreditName()));
         

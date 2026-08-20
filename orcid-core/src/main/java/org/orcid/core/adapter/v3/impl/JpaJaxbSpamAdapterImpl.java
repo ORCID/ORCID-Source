@@ -1,17 +1,14 @@
 package org.orcid.core.adapter.v3.impl;
 
 import org.orcid.core.adapter.v3.JpaJaxbSpamAdapter;
+import org.orcid.jaxb.model.v3.release.record.SourceType;
 import org.orcid.jaxb.model.v3.release.record.Spam;
 import org.orcid.persistence.jpa.entities.SpamEntity;
 
-import ma.glasnost.orika.MapperFacade;
-
 public class JpaJaxbSpamAdapterImpl implements JpaJaxbSpamAdapter {
 
-    private MapperFacade mapperFacade;
-
-    public void setMapperFacade(MapperFacade mapperFacade) {
-        this.mapperFacade = mapperFacade;
+    public void setMapperFacade(Object mapperFacade) {
+        // No-op: retained for backward-compatible Spring XML wiring during incremental Orika removal.
     }
 
     @Override
@@ -19,7 +16,12 @@ public class JpaJaxbSpamAdapterImpl implements JpaJaxbSpamAdapter {
         if (spam == null) {
             return null;
         }
-        return mapperFacade.map(spam, SpamEntity.class);
+        SpamEntity mapped = new SpamEntity();
+        mapped.setSpamCounter(spam.getSpamCounter());
+        if (spam.getSourceType() != null) {
+            mapped.setSourceType(org.orcid.persistence.jpa.entities.SourceType.valueOf(spam.getSourceType().name()));
+        }
+        return mapped;
     }
 
     @Override
@@ -27,7 +29,12 @@ public class JpaJaxbSpamAdapterImpl implements JpaJaxbSpamAdapter {
         if (spamEntity == null) {
             return null;
         }
-        return mapperFacade.map(spamEntity, Spam.class);
+        Spam mapped = new Spam();
+        mapped.setSpamCounter(spamEntity.getSpamCounter());
+        if (spamEntity.getSourceType() != null) {
+            mapped.setSourceType(SourceType.fromValue(spamEntity.getSourceType().name()));
+        }
+        return mapped;
     }
     
 }

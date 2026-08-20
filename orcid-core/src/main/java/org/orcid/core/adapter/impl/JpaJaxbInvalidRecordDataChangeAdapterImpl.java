@@ -1,20 +1,18 @@
 package org.orcid.core.adapter.impl;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.orcid.core.adapter.JpaJaxbInvalidRecordDataChangeAdapter;
 import org.orcid.model.record_correction.RecordCorrection;
 import org.orcid.persistence.jpa.entities.InvalidRecordDataChangeEntity;
 
-import ma.glasnost.orika.MapperFacade;
-
 public class JpaJaxbInvalidRecordDataChangeAdapterImpl implements JpaJaxbInvalidRecordDataChangeAdapter {
 
-    private MapperFacade mapperFacade;
-
-    public void setMapperFacade(MapperFacade mapperFacade) {
-        this.mapperFacade = mapperFacade;
+    public void setMapperFacade(Object mapperFacade) {
+        // No-op: retained for backward-compatible Spring XML wiring during incremental Orika removal.
     }
 
     @Override
@@ -22,7 +20,7 @@ public class JpaJaxbInvalidRecordDataChangeAdapterImpl implements JpaJaxbInvalid
         if (entity == null) {
             return null;
         }
-        return mapperFacade.map(entity, RecordCorrection.class);
+        return mapEntity(entity);
     }
 
     @Override
@@ -30,7 +28,20 @@ public class JpaJaxbInvalidRecordDataChangeAdapterImpl implements JpaJaxbInvalid
         if (entities == null) {
             return null;
         }
-        return mapperFacade.mapAsList(entities, RecordCorrection.class);
+        if (entities.isEmpty()) {
+            return Collections.emptyList();
+        }
+        return entities.stream().map(this::mapEntity).collect(Collectors.toList());
+    }
+
+    private RecordCorrection mapEntity(InvalidRecordDataChangeEntity entity) {
+        RecordCorrection mapped = new RecordCorrection();
+        mapped.setSequence(entity.getId());
+        mapped.setSqlUsedToUpdate(entity.getSqlUsedToUpdate());
+        mapped.setDescription(entity.getDescription());
+        mapped.setNumChanged(entity.getNumChanged());
+        mapped.setType(entity.getType());
+        return mapped;
     }
 
 }

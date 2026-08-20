@@ -156,7 +156,7 @@ public class AnonymizeWorksFromCSV {
                 }
                 List<ContributorsRolesAndSequences> topContributors = contributorUtils.getContributorsGroupedByOrcid(work.getWorkContributors().getContributor(), maxContributorsForUI);
                 if (topContributors.size() > 0) {
-                    workEntity.setTopContributorsJson(contributorsRolesAndSequencesConverter.convertTo(topContributors, null));
+                    workEntity.setTopContributorsJson(contributorsRolesAndSequencesConverter.convertTo(topContributors));
                 }
             } else {
                 workEntity.setContributorsJson("{\"contributor\":[]}");

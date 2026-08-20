@@ -2,18 +2,18 @@ package org.orcid.core.adapter.impl;
 
 import java.util.Date;
 
-import org.orcid.core.adapter.jsonidentifier.converter.ExternalIdentifierTypeConverter;
+import org.orcid.core.adapter.mapstruct.ExternalIdentifierTypeMapper;
 import org.orcid.persistence.jpa.entities.IdentifierTypeEntity;
 import org.orcid.pojo.IdentifierType;
 
 public class IdentifierTypePOJOConverter {
 
-    private ExternalIdentifierTypeConverter externalIdentifierTypeConverter = new ExternalIdentifierTypeConverter();
+    private ExternalIdentifierTypeMapper externalIdentifierTypeConverter = ExternalIdentifierTypeMapper.INSTANCE;
 
     public IdentifierTypeEntity fromPojo(IdentifierType id){
         IdentifierTypeEntity entity = new IdentifierTypeEntity();
         entity.setId(id.getPutCode());
-        entity.setName(externalIdentifierTypeConverter.convertTo(id.getName(),null));
+        entity.setName(externalIdentifierTypeConverter.convertTo(id.getName()));
         entity.setIsDeprecated(id.getDeprecated());
         entity.setResolutionPrefix(id.getResolutionPrefix());
         entity.setValidationRegex(id.getValidationRegex());   
@@ -26,7 +26,7 @@ public class IdentifierTypePOJOConverter {
     public IdentifierType fromEntity(IdentifierTypeEntity entity){
         IdentifierType id = new IdentifierType();
         id.setPutCode(entity.getId());
-        id.setName(externalIdentifierTypeConverter.convertFrom(entity.getName(),null));
+        id.setName(externalIdentifierTypeConverter.convertFrom(entity.getName()));
         id.setDeprecated(entity.getIsDeprecated());
         id.setResolutionPrefix(entity.getResolutionPrefix());
         id.setValidationRegex(entity.getValidationRegex());   

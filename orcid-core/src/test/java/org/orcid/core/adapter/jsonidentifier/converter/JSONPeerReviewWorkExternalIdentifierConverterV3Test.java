@@ -21,20 +21,26 @@ import org.orcid.persistence.jpa.entities.SourceEntity;
 
 public class JSONPeerReviewWorkExternalIdentifierConverterV3Test {
 
-    private JSONPeerReviewWorkExternalIdentifierConverterV3 converter = new JSONPeerReviewWorkExternalIdentifierConverterV3();
+    private final org.orcid.core.adapter.mapstruct.jsonidentifier.JSONPeerReviewWorkExternalIdentifierMapperV3 converter = newConverter();
+
+    private static org.orcid.core.adapter.mapstruct.jsonidentifier.JSONPeerReviewWorkExternalIdentifierMapperV3 newConverter() {
+        org.orcid.core.adapter.mapstruct.jsonidentifier.JSONPeerReviewWorkExternalIdentifierMapperV3 mapper = org.mapstruct.factory.Mappers.getMapper(org.orcid.core.adapter.mapstruct.jsonidentifier.JSONPeerReviewWorkExternalIdentifierMapperV3.class);
+        org.springframework.test.util.ReflectionTestUtils.setField(mapper, "typeMapper", org.orcid.core.adapter.mapstruct.jsonidentifier.ExternalIdentifierTypeMapper.INSTANCE);
+        return mapper;
+    }
 
     @Test
     public void testConvertTo() throws JAXBException {
         PeerReview peerReview = getPeerReview();
         assertEquals(
                 "{\"relationship\":\"SELF\",\"url\":{\"value\":\"http://orcid.org\"},\"workExternalIdentifierType\":\"DOI\",\"workExternalIdentifierId\":{\"content\":\"peer-review:subject-external-identifier-id\"}}",
-                converter.convertTo(peerReview.getSubjectExternalIdentifier(), null));
+                converter.convertTo(peerReview.getSubjectExternalIdentifier()));
     }
 
     @Test
     public void testConvertFrom() {
         PeerReviewEntity peerReview = getPeerReviewEntity();
-        ExternalID externalID = converter.convertFrom(peerReview.getSubjectExternalIdentifiersJson(), null);
+        ExternalID externalID = converter.convertFrom(peerReview.getSubjectExternalIdentifiersJson());
         assertNotNull(externalID);
         
         assertEquals("source-work-id", externalID.getType());

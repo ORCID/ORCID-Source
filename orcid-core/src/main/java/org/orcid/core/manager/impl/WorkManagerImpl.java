@@ -476,7 +476,7 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
             List<ContributorsRolesAndSequencesV2> topContributors = contributorUtils.getContributorsGroupedByOrcid(work.getWorkContributors().getContributor(),
                     maxContributorsForUI);
             if (topContributors.size() > 0) {
-                workEntity.setTopContributorsJson(contributorsRolesAndSequencesConverterV2.convertTo(topContributors, null));
+                workEntity.setTopContributorsJson(contributorsRolesAndSequencesConverterV2.convertTo(topContributors));
             }
         } else {
             workEntity.setContributorsJson("{\"contributor\":[]}");

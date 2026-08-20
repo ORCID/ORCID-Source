@@ -45,7 +45,7 @@ public class WorkContributorsConverterTest {
         Mockito.when(mockContributorRoleConverter.toDBRole(Mockito.anyString())).thenReturn("SOME-VALUE");
         
         WorkContributors workContributors = getWorkContributors();
-        String json = workContributorsConverter.convertTo(workContributors, null);
+        String json = workContributorsConverter.convertTo(workContributors);
         assertTrue(json.contains("SOME-VALUE"));
         assertTrue(json.contains("SOME-VALUE"));
         
@@ -61,7 +61,7 @@ public class WorkContributorsConverterTest {
         Mockito.when(mockContributorRoleConverter.toDBRole(Mockito.anyString())).thenReturn(null);
         
         WorkContributors workContributors = getWorkContributors();
-        workContributorsConverter.convertTo(workContributors, null);
+        workContributorsConverter.convertTo(workContributors);
     }
 
     /**
@@ -74,7 +74,7 @@ public class WorkContributorsConverterTest {
     public void testConvertFrom() {
         // imagine all roles converted to author
         Mockito.when(mockContributorRoleConverter.toRoleValue(Mockito.anyString())).thenReturn("some-value");
-        WorkContributors workContributors = workContributorsConverter.convertFrom(getWorkContributorsJson(), null);
+        WorkContributors workContributors = workContributorsConverter.convertFrom(getWorkContributorsJson());
         assertNotNull(workContributors.getContributor());
         assertEquals(2, workContributors.getContributor().size());
         assertEquals("some-value", workContributors.getContributor().get(0).getContributorAttributes().getContributorRole());

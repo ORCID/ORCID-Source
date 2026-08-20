@@ -10,6 +10,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
+import org.orcid.core.adapter.mapstruct.FundingContributorsMapperV3;
 import org.orcid.core.contributors.roles.ContributorRoleConverter;
 import org.orcid.core.contributors.roles.InvalidContributorRoleException;
 import org.orcid.core.contributors.roles.credit.CreditRole;
@@ -25,12 +26,12 @@ public class FundingContributorsConverterTest {
     @Mock
     private ContributorRoleConverter mockContributorRoleConverter;
 
-    @InjectMocks
-    private FundingContributorsConverter fundingContributorsConverter;
+    private FundingContributorsMapperV3 fundingContributorsConverter;
 
     @Before
     public void setUp() {
         MockitoAnnotations.initMocks(this);
+        fundingContributorsConverter = new FundingContributorsMapperV3(mockContributorRoleConverter);
     }
     
     /**
@@ -44,7 +45,7 @@ public class FundingContributorsConverterTest {
         Mockito.when(mockContributorRoleConverter.toDBRole(Mockito.anyString())).thenReturn("SOME-VALUE");
         
         FundingContributors fundingContributors = getFundingContributors();
-        String json = fundingContributorsConverter.convertTo(fundingContributors, null);
+        String json = fundingContributorsConverter.convertTo(fundingContributors);
         assertTrue(json.contains("SOME-VALUE"));
         assertTrue(json.contains("SOME-VALUE"));
         
@@ -60,14 +61,14 @@ public class FundingContributorsConverterTest {
         Mockito.when(mockContributorRoleConverter.toDBRole(Mockito.anyString())).thenReturn(null);
         
         FundingContributors fundingContributors = getFundingContributors();
-        fundingContributorsConverter.convertTo(fundingContributors, null);
+        fundingContributorsConverter.convertTo(fundingContributors);
     }
 
     @Test
     public void testConvertFrom() {
         // imagine all roles converted to author
         Mockito.when(mockContributorRoleConverter.toRoleValue(Mockito.anyString())).thenReturn("some-value");
-        FundingContributors fundingContributors = fundingContributorsConverter.convertFrom(getFundingContributorsJson(), null);
+        FundingContributors fundingContributors = fundingContributorsConverter.convertFrom(getFundingContributorsJson());
         assertNotNull(fundingContributors.getContributor());
         assertEquals(1, fundingContributors.getContributor().size());
         assertEquals("some-value", fundingContributors.getContributor().get(0).getContributorAttributes().getContributorRole());

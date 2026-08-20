@@ -12,12 +12,9 @@ import jakarta.xml.bind.JAXBContext;
 import jakarta.xml.bind.JAXBException;
 import jakarta.xml.bind.Unmarshaller;
 
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.orcid.core.locale.LocaleManager;
-import org.orcid.core.utils.v3.identifiers.PIDNormalizationService;
-import org.orcid.core.utils.v3.identifiers.PIDResolverService;
+import org.orcid.core.adapter.mapstruct.jsonidentifier.JSONWorkExternalIdentifiersMapperV3;
 import org.orcid.jaxb.model.common.Relationship;
 import org.orcid.jaxb.model.v3.release.common.Url;
 import org.orcid.jaxb.model.v3.release.record.ExternalID;
@@ -35,30 +32,20 @@ import org.springframework.test.context.ContextConfiguration;
 public class JSONWorkExternalIdentifiersConverterV3Test {
 
     @Resource
-    PIDNormalizationService norm;
-    @Resource
-    PIDResolverService resolver;
-    @Resource
-    LocaleManager localeManager;
-    private JSONWorkExternalIdentifiersConverterV3 converter;
+    private JSONWorkExternalIdentifiersMapperV3 converter;
 
-    @Before
-    public void initMocks(){
-        converter = new JSONWorkExternalIdentifiersConverterV3(norm, resolver, localeManager);
-    }
-    
     @Test
     public void testConvertTo() throws JAXBException {
         Work work = getWork();
         assertEquals(
                 "{\"workExternalIdentifier\":[{\"relationship\":\"SELF\",\"url\":{\"value\":\"http://orcid.org\"},\"workExternalIdentifierType\":\"AGR\",\"workExternalIdentifierId\":{\"content\":\"work:external-identifier-id\"}}]}",
-                converter.convertTo(work.getExternalIdentifiers(), null));
+                converter.convertTo(work.getExternalIdentifiers()));
     }
 
     @Test
     public void testConvertFrom() throws IllegalAccessException {
         WorkEntity workEntity = getWorkEntity();
-        ExternalIDs entityIDs = converter.convertFrom(workEntity.getExternalIdentifiersJson(), null);
+        ExternalIDs entityIDs = converter.convertFrom(workEntity.getExternalIdentifiersJson());
         assertEquals(1, entityIDs.getExternalIdentifier().size());
 
         ExternalID externalID = entityIDs.getExternalIdentifier().get(0);
@@ -72,7 +59,7 @@ public class JSONWorkExternalIdentifiersConverterV3Test {
     public void testConvertFromNormalize() throws IllegalAccessException {
         WorkEntity workEntity = getWorkEntity();
         workEntity.setExternalIdentifiersJson("{\"workExternalIdentifier\":[{\"workExternalIdentifierType\":\"DOI\",\"workExternalIdentifierId\":{\"content\":\"doi:10.1/123\"}}]}");
-        ExternalIDs entityIDs = converter.convertFrom(workEntity.getExternalIdentifiersJson(), null);
+        ExternalIDs entityIDs = converter.convertFrom(workEntity.getExternalIdentifiersJson());
         assertEquals(1, entityIDs.getExternalIdentifier().size());
         ExternalID externalID = entityIDs.getExternalIdentifier().get(0);
         assertEquals("doi:10.1/123", externalID.getValue());
@@ -85,7 +72,7 @@ public class JSONWorkExternalIdentifiersConverterV3Test {
     public void testConvertFromNormalizeError() throws IllegalAccessException {
         WorkEntity workEntity = getWorkEntity();
         workEntity.setExternalIdentifiersJson("{\"workExternalIdentifier\":[{\"workExternalIdentifierType\":\"DOI\",\"workExternalIdentifierId\":{\"content\":\"123\"}}]}");
-        ExternalIDs entityIDs = converter.convertFrom(workEntity.getExternalIdentifiersJson(), null);
+        ExternalIDs entityIDs = converter.convertFrom(workEntity.getExternalIdentifiersJson());
         assertEquals(1, entityIDs.getExternalIdentifier().size());
         ExternalID externalID = entityIDs.getExternalIdentifier().get(0);
         assertEquals("123", externalID.getValue());
@@ -99,7 +86,7 @@ public class JSONWorkExternalIdentifiersConverterV3Test {
     @Test
     public void testConverFromtWithIdThatBreaksUrlValidation() {
         String extIds = "{\"workExternalIdentifier\":[{\"workExternalIdentifierType\":\"DOI\",\"workExternalIdentifierId\":{\"content\":\"10.00000/test.v%vi%i.0000\"}}]}";
-        ExternalIDs entityIDs = converter.convertFrom(extIds, null);
+        ExternalIDs entityIDs = converter.convertFrom(extIds);
         assertNotNull(entityIDs.getExternalIdentifier());
         ExternalID eid0 = entityIDs.getExternalIdentifier().get(0);
         assertNotNull(eid0);
@@ -116,7 +103,7 @@ public class JSONWorkExternalIdentifiersConverterV3Test {
     @Test
     public void testConverFromtWithUrlThatBreaksUrlValidation() {
         String extIds = "{\"workExternalIdentifier\":[{\"relationship\":\"SELF\",\"url\":{\"value\":\"http://doi.org/10.00000/test.v%vi%i.0000\"},\"workExternalIdentifierType\":\"DOI\",\"workExternalIdentifierId\":{\"content\":\"10.00000/test.v%vi%i.0000\"}}]}";
-        ExternalIDs entityIDs = converter.convertFrom(extIds, null);
+        ExternalIDs entityIDs = converter.convertFrom(extIds);
         assertNotNull(entityIDs.getExternalIdentifier());
         ExternalID eid0 = entityIDs.getExternalIdentifier().get(0);
         assertNotNull(eid0);
@@ -140,10 +127,10 @@ public class JSONWorkExternalIdentifiersConverterV3Test {
         ids.getExternalIdentifier().add(eid0);
         String expected1 = "{\"workExternalIdentifier\":[{\"relationship\":\"SELF\",\"url\":null,\"workExternalIdentifierType\":\"DOI\",\"workExternalIdentifierId\":{\"content\":\"10.00000/test.v%vi%i.0000\"}}]}";
         String expected2 = "{\"workExternalIdentifier\":[{\"relationship\":\"SELF\",\"url\":{\"value\":\"http://doi.org/10.00000/test.v%vi%i.0000\"},\"workExternalIdentifierType\":\"DOI\",\"workExternalIdentifierId\":{\"content\":\"10.00000/test.v%vi%i.0000\"}}]}";
-        assertEquals(expected1, converter.convertTo(ids, null));
+        assertEquals(expected1, converter.convertTo(ids));
         // Set the URL
         eid0.setUrl(new Url("http://doi.org/10.00000/test.v%vi%i.0000"));
-        assertEquals(expected2, converter.convertTo(ids, null));        
+        assertEquals(expected2, converter.convertTo(ids));        
     }
 
     private Work getWork() throws JAXBException {

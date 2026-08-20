@@ -13,7 +13,6 @@ import java.util.Set;
 import jakarta.annotation.Resource;
 
 import org.apache.commons.lang3.StringUtils;
-import org.orcid.core.adapter.jsonidentifier.converter.JSONWorkExternalIdentifiersConverterV3;
 import org.orcid.core.adapter.v3.converter.ContributorsRolesAndSequencesConverter;
 import org.orcid.core.contributors.roles.works.WorkContributorRoleConverter;
 import org.orcid.core.exception.ExceedMaxNumberOfElementsException;
@@ -111,6 +110,9 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
 
     @Resource
     private SourceEntityUtils sourceEntityUtils;
+
+    @Resource
+    private org.orcid.core.adapter.mapstruct.jsonidentifier.JSONWorkExternalIdentifiersMapperV3 jsonWorkExternalIdentifiersMapperV3;
 
     @Value("${org.orcid.core.work.contributors.ui.max:50}")
     private int maxContributorsForUI;
@@ -488,7 +490,6 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
     @Transactional
     public void createNewWorkGroup(List<Long> workIds, String orcid) throws MissingGroupableExternalIDException {
         List<MinimizedWorkEntity> works = workEntityCacheManager.retrieveMinimizedWorks(orcid, workIds, getLastModified(orcid));
-        JSONWorkExternalIdentifiersConverterV3 externalIdConverter = new JSONWorkExternalIdentifiersConverterV3(norm, resolver, localeManager);
         ExternalIDs allExternalIDs = new ExternalIDs();
         List<MinimizedWorkEntity> userVersions = new ArrayList<>();
         MinimizedWorkEntity userPreferred = null;
@@ -506,7 +507,7 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
             }
 
             if (work.getExternalIdentifiersJson() != null) {
-                ExternalIDs externalIDs = externalIdConverter.convertFrom(work.getExternalIdentifiersJson(), null);
+                ExternalIDs externalIDs = jsonWorkExternalIdentifiersMapperV3.convertFrom(work.getExternalIdentifiersJson());
                 for (ExternalID externalID : externalIDs.getExternalIdentifier()) {
                     if (!allExternalIDs.getExternalIdentifier().contains(externalID)) {
                         allExternalIDs.getExternalIdentifier().add(externalID);
@@ -523,7 +524,7 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
             throw new MissingGroupableExternalIDException();
         }
 
-        String externalIDsJson = externalIdConverter.convertTo(allExternalIDs, null);
+        String externalIDsJson = jsonWorkExternalIdentifiersMapperV3.convertTo(allExternalIDs);
         if (!userVersions.isEmpty()) {
             for (MinimizedWorkEntity userVersion : userVersions) {
                 WorkEntity userVersionFullEntity = workDao.getWork(orcid, userVersion.getId());
@@ -676,7 +677,7 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
             List<ContributorsRolesAndSequences> topContributors = contributorUtils.getContributorsGroupedByOrcid(work.getWorkContributors().getContributor(),
                     maxContributorsForUI);
             if (topContributors.size() > 0) {
-                workEntity.setTopContributorsJson(contributorsRolesAndSequencesConverter.convertTo(topContributors, null));
+                workEntity.setTopContributorsJson(contributorsRolesAndSequencesConverter.convertTo(topContributors));
             }
         } else {
             workEntity.setContributorsJson("{\"contributor\":[]}");
@@ -696,7 +697,7 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
                 }
             });
         }
-        return contributorsRolesAndSequencesConverter.convertTo(work.getContributorsGroupedByOrcid(), null);
+        return contributorsRolesAndSequencesConverter.convertTo(work.getContributorsGroupedByOrcid());
     }
 
     private String getSourceName(Source activeSource) {

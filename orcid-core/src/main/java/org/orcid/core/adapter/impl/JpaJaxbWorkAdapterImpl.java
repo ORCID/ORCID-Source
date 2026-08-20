@@ -9,8 +9,6 @@ import org.orcid.jaxb.model.record_v2.Work;
 import org.orcid.persistence.jpa.entities.MinimizedWorkEntity;
 import org.orcid.persistence.jpa.entities.WorkEntity;
 
-import ma.glasnost.orika.MapperFacade;
-
 /**
  * 
  * @author Will Simpson
@@ -18,10 +16,10 @@ import ma.glasnost.orika.MapperFacade;
  */
 public class JpaJaxbWorkAdapterImpl implements JpaJaxbWorkAdapter {
 
-    private MapperFacade mapperFacade;
+    private final MapperFacadeSupport mapperFacade = new MapperFacadeSupport();
 
-    public void setMapperFacade(MapperFacade mapperFacade) {
-        this.mapperFacade = mapperFacade;
+    public void setMapperFacade(Object mapperFacade) {
+        this.mapperFacade.setMapperFacade(mapperFacade);
     }
 
     @Override

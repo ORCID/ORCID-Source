@@ -3,20 +3,19 @@ package org.orcid.core.adapter.v3.impl;
 import java.util.Collection;
 import java.util.List;
 
+import org.orcid.core.adapter.impl.MapperFacadeSupport;
 import org.orcid.core.adapter.v3.JpaJaxbExternalIdentifierAdapter;
 import org.orcid.jaxb.model.common.Relationship;
 import org.orcid.jaxb.model.v3.release.record.PersonExternalIdentifier;
 import org.orcid.jaxb.model.v3.release.record.PersonExternalIdentifiers;
 import org.orcid.persistence.jpa.entities.ExternalIdentifierEntity;
 
-import ma.glasnost.orika.MapperFacade;
-
 public class JpaJaxbExternalIdentifierAdapterImpl implements JpaJaxbExternalIdentifierAdapter {
 
-    private MapperFacade mapperFacade;
+    private final MapperFacadeSupport mapperFacade = new MapperFacadeSupport();
 
-    public void setMapperFacade(MapperFacade mapperFacade) {
-        this.mapperFacade = mapperFacade;
+    public void setMapperFacade(Object mapperFacade) {
+        this.mapperFacade.setMapperFacade(mapperFacade);
     }
 
     @Override

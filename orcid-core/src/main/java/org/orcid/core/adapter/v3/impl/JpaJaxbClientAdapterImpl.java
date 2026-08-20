@@ -3,19 +3,18 @@ package org.orcid.core.adapter.v3.impl;
 import java.util.Collection;
 import java.util.Set;
 
+import org.orcid.core.adapter.impl.MapperFacadeSupport;
 import org.orcid.core.adapter.v3.JpaJaxbClientAdapter;
 import org.orcid.jaxb.model.v3.release.client.Client;
 import org.orcid.jaxb.model.v3.release.client.ClientSummary;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 
-import ma.glasnost.orika.MapperFacade;
-
 public class JpaJaxbClientAdapterImpl implements JpaJaxbClientAdapter {
 
-    private MapperFacade mapperFacade;
+    private final MapperFacadeSupport mapperFacade = new MapperFacadeSupport();
 
-    public void setMapperFacade(MapperFacade mapperFacade) {
-        this.mapperFacade = mapperFacade;
+    public void setMapperFacade(Object mapperFacade) {
+        this.mapperFacade.setMapperFacade(mapperFacade);
     }
 
     @Override

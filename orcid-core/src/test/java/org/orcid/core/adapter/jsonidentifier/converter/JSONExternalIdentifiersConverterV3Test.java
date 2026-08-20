@@ -28,14 +28,17 @@ public class JSONExternalIdentifiersConverterV3Test {
     @Mock
     private LocaleManager localeManager;
     
-    private JSONExternalIdentifiersConverterV3 converter;
+    private org.orcid.core.adapter.mapstruct.jsonidentifier.JSONExternalIdentifiersMapperV3 converter;
     
     @Before
     public void before() {
         MockitoAnnotations.initMocks(this);
         Mockito.when(norm.normalise(Mockito.anyString(), Mockito.anyString())).thenReturn("blah");
         Mockito.when(localeManager.resolveMessage(Mockito.anyString(), Mockito.any())).thenReturn("blah");
-        converter  = new JSONExternalIdentifiersConverterV3(norm, localeManager);
+        converter = org.mapstruct.factory.Mappers.getMapper(org.orcid.core.adapter.mapstruct.jsonidentifier.JSONExternalIdentifiersMapperV3.class);
+        org.springframework.test.util.ReflectionTestUtils.setField(converter, "norm", norm);
+        org.springframework.test.util.ReflectionTestUtils.setField(converter, "localeManager", localeManager);
+        org.springframework.test.util.ReflectionTestUtils.setField(converter, "typeMapper", org.orcid.core.adapter.mapstruct.jsonidentifier.ExternalIdentifierTypeMapper.INSTANCE);
     }
 
     @Test
@@ -43,12 +46,12 @@ public class JSONExternalIdentifiersConverterV3Test {
         Education education = getEducation();
         assertEquals(
                 "{\"externalIdentifier\":[{\"type\":\"GRANT_NUMBER\",\"value\":\"external-identifier-value\",\"url\":{\"value\":\"http://tempuri.org\"},\"relationship\":\"SELF\"},{\"type\":\"GRANT_NUMBER\",\"value\":\"external-identifier-value2\",\"url\":{\"value\":\"http://tempuri.org/2\"},\"relationship\":\"SELF\"}]}",
-                converter.convertTo(education.getExternalIdentifiers(), null));
+                converter.convertTo(education.getExternalIdentifiers()));
     }
 
     @Test
     public void testConvertFrom() {
-        ExternalIDs externalIDs = converter.convertFrom("{\"externalIdentifier\":[{\"type\":\"GRANT_NUMBER\",\"value\":\"external-identifier-value\",\"url\":{\"value\":\"http://tempuri.org\"},\"relationship\":\"SELF\"},{\"type\":\"GRANT_NUMBER\",\"value\":\"external-identifier-value2\",\"url\":{\"value\":\"http://tempuri.org/2\"},\"relationship\":\"SELF\"}]}", null);
+        ExternalIDs externalIDs = converter.convertFrom("{\"externalIdentifier\":[{\"type\":\"GRANT_NUMBER\",\"value\":\"external-identifier-value\",\"url\":{\"value\":\"http://tempuri.org\"},\"relationship\":\"SELF\"},{\"type\":\"GRANT_NUMBER\",\"value\":\"external-identifier-value2\",\"url\":{\"value\":\"http://tempuri.org/2\"},\"relationship\":\"SELF\"}]}");
         assertNotNull(externalIDs);
         assertEquals(2, externalIDs.getExternalIdentifier().size());
         

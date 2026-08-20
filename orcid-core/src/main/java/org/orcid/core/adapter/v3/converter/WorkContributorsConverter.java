@@ -21,21 +21,21 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import ma.glasnost.orika.converter.BidirectionalConverter;
-import ma.glasnost.orika.metadata.Type;
-
-public class WorkContributorsConverter extends BidirectionalConverter<WorkContributors, String> {
+/**
+ * Plain, Orika-free converter for v3 WorkContributors.
+ * Converts WorkContributors <-> JSON string for DB storage.
+ */
+public class WorkContributorsConverter {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(WorkContributorsConverter.class);
-	
+
     private ContributorRoleConverter roleConverter;
 
     public WorkContributorsConverter(ContributorRoleConverter roleConverter) {
         this.roleConverter = roleConverter;
     }
 
-    @Override
-    public String convertTo(WorkContributors source, Type<String> destinationType) {
+    public String convertTo(WorkContributors source) {
         // convert role to db format
         source.getContributor().forEach(c -> {
             if (c.getContributorAttributes() != null && c.getContributorAttributes().getContributorRole() != null) {
@@ -62,8 +62,7 @@ public class WorkContributorsConverter extends BidirectionalConverter<WorkContri
         return JsonUtils.convertToJsonString(source);
     }
 
-    @Override
-    public WorkContributors convertFrom(String source, Type<WorkContributors> destinationType) {
+    public WorkContributors convertFrom(String source) {
         WorkContributors workContributors = JsonUtils.readObjectFromJsonString(source, WorkContributors.class);
         
         // convert role to API format

@@ -8,14 +8,12 @@ import org.orcid.jaxb.model.client_v2.Client;
 import org.orcid.jaxb.model.client_v2.ClientSummary;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 
-import ma.glasnost.orika.MapperFacade;
-
 public class JpaJaxbClientAdapterImpl implements JpaJaxbClientAdapter {
 
-    private MapperFacade mapperFacade;
+    private final MapperFacadeSupport mapperFacade = new MapperFacadeSupport();
 
-    public void setMapperFacade(MapperFacade mapperFacade) {
-        this.mapperFacade = mapperFacade;
+    public void setMapperFacade(Object mapperFacade) {
+        this.mapperFacade.setMapperFacade(mapperFacade);
     }
 
     @Override

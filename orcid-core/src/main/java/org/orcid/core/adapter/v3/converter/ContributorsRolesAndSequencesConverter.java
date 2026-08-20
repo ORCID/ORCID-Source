@@ -3,10 +3,7 @@ package org.orcid.core.adapter.v3.converter;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import ma.glasnost.orika.converter.BidirectionalConverter;
-import ma.glasnost.orika.metadata.Type;
 import org.orcid.core.contributors.roles.ContributorRoleConverter;
-import org.orcid.core.contributors.roles.ContributorRoleConverterImpl;
 import org.orcid.core.contributors.roles.credit.CreditRole;
 import org.orcid.core.utils.JsonUtils;
 import org.orcid.core.utils.v3.ContributorUtils;
@@ -20,20 +17,21 @@ import jakarta.annotation.Resource;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ContributorsRolesAndSequencesConverter extends BidirectionalConverter<List<ContributorsRolesAndSequences>, String> {
+/**
+ * Plain, Orika-free converter for serializing/deserializing ContributorsRolesAndSequences objects.
+ */
+public class ContributorsRolesAndSequencesConverter {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ContributorsRolesAndSequencesConverter.class);
 
     @Resource(name = "workContributorRoleConverter")
     private ContributorRoleConverter workContributorRoleConverter;
 
-    @Override
-    public String convertTo(List<ContributorsRolesAndSequences> source, Type<String> destinationType) {
+    public String convertTo(List<ContributorsRolesAndSequences> source) {
         return JsonUtils.convertToJsonString(source);
     }
 
-    @Override
-    public List<ContributorsRolesAndSequences> convertFrom(String source, Type<List<ContributorsRolesAndSequences>> destinationType) {
+    public List<ContributorsRolesAndSequences> convertFrom(String source) {
         return null;
     }
 

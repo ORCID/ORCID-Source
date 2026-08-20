@@ -3,18 +3,16 @@ package org.orcid.core.adapter.impl;
 import java.util.Collection;
 import java.util.List;
 
-import ma.glasnost.orika.MapperFacade;
-
 import org.orcid.core.adapter.JpaJaxbEmailAdapter;
 import org.orcid.jaxb.model.record_v2.Email;
 import org.orcid.persistence.jpa.entities.EmailEntity;
 
 public class JpaJaxbEmailAdapterImpl implements JpaJaxbEmailAdapter {
 
-    private MapperFacade mapperFacade;
+    private final MapperFacadeSupport mapperFacade = new MapperFacadeSupport();
     
-    public void setMapperFacade(MapperFacade mapperFacade) {
-        this.mapperFacade = mapperFacade;
+    public void setMapperFacade(Object mapperFacade) {
+        this.mapperFacade.setMapperFacade(mapperFacade);
     }
     
     @Override

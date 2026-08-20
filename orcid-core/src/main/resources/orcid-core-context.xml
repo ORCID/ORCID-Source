@@ -23,7 +23,7 @@
 		base-package="org.orcid.core.manager.validator, org.orcid.core.manager.impl, org.orcid.core.oauth.service,
 		org.orcid.core.security, org.orcid.core.messaging, org.orcid.core.togglz, org.orcid.core.utils.v3.identifiers,
 		org.orcid.core.groupIds, org.orcid.core.solr, org.orcid.core.orgs, org.orcid.core.contributors,
-		org.orcid.core.oauth.authorizationServer" />
+		org.orcid.core.oauth.authorizationServer, org.orcid.core.adapter.mapstruct" />
 	<aop:aspectj-autoproxy proxy-target-class="true" />
 	
     <context:mbean-server />
@@ -906,7 +906,6 @@
     
     <!-- v3 adapters -->
 	<bean id="mapperFacadeFactoryV3" class="org.orcid.core.adapter.v3.impl.MapperFacadeFactory" depends-on="PIDNormalizationService">
-		<constructor-arg ref="sourceEntityUtils" />
 	</bean>
     <bean id="mapperFacadeV3" factory-bean="&amp;mapperFacadeFactoryV3" factory-method="getObject"/>
     <bean id="jpaJaxbNotificationAdapterV3" class="org.orcid.core.adapter.v3.impl.JpaJaxbNotificationAdapterImpl">
@@ -1171,12 +1170,6 @@
         <constructor-arg ref="workContributorRoleConverter" />
     </bean>
     
-    <bean id="jsonWorkExternalIdentifiersConverterV3" class="org.orcid.core.adapter.jsonidentifier.converter.JSONWorkExternalIdentifiersConverterV3">
-        <constructor-arg ref="PIDNormalizationService" />
-        <constructor-arg ref="PIDResolverService" />
-        <constructor-arg ref="localeManager" />
-    </bean>
-
 	<bean id="contributorsRolesAndSequencesConverter" class="org.orcid.core.adapter.v3.converter.ContributorsRolesAndSequencesConverter" />
 
 	<bean id="contributorsRolesAndSequencesConverterV2" class="org.orcid.core.adapter.v3.converter.ContributorsRolesAndSequencesConverterV2"/>		
