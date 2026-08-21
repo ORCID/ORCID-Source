@@ -1,7 +1,9 @@
 package org.orcid.frontend.web.controllers;
 
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
+import java.nio.charset.StandardCharsets;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -42,6 +44,7 @@ import org.orcid.frontend.web.pagination.Page;
 import org.orcid.frontend.web.pagination.ResearchResourcePaginator;
 import org.orcid.frontend.web.pagination.WorksPaginator;
 import org.orcid.frontend.web.util.LanguagesMap;
+import org.orcid.frontend.web.util.StaticShellService;
 import org.orcid.jaxb.model.message.OrcidType;
 import org.orcid.jaxb.model.v3.release.common.Visibility;
 import org.orcid.jaxb.model.v3.release.groupid.GroupIdRecord;
@@ -87,6 +90,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.context.request.ServletWebRequest;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.RedirectView;
 
@@ -144,6 +148,9 @@ public class PublicProfileController extends BaseWorkspaceController {
     @Resource(name = "contributorUtilsV3")
     private ContributorUtils contributorUtils;
 
+    @Resource
+    private StaticShellService staticShellService;
+
     @Value("${org.orcid.core.work.contributors.ui.max:50}")
     private int maxContributorsForUI;
     
@@ -169,7 +176,7 @@ public class PublicProfileController extends BaseWorkspaceController {
     @RequestMapping(value = { "/{orcid:(?:\\d{4}-){3,}\\d{3}[\\dX]}", "/{orcid:(?:\\d{4}-){3,}\\d{3}[\\dX]}/print" })
     public ModelAndView publicPreview(HttpServletRequest request, HttpServletResponse response, @RequestParam(value = "page", defaultValue = "1") int pageNo,
             @RequestParam(value = "v", defaultValue = "0") int v, @RequestParam(value = "maxResults", defaultValue = "15") int maxResults,
-            @PathVariable("orcid") String orcid) {
+            @PathVariable("orcid") String orcid) throws IOException {
 
         ProfileEntity profile = null;
 
@@ -181,15 +188,14 @@ public class PublicProfileController extends BaseWorkspaceController {
 
         Long lastModifiedTime = getLastModifiedTime(orcid);
 
-        ModelAndView mav = null;
-        if (request.getRequestURI().contains("/print")) {
-            mav = new ModelAndView("print_public_record");
-            mav.addObject("hideSupportWidget", true);
-            mav.addObject("noIndex", true);
-        } else {
-            mav = new ModelAndView("public_profile_v3");
+        if (!request.getRequestURI().contains("/print")) {
+            return serveAngularShell(request, response, lastModifiedTime);
         }
-        
+
+        ModelAndView mav = new ModelAndView("print_public_record");
+        mav.addObject("hideSupportWidget", true);
+        mav.addObject("noIndex", true);
+
         if (!domainsAllowingRobots.contains(orcidUrlManager.getBaseDomainRmProtocall())) {
             mav.addObject("noIndex", true);
         }
@@ -236,6 +242,32 @@ public class PublicProfileController extends BaseWorkspaceController {
             mav.addObject("ogDescription",  orcidDescription2 );
         }
         return mav;
+    }
+
+    /**
+     * Serves the Angular shell for the public record page with conditional GET
+     * support: Last-Modified is the record's last modified date and requests
+     * carrying a fresh If-Modified-Since get a 304 without a body (PD-6059).
+     */
+    private ModelAndView serveAngularShell(HttpServletRequest request, HttpServletResponse response, Long lastModifiedTime) throws IOException {
+        // no-cache = cache but always revalidate; deliberately no ETag since
+        // Cloudflare has been observed stripping it
+        response.setHeader("Cache-Control", "no-cache");
+        if (lastModifiedTime != null && lastModifiedTime > 0) {
+            ServletWebRequest webRequest = new ServletWebRequest(request, response);
+            if (webRequest.checkNotModified(lastModifiedTime)) {
+                return null;
+            }
+        }
+        // The body varies on the locale_v3 cookie but the validator does not; safe
+        // because no-cache forces revalidation and crawlers do not send the cookie
+        byte[] body = staticShellService.getShellHtml(localeManager.getLocale()).getBytes(StandardCharsets.UTF_8);
+        response.setContentType("text/html;charset=UTF-8");
+        response.setContentLength(body.length);
+        if (!"HEAD".equals(request.getMethod())) {
+            response.getOutputStream().write(body);
+        }
+        return null;
     }
 
     @RequestMapping(value = "/{orcid:(?:\\d{4}-){3,}\\d{3}[\\dX]}/userInfo.json", method = RequestMethod.GET)
