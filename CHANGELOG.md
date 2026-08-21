@@ -1,3 +1,9 @@
+## v3.0.43 - 2026-08-21
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.0.42...v3.0.43)
+
+- [#7646](https://github.com/ORCID/ORCID-Source/pull/7646): PD-5900 add the OAUTH_BACKUP_EMAIL_INTERSTITIAL togglz
+
 ## v3.0.42 - 2026-08-19
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.0.41...v3.0.42)
