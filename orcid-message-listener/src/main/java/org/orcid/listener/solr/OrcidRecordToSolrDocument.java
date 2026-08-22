@@ -162,6 +162,7 @@ public class OrcidRecordToSolrDocument {
             Map<String, List<String>> partOf = new HashMap<String, List<String>>();
             Map<String, List<String>> self = new HashMap<String, List<String>>();
             Map<String, List<String>> versionOf = new HashMap<String, List<String>>();
+            Map<String, List<String>> fundedBy = new HashMap<String, List<String>>();
 
             if (record.getActivitiesSummary() != null && record.getActivitiesSummary().getWorks() != null
                     && record.getActivitiesSummary().getWorks().getWorkGroup() != null) {
@@ -193,6 +194,22 @@ public class OrcidRecordToSolrDocument {
                                         }
                                         if (!partOf.get(id.getType() + SolrConstants.DYNAMIC_PART_OF).contains(id.getValue())) {
                                             partOf.get(id.getType() + SolrConstants.DYNAMIC_PART_OF).add(id.getValue());
+                                        }
+                                    }
+                                    if (Relationship.VERSION_OF.equals(id.getRelationship())) {
+                                        if (!versionOf.containsKey(id.getType() + SolrConstants.DYNAMIC_VERSION_OF)) {
+                                            versionOf.put(id.getType() + SolrConstants.DYNAMIC_VERSION_OF, new ArrayList<String>());
+                                        }
+                                        if (!versionOf.get(id.getType() + SolrConstants.DYNAMIC_VERSION_OF).contains(id.getValue())) {
+                                            versionOf.get(id.getType() + SolrConstants.DYNAMIC_VERSION_OF).add(id.getValue());
+                                        }
+                                    }
+                                    if (Relationship.FUNDED_BY.equals(id.getRelationship())) {
+                                        if (!fundedBy.containsKey(id.getType() + SolrConstants.DYNAMIC_FUNDED_BY)) {
+                                            fundedBy.put(id.getType() + SolrConstants.DYNAMIC_FUNDED_BY, new ArrayList<String>());
+                                        }
+                                        if (!fundedBy.get(id.getType() + SolrConstants.DYNAMIC_FUNDED_BY).contains(id.getValue())) {
+                                            fundedBy.get(id.getType() + SolrConstants.DYNAMIC_FUNDED_BY).add(id.getValue());
                                         }
                                     }
                                 }
@@ -295,6 +312,13 @@ public class OrcidRecordToSolrDocument {
                                     if (!versionOf.get(id.getType() + SolrConstants.DYNAMIC_VERSION_OF).contains(id.getValue())) {
                                         versionOf.get(id.getType() + SolrConstants.DYNAMIC_VERSION_OF).add(id.getValue());
                                     }
+                                } else if (org.orcid.jaxb.model.common.Relationship.FUNDED_BY.equals(id.getRelationship())) {
+                                    if (!fundedBy.containsKey(id.getType() + SolrConstants.DYNAMIC_FUNDED_BY)) {
+                                        fundedBy.put(id.getType() + SolrConstants.DYNAMIC_FUNDED_BY, new ArrayList<String>());
+                                    }
+                                    if (!fundedBy.get(id.getType() + SolrConstants.DYNAMIC_FUNDED_BY).contains(id.getValue())) {
+                                        fundedBy.get(id.getType() + SolrConstants.DYNAMIC_FUNDED_BY).add(id.getValue());
+                                    }
                                 }
                             }
                         }
@@ -356,6 +380,13 @@ public class OrcidRecordToSolrDocument {
                                     if (!versionOf.get(id.getType() + SolrConstants.DYNAMIC_VERSION_OF).contains(id.getValue())) {
                                         versionOf.get(id.getType() + SolrConstants.DYNAMIC_VERSION_OF).add(id.getValue());
                                     }
+                                } else if (org.orcid.jaxb.model.common.Relationship.FUNDED_BY.equals(id.getRelationship())) {
+                                    if (!fundedBy.containsKey(id.getType() + SolrConstants.DYNAMIC_FUNDED_BY)) {
+                                        fundedBy.put(id.getType() + SolrConstants.DYNAMIC_FUNDED_BY, new ArrayList<String>());
+                                    }
+                                    if (!fundedBy.get(id.getType() + SolrConstants.DYNAMIC_FUNDED_BY).contains(id.getValue())) {
+                                        fundedBy.get(id.getType() + SolrConstants.DYNAMIC_FUNDED_BY).add(id.getValue());
+                                    }
                                 }
                             }
                         }
@@ -405,6 +436,13 @@ public class OrcidRecordToSolrDocument {
                                         }
                                         if (!versionOf.get(id.getType() + SolrConstants.DYNAMIC_VERSION_OF).contains(id.getValue())) {
                                             versionOf.get(id.getType() + SolrConstants.DYNAMIC_VERSION_OF).add(id.getValue());
+                                        }
+                                    } else if (org.orcid.jaxb.model.common.Relationship.FUNDED_BY.equals(id.getRelationship())) {
+                                        if (!fundedBy.containsKey(id.getType() + SolrConstants.DYNAMIC_FUNDED_BY)) {
+                                            fundedBy.put(id.getType() + SolrConstants.DYNAMIC_FUNDED_BY, new ArrayList<String>());
+                                        }
+                                        if (!fundedBy.get(id.getType() + SolrConstants.DYNAMIC_FUNDED_BY).contains(id.getValue())) {
+                                            fundedBy.get(id.getType() + SolrConstants.DYNAMIC_FUNDED_BY).add(id.getValue());
                                         }
                                     }
                                 }
@@ -658,10 +696,11 @@ public class OrcidRecordToSolrDocument {
                 }
             }
 
-            // Now add all self, part of and version of identifiers
+            // Now add all self, part of, version of and funded by identifiers
             profileIndexDocument.setSelfIds(self);
             profileIndexDocument.setPartOfIds(partOf);
             profileIndexDocument.setVersionOfIds(versionOf);
+            profileIndexDocument.setFundedByIds(fundedBy);
             // Now add all activities ext ids to the doc, the old way
             addExternalIdentifiersToIndexDocument(profileIndexDocument, allExternalIdentifiers);
 
