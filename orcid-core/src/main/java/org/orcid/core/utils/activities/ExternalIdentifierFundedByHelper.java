@@ -7,14 +7,16 @@ public class ExternalIdentifierFundedByHelper {
     private static final String EXT_ID_PROPOSAL_ID = "proposal-id";
     private static final String EXT_ID_URI = "uri";
     private static final String EXT_ID_DOI = "doi";
-    
+    private static final String EXT_ID_RRID = "rrid";
+
     public static boolean isExtIdTypeAllowedForFundedBy(String extIdType) {
         if(extIdType != null && !StringUtils.equalsIgnoreCase(extIdType,EXT_ID_GRANT_NUMBER)
                 && !StringUtils.equalsIgnoreCase(extIdType,EXT_ID_PROPOSAL_ID)
                 && !StringUtils.equalsIgnoreCase(extIdType,EXT_ID_URI)
-                && !StringUtils.equalsIgnoreCase(extIdType,EXT_ID_DOI)) {
-            return false;  
-        }   
+                && !StringUtils.equalsIgnoreCase(extIdType,EXT_ID_DOI)
+                && !StringUtils.equalsIgnoreCase(extIdType,EXT_ID_RRID)) {
+            return false;
+        }
         return true;
     }
 }
