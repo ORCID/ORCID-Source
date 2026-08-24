@@ -7,7 +7,7 @@ import org.mapstruct.MappingTarget;
 
 import org.orcid.core.adapter.JpaJaxbNameAdapter;
 import org.orcid.core.adapter.mapstruct.VisibilityMapperV2;
-import org.orcid.jaxb.model.record_v2.CreditName;
+import org.orcid.jaxb.model.common_v2.CreditName;
 import org.orcid.jaxb.model.record_v2.FamilyName;
 import org.orcid.jaxb.model.record_v2.GivenNames;
 import org.orcid.jaxb.model.record_v2.Name;
