@@ -40,8 +40,8 @@ public abstract class JpaJaxbAddressAdapterImpl implements JpaJaxbAddressAdapter
      */
     @Mapping(source = "putCode", target = "id")
     @Mapping(source = "country.value", target = "iso2Country")
-    @Mapping(source = "createdDate.value", target = "dateCreated")
-    @Mapping(source = "lastModifiedDate.value", target = "lastModified")
+    @Mapping(target = "dateCreated", ignore = true)
+    @Mapping(target = "lastModified", ignore = true)
     @Mapping(target = "displayIndex", ignore = true)
     protected abstract AddressEntity mapToAddressEntity(Address address);
 
@@ -79,8 +79,8 @@ public abstract class JpaJaxbAddressAdapterImpl implements JpaJaxbAddressAdapter
     @Override
     @Mapping(source = "putCode", target = "id")
     @Mapping(source = "country.value", target = "iso2Country")
-    @Mapping(source = "createdDate.value", target = "dateCreated")
-    @Mapping(source = "lastModifiedDate.value", target = "lastModified")
+    @Mapping(target = "dateCreated", ignore = true)
+    @Mapping(target = "lastModified", ignore = true)
     @Mapping(target = "displayIndex", ignore = true)
     public abstract AddressEntity toAddressEntity(Address address, @MappingTarget AddressEntity existing);
 }

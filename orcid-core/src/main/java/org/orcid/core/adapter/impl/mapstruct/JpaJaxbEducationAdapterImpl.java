@@ -9,6 +9,7 @@ import org.mapstruct.MappingTarget;
 
 import org.orcid.core.adapter.JpaJaxbEducationAdapter;
 import org.orcid.core.adapter.mapstruct.FuzzyDateMapperV2;
+import org.orcid.core.adapter.mapstruct.OrgMapperV2;
 import org.orcid.core.adapter.mapstruct.SourceMapperV2;
 import org.orcid.core.adapter.mapstruct.VisibilityMapperV2;
 import org.orcid.jaxb.model.record.summary_v2.EducationSummary;
@@ -21,7 +22,12 @@ import org.orcid.persistence.jpa.entities.OrgAffiliationRelationEntity;
  */
 @Mapper(
     componentModel = "spring", 
-    uses = {SourceMapperV2.class, FuzzyDateMapperV2.class, VisibilityMapperV2.class}
+    uses = {
+        SourceMapperV2.class, 
+        FuzzyDateMapperV2.class, 
+        VisibilityMapperV2.class,
+        OrgMapperV2.class
+    }
 )
 public abstract class JpaJaxbEducationAdapterImpl implements JpaJaxbEducationAdapter {
 
@@ -29,10 +35,6 @@ public abstract class JpaJaxbEducationAdapterImpl implements JpaJaxbEducationAda
     // API -> Database (Creation)
     // ========================================================================
 
-    /**
-     * Manual wrapper implementation to ensure displayIndex is ONLY defaulted 
-     * during new entity creation, matching the original logic.
-     */
     @Override
     public OrgAffiliationRelationEntity toOrgAffiliationRelationEntity(Education education) {
         if (education == null) {
@@ -48,16 +50,11 @@ public abstract class JpaJaxbEducationAdapterImpl implements JpaJaxbEducationAda
         return entity;
     }
 
-    /**
-     * Internal method for MapStruct to generate the creation logic.
-     */
     @Mapping(source = "putCode", target = "id")
-    @Mapping(source = "createdDate.value", target = "dateCreated")
-    @Mapping(source = "lastModifiedDate.value", target = "lastModified")
     @Mapping(source = "departmentName", target = "department")
     @Mapping(source = "roleTitle", target = "title")
-    // Orika fieldBToA rules dictated that 'org' properties were only mapped DB -> API.
-    // We ignore them here to prevent accidental database overwrites from API submissions.
+    @Mapping(target = "dateCreated", ignore = true)
+    @Mapping(target = "lastModified", ignore = true)
     @Mapping(target = "org", ignore = true)
     @Mapping(target = "displayIndex", ignore = true)
     protected abstract OrgAffiliationRelationEntity mapToEntity(Education education);
@@ -73,28 +70,16 @@ public abstract class JpaJaxbEducationAdapterImpl implements JpaJaxbEducationAda
     @Mapping(source = "lastModified", target = "lastModifiedDate.value")
     @Mapping(source = "department", target = "departmentName")
     @Mapping(source = "title", target = "roleTitle")
-    // MapStruct natively handles the deep nested BToA mappings from Orika
-    @Mapping(source = "org.name", target = "organization.name")
-    @Mapping(source = "org.city", target = "organization.address.city")
-    @Mapping(source = "org.region", target = "organization.address.region")
-    @Mapping(source = "org.country", target = "organization.address.country")
-    @Mapping(source = "org.orgDisambiguated.sourceId", target = "organization.disambiguatedOrganization.disambiguatedOrganizationIdentifier")
-    @Mapping(source = "org.orgDisambiguated.sourceType", target = "organization.disambiguatedOrganization.disambiguationSource")
-    @Mapping(source = "org.orgDisambiguated.id", target = "organization.disambiguatedOrganization.id")
+    @Mapping(source = "org", target = "organization")
     public abstract Education toEducation(OrgAffiliationRelationEntity entity);
 
+    @Override
     @Mapping(source = "id", target = "putCode")
     @Mapping(source = "dateCreated", target = "createdDate.value")
     @Mapping(source = "lastModified", target = "lastModifiedDate.value")
     @Mapping(source = "department", target = "departmentName")
     @Mapping(source = "title", target = "roleTitle")
-    @Mapping(source = "org.name", target = "organization.name")
-    @Mapping(source = "org.city", target = "organization.address.city")
-    @Mapping(source = "org.region", target = "organization.address.region")
-    @Mapping(source = "org.country", target = "organization.address.country")
-    @Mapping(source = "org.orgDisambiguated.sourceId", target = "organization.disambiguatedOrganization.disambiguatedOrganizationIdentifier")
-    @Mapping(source = "org.orgDisambiguated.sourceType", target = "organization.disambiguatedOrganization.disambiguationSource")
-    @Mapping(source = "org.orgDisambiguated.id", target = "organization.disambiguatedOrganization.id")
+    @Mapping(source = "org", target = "organization")
     public abstract EducationSummary toEducationSummary(OrgAffiliationRelationEntity entity);
 
 
@@ -115,10 +100,10 @@ public abstract class JpaJaxbEducationAdapterImpl implements JpaJaxbEducationAda
 
     @Override
     @Mapping(source = "putCode", target = "id")
-    @Mapping(source = "createdDate.value", target = "dateCreated")
-    @Mapping(source = "lastModifiedDate.value", target = "lastModified")
     @Mapping(source = "departmentName", target = "department")
     @Mapping(source = "roleTitle", target = "title")
+    @Mapping(target = "dateCreated", ignore = true)
+    @Mapping(target = "lastModified", ignore = true)
     @Mapping(target = "org", ignore = true)
     @Mapping(target = "displayIndex", ignore = true)
     public abstract OrgAffiliationRelationEntity toOrgAffiliationRelationEntity(Education education, @MappingTarget OrgAffiliationRelationEntity existing);

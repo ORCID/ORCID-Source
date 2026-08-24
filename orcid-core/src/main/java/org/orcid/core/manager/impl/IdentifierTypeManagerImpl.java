@@ -14,7 +14,7 @@ import java.util.TreeMap;
 import jakarta.annotation.Resource;
 
 import org.apache.commons.collections4.trie.PatriciaTrie;
-import org.orcid.core.adapter.impl.IdentifierTypePOJOConverter;
+import org.orcid.core.adapter.mapstruct.IdentifierTypeMapper;
 import org.orcid.core.adapter.mapstruct.jsonidentifier.ExternalIdentifierTypeMapper;
 import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.IdentifierTypeManager;

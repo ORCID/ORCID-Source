@@ -10,8 +10,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 /**
- * Plain, Orika-free converter for v2 WorkContributors.
- * Converts WorkContributors <-> JSON string for DB storage.
+ * Plain, Orika-free converter for v2 WorkContributors. Converts WorkContributors <-> JSON string for DB storage.
  */
 public class WorkContributorsConverter {
 

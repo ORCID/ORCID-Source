@@ -31,6 +31,10 @@ import org.orcid.persistence.jpa.entities.PeerReviewEntity;
 )
 public abstract class JpaJaxbPeerReviewAdapterImpl implements JpaJaxbPeerReviewAdapter {
 
+    // ========================================================================
+    // API -> Database (Creation & Update)
+    // ========================================================================
+
     @Override
     @Mapping(source = "putCode", target = "id")
     @Mapping(source = "url.value", target = "url")
@@ -63,6 +67,11 @@ public abstract class JpaJaxbPeerReviewAdapterImpl implements JpaJaxbPeerReviewA
     @Mapping(target = "lastModified", ignore = true)
     public abstract PeerReviewEntity toPeerReviewEntity(PeerReview peerReview, @MappingTarget PeerReviewEntity existing);
 
+
+    // ========================================================================
+    // Database -> API (Retrieval)
+    // ========================================================================
+
     @Override
     @Mapping(source = "id", target = "putCode")
     @Mapping(source = "url", target = "url.value")
@@ -81,12 +90,18 @@ public abstract class JpaJaxbPeerReviewAdapterImpl implements JpaJaxbPeerReviewA
 
     @Override
     @Mapping(source = "id", target = "putCode")
+    @Mapping(source = "url", target = "url.value")
     @Mapping(source = "externalIdentifiersJson", target = "externalIdentifiers")
     @Mapping(source = "org", target = "organization")
     @Mapping(source = "completionDate", target = "completionDate")
     @Mapping(source = "dateCreated", target = "createdDate.value")
     @Mapping(source = "lastModified", target = "lastModifiedDate.value")
     public abstract PeerReviewSummary toPeerReviewSummary(PeerReviewEntity entity);
+
+
+    // ========================================================================
+    // Collection Mappings
+    // ========================================================================
 
     @Override
     public abstract List<PeerReview> toPeerReview(Collection<PeerReviewEntity> entities);

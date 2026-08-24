@@ -2,10 +2,16 @@ package org.orcid.core.adapter.v3.impl.mapstruct;
 
 import java.net.URI;
 import java.util.Collection;
+import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+
+import javax.xml.datatype.DatatypeConfigurationException;
+import javax.xml.datatype.DatatypeFactory;
+import javax.xml.datatype.XMLGregorianCalendar;
 
 import org.apache.commons.lang3.StringUtils;
 import org.mapstruct.AfterMapping;
@@ -99,49 +105,49 @@ public abstract class JpaJaxbNotificationAdapterImpl implements JpaJaxbNotificat
 
     // 1. Notification Custom 
     @Mapping(source = "putCode", target = "id")
-    @Mapping(source = "createdDate.value", target = "dateCreated")
+    @Mapping(target = "dateCreated", ignore = true)
     protected abstract NotificationCustomEntity map(NotificationCustom n);
 
     @Mapping(source = "id", target = "putCode")
-    @Mapping(source = "dateCreated", target = "createdDate.value")
+    @Mapping(source = "dateCreated", target = "createdDate")
     protected abstract NotificationCustom map(NotificationCustomEntity e);
 
     // 2. Notification Service Announcement
     @Mapping(source = "putCode", target = "id")
-    @Mapping(source = "createdDate.value", target = "dateCreated")
+    @Mapping(target = "dateCreated", ignore = true)
     protected abstract NotificationServiceAnnouncementEntity map(NotificationServiceAnnouncement n);
 
     @Mapping(source = "id", target = "putCode")
-    @Mapping(source = "dateCreated", target = "createdDate.value")
+    @Mapping(source = "dateCreated", target = "createdDate")
     protected abstract NotificationServiceAnnouncement map(NotificationServiceAnnouncementEntity e);
 
     // 3. Notification Tip
     @Mapping(source = "putCode", target = "id")
-    @Mapping(source = "createdDate.value", target = "dateCreated")
+    @Mapping(target = "dateCreated", ignore = true)
     protected abstract NotificationTipEntity map(NotificationTip n);
 
     @Mapping(source = "id", target = "putCode")
-    @Mapping(source = "dateCreated", target = "createdDate.value")
+    @Mapping(source = "dateCreated", target = "createdDate")
     protected abstract NotificationTip map(NotificationTipEntity e);
 
     // 4. Notification Administrative
     @Mapping(source = "putCode", target = "id")
-    @Mapping(source = "createdDate.value", target = "dateCreated")
+    @Mapping(target = "dateCreated", ignore = true)
     protected abstract NotificationAdministrativeEntity map(NotificationAdministrative n);
 
     @Mapping(source = "id", target = "putCode")
-    @Mapping(source = "dateCreated", target = "createdDate.value")
+    @Mapping(source = "dateCreated", target = "createdDate")
     protected abstract NotificationAdministrative map(NotificationAdministrativeEntity e);
 
     // 5. Notification Permission
     @Mapping(source = "putCode", target = "id")
-    @Mapping(source = "createdDate.value", target = "dateCreated")
+    @Mapping(target = "dateCreated", ignore = true)
     @Mapping(source = "authorizationUrl.uri", target = "authorizationUrl")
     @Mapping(source = "items.items", target = "notificationItems")
     protected abstract NotificationAddItemsEntity map(NotificationPermission n);
 
     @Mapping(source = "id", target = "putCode")
-    @Mapping(source = "dateCreated", target = "createdDate.value")
+    @Mapping(source = "dateCreated", target = "createdDate")
     @Mapping(source = "authorizationUrl", target = "authorizationUrl.uri")
     @Mapping(source = "notificationItems", target = "items.items")
     protected abstract NotificationPermission map(NotificationAddItemsEntity e);
@@ -166,12 +172,12 @@ public abstract class JpaJaxbNotificationAdapterImpl implements JpaJaxbNotificat
 
     // 6. Notification Institutional Connection   
     @Mapping(source = "putCode", target = "id")
-    @Mapping(source = "createdDate.value", target = "dateCreated")
+    @Mapping(target = "dateCreated", ignore = true)
     @Mapping(source = "authorizationUrl.uri", target = "authorizationUrl")
     protected abstract NotificationInstitutionalConnectionEntity map(NotificationInstitutionalConnection n);
 
     @Mapping(source = "id", target = "putCode")
-    @Mapping(source = "dateCreated", target = "createdDate.value")
+    @Mapping(source = "dateCreated", target = "createdDate")
     @Mapping(source = "authorizationUrl", target = "authorizationUrl.uri")
     protected abstract NotificationInstitutionalConnection map(NotificationInstitutionalConnectionEntity e);
 
@@ -203,25 +209,25 @@ public abstract class JpaJaxbNotificationAdapterImpl implements JpaJaxbNotificat
 
     // 7. Notification Amended
     @Mapping(source = "putCode", target = "id")
-    @Mapping(source = "createdDate.value", target = "dateCreated")
+    @Mapping(target = "dateCreated", ignore = true)
     @Mapping(source = "items.items", target = "notificationItems")
     @Mapping(source = "amendedSection", target = "amendedSection")
     protected abstract NotificationAmendedEntity map(NotificationAmended n);
 
     @Mapping(source = "id", target = "putCode")
-    @Mapping(source = "dateCreated", target = "createdDate.value")
+    @Mapping(source = "dateCreated", target = "createdDate")
     @Mapping(source = "notificationItems", target = "items.items")
     @Mapping(source = "amendedSection", target = "amendedSection")
     protected abstract NotificationAmended map(NotificationAmendedEntity e);
 
     // 8. Notification Find My Stuff (V3 specific)
     @Mapping(source = "putCode", target = "id")
-    @Mapping(source = "createdDate.value", target = "dateCreated")
+    @Mapping(target = "dateCreated", ignore = true)
     @Mapping(source = "authorizationUrl.uri", target = "authorizationUrl")
     protected abstract NotificationFindMyStuffEntity map(NotificationFindMyStuff n);
 
     @Mapping(source = "id", target = "putCode")
-    @Mapping(source = "dateCreated", target = "createdDate.value")
+    @Mapping(source = "dateCreated", target = "createdDate")
     @Mapping(source = "authorizationUrl", target = "authorizationUrl.uri")
     protected abstract NotificationFindMyStuff map(NotificationFindMyStuffEntity e);
 
@@ -285,6 +291,27 @@ public abstract class JpaJaxbNotificationAdapterImpl implements JpaJaxbNotificat
     protected Map mapAdditionalInfo(String json) {
         if (PojoUtil.isEmpty(json)) return null;
         return JsonUtils.readObjectFromJsonString(json, HashMap.class);
+    }
+
+    // XMLGregorianCalendar <-> java.util.Date Converters
+    protected Date xmlGregorianCalendarToDate(XMLGregorianCalendar cal) {
+        if (cal == null) {
+            return null;
+        }
+        return cal.toGregorianCalendar().getTime();
+    }
+
+    protected XMLGregorianCalendar dateToXmlGregorianCalendar(Date date) {
+        if (date == null) {
+            return null;
+        }
+        GregorianCalendar cal = new GregorianCalendar();
+        cal.setTime(date);
+        try {
+            return DatatypeFactory.newInstance().newXMLGregorianCalendar(cal);
+        } catch (DatatypeConfigurationException e) {
+            throw new RuntimeException("Failed to convert Date to XMLGregorianCalendar", e);
+        }
     }
 
     // URI Validation Utilities

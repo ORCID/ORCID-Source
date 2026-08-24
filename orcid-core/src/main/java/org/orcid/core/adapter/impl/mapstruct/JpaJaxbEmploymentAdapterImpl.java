@@ -9,6 +9,7 @@ import org.mapstruct.MappingTarget;
 
 import org.orcid.core.adapter.JpaJaxbEmploymentAdapter;
 import org.orcid.core.adapter.mapstruct.FuzzyDateMapperV2;
+import org.orcid.core.adapter.mapstruct.OrgMapperV2;
 import org.orcid.core.adapter.mapstruct.SourceMapperV2;
 import org.orcid.core.adapter.mapstruct.VisibilityMapperV2;
 import org.orcid.jaxb.model.record.summary_v2.EmploymentSummary;
@@ -17,7 +18,12 @@ import org.orcid.persistence.jpa.entities.OrgAffiliationRelationEntity;
 
 @Mapper(
     componentModel = "spring", 
-    uses = {SourceMapperV2.class, FuzzyDateMapperV2.class, VisibilityMapperV2.class}
+    uses = {
+        SourceMapperV2.class, 
+        FuzzyDateMapperV2.class, 
+        VisibilityMapperV2.class,
+        OrgMapperV2.class
+    }
 )
 public abstract class JpaJaxbEmploymentAdapterImpl implements JpaJaxbEmploymentAdapter {
 
@@ -41,10 +47,10 @@ public abstract class JpaJaxbEmploymentAdapterImpl implements JpaJaxbEmploymentA
     }
 
     @Mapping(source = "putCode", target = "id")
-    @Mapping(source = "createdDate.value", target = "dateCreated")
-    @Mapping(source = "lastModifiedDate.value", target = "lastModified")
     @Mapping(source = "departmentName", target = "department")
     @Mapping(source = "roleTitle", target = "title")
+    @Mapping(target = "dateCreated", ignore = true)
+    @Mapping(target = "lastModified", ignore = true)
     @Mapping(target = "org", ignore = true)
     @Mapping(target = "displayIndex", ignore = true)
     protected abstract OrgAffiliationRelationEntity mapToEntity(Employment employment);
@@ -59,13 +65,7 @@ public abstract class JpaJaxbEmploymentAdapterImpl implements JpaJaxbEmploymentA
     @Mapping(source = "lastModified", target = "lastModifiedDate.value")
     @Mapping(source = "department", target = "departmentName")
     @Mapping(source = "title", target = "roleTitle")
-    @Mapping(source = "org.name", target = "organization.name")
-    @Mapping(source = "org.city", target = "organization.address.city")
-    @Mapping(source = "org.region", target = "organization.address.region")
-    @Mapping(source = "org.country", target = "organization.address.country")
-    @Mapping(source = "org.orgDisambiguated.sourceId", target = "organization.disambiguatedOrganization.disambiguatedOrganizationIdentifier")
-    @Mapping(source = "org.orgDisambiguated.sourceType", target = "organization.disambiguatedOrganization.disambiguationSource")
-    @Mapping(source = "org.orgDisambiguated.id", target = "organization.disambiguatedOrganization.id")
+    @Mapping(source = "org", target = "organization")
     public abstract Employment toEmployment(OrgAffiliationRelationEntity entity);
 
     @Override
@@ -74,13 +74,7 @@ public abstract class JpaJaxbEmploymentAdapterImpl implements JpaJaxbEmploymentA
     @Mapping(source = "lastModified", target = "lastModifiedDate.value")
     @Mapping(source = "department", target = "departmentName")
     @Mapping(source = "title", target = "roleTitle")
-    @Mapping(source = "org.name", target = "organization.name")
-    @Mapping(source = "org.city", target = "organization.address.city")
-    @Mapping(source = "org.region", target = "organization.address.region")
-    @Mapping(source = "org.country", target = "organization.address.country")
-    @Mapping(source = "org.orgDisambiguated.sourceId", target = "organization.disambiguatedOrganization.disambiguatedOrganizationIdentifier")
-    @Mapping(source = "org.orgDisambiguated.sourceType", target = "organization.disambiguatedOrganization.disambiguationSource")
-    @Mapping(source = "org.orgDisambiguated.id", target = "organization.disambiguatedOrganization.id")
+    @Mapping(source = "org", target = "organization")
     public abstract EmploymentSummary toEmploymentSummary(OrgAffiliationRelationEntity entity);
 
     // ========================================================================
@@ -99,10 +93,10 @@ public abstract class JpaJaxbEmploymentAdapterImpl implements JpaJaxbEmploymentA
 
     @Override
     @Mapping(source = "putCode", target = "id")
-    @Mapping(source = "createdDate.value", target = "dateCreated")
-    @Mapping(source = "lastModifiedDate.value", target = "lastModified")
     @Mapping(source = "departmentName", target = "department")
     @Mapping(source = "roleTitle", target = "title")
+    @Mapping(target = "dateCreated", ignore = true)
+    @Mapping(target = "lastModified", ignore = true)
     @Mapping(target = "org", ignore = true)
     @Mapping(target = "displayIndex", ignore = true)
     public abstract OrgAffiliationRelationEntity toOrgAffiliationRelationEntity(Employment employment, @MappingTarget OrgAffiliationRelationEntity existing);
