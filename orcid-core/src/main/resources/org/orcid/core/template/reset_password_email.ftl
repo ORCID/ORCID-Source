@@ -1,6 +1,6 @@
 <#import "email_macros.ftl" as emailMacros />
 
-<@emailMacros.msg "email.reset_password.orcid_id" /> ${recipientEmail} <@emailMacros.msg "email.reset_password.is" /> ${baseUri}/${orcid}
+<@emailMacros.msg "email.reset_password.orcid_id" /> {recipientEmail} <@emailMacros.msg "email.reset_password.is" /> ${baseUri}/${orcid}
 
 <@emailMacros.msg "email.reset_password.to_reset" />
 

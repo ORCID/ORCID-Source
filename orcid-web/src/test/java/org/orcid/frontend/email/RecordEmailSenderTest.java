@@ -10,6 +10,7 @@ import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -37,6 +38,7 @@ import org.orcid.core.manager.EncryptionManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.v3.EmailManager;
 import org.orcid.core.manager.v3.RecordNameManager;
+import org.orcid.core.manager.TemplateManager;
 import org.orcid.core.manager.v3.SourceManager;
 import org.orcid.core.utils.cache.redis.RedisClient;
 import org.orcid.jaxb.model.common.AvailableLocales;
@@ -397,6 +399,47 @@ public class RecordEmailSenderTest {
         // ...and must not leak the other address on the record.
         assertEquals(submitted, to.getAllValues().get(0));
         assertTrue(!bodies.getAllValues().get(0).contains("second@test.orcid.org"));
+    }
+
+    @Test
+    public void testResetEmail_rendersEachTemplateOnceForAllRecipients() throws Exception {
+        String userOrcid = "0000-0000-0000-0003";
+        String submitted = "primary@test.orcid.org";
+        when(mockEmailManager.getVerifiedEmails(userOrcid)).thenReturn(verifiedEmails(submitted, "second@test.orcid.org", "third@test.orcid.org"));
+
+        TemplateManager real = (TemplateManager) ReflectionTestUtils.getField(recordEmailSender, "templateManager");
+        TemplateManager spyTemplateManager = spy(real);
+        ReflectionTestUtils.setField(recordEmailSender, "templateManager", spyTemplateManager);
+        try {
+            recordEmailSender.sendPasswordResetEmail(submitted, userOrcid);
+
+            // Three recipients, but only the address differs between copies, so each template is
+            // rendered once and the placeholder is substituted per recipient.
+            verify(spyTemplateManager, times(1)).processTemplate(eq("reset_password_email.ftl"), any());
+            verify(spyTemplateManager, times(1)).processTemplate(eq("reset_password_email_html.ftl"), any());
+            verify(mockMailGunManager, times(3)).sendEmail(anyString(), anyString(), anyString(), anyString(), anyString());
+        } finally {
+            ReflectionTestUtils.setField(recordEmailSender, "templateManager", real);
+        }
+    }
+
+    @Test
+    public void testResetEmail_escapesRecipientAddressInHtmlBody() throws Exception {
+        String userOrcid = "0000-0000-0000-0003";
+        // The substitution happens after FreeMarker's <#escape x as x?html> has run, so the
+        // address is the one value that could reach the HTML unescaped.
+        String submitted = "a&b@test.orcid.org";
+        when(mockEmailManager.getVerifiedEmails(userOrcid)).thenReturn(new Emails());
+
+        recordEmailSender.sendPasswordResetEmail(submitted, userOrcid);
+
+        ArgumentCaptor<String> body = ArgumentCaptor.forClass(String.class);
+        ArgumentCaptor<String> htmlBody = ArgumentCaptor.forClass(String.class);
+        verify(mockMailGunManager, times(1)).sendEmail(anyString(), eq(submitted), anyString(), body.capture(), htmlBody.capture());
+
+        assertTrue("plain text body should carry the raw address", body.getValue().contains(submitted));
+        assertTrue("html body should carry the escaped address", htmlBody.getValue().contains("a&amp;b@test.orcid.org"));
+        assertTrue("html body must not carry the raw ampersand", !htmlBody.getValue().contains("a&b@test.orcid.org"));
     }
 
     @Test

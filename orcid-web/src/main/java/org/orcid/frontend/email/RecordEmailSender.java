@@ -43,11 +43,19 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
 import org.springframework.context.NoSuchMessageException;
 import org.springframework.stereotype.Component;
+import org.springframework.web.util.HtmlUtils;
 
 @Component
 public class RecordEmailSender {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(RecordEmailSender.class);
+
+    /**
+     * Literal text in reset_password_email.ftl / _html.ftl. The reset templates are rendered once
+     * per request and this token is swapped per recipient, rather than re-rendering N times for a
+     * single differing value.
+     */
+    private static final String RECIPIENT_EMAIL_PLACEHOLDER = "{recipientEmail}";
 
     @Value("${org.orcid.core.mail.apiRecordCreationEmailEnabled:true}")
     private boolean apiRecordCreationEmailEnabled;
@@ -290,17 +298,22 @@ public class RecordEmailSender {
 
         String subject = verifyEmailUtils.getSubject("email.subject.reset", locale);
         Collection<String> recipients = buildPasswordResetRecipients(submittedEmail, userOrcid);
+        // Rendered once for the whole request: only the recipient's own address differs between
+        // copies, and it is substituted below. Rendering also stays outside the per-recipient
+        // catch, because a broken template fails for every recipient alike and swallowing that
+        // would turn "nobody got a link" into a warning nobody reads.
+        String bodyTemplate = templateManager.processTemplate("reset_password_email.ftl", templateParams);
+        String htmlBodyTemplate = templateManager.processTemplate("reset_password_email_html.ftl", templateParams);
         int accepted = 0;
         int failed = 0;
         for (String recipient : recipients) {
+            String body = bodyTemplate.replace(RECIPIENT_EMAIL_PLACEHOLDER, recipient);
+            // The HTML template renders inside <#escape x as x?html>, but this substitution runs
+            // after FreeMarker has finished, so the address has to be escaped here or it would be
+            // the one unescaped value in the document.
+            String htmlBody = htmlBodyTemplate.replace(RECIPIENT_EMAIL_PLACEHOLDER, HtmlUtils.htmlEscape(recipient));
             // One send per recipient on purpose. Putting every address in a single "to" would
             // disclose the record's whole verified email list to each of them.
-            templateParams.put("recipientEmail", recipient);
-            // Rendering stays outside the catch below. A broken template fails for every
-            // recipient alike, so swallowing it here would turn "nobody got a link" into a
-            // warning nobody reads.
-            String body = templateManager.processTemplate("reset_password_email.ftl", templateParams);
-            String htmlBody = templateManager.processTemplate("reset_password_email_html.ftl", templateParams);
             try {
                 if (mailgunManager.sendEmail(EmailConstants.DO_NOT_REPLY_NOTIFY_ORCID_ORG, recipient, subject, body, htmlBody)) {
                     accepted++;
