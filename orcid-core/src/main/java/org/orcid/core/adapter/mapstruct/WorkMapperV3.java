@@ -2,7 +2,6 @@ package org.orcid.core.adapter.mapstruct;
 
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
-import org.orcid.core.adapter.v3.converter.ContributorsRolesAndSequencesConverter;
 import org.orcid.jaxb.model.common.WorkType;
 import org.orcid.jaxb.model.v3.release.common.Title;
 import org.orcid.jaxb.model.v3.release.record.Work;
@@ -90,7 +89,7 @@ public interface WorkMapperV3 {
         entity.setCitationType((work.getWorkCitation() == null || work.getWorkCitation().getWorkCitationType() == null) ? null : work.getWorkCitation().getWorkCitationType().toString());
     }
 
-    default void mapWorkExtendedBtoA(WorkEntity entity, WorkExtended work, ContributorsRolesAndSequencesConverter contributorsConverter) {
+    default void mapWorkExtendedBtoA(WorkEntity entity, WorkExtended work, ContributorsRolesAndSequencesMapperV3 contributorsConverter) {
         work.setWorkType(WorkType.valueOf(entity.getWorkType()));
         work.setJournalTitle(entity.getJournalTitle() != null && !entity.getJournalTitle().isEmpty() ? new Title(entity.getJournalTitle()) : null);
 

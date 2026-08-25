@@ -16,10 +16,9 @@ import jakarta.annotation.PostConstruct;
 import jakarta.annotation.Resource;
 
 import org.apache.commons.lang3.StringUtils;
-
-import org.orcid.core.adapter.mapstruct.jsonidentifier.JSONWorkExternalIdentifiersMapperV3;
+import org.orcid.core.adapter.mapstruct.ContributorsRolesAndSequencesMapperV3;
+import org.orcid.core.adapter.mapstruct.JSONWorkExternalIdentifiersMapperV3;
 import org.orcid.core.adapter.v3.JpaJaxbWorkAdapter;
-import org.orcid.core.adapter.v3.converter.ContributorsRolesAndSequencesConverter;
 import org.orcid.core.adapter.v3.converter.WorkContributorsConverter;
 import org.orcid.core.exception.ExceedMaxNumberOfPutCodesException;
 import org.orcid.core.exception.OrcidCoreExceptionMapper;
@@ -96,7 +95,7 @@ public class WorkManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements 
     private SourceNameCacheManager sourceNameCacheManager;
 
     @Resource
-    private ContributorsRolesAndSequencesConverter contributorsRolesAndSequencesConverter;
+    private ContributorsRolesAndSequencesMapperV3 contributorsRolesAndSequencesConverter;
 
     @Resource
     private SourceEntityUtils sourceEntityUtils;

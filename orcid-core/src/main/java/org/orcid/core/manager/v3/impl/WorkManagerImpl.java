@@ -13,7 +13,6 @@ import java.util.Set;
 import jakarta.annotation.Resource;
 
 import org.apache.commons.lang3.StringUtils;
-import org.orcid.core.adapter.v3.converter.ContributorsRolesAndSequencesConverter;
 import org.orcid.core.contributors.roles.works.WorkContributorRoleConverter;
 import org.orcid.core.exception.ExceedMaxNumberOfElementsException;
 import org.orcid.core.exception.MissingGroupableExternalIDException;
@@ -61,6 +60,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
 import org.springframework.transaction.annotation.Transactional;
+import org.orcid.core.adapter.mapstruct.ContributorsRolesAndSequencesMapperV3;
+import org.orcid.core.adapter.mapstruct.JSONWorkExternalIdentifiersMapperV3;
 
 public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkManager {
 
@@ -103,7 +104,7 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
     private ContributorUtils contributorUtils;
 
     @Resource
-    private ContributorsRolesAndSequencesConverter contributorsRolesAndSequencesConverter;
+    private ContributorsRolesAndSequencesMapperV3 contributorsRolesAndSequencesConverter;
 
     @Resource
     private WorkContributorRoleConverter workContributorsRoleConverter;
@@ -112,7 +113,7 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
     private SourceEntityUtils sourceEntityUtils;
 
     @Resource
-    private org.orcid.core.adapter.mapstruct.jsonidentifier.JSONWorkExternalIdentifiersMapperV3 jsonWorkExternalIdentifiersMapperV3;
+    private JSONWorkExternalIdentifiersMapperV3 jsonWorkExternalIdentifiersMapperV3;
 
     @Value("${org.orcid.core.work.contributors.ui.max:50}")
     private int maxContributorsForUI;

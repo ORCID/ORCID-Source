@@ -38,7 +38,7 @@ import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.orcid.core.BaseTest;
-import org.orcid.core.adapter.v3.converter.ContributorsRolesAndSequencesConverter;
+import org.orcid.core.adapter.mapstruct.ContributorsRolesAndSequencesMapperV3;
 import org.orcid.core.contributors.roles.credit.CreditRole;
 import org.orcid.core.exception.ExceedMaxNumberOfPutCodesException;
 import org.orcid.core.exception.MissingGroupableExternalIDException;
@@ -138,7 +138,7 @@ public class WorkManagerTest extends BaseTest {
     private ClientDetailsManager clientDetailsManager;
     
     @Resource
-    private ContributorsRolesAndSequencesConverter contributorsRolesAndSequencesConverter;
+    private ContributorsRolesAndSequencesMapperV3 contributorsRolesAndSequencesConverter;
 
     @Mock
     private SourceManager mockSourceManager;
@@ -1620,7 +1620,7 @@ public class WorkManagerTest extends BaseTest {
     @Test
     public void testCreateWorkFromAPIAndValidateTopContributors() {
         String orcid = "0000-0000-0000-0004";
-        ContributorsRolesAndSequencesConverter mockContributorsRolesAndSequencesConverter = Mockito.mock(ContributorsRolesAndSequencesConverter.class);
+        ContributorsRolesAndSequencesMapperV3 mockContributorsRolesAndSequencesConverter = Mockito.mock(ContributorsRolesAndSequencesMapperV3.class);
 
         ReflectionTestUtils.setField(workManager, "contributorsRolesAndSequencesConverter", mockContributorsRolesAndSequencesConverter);
 

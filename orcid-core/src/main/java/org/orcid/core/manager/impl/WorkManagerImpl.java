@@ -12,7 +12,7 @@ import java.util.Set;
 
 import jakarta.annotation.Resource;
 
-import org.orcid.core.adapter.v3.converter.ContributorsRolesAndSequencesConverterV2;
+import org.orcid.core.adapter.mapstruct.ContributorsRolesAndSequencesMapperV2;
 import org.orcid.core.exception.ExceedMaxNumberOfElementsException;
 import org.orcid.core.exception.OrcidDuplicatedActivityException;
 import org.orcid.core.exception.OrcidForbiddenException;
@@ -93,7 +93,7 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
     private ContributorUtils contributorUtils;
 
     @Resource
-    private ContributorsRolesAndSequencesConverterV2 contributorsRolesAndSequencesConverterV2;
+    private ContributorsRolesAndSequencesMapperV2 contributorsRolesAndSequencesConverterV2;
 
     @Resource
     private SourceEntityUtils sourceEntityUtils;

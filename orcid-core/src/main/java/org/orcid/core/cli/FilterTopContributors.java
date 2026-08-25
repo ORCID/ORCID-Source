@@ -1,6 +1,6 @@
 package org.orcid.core.cli;
 
-import org.orcid.core.adapter.v3.converter.ContributorsRolesAndSequencesConverter;
+import org.orcid.core.adapter.mapstruct.ContributorsRolesAndSequencesMapperV3;
 import org.orcid.core.adapter.v3.converter.WorkContributorsConverter;
 import org.orcid.core.utils.v3.ContributorUtils;
 import org.orcid.persistence.dao.WorkDao;
@@ -23,7 +23,7 @@ public class FilterTopContributors {
 
     private WorkDao workDao;
     private WorkContributorsConverter workContributorsConverter;
-    private ContributorsRolesAndSequencesConverter contributorsRolesAndSequencesConverter;
+    private ContributorsRolesAndSequencesMapperV3 contributorsRolesAndSequencesConverter;
     private static Logger logger = Logger.getLogger(FilterTopContributors.class.getName());
     private static final int MAX_CONTRIBUTORS_FOR_UI = 50;
     private static int batchSize = 1000;
@@ -87,7 +87,7 @@ public class FilterTopContributors {
         ApplicationContext context = new ClassPathXmlApplicationContext("orcid-core-context.xml");
         workDao = (WorkDao) context.getBean("workDao");
         workContributorsConverter = (WorkContributorsConverter) context.getBean("workContributorsConverter");
-        contributorsRolesAndSequencesConverter = (ContributorsRolesAndSequencesConverter) context.getBean("contributorsRolesAndSequencesConverter");
+        contributorsRolesAndSequencesConverter = (ContributorsRolesAndSequencesMapperV3) context.getBean("contributorsRolesAndSequencesConverter");
     }
 
     private void validateParameters() {

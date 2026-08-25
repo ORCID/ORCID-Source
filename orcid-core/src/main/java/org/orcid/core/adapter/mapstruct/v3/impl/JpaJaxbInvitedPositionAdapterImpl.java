@@ -1,4 +1,4 @@
-package org.orcid.core.adapter.v3.impl.mapstruct;
+package org.orcid.core.adapter.mapstruct.v3.impl;
 
 import java.util.Collection;
 import java.util.List;
@@ -12,9 +12,9 @@ import org.orcid.core.adapter.mapstruct.JSONExternalIdentifiersMapperV3;
 import org.orcid.core.adapter.mapstruct.OrgMapperV3;
 import org.orcid.core.adapter.mapstruct.SourceMapperV3;
 import org.orcid.core.adapter.mapstruct.VisibilityMapperV3;
-import org.orcid.core.adapter.v3.JpaJaxbQualificationAdapter;
-import org.orcid.jaxb.model.v3.release.record.Qualification;
-import org.orcid.jaxb.model.v3.release.record.summary.QualificationSummary;
+import org.orcid.core.adapter.v3.JpaJaxbInvitedPositionAdapter;
+import org.orcid.jaxb.model.v3.release.record.InvitedPosition;
+import org.orcid.jaxb.model.v3.release.record.summary.InvitedPositionSummary;
 import org.orcid.persistence.jpa.entities.OrgAffiliationRelationEntity;
 
 @Mapper(
@@ -27,7 +27,7 @@ import org.orcid.persistence.jpa.entities.OrgAffiliationRelationEntity;
         FuzzyDateMapperV3.class
     }
 )
-public abstract class JpaJaxbQualificationAdapterImpl implements JpaJaxbQualificationAdapter {
+public abstract class JpaJaxbInvitedPositionAdapterImpl implements JpaJaxbInvitedPositionAdapter {
 
     @Override
     @Mapping(source = "putCode", target = "id")
@@ -40,7 +40,7 @@ public abstract class JpaJaxbQualificationAdapterImpl implements JpaJaxbQualific
     @Mapping(source = "endDate", target = "endDate")
     @Mapping(target = "dateCreated", ignore = true)
     @Mapping(target = "lastModified", ignore = true)
-    public abstract OrgAffiliationRelationEntity toOrgAffiliationRelationEntity(Qualification qualification);
+    public abstract OrgAffiliationRelationEntity toOrgAffiliationRelationEntity(InvitedPosition invitedPosition);
 
     @Override
     @Mapping(source = "putCode", target = "id")
@@ -53,7 +53,7 @@ public abstract class JpaJaxbQualificationAdapterImpl implements JpaJaxbQualific
     @Mapping(source = "endDate", target = "endDate")
     @Mapping(target = "dateCreated", ignore = true)
     @Mapping(target = "lastModified", ignore = true)
-    public abstract OrgAffiliationRelationEntity toOrgAffiliationRelationEntity(Qualification qualification, @MappingTarget OrgAffiliationRelationEntity existing);
+    public abstract OrgAffiliationRelationEntity toOrgAffiliationRelationEntity(InvitedPosition invitedPosition, @MappingTarget OrgAffiliationRelationEntity existing);
 
     @Override
     @Mapping(source = "id", target = "putCode")
@@ -66,7 +66,7 @@ public abstract class JpaJaxbQualificationAdapterImpl implements JpaJaxbQualific
     @Mapping(source = "endDate", target = "endDate")
     @Mapping(source = "dateCreated", target = "createdDate.value")
     @Mapping(source = "lastModified", target = "lastModifiedDate.value")
-    public abstract Qualification toQualification(OrgAffiliationRelationEntity entity);
+    public abstract InvitedPosition toInvitedPosition(OrgAffiliationRelationEntity entity);
 
     @Override
     @Mapping(source = "id", target = "putCode")
@@ -79,12 +79,11 @@ public abstract class JpaJaxbQualificationAdapterImpl implements JpaJaxbQualific
     @Mapping(source = "endDate", target = "endDate")
     @Mapping(source = "dateCreated", target = "createdDate.value")
     @Mapping(source = "lastModified", target = "lastModifiedDate.value")
-    public abstract QualificationSummary toQualificationSummary(OrgAffiliationRelationEntity entity);
-
-
-    @Override
-    public abstract List<Qualification> toQualification(Collection<OrgAffiliationRelationEntity> entities);
+    public abstract InvitedPositionSummary toInvitedPositionSummary(OrgAffiliationRelationEntity entity);
 
     @Override
-    public abstract List<QualificationSummary> toQualificationSummary(Collection<OrgAffiliationRelationEntity> entities);
+    public abstract List<InvitedPosition> toInvitedPosition(Collection<OrgAffiliationRelationEntity> entities);
+
+    @Override
+    public abstract List<InvitedPositionSummary> toInvitedPositionSummary(Collection<OrgAffiliationRelationEntity> entities);
 }

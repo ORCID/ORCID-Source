@@ -1,4 +1,4 @@
-package org.orcid.core.adapter.v3.impl.mapstruct;
+package org.orcid.core.adapter.mapstruct.v3.impl;
 
 import java.util.Collection;
 import java.util.List;
@@ -12,11 +12,14 @@ import org.orcid.core.adapter.mapstruct.JSONExternalIdentifiersMapperV3;
 import org.orcid.core.adapter.mapstruct.OrgMapperV3;
 import org.orcid.core.adapter.mapstruct.SourceMapperV3;
 import org.orcid.core.adapter.mapstruct.VisibilityMapperV3;
-import org.orcid.core.adapter.v3.JpaJaxbMembershipAdapter;
-import org.orcid.jaxb.model.v3.release.record.Membership;
-import org.orcid.jaxb.model.v3.release.record.summary.MembershipSummary;
+import org.orcid.core.adapter.v3.JpaJaxbEducationAdapter;
+import org.orcid.jaxb.model.v3.release.record.Education;
+import org.orcid.jaxb.model.v3.release.record.summary.EducationSummary;
 import org.orcid.persistence.jpa.entities.OrgAffiliationRelationEntity;
 
+/**
+ * MapStruct automatically generates the implementation and registers it as a Spring Component.
+ */
 @Mapper(
     componentModel = "spring",
     uses = {
@@ -27,7 +30,7 @@ import org.orcid.persistence.jpa.entities.OrgAffiliationRelationEntity;
         FuzzyDateMapperV3.class
     }
 )
-public abstract class JpaJaxbMembershipAdapterImpl implements JpaJaxbMembershipAdapter {
+public abstract class JpaJaxbEducationAdapterImpl implements JpaJaxbEducationAdapter {
 
     @Override
     @Mapping(source = "putCode", target = "id")
@@ -40,7 +43,7 @@ public abstract class JpaJaxbMembershipAdapterImpl implements JpaJaxbMembershipA
     @Mapping(source = "endDate", target = "endDate")
     @Mapping(target = "dateCreated", ignore = true)
     @Mapping(target = "lastModified", ignore = true)
-    public abstract OrgAffiliationRelationEntity toOrgAffiliationRelationEntity(Membership membership);
+    public abstract OrgAffiliationRelationEntity toOrgAffiliationRelationEntity(Education education);
 
     @Override
     @Mapping(source = "putCode", target = "id")
@@ -53,12 +56,7 @@ public abstract class JpaJaxbMembershipAdapterImpl implements JpaJaxbMembershipA
     @Mapping(source = "endDate", target = "endDate")
     @Mapping(target = "dateCreated", ignore = true)
     @Mapping(target = "lastModified", ignore = true)
-    public abstract OrgAffiliationRelationEntity toOrgAffiliationRelationEntity(Membership membership, @MappingTarget OrgAffiliationRelationEntity existing);
-
-
-    // ========================================================================
-    // Database -> API (Retrieval)
-    // ========================================================================
+    public abstract OrgAffiliationRelationEntity toOrgAffiliationRelationEntity(Education education, @MappingTarget OrgAffiliationRelationEntity existing);
 
     @Override
     @Mapping(source = "id", target = "putCode")
@@ -71,7 +69,7 @@ public abstract class JpaJaxbMembershipAdapterImpl implements JpaJaxbMembershipA
     @Mapping(source = "endDate", target = "endDate")
     @Mapping(source = "dateCreated", target = "createdDate.value")
     @Mapping(source = "lastModified", target = "lastModifiedDate.value")
-    public abstract Membership toMembership(OrgAffiliationRelationEntity entity);
+    public abstract Education toEducation(OrgAffiliationRelationEntity entity);
 
     @Override
     @Mapping(source = "id", target = "putCode")
@@ -84,16 +82,12 @@ public abstract class JpaJaxbMembershipAdapterImpl implements JpaJaxbMembershipA
     @Mapping(source = "endDate", target = "endDate")
     @Mapping(source = "dateCreated", target = "createdDate.value")
     @Mapping(source = "lastModified", target = "lastModifiedDate.value")
-    public abstract MembershipSummary toMembershipSummary(OrgAffiliationRelationEntity entity);
+    public abstract EducationSummary toEducationSummary(OrgAffiliationRelationEntity entity);
 
-
-    // ========================================================================
-    // Collection Mappings
-    // ========================================================================
 
     @Override
-    public abstract List<Membership> toMembership(Collection<OrgAffiliationRelationEntity> entities);
+    public abstract List<Education> toEducation(Collection<OrgAffiliationRelationEntity> entities);
 
     @Override
-    public abstract List<MembershipSummary> toMembershipSummary(Collection<OrgAffiliationRelationEntity> entities);
+    public abstract List<EducationSummary> toEducationSummary(Collection<OrgAffiliationRelationEntity> entities);
 }

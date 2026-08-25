@@ -1,4 +1,4 @@
-package org.orcid.core.adapter.v3.impl.mapstruct;
+package org.orcid.core.adapter.mapstruct.v3.impl;
 
 import java.util.Collection;
 import java.util.List;
@@ -12,9 +12,9 @@ import org.orcid.core.adapter.mapstruct.JSONExternalIdentifiersMapperV3;
 import org.orcid.core.adapter.mapstruct.OrgMapperV3;
 import org.orcid.core.adapter.mapstruct.SourceMapperV3;
 import org.orcid.core.adapter.mapstruct.VisibilityMapperV3;
-import org.orcid.core.adapter.v3.JpaJaxbServiceAdapter;
-import org.orcid.jaxb.model.v3.release.record.Service;
-import org.orcid.jaxb.model.v3.release.record.summary.ServiceSummary;
+import org.orcid.core.adapter.v3.JpaJaxbEmploymentAdapter;
+import org.orcid.jaxb.model.v3.release.record.Employment;
+import org.orcid.jaxb.model.v3.release.record.summary.EmploymentSummary;
 import org.orcid.persistence.jpa.entities.OrgAffiliationRelationEntity;
 
 @Mapper(
@@ -27,7 +27,7 @@ import org.orcid.persistence.jpa.entities.OrgAffiliationRelationEntity;
         FuzzyDateMapperV3.class
     }
 )
-public abstract class JpaJaxbServiceAdapterImpl implements JpaJaxbServiceAdapter {
+public abstract class JpaJaxbEmploymentAdapterImpl implements JpaJaxbEmploymentAdapter {
 
     @Override
     @Mapping(source = "putCode", target = "id")
@@ -40,7 +40,7 @@ public abstract class JpaJaxbServiceAdapterImpl implements JpaJaxbServiceAdapter
     @Mapping(source = "endDate", target = "endDate")
     @Mapping(target = "dateCreated", ignore = true)
     @Mapping(target = "lastModified", ignore = true)
-    public abstract OrgAffiliationRelationEntity toOrgAffiliationRelationEntity(Service service);
+    public abstract OrgAffiliationRelationEntity toOrgAffiliationRelationEntity(Employment employment);
 
     @Override
     @Mapping(source = "putCode", target = "id")
@@ -53,7 +53,8 @@ public abstract class JpaJaxbServiceAdapterImpl implements JpaJaxbServiceAdapter
     @Mapping(source = "endDate", target = "endDate")
     @Mapping(target = "dateCreated", ignore = true)
     @Mapping(target = "lastModified", ignore = true)
-    public abstract OrgAffiliationRelationEntity toOrgAffiliationRelationEntity(Service service, @MappingTarget OrgAffiliationRelationEntity existing);
+    public abstract OrgAffiliationRelationEntity toOrgAffiliationRelationEntity(Employment employment, @MappingTarget OrgAffiliationRelationEntity existing);
+
 
     @Override
     @Mapping(source = "id", target = "putCode")
@@ -66,7 +67,7 @@ public abstract class JpaJaxbServiceAdapterImpl implements JpaJaxbServiceAdapter
     @Mapping(source = "endDate", target = "endDate")
     @Mapping(source = "dateCreated", target = "createdDate.value")
     @Mapping(source = "lastModified", target = "lastModifiedDate.value")
-    public abstract Service toService(OrgAffiliationRelationEntity entity);
+    public abstract Employment toEmployment(OrgAffiliationRelationEntity entity);
 
     @Override
     @Mapping(source = "id", target = "putCode")
@@ -79,11 +80,11 @@ public abstract class JpaJaxbServiceAdapterImpl implements JpaJaxbServiceAdapter
     @Mapping(source = "endDate", target = "endDate")
     @Mapping(source = "dateCreated", target = "createdDate.value")
     @Mapping(source = "lastModified", target = "lastModifiedDate.value")
-    public abstract ServiceSummary toServiceSummary(OrgAffiliationRelationEntity entity);
+    public abstract EmploymentSummary toEmploymentSummary(OrgAffiliationRelationEntity entity);
 
     @Override
-    public abstract List<Service> toService(Collection<OrgAffiliationRelationEntity> entities);
+    public abstract List<Employment> toEmployment(Collection<OrgAffiliationRelationEntity> entities);
 
     @Override
-    public abstract List<ServiceSummary> toServiceSummary(Collection<OrgAffiliationRelationEntity> entities);
+    public abstract List<EmploymentSummary> toEmploymentSummary(Collection<OrgAffiliationRelationEntity> entities);
 }

@@ -7,7 +7,7 @@ import java.util.Map;
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.Resource;
 
-import org.orcid.core.adapter.v3.converter.ContributorsRolesAndSequencesConverter;
+import org.orcid.core.adapter.mapstruct.ContributorsRolesAndSequencesMapperV3;
 import org.orcid.core.manager.IdentifierTypeManager;
 import org.orcid.pojo.IdentifierType;
 import org.slf4j.Logger;

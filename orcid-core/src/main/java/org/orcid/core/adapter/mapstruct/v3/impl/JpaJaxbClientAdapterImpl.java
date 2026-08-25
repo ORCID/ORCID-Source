@@ -1,4 +1,4 @@
-package org.orcid.core.adapter.v3.impl.mapstruct;
+package org.orcid.core.adapter.mapstruct.v3.impl;
 
 import java.util.Collection;
 import java.util.Set;

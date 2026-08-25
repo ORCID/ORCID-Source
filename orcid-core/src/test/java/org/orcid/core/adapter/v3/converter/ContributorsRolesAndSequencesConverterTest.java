@@ -5,6 +5,7 @@ import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.orcid.core.adapter.mapstruct.ContributorsRolesAndSequencesMapperV3;
 import org.orcid.core.contributors.roles.ContributorRoleConverter;
 import org.orcid.core.contributors.roles.credit.CreditRole;
 import org.orcid.jaxb.model.v3.release.common.ContributorAttributes;
@@ -27,7 +28,7 @@ public class ContributorsRolesAndSequencesConverterTest {
     private ContributorRoleConverter mockContributorRoleConverter;
 
     @InjectMocks
-    private ContributorsRolesAndSequencesConverter contributorsRolesAndSequencesConverter;
+    private ContributorsRolesAndSequencesMapperV3 contributorsRolesAndSequencesConverter;
 
     @Before
     public void setUp() {

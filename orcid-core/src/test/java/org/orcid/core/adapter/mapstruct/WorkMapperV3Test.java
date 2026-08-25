@@ -6,7 +6,6 @@ import static org.mockito.Mockito.verify;
 
 import org.junit.Test;
 import org.orcid.core.adapter.mapstruct.WorkMapperV3;
-import org.orcid.core.adapter.v3.converter.ContributorsRolesAndSequencesConverter;
 import org.orcid.jaxb.model.common.WorkType;
 import org.orcid.jaxb.model.v3.release.record.Work;
 import org.orcid.persistence.jpa.entities.WorkEntity;
@@ -36,7 +35,7 @@ public class WorkMapperV3Test {
         entity.setTopContributorsJson("[{\"orcid\":\"0000-0000-0000-0000\"}]");
 
         WorkExtended work = new WorkExtended();
-        ContributorsRolesAndSequencesConverter converter = mock(ContributorsRolesAndSequencesConverter.class);
+        ContributorsRolesAndSequencesMapperV3 converter = mock(ContributorsRolesAndSequencesMapperV3.class);
 
         WorkMapperV3.INSTANCE.mapWorkExtendedBtoA(entity, work, converter);
 

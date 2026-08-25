@@ -1,4 +1,4 @@
-package org.orcid.core.adapter.v3.impl.mapstruct;
+package org.orcid.core.adapter.mapstruct.v3.impl;
 
 import java.util.Collection;
 import java.util.List;
@@ -12,9 +12,9 @@ import org.orcid.core.adapter.mapstruct.JSONExternalIdentifiersMapperV3;
 import org.orcid.core.adapter.mapstruct.OrgMapperV3;
 import org.orcid.core.adapter.mapstruct.SourceMapperV3;
 import org.orcid.core.adapter.mapstruct.VisibilityMapperV3;
-import org.orcid.core.adapter.v3.JpaJaxbInvitedPositionAdapter;
-import org.orcid.jaxb.model.v3.release.record.InvitedPosition;
-import org.orcid.jaxb.model.v3.release.record.summary.InvitedPositionSummary;
+import org.orcid.core.adapter.v3.JpaJaxbMembershipAdapter;
+import org.orcid.jaxb.model.v3.release.record.Membership;
+import org.orcid.jaxb.model.v3.release.record.summary.MembershipSummary;
 import org.orcid.persistence.jpa.entities.OrgAffiliationRelationEntity;
 
 @Mapper(
@@ -27,7 +27,7 @@ import org.orcid.persistence.jpa.entities.OrgAffiliationRelationEntity;
         FuzzyDateMapperV3.class
     }
 )
-public abstract class JpaJaxbInvitedPositionAdapterImpl implements JpaJaxbInvitedPositionAdapter {
+public abstract class JpaJaxbMembershipAdapterImpl implements JpaJaxbMembershipAdapter {
 
     @Override
     @Mapping(source = "putCode", target = "id")
@@ -40,7 +40,7 @@ public abstract class JpaJaxbInvitedPositionAdapterImpl implements JpaJaxbInvite
     @Mapping(source = "endDate", target = "endDate")
     @Mapping(target = "dateCreated", ignore = true)
     @Mapping(target = "lastModified", ignore = true)
-    public abstract OrgAffiliationRelationEntity toOrgAffiliationRelationEntity(InvitedPosition invitedPosition);
+    public abstract OrgAffiliationRelationEntity toOrgAffiliationRelationEntity(Membership membership);
 
     @Override
     @Mapping(source = "putCode", target = "id")
@@ -53,7 +53,12 @@ public abstract class JpaJaxbInvitedPositionAdapterImpl implements JpaJaxbInvite
     @Mapping(source = "endDate", target = "endDate")
     @Mapping(target = "dateCreated", ignore = true)
     @Mapping(target = "lastModified", ignore = true)
-    public abstract OrgAffiliationRelationEntity toOrgAffiliationRelationEntity(InvitedPosition invitedPosition, @MappingTarget OrgAffiliationRelationEntity existing);
+    public abstract OrgAffiliationRelationEntity toOrgAffiliationRelationEntity(Membership membership, @MappingTarget OrgAffiliationRelationEntity existing);
+
+
+    // ========================================================================
+    // Database -> API (Retrieval)
+    // ========================================================================
 
     @Override
     @Mapping(source = "id", target = "putCode")
@@ -66,7 +71,7 @@ public abstract class JpaJaxbInvitedPositionAdapterImpl implements JpaJaxbInvite
     @Mapping(source = "endDate", target = "endDate")
     @Mapping(source = "dateCreated", target = "createdDate.value")
     @Mapping(source = "lastModified", target = "lastModifiedDate.value")
-    public abstract InvitedPosition toInvitedPosition(OrgAffiliationRelationEntity entity);
+    public abstract Membership toMembership(OrgAffiliationRelationEntity entity);
 
     @Override
     @Mapping(source = "id", target = "putCode")
@@ -79,11 +84,16 @@ public abstract class JpaJaxbInvitedPositionAdapterImpl implements JpaJaxbInvite
     @Mapping(source = "endDate", target = "endDate")
     @Mapping(source = "dateCreated", target = "createdDate.value")
     @Mapping(source = "lastModified", target = "lastModifiedDate.value")
-    public abstract InvitedPositionSummary toInvitedPositionSummary(OrgAffiliationRelationEntity entity);
+    public abstract MembershipSummary toMembershipSummary(OrgAffiliationRelationEntity entity);
+
+
+    // ========================================================================
+    // Collection Mappings
+    // ========================================================================
 
     @Override
-    public abstract List<InvitedPosition> toInvitedPosition(Collection<OrgAffiliationRelationEntity> entities);
+    public abstract List<Membership> toMembership(Collection<OrgAffiliationRelationEntity> entities);
 
     @Override
-    public abstract List<InvitedPositionSummary> toInvitedPositionSummary(Collection<OrgAffiliationRelationEntity> entities);
+    public abstract List<MembershipSummary> toMembershipSummary(Collection<OrgAffiliationRelationEntity> entities);
 }

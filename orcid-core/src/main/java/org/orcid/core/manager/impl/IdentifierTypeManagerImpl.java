@@ -14,8 +14,8 @@ import java.util.TreeMap;
 import jakarta.annotation.Resource;
 
 import org.apache.commons.collections4.trie.PatriciaTrie;
-import org.orcid.core.adapter.mapstruct.IdentifierTypeMapper;
-import org.orcid.core.adapter.mapstruct.jsonidentifier.ExternalIdentifierTypeMapper;
+import org.orcid.core.adapter.impl.mapstruct.IdentifierTypeMapper;
+import org.orcid.core.adapter.mapstruct.ExternalIdentifierTypeMapper;
 import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.IdentifierTypeManager;
 import org.orcid.core.manager.OrcidSecurityManager;
@@ -58,7 +58,9 @@ public class IdentifierTypeManagerImpl implements IdentifierTypeManager {
     @Resource
     private LocaleManager localeManager;
 
-    private IdentifierTypePOJOConverter adapter = new IdentifierTypePOJOConverter();
+    @Resource
+    private IdentifierTypeMapper identifierTypeMapper;
+
     private ExternalIdentifierTypeMapper externalIdentifierTypeConverter = ExternalIdentifierTypeMapper.INSTANCE;    
     
     /**
@@ -69,7 +71,7 @@ public class IdentifierTypeManagerImpl implements IdentifierTypeManager {
     public IdentifierType fetchIdentifierTypeByDatabaseName(String name, Locale loc) {
         loc = (loc == null )? Locale.ENGLISH : loc;
         IdentifierTypeEntity entity = idTypeDao.getEntityByName(name);
-        IdentifierType type = adapter.fromEntity(entity);
+        IdentifierType type = identifierTypeMapper.fromEntity(entity);
         type.setDescription(getMessage(type.getName(), loc));
         return type;
     }
@@ -86,7 +88,7 @@ public class IdentifierTypeManagerImpl implements IdentifierTypeManager {
         List<IdentifierTypeEntity> entities = idTypeDao.getEntities();
         Map<String, IdentifierType> ids = new HashMap<String, IdentifierType>();
         for (IdentifierTypeEntity e : entities) {
-            IdentifierType id = adapter.fromEntity(e);
+            IdentifierType id = identifierTypeMapper.fromEntity(e);
             id.setDescription(getMessage(id.getName(), loc));
             ids.put(id.getName(), id);
         }
@@ -96,12 +98,12 @@ public class IdentifierTypeManagerImpl implements IdentifierTypeManager {
     @Override
     @CacheEvict(value = { "identifier-types", "identifier-types-map" }, allEntries = true)
     public IdentifierType createIdentifierType(IdentifierType id) {
-        IdentifierTypeEntity entity = adapter.fromPojo(id);
+        IdentifierTypeEntity entity = identifierTypeMapper.fromPojo(id);
         SourceEntity source = sourceManager.retrieveSourceEntity();
         entity.setSourceClient(source.getSourceClient());
         Date now = new Date();
         entity = idTypeDao.addIdentifierType(entity);
-        return adapter.fromEntity(entity);
+        return identifierTypeMapper.fromEntity(entity);
     }
 
     @Override
@@ -117,7 +119,7 @@ public class IdentifierTypeManagerImpl implements IdentifierTypeManager {
         entity.setIsCaseSensitive(id.getCaseSensitive());
         entity.setPrimaryUse(id.getPrimaryUse());
         entity = idTypeDao.updateIdentifierType(entity);
-        return adapter.fromEntity(entity);
+        return identifierTypeMapper.fromEntity(entity);
     }
     
     private String getMessage(String type, Locale locale) {
@@ -129,29 +131,6 @@ public class IdentifierTypeManagerImpl implements IdentifierTypeManager {
         }
     }
 
-    
-    /** Seems pointless to base on live data - based on 2016 datadump
-     *  DOI,414627,9.49E+06,8.56E+06
-        EID,176888,5.52E+06,5.42E+06
-        PMID,65623,1.17E+06,1.16E+06
-        ISSN,64859,944926,493274
-        WOSUID,45497,1.37E+06,1.35E+06
-        PMC,41232,272073,270988
-        ISBN,39629,217805,172146
-        OTHER_ID,15486,203683,200963
-        SOURCE_WORK_ID,14091,279023,277629
-        ARXIV,5199,134103,130695
-        HANDLE,1535,26142,26069
-        BIBCODE,1347,83041,82412
-     */    
-    //private static List<String> topTypes = Lists.newArrayList("doi","eid","pmid","issn","wosuid","pmc","isbn","other-id","arxiv","handle","bibcode");
-    
-    /**
-     * Returns an immutable list of the default identifierType objects to show.
-     * Sorted by description
-     * Null locale will result in Locale.ENGLISH
-     * 
-     */
     @Override
     @Cacheable("identifier-types-map-top")
     public List<IdentifierType> fetchDefaultIdentifierTypes(Locale loc) {
@@ -162,12 +141,6 @@ public class IdentifierTypeManagerImpl implements IdentifierTypeManager {
         return List.copyOf(sorted.values());
     }
 
-    /**
-     * Queries the identifier name and description fields for words that START WITH query.
-     * Returns an immutable list of matching types.
-     * Null locale will result in Locale.ENGLISH
-     * 
-     */
     @Override
     @Cacheable("identifier-types-map-prefix")
     public List<IdentifierType> queryByPrefix(String query, Locale loc) {
@@ -212,6 +185,4 @@ public class IdentifierTypeManagerImpl implements IdentifierTypeManager {
         
         return builder.build();
     }
-
-
 }

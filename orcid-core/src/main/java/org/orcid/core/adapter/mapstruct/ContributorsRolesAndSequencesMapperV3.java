@@ -1,4 +1,4 @@
-package org.orcid.core.adapter.v3.converter;
+package org.orcid.core.adapter.mapstruct;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -20,9 +20,9 @@ import java.util.List;
 /**
  * Plain, Orika-free converter for serializing/deserializing ContributorsRolesAndSequences objects.
  */
-public class ContributorsRolesAndSequencesConverter {
+public class ContributorsRolesAndSequencesMapperV3 {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(ContributorsRolesAndSequencesConverter.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(ContributorsRolesAndSequencesMapperV3.class);
 
     @Resource(name = "workContributorRoleConverter")
     private ContributorRoleConverter workContributorRoleConverter;

@@ -1,4 +1,4 @@
-package org.orcid.core.adapter;
+package org.orcid.core.adapter.mapstruct;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
