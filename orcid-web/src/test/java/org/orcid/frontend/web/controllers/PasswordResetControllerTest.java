@@ -6,9 +6,11 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
@@ -48,6 +50,8 @@ import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.orcid.test.TargetProxyHelper;
 import org.orcid.utils.ExpiringLinkService;
 import com.nimbusds.jwt.JWTClaimsSet;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpSession;
 import org.springframework.test.context.ContextConfiguration;
@@ -140,20 +144,48 @@ public class PasswordResetControllerTest extends DBUnitTest {
     }
     
     @Test
+    public void testPasswordResetActiveClaimedSendsResetEmail() throws DatatypeConfigurationException {
+        String email = "email1@test.orcid.org";
+        String orcid = "0000-0000-0000-0000";
+        when(emailManager.emailExists(email)).thenReturn(true);
+        when(emailManager.findOrcidIdByEmail(email)).thenReturn(orcid);
+        when(profileEntityManager.isDeactivated(orcid)).thenReturn(false);
+        when(profileEntityManager.isProfileClaimedByEmail(email)).thenReturn(true);
+        ProfileEntity record = new ProfileEntity();
+        when(profileEntityCacheManager.retrieve(orcid)).thenReturn(record);
+        EmailRequest resetRequest = new EmailRequest();
+        resetRequest.setEmail(email);
+
+        ResponseEntity<EmailRequest> response = passwordResetController.issuePasswordResetRequest(new MockHttpServletRequest(), resetRequest);
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertNotNull(response.getBody().getErrors());
+        assertTrue(response.getBody().getErrors().isEmpty());
+        // The controller hands the submitted address to the sender, which decides the full
+        // recipient set. Nothing about the fan out belongs here.
+        verify(mockRecordEmailSender, times(1)).sendPasswordResetEmail(eq(email), eq(orcid));
+        verify(mockRecordEmailSender, never()).sendReactivationEmail(anyString(), anyString());
+        verify(mockRecordEmailSender, never()).sendPasswordResetNotFoundEmail(anyString(), any());
+    }
+
+    @Test
     public void testPasswordResetUnclaimedSendEmail() throws DatatypeConfigurationException {
         String email = "email1@test.orcid.org";
         String orcid = "0000-0000-0000-0000";
         when(emailManager.emailExists(email)).thenReturn(true); 
         when(emailManager.findOrcidIdByEmail(email)).thenReturn(orcid);
         when(profileEntityManager.isDeactivated(orcid)).thenReturn(false);
-        when(profileEntityManager.isProfileClaimedByEmail(orcid)).thenReturn(false);
+        when(profileEntityManager.isProfileClaimedByEmail(email)).thenReturn(false);
         ProfileEntity record= new ProfileEntity();
         when(profileEntityCacheManager.retrieve(orcid)).thenReturn(record);
         EmailRequest resetRequest = new EmailRequest();
         resetRequest.setEmail("email1@test.orcid.org");
         resetRequest = passwordResetController.issuePasswordResetRequest(new MockHttpServletRequest(), resetRequest).getBody();
         assertNotNull(resetRequest.getErrors());
-        assertTrue(resetRequest.getErrors().isEmpty());   
+        assertTrue(resetRequest.getErrors().isEmpty());
+        verify(mockRecordEmailSender, times(1)).sendClaimReminderEmail(eq(orcid), eq(0), eq(email));
+        // An unclaimed record gets a claim reminder, never a fanned out reset link.
+        verify(mockRecordEmailSender, never()).sendPasswordResetEmail(anyString(), anyString());
     }    
     
     @Test
@@ -163,6 +195,9 @@ public class PasswordResetControllerTest extends DBUnitTest {
         resetRequest = passwordResetController.issuePasswordResetRequest(new MockHttpServletRequest(), resetRequest).getBody();
         assertNotNull(resetRequest.getErrors());
         assertTrue(resetRequest.getErrors().isEmpty());
+        verify(mockRecordEmailSender, times(1)).sendPasswordResetNotFoundEmail(eq("not_in_orcid@test.orcid.org"), any());
+        // There is no account here, so there is no verified email set to fan out to.
+        verify(mockRecordEmailSender, never()).sendPasswordResetEmail(anyString(), anyString());
     }
 
     @Test
@@ -178,7 +213,11 @@ public class PasswordResetControllerTest extends DBUnitTest {
         resetRequest.setEmail("email1@test.orcid.org");
         resetRequest = passwordResetController.issuePasswordResetRequest(new MockHttpServletRequest(), resetRequest).getBody();
         assertNotNull(resetRequest.getErrors());
-        assertTrue(resetRequest.getErrors().isEmpty());   
+        assertTrue(resetRequest.getErrors().isEmpty());
+        verify(mockRecordEmailSender, times(1)).sendReactivationEmail(eq(email), eq(orcid));
+        // A deactivated record gets a reactivation link, which is a different decision from
+        // fanning a password reset link out across the record's addresses.
+        verify(mockRecordEmailSender, never()).sendPasswordResetEmail(anyString(), anyString());
     }
 
     @Test
