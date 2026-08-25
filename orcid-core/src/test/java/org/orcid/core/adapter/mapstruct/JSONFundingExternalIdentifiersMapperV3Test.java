@@ -1,4 +1,4 @@
-package org.orcid.core.adapter.jsonidentifier.converter;
+package org.orcid.core.adapter.mapstruct;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -11,22 +11,26 @@ import jakarta.xml.bind.JAXBException;
 import jakarta.xml.bind.Unmarshaller;
 
 import org.junit.Test;
+import org.mapstruct.factory.Mappers;
+import org.orcid.core.adapter.mapstruct.ExternalIdentifierTypeMapper;
+import org.orcid.core.adapter.mapstruct.JSONFundingExternalIdentifiersMapperV3;
 import org.orcid.jaxb.model.common_v2.Visibility;
-import org.orcid.jaxb.model.record_v2.ExternalID;
-import org.orcid.jaxb.model.record_v2.ExternalIDs;
-import org.orcid.jaxb.model.record_v2.Funding;
 import org.orcid.jaxb.model.record_v2.FundingType;
+import org.orcid.jaxb.model.v3.release.record.ExternalID;
+import org.orcid.jaxb.model.v3.release.record.ExternalIDs;
+import org.orcid.jaxb.model.v3.release.record.Funding;
 import org.orcid.persistence.jpa.entities.EndDateEntity;
 import org.orcid.persistence.jpa.entities.ProfileFundingEntity;
 import org.orcid.persistence.jpa.entities.StartDateEntity;
+import org.springframework.test.util.ReflectionTestUtils;
 
-public class JSONFundingExternalIdentifiersConverterV2Test {
+public class JSONFundingExternalIdentifiersMapperV3Test {
 
-    private final org.orcid.core.adapter.mapstruct.jsonidentifier.JSONFundingExternalIdentifiersMapperV2 converter = newConverter();
+    private final JSONFundingExternalIdentifiersMapperV3 converter = newConverter();
 
-    private static org.orcid.core.adapter.mapstruct.jsonidentifier.JSONFundingExternalIdentifiersMapperV2 newConverter() {
-        org.orcid.core.adapter.mapstruct.jsonidentifier.JSONFundingExternalIdentifiersMapperV2 mapper = org.mapstruct.factory.Mappers.getMapper(org.orcid.core.adapter.mapstruct.jsonidentifier.JSONFundingExternalIdentifiersMapperV2.class);
-        org.springframework.test.util.ReflectionTestUtils.setField(mapper, "typeMapper", org.orcid.core.adapter.mapstruct.jsonidentifier.ExternalIdentifierTypeMapper.INSTANCE);
+    private static JSONFundingExternalIdentifiersMapperV3 newConverter() {
+        JSONFundingExternalIdentifiersMapperV3 mapper = Mappers.getMapper(JSONFundingExternalIdentifiersMapperV3.class);
+        ReflectionTestUtils.setField(mapper, "typeMapper", ExternalIdentifierTypeMapper.INSTANCE);
         return mapper;
     }
 
@@ -44,12 +48,12 @@ public class JSONFundingExternalIdentifiersConverterV2Test {
         ExternalIDs externalIDs = converter.convertFrom(funding.getExternalIdentifiersJson());
         assertNotNull(externalIDs);
         assertEquals(2, externalIDs.getExternalIdentifier().size());
-        
+
         ExternalID externalID = externalIDs.getExternalIdentifier().get(0);
         assertEquals("grant_number", externalID.getType());
         assertEquals("12345", externalID.getValue());
         assertEquals("http://tempuri.org", externalID.getUrl().getValue());
-        
+
         externalID = externalIDs.getExternalIdentifier().get(1);
         assertEquals("grant_number", externalID.getType());
         assertEquals("67890", externalID.getValue());
@@ -79,9 +83,8 @@ public class JSONFundingExternalIdentifiersConverterV2Test {
     private Funding getFunding() throws JAXBException {
         JAXBContext context = JAXBContext.newInstance(Funding.class);
         Unmarshaller unmarshaller = context.createUnmarshaller();
-        String name = "/record_2.0/samples/read_samples/funding-full-2.0.xml";
+        String name = "/record_3.0/samples/read_samples/funding-full-3.0.xml";
         InputStream inputStream = getClass().getResourceAsStream(name);
         return (Funding) unmarshaller.unmarshal(inputStream);
     }
-
 }

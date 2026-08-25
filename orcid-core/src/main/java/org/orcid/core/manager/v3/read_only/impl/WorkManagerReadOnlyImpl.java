@@ -18,8 +18,8 @@ import jakarta.annotation.Resource;
 import org.apache.commons.lang3.StringUtils;
 import org.orcid.core.adapter.mapstruct.ContributorsRolesAndSequencesMapperV3;
 import org.orcid.core.adapter.mapstruct.JSONWorkExternalIdentifiersMapperV3;
+import org.orcid.core.adapter.mapstruct.WorkContributorsMapperV3;
 import org.orcid.core.adapter.v3.JpaJaxbWorkAdapter;
-import org.orcid.core.adapter.v3.converter.WorkContributorsConverter;
 import org.orcid.core.exception.ExceedMaxNumberOfPutCodesException;
 import org.orcid.core.exception.OrcidCoreExceptionMapper;
 import org.orcid.core.exception.PutCodeFormatException;
@@ -82,8 +82,8 @@ public class WorkManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements 
     @Resource(name = "contributorUtilsV3")
     private ContributorUtils contributorUtils;
 
-    @Resource(name = "workContributorsConverter")
-    private WorkContributorsConverter workContributorsConverter;
+    @Resource(name = "workContributorsMapperV3")
+    private WorkContributorsMapperV3 workContributorsMapperV3;
 
     @Resource
     private JSONWorkExternalIdentifiersMapperV3 jsonWorkExternalIdentifiersConverterV3;
@@ -295,7 +295,7 @@ public class WorkManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements 
             if (contributors != null && !"".equals(contributors)) {
                 contributorsRolesAndSequencesList = contributorsRolesAndSequencesConverter.getContributorsRolesAndSequencesList(contributors);
             } else {
-                contributorList = workContributorsConverter.getContributorsList(contributors);
+                contributorList = workContributorsMapperV3.getContributorsList(contributors);
             }
 
             WorkSummaryExtended wse = new WorkSummaryExtended.WorkSummaryExtendedBuilder(putCode, workType, title, sourceId, clientSourceId, createdDate,
@@ -492,7 +492,7 @@ public class WorkManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements 
                     if (w.getTitle() != null && w.getTitle().getTitle() != null && !PojoUtil.isEmpty(w.getTitle().getTitle().getContent())) {
                         title.setTitle(w.getTitle().getTitle().getContent());
                     } else {
-                    	title.setTitle("");
+                        title.setTitle("");
                     }
 
                     title.setPublic(org.orcid.jaxb.model.v3.release.common.Visibility.PUBLIC.equals(w.getVisibility()));

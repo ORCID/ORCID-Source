@@ -1,7 +1,7 @@
 package org.orcid.core.cli;
 
 import org.orcid.core.adapter.mapstruct.ContributorsRolesAndSequencesMapperV3;
-import org.orcid.core.adapter.v3.converter.WorkContributorsConverter;
+import org.orcid.core.adapter.mapstruct.WorkContributorsMapperV3;
 import org.orcid.core.utils.v3.ContributorUtils;
 import org.orcid.persistence.dao.WorkDao;
 import org.orcid.persistence.jpa.entities.WorkEntity;
@@ -22,7 +22,7 @@ import java.util.logging.SimpleFormatter;
 public class FilterTopContributors {
 
     private WorkDao workDao;
-    private WorkContributorsConverter workContributorsConverter;
+    private WorkContributorsMapperV3 workContributorsMapperV3;
     private ContributorsRolesAndSequencesMapperV3 contributorsRolesAndSequencesConverter;
     private static Logger logger = Logger.getLogger(FilterTopContributors.class.getName());
     private static final int MAX_CONTRIBUTORS_FOR_UI = 50;
@@ -67,7 +67,7 @@ public class FilterTopContributors {
         WorkEntity workEntity = workDao.find(((BigInteger) workObject[0]).longValue());
         ContributorUtils contributorUtils = new ContributorUtils();
         WorkSummaryExtended wse = new WorkSummaryExtended.WorkSummaryExtendedBuilder(((BigInteger) workObject[0]))
-                .contributors(workContributorsConverter.getContributorsList(isEmpty(workObject[1])))
+                .contributors(workContributorsMapperV3.getContributorsList(isEmpty(workObject[1])))
                 .build();
         List<ContributorsRolesAndSequences> contributors = contributorUtils.getContributorsGroupedByOrcid(wse.getContributors().getContributor(), MAX_CONTRIBUTORS_FOR_UI);
         if (contributors.size() > 0) {
@@ -86,7 +86,7 @@ public class FilterTopContributors {
     private void init() {
         ApplicationContext context = new ClassPathXmlApplicationContext("orcid-core-context.xml");
         workDao = (WorkDao) context.getBean("workDao");
-        workContributorsConverter = (WorkContributorsConverter) context.getBean("workContributorsConverter");
+        workContributorsMapperV3 = (WorkContributorsMapperV3) context.getBean("workContributorsMapperV3");
         contributorsRolesAndSequencesConverter = (ContributorsRolesAndSequencesMapperV3) context.getBean("contributorsRolesAndSequencesConverter");
     }
 

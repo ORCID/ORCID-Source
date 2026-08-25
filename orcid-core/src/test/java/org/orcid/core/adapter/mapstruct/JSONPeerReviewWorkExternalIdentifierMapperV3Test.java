@@ -1,4 +1,4 @@
-package org.orcid.core.adapter.jsonidentifier.converter;
+package org.orcid.core.adapter.mapstruct;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -10,26 +10,29 @@ import jakarta.xml.bind.JAXBException;
 import jakarta.xml.bind.Unmarshaller;
 
 import org.junit.Test;
+import org.mapstruct.factory.Mappers;
+import org.orcid.core.adapter.mapstruct.ExternalIdentifierTypeMapper;
+import org.orcid.core.adapter.mapstruct.JSONPeerReviewWorkExternalIdentifierMapperV3;
 import org.orcid.jaxb.model.common_v2.Visibility;
-import org.orcid.jaxb.model.record_v2.ExternalID;
-import org.orcid.jaxb.model.record_v2.PeerReview;
 import org.orcid.jaxb.model.record_v2.PeerReviewType;
 import org.orcid.jaxb.model.record_v2.Role;
 import org.orcid.jaxb.model.record_v2.WorkType;
+import org.orcid.jaxb.model.v3.release.record.ExternalID;
+import org.orcid.jaxb.model.v3.release.record.PeerReview;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.CompletionDateEntity;
 import org.orcid.persistence.jpa.entities.OrgEntity;
 import org.orcid.persistence.jpa.entities.PeerReviewEntity;
-import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.SourceEntity;
+import org.springframework.test.util.ReflectionTestUtils;
 
-public class JSONPeerReviewWorkExternalIdentifierConverterV2Test {
+public class JSONPeerReviewWorkExternalIdentifierMapperV3Test {
 
-    private final org.orcid.core.adapter.mapstruct.jsonidentifier.JSONPeerReviewWorkExternalIdentifierMapperV2 converter = newConverter();
+    private final JSONPeerReviewWorkExternalIdentifierMapperV3 converter = newConverter();
 
-    private static org.orcid.core.adapter.mapstruct.jsonidentifier.JSONPeerReviewWorkExternalIdentifierMapperV2 newConverter() {
-        org.orcid.core.adapter.mapstruct.jsonidentifier.JSONPeerReviewWorkExternalIdentifierMapperV2 mapper = org.mapstruct.factory.Mappers.getMapper(org.orcid.core.adapter.mapstruct.jsonidentifier.JSONPeerReviewWorkExternalIdentifierMapperV2.class);
-        org.springframework.test.util.ReflectionTestUtils.setField(mapper, "typeMapper", org.orcid.core.adapter.mapstruct.jsonidentifier.ExternalIdentifierTypeMapper.INSTANCE);
+    private static JSONPeerReviewWorkExternalIdentifierMapperV3 newConverter() {
+        JSONPeerReviewWorkExternalIdentifierMapperV3 mapper = Mappers.getMapper(JSONPeerReviewWorkExternalIdentifierMapperV3.class);
+        ReflectionTestUtils.setField(mapper, "typeMapper", ExternalIdentifierTypeMapper.INSTANCE);
         return mapper;
     }
 
@@ -46,7 +49,7 @@ public class JSONPeerReviewWorkExternalIdentifierConverterV2Test {
         PeerReviewEntity peerReview = getPeerReviewEntity();
         ExternalID externalID = converter.convertFrom(peerReview.getSubjectExternalIdentifiersJson());
         assertNotNull(externalID);
-        
+
         assertEquals("source-work-id", externalID.getType());
         assertEquals("peer-review:subject-external-identifier-id", externalID.getValue());
         assertEquals("http://orcid.org", externalID.getUrl().getValue());
@@ -55,7 +58,7 @@ public class JSONPeerReviewWorkExternalIdentifierConverterV2Test {
     private PeerReview getPeerReview() throws JAXBException {
         JAXBContext context = JAXBContext.newInstance(PeerReview.class);
         Unmarshaller unmarshaller = context.createUnmarshaller();
-        String name = "/record_2.0/samples/read_samples/peer-review-full-2.0.xml";
+        String name = "/record_3.0/samples/read_samples/peer-review-full-3.0.xml";
         InputStream inputStream = getClass().getResourceAsStream(name);
         return (PeerReview) unmarshaller.unmarshal(inputStream);
     }
@@ -67,13 +70,12 @@ public class JSONPeerReviewWorkExternalIdentifierConverterV2Test {
         orgEntity.setName("org:name");
         orgEntity.setRegion("org:region");
         orgEntity.setUrl("org:url");
-        
+
         ClientDetailsEntity clientDetailsEntity = new ClientDetailsEntity();
         clientDetailsEntity.setId("APP-000000001");
 
         SourceEntity sourceEntity = new SourceEntity();
         sourceEntity.setSourceClient(clientDetailsEntity);
-        
         orgEntity.setSource(sourceEntity);
 
         PeerReviewEntity result = new PeerReviewEntity();
@@ -100,5 +102,4 @@ public class JSONPeerReviewWorkExternalIdentifierConverterV2Test {
 
         return result;
     }
-
 }

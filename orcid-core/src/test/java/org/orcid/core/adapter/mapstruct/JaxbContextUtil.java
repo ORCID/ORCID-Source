@@ -1,4 +1,4 @@
-package org.orcid.core.adapter.jsonidentifier.converter;
+package org.orcid.core.adapter.mapstruct;
 
 import jakarta.xml.bind.JAXBContext;
 import jakarta.xml.bind.JAXBException;

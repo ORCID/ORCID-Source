@@ -1,4 +1,4 @@
-package org.orcid.core.adapter.impl;
+package org.orcid.core.adapter.v2.latest;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -8,12 +8,14 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.junit.Test;
+import org.mapstruct.factory.Mappers;
+import org.orcid.core.adapter.mapstruct.impl.JpaJaxbInvalidRecordDataChangeAdapterImpl;
 import org.orcid.model.record_correction.RecordCorrection;
 import org.orcid.persistence.jpa.entities.InvalidRecordDataChangeEntity;
 
 public class JpaJaxbInvalidRecordDataChangeAdapterImplTest {
 
-    private final JpaJaxbInvalidRecordDataChangeAdapterImpl adapter = new JpaJaxbInvalidRecordDataChangeAdapterImpl();
+    private final JpaJaxbInvalidRecordDataChangeAdapterImpl adapter = Mappers.getMapper(JpaJaxbInvalidRecordDataChangeAdapterImpl.class);
 
     @Test
     public void toInvalidRecordDataChangeShouldReturnNullForNullInput() {

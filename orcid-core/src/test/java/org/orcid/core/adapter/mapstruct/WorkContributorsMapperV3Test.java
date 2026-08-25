@@ -1,8 +1,7 @@
-package org.orcid.core.adapter.converter;
+package org.orcid.core.adapter.mapstruct;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import org.junit.Before;
@@ -12,22 +11,24 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.orcid.core.contributors.roles.ContributorRoleConverter;
-import org.orcid.jaxb.model.common_v2.Contributor;
-import org.orcid.jaxb.model.common_v2.ContributorAttributes;
-import org.orcid.jaxb.model.common_v2.ContributorEmail;
-import org.orcid.jaxb.model.common_v2.ContributorOrcid;
-import org.orcid.jaxb.model.common_v2.ContributorRole;
-import org.orcid.jaxb.model.common_v2.CreditName;
-import org.orcid.jaxb.model.record_v2.SequenceType;
-import org.orcid.jaxb.model.record_v2.WorkContributors;
+import org.orcid.core.contributors.roles.InvalidContributorRoleException;
+import org.orcid.core.contributors.roles.credit.CreditRole;
+import org.orcid.jaxb.model.common.SequenceType;
+import org.orcid.jaxb.model.v3.release.common.Contributor;
+import org.orcid.jaxb.model.v3.release.common.ContributorAttributes;
+import org.orcid.jaxb.model.v3.release.common.ContributorEmail;
+import org.orcid.jaxb.model.v3.release.common.ContributorOrcid;
+import org.orcid.jaxb.model.v3.release.common.CreditName;
+import org.orcid.jaxb.model.v3.release.record.WorkContributors;
+import org.orcid.core.adapter.mapstruct.WorkContributorsMapperV3;
 
-public class WorkContributorsConverterTest {
+public class WorkContributorsMapperV3Test {
 
     @Mock
     private ContributorRoleConverter mockContributorRoleConverter;
 
     @InjectMocks
-    private WorkContributorsConverter workContributorsConverter;
+    private WorkContributorsMapperV3 workContributorsMapper;
 
     @Before
     public void setUp() {
@@ -42,13 +43,26 @@ public class WorkContributorsConverterTest {
      */
     @Test
     public void testConvertTo() {
-        WorkContributors workContributors = getWorkContributors();
-        String json = workContributorsConverter.convertTo(workContributors);
-        assertTrue(json.contains("AUTHOR"));
-        assertTrue(json.contains("CO_INVENTOR"));
+        Mockito.when(mockContributorRoleConverter.toDBRole(Mockito.anyString())).thenReturn("SOME-VALUE");
         
-        // role converter not needed for this operation
-        Mockito.verify(mockContributorRoleConverter, Mockito.never()).toDBRole(Mockito.anyString());
+        WorkContributors workContributors = getWorkContributors();
+        String json = workContributorsMapper.convertTo(workContributors);
+        assertTrue(json.contains("SOME-VALUE"));
+        assertTrue(json.contains("SOME-VALUE"));
+        
+        // role converter needed to turn role names to upper case enum names 
+        Mockito.verify(mockContributorRoleConverter, Mockito.times(2)).toDBRole(Mockito.anyString());
+    }
+    
+    /**
+     * Test to check invalid roles converted to null don't get into the db
+     */
+    @Test(expected = InvalidContributorRoleException.class)
+    public void testConvertToWithErroneousValue() {
+        Mockito.when(mockContributorRoleConverter.toDBRole(Mockito.anyString())).thenReturn(null);
+        
+        WorkContributors workContributors = getWorkContributors();
+        workContributorsMapper.convertTo(workContributors);
     }
 
     /**
@@ -60,30 +74,24 @@ public class WorkContributorsConverterTest {
     @Test
     public void testConvertFrom() {
         // imagine all roles converted to author
-        Mockito.when(mockContributorRoleConverter.toLegacyRoleName(Mockito.anyString())).thenReturn("AUTHOR");
-        WorkContributors workContributors = workContributorsConverter.convertFrom(getWorkContributorsJson());
+        Mockito.when(mockContributorRoleConverter.toRoleValue(Mockito.anyString())).thenReturn("some-value");
+        WorkContributors workContributors = workContributorsMapper.convertFrom(getWorkContributorsJson());
         assertNotNull(workContributors.getContributor());
         assertEquals(2, workContributors.getContributor().size());
-        assertEquals(ContributorRole.AUTHOR, workContributors.getContributor().get(0).getContributorAttributes().getContributorRole());
-        assertEquals(ContributorRole.AUTHOR, workContributors.getContributor().get(1).getContributorAttributes().getContributorRole());
+        assertEquals("some-value", workContributors.getContributor().get(0).getContributorAttributes().getContributorRole());
+        assertEquals("some-value", workContributors.getContributor().get(1).getContributorAttributes().getContributorRole());
         
-        // imagine all roles not convertible
-        Mockito.when(mockContributorRoleConverter.toLegacyRoleName(Mockito.anyString())).thenReturn(null);
-        workContributors = workContributorsConverter.convertFrom(getWorkContributorsJson());
-        assertNotNull(workContributors.getContributor());
-        assertEquals(2, workContributors.getContributor().size());
-        assertNull(workContributors.getContributor().get(0).getContributorAttributes().getContributorRole());
-        assertNull(workContributors.getContributor().get(1).getContributorAttributes().getContributorRole());
+        Mockito.verify(mockContributorRoleConverter, Mockito.times(2)).toRoleValue(Mockito.anyString());
     }
     
     private WorkContributors getWorkContributors() {
         WorkContributors workContributors = new WorkContributors();
-        workContributors.getContributor().add(getContributor(ContributorRole.AUTHOR));
-        workContributors.getContributor().add(getContributor(ContributorRole.CO_INVENTOR));
+        workContributors.getContributor().add(getContributor(CreditRole.FUNDING_ACQUISITION.value()));
+        workContributors.getContributor().add(getContributor(CreditRole.FORMAL_ANALYSIS.value()));
         return workContributors;
     }
     
-    private Contributor getContributor(ContributorRole contributorRole) {
+    private Contributor getContributor(String contributorRole) {
         Contributor contributor = new Contributor();
         contributor.setContributorOrcid(new ContributorOrcid("orcid"));
         contributor.setContributorEmail(new ContributorEmail("email"));

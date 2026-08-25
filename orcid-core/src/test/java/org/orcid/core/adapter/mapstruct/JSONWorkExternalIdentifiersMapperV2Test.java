@@ -1,4 +1,4 @@
-package org.orcid.core.adapter.jsonidentifier.converter;
+package org.orcid.core.adapter.mapstruct;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -12,9 +12,14 @@ import jakarta.xml.bind.JAXBException;
 import jakarta.xml.bind.Unmarshaller;
 
 import org.junit.Test;
+import org.mapstruct.factory.Mappers;
+import org.orcid.core.adapter.mapstruct.ExternalIdentifierTypeMapper;
+import org.orcid.core.adapter.mapstruct.JSONWorkExternalIdentifiersMapperV2;
+import org.orcid.core.utils.DateFieldsOnBaseEntityUtils;
 import org.orcid.jaxb.model.common_v2.Iso3166Country;
 import org.orcid.jaxb.model.common_v2.Url;
 import org.orcid.jaxb.model.common_v2.Visibility;
+import org.orcid.jaxb.model.message.WorkExternalIdentifierType;
 import org.orcid.jaxb.model.record_v2.CitationType;
 import org.orcid.jaxb.model.record_v2.ExternalID;
 import org.orcid.jaxb.model.record_v2.ExternalIDs;
@@ -23,16 +28,16 @@ import org.orcid.jaxb.model.record_v2.Work;
 import org.orcid.jaxb.model.record_v2.WorkType;
 import org.orcid.persistence.jpa.entities.PublicationDateEntity;
 import org.orcid.persistence.jpa.entities.WorkEntity;
-import org.orcid.core.utils.DateFieldsOnBaseEntityUtils;
 import org.orcid.utils.DateUtils;
+import org.springframework.test.util.ReflectionTestUtils;
 
-public class JSONWorkExternalIdentifiersConverterV2Test {
+public class JSONWorkExternalIdentifiersMapperV2Test {
 
-    private final org.orcid.core.adapter.mapstruct.jsonidentifier.JSONWorkExternalIdentifiersMapperV2 converter = newConverter();
+    private final JSONWorkExternalIdentifiersMapperV2 converter = newConverter();
 
-    private static org.orcid.core.adapter.mapstruct.jsonidentifier.JSONWorkExternalIdentifiersMapperV2 newConverter() {
-        org.orcid.core.adapter.mapstruct.jsonidentifier.JSONWorkExternalIdentifiersMapperV2 mapper = org.mapstruct.factory.Mappers.getMapper(org.orcid.core.adapter.mapstruct.jsonidentifier.JSONWorkExternalIdentifiersMapperV2.class);
-        org.springframework.test.util.ReflectionTestUtils.setField(mapper, "typeMapper", org.orcid.core.adapter.mapstruct.jsonidentifier.ExternalIdentifierTypeMapper.INSTANCE);
+    private static JSONWorkExternalIdentifiersMapperV2 newConverter() {
+        JSONWorkExternalIdentifiersMapperV2 mapper = Mappers.getMapper(JSONWorkExternalIdentifiersMapperV2.class);
+        ReflectionTestUtils.setField(mapper, "typeMapper", ExternalIdentifierTypeMapper.INSTANCE);
         return mapper;
     }
 
@@ -48,11 +53,11 @@ public class JSONWorkExternalIdentifiersConverterV2Test {
         WorkEntity workEntity = getWorkEntity();
         ExternalIDs entityIDs = converter.convertFrom(workEntity.getExternalIdentifiersJson());
         assertEquals(1, entityIDs.getExternalIdentifier().size());
-        
+
         ExternalID externalID = entityIDs.getExternalIdentifier().get(0);
         assertEquals("123", externalID.getValue());
         assertNotNull(externalID.getType());
-        assertEquals(org.orcid.jaxb.model.message.WorkExternalIdentifierType.AGR.value(), externalID.getType());
+        assertEquals(WorkExternalIdentifierType.AGR.value(), externalID.getType());
     }
 
     @Test
@@ -66,7 +71,7 @@ public class JSONWorkExternalIdentifiersConverterV2Test {
         assertEquals("doi", eid0.getType());
         assertEquals("10.00000/test.v%vi%i.0000", eid0.getValue());
     }
-    
+
     @Test
     public void testConvertToWithIdThatBreaksUrlValidation() {
         ExternalID eid0 = new ExternalID();
@@ -80,9 +85,9 @@ public class JSONWorkExternalIdentifiersConverterV2Test {
         assertEquals(expected1, converter.convertTo(ids));
         // Set the URL
         eid0.setUrl(new Url("http://doi.org/10.00000/test.v%vi%i.0000"));
-        assertEquals(expected2, converter.convertTo(ids));        
+        assertEquals(expected2, converter.convertTo(ids));
     }
-    
+
     private Work getWork() throws JAXBException {
         JAXBContext context = JAXBContext.newInstance(Work.class);
         Unmarshaller unmarshaller = context.createUnmarshaller();
@@ -117,5 +122,4 @@ public class JSONWorkExternalIdentifiersConverterV2Test {
         work.setExternalIdentifiersJson("{\"workExternalIdentifier\":[{\"workExternalIdentifierType\":\"AGR\",\"workExternalIdentifierId\":{\"content\":\"123\"}}]}");
         return work;
     }
-
 }

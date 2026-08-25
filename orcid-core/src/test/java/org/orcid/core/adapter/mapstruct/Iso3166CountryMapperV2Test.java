@@ -1,4 +1,4 @@
-package org.orcid.core.adapter.converter;
+package org.orcid.core.adapter.mapstruct;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
@@ -7,7 +7,7 @@ import org.junit.Test;
 import org.orcid.core.adapter.mapstruct.Iso3166CountryMapperV2;
 import org.orcid.jaxb.model.common_v2.Iso3166Country;
 
-public class Iso3166CountryConverterTest {
+public class Iso3166CountryMapperV2Test {
 
     private final Iso3166CountryMapperV2 converter = Iso3166CountryMapperV2.INSTANCE;
 

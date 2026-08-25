@@ -1,4 +1,4 @@
-package org.orcid.core.adapter.v3.converter;
+package org.orcid.core.adapter.mapstruct;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -19,7 +19,7 @@ import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 
-public class ContributorsRolesAndSequencesConverterTest {
+public class ContributorsRolesAndSequencesMapperV3Test {
 
     String contributorsJson = "[{\"contributorOrcid\":{\"uri\":null,\"path\":\"0000-0000-0000-000X\",\"host\":null},\"creditName\":{\"content\":\"Contributor 1\"},\"contributorEmail\":null,\"contributorAttributes\":null,\"rolesAndSequences\":[{\"contributorSequence\":null,\"contributorRole\":\"http://credit.niso.org/contributor-roles/funding-acquisition/\"},{\"contributorSequence\":null,\"contributorRole\":\"http://credit.niso.org/contributor-roles/writing-review-editing/\"}]}]";
     String contributorsJsonWithoutRoles = "[{\"contributorOrcid\":{\"uri\":null,\"path\":\"0000-0000-0000-000X\",\"host\":null},\"creditName\":{\"content\":\"Contributor 1\"},\"contributorEmail\":null,\"contributorAttributes\":null,\"rolesAndSequences\":null}]";

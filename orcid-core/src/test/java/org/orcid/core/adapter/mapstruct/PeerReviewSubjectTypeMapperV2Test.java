@@ -1,4 +1,4 @@
-package org.orcid.core.adapter.converter;
+package org.orcid.core.adapter.mapstruct;
 
 import static org.junit.Assert.assertEquals;
 
@@ -11,7 +11,7 @@ import org.springframework.test.context.ContextConfiguration;
 
 @RunWith(OrcidJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:test-orcid-core-context.xml" })
-public class PeerReviewSubjectTypeConverterTest {
+public class PeerReviewSubjectTypeMapperV2Test {
         
     private PeerReviewSubjectTypeMapperV2 peerReviewSubjectTypeConverter = PeerReviewSubjectTypeMapperV2.INSTANCE;
 

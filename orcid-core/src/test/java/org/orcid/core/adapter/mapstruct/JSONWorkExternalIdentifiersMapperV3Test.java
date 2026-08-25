@@ -1,4 +1,4 @@
-package org.orcid.core.adapter.jsonidentifier.converter;
+package org.orcid.core.adapter.mapstruct;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -14,7 +14,7 @@ import jakarta.xml.bind.Unmarshaller;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.orcid.core.adapter.mapstruct.jsonidentifier.JSONWorkExternalIdentifiersMapperV3;
+import org.orcid.core.adapter.mapstruct.JSONWorkExternalIdentifiersMapperV3;
 import org.orcid.jaxb.model.common.Relationship;
 import org.orcid.jaxb.model.v3.release.common.Url;
 import org.orcid.jaxb.model.v3.release.record.ExternalID;
@@ -29,7 +29,7 @@ import org.springframework.test.context.ContextConfiguration;
 
 @RunWith(OrcidJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:test-orcid-core-context.xml" })
-public class JSONWorkExternalIdentifiersConverterV3Test {
+public class JSONWorkExternalIdentifiersMapperV3Test {
 
     @Resource
     private JSONWorkExternalIdentifiersMapperV3 converter;

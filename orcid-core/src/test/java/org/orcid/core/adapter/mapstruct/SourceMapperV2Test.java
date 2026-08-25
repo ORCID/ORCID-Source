@@ -3,80 +3,89 @@ package org.orcid.core.adapter.mapstruct;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import org.junit.Before;
 import org.junit.Test;
-import org.orcid.core.adapter.mapstruct.SourceMapperV2;
+import org.junit.runner.RunWith;
+import org.mapstruct.factory.Mappers;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.orcid.core.manager.SourceNameCacheManager;
 import org.orcid.core.manager.impl.OrcidUrlManager;
 import org.orcid.core.manager.read_only.ClientDetailsManagerReadOnly;
 import org.orcid.jaxb.model.common_v2.Source;
-import org.orcid.persistence.jpa.entities.ExternalIdentifierEntity;
+import org.orcid.persistence.jpa.entities.SourceAwareEntity;
 
+@RunWith(MockitoJUnitRunner.class)
 public class SourceMapperV2Test {
 
-    @Test
-    public void toSourceShouldReturnNullWhenNoElementSourceId() {
-        ExternalIdentifierEntity entity = new ExternalIdentifierEntity();
-        OrcidUrlManager urlManager = mock(OrcidUrlManager.class);
-        ClientDetailsManagerReadOnly clientDetailsManager = mock(ClientDetailsManagerReadOnly.class);
-        SourceNameCacheManager sourceNameCacheManager = mock(SourceNameCacheManager.class);
+    @Mock
+    private OrcidUrlManager orcidUrlManager;
 
-        Source source = SourceMapperV2.INSTANCE.toSource(entity, urlManager, clientDetailsManager, sourceNameCacheManager);
+    @Mock
+    private ClientDetailsManagerReadOnly clientDetailsManagerReadOnly;
 
-        assertNull(source);
+    @Mock
+    private SourceNameCacheManager sourceNameCacheManager;
+
+    @Mock
+    private SourceAwareEntity<?> entity;
+
+    @InjectMocks
+    private final SourceMapperV2 mapper = Mappers.getMapper(SourceMapperV2.class);
+
+    @Before
+    public void setUp() {
+        when(orcidUrlManager.getBaseHost()).thenReturn("orcid.org");
+        when(orcidUrlManager.getBaseUriHttp()).thenReturn("http://orcid.org");
     }
 
     @Test
-    @SuppressWarnings("deprecation")
+    public void toSourceShouldReturnNullForNullEntity() {
+        assertNull(mapper.toSource(null));
+    }
+
+    @Test
+    public void toSourceShouldReturnNullForEmptySourceId() {
+        when(entity.getElementSourceId()).thenReturn(null);
+        assertNull(mapper.toSource(entity));
+    }
+
+    @Test
     public void toSourceShouldMapClientSource() {
-        ExternalIdentifierEntity entity = new ExternalIdentifierEntity();
-        entity.setClientSourceId("APP-12345");
+        String clientId = "APP-1234567890123456";
+        when(entity.getElementSourceId()).thenReturn(clientId);
+        when(clientDetailsManagerReadOnly.isLegacyClientId(clientId)).thenReturn(false);
+        when(sourceNameCacheManager.retrieve(clientId)).thenReturn("Test Client App");
 
-        OrcidUrlManager urlManager = mock(OrcidUrlManager.class);
-        when(urlManager.getBaseHost()).thenReturn("sandbox.orcid.org");
-        when(urlManager.getBaseUriHttp()).thenReturn("http://sandbox.orcid.org");
-
-        ClientDetailsManagerReadOnly clientDetailsManager = mock(ClientDetailsManagerReadOnly.class);
-        when(clientDetailsManager.isLegacyClientId("APP-12345")).thenReturn(false);
-
-        SourceNameCacheManager sourceNameCacheManager = mock(SourceNameCacheManager.class);
-        when(sourceNameCacheManager.retrieve("APP-12345")).thenReturn("Test Client");
-
-        Source source = SourceMapperV2.INSTANCE.toSource(entity, urlManager, clientDetailsManager, sourceNameCacheManager);
+        Source source = mapper.toSource(entity);
 
         assertNotNull(source);
         assertNotNull(source.getSourceClientId());
-        assertEquals("APP-12345", source.getSourceClientId().getPath());
-        assertEquals("http://sandbox.orcid.org/client/APP-12345", source.getSourceClientId().getUri());
-        assertEquals("sandbox.orcid.org", source.getSourceClientId().getHost());
-        assertEquals("Test Client", source.getSourceName().getContent());
+        assertNull(source.getSourceOrcid());
+        assertEquals(clientId, source.getSourceClientId().getPath());
+        assertEquals("http://orcid.org/client/" + clientId, source.getSourceClientId().getUri());
+        assertEquals("orcid.org", source.getSourceClientId().getHost());
+        assertEquals("Test Client App", source.getSourceName().getContent());
     }
 
     @Test
-    @SuppressWarnings("deprecation")
     public void toSourceShouldMapOrcidSource() {
-        ExternalIdentifierEntity entity = new ExternalIdentifierEntity();
-        entity.setSourceId("0000-0001-2345-6789");
+        String userOrcid = "0000-0000-0000-0001";
+        when(entity.getElementSourceId()).thenReturn(userOrcid);
+        when(clientDetailsManagerReadOnly.isLegacyClientId(userOrcid)).thenReturn(false);
+        when(sourceNameCacheManager.retrieve(userOrcid)).thenReturn("Test User");
 
-        OrcidUrlManager urlManager = mock(OrcidUrlManager.class);
-        when(urlManager.getBaseHost()).thenReturn("sandbox.orcid.org");
-        when(urlManager.getBaseUriHttp()).thenReturn("http://sandbox.orcid.org");
-
-        ClientDetailsManagerReadOnly clientDetailsManager = mock(ClientDetailsManagerReadOnly.class);
-        when(clientDetailsManager.isLegacyClientId("0000-0001-2345-6789")).thenReturn(false);
-
-        SourceNameCacheManager sourceNameCacheManager = mock(SourceNameCacheManager.class);
-        when(sourceNameCacheManager.retrieve("0000-0001-2345-6789")).thenReturn("Test User");
-
-        Source source = SourceMapperV2.INSTANCE.toSource(entity, urlManager, clientDetailsManager, sourceNameCacheManager);
+        Source source = mapper.toSource(entity);
 
         assertNotNull(source);
         assertNotNull(source.getSourceOrcid());
-        assertEquals("0000-0001-2345-6789", source.getSourceOrcid().getPath());
-        assertEquals("http://sandbox.orcid.org/0000-0001-2345-6789", source.getSourceOrcid().getUri());
-        assertEquals("sandbox.orcid.org", source.getSourceOrcid().getHost());
+        assertNull(source.getSourceClientId());
+        assertEquals(userOrcid, source.getSourceOrcid().getPath());
+        assertEquals("http://orcid.org/" + userOrcid, source.getSourceOrcid().getUri());
+        assertEquals("orcid.org", source.getSourceOrcid().getHost());
         assertEquals("Test User", source.getSourceName().getContent());
     }
 }

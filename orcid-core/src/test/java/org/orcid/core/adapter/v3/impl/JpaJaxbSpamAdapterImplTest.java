@@ -5,13 +5,15 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 
 import org.junit.Test;
+import org.mapstruct.factory.Mappers;
+import org.orcid.core.adapter.mapstruct.v3.impl.JpaJaxbSpamAdapterImpl;
 import org.orcid.jaxb.model.v3.release.record.SourceType;
 import org.orcid.jaxb.model.v3.release.record.Spam;
 import org.orcid.persistence.jpa.entities.SpamEntity;
 
 public class JpaJaxbSpamAdapterImplTest {
 
-    private final JpaJaxbSpamAdapterImpl adapter = new JpaJaxbSpamAdapterImpl();
+    private final JpaJaxbSpamAdapterImpl adapter = Mappers.getMapper(JpaJaxbSpamAdapterImpl.class);
 
     @Test
     public void toSpamEntityShouldReturnNullForNullInput() {

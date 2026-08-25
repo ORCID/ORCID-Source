@@ -1,4 +1,4 @@
-package org.orcid.core.adapter.v3.converter;
+package org.orcid.core.adapter.mapstruct;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -21,7 +21,7 @@ import org.orcid.jaxb.model.v3.release.record.FundingContributor;
 import org.orcid.jaxb.model.v3.release.record.FundingContributorAttributes;
 import org.orcid.jaxb.model.v3.release.record.FundingContributors;
 
-public class FundingContributorsConverterTest {
+public class FundingContributorsMapperV3Test {
 
     @Mock
     private ContributorRoleConverter mockContributorRoleConverter;

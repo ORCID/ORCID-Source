@@ -1,4 +1,4 @@
-package org.orcid.core.adapter.jsonidentifier.converter;
+package org.orcid.core.adapter.mapstruct;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -11,34 +11,38 @@ import jakarta.xml.bind.Unmarshaller;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.mapstruct.factory.Mappers;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
+import org.orcid.core.adapter.mapstruct.ExternalIdentifierTypeMapper;
+import org.orcid.core.adapter.mapstruct.JSONExternalIdentifiersMapperV3;
 import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.utils.v3.identifiers.PIDNormalizationService;
 import org.orcid.jaxb.model.v3.release.record.Education;
 import org.orcid.jaxb.model.v3.release.record.ExternalID;
 import org.orcid.jaxb.model.v3.release.record.ExternalIDs;
+import org.springframework.test.util.ReflectionTestUtils;
 
-public class JSONExternalIdentifiersConverterV3Test {
+public class JSONExternalIdentifiersMapperV3Test {
 
     @Mock
     private PIDNormalizationService norm;
-    
+
     @Mock
     private LocaleManager localeManager;
-    
-    private org.orcid.core.adapter.mapstruct.jsonidentifier.JSONExternalIdentifiersMapperV3 converter;
-    
+
+    private JSONExternalIdentifiersMapperV3 mapper;
+
     @Before
     public void before() {
         MockitoAnnotations.initMocks(this);
         Mockito.when(norm.normalise(Mockito.anyString(), Mockito.anyString())).thenReturn("blah");
         Mockito.when(localeManager.resolveMessage(Mockito.anyString(), Mockito.any())).thenReturn("blah");
-        converter = org.mapstruct.factory.Mappers.getMapper(org.orcid.core.adapter.mapstruct.jsonidentifier.JSONExternalIdentifiersMapperV3.class);
-        org.springframework.test.util.ReflectionTestUtils.setField(converter, "norm", norm);
-        org.springframework.test.util.ReflectionTestUtils.setField(converter, "localeManager", localeManager);
-        org.springframework.test.util.ReflectionTestUtils.setField(converter, "typeMapper", org.orcid.core.adapter.mapstruct.jsonidentifier.ExternalIdentifierTypeMapper.INSTANCE);
+        mapper = Mappers.getMapper(JSONExternalIdentifiersMapperV3.class);
+        ReflectionTestUtils.setField(mapper, "norm", norm);
+        ReflectionTestUtils.setField(mapper, "localeManager", localeManager);
+        ReflectionTestUtils.setField(mapper, "typeMapper", ExternalIdentifierTypeMapper.INSTANCE);
     }
 
     @Test
@@ -46,27 +50,26 @@ public class JSONExternalIdentifiersConverterV3Test {
         Education education = getEducation();
         assertEquals(
                 "{\"externalIdentifier\":[{\"type\":\"GRANT_NUMBER\",\"value\":\"external-identifier-value\",\"url\":{\"value\":\"http://tempuri.org\"},\"relationship\":\"SELF\"},{\"type\":\"GRANT_NUMBER\",\"value\":\"external-identifier-value2\",\"url\":{\"value\":\"http://tempuri.org/2\"},\"relationship\":\"SELF\"}]}",
-                converter.convertTo(education.getExternalIdentifiers()));
+                mapper.convertTo(education.getExternalIdentifiers()));
     }
 
     @Test
     public void testConvertFrom() {
-        ExternalIDs externalIDs = converter.convertFrom("{\"externalIdentifier\":[{\"type\":\"GRANT_NUMBER\",\"value\":\"external-identifier-value\",\"url\":{\"value\":\"http://tempuri.org\"},\"relationship\":\"SELF\"},{\"type\":\"GRANT_NUMBER\",\"value\":\"external-identifier-value2\",\"url\":{\"value\":\"http://tempuri.org/2\"},\"relationship\":\"SELF\"}]}");
+        ExternalIDs externalIDs = mapper.convertFrom("{\"externalIdentifier\":[{\"type\":\"GRANT_NUMBER\",\"value\":\"external-identifier-value\",\"url\":{\"value\":\"http://tempuri.org\"},\"relationship\":\"SELF\"},{\"type\":\"GRANT_NUMBER\",\"value\":\"external-identifier-value2\",\"url\":{\"value\":\"http://tempuri.org/2\"},\"relationship\":\"SELF\"}]}");
         assertNotNull(externalIDs);
         assertEquals(2, externalIDs.getExternalIdentifier().size());
-        
+
         ExternalID externalID = externalIDs.getExternalIdentifier().get(0);
         assertEquals("grant_number", externalID.getType());
         assertEquals("external-identifier-value", externalID.getValue());
         assertEquals("http://tempuri.org", externalID.getUrl().getValue());
-        
+
         externalID = externalIDs.getExternalIdentifier().get(1);
         assertEquals("grant_number", externalID.getType());
         assertEquals("external-identifier-value2", externalID.getValue());
         assertEquals("http://tempuri.org/2", externalID.getUrl().getValue());
     }
 
-   
     private Education getEducation() throws JAXBException {
         JAXBContext context = JAXBContext.newInstance(Education.class);
         Unmarshaller unmarshaller = context.createUnmarshaller();
