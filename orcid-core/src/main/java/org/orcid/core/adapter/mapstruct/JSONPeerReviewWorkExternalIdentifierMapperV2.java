@@ -3,10 +3,9 @@ package org.orcid.core.adapter.mapstruct;
 import org.apache.commons.lang3.StringUtils;
 import org.mapstruct.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import org.orcid.core.adapter.jsonidentifier.JSONUrl;
-import org.orcid.core.adapter.jsonidentifier.JSONWorkExternalIdentifier;
-import org.orcid.core.adapter.jsonidentifier.JSONWorkExternalIdentifier.WorkExternalIdentifierId;
+import org.orcid.core.adapter.mapstruct.jsonidentifier.JSONUrl;
+import org.orcid.core.adapter.mapstruct.jsonidentifier.JSONWorkExternalIdentifier;
+import org.orcid.core.adapter.mapstruct.jsonidentifier.JSONWorkExternalIdentifier.WorkExternalIdentifierId;
 import org.orcid.core.utils.JsonUtils;
 import org.orcid.jaxb.model.common_v2.Url;
 import org.orcid.jaxb.model.message.WorkExternalIdentifierType;

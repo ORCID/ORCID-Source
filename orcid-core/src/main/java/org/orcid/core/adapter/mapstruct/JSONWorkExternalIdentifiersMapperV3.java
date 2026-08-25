@@ -6,10 +6,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import jakarta.annotation.PostConstruct;
 
-import org.orcid.core.adapter.jsonidentifier.JSONUrl;
-import org.orcid.core.adapter.jsonidentifier.JSONWorkExternalIdentifier;
-import org.orcid.core.adapter.jsonidentifier.JSONWorkExternalIdentifier.WorkExternalIdentifierId;
-import org.orcid.core.adapter.jsonidentifier.JSONWorkExternalIdentifiers;
+import org.orcid.core.adapter.mapstruct.jsonidentifier.JSONUrl;
+import org.orcid.core.adapter.mapstruct.jsonidentifier.JSONWorkExternalIdentifier;
+import org.orcid.core.adapter.mapstruct.jsonidentifier.JSONWorkExternalIdentifiers;
+import org.orcid.core.adapter.mapstruct.jsonidentifier.JSONWorkExternalIdentifier.WorkExternalIdentifierId;
 import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.utils.JsonUtils;
 import org.orcid.core.utils.v3.identifiers.PIDNormalizationService;
