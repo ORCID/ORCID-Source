@@ -16,6 +16,7 @@ import org.orcid.core.adapter.mapstruct.SourceMapperV2;
 import org.orcid.core.adapter.mapstruct.VisibilityMapperV2;
 import org.orcid.jaxb.model.record.summary_v2.PeerReviewSummary;
 import org.orcid.jaxb.model.record_v2.PeerReview;
+import org.orcid.jaxb.model.record_v2.WorkType;
 import org.orcid.persistence.jpa.entities.PeerReviewEntity;
 
 @Mapper(
@@ -30,6 +31,22 @@ import org.orcid.persistence.jpa.entities.PeerReviewEntity;
     }
 )
 public abstract class JpaJaxbPeerReviewAdapterImpl implements JpaJaxbPeerReviewAdapter {
+
+    // ========================================================================
+    // Custom Mapping Methods
+    // ========================================================================
+
+    public WorkType mapSubjectType(String subjectType) {
+        if (subjectType == null) {
+            return null;
+        }
+        try {
+            return WorkType.valueOf(subjectType);
+        } catch (IllegalArgumentException e) {
+            // Fallback for invalid legacy data like "GRANT"
+            return WorkType.OTHER;
+        }
+    }
 
     // ========================================================================
     // API -> Database (Creation)
@@ -50,9 +67,9 @@ public abstract class JpaJaxbPeerReviewAdapterImpl implements JpaJaxbPeerReviewA
     @Mapping(source = "subjectUrl.value", target = "subjectUrl")
     @Mapping(source = "externalIdentifiers", target = "externalIdentifiersJson")
     @Mapping(source = "completionDate", target = "completionDate")
+    @Mapping(source = "organization", target = "org")
     @Mapping(target = "dateCreated", ignore = true)
     @Mapping(target = "lastModified", ignore = true)
-    @Mapping(target = "org", ignore = true)
     public abstract PeerReviewEntity toPeerReviewEntity(PeerReview peerReview);
 
 
@@ -123,8 +140,8 @@ public abstract class JpaJaxbPeerReviewAdapterImpl implements JpaJaxbPeerReviewA
     @Mapping(source = "subjectUrl.value", target = "subjectUrl")
     @Mapping(source = "externalIdentifiers", target = "externalIdentifiersJson")
     @Mapping(source = "completionDate", target = "completionDate")
+    @Mapping(source = "organization", target = "org")
     @Mapping(target = "dateCreated", ignore = true)
     @Mapping(target = "lastModified", ignore = true)
-    @Mapping(target = "org", ignore = true)
     public abstract PeerReviewEntity toPeerReviewEntity(PeerReview peerReview, @MappingTarget PeerReviewEntity existing);
 }

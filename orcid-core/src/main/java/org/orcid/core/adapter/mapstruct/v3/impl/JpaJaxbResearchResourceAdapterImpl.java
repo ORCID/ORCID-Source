@@ -166,19 +166,12 @@ public abstract class JpaJaxbResearchResourceAdapterImpl implements JpaJaxbResea
     @Mapping(target = "researchResourceEntity", ignore = true)
     public abstract ResearchResourceItemEntity toItemEntity(ResearchResourceItem item);
 
-    public ResearchResourceItem toItem(ResearchResourceItemEntity entity) {
-        if (entity == null) {
-            return null;
-        }
-        ResearchResourceItem item = new ResearchResourceItem();
-        if (entity.getUrl() != null) {
-            item.setUrl(new Url(entity.getUrl()));
-        }
-        if (entity.getExternalIdentifiersJson() != null) {
-            item.setExternalIdentifiers(jsonWorkExternalIdentifiersMapperV3.convertFrom(entity.getExternalIdentifiersJson()));
-        }
-        return item;
-    }
+    @Mapping(source = "resourceName", target = "resourceName")
+    @Mapping(source = "resourceType", target = "resourceType")
+    @Mapping(source = "hosts", target = "hosts")
+    @Mapping(source = "url", target = "url.value")
+    @Mapping(source = "externalIdentifiersJson", target = "externalIdentifiers")
+    public abstract ResearchResourceItem toItem(ResearchResourceItemEntity entity);
 
     // ========================================================================
     // Collection Mappings

@@ -235,6 +235,10 @@ public class BibtexManagerImpl extends ManagerReadOnlyBaseImpl implements Bibtex
     //from https://github.com/datacite/content-resolver/issues/2
     //this is the same as datacite and pangaea
     public final String escapeStringForBibtex(String text) {
+        if (text == null) {
+            return "";
+        }
+        
         StringBuilder sb=new StringBuilder(text.length());
         boolean nl=false;
         for (int codepoint : text.codePoints().toArray()){

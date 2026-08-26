@@ -6,6 +6,7 @@ import org.orcid.jaxb.model.common_v2.DisambiguatedOrganization;
 import org.orcid.jaxb.model.common_v2.Iso3166Country;
 import org.orcid.jaxb.model.common_v2.Organization;
 import org.orcid.jaxb.model.common_v2.OrganizationAddress;
+import org.orcid.persistence.jpa.entities.OrgDisambiguatedEntity;
 import org.orcid.persistence.jpa.entities.OrgEntity;
 
 /**
@@ -17,7 +18,28 @@ public abstract class OrgMapperV2 {
     public static final OrgMapperV2 INSTANCE = Mappers.getMapper(OrgMapperV2.class);
 
     public OrgEntity convertTo(Organization source) {
-        return null;
+        if (source == null) {
+            return null;
+        }
+        OrgEntity entity = new OrgEntity();
+        entity.setName(source.getName());
+        if (source.getAddress() != null) {
+            OrganizationAddress address = source.getAddress();
+            entity.setCity(address.getCity());
+            entity.setRegion(address.getRegion());
+            if (address.getCountry() != null) {
+                entity.setCountry(address.getCountry().name());
+            }
+        }
+        if (source.getDisambiguatedOrganization() != null) {
+            DisambiguatedOrganization disambiguated = source.getDisambiguatedOrganization();
+            OrgDisambiguatedEntity orgDisambiguated = new OrgDisambiguatedEntity();
+            orgDisambiguated.setSourceId(disambiguated.getDisambiguatedOrganizationIdentifier());
+            orgDisambiguated.setSourceType(disambiguated.getDisambiguationSource());
+            orgDisambiguated.setId(disambiguated.getId());
+            entity.setOrgDisambiguated(orgDisambiguated);
+        }
+        return entity;
     }
 
     public Organization convertFrom(OrgEntity source) {
