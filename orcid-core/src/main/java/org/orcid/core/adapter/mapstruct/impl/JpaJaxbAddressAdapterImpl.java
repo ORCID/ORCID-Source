@@ -8,11 +8,12 @@ import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 
 import org.orcid.core.adapter.JpaJaxbAddressAdapter;
+import org.orcid.core.adapter.mapstruct.SourceMapperV2;
 import org.orcid.jaxb.model.record_v2.Address;
 import org.orcid.jaxb.model.record_v2.Addresses;
 import org.orcid.persistence.jpa.entities.AddressEntity;
 
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring", uses = {SourceMapperV2.class})
 public abstract class JpaJaxbAddressAdapterImpl implements JpaJaxbAddressAdapter {
 
     /**
@@ -53,6 +54,7 @@ public abstract class JpaJaxbAddressAdapterImpl implements JpaJaxbAddressAdapter
     @Mapping(source = "iso2Country", target = "country.value")
     @Mapping(source = "dateCreated", target = "createdDate.value")
     @Mapping(source = "lastModified", target = "lastModifiedDate.value")
+    @Mapping(source = ".", target = "source")
     public abstract Address toAddress(AddressEntity entity);
 
     /**

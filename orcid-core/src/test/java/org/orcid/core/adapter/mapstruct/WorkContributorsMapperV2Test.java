@@ -12,7 +12,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.orcid.core.adapter.mapstruct.WorkContributorsMapperV2;
-import org.orcid.core.contributors.roles.ContributorRoleConverter;
+import org.orcid.core.contributors.roles.works.WorkContributorRoleConverter;
 import org.orcid.jaxb.model.common_v2.Contributor;
 import org.orcid.jaxb.model.common_v2.ContributorAttributes;
 import org.orcid.jaxb.model.common_v2.ContributorEmail;
@@ -25,7 +25,7 @@ import org.orcid.jaxb.model.record_v2.WorkContributors;
 public class WorkContributorsMapperV2Test {
 
     @Mock
-    private ContributorRoleConverter mockContributorRoleConverter;
+    private WorkContributorRoleConverter mockContributorRoleConverter;
 
     @InjectMocks
     private WorkContributorsMapperV2 workContributorsMapper;

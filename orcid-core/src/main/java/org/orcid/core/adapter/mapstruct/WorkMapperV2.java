@@ -20,7 +20,7 @@ public interface WorkMapperV2 {
             entity.setWorkType(work.getWorkType().name());
         }
         entity.setWorkUrl(work.getUrl() == null ? null : work.getUrl().getValue());
-        entity.setIso2Country(work.getCountry() == null ? null : work.getCountry().getValue().toString());
+        entity.setIso2Country((work.getCountry() == null || work.getCountry().getValue() == null) ? null : work.getCountry().getValue().toString());
         entity.setJournalTitle(work.getJournalTitle() == null ? null : work.getJournalTitle().getContent());
         entity.setTranslatedTitle((work.getWorkTitle() == null || work.getWorkTitle().getTranslatedTitle() == null) ? null : work.getWorkTitle().getTranslatedTitle().getContent());
         entity.setTranslatedTitleLanguageCode(

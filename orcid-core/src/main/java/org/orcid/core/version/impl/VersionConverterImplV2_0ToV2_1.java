@@ -5,6 +5,7 @@ import java.beans.IntrospectionException;
 import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
@@ -57,8 +58,8 @@ public class VersionConverterImplV2_0ToV2_1 implements V2VersionConverter {
 
     /**
      * Deep-copies every bean property from source onto an already-constructed target of the
-     * same class, recomputing OrcidIdBase.uri per direction. Replaces what used to be Orika's
-     * byDefault() classMap(X.class, X.class) registrations plus a CustomMapper for OrcidIdBase.
+     * same class, recomputing OrcidIdBase.uri per direction. Handles standard properties with setters,
+     * getter-only collection properties, and getter-only complex object properties.
      */
     private void copyInto(Object source, Object target, boolean downgrade) {
         if (source == null || target == null) {
@@ -71,11 +72,37 @@ public class VersionConverterImplV2_0ToV2_1 implements V2VersionConverter {
         try {
             BeanInfo beanInfo = Introspector.getBeanInfo(source.getClass());
             for (PropertyDescriptor pd : beanInfo.getPropertyDescriptors()) {
-                if (pd.getReadMethod() == null || pd.getWriteMethod() == null) {
+                if ("class".equals(pd.getName()) || pd.getReadMethod() == null) {
                     continue;
                 }
-                Object value = pd.getReadMethod().invoke(source);
-                pd.getWriteMethod().invoke(target, copyValue(value, downgrade));
+                if (pd.getWriteMethod() != null) {
+                    Object value = pd.getReadMethod().invoke(source);
+                    pd.getWriteMethod().invoke(target, copyValue(value, downgrade));
+                } else if (Collection.class.isAssignableFrom(pd.getPropertyType())) {
+                    Object sourceColl = pd.getReadMethod().invoke(source);
+                    if (sourceColl instanceof Collection) {
+                        Object targetCollObj = pd.getReadMethod().invoke(target);
+                        if (targetCollObj instanceof Collection) {
+                            @SuppressWarnings("unchecked")
+                            Collection<Object> targetColl = (Collection<Object>) targetCollObj;
+                            targetColl.clear();
+                            @SuppressWarnings("unchecked")
+                            Collection<Object> copiedColl = (Collection<Object>) copyValue(sourceColl, downgrade);
+                            if (copiedColl != null) {
+                                targetColl.addAll(copiedColl);
+                            }
+                        }
+                    }
+                } else {
+                    // Handles getter-only non-collection complex properties
+                    Object sourceObj = pd.getReadMethod().invoke(source);
+                    if (sourceObj != null) {
+                        Object targetObj = pd.getReadMethod().invoke(target);
+                        if (targetObj != null) {
+                            copyInto(sourceObj, targetObj, downgrade);
+                        }
+                    }
+                }
             }
         } catch (ReflectiveOperationException | IntrospectionException e) {
             throw new RuntimeException("Unable to copy " + source.getClass(), e);
@@ -112,12 +139,10 @@ public class VersionConverterImplV2_0ToV2_1 implements V2VersionConverter {
     private void copyOrcidIdBase(OrcidIdBase a, OrcidIdBase b, boolean downgrade) {
         b.setHost(a.getHost());
         b.setPath(a.getPath());
-        String pathPrefix = a.getClass().isAssignableFrom(SourceClientId.class) ? "/client/" : "/";
+        String pathPrefix = (a instanceof SourceClientId) ? "/client/" : "/";
         if (downgrade) {
-            // From 2.1 to 2.0 set the base http uri
             b.setUri(orcidUrlManager.getBaseUriHttp() + pathPrefix + b.getPath());
         } else {
-            // From 2.0 to 2.1 set the base uri which is https
             b.setUri(orcidUrlManager.getBaseUrl() + pathPrefix + a.getPath());
         }
     }
@@ -127,4 +152,3 @@ public class VersionConverterImplV2_0ToV2_1 implements V2VersionConverter {
                 || value instanceof java.util.Date || value instanceof javax.xml.datatype.XMLGregorianCalendar;
     }
 }
-

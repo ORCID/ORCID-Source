@@ -112,7 +112,7 @@ public abstract class JSONWorkExternalIdentifiersMapperV3 {
             if (workExternalIdentifier.getWorkExternalIdentifierType() == null) {
                 id.setType(WorkExternalIdentifierType.OTHER_ID.value());
             } else {
-                id.setType(typeMapper.convertTo(workExternalIdentifier.getWorkExternalIdentifierType()));
+                id.setType(typeMapper.convertFrom(workExternalIdentifier.getWorkExternalIdentifierType()));
             }
             
             if (workExternalIdentifier.getWorkExternalIdentifierId() != null) {
@@ -166,7 +166,7 @@ public abstract class JSONWorkExternalIdentifiersMapperV3 {
             }
             
             if (workExternalIdentifier.getRelationship() != null) {
-                id.setRelationship(Relationship.fromValue(typeMapper.convertTo(workExternalIdentifier.getRelationship())));
+                id.setRelationship(Relationship.fromValue(typeMapper.convertFrom(workExternalIdentifier.getRelationship())));
             }
             
             externalIDs.getExternalIdentifier().add(id);

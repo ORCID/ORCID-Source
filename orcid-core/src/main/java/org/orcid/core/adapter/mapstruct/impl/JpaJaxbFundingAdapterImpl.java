@@ -3,9 +3,12 @@ package org.orcid.core.adapter.mapstruct.impl;
 import java.util.Collection;
 import java.util.List;
 
+import java.math.BigDecimal;
+
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
+import org.mapstruct.Named;
 
 import org.orcid.core.adapter.JpaJaxbFundingAdapter;
 import org.orcid.core.adapter.mapstruct.FuzzyDateMapperV2;
@@ -40,8 +43,7 @@ public abstract class JpaJaxbFundingAdapterImpl implements JpaJaxbFundingAdapter
     @Mapping(source = "title.title.content", target = "title")
     @Mapping(source = "title.translatedTitle.content", target = "translatedTitle")
     @Mapping(source = "title.translatedTitle.languageCode", target = "translatedTitleLanguageCode")
-    // MapStruct natively handles String <-> BigDecimal conversion for numericAmount
-    @Mapping(source = "amount.content", target = "numericAmount")
+    @Mapping(source = "amount.content", target = "numericAmount", qualifiedByName = "amountContentToNumericAmount")
     @Mapping(source = "amount.currencyCode", target = "currencyCode")
     @Mapping(source = "url.value", target = "url")
     @Mapping(source = "externalIdentifiers", target = "externalIdentifiersJson")
@@ -51,6 +53,12 @@ public abstract class JpaJaxbFundingAdapterImpl implements JpaJaxbFundingAdapter
     @Mapping(target = "lastModified", ignore = true)
     @Mapping(target = "org", ignore = true)
     public abstract ProfileFundingEntity toProfileFundingEntity(Funding funding);
+
+    // Preserves legacy Orika behavior: parses via Double so trailing ".0" is retained (e.g. "1234" -> 1234.0)
+    @Named("amountContentToNumericAmount")
+    protected BigDecimal amountContentToNumericAmount(String content) {
+        return content == null ? null : BigDecimal.valueOf(Double.valueOf(content));
+    }
 
 
     // ========================================================================
@@ -119,7 +127,7 @@ public abstract class JpaJaxbFundingAdapterImpl implements JpaJaxbFundingAdapter
     @Mapping(source = "title.title.content", target = "title")
     @Mapping(source = "title.translatedTitle.content", target = "translatedTitle")
     @Mapping(source = "title.translatedTitle.languageCode", target = "translatedTitleLanguageCode")
-    @Mapping(source = "amount.content", target = "numericAmount")
+    @Mapping(source = "amount.content", target = "numericAmount", qualifiedByName = "amountContentToNumericAmount")
     @Mapping(source = "amount.currencyCode", target = "currencyCode")
     @Mapping(source = "url.value", target = "url")
     @Mapping(source = "externalIdentifiers", target = "externalIdentifiersJson")
