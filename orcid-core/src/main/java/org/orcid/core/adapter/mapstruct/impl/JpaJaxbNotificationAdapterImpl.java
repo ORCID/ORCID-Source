@@ -226,12 +226,12 @@ public abstract class JpaJaxbNotificationAdapterImpl implements JpaJaxbNotificat
     }
 
     // Notification Items Mapping
-    @Mapping(source = "externalIdentifier.type", target = "externalIdType")
+    @Mapping(source = "externalIdentifier.type", target = "externalIdType", qualifiedByName = "apiToDb")
     @Mapping(source = "externalIdentifier.value", target = "externalIdValue")
     @Mapping(source = "additionalInfo", target = "additionalInfo")
     protected abstract NotificationItemEntity mapItem(Item item);
 
-    @Mapping(source = "externalIdType", target = "externalIdentifier.type")
+    @Mapping(source = "externalIdType", target = "externalIdentifier.type", qualifiedByName = "dbToApi")
     @Mapping(source = "externalIdValue", target = "externalIdentifier.value")
     @Mapping(source = "additionalInfo", target = "additionalInfo")
     protected abstract Item mapItem(NotificationItemEntity entity);

@@ -71,6 +71,10 @@ public class PIDNormalizationService {
                         }
                     }
                 }
+                // Sort each list so catch-all normalizers execute in proper spring order
+                for (List<Normalizer> list : map.values()) {
+                    Collections.sort(list, AnnotationAwareOrderComparator.INSTANCE);
+                }
             }
         }
         return idTypeMap;

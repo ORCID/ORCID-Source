@@ -57,7 +57,6 @@ public class SourceMapperV2Test {
     public void toSourceShouldMapClientSource() {
         String clientId = "APP-1234567890123456";
         when(entity.getElementSourceId()).thenReturn(clientId);
-        when(clientDetailsManagerReadOnly.isLegacyClientId(clientId)).thenReturn(false);
         when(sourceNameCacheManager.retrieve(clientId)).thenReturn("Test Client App");
 
         Source source = mapper.toSource(entity);
@@ -69,6 +68,24 @@ public class SourceMapperV2Test {
         assertEquals("http://orcid.org/client/" + clientId, source.getSourceClientId().getUri());
         assertEquals("orcid.org", source.getSourceClientId().getHost());
         assertEquals("Test Client App", source.getSourceName().getContent());
+    }
+
+    @Test
+    public void toSourceShouldMapLegacyClientSource() {
+        String legacyClientId = "LEGACY-123";
+        when(entity.getElementSourceId()).thenReturn(legacyClientId);
+        when(clientDetailsManagerReadOnly.isLegacyClientId(legacyClientId)).thenReturn(true);
+        when(sourceNameCacheManager.retrieve(legacyClientId)).thenReturn("Test Legacy Client");
+
+        Source source = mapper.toSource(entity);
+
+        assertNotNull(source);
+        assertNotNull(source.getSourceClientId());
+        assertNull(source.getSourceOrcid());
+        assertEquals(legacyClientId, source.getSourceClientId().getPath());
+        assertEquals("http://orcid.org/client/" + legacyClientId, source.getSourceClientId().getUri());
+        assertEquals("orcid.org", source.getSourceClientId().getHost());
+        assertEquals("Test Legacy Client", source.getSourceName().getContent());
     }
 
     @Test

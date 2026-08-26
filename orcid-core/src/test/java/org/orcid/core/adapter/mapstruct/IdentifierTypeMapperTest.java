@@ -5,6 +5,7 @@ import static org.junit.Assert.assertNull;
 
 import java.util.Date;
 
+import org.junit.Before;
 import org.junit.Test;
 import org.mapstruct.factory.Mappers;
 import org.orcid.core.adapter.mapstruct.impl.IdentifierTypeMapper;
@@ -12,10 +13,16 @@ import org.orcid.core.utils.DateFieldsOnBaseEntityUtils;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.IdentifierTypeEntity;
 import org.orcid.pojo.IdentifierType;
+import org.springframework.test.util.ReflectionTestUtils;
 
 public class IdentifierTypeMapperTest {
 
     private final IdentifierTypeMapper mapper = Mappers.getMapper(IdentifierTypeMapper.class);
+
+    @Before
+    public void setUp() {
+        ReflectionTestUtils.setField(mapper, "externalIdentifierTypeMapper", ExternalIdentifierTypeMapper.INSTANCE);
+    }
 
     @Test
     public void testFromPojo() {

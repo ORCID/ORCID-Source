@@ -1,16 +1,22 @@
 package org.orcid.core.adapter.mapstruct.v3.impl;
 
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Set;
 
+import org.mapstruct.AfterMapping;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 
+import org.orcid.core.adapter.mapstruct.ClientMapperV3;
 import org.orcid.core.adapter.v3.JpaJaxbClientAdapter;
+import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.v3.release.client.Client;
+import org.orcid.jaxb.model.v3.release.client.ClientRedirectUri;
 import org.orcid.jaxb.model.v3.release.client.ClientSummary;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
+import org.orcid.persistence.jpa.entities.ClientRedirectUriEntity;
 
 /**
  * MapStruct implementation for V3 JpaJaxbClientAdapter.
@@ -28,7 +34,34 @@ public abstract class JpaJaxbClientAdapterImpl implements JpaJaxbClientAdapter {
     @Mapping(source = "clientDescription", target = "description")
     @Mapping(source = "clientWebsite", target = "website")
     @Mapping(source = "decryptedClientSecret", target = "decryptedSecret")
+    @Mapping(source = "allowAutoDeprecate", target = "allowAutoDeprecate")
+    @Mapping(source = "persistentTokensEnabled", target = "persistentTokensEnabled")
+    @Mapping(source = "clientType", target = "clientType")
+    @Mapping(source = "groupProfileId", target = "groupProfileId")
+    @Mapping(source = "authenticationProviderId", target = "authenticationProviderId")
+    @Mapping(target = "emailAccessReason", ignore = true)
     public abstract Client toClient(ClientDetailsEntity entity);
+
+    @AfterMapping
+    protected void populateRedirectUris(ClientDetailsEntity entity, @MappingTarget Client client) {
+        if (entity.getClientRegisteredRedirectUris() == null) {
+            return;
+        }
+        Set<ClientRedirectUri> redirectUris = new HashSet<>();
+        for (ClientRedirectUriEntity redirectUriEntity : entity.getClientRegisteredRedirectUris()) {
+            ClientRedirectUri element = new ClientRedirectUri();
+            element.setRedirectUri(redirectUriEntity.getRedirectUri());
+            element.setRedirectUriType(redirectUriEntity.getRedirectUriType());
+            element.setUriActType(redirectUriEntity.getUriActType());
+            element.setUriGeoArea(redirectUriEntity.getUriGeoArea());
+            element.setPredefinedClientScopes(ScopePathType.getScopesFromSpaceSeparatedString(redirectUriEntity.getPredefinedClientScope()));
+            if (redirectUriEntity.getStatus() != null) {
+                element.setStatus(redirectUriEntity.getStatus().name());
+            }
+            redirectUris.add(element);
+        }
+        client.setClientRedirectUris(redirectUris);
+    }
 
     @Override
     @Mapping(source = "clientName", target = "name")
@@ -48,8 +81,14 @@ public abstract class JpaJaxbClientAdapterImpl implements JpaJaxbClientAdapter {
     @Mapping(source = "description", target = "clientDescription")
     @Mapping(source = "website", target = "clientWebsite")
     @Mapping(source = "decryptedSecret", target = "decryptedClientSecret")
+    @Mapping(source = "allowAutoDeprecate", target = "allowAutoDeprecate")
+    @Mapping(target = "persistentTokensEnabled", ignore = true)
     @Mapping(target = "dateCreated", ignore = true)
     @Mapping(target = "lastModified", ignore = true)
+    @Mapping(target = "authenticationProviderId", ignore = true)
+    @Mapping(target = "clientType", ignore = true)
+    @Mapping(target = "groupProfileId", ignore = true)
+    @Mapping(target = "emailAccessReason", ignore = true)
     public abstract ClientDetailsEntity toEntity(Client client);
 
     @Override
@@ -58,7 +97,18 @@ public abstract class JpaJaxbClientAdapterImpl implements JpaJaxbClientAdapter {
     @Mapping(source = "description", target = "clientDescription")
     @Mapping(source = "website", target = "clientWebsite")
     @Mapping(source = "decryptedSecret", target = "decryptedClientSecret")
+    @Mapping(source = "allowAutoDeprecate", target = "allowAutoDeprecate")
+    @Mapping(source = "persistentTokensEnabled", target = "persistentTokensEnabled")
+    @Mapping(source = "authenticationProviderId", target = "authenticationProviderId")
+    @Mapping(source = "groupProfileId", target = "groupProfileId")
+    @Mapping(source = "clientType", target = "clientType")
     @Mapping(target = "dateCreated", ignore = true)
     @Mapping(target = "lastModified", ignore = true)
+    @Mapping(target = "emailAccessReason", ignore = true)
     public abstract ClientDetailsEntity toEntity(Client client, @MappingTarget ClientDetailsEntity existing);
+
+    @AfterMapping
+    protected void populateRedirectUrisEntity(Client client, @MappingTarget ClientDetailsEntity entity) {
+        ClientMapperV3.INSTANCE.syncRedirectUrisFromClient(client, entity);
+    }
 }

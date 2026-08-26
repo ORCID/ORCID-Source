@@ -34,6 +34,11 @@ public abstract class JpaJaxbClientAdapterImpl implements JpaJaxbClientAdapter {
     @Mapping(source = "clientDescription", target = "description")
     @Mapping(source = "clientWebsite", target = "website")
     @Mapping(source = "decryptedClientSecret", target = "decryptedSecret")
+    @Mapping(source = "allowAutoDeprecate", target = "allowAutoDeprecate")
+    @Mapping(source = "persistentTokensEnabled", target = "persistentTokensEnabled")
+    @Mapping(source = "clientType", target = "clientType")
+    @Mapping(source = "groupProfileId", target = "groupProfileId")
+    @Mapping(source = "authenticationProviderId", target = "authenticationProviderId")
     @Mapping(target = "emailAccessReason", ignore = true)
     public abstract Client toClient(ClientDetailsEntity entity);
 
@@ -73,6 +78,8 @@ public abstract class JpaJaxbClientAdapterImpl implements JpaJaxbClientAdapter {
     @Mapping(source = "description", target = "clientDescription")
     @Mapping(source = "website", target = "clientWebsite")
     @Mapping(source = "decryptedSecret", target = "decryptedClientSecret")
+    @Mapping(source = "allowAutoDeprecate", target = "allowAutoDeprecate")
+    @Mapping(target = "persistentTokensEnabled", ignore = true)
     @Mapping(target = "dateCreated", ignore = true)
     @Mapping(target = "lastModified", ignore = true)
     @Mapping(target = "authenticationProviderId", ignore = true)
@@ -87,11 +94,13 @@ public abstract class JpaJaxbClientAdapterImpl implements JpaJaxbClientAdapter {
     @Mapping(source = "description", target = "clientDescription")
     @Mapping(source = "website", target = "clientWebsite")
     @Mapping(source = "decryptedSecret", target = "decryptedClientSecret")
+    @Mapping(source = "allowAutoDeprecate", target = "allowAutoDeprecate")
+    @Mapping(source = "persistentTokensEnabled", target = "persistentTokensEnabled")
+    @Mapping(source = "authenticationProviderId", target = "authenticationProviderId")
+    @Mapping(source = "groupProfileId", target = "groupProfileId")
+    @Mapping(source = "clientType", target = "clientType")
     @Mapping(target = "dateCreated", ignore = true)
     @Mapping(target = "lastModified", ignore = true)
-    @Mapping(target = "authenticationProviderId", ignore = true)
-    @Mapping(target = "groupProfileId", ignore = true)
-    @Mapping(target = "clientType", ignore = true)
     @Mapping(target = "emailAccessReason", ignore = true)
     public abstract ClientDetailsEntity toEntity(Client client, @MappingTarget ClientDetailsEntity existing);
 
