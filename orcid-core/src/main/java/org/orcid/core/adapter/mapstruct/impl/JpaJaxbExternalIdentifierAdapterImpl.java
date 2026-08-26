@@ -57,6 +57,7 @@ public abstract class JpaJaxbExternalIdentifierAdapterImpl implements JpaJaxbExt
     @Mapping(source = "externalIdUrl", target = "url.value")
     @Mapping(source = "dateCreated", target = "createdDate.value")
     @Mapping(source = "lastModified", target = "lastModifiedDate.value")
+    @Mapping(source = ".", target = "source")
     public abstract PersonExternalIdentifier toExternalIdentifier(ExternalIdentifierEntity entity);
 
     /**

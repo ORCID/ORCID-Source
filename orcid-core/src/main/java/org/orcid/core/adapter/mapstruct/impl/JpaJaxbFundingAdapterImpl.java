@@ -78,6 +78,7 @@ public abstract class JpaJaxbFundingAdapterImpl implements JpaJaxbFundingAdapter
     @Mapping(source = "org.orgDisambiguated.sourceId", target = "organization.disambiguatedOrganization.disambiguatedOrganizationIdentifier")
     @Mapping(source = "org.orgDisambiguated.sourceType", target = "organization.disambiguatedOrganization.disambiguationSource")
     @Mapping(source = "org.orgDisambiguated.id", target = "organization.disambiguatedOrganization.id")
+    @Mapping(source = ".", target = "source")
     public abstract Funding toFunding(ProfileFundingEntity profileFundingEntity);
 
     @Override
@@ -96,6 +97,7 @@ public abstract class JpaJaxbFundingAdapterImpl implements JpaJaxbFundingAdapter
     @Mapping(source = "org.orgDisambiguated.sourceId", target = "organization.disambiguatedOrganization.disambiguatedOrganizationIdentifier")
     @Mapping(source = "org.orgDisambiguated.sourceType", target = "organization.disambiguatedOrganization.disambiguationSource")
     @Mapping(source = "org.orgDisambiguated.id", target = "organization.disambiguatedOrganization.id")
+    @Mapping(source = ".", target = "source")
     public abstract FundingSummary toFundingSummary(ProfileFundingEntity profileFundingEntity);
 
 

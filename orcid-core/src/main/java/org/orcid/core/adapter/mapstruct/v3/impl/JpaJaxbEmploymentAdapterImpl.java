@@ -67,6 +67,7 @@ public abstract class JpaJaxbEmploymentAdapterImpl implements JpaJaxbEmploymentA
     @Mapping(source = "endDate", target = "endDate")
     @Mapping(source = "dateCreated", target = "createdDate.value")
     @Mapping(source = "lastModified", target = "lastModifiedDate.value")
+    @Mapping(source = ".", target = "source")
     public abstract Employment toEmployment(OrgAffiliationRelationEntity entity);
 
     @Override
@@ -80,6 +81,7 @@ public abstract class JpaJaxbEmploymentAdapterImpl implements JpaJaxbEmploymentA
     @Mapping(source = "endDate", target = "endDate")
     @Mapping(source = "dateCreated", target = "createdDate.value")
     @Mapping(source = "lastModified", target = "lastModifiedDate.value")
+    @Mapping(source = ".", target = "source")
     public abstract EmploymentSummary toEmploymentSummary(OrgAffiliationRelationEntity entity);
 
     @Override

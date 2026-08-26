@@ -27,6 +27,7 @@ public abstract class JpaJaxbGroupIdRecordAdapterImpl implements JpaJaxbGroupIdR
     // MapStruct automatically maps "groupId" because the names match on both sides
     @Mapping(source = "dateCreated", target = "createdDate.value")
     @Mapping(source = "lastModified", target = "lastModifiedDate.value")
+    @Mapping(source = ".", target = "source")
     public abstract GroupIdRecord toGroupIdRecord(GroupIdRecordEntity groupIdRecordEntity);
 
 

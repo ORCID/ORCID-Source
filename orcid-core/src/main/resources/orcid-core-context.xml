@@ -15,15 +15,14 @@
 	<bean id="httpRequestUtils" class="org.orcid.core.utils.http.HttpRequestUtils" />
 	<bean id="identityProviderManager" class="org.orcid.core.manager.impl.IdentityProviderManagerImpl" />
 	<import resource="classpath*:orcid-core-cache-config.xml" />
-	
-	<!-- Commenting out whilst the auditing is still being discussed -->
-	<!-- <import resource="classpath*:orcid-audit-context.xml" /> -->
 
 	<context:component-scan
 		base-package="org.orcid.core.manager.validator, org.orcid.core.manager.impl, org.orcid.core.oauth.service,
 		org.orcid.core.security, org.orcid.core.messaging, org.orcid.core.togglz, org.orcid.core.utils.v3.identifiers,
 		org.orcid.core.groupIds, org.orcid.core.solr, org.orcid.core.orgs, org.orcid.core.contributors,
-		org.orcid.core.oauth.authorizationServer, org.orcid.core.adapter.mapstruct" />
+		org.orcid.core.oauth.authorizationServer, org.orcid.core.adapter.mapstruct">
+		<context:exclude-filter type="regex" expression=".*AdapterImplImpl" />
+	</context:component-scan>
 	<aop:aspectj-autoproxy proxy-target-class="true" />
 	
     <context:mbean-server />
@@ -301,7 +300,7 @@
 	
 	<bean id="profileEntityGenericCacheManager" class="org.orcid.core.cache.impl.GenericCacheManagerImpl">
         <property name="cache" ref="profileEntityCache" />
-         <property name="profileEntityManager" ref="profileEntityManagerV3" />
+        <property name="profileEntityManager" ref="profileEntityManagerV3" />
         <property name="retriever" ref="profileEntityRetriever" />
     </bean>
     
@@ -719,7 +718,7 @@
 	
 	<bean id="orcidSecurityManager" class="org.orcid.core.manager.impl.OrcidSecurityManagerImpl" />			
 
-	<bean id="identitifierTypeManager" class="org.orcid.core.manager.impl.IdentifierTypeManagerImpl" />
+	<bean id="identifierTypeManager" class="org.orcid.core.manager.impl.IdentifierTypeManagerImpl" />
     
     <bean id="institutionalSignInManager" class="org.orcid.core.manager.impl.InstitutionalSignInManagerImpl" />
 	
@@ -821,195 +820,52 @@
 	
 	<bean id="fundingContributorRoleConverter" class="org.orcid.core.contributors.roles.fundings.FundingContributorRoleConverter" />
 	
-	<bean id="mapperFacadeFactory" class="org.orcid.core.adapter.impl.MapperFacadeFactory">
-	   <constructor-arg ref="workContributorRoleConverter" />
-	   <constructor-arg ref="fundingContributorRoleConverter" />
-	</bean>
-	<bean id="mapperFacade" factory-bean="&amp;mapperFacadeFactory" factory-method="getObject"/>
-	<bean id="jpaJaxbNotificationAdapter" class="org.orcid.core.adapter.impl.JpaJaxbNotificationAdapterImpl">
-	    <property name="mapperFacade" ref="mapperFacade" />
-	</bean>
-	<bean id="workMapperFacade" factory-bean="&amp;mapperFacadeFactory" factory-method="getWorkMapperFacade"/>
-    <bean id="jpaJaxbWorkAdapter" class="org.orcid.core.adapter.impl.JpaJaxbWorkAdapterImpl">
-        <property name="mapperFacade" ref="workMapperFacade" />
-    </bean>
-	
-	<bean id="fundingMapperFacade" factory-bean="&amp;mapperFacadeFactory" factory-method="getFundingMapperFacade"/>
-	<bean id="jpaJaxbFundingAdapter" class="org.orcid.core.adapter.impl.JpaJaxbFundingAdapterImpl">
-        <property name="mapperFacade" ref="fundingMapperFacade" />
-    </bean>
-	
-	<bean id="educationMapperFacade" factory-bean="&amp;mapperFacadeFactory" factory-method="getEducationMapperFacade"/>
-	<bean id="jpaJaxbEducationAdapter" class="org.orcid.core.adapter.impl.JpaJaxbEducationAdapterImpl">
-        <property name="mapperFacade" ref="educationMapperFacade" />
-    </bean>
-	
-	<bean id="employmentMapperFacade" factory-bean="&amp;mapperFacadeFactory" factory-method="getEmploymentMapperFacade"/>
-	<bean id="jpaJaxbEmploymentAdapter" class="org.orcid.core.adapter.impl.JpaJaxbEmploymentAdapterImpl">
-        <property name="mapperFacade" ref="employmentMapperFacade" />
-    </bean>
+	<!-- MapStruct adapters (v2) -->
+	<bean id="workMapperV2" class="org.orcid.core.adapter.mapstruct.WorkMapperV2Impl" />
+
+	<bean id="jpaJaxbNotificationAdapter" class="org.orcid.core.adapter.mapstruct.impl.JpaJaxbNotificationAdapterImplImpl" />
+	<bean id="jpaJaxbWorkAdapter" class="org.orcid.core.adapter.mapstruct.impl.JpaJaxbWorkAdapterImplImpl" />
+	<bean id="jpaJaxbFundingAdapter" class="org.orcid.core.adapter.mapstruct.impl.JpaJaxbFundingAdapterImplImpl" />
+	<bean id="jpaJaxbEducationAdapter" class="org.orcid.core.adapter.mapstruct.impl.JpaJaxbEducationAdapterImplImpl" />
+	<bean id="jpaJaxbEmploymentAdapter" class="org.orcid.core.adapter.mapstruct.impl.JpaJaxbEmploymentAdapterImplImpl" />
+    <bean id="jpaJaxbPeerReviewAdapter" class="org.orcid.core.adapter.mapstruct.impl.JpaJaxbPeerReviewAdapterImplImpl" />
+    <bean id="jpaJaxbGroupIdRecordAdapter" class="org.orcid.core.adapter.mapstruct.impl.JpaJaxbGroupIdRecordAdapterImplImpl" />
+    <bean id="jpaJaxbResearcherUrlAdapter" class="org.orcid.core.adapter.mapstruct.impl.JpaJaxbResearcherUrlAdapterImplImpl" />
+    <bean id="jpaJaxbEmailAdapter" class="org.orcid.core.adapter.mapstruct.impl.JpaJaxbEmailAdapterImplImpl" />
+    <bean id="jpaJaxbOtherNameAdapter" class="org.orcid.core.adapter.mapstruct.impl.JpaJaxbOtherNameAdapterImplImpl" />
+    <bean id="jpaJaxbNameAdapter" class="org.orcid.core.adapter.mapstruct.impl.JpaJaxbNameAdapterImplImpl" />
+    <bean id="jpaJaxbExternalIdentifierAdapter" class="org.orcid.core.adapter.mapstruct.impl.JpaJaxbExternalIdentifierAdapterImplImpl" />
+    <bean id="jpaJaxbKeywordAdapter" class="org.orcid.core.adapter.mapstruct.impl.JpaJaxbKeywordAdapterImplImpl" />
+    <bean id="jpaJaxbAddressAdapter" class="org.orcid.core.adapter.mapstruct.impl.JpaJaxbAddressAdapterImplImpl" />
+    <bean id="jpaJaxbClientAdapter" class="org.orcid.core.adapter.mapstruct.impl.JpaJaxbClientAdapterImplImpl" />
+    <bean id="jpaJaxbInvalidRecordDataChangeAdapter" class="org.orcid.core.adapter.mapstruct.impl.JpaJaxbInvalidRecordDataChangeAdapterImplImpl" />
     
-    <bean id="peerReviewMapperFacade" factory-bean="&amp;mapperFacadeFactory" factory-method="getPeerReviewMapperFacade"/>
-	<bean id="jpaJaxbPeerReviewAdapter" class="org.orcid.core.adapter.impl.JpaJaxbPeerReviewAdapterImpl">
-        <property name="mapperFacade" ref="peerReviewMapperFacade" />
-    </bean>
-    
-    <bean id="groupIdRecordMapperFacade" factory-bean="&amp;mapperFacadeFactory" factory-method="getGroupIdRecordMapperFacade"/>
-	<bean id="jpaJaxbGroupIdRecordAdapter" class="org.orcid.core.adapter.impl.JpaJaxbGroupIdRecordAdapterImpl">
-        <property name="mapperFacade" ref="groupIdRecordMapperFacade" />
-    </bean>
-    
-    <bean id="researcherUrlMapperFacade" factory-bean="&amp;mapperFacadeFactory" factory-method="getResearcherUrlMapperFacade"/>
-	<bean id="jpaJaxbResearcherUrlAdapter" class="org.orcid.core.adapter.impl.JpaJaxbResearcherUrlAdapterImpl">
-        <property name="mapperFacade" ref="researcherUrlMapperFacade" />
-    </bean>
-    
-    <bean id="emailMapperFacade" factory-bean="&amp;mapperFacadeFactory" factory-method="getEmailMapperFacade"/>
-	<bean id="jpaJaxbEmailAdapter" class="org.orcid.core.adapter.impl.JpaJaxbEmailAdapterImpl">
-        <property name="mapperFacade" ref="emailMapperFacade" />
-    </bean>
-    
-    <bean id="otherNameUrlMapperFacade" factory-bean="&amp;mapperFacadeFactory" factory-method="getOtherNameMapperFacade"/>
-	<bean id="jpaJaxbOtherNameAdapter" class="org.orcid.core.adapter.impl.JpaJaxbOtherNameAdapterImpl">
-        <property name="mapperFacade" ref="otherNameUrlMapperFacade" />
-    </bean>
-    
-    <bean id="nameMapperFacade" factory-bean="&amp;mapperFacadeFactory" factory-method="getNameMapperFacade"/>
-	<bean id="jpaJaxbNameAdapter" class="org.orcid.core.adapter.impl.JpaJaxbNameAdapterImpl">
-        <property name="mapperFacade" ref="nameMapperFacade" />
-    </bean>
-    
-    <bean id="externalIdentifierMapperFacade" factory-bean="&amp;mapperFacadeFactory" factory-method="getExternalIdentifierMapperFacade"/>
-	<bean id="jpaJaxbExternalIdentifierAdapter" class="org.orcid.core.adapter.impl.JpaJaxbExternalIdentifierAdapterImpl">
-        <property name="mapperFacade" ref="externalIdentifierMapperFacade" />
-    </bean>        
-    
-    <bean id="keywordMapperFacade" factory-bean="&amp;mapperFacadeFactory" factory-method="getKeywordMapperFacade"/>
-	<bean id="jpaJaxbKeywordAdapter" class="org.orcid.core.adapter.impl.JpaJaxbKeywordAdapterImpl">
-        <property name="mapperFacade" ref="keywordMapperFacade" />
-    </bean>
-        
-    <bean id="addressMapperFacade" factory-bean="&amp;mapperFacadeFactory" factory-method="getAddressMapperFacade"/>
-	<bean id="jpaJaxbAddressAdapter" class="org.orcid.core.adapter.impl.JpaJaxbAddressAdapterImpl">
-        <property name="mapperFacade" ref="addressMapperFacade" />
-    </bean>
-    
-    <bean id="clientMapperFacade" factory-bean="&amp;mapperFacadeFactory" factory-method="getClientMapperFacade"/>
-	<bean id="jpaJaxbClientAdapter" class="org.orcid.core.adapter.impl.JpaJaxbClientAdapterImpl">
-        <property name="mapperFacade" ref="clientMapperFacade" />
+    <!-- MapStruct adapters (v3) -->
+    <bean id="fundingContributorsMapperV3" class="org.orcid.core.adapter.mapstruct.FundingContributorsMapperV3">
+        <constructor-arg ref="fundingContributorRoleConverter" />
     </bean>
 
-    <bean id="invalidRecordDataChangeMapperFacade" factory-bean="&amp;mapperFacadeFactory" factory-method="getInvalidRecordDataChangeMapperFacade"/>
-	<bean id="jpaJaxbInvalidRecordDataChangeAdapter" class="org.orcid.core.adapter.impl.JpaJaxbInvalidRecordDataChangeAdapterImpl">
-        <property name="mapperFacade" ref="invalidRecordDataChangeMapperFacade" />
-    </bean>
-    
-    <!-- v3 adapters -->
-	<bean id="mapperFacadeFactoryV3" class="org.orcid.core.adapter.v3.impl.MapperFacadeFactory" depends-on="PIDNormalizationService">
-	</bean>
-    <bean id="mapperFacadeV3" factory-bean="&amp;mapperFacadeFactoryV3" factory-method="getObject"/>
-    <bean id="jpaJaxbNotificationAdapterV3" class="org.orcid.core.adapter.v3.impl.JpaJaxbNotificationAdapterImpl">
-        <property name="mapperFacade" ref="mapperFacadeV3" />
-    </bean>
-    <bean id="workMapperFacadeV3" factory-bean="&amp;mapperFacadeFactoryV3" factory-method="getWorkMapperFacade"/>
-    <bean id="jpaJaxbWorkAdapterV3" class="org.orcid.core.adapter.v3.impl.JpaJaxbWorkAdapterImpl">
-        <property name="mapperFacade" ref="workMapperFacadeV3" />
-    </bean>
-    
-    <bean id="fundingMapperFacadeV3" factory-bean="&amp;mapperFacadeFactoryV3" factory-method="getFundingMapperFacade"/>
-    <bean id="jpaJaxbFundingAdapterV3" class="org.orcid.core.adapter.v3.impl.JpaJaxbFundingAdapterImpl">
-        <property name="mapperFacade" ref="fundingMapperFacadeV3" />
-    </bean>
-    
-    <bean id="distinctionMapperFacadeV3" factory-bean="&amp;mapperFacadeFactoryV3" factory-method="getDistinctionMapperFacade"/>
-    <bean id="jpaJaxbDistinctionAdapterV3" class="org.orcid.core.adapter.v3.impl.JpaJaxbDistinctionAdapterImpl">
-        <property name="mapperFacade" ref="distinctionMapperFacadeV3" />
-    </bean>
-    
-    <bean id="educationMapperFacadeV3" factory-bean="&amp;mapperFacadeFactoryV3" factory-method="getEducationMapperFacade"/>
-    <bean id="jpaJaxbEducationAdapterV3" class="org.orcid.core.adapter.v3.impl.JpaJaxbEducationAdapterImpl">
-        <property name="mapperFacade" ref="educationMapperFacadeV3" />
-    </bean>
-    
-    <bean id="employmentMapperFacadeV3" factory-bean="&amp;mapperFacadeFactoryV3" factory-method="getEmploymentMapperFacade"/>
-    <bean id="jpaJaxbEmploymentAdapterV3" class="org.orcid.core.adapter.v3.impl.JpaJaxbEmploymentAdapterImpl">
-        <property name="mapperFacade" ref="employmentMapperFacadeV3" />
-    </bean>
-    
-    <bean id="invitedPositionMapperFacadeV3" factory-bean="&amp;mapperFacadeFactoryV3" factory-method="getInvitedPositionMapperFacade"/>
-    <bean id="jpaJaxbInvitedPositionAdapterV3" class="org.orcid.core.adapter.v3.impl.JpaJaxbInvitedPositionAdapterImpl">
-        <property name="mapperFacade" ref="invitedPositionMapperFacadeV3" />
-    </bean>
-    
-    <bean id="membershipMapperFacadeV3" factory-bean="&amp;mapperFacadeFactoryV3" factory-method="getMembershipMapperFacade"/>
-    <bean id="jpaJaxbMembershipAdapterV3" class="org.orcid.core.adapter.v3.impl.JpaJaxbMembershipAdapterImpl">
-        <property name="mapperFacade" ref="membershipMapperFacadeV3" />
-    </bean>
-    
-    <bean id="qualificationMapperFacadeV3" factory-bean="&amp;mapperFacadeFactoryV3" factory-method="getQualificationMapperFacade"/>
-    <bean id="jpaJaxbQualificationAdapterV3" class="org.orcid.core.adapter.v3.impl.JpaJaxbQualificationAdapterImpl">
-        <property name="mapperFacade" ref="qualificationMapperFacadeV3" />
-    </bean>
-    
-    <bean id="serviceMapperFacadeV3" factory-bean="&amp;mapperFacadeFactoryV3" factory-method="getServiceMapperFacade"/>
-    <bean id="jpaJaxbServiceAdapterV3" class="org.orcid.core.adapter.v3.impl.JpaJaxbServiceAdapterImpl">
-        <property name="mapperFacade" ref="serviceMapperFacadeV3" />
-    </bean>
-    
-    <bean id="peerReviewMapperFacadeV3" factory-bean="&amp;mapperFacadeFactoryV3" factory-method="getPeerReviewMapperFacade"/>
-    <bean id="jpaJaxbPeerReviewAdapterV3" class="org.orcid.core.adapter.v3.impl.JpaJaxbPeerReviewAdapterImpl">
-        <property name="mapperFacade" ref="peerReviewMapperFacadeV3" />
-    </bean>
-    
-	<bean id="researchResourceMapperFacadeV3" factory-bean="&amp;mapperFacadeFactoryV3" factory-method="getResearchResourceMapperFacade"/>
-    <bean id="jpaJaxbResearchResourceAdapterV3" class="org.orcid.core.adapter.v3.impl.JpaJaxbResearchResourceAdapterImpl">
-        <property name="mapperFacade" ref="researchResourceMapperFacadeV3" />
-    </bean>
-    
-    <bean id="groupIdRecordMapperFacadeV3" factory-bean="&amp;mapperFacadeFactoryV3" factory-method="getGroupIdRecordMapperFacade"/>
-    <bean id="jpaJaxbGroupIdRecordAdapterV3" class="org.orcid.core.adapter.v3.impl.JpaJaxbGroupIdRecordAdapterImpl">
-        <property name="mapperFacade" ref="groupIdRecordMapperFacadeV3" />
-    </bean>
-    
-    <bean id="researcherUrlMapperFacadeV3" factory-bean="&amp;mapperFacadeFactoryV3" factory-method="getResearcherUrlMapperFacade"/>
-    <bean id="jpaJaxbResearcherUrlAdapterV3" class="org.orcid.core.adapter.v3.impl.JpaJaxbResearcherUrlAdapterImpl">
-        <property name="mapperFacade" ref="researcherUrlMapperFacadeV3" />
-    </bean>
-    
-    <bean id="emailMapperFacadeV3" factory-bean="&amp;mapperFacadeFactoryV3" factory-method="getEmailMapperFacade"/>
-    <bean id="jpaJaxbEmailAdapterV3" class="org.orcid.core.adapter.v3.impl.JpaJaxbEmailAdapterImpl">
-        <property name="mapperFacade" ref="emailMapperFacadeV3" />
-    </bean>
-    
-    <bean id="otherNameUrlMapperFacadeV3" factory-bean="&amp;mapperFacadeFactoryV3" factory-method="getOtherNameMapperFacade"/>
-    <bean id="jpaJaxbOtherNameAdapterV3" class="org.orcid.core.adapter.v3.impl.JpaJaxbOtherNameAdapterImpl">
-        <property name="mapperFacade" ref="otherNameUrlMapperFacadeV3" />
-    </bean>
-    
-    <bean id="nameMapperFacadeV3" factory-bean="&amp;mapperFacadeFactoryV3" factory-method="getNameMapperFacade"/>
-    <bean id="jpaJaxbNameAdapterV3" class="org.orcid.core.adapter.v3.impl.JpaJaxbNameAdapterImpl">
-        <property name="mapperFacade" ref="nameMapperFacadeV3" />
-    </bean>
-    
-    <bean id="externalIdentifierMapperFacadeV3" factory-bean="&amp;mapperFacadeFactoryV3" factory-method="getExternalIdentifierMapperFacade"/>
-    <bean id="jpaJaxbExternalIdentifierAdapterV3" class="org.orcid.core.adapter.v3.impl.JpaJaxbExternalIdentifierAdapterImpl">
-        <property name="mapperFacade" ref="externalIdentifierMapperFacadeV3" />
-    </bean>        
-    
-    <bean id="keywordMapperFacadeV3" factory-bean="&amp;mapperFacadeFactoryV3" factory-method="getKeywordMapperFacade"/>
-    <bean id="jpaJaxbKeywordAdapterV3" class="org.orcid.core.adapter.v3.impl.JpaJaxbKeywordAdapterImpl">
-        <property name="mapperFacade" ref="keywordMapperFacadeV3" />
-    </bean>
-        
-    <bean id="addressMapperFacadeV3" factory-bean="&amp;mapperFacadeFactoryV3" factory-method="getAddressMapperFacade"/>
-    <bean id="jpaJaxbAddressAdapterV3" class="org.orcid.core.adapter.v3.impl.JpaJaxbAddressAdapterImpl">
-        <property name="mapperFacade" ref="addressMapperFacadeV3" />
-    </bean>
-    
-    <bean id="clientMapperFacadeV3" factory-bean="&amp;mapperFacadeFactoryV3" factory-method="getClientMapperFacade"/>
-    <bean id="jpaJaxbClientAdapterV3" class="org.orcid.core.adapter.v3.impl.JpaJaxbClientAdapterImpl">
-        <property name="mapperFacade" ref="clientMapperFacadeV3" />
-    </bean>
+    <bean id="jpaJaxbNotificationAdapterV3" class="org.orcid.core.adapter.mapstruct.v3.impl.JpaJaxbNotificationAdapterImplImpl" />
+    <bean id="jpaJaxbWorkAdapterV3" class="org.orcid.core.adapter.mapstruct.v3.impl.JpaJaxbWorkAdapterImplImpl" />
+    <bean id="jpaJaxbFundingAdapterV3" class="org.orcid.core.adapter.mapstruct.v3.impl.JpaJaxbFundingAdapterImplImpl" />
+    <bean id="jpaJaxbDistinctionAdapterV3" class="org.orcid.core.adapter.mapstruct.v3.impl.JpaJaxbDistinctionAdapterImplImpl" />
+    <bean id="jpaJaxbEducationAdapterV3" class="org.orcid.core.adapter.mapstruct.v3.impl.JpaJaxbEducationAdapterImplImpl" />
+    <bean id="jpaJaxbEmploymentAdapterV3" class="org.orcid.core.adapter.mapstruct.v3.impl.JpaJaxbEmploymentAdapterImplImpl" />
+    <bean id="jpaJaxbInvitedPositionAdapterV3" class="org.orcid.core.adapter.mapstruct.v3.impl.JpaJaxbInvitedPositionAdapterImplImpl" />
+    <bean id="jpaJaxbMembershipAdapterV3" class="org.orcid.core.adapter.mapstruct.v3.impl.JpaJaxbMembershipAdapterImplImpl" />
+    <bean id="jpaJaxbQualificationAdapterV3" class="org.orcid.core.adapter.mapstruct.v3.impl.JpaJaxbQualificationAdapterImplImpl" />
+    <bean id="jpaJaxbServiceAdapterV3" class="org.orcid.core.adapter.mapstruct.v3.impl.JpaJaxbServiceAdapterImplImpl" />
+    <bean id="jpaJaxbPeerReviewAdapterV3" class="org.orcid.core.adapter.mapstruct.v3.impl.JpaJaxbPeerReviewAdapterImplImpl" />
+	<bean id="jpaJaxbResearchResourceAdapterV3" class="org.orcid.core.adapter.mapstruct.v3.impl.JpaJaxbResearchResourceAdapterImplImpl" />
+    <bean id="jpaJaxbGroupIdRecordAdapterV3" class="org.orcid.core.adapter.mapstruct.v3.impl.JpaJaxbGroupIdRecordAdapterImplImpl" />
+    <bean id="jpaJaxbResearcherUrlAdapterV3" class="org.orcid.core.adapter.mapstruct.v3.impl.JpaJaxbResearcherUrlAdapterImplImpl" />
+    <bean id="jpaJaxbEmailAdapterV3" class="org.orcid.core.adapter.mapstruct.v3.impl.JpaJaxbEmailAdapterImplImpl" />
+    <bean id="jpaJaxbOtherNameAdapterV3" class="org.orcid.core.adapter.mapstruct.v3.impl.JpaJaxbOtherNameAdapterImplImpl" />
+    <bean id="jpaJaxbNameAdapterV3" class="org.orcid.core.adapter.mapstruct.v3.impl.JpaJaxbNameAdapterImplImpl" />
+    <bean id="jpaJaxbExternalIdentifierAdapterV3" class="org.orcid.core.adapter.mapstruct.v3.impl.JpaJaxbExternalIdentifierAdapterImplImpl" />
+    <bean id="jpaJaxbKeywordAdapterV3" class="org.orcid.core.adapter.mapstruct.v3.impl.JpaJaxbKeywordAdapterImplImpl" />
+    <bean id="jpaJaxbAddressAdapterV3" class="org.orcid.core.adapter.mapstruct.v3.impl.JpaJaxbAddressAdapterImplImpl" />
+    <bean id="jpaJaxbClientAdapterV3" class="org.orcid.core.adapter.mapstruct.v3.impl.JpaJaxbClientAdapterImplImpl" />
              
     <bean id="v2VersionObjectFactory" class="org.orcid.core.version.impl.V2VersionObjectFactoryImpl" />
     
@@ -1027,8 +883,6 @@
 	
 	<bean id="crossDomainWebManger" class="org.orcid.core.web.filters.CrossDomainWebManger" />	
 	
-	<!-- We can add our Jms Message Sending Resource via @component - the whole package works like that-->
-
 	<bean id="orcidMessageUtil" class="org.orcid.core.utils.OrcidMessageUtil" />		
 	
 	<bean id="orcidCoreExceptionMapper" class="org.orcid.core.exception.OrcidCoreExceptionMapper" />
@@ -1105,7 +959,6 @@
     
     <!-- email trickle -->
     <bean id="jmsConnectionFactory" class="org.apache.activemq.ActiveMQConnectionFactory">
-        <!-- lets use an embedded broker for now (easier to test!) -->
         <property name="brokerURL"
             value="${org.orcid.messaging.brokerURL:vm://localhost?broker.persistent=false}" />
         <property name="redeliveryPolicy" ref="redeliveryPolicy" />
@@ -1116,7 +969,7 @@
         <property name="targetConnectionFactory" ref="jmsConnectionFactory" />
     </bean>
 
-    <!-- JmsTemplate Definition so we can send to queues -->
+    <!-- JmsTemplate Definition -->
     <bean id="jmsTemplate" class="org.springframework.jms.core.JmsTemplate">
         <property name="connectionFactory" ref="jmsConnectionFactory" />
     </bean>
@@ -1160,19 +1013,11 @@
 		<property name="spamDao" ref="spamDaoReadOnly" />
 	</bean>
 
-	<bean id="spamMapperFacade" factory-bean="&amp;mapperFacadeFactoryV3" factory-method="getSpamMapperFacade"/>
-	
-	<bean id="jpaJaxbSpamAdapter" class="org.orcid.core.adapter.v3.impl.JpaJaxbSpamAdapterImpl">
-		<property name="mapperFacade" ref="spamMapperFacade"/>
-	</bean>
-	    
-    <bean id="workContributorsConverter" class="org.orcid.core.adapter.v3.converter.WorkContributorsConverter">
-        <constructor-arg ref="workContributorRoleConverter" />
-    </bean>
-    
-	<bean id="contributorsRolesAndSequencesConverter" class="org.orcid.core.adapter.v3.converter.ContributorsRolesAndSequencesConverter" />
+	<bean id="jpaJaxbSpamAdapter" class="org.orcid.core.adapter.mapstruct.v3.impl.JpaJaxbSpamAdapterImplImpl" />
 
-	<bean id="contributorsRolesAndSequencesConverterV2" class="org.orcid.core.adapter.v3.converter.ContributorsRolesAndSequencesConverterV2"/>		
+	<bean id="contributorsRolesAndSequencesConverter" class="org.orcid.core.adapter.mapstruct.ContributorsRolesAndSequencesMapperV3" />
+
+	<bean id="contributorsRolesAndSequencesConverterV2" class="org.orcid.core.adapter.mapstruct.ContributorsRolesAndSequencesMapperV2"/>		
 
 	<bean id="VerifyEmailUtils" class="org.orcid.core.utils.VerifyEmailUtils" />	
 

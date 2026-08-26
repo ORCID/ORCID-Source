@@ -66,6 +66,7 @@ public abstract class JpaJaxbServiceAdapterImpl implements JpaJaxbServiceAdapter
     @Mapping(source = "endDate", target = "endDate")
     @Mapping(source = "dateCreated", target = "createdDate.value")
     @Mapping(source = "lastModified", target = "lastModifiedDate.value")
+    @Mapping(source = ".", target = "source")
     public abstract Service toService(OrgAffiliationRelationEntity entity);
 
     @Override
@@ -79,6 +80,7 @@ public abstract class JpaJaxbServiceAdapterImpl implements JpaJaxbServiceAdapter
     @Mapping(source = "endDate", target = "endDate")
     @Mapping(source = "dateCreated", target = "createdDate.value")
     @Mapping(source = "lastModified", target = "lastModifiedDate.value")
+    @Mapping(source = ".", target = "source")
     public abstract ServiceSummary toServiceSummary(OrgAffiliationRelationEntity entity);
 
     @Override

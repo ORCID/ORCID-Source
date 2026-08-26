@@ -1,7 +1,5 @@
 package org.orcid.core.manager.v3.impl;
 
-import jakarta.annotation.Resource;
-
 import org.apache.commons.lang3.StringUtils;
 import org.orcid.core.common.util.AuthenticationUtils;
 import org.orcid.core.manager.ClientDetailsManager;
@@ -17,6 +15,8 @@ import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.SourceEntity;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 
@@ -27,16 +27,18 @@ import org.springframework.security.core.context.SecurityContextHolder;
  */
 public class SourceManagerImpl implements SourceManager {
 
-    @Resource
+    @Autowired
     private ProfileDao profileDao;
 
-    @Resource
+    @Autowired
+    @Lazy
     private ClientDetailsManager clientDetailsManager;   
     
-    @Resource
+    @Autowired
     private OrcidOauth2TokenDetailDao orcidOauth2TokenDetailDao;
     
-    @Resource
+    @Autowired
+    @Lazy
     private SourceNameCacheManager sourceNameCacheManager;
     
     /** returns the active source, either an effective ORCID iD or Client Id.
@@ -69,12 +71,12 @@ public class SourceManagerImpl implements SourceManager {
             source.setSourceName(new SourceName(clientDetails.getClientName()));  
 
             // Check member OBO
-            if(StringUtils.isNotBlank(authDetails.getOboClientId())) {
+            if (StringUtils.isNotBlank(authDetails.getOboClientId())) {
                 String oboClientId = authDetails.getOboClientId();
                 ClientDetailsEntity oboClientDetails = clientDetailsManager.findByClientId(oboClientId);
                 source.setAssertionOriginClientId(new SourceClientId(oboClientId));
                 source.setAssertionOriginName(new SourceName(oboClientDetails.getClientName()));
-            } else if(clientDetails.isUserOBOEnabled()){
+            } else if (clientDetails.isUserOBOEnabled()) {
                 // Check user OBO
                 String userOrcid = authDetails.getUserOrcid();
                 if (StringUtils.isNotBlank(userOrcid)) {
@@ -85,7 +87,7 @@ public class SourceManagerImpl implements SourceManager {
         } else {
             // User authentication
             String userOrcid = AuthenticationUtils.retrieveEffectiveOrcid();
-            if(userOrcid == null){
+            if (userOrcid == null) {
                 // Must be system role
                 return null;
             }

@@ -49,6 +49,7 @@ public abstract class JpaJaxbAddressAdapterImpl implements JpaJaxbAddressAdapter
     @Mapping(source = "iso2Country", target = "country.value")
     @Mapping(source = "dateCreated", target = "createdDate.value")
     @Mapping(source = "lastModified", target = "lastModifiedDate.value")
+    @Mapping(source = ".", target = "source")
     public abstract Address toAddress(AddressEntity entity);
 
     @Override

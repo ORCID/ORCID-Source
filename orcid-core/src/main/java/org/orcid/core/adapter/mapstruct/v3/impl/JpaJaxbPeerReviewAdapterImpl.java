@@ -86,6 +86,7 @@ public abstract class JpaJaxbPeerReviewAdapterImpl implements JpaJaxbPeerReviewA
     @Mapping(source = "completionDate", target = "completionDate")
     @Mapping(source = "dateCreated", target = "createdDate.value")
     @Mapping(source = "lastModified", target = "lastModifiedDate.value")
+    @Mapping(source = ".", target = "source")
     public abstract PeerReview toPeerReview(PeerReviewEntity entity);
 
     @Override
@@ -96,6 +97,7 @@ public abstract class JpaJaxbPeerReviewAdapterImpl implements JpaJaxbPeerReviewA
     @Mapping(source = "completionDate", target = "completionDate")
     @Mapping(source = "dateCreated", target = "createdDate.value")
     @Mapping(source = "lastModified", target = "lastModifiedDate.value")
+    @Mapping(source = ".", target = "source")
     public abstract PeerReviewSummary toPeerReviewSummary(PeerReviewEntity entity);
 
 

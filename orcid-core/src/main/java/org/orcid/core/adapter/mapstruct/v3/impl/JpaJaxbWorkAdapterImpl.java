@@ -110,6 +110,7 @@ public abstract class JpaJaxbWorkAdapterImpl implements JpaJaxbWorkAdapter {
     @Mapping(source = "iso2Country", target = "country.value")
     @Mapping(source = "dateCreated", target = "createdDate.value")
     @Mapping(source = "lastModified", target = "lastModifiedDate.value")
+    @Mapping(source = ".", target = "source")
     public abstract Work toWork(WorkEntity workEntity);
 
     @Override
@@ -125,6 +126,7 @@ public abstract class JpaJaxbWorkAdapterImpl implements JpaJaxbWorkAdapter {
     @Mapping(source = "workUrl", target = "url.value")
     @Mapping(source = "dateCreated", target = "createdDate.value")
     @Mapping(source = "lastModified", target = "lastModifiedDate.value")
+    @Mapping(source = ".", target = "source")
     public abstract WorkSummary toWorkSummary(WorkEntity workEntity);
 
     @Override
@@ -142,6 +144,7 @@ public abstract class JpaJaxbWorkAdapterImpl implements JpaJaxbWorkAdapter {
     @Mapping(source = "workUrl", target = "url.value")
     @Mapping(source = "dateCreated", target = "createdDate.value")
     @Mapping(source = "lastModified", target = "lastModifiedDate.value")
+    @Mapping(source = ".", target = "source")
     public abstract WorkSummary toWorkSummary(MinimizedWorkEntity minimizedWorkEntity);
 
     @Mapping(source = "id", target = "putCode")
@@ -159,6 +162,7 @@ public abstract class JpaJaxbWorkAdapterImpl implements JpaJaxbWorkAdapter {
     @Mapping(source = "workUrl", target = "url.value")
     @Mapping(source = "dateCreated", target = "createdDate.value")
     @Mapping(source = "lastModified", target = "lastModifiedDate.value")
+    @Mapping(source = ".", target = "source")
     public abstract Work toWorkFromMinimized(MinimizedWorkEntity minimizedWorkEntity);
 
     @Mapping(source = "id", target = "putCode")
@@ -175,6 +179,7 @@ public abstract class JpaJaxbWorkAdapterImpl implements JpaJaxbWorkAdapter {
     @Mapping(source = "workUrl", target = "url.value")
     @Mapping(source = "dateCreated", target = "createdDate.value")
     @Mapping(source = "lastModified", target = "lastModifiedDate.value")
+    @Mapping(source = ".", target = "source")
     public abstract WorkSummaryExtended toWorkSummaryExtended(MinimizedExtendedWorkEntity minimizedExtendedWorkEntity);
 
     @Override

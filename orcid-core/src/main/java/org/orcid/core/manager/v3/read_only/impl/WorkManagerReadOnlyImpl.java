@@ -51,6 +51,7 @@ import org.orcid.pojo.ajaxForm.WorkForm;
 import org.orcid.pojo.grouping.WorkGroupingSuggestion;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 
 import static org.orcid.pojo.ajaxForm.PojoUtil.getWorkForm;
@@ -76,7 +77,7 @@ public class WorkManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements 
     @Resource
     private WorksExtendedCacheManager worksExtendedCacheManager;
 
-    @Resource
+    @Resource(name = "groupingSuggestionManagerV3")
     private GroupingSuggestionManager groupingSuggestionsManager;
 
     @Resource(name = "contributorUtilsV3")
@@ -85,7 +86,7 @@ public class WorkManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements 
     @Resource(name = "workContributorsMapperV3")
     private WorkContributorsMapperV3 workContributorsMapperV3;
 
-    @Resource
+    @Autowired
     private JSONWorkExternalIdentifiersMapperV3 jsonWorkExternalIdentifiersConverterV3;
 
     @Resource
@@ -94,7 +95,7 @@ public class WorkManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements 
     @Resource
     private SourceNameCacheManager sourceNameCacheManager;
 
-    @Resource
+    @Resource(name = "contributorsRolesAndSequencesConverter")
     private ContributorsRolesAndSequencesMapperV3 contributorsRolesAndSequencesConverter;
 
     @Resource
@@ -522,7 +523,6 @@ public class WorkManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements 
         }
 
         return titles;
-
     }
 
     @Override

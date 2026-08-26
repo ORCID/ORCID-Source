@@ -66,6 +66,7 @@ public abstract class JpaJaxbEmploymentAdapterImpl implements JpaJaxbEmploymentA
     @Mapping(source = "department", target = "departmentName")
     @Mapping(source = "title", target = "roleTitle")
     @Mapping(source = "org", target = "organization")
+    @Mapping(source = ".", target = "source")
     public abstract Employment toEmployment(OrgAffiliationRelationEntity entity);
 
     @Override
@@ -75,6 +76,7 @@ public abstract class JpaJaxbEmploymentAdapterImpl implements JpaJaxbEmploymentA
     @Mapping(source = "department", target = "departmentName")
     @Mapping(source = "title", target = "roleTitle")
     @Mapping(source = "org", target = "organization")
+    @Mapping(source = ".", target = "source")
     public abstract EmploymentSummary toEmploymentSummary(OrgAffiliationRelationEntity entity);
 
     // ========================================================================

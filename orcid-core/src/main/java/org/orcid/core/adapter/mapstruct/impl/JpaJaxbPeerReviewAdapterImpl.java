@@ -78,6 +78,7 @@ public abstract class JpaJaxbPeerReviewAdapterImpl implements JpaJaxbPeerReviewA
     @Mapping(source = "externalIdentifiersJson", target = "externalIdentifiers")
     @Mapping(source = "completionDate", target = "completionDate")
     @Mapping(source = "org", target = "organization")
+    @Mapping(source = ".", target = "source")
     public abstract PeerReview toPeerReview(PeerReviewEntity entity);
 
     @Override
@@ -88,6 +89,7 @@ public abstract class JpaJaxbPeerReviewAdapterImpl implements JpaJaxbPeerReviewA
     @Mapping(source = "externalIdentifiersJson", target = "externalIdentifiers")
     @Mapping(source = "completionDate", target = "completionDate")
     @Mapping(source = "org", target = "organization")
+    @Mapping(source = ".", target = "source")
     public abstract PeerReviewSummary toPeerReviewSummary(PeerReviewEntity entity);
 
 

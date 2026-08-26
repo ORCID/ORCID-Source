@@ -66,6 +66,7 @@ public abstract class JpaJaxbInvitedPositionAdapterImpl implements JpaJaxbInvite
     @Mapping(source = "endDate", target = "endDate")
     @Mapping(source = "dateCreated", target = "createdDate.value")
     @Mapping(source = "lastModified", target = "lastModifiedDate.value")
+    @Mapping(source = ".", target = "source")
     public abstract InvitedPosition toInvitedPosition(OrgAffiliationRelationEntity entity);
 
     @Override
@@ -79,6 +80,7 @@ public abstract class JpaJaxbInvitedPositionAdapterImpl implements JpaJaxbInvite
     @Mapping(source = "endDate", target = "endDate")
     @Mapping(source = "dateCreated", target = "createdDate.value")
     @Mapping(source = "lastModified", target = "lastModifiedDate.value")
+    @Mapping(source = ".", target = "source")
     public abstract InvitedPositionSummary toInvitedPositionSummary(OrgAffiliationRelationEntity entity);
 
     @Override

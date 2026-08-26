@@ -71,6 +71,7 @@ public abstract class JpaJaxbMembershipAdapterImpl implements JpaJaxbMembershipA
     @Mapping(source = "endDate", target = "endDate")
     @Mapping(source = "dateCreated", target = "createdDate.value")
     @Mapping(source = "lastModified", target = "lastModifiedDate.value")
+    @Mapping(source = ".", target = "source")
     public abstract Membership toMembership(OrgAffiliationRelationEntity entity);
 
     @Override
@@ -84,6 +85,7 @@ public abstract class JpaJaxbMembershipAdapterImpl implements JpaJaxbMembershipA
     @Mapping(source = "endDate", target = "endDate")
     @Mapping(source = "dateCreated", target = "createdDate.value")
     @Mapping(source = "lastModified", target = "lastModifiedDate.value")
+    @Mapping(source = ".", target = "source")
     public abstract MembershipSummary toMembershipSummary(OrgAffiliationRelationEntity entity);
 
 

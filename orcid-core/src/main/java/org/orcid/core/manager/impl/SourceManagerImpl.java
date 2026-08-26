@@ -1,9 +1,5 @@
 package org.orcid.core.manager.impl;
 
-import java.util.Collection;
-
-import jakarta.annotation.Resource;
-
 import org.orcid.core.common.util.AuthenticationUtils;
 import org.orcid.core.manager.ClientDetailsManager;
 import org.orcid.core.manager.SourceManager;
@@ -14,6 +10,8 @@ import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.SourceEntity;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 
@@ -24,13 +22,15 @@ import org.springframework.security.core.context.SecurityContextHolder;
  */
 public class SourceManagerImpl extends ManagerReadOnlyBaseImpl implements SourceManager {
 
-    @Resource
+    @Autowired
     private ProfileDao profileDao;
 
-    @Resource
+    @Autowired
+    @Lazy
     private ClientDetailsManager clientDetailsManager;    
     
-    @Resource
+    @Autowired
+    @Lazy
     private SourceNameCacheManager sourceNameCacheManager;
     
     @Override

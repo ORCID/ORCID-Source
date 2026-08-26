@@ -43,6 +43,13 @@ import com.google.common.collect.ImmutableList.Builder;
  */
 public class IdentifierTypeManagerImpl implements IdentifierTypeManager {
 
+    // Declared first so it is injected before the other @Resource fields below: this bean has
+    // no dependency back on IdentifierTypeManager, so resolving it early avoids it being left
+    // null when a circular dependency (e.g. via UnresolvableResolver) re-enters this same
+    // partially-initialized instance while the later fields are still being injected.
+    @Resource
+    private IdentifierTypeMapper identifierTypeMapper;
+
     @Resource
     private IdentifierTypeDao idTypeDao;
 
@@ -57,9 +64,6 @@ public class IdentifierTypeManagerImpl implements IdentifierTypeManager {
     
     @Resource
     private LocaleManager localeManager;
-
-    @Resource
-    private IdentifierTypeMapper identifierTypeMapper;
 
     private ExternalIdentifierTypeMapper externalIdentifierTypeConverter = ExternalIdentifierTypeMapper.INSTANCE;    
     

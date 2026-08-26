@@ -51,6 +51,7 @@ public abstract class JpaJaxbResearcherUrlAdapterImpl implements JpaJaxbResearch
     @Mapping(source = "url", target = "url.value")
     @Mapping(source = "dateCreated", target = "createdDate.value")
     @Mapping(source = "lastModified", target = "lastModifiedDate.value")
+    @Mapping(source = ".", target = "source")
     public abstract ResearcherUrl toResearcherUrl(ResearcherUrlEntity entity);
 
     @Override

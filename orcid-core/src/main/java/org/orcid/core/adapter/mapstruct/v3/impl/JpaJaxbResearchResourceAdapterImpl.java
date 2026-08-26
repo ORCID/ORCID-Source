@@ -107,6 +107,7 @@ public abstract class JpaJaxbResearchResourceAdapterImpl implements JpaJaxbResea
     @Mapping(source = "resourceItems", target = "resourceItems")
     @Mapping(source = "dateCreated", target = "createdDate.value")
     @Mapping(source = "lastModified", target = "lastModifiedDate.value")
+    @Mapping(source = ".", target = "source")
     public abstract ResearchResource toModel(ResearchResourceEntity entity);
 
     @Override
@@ -121,6 +122,7 @@ public abstract class JpaJaxbResearchResourceAdapterImpl implements JpaJaxbResea
     @Mapping(source = "hosts", target = "proposal.hosts")
     @Mapping(source = "dateCreated", target = "createdDate.value")
     @Mapping(source = "lastModified", target = "lastModifiedDate.value")
+    @Mapping(source = ".", target = "source")
     public abstract ResearchResourceSummary toSummary(ResearchResourceEntity entity);
 
     // ========================================================================

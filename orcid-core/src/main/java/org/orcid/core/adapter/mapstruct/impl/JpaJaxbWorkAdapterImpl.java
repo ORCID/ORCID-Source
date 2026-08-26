@@ -111,6 +111,7 @@ public abstract class JpaJaxbWorkAdapterImpl implements JpaJaxbWorkAdapter {
     @Mapping(source = "languageCode", target = "languageCode")
     @Mapping(source = "iso2Country", target = "country.value")
     @Mapping(source = "publicationDate", target = "publicationDate")
+    @Mapping(source = ".", target = "source")
     @Mapping(target = "workType", ignore = true) // Handled by WorkMapperV2
     public abstract Work toWork(WorkEntity workEntity);
 
@@ -129,6 +130,7 @@ public abstract class JpaJaxbWorkAdapterImpl implements JpaJaxbWorkAdapter {
     @Mapping(source = "translatedTitleLanguageCode", target = "title.translatedTitle.languageCode")
     @Mapping(source = "publicationDate", target = "publicationDate")
     @Mapping(source = "externalIdentifiersJson", target = "externalIdentifiers")
+    @Mapping(source = ".", target = "source")
     @Mapping(target = "type", ignore = true) // Handled by WorkMapperV2
     public abstract WorkSummary toWorkSummary(WorkEntity workEntity);
 
@@ -152,6 +154,7 @@ public abstract class JpaJaxbWorkAdapterImpl implements JpaJaxbWorkAdapter {
     @Mapping(source = "publicationDay", target = "publicationDate.day.value")
     @Mapping(source = "externalIdentifiersJson", target = "workExternalIdentifiers")
     @Mapping(source = "workUrl", target = "url.value")
+    @Mapping(source = ".", target = "source")
     @Mapping(target = "workType", ignore = true) // Handled by WorkMapperV2
     protected abstract Work toWorkFromMinimized(MinimizedWorkEntity entity);
 
@@ -171,6 +174,7 @@ public abstract class JpaJaxbWorkAdapterImpl implements JpaJaxbWorkAdapter {
     @Mapping(source = "publicationMonth", target = "publicationDate.month.value")
     @Mapping(source = "publicationDay", target = "publicationDate.day.value")
     @Mapping(source = "externalIdentifiersJson", target = "externalIdentifiers")
+    @Mapping(source = ".", target = "source")
     @Mapping(target = "type", ignore = true) // Handled by WorkMapperV2
     protected abstract WorkSummary toWorkSummaryFromMinimized(MinimizedWorkEntity entity);
 

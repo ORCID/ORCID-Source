@@ -23,6 +23,7 @@ public abstract class IdentifierTypeMapper {
     @Mapping(source = "putCode", target = "id")
     @Mapping(source = "deprecated", target = "isDeprecated")
     @Mapping(source = "caseSensitive", target = "isCaseSensitive")
+    @Mapping(source = "name", target = "name", qualifiedByName = "apiToDb")
     // Preserve original logic: auditing timestamps are ignored during POJO-to-Entity mapping
     @Mapping(target = "dateCreated", ignore = true)
     @Mapping(target = "lastModified", ignore = true)
@@ -36,5 +37,6 @@ public abstract class IdentifierTypeMapper {
     @Mapping(source = "id", target = "putCode")
     @Mapping(source = "isDeprecated", target = "deprecated")
     @Mapping(source = "isCaseSensitive", target = "caseSensitive")
+    @Mapping(source = "name", target = "name", qualifiedByName = "dbToApi")
     public abstract IdentifierType fromEntity(IdentifierTypeEntity entity);
 }

@@ -14,7 +14,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
-import jakarta.annotation.Resource;
 import jakarta.ws.rs.core.MediaType;
 
 import org.apache.commons.lang3.StringUtils;
@@ -46,22 +45,25 @@ import org.orcid.pojo.IdentifierType;
 import org.orcid.pojo.PIDResolutionResult;
 import org.orcid.pojo.WorkExtended;
 import org.orcid.pojo.ajaxForm.PojoUtil;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
 @Component
 public class PubMedResolver implements LinkResolver, MetadataResolver {
 
-    @Resource
-    PIDNormalizationService normalizationService;
+    @Autowired
+    private PIDNormalizationService normalizationService;
 
-    @Resource
-    PIDResolverCache cache;
+    @Autowired
+    private PIDResolverCache cache;
 
-    @Resource
+    @Autowired
+    @Lazy
     private IdentifierTypeManager identifierTypeManager;
 
-    @Resource
+    @Autowired
     protected LocaleManager localeManager;
 
     @Value("${org.orcid.core.work.contributors.ui.max:50}")

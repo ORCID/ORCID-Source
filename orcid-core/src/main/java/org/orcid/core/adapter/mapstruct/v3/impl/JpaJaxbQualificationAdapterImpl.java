@@ -66,6 +66,7 @@ public abstract class JpaJaxbQualificationAdapterImpl implements JpaJaxbQualific
     @Mapping(source = "endDate", target = "endDate")
     @Mapping(source = "dateCreated", target = "createdDate.value")
     @Mapping(source = "lastModified", target = "lastModifiedDate.value")
+    @Mapping(source = ".", target = "source")
     public abstract Qualification toQualification(OrgAffiliationRelationEntity entity);
 
     @Override
@@ -79,6 +80,7 @@ public abstract class JpaJaxbQualificationAdapterImpl implements JpaJaxbQualific
     @Mapping(source = "endDate", target = "endDate")
     @Mapping(source = "dateCreated", target = "createdDate.value")
     @Mapping(source = "lastModified", target = "lastModifiedDate.value")
+    @Mapping(source = ".", target = "source")
     public abstract QualificationSummary toQualificationSummary(OrgAffiliationRelationEntity entity);
 
 

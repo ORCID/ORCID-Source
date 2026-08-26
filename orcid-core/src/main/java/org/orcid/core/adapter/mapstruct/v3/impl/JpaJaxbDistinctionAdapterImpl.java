@@ -68,6 +68,7 @@ public abstract class JpaJaxbDistinctionAdapterImpl implements JpaJaxbDistinctio
     @Mapping(source = "endDate", target = "endDate")
     @Mapping(source = "dateCreated", target = "createdDate.value")
     @Mapping(source = "lastModified", target = "lastModifiedDate.value")
+    @Mapping(source = ".", target = "source")
     public abstract Distinction toDistinction(OrgAffiliationRelationEntity entity);
 
     @Override
@@ -81,6 +82,7 @@ public abstract class JpaJaxbDistinctionAdapterImpl implements JpaJaxbDistinctio
     @Mapping(source = "endDate", target = "endDate")
     @Mapping(source = "dateCreated", target = "createdDate.value")
     @Mapping(source = "lastModified", target = "lastModifiedDate.value")
+    @Mapping(source = ".", target = "source")
     public abstract DistinctionSummary toDistinctionSummary(OrgAffiliationRelationEntity entity);
 
 

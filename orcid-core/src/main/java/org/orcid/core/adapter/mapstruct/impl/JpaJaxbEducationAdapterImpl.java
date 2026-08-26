@@ -71,6 +71,7 @@ public abstract class JpaJaxbEducationAdapterImpl implements JpaJaxbEducationAda
     @Mapping(source = "department", target = "departmentName")
     @Mapping(source = "title", target = "roleTitle")
     @Mapping(source = "org", target = "organization")
+    @Mapping(source = ".", target = "source")
     public abstract Education toEducation(OrgAffiliationRelationEntity entity);
 
     @Override
@@ -80,6 +81,7 @@ public abstract class JpaJaxbEducationAdapterImpl implements JpaJaxbEducationAda
     @Mapping(source = "department", target = "departmentName")
     @Mapping(source = "title", target = "roleTitle")
     @Mapping(source = "org", target = "organization")
+    @Mapping(source = ".", target = "source")
     public abstract EducationSummary toEducationSummary(OrgAffiliationRelationEntity entity);
 
 

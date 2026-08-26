@@ -57,6 +57,7 @@ public abstract class JpaJaxbOtherNameAdapterImpl implements JpaJaxbOtherNameAda
     @Mapping(source = "displayName", target = "content")
     @Mapping(source = "dateCreated", target = "createdDate.value")
     @Mapping(source = "lastModified", target = "lastModifiedDate.value")
+    @Mapping(source = ".", target = "source")
     public abstract OtherName toOtherName(OtherNameEntity entity);
 
 

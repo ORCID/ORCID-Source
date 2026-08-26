@@ -69,6 +69,7 @@ public abstract class JpaJaxbEducationAdapterImpl implements JpaJaxbEducationAda
     @Mapping(source = "endDate", target = "endDate")
     @Mapping(source = "dateCreated", target = "createdDate.value")
     @Mapping(source = "lastModified", target = "lastModifiedDate.value")
+    @Mapping(source = ".", target = "source")
     public abstract Education toEducation(OrgAffiliationRelationEntity entity);
 
     @Override
@@ -82,6 +83,7 @@ public abstract class JpaJaxbEducationAdapterImpl implements JpaJaxbEducationAda
     @Mapping(source = "endDate", target = "endDate")
     @Mapping(source = "dateCreated", target = "createdDate.value")
     @Mapping(source = "lastModified", target = "lastModifiedDate.value")
+    @Mapping(source = ".", target = "source")
     public abstract EducationSummary toEducationSummary(OrgAffiliationRelationEntity entity);
 
 

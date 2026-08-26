@@ -52,6 +52,7 @@ public abstract class JpaJaxbKeywordAdapterImpl implements JpaJaxbKeywordAdapter
     @Mapping(source = "keywordName", target = "content")
     @Mapping(source = "dateCreated", target = "createdDate.value")
     @Mapping(source = "lastModified", target = "lastModifiedDate.value")
+    @Mapping(source = ".", target = "source")
     public abstract Keyword toKeyword(ProfileKeywordEntity entity);
 
 
