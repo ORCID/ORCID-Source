@@ -77,6 +77,9 @@ FROM tomcat:10.1.57-jdk21-temurin-noble
 # copy jar file from build
 COPY --from=maven /build/*/target/*.war /usr/local/tomcat/webapps/orcid-web.war
 
+# custom server.xml with encodedSolidusHandling and compression settings
+COPY orcid-web/server.xml /usr/local/tomcat/conf/server.xml
+
 RUN mkdir -p /usr/local/tomcat/newrelic
 COPY newrelic.yml /usr/local/tomcat/newrelic/newrelic.yml
 RUN curl -L -s https://download.newrelic.com/newrelic/java-agent/newrelic-agent/8.13.0/newrelic-agent-8.13.0.jar -o /usr/local/tomcat/newrelic/newrelic.jar

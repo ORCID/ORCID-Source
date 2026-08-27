@@ -2,8 +2,6 @@
 -- PostgreSQL database dump
 --
 
--- Dumped from database version 13.10 (Ubuntu 13.10-1.pgdg20.04+1)
--- Dumped by pg_dump version 15.2 (Ubuntu 15.2-1.pgdg20.04+1)
 
 \c orcid
 
@@ -22,15 +20,10 @@ SET row_security = off;
 -- Name: public; Type: SCHEMA; Schema: -; Owner: postgres
 --
 
+CREATE SCHEMA IF NOT EXISTS public;
+
 
 ALTER SCHEMA public OWNER TO postgres;
-
---
--- Name: SCHEMA public; Type: COMMENT; Schema: -; Owner: postgres
---
-
-COMMENT ON SCHEMA public IS 'standard public schema';
-
 
 --
 -- Name: org_disambiguated_descendent; Type: TYPE; Schema: public; Owner: orcid
@@ -323,9 +316,9 @@ ALTER TABLE public.affiliation OWNER TO orcid;
 CREATE TABLE public.org (
     id bigint NOT NULL,
     name character varying(4000) NOT NULL,
-    city character varying(4000) NOT NULL,
+    city character varying(4000),
     region character varying(4000) NOT NULL,
-    country character varying(2) NOT NULL,
+    country character varying(2),
     url character varying(2000),
     source_id character varying(255),
     date_created timestamp with time zone,
@@ -343,7 +336,7 @@ ALTER TABLE public.org OWNER TO orcid;
 
 CREATE TABLE public.org_affiliation_relation (
     id bigint NOT NULL,
-    org_id bigint NOT NULL,
+    org_id bigint,
     orcid character varying(255) NOT NULL,
     org_affiliation_relation_role text,
     org_affiliation_relation_title text,
@@ -363,7 +356,8 @@ CREATE TABLE public.org_affiliation_relation (
     external_ids_json json,
     display_index bigint DEFAULT 0,
     assertion_origin_source_id character varying(19),
-    assertion_origin_client_source_id character varying(20)
+    assertion_origin_client_source_id character varying(20),
+    featured boolean
 );
 
 
@@ -501,7 +495,11 @@ CREATE TABLE public.client_details (
     email_access_reason text,
     user_obo_enabled boolean DEFAULT false,
     deactivated_date timestamp with time zone,
-    deactivated_by character varying(19)
+    deactivated_by character varying(19),
+    user_notification_enabled boolean DEFAULT false,
+    notification_domains json,
+    notification_webpage_url text,
+    member_id character varying(24)
 );
 
 
@@ -534,7 +532,8 @@ CREATE TABLE public.client_redirect_uri (
     redirect_uri_type text DEFAULT 'default'::character varying NOT NULL,
     uri_act_type json DEFAULT '{"import-works-wizard" : ["Articles"]}'::json,
     uri_geo_area json DEFAULT '{"import-works-wizard" : ["Global"]}'::json,
-    status character varying(200) DEFAULT 'OK'::character varying
+    status character varying(200) DEFAULT 'OK'::character varying,
+    redirect_uri_metadata json DEFAULT '{}'::json
 );
 
 
@@ -720,7 +719,10 @@ CREATE VIEW public.dw_client_details AS
     client_details.client_type,
     client_details.user_obo_enabled,
     client_details.date_created,
-    client_details.last_modified
+    client_details.last_modified,
+    client_details.user_notification_enabled,
+    client_details.notification_domains,
+    client_details.notification_webpage_url
    FROM public.client_details
   WHERE (client_details.last_modified > date_trunc('day'::text, (now() - '4 mons'::interval)));
 
@@ -958,6 +960,7 @@ CREATE TABLE public.identifier_type (
     case_sensitive boolean DEFAULT false NOT NULL
 );
 
+
 ALTER TABLE public.identifier_type OWNER TO orcid;
 
 --
@@ -1067,7 +1070,9 @@ CREATE VIEW public.dw_notification AS
     notification.read_date,
     notification.actioned_date,
     notification.archived_date,
-    notification.last_modified
+    notification.last_modified,
+    notification.notification_family,
+    notification.assertion_origin_client_source_id
    FROM public.notification
   WHERE ((notification.notification_type = 'PERMISSION'::text) AND (notification.client_source_id IS NOT NULL) AND (notification.last_modified > date_trunc('day'::text, (now() - '1 year'::interval))));
 
@@ -1177,9 +1182,9 @@ CREATE VIEW public.dw_org_affiliation_relation AS
     org_affiliation_relation.url,
     org_affiliation_relation.external_ids_json,
     (org_affiliation_relation.date_created)::timestamp without time zone AS date_created,
-    (org_affiliation_relation.last_modified)::timestamp without time zone AS last_modified
-   FROM public.org_affiliation_relation
-  WHERE (org_affiliation_relation.last_modified > date_trunc('day'::text, (now() - '4 mons'::interval)));
+    (org_affiliation_relation.last_modified)::timestamp without time zone AS last_modified,
+    org_affiliation_relation.featured
+   FROM public.org_affiliation_relation;
 
 
 ALTER TABLE public.dw_org_affiliation_relation OWNER TO orcid;
@@ -1323,6 +1328,7 @@ ALTER TABLE public.dw_other_name OWNER TO orcid;
 CREATE VIEW public.dw_papi_event_stats AS
  SELECT event_stats.event_type,
     event_stats.client_id,
+    event_stats.ip,
     event_stats.count,
     date_trunc('day'::text, event_stats.date) AS date_trunc,
     date_trunc('day'::text, event_stats.date) AS last_modified
@@ -1478,7 +1484,7 @@ CREATE VIEW public.dw_profile AS
     profile.reviewed,
     profile.creation_method
    FROM public.profile
-  WHERE (profile.last_modified > date_trunc('day'::text, (now() - '4 mons'::interval)));
+  WHERE ((profile.last_modified > date_trunc('day'::text, (now() - '4 mons'::interval))) OR (profile.last_login > date_trunc('day'::text, (now() - '4 mons'::interval))));
 
 
 ALTER TABLE public.dw_profile OWNER TO orcid;
@@ -1493,7 +1499,8 @@ CREATE TABLE public.profile_email_domain (
     email_domain character varying(254) NOT NULL,
     visibility character varying(20),
     date_created timestamp with time zone,
-    last_modified timestamp with time zone
+    last_modified timestamp with time zone,
+    generated_by_script boolean DEFAULT false NOT NULL
 );
 
 
@@ -1645,6 +1652,150 @@ CREATE TABLE public.profile_keyword (
 ALTER TABLE public.profile_keyword OWNER TO orcid;
 
 --
+-- Name: record_name; Type: TABLE; Schema: public; Owner: orcid
+--
+
+CREATE TABLE public.record_name (
+    id bigint NOT NULL,
+    orcid character varying(255) NOT NULL,
+    credit_name text,
+    family_name text,
+    given_names text,
+    visibility character varying(20),
+    date_created timestamp with time zone,
+    last_modified timestamp with time zone
+);
+
+
+ALTER TABLE public.record_name OWNER TO orcid;
+
+--
+-- Name: researcher_url_seq; Type: SEQUENCE; Schema: public; Owner: orcid
+--
+
+CREATE SEQUENCE public.researcher_url_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.researcher_url_seq OWNER TO orcid;
+
+--
+-- Name: researcher_url; Type: TABLE; Schema: public; Owner: orcid
+--
+
+CREATE TABLE public.researcher_url (
+    url text NOT NULL,
+    date_created timestamp without time zone,
+    last_modified timestamp without time zone,
+    orcid character varying(19) NOT NULL,
+    id bigint DEFAULT nextval('public.researcher_url_seq'::regclass) NOT NULL,
+    url_name text,
+    visibility character varying(19),
+    source_id character varying(19),
+    client_source_id character varying(20),
+    display_index bigint DEFAULT 0,
+    assertion_origin_source_id character varying(19),
+    assertion_origin_client_source_id character varying(20)
+);
+
+
+ALTER TABLE public.researcher_url OWNER TO orcid;
+
+--
+-- Name: work; Type: TABLE; Schema: public; Owner: orcid
+--
+
+CREATE TABLE public.work (
+    work_id bigint NOT NULL,
+    date_created timestamp without time zone,
+    last_modified timestamp without time zone,
+    publication_day integer,
+    publication_month integer,
+    publication_year integer,
+    title text,
+    subtitle text,
+    description text,
+    work_url text,
+    citation text,
+    work_type text,
+    citation_type text,
+    contributors_json json,
+    journal_title text,
+    language_code text,
+    translated_title text,
+    translated_title_language_code text,
+    iso2_country text,
+    external_ids_json json,
+    orcid character varying(19),
+    added_to_profile_date timestamp without time zone,
+    visibility character varying(19),
+    display_index bigint DEFAULT (0)::bigint,
+    source_id character varying(19),
+    client_source_id character varying(20),
+    assertion_origin_source_id character varying(19),
+    assertion_origin_client_source_id character varying(20),
+    top_contributors_json text,
+    featured_display_index integer DEFAULT 0
+);
+
+
+ALTER TABLE public.work OWNER TO orcid;
+
+--
+-- Name: dw_profile_info_for_spam_check; Type: VIEW; Schema: public; Owner: orcid
+--
+
+CREATE VIEW public.dw_profile_info_for_spam_check AS
+ SELECT p.orcid,
+    rn.given_names,
+    rn.family_name,
+    rn.credit_name,
+    x_urls.urls,
+    x_keywords.keywords,
+    x_other.other_names,
+    b.biography,
+    x_email.emails,
+    '?'::text AS spam,
+    p.last_modified
+   FROM ((((((public.profile p
+     JOIN public.record_name rn ON (((rn.orcid)::text = (p.orcid)::text)))
+     LEFT JOIN ( SELECT researcher_url.orcid,
+            count(researcher_url.id) AS url_count,
+            string_agg(researcher_url.url_name, '|'::text) AS urls
+           FROM public.researcher_url
+          GROUP BY researcher_url.orcid) x_urls ON (((x_urls.orcid)::text = (p.orcid)::text)))
+     LEFT JOIN ( SELECT profile_keyword.profile_orcid,
+            count(profile_keyword.id) AS keyword_count,
+            string_agg(profile_keyword.keywords_name, '|'::text) AS keywords
+           FROM public.profile_keyword
+          GROUP BY profile_keyword.profile_orcid) x_keywords ON (((x_keywords.profile_orcid)::text = (p.orcid)::text)))
+     LEFT JOIN ( SELECT other_name.orcid,
+            count(other_name.display_name) AS other_name_count,
+            string_agg(other_name.display_name, '|'::text) AS other_names
+           FROM public.other_name
+          GROUP BY other_name.orcid) x_other ON (((x_other.orcid)::text = (p.orcid)::text)))
+     LEFT JOIN ( SELECT email.orcid,
+            count(email.email) AS email_count,
+            string_agg(DISTINCT "substring"(email.email, '@(.*)$'::text), '|'::text) AS emails
+           FROM public.email
+          GROUP BY email.orcid) x_email ON (((x_email.orcid)::text = (p.orcid)::text)))
+     LEFT JOIN public.biography b ON (((b.orcid)::text = (p.orcid)::text)))
+  WHERE ((NOT (EXISTS ( SELECT 1
+           FROM public.work w
+          WHERE ((w.orcid)::text = (p.orcid)::text)))) AND (NOT (EXISTS ( SELECT 1
+           FROM public.peer_review pr
+          WHERE ((pr.orcid)::text = (p.orcid)::text)))) AND (NOT (EXISTS ( SELECT 1
+           FROM public.profile_email_domain ped
+          WHERE ((ped.orcid)::text = (p.orcid)::text)))) AND (p.record_locked IS NOT TRUE) AND (p.reviewed IS NOT TRUE) AND (p.last_modified > date_trunc('day'::text, (now() - '3 mons'::interval))));
+
+
+ALTER TABLE public.dw_profile_info_for_spam_check OWNER TO orcid;
+
+--
 -- Name: dw_profile_keyword; Type: VIEW; Schema: public; Owner: orcid
 --
 
@@ -1666,24 +1817,6 @@ CREATE VIEW public.dw_profile_keyword AS
 
 
 ALTER TABLE public.dw_profile_keyword OWNER TO orcid;
-
---
--- Name: record_name; Type: TABLE; Schema: public; Owner: orcid
---
-
-CREATE TABLE public.record_name (
-    id bigint NOT NULL,
-    orcid character varying(255) NOT NULL,
-    credit_name text,
-    family_name text,
-    given_names text,
-    visibility character varying(20),
-    date_created timestamp with time zone,
-    last_modified timestamp with time zone
-);
-
-
-ALTER TABLE public.record_name OWNER TO orcid;
 
 --
 -- Name: dw_record_name; Type: VIEW; Schema: public; Owner: orcid
@@ -1860,42 +1993,6 @@ CREATE VIEW public.dw_research_resource_org AS
 ALTER TABLE public.dw_research_resource_org OWNER TO orcid;
 
 --
--- Name: researcher_url_seq; Type: SEQUENCE; Schema: public; Owner: orcid
---
-
-CREATE SEQUENCE public.researcher_url_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
-ALTER TABLE public.researcher_url_seq OWNER TO orcid;
-
---
--- Name: researcher_url; Type: TABLE; Schema: public; Owner: orcid
---
-
-CREATE TABLE public.researcher_url (
-    url text NOT NULL,
-    date_created timestamp without time zone,
-    last_modified timestamp without time zone,
-    orcid character varying(19) NOT NULL,
-    id bigint DEFAULT nextval('public.researcher_url_seq'::regclass) NOT NULL,
-    url_name text,
-    visibility character varying(19),
-    source_id character varying(19),
-    client_source_id character varying(20),
-    display_index bigint DEFAULT 0,
-    assertion_origin_source_id character varying(19),
-    assertion_origin_client_source_id character varying(20)
-);
-
-
-ALTER TABLE public.researcher_url OWNER TO orcid;
-
---
 -- Name: dw_researcher_url; Type: VIEW; Schema: public; Owner: orcid
 --
 
@@ -2019,45 +2116,6 @@ CREATE VIEW public.dw_validated_public_profile AS
 ALTER TABLE public.dw_validated_public_profile OWNER TO orcid;
 
 --
--- Name: work; Type: TABLE; Schema: public; Owner: orcid
---
-
-CREATE TABLE public.work (
-    work_id bigint NOT NULL,
-    date_created timestamp without time zone,
-    last_modified timestamp without time zone,
-    publication_day integer,
-    publication_month integer,
-    publication_year integer,
-    title text,
-    subtitle text,
-    description text,
-    work_url text,
-    citation text,
-    work_type text,
-    citation_type text,
-    contributors_json json,
-    journal_title text,
-    language_code text,
-    translated_title text,
-    translated_title_language_code text,
-    iso2_country text,
-    external_ids_json json,
-    orcid character varying(19),
-    added_to_profile_date timestamp without time zone,
-    visibility character varying(19),
-    display_index bigint DEFAULT (0)::bigint,
-    source_id character varying(19),
-    client_source_id character varying(20),
-    assertion_origin_source_id character varying(19),
-    assertion_origin_client_source_id character varying(20),
-    top_contributors_json text
-);
-
-
-ALTER TABLE public.work OWNER TO orcid;
-
---
 -- Name: dw_work; Type: VIEW; Schema: public; Owner: orcid
 --
 
@@ -2086,7 +2144,8 @@ CREATE VIEW public.dw_work AS
         END AS self_asserted,
     work.client_source_id,
     work.date_created,
-    work.last_modified
+    work.last_modified,
+    work.featured_display_index
    FROM public.work
   WHERE (work.last_modified > date_trunc('day'::text, (now() - '4 mons'::interval)));
 
@@ -2750,7 +2809,14 @@ CREATE TABLE public.oauth2_authoriziation_code_detail (
     last_modified timestamp with time zone,
     persistent boolean DEFAULT false,
     version bigint DEFAULT (0)::bigint,
-    nonce character varying(2000)
+    nonce character varying(2000),
+    scopes character varying(255),
+    authorities character varying(255),
+    authorization_state_attribute character varying(500),
+    authorization_request_uri character varying(2500),
+    spring_authorization_code_request_id character varying(255),
+    authorization_code_expires_at timestamp with time zone,
+    attributes character varying(8000)
 );
 
 
@@ -2922,6 +2988,20 @@ CREATE SEQUENCE public.other_name_seq
 
 
 ALTER TABLE public.other_name_seq OWNER TO orcid;
+
+--
+-- Name: papi_daily_limit_seq; Type: SEQUENCE; Schema: public; Owner: orcid
+--
+
+CREATE SEQUENCE public.papi_daily_limit_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.papi_daily_limit_seq OWNER TO orcid;
 
 --
 -- Name: patent; Type: TABLE; Schema: public; Owner: orcid
@@ -3125,6 +3205,35 @@ CREATE SEQUENCE public.profile_history_event_seq
 ALTER TABLE public.profile_history_event_seq OWNER TO orcid;
 
 --
+-- Name: profile_interstitial_flag; Type: TABLE; Schema: public; Owner: orcid
+--
+
+CREATE TABLE public.profile_interstitial_flag (
+    id bigint NOT NULL,
+    orcid character varying(255) NOT NULL,
+    interstitial_name character varying(255),
+    date_created timestamp with time zone,
+    last_modified timestamp with time zone
+);
+
+
+ALTER TABLE public.profile_interstitial_flag OWNER TO orcid;
+
+--
+-- Name: profile_interstitial_flag_seq; Type: SEQUENCE; Schema: public; Owner: orcid
+--
+
+CREATE SEQUENCE public.profile_interstitial_flag_seq
+    START WITH 1000
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.profile_interstitial_flag_seq OWNER TO orcid;
+
+--
 -- Name: profile_patent; Type: TABLE; Schema: public; Owner: orcid
 --
 
@@ -3151,6 +3260,23 @@ CREATE TABLE public.profile_subject (
 
 
 ALTER TABLE public.profile_subject OWNER TO orcid;
+
+--
+-- Name: public_api_daily_rate_limit; Type: TABLE; Schema: public; Owner: orcid
+--
+
+CREATE TABLE public.public_api_daily_rate_limit (
+    id bigint NOT NULL,
+    client_id character varying(255),
+    ip_address character varying(200),
+    request_count bigint NOT NULL,
+    request_date date NOT NULL,
+    date_created timestamp with time zone,
+    last_modified timestamp with time zone
+);
+
+
+ALTER TABLE public.public_api_daily_rate_limit OWNER TO orcid;
 
 --
 -- Name: record_name_seq; Type: SEQUENCE; Schema: public; Owner: orcid
@@ -4007,6 +4133,14 @@ ALTER TABLE ONLY public.profile_history_event
 
 
 --
+-- Name: profile_interstitial_flag profile_interstitial_flag_pkey; Type: CONSTRAINT; Schema: public; Owner: orcid
+--
+
+ALTER TABLE ONLY public.profile_interstitial_flag
+    ADD CONSTRAINT profile_interstitial_flag_pkey PRIMARY KEY (id);
+
+
+--
 -- Name: profile_keyword profile_keyword_numeric_pkey; Type: CONSTRAINT; Schema: public; Owner: orcid
 --
 
@@ -4036,6 +4170,14 @@ ALTER TABLE ONLY public.profile
 
 ALTER TABLE ONLY public.profile_subject
     ADD CONSTRAINT profile_subject_pkey PRIMARY KEY (profile_orcid, subjects_name);
+
+
+--
+-- Name: public_api_daily_rate_limit public_api_limit_daily_pkey; Type: CONSTRAINT; Schema: public; Owner: orcid
+--
+
+ALTER TABLE ONLY public.public_api_daily_rate_limit
+    ADD CONSTRAINT public_api_limit_daily_pkey PRIMARY KEY (id);
 
 
 --
@@ -4188,6 +4330,14 @@ ALTER TABLE ONLY public.statistic_key
 
 ALTER TABLE ONLY public.subject
     ADD CONSTRAINT subject_pkey PRIMARY KEY (name);
+
+
+--
+-- Name: public_api_daily_rate_limit uc_client_ip_date; Type: CONSTRAINT; Schema: public; Owner: orcid
+--
+
+ALTER TABLE ONLY public.public_api_daily_rate_limit
+    ADD CONSTRAINT uc_client_ip_date UNIQUE (client_id, ip_address, request_date);
 
 
 --
@@ -4373,6 +4523,13 @@ CREATE INDEX external_identifier_orcid_idx ON public.external_identifier USING b
 
 
 --
+-- Name: featured_display_index_idx; Type: INDEX; Schema: public; Owner: orcid
+--
+
+CREATE INDEX featured_display_index_idx ON public.work USING btree (featured_display_index);
+
+
+--
 -- Name: given_permission_to_giver_orcid_idx; Type: INDEX; Schema: public; Owner: orcid
 --
 
@@ -4426,6 +4583,90 @@ CREATE INDEX group_id_record_issn_loader_fail_count_index ON public.group_id_rec
 --
 
 CREATE INDEX group_id_record_sync_date_index ON public.group_id_record USING btree (sync_date);
+
+
+--
+-- Name: idx_claimed; Type: INDEX; Schema: public; Owner: orcid
+--
+
+CREATE INDEX idx_claimed ON public.profile USING btree (claimed);
+
+
+--
+-- Name: idx_client_id; Type: INDEX; Schema: public; Owner: orcid
+--
+
+CREATE INDEX idx_client_id ON public.public_api_daily_rate_limit USING btree (client_id);
+
+
+--
+-- Name: idx_client_ip_date; Type: INDEX; Schema: public; Owner: orcid
+--
+
+CREATE INDEX idx_client_ip_date ON public.public_api_daily_rate_limit USING btree (client_id, ip_address, request_date);
+
+
+--
+-- Name: idx_email_event_email_normalized; Type: INDEX; Schema: public; Owner: orcid
+--
+
+CREATE INDEX idx_email_event_email_normalized ON public.email_event USING btree (btrim(lower(email)));
+
+
+--
+-- Name: idx_ip_address; Type: INDEX; Schema: public; Owner: orcid
+--
+
+CREATE INDEX idx_ip_address ON public.public_api_daily_rate_limit USING btree (ip_address);
+
+
+--
+-- Name: idx_primary_record; Type: INDEX; Schema: public; Owner: orcid
+--
+
+CREATE INDEX idx_primary_record ON public.profile USING btree (primary_record);
+
+
+--
+-- Name: idx_profile_deactivation_date; Type: INDEX; Schema: public; Owner: orcid
+--
+
+CREATE INDEX idx_profile_deactivation_date ON public.profile USING btree (profile_deactivation_date);
+
+
+--
+-- Name: idx_record_locked; Type: INDEX; Schema: public; Owner: orcid
+--
+
+CREATE INDEX idx_record_locked ON public.profile USING btree (record_locked);
+
+
+--
+-- Name: idx_request_date; Type: INDEX; Schema: public; Owner: orcid
+--
+
+CREATE INDEX idx_request_date ON public.public_api_daily_rate_limit USING btree (request_date);
+
+
+--
+-- Name: idx_send_administrative_change_notifications; Type: INDEX; Schema: public; Owner: orcid
+--
+
+CREATE INDEX idx_send_administrative_change_notifications ON public.email_frequency USING btree (send_administrative_change_notifications);
+
+
+--
+-- Name: idx_send_change_notifications; Type: INDEX; Schema: public; Owner: orcid
+--
+
+CREATE INDEX idx_send_change_notifications ON public.email_frequency USING btree (send_change_notifications);
+
+
+--
+-- Name: idx_send_member_update_requests; Type: INDEX; Schema: public; Owner: orcid
+--
+
+CREATE INDEX idx_send_member_update_requests ON public.email_frequency USING btree (send_member_update_requests);
 
 
 --
@@ -4517,6 +4758,27 @@ CREATE INDEX notification_sent_date_index ON public.notification USING btree (se
 --
 
 CREATE INDEX notification_type_index ON public.notification USING btree (notification_type);
+
+
+--
+-- Name: notification_unsent_idx; Type: INDEX; Schema: public; Owner: orcid
+--
+
+CREATE INDEX notification_unsent_idx ON public.notification USING btree (orcid, notification_type) WHERE (sent_date IS NULL);
+
+
+--
+-- Name: oauth2_authoriziation_code_detail_state_idx; Type: INDEX; Schema: public; Owner: orcid
+--
+
+CREATE INDEX oauth2_authoriziation_code_detail_state_idx ON public.oauth2_authoriziation_code_detail USING btree (authorization_state_attribute);
+
+
+--
+-- Name: oauth2_token_detail_authkey_orcid_client_expiration_idx; Type: INDEX; Schema: public; Owner: orcid
+--
+
+CREATE INDEX oauth2_token_detail_authkey_orcid_client_expiration_idx ON public.oauth2_token_detail USING btree (authentication_key, user_orcid, client_details_id, token_expiration DESC);
 
 
 --
@@ -4667,10 +4929,31 @@ CREATE INDEX profile_indexing_status_idx ON public.profile USING btree (indexing
 
 
 --
+-- Name: profile_interstitial_flag_orcid_index; Type: INDEX; Schema: public; Owner: orcid
+--
+
+CREATE INDEX profile_interstitial_flag_orcid_index ON public.profile_interstitial_flag USING btree (orcid);
+
+
+--
 -- Name: profile_keyword_orcid_idx; Type: INDEX; Schema: public; Owner: orcid
 --
 
 CREATE INDEX profile_keyword_orcid_idx ON public.profile_keyword USING btree (profile_orcid);
+
+
+--
+-- Name: profile_last_login_idx; Type: INDEX; Schema: public; Owner: orcid
+--
+
+CREATE INDEX profile_last_login_idx ON public.profile USING btree (last_login);
+
+
+--
+-- Name: profile_last_login_index; Type: INDEX; Schema: public; Owner: orcid
+--
+
+CREATE INDEX profile_last_login_index ON public.profile USING btree (last_login);
 
 
 --
@@ -4748,6 +5031,13 @@ CREATE INDEX salesforce_connection_account_id_idx ON public.salesforce_connectio
 --
 
 CREATE INDEX spam_orcid_index ON public.spam USING btree (orcid);
+
+
+--
+-- Name: spring_authorization_code_request_id_idx; Type: INDEX; Schema: public; Owner: orcid
+--
+
+CREATE INDEX spring_authorization_code_request_id_idx ON public.oauth2_authoriziation_code_detail USING btree (spring_authorization_code_request_id);
 
 
 --
@@ -5421,6 +5711,14 @@ ALTER TABLE ONLY public.profile_funding
 
 
 --
+-- Name: profile_interstitial_flag profile_interstitial_flag_fk; Type: FK CONSTRAINT; Schema: public; Owner: orcid
+--
+
+ALTER TABLE ONLY public.profile_interstitial_flag
+    ADD CONSTRAINT profile_interstitial_flag_fk FOREIGN KEY (orcid) REFERENCES public.profile(orcid);
+
+
+--
 -- Name: profile_patent profile_patent_orcid_fk; Type: FK CONSTRAINT; Schema: public; Owner: orcid
 --
 
@@ -5434,6 +5732,14 @@ ALTER TABLE ONLY public.profile_patent
 
 ALTER TABLE ONLY public.profile_patent
     ADD CONSTRAINT profile_patent_patent_fk FOREIGN KEY (patent_id) REFERENCES public.patent(patent_id);
+
+
+--
+-- Name: public_api_daily_rate_limit public_api_rate_limiting_client_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: orcid
+--
+
+ALTER TABLE ONLY public.public_api_daily_rate_limit
+    ADD CONSTRAINT public_api_rate_limiting_client_id_fk FOREIGN KEY (client_id) REFERENCES public.client_details(client_details_id);
 
 
 --
@@ -5570,14 +5876,6 @@ ALTER TABLE ONLY public.work
 
 ALTER TABLE ONLY public.work
     ADD CONSTRAINT work_source_id_fk FOREIGN KEY (source_id) REFERENCES public.profile(orcid);
-
-
---
--- Name: SCHEMA public; Type: ACL; Schema: -; Owner: postgres
---
-
-REVOKE USAGE ON SCHEMA public FROM PUBLIC;
-GRANT ALL ON SCHEMA public TO PUBLIC;
 
 
 --
@@ -5894,7 +6192,6 @@ GRANT SELECT ON TABLE public.dw_org TO orcidro;
 --
 
 GRANT SELECT ON TABLE public.dw_org_affiliation_relation TO dw_user;
-GRANT SELECT ON TABLE public.dw_org_affiliation_relation TO orcidro;
 
 
 --
@@ -5940,14 +6237,6 @@ GRANT SELECT ON TABLE public.other_name TO orcidro;
 
 GRANT SELECT ON TABLE public.dw_other_name TO dw_user;
 GRANT SELECT ON TABLE public.dw_other_name TO orcidro;
-
-
---
--- Name: TABLE dw_papi_event_stats; Type: ACL; Schema: public; Owner: orcid
---
-
-GRANT SELECT ON TABLE public.dw_papi_event_stats TO dw_user;
-GRANT SELECT ON TABLE public.dw_papi_event_stats TO orcidro;
 
 
 --
@@ -6034,18 +6323,40 @@ GRANT SELECT ON TABLE public.profile_keyword TO orcidro;
 
 
 --
+-- Name: TABLE record_name; Type: ACL; Schema: public; Owner: orcid
+--
+
+GRANT SELECT ON TABLE public.record_name TO orcidro;
+
+
+--
+-- Name: TABLE researcher_url; Type: ACL; Schema: public; Owner: orcid
+--
+
+GRANT SELECT ON TABLE public.researcher_url TO orcidro;
+
+
+--
+-- Name: TABLE work; Type: ACL; Schema: public; Owner: orcid
+--
+
+GRANT SELECT ON TABLE public.work TO orcidro;
+GRANT SELECT ON TABLE public.work TO dw_user;
+
+
+--
+-- Name: TABLE dw_profile_info_for_spam_check; Type: ACL; Schema: public; Owner: orcid
+--
+
+GRANT SELECT ON TABLE public.dw_profile_info_for_spam_check TO dw_user;
+
+
+--
 -- Name: TABLE dw_profile_keyword; Type: ACL; Schema: public; Owner: orcid
 --
 
 GRANT SELECT ON TABLE public.dw_profile_keyword TO dw_user;
 GRANT SELECT ON TABLE public.dw_profile_keyword TO orcidro;
-
-
---
--- Name: TABLE record_name; Type: ACL; Schema: public; Owner: orcid
---
-
-GRANT SELECT ON TABLE public.record_name TO orcidro;
 
 
 --
@@ -6117,13 +6428,6 @@ GRANT SELECT ON TABLE public.dw_research_resource_org TO orcidro;
 
 
 --
--- Name: TABLE researcher_url; Type: ACL; Schema: public; Owner: orcid
---
-
-GRANT SELECT ON TABLE public.researcher_url TO orcidro;
-
-
---
 -- Name: TABLE dw_researcher_url; Type: ACL; Schema: public; Owner: orcid
 --
 
@@ -6159,14 +6463,6 @@ GRANT SELECT ON TABLE public.validated_public_profile TO orcidro;
 
 GRANT SELECT ON TABLE public.dw_validated_public_profile TO dw_user;
 GRANT SELECT ON TABLE public.dw_validated_public_profile TO orcidro;
-
-
---
--- Name: TABLE work; Type: ACL; Schema: public; Owner: orcid
---
-
-GRANT SELECT ON TABLE public.work TO orcidro;
-GRANT SELECT ON TABLE public.work TO dw_user;
 
 
 --
@@ -6397,6 +6693,13 @@ GRANT SELECT ON TABLE public.profile_event TO orcidro;
 
 
 --
+-- Name: TABLE profile_interstitial_flag; Type: ACL; Schema: public; Owner: orcid
+--
+
+GRANT SELECT ON TABLE public.profile_interstitial_flag TO orcidro;
+
+
+--
 -- Name: TABLE profile_patent; Type: ACL; Schema: public; Owner: orcid
 --
 
@@ -6408,6 +6711,13 @@ GRANT SELECT ON TABLE public.profile_patent TO orcidro;
 --
 
 GRANT SELECT ON TABLE public.profile_subject TO orcidro;
+
+
+--
+-- Name: TABLE public_api_daily_rate_limit; Type: ACL; Schema: public; Owner: orcid
+--
+
+GRANT SELECT ON TABLE public.public_api_daily_rate_limit TO orcidro;
 
 
 --
@@ -6477,127 +6787,3 @@ GRANT SELECT ON TABLE public.webhook TO orcidro;
 -- PostgreSQL database dump complete
 --
 
---
--- Populate identifier types
---
-INSERT INTO public.identifier_type (id, id_name, id_validation_regex, id_resolution_prefix, id_deprecated, client_source_id, date_created, last_modified, primary_use, case_sensitive) VALUES (1, 'OTHER_ID', NULL, NULL, false, NULL, '2016-05-20 11:17:37.775534+00', '2016-05-20 11:17:37.775534+00', 'work', false);
-INSERT INTO public.identifier_type (id, id_name, id_validation_regex, id_resolution_prefix, id_deprecated, client_source_id, date_created, last_modified, primary_use, case_sensitive) VALUES (2, 'ASIN_TLD', NULL, NULL, false, NULL, '2016-05-20 11:17:37.775534+00', '2016-05-20 11:17:37.775534+00', 'work', false);
-INSERT INTO public.identifier_type (id, id_name, id_validation_regex, id_resolution_prefix, id_deprecated, client_source_id, date_created, last_modified, primary_use, case_sensitive) VALUES (3, 'EID', NULL, NULL, false, NULL, '2016-05-20 11:17:37.775534+00', '2016-05-20 11:17:37.775534+00', 'work', false);
-INSERT INTO public.identifier_type (id, id_name, id_validation_regex, id_resolution_prefix, id_deprecated, client_source_id, date_created, last_modified, primary_use, case_sensitive) VALUES (4, 'CBA', NULL, NULL, false, NULL, '2016-05-20 11:17:37.775534+00', '2016-05-20 11:17:37.775534+00', 'work', false);
-INSERT INTO public.identifier_type (id, id_name, id_validation_regex, id_resolution_prefix, id_deprecated, client_source_id, date_created, last_modified, primary_use, case_sensitive) VALUES (5, 'CIT', NULL, NULL, false, NULL, '2016-05-20 11:17:37.775534+00', '2016-05-20 11:17:37.775534+00', 'work', false);
-INSERT INTO public.identifier_type (id, id_name, id_validation_regex, id_resolution_prefix, id_deprecated, client_source_id, date_created, last_modified, primary_use, case_sensitive) VALUES (6, 'CTX', NULL, NULL, false, NULL, '2016-05-20 11:17:37.775534+00', '2016-05-20 11:17:37.775534+00', 'work', false);
-INSERT INTO public.identifier_type (id, id_name, id_validation_regex, id_resolution_prefix, id_deprecated, client_source_id, date_created, last_modified, primary_use, case_sensitive) VALUES (7, 'HIR', NULL, NULL, false, NULL, '2016-05-20 11:17:37.775534+00', '2016-05-20 11:17:37.775534+00', 'work', false);
-INSERT INTO public.identifier_type (id, id_name, id_validation_regex, id_resolution_prefix, id_deprecated, client_source_id, date_created, last_modified, primary_use, case_sensitive) VALUES (8, 'PAT', NULL, NULL, false, NULL, '2016-05-20 11:17:37.775534+00', '2016-05-20 11:17:37.775534+00', 'work', false);
-INSERT INTO public.identifier_type (id, id_name, id_validation_regex, id_resolution_prefix, id_deprecated, client_source_id, date_created, last_modified, primary_use, case_sensitive) VALUES (9, 'SOURCE_WORK_ID', NULL, NULL, false, NULL, '2016-05-20 11:17:37.775534+00', '2016-05-20 11:17:37.775534+00', 'work', false);
-INSERT INTO public.identifier_type (id, id_name, id_validation_regex, id_resolution_prefix, id_deprecated, client_source_id, date_created, last_modified, primary_use, case_sensitive) VALUES (10, 'URN', NULL, NULL, false, NULL, '2016-05-20 11:17:37.775534+00', '2016-05-20 11:17:37.775534+00', 'work', false);
-INSERT INTO public.identifier_type (id, id_name, id_validation_regex, id_resolution_prefix, id_deprecated, client_source_id, date_created, last_modified, primary_use, case_sensitive) VALUES (11, 'WOSUID', NULL, NULL, false, NULL, '2016-05-20 11:17:37.775534+00', '2016-05-20 11:17:37.775534+00', 'work', false);
-INSERT INTO public.identifier_type (id, id_name, id_validation_regex, id_resolution_prefix, id_deprecated, client_source_id, date_created, last_modified, primary_use, case_sensitive) VALUES (12, 'ASIN', NULL, 'http://www.amazon.com/dp/', false, NULL, '2016-05-20 11:17:37.775534+00', '2016-05-20 11:17:37.775534+00', 'work', false);
-INSERT INTO public.identifier_type (id, id_name, id_validation_regex, id_resolution_prefix, id_deprecated, client_source_id, date_created, last_modified, primary_use, case_sensitive) VALUES (13, 'JFM', NULL, 'http://zbmath.org/?format=complete&q=an%3A', false, NULL, '2016-05-20 11:17:37.775534+00', '2016-05-20 11:17:37.775534+00', 'work', false);
-INSERT INTO public.identifier_type (id, id_name, id_validation_regex, id_resolution_prefix, id_deprecated, client_source_id, date_created, last_modified, primary_use, case_sensitive) VALUES (14, 'JSTOR', NULL, 'http://www.jstor.org/stable/', false, NULL, '2016-05-20 11:17:37.775534+00', '2016-05-20 11:17:37.775534+00', 'work', false);
-INSERT INTO public.identifier_type (id, id_name, id_validation_regex, id_resolution_prefix, id_deprecated, client_source_id, date_created, last_modified, primary_use, case_sensitive) VALUES (15, 'LCCN', NULL, 'http://lccn.loc.gov/', false, NULL, '2016-05-20 11:17:37.775534+00', '2016-05-20 11:17:37.775534+00', 'work', false);
-INSERT INTO public.identifier_type (id, id_name, id_validation_regex, id_resolution_prefix, id_deprecated, client_source_id, date_created, last_modified, primary_use, case_sensitive) VALUES (16, 'MR', NULL, 'http://www.ams.org/mathscinet-getitem?mr=', false, NULL, '2016-05-20 11:17:37.775534+00', '2016-05-20 11:17:37.775534+00', 'work', false);
-INSERT INTO public.identifier_type (id, id_name, id_validation_regex, id_resolution_prefix, id_deprecated, client_source_id, date_created, last_modified, primary_use, case_sensitive) VALUES (17, 'OCLC', NULL, 'http://www.worldcat.org/oclc/', false, NULL, '2016-05-20 11:17:37.775534+00', '2016-05-20 11:17:37.775534+00', 'work', false);
-INSERT INTO public.identifier_type (id, id_name, id_validation_regex, id_resolution_prefix, id_deprecated, client_source_id, date_created, last_modified, primary_use, case_sensitive) VALUES (18, 'SSRN', NULL, 'http://papers.ssrn.com/abstract_id=', false, NULL, '2016-05-20 11:17:37.775534+00', '2016-05-20 11:17:37.775534+00', 'work', false);
-INSERT INTO public.identifier_type (id, id_name, id_validation_regex, id_resolution_prefix, id_deprecated, client_source_id, date_created, last_modified, primary_use, case_sensitive) VALUES (19, 'ZBL', NULL, 'http://zbmath.org/?format=complete&q=', false, NULL, '2016-05-20 11:17:37.775534+00', '2016-05-20 11:17:37.775534+00', 'work', false);
-INSERT INTO public.identifier_type (id, id_name, id_validation_regex, id_resolution_prefix, id_deprecated, client_source_id, date_created, last_modified, primary_use, case_sensitive) VALUES (20, 'LENSID', NULL, 'https://www.lens.org/', false, NULL, '2016-11-09 15:58:48.048155+00', '2016-11-09 15:58:48.048155+00', 'work', false);
-INSERT INTO public.identifier_type (id, id_name, id_validation_regex, id_resolution_prefix, id_deprecated, client_source_id, date_created, last_modified, primary_use, case_sensitive) VALUES (21, 'PDB', NULL, 'http://identifiers.org/pdb/', false, NULL, '2016-10-13 21:08:32.999427+00', '2016-10-13 21:08:32.999427+00', 'work', false);
-INSERT INTO public.identifier_type (id, id_name, id_validation_regex, id_resolution_prefix, id_deprecated, client_source_id, date_created, last_modified, primary_use, case_sensitive) VALUES (22, 'CIENCIAIUL', NULL, 'https://ciencia.iscte-iul.pt/id/', false, NULL, '2017-01-27 18:19:06.455101+00', '2017-01-27 18:19:06.455101+00', 'work', false);
-INSERT INTO public.identifier_type (id, id_name, id_validation_regex, id_resolution_prefix, id_deprecated, client_source_id, date_created, last_modified, primary_use, case_sensitive) VALUES (23, 'DOI', NULL, 'https://doi.org/', false, NULL, '2016-05-20 11:17:37.775534+00', '2016-05-20 11:17:37.775534+00', 'work', false);
-INSERT INTO public.identifier_type (id, id_name, id_validation_regex, id_resolution_prefix, id_deprecated, client_source_id, date_created, last_modified, primary_use, case_sensitive) VALUES (24, 'KUID', NULL, 'https://koreamed.org/article/', false, NULL, '2016-11-03 16:47:12.334209+00', '2016-11-03 16:47:12.334209+00', 'work', false);
-INSERT INTO public.identifier_type (id, id_name, id_validation_regex, id_resolution_prefix, id_deprecated, client_source_id, date_created, last_modified, primary_use, case_sensitive) VALUES (25, 'AUTHENTICUSID', NULL, 'https://www.authenticus.pt/', false, NULL, '2017-10-10 16:54:48.278545+00', '2017-10-10 16:54:48.278545+00', 'work', false);
-INSERT INTO public.identifier_type (id, id_name, id_validation_regex, id_resolution_prefix, id_deprecated, client_source_id, date_created, last_modified, primary_use, case_sensitive) VALUES (26, 'BIBCODE', NULL, 'http://adsabs.harvard.edu/abs/', false, NULL, '2016-05-20 11:17:37.775534+00', '2016-05-20 11:17:37.775534+00', 'work', true);
-INSERT INTO public.identifier_type (id, id_name, id_validation_regex, id_resolution_prefix, id_deprecated, client_source_id, date_created, last_modified, primary_use, case_sensitive) VALUES (27, 'ARK', NULL, NULL, false, NULL, '2018-01-31 22:36:09.661795+00', '2018-01-31 22:36:09.661795+00', 'work', true);
-INSERT INTO public.identifier_type (id, id_name, id_validation_regex, id_resolution_prefix, id_deprecated, client_source_id, date_created, last_modified, primary_use, case_sensitive) VALUES (28, 'ARXIV', NULL, 'https://arxiv.org/abs/', false, NULL, '2016-05-20 11:17:37.775534+00', '2016-05-20 11:17:37.775534+00', 'work', false);
-INSERT INTO public.identifier_type (id, id_name, id_validation_regex, id_resolution_prefix, id_deprecated, client_source_id, date_created, last_modified, primary_use, case_sensitive) VALUES (29, 'RRID', NULL, 'https://identifiers.org/rrid/', false, NULL, '2017-05-18 20:59:37.276411+00', '2017-05-18 20:59:37.276411+00', 'work', true);
-INSERT INTO public.identifier_type (id, id_name, id_validation_regex, id_resolution_prefix, id_deprecated, client_source_id, date_created, last_modified, primary_use, case_sensitive) VALUES (30, 'RFC', NULL, 'https://tools.ietf.org/html/', false, NULL, '2016-05-20 11:17:37.775534+00', '2016-05-20 11:17:37.775534+00', 'work', false);
-INSERT INTO public.identifier_type (id, id_name, id_validation_regex, id_resolution_prefix, id_deprecated, client_source_id, date_created, last_modified, primary_use, case_sensitive) VALUES (31, 'DNB', NULL, 'https://d-nb.info/', false, NULL, '2018-06-21 16:27:54.505109+00', '2018-06-21 16:27:54.505109+00', 'work', false);
-INSERT INTO public.identifier_type (id, id_name, id_validation_regex, id_resolution_prefix, id_deprecated, client_source_id, date_created, last_modified, primary_use, case_sensitive) VALUES (32, 'URI', NULL, NULL, false, NULL, '2016-05-20 11:17:37.775534+00', '2016-05-20 11:17:37.775534+00', 'work', true);
-INSERT INTO public.identifier_type (id, id_name, id_validation_regex, id_resolution_prefix, id_deprecated, client_source_id, date_created, last_modified, primary_use, case_sensitive) VALUES (33, 'ISSN', NULL, 'https://portal.issn.org/resource/ISSN/', false, NULL, '2016-05-20 11:17:37.775534+00', '2016-05-20 11:17:37.775534+00', 'work', false);
-INSERT INTO public.identifier_type (id, id_name, id_validation_regex, id_resolution_prefix, id_deprecated, client_source_id, date_created, last_modified, primary_use, case_sensitive) VALUES (34, 'HANDLE', NULL, 'http://hdl.handle.net/', false, NULL, '2016-05-20 11:17:37.775534+00', '2016-05-20 11:17:37.775534+00', 'work', false);
-INSERT INTO public.identifier_type (id, id_name, id_validation_regex, id_resolution_prefix, id_deprecated, client_source_id, date_created, last_modified, primary_use, case_sensitive) VALUES (35, 'HAL', NULL, 'https://hal.archives-ouvertes.fr/view/resolver/', false, NULL, '2020-10-28 23:27:05.258004+00', '2020-10-28 23:27:05.258004+00', 'work', false);
-INSERT INTO public.identifier_type (id, id_name, id_validation_regex, id_resolution_prefix, id_deprecated, client_source_id, date_created, last_modified, primary_use, case_sensitive) VALUES (36, 'OSTI', NULL, 'https://www.osti.gov/biblio/', false, NULL, '2016-05-20 11:17:37.775534+00', '2021-02-23 17:22:47.289413+00', 'work', false);
-INSERT INTO public.identifier_type (id, id_name, id_validation_regex, id_resolution_prefix, id_deprecated, client_source_id, date_created, last_modified, primary_use, case_sensitive) VALUES (37, 'PPR', NULL, 'https://europepmc.org/article/PPR/', false, NULL, '2021-03-13 17:48:30.572269+00', '2021-03-13 17:48:30.572269+00', 'work', false);
-INSERT INTO public.identifier_type (id, id_name, id_validation_regex, id_resolution_prefix, id_deprecated, client_source_id, date_created, last_modified, primary_use, case_sensitive) VALUES (38, 'GRANT_NUMBER', NULL, NULL, false, NULL, '2016-05-20 11:17:37.775534+00', '2021-04-20 14:41:36.898489+00', 'work', false);
-INSERT INTO public.identifier_type (id, id_name, id_validation_regex, id_resolution_prefix, id_deprecated, client_source_id, date_created, last_modified, primary_use, case_sensitive) VALUES (39, 'PROPOSAL_ID', NULL, NULL, false, NULL, '2019-01-15 20:43:10.21477+00', '2021-04-20 14:41:36.910654+00', 'work', false);
-INSERT INTO public.identifier_type (id, id_name, id_validation_regex, id_resolution_prefix, id_deprecated, client_source_id, date_created, last_modified, primary_use, case_sensitive) VALUES (40, 'ETHOS', NULL, 'http://ethos.bl.uk/OrderDetails.do?uin=', false, NULL, '2016-05-20 11:17:37.775534+00', '2016-05-20 11:17:37.775534+00', 'work', true);
-INSERT INTO public.identifier_type (id, id_name, id_validation_regex, id_resolution_prefix, id_deprecated, client_source_id, date_created, last_modified, primary_use, case_sensitive) VALUES (41, 'OL', NULL, 'http://openlibrary.org/b/', false, NULL, '2016-05-20 11:17:37.775534+00', '2016-05-20 11:17:37.775534+00', 'work', true);
-INSERT INTO public.identifier_type (id, id_name, id_validation_regex, id_resolution_prefix, id_deprecated, client_source_id, date_created, last_modified, primary_use, case_sensitive) VALUES (42, 'EMPIAR', NULL, 'https://www.ebi.ac.uk/empiar/', false, NULL, '2021-08-25 01:33:13.522236+00', '2021-08-25 01:33:13.522236+00', 'work', true);
-INSERT INTO public.identifier_type (id, id_name, id_validation_regex, id_resolution_prefix, id_deprecated, client_source_id, date_created, last_modified, primary_use, case_sensitive) VALUES (43, 'AGR', NULL, NULL, false, NULL, '2016-05-20 11:17:37.775+00', '2016-05-20 11:17:37.775534+00', 'work', false);
-INSERT INTO public.identifier_type (id, id_name, id_validation_regex, id_resolution_prefix, id_deprecated, client_source_id, date_created, last_modified, primary_use, case_sensitive) VALUES (44, 'ISMN', NULL, NULL, false, NULL, '2021-11-18 23:04:00.197881+00', '2021-11-18 23:04:00.197881+00', 'work', false);
-INSERT INTO public.identifier_type (id, id_name, id_validation_regex, id_resolution_prefix, id_deprecated, client_source_id, date_created, last_modified, primary_use, case_sensitive) VALUES (45, 'EMDB', NULL, 'https://www.ebi.ac.uk/emdb/', false, NULL, '2021-11-22 22:30:13.66811+00', '2021-11-22 22:30:13.66811+00', 'work', true);
-INSERT INTO public.identifier_type (id, id_name, id_validation_regex, id_resolution_prefix, id_deprecated, client_source_id, date_created, last_modified, primary_use, case_sensitive) VALUES (46, 'PMID', NULL, 'https://pubmed.ncbi.nlm.nih.gov/', false, NULL, '2016-05-20 11:17:37.775534+00', '2016-05-20 11:17:37.775534+00', 'work', false);
-INSERT INTO public.identifier_type (id, id_name, id_validation_regex, id_resolution_prefix, id_deprecated, client_source_id, date_created, last_modified, primary_use, case_sensitive) VALUES (47, 'PMC', NULL, 'https://europepmc.org/article/pmc/', false, NULL, '2016-05-20 11:17:37.775534+00', '2016-05-20 11:17:37.775534+00', 'work', false);
-INSERT INTO public.identifier_type (id, id_name, id_validation_regex, id_resolution_prefix, id_deprecated, client_source_id, date_created, last_modified, primary_use, case_sensitive) VALUES (48, 'CSTR', NULL, 'https://www.cstr.cn/', false, NULL, '2022-06-07 18:54:40.806959+00', '2022-06-07 18:54:40.806959+00', 'work', false);
-INSERT INTO public.identifier_type (id, id_name, id_validation_regex, id_resolution_prefix, id_deprecated, client_source_id, date_created, last_modified, primary_use, case_sensitive) VALUES (49, 'ISBN', '', 'https://www.worldcat.org/isbn/', false, NULL, '2016-05-25 11:17:37.775+00', '2016-05-25 11:17:37.775+00', 'work', false);
-INSERT INTO public.identifier_type (id, id_name, id_validation_regex, id_resolution_prefix, id_deprecated, client_source_id, date_created, last_modified, primary_use, case_sensitive) VALUES (50, 'K10PLUS', NULL, 'https://opac.k10plus.de/DB=2.299/PPNSET?PPN=', false, NULL, '2022-09-01 08:43:11.796091+00', '2022-09-01 08:43:11.796091+00', 'work', true);
-INSERT INTO public.identifier_type (id, id_name, id_validation_regex, id_resolution_prefix, id_deprecated, client_source_id, date_created, last_modified, primary_use, case_sensitive) VALUES (51, 'CGN', NULL, 'https://id.culturegraph.org/', false, NULL, '2022-09-20 01:50:54.126735+00', '2022-09-20 01:50:54.126735+00', 'work', true);
-INSERT INTO public.identifier_type (id, id_name, id_validation_regex, id_resolution_prefix, id_deprecated, client_source_id, date_created, last_modified, primary_use, case_sensitive) VALUES (52, 'RAiD', NULL, 'https://raid.org/', false, NULL, '2024-06-20 16:59:23.95768+00', '2024-06-20 16:59:23.95768+00', 'work', false);
-
---
--- NOTE! The following users and clients have their passwords encrypted using the QA passphrases, so, for this to work, you will need to add the following properties env variables to tomcat:
--- -Dorg.orcid.core.passPhraseForInternalEncryption=wibbler12345678
--- -Dorg.orcid.core.passPhraseForExternalEncryption=wibbler12345678
---
-
---
--- Create users
---
-INSERT INTO public.profile (orcid, date_created, last_modified, account_expiry, completed_date, claimed, creation_method, enabled, encrypted_password, is_selectable_sponsor, source_id, orcid_type, submission_date, indexing_status, profile_deactivation_date, activities_visibility_default, last_indexed_date, locale, primary_record, deprecated_date, group_type, referred_by, enable_developer_tools, salesforce_id, client_source_id, developer_tools_enabled_date, record_locked, used_captcha_on_registration, user_last_ip, reviewed, reason_locked, reason_locked_description, hashed_orcid, last_login, secret_for_2fa, using_2fa, deprecating_admin, deprecated_method, record_locked_date, record_locked_admin_id, signin_lock_start, signin_lock_last_attempt, signin_lock_count, auto_lock_date) VALUES ('0000-0000-0000-0000', '2024-12-05 20:17:30.31', '2024-12-05 20:17:30.037982', NULL, NULL, true, 'Direct', true, '7wc70RIAw5b2P5DS15Rpllw2UbNNZl0pU71ITWbeG7MB28AOZcidpzscwCBuql/k/O9TUKN6EQ1gz615fhKF+1Z7MrNWlXli4pyaXRyzgOQ=', NULL, NULL, 'USER', '2024-12-05 20:17:30.038+00', 'DONE', NULL, 'PUBLIC', '2024-12-05 20:17:38.210127+00', 'EN', NULL, NULL, NULL, NULL, false, NULL, NULL, NULL, false, true, '186.5.174.177', false, NULL, NULL, '92642c5c8e7d21de97aadf4c913a0817be9a1ee9a04091a22be7870489734b89', '2024-12-05 20:20:18.633868', NULL, false, NULL, NULL, NULL, NULL, NULL, NULL, 0, NULL);
-INSERT INTO public.profile (orcid, date_created, last_modified, account_expiry, completed_date, claimed, creation_method, enabled, encrypted_password, is_selectable_sponsor, source_id, orcid_type, submission_date, indexing_status, profile_deactivation_date, activities_visibility_default, last_indexed_date, locale, primary_record, deprecated_date, group_type, referred_by, enable_developer_tools, salesforce_id, client_source_id, developer_tools_enabled_date, record_locked, used_captcha_on_registration, user_last_ip, reviewed, reason_locked, reason_locked_description, hashed_orcid, last_login, secret_for_2fa, using_2fa, deprecating_admin, deprecated_method, record_locked_date, record_locked_admin_id, signin_lock_start, signin_lock_last_attempt, signin_lock_count, auto_lock_date) VALUES ('0000-0000-0000-0001', '2024-12-05 20:18:52.782', '2024-12-05 20:18:52.523386', NULL, NULL, true, 'Direct', true, '7wc70RIAw5b2P5DS15Rpllw2UbNNZl0pU71ITWbeG7MB28AOZcidpzscwCBuql/k/O9TUKN6EQ1gz615fhKF+1Z7MrNWlXli4pyaXRyzgOQ=', NULL, NULL, 'ADMIN', '2024-12-05 20:18:52.524+00', 'DONE', NULL, 'PUBLIC', '2024-12-05 20:18:58.276245+00', 'EN', NULL, NULL, NULL, NULL, false, NULL, NULL, NULL, false, true, '186.5.174.177', false, NULL, NULL, '43a7ac7d5ccde49654ec71a1d5d3a7829517086206d9c0366fc9b64316e51002', '2024-12-05 20:20:32.078858', NULL, false, NULL, NULL, NULL, NULL, NULL, NULL, 0, NULL);
-INSERT INTO public.email (date_created, last_modified, email, orcid, visibility, is_primary, is_current, is_verified, source_id, client_source_id, email_hash, assertion_origin_source_id, assertion_origin_client_source_id, date_verified) VALUES ('2024-12-05 20:18:52.785+00', '2024-12-05 20:18:52.785+00', 'admin@orcid.org', '0000-0000-0000-0001', 'PRIVATE', true, true, false, '0000-0000-0000-0001', NULL, 'c9fb16d78d4f44c1ff05ca7cf81a8b267c525bc2144886c1e0af89c374484af9', NULL, NULL, NULL);
-INSERT INTO public.email (date_created, last_modified, email, orcid, visibility, is_primary, is_current, is_verified, source_id, client_source_id, email_hash, assertion_origin_source_id, assertion_origin_client_source_id, date_verified) VALUES ('2024-12-05 20:17:30.313+00', '2024-12-05 20:17:30.313+00', 'user@orcid.org', '0000-0000-0000-0000', 'PRIVATE', true, true, false, '0000-0000-0000-0000', NULL, '9167d11d8fd4253671d7cf74b80d8053b267fad86e36e891b4b8a5d90db45cb8', NULL, NULL, NULL);
-INSERT INTO public.record_name (id, orcid, credit_name, family_name, given_names, visibility, date_created, last_modified) VALUES (10463, '0000-0000-0000-0000', NULL, 'Orcid', 'User', 'PUBLIC', '2024-12-05 20:17:30.316+00', '2024-12-05 20:17:30.316+00');
-INSERT INTO public.record_name (id, orcid, credit_name, family_name, given_names, visibility, date_created, last_modified) VALUES (10464, '0000-0000-0000-0001', NULL, 'User', 'Admin', 'PUBLIC', '2024-12-05 20:18:52.788+00', '2024-12-05 20:18:52.788+00');
-INSERT INTO public.granted_authority (authority, orcid, date_created, last_modified) VALUES ('ROLE_USER', '0000-0000-0000-0000', '2024-12-05 20:17:30.31', '2024-12-05 20:17:30.31');
-INSERT INTO public.granted_authority (authority, orcid, date_created, last_modified) VALUES ('ROLE_USER', '0000-0000-0000-0001', '2024-12-05 20:18:52.783', '2024-12-05 20:18:52.783');
-
---
--- Create premium member
---
-INSERT INTO public.profile (orcid, date_created, last_modified, account_expiry, completed_date, claimed, creation_method, enabled, encrypted_password, is_selectable_sponsor, source_id, orcid_type, submission_date, indexing_status, profile_deactivation_date, activities_visibility_default, last_indexed_date, locale, primary_record, deprecated_date, group_type, referred_by, enable_developer_tools, salesforce_id, client_source_id, developer_tools_enabled_date, record_locked, used_captcha_on_registration, user_last_ip, reviewed, reason_locked, reason_locked_description, hashed_orcid, last_login, secret_for_2fa, using_2fa, deprecating_admin, deprecated_method, record_locked_date, record_locked_admin_id, signin_lock_start, signin_lock_last_attempt, signin_lock_count, auto_lock_date) VALUES ('0009-0000-0000-0000', '2024-04-22 14:28:28.872', '2024-04-22 14:28:46.537', NULL, NULL, true, 'Direct', true, '7wc70RIAw5b2P5DS15Rpllw2UbNNZl0pU71ITWbeG7MB28AOZcidpzscwCBuql/k/O9TUKN6EQ1gz615fhKF+1Z7MrNWlXli4pyaXRyzgOQ=', NULL, NULL, 'GROUP', '2024-04-22 14:28:28.865+00', 'DONE', NULL, 'PRIVATE', '2024-04-22 15:28:39.641078+00', 'EN', NULL, NULL, 'PREMIUM', NULL, false, '123456789012345', NULL, NULL, false, false, NULL, true, NULL, NULL, '716ba0ab70d546a7b7578118a7aec863564e555ebc21caa0b3d9fc17dec87383', NULL, NULL, false, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
-INSERT INTO public.email (date_created, last_modified, email, orcid, visibility, is_primary, is_current, is_verified, source_id, client_source_id, email_hash, assertion_origin_source_id, assertion_origin_client_source_id, date_verified) VALUES ('2024-04-22 14:28:28.889+00', '2024-04-22 14:28:28.889+00', 'member@orcid.org', '0009-0000-0000-0000', 'PRIVATE', true, true, true, '0009-0000-0000-0000', NULL, '31f4018550531879ff9f02f3b0670cf6abc13524bc2c94d8eb25149085f31a52', NULL, NULL, NULL);
-INSERT INTO public.granted_authority (authority, orcid, date_created, last_modified) VALUES ('ROLE_GROUP', '0009-0000-0000-0000', '2024-04-22 14:28:28.873', '2024-04-22 14:28:28.873');
-INSERT INTO public.record_name (id, orcid, credit_name, family_name, given_names, visibility, date_created, last_modified) VALUES (9281, '0009-0000-0000-0000', 'Member', NULL, NULL, 'PUBLIC', '2024-04-22 14:28:28.904+00', '2024-04-22 14:28:28.904+00');
-
---
--- Create premium client
--- Client secret: 9db18cce-aa3b-4398-acef-2c661c38b24b
--- Client redirect uri: https://qa.orcid.org
---
-INSERT INTO public.client_details (client_details_id, client_secret, date_created, last_modified, client_name, webhooks_enabled, client_description, client_website, persistent_tokens_enabled, group_orcid, client_type, authentication_provider_id, allow_auto_deprecate, email_access_reason, user_obo_enabled, deactivated_date, deactivated_by) VALUES ('APP-0000000000000000000', NULL, '2024-04-22 14:29:52.29', '2024-04-22 14:30:46.541', 'Test', true, 'Just a test', 'http://www.orcid.org', true, '0009-0000-0000-0000', 'PREMIUM_UPDATER', '', false, NULL, false, NULL, NULL);
-INSERT INTO public.client_secret (client_details_id, client_secret, date_created, last_modified, is_primary) VALUES ('APP-0000000000000000000', '/yDskPX+DCU3aMoNHgyvyiMpPLF4cqErwG4vKHqmKu3diCjdYJKyH30u9Ue+7RTm', '2024-04-22 14:29:52.296+00', '2024-04-22 14:29:52.296+00', true);
-INSERT INTO public.client_redirect_uri (client_details_id, redirect_uri, date_created, last_modified, predefined_client_redirect_scope, redirect_uri_type, uri_act_type, uri_geo_area, status) VALUES ('APP-0000000000000000000', 'https://qa.orcid.org', '2024-04-22 14:29:52.293', '2024-04-22 14:29:52.293', '', 'default', '{"import-works-wizard":["Articles"]}', '{"import-works-wizard":["Global"]}', 'OK');
-INSERT INTO public.client_authorised_grant_type (client_details_id, grant_type, date_created, last_modified) VALUES ('APP-0000000000000000000', 'refresh_token', '2024-04-22 14:29:52.291', '2024-04-22 14:29:52.291');
-INSERT INTO public.client_authorised_grant_type (client_details_id, grant_type, date_created, last_modified) VALUES ('APP-0000000000000000000', 'implicit', '2024-04-22 14:29:52.292', '2024-04-22 14:29:52.292');
-INSERT INTO public.client_authorised_grant_type (client_details_id, grant_type, date_created, last_modified) VALUES ('APP-0000000000000000000', 'authorization_code', '2024-04-22 14:29:52.293', '2024-04-22 14:29:52.293');
-INSERT INTO public.client_authorised_grant_type (client_details_id, grant_type, date_created, last_modified) VALUES ('APP-0000000000000000000', 'client_credentials', '2024-04-22 14:29:52.293', '2024-04-22 14:29:52.293');
-INSERT INTO public.client_authorised_grant_type (client_details_id, grant_type, date_created, last_modified) VALUES ('APP-0000000000000000000', 'urn:ietf:params:oauth:grant-type:token-exchange', '2024-04-22 14:30:46.536', '2024-04-22 14:30:46.536');
-INSERT INTO public.client_granted_authority (client_details_id, granted_authority, date_created, last_modified) VALUES ('APP-0000000000000000000', 'ROLE_CLIENT', '2024-04-22 14:29:52.293', '2024-04-22 14:29:52.293');
-INSERT INTO public.client_resource_id (client_details_id, resource_id, date_created, last_modified) VALUES ('APP-0000000000000000000', 'orcid', '2024-04-22 14:29:52.294', '2024-04-22 14:29:52.294');
-INSERT INTO public.client_scope (client_details_id, scope_type, date_created, last_modified) VALUES ('APP-0000000000000000000', '/group-id-record/update', '2024-04-22 14:29:52.294', '2024-04-22 14:29:52.294');
-INSERT INTO public.client_scope (client_details_id, scope_type, date_created, last_modified) VALUES ('APP-0000000000000000000', '/peer-review/update', '2024-04-22 14:29:52.294', '2024-04-22 14:29:52.294');
-INSERT INTO public.client_scope (client_details_id, scope_type, date_created, last_modified) VALUES ('APP-0000000000000000000', '/orcid-bio/update', '2024-04-22 14:29:52.294', '2024-04-22 14:29:52.294');
-INSERT INTO public.client_scope (client_details_id, scope_type, date_created, last_modified) VALUES ('APP-0000000000000000000', '/authenticate', '2024-04-22 14:29:52.294', '2024-04-22 14:29:52.294');
-INSERT INTO public.client_scope (client_details_id, scope_type, date_created, last_modified) VALUES ('APP-0000000000000000000', 'openid', '2024-04-22 14:29:52.294', '2024-04-22 14:29:52.294');
-INSERT INTO public.client_scope (client_details_id, scope_type, date_created, last_modified) VALUES ('APP-0000000000000000000', '/webhook', '2024-04-22 14:29:52.294', '2024-04-22 14:29:52.294');
-INSERT INTO public.client_scope (client_details_id, scope_type, date_created, last_modified) VALUES ('APP-0000000000000000000', '/orcid-profile/read-limited', '2024-04-22 14:29:52.294', '2024-04-22 14:29:52.294');
-INSERT INTO public.client_scope (client_details_id, scope_type, date_created, last_modified) VALUES ('APP-0000000000000000000', '/orcid-works/create', '2024-04-22 14:29:52.294', '2024-04-22 14:29:52.294');
-INSERT INTO public.client_scope (client_details_id, scope_type, date_created, last_modified) VALUES ('APP-0000000000000000000', '/read-public', '2024-04-22 14:29:52.294', '2024-04-22 14:29:52.294');
-INSERT INTO public.client_scope (client_details_id, scope_type, date_created, last_modified) VALUES ('APP-0000000000000000000', '/peer-review/create', '2024-04-22 14:29:52.295', '2024-04-22 14:29:52.295');
-INSERT INTO public.client_scope (client_details_id, scope_type, date_created, last_modified) VALUES ('APP-0000000000000000000', '/funding/read-limited', '2024-04-22 14:29:52.295', '2024-04-22 14:29:52.295');
-INSERT INTO public.client_scope (client_details_id, scope_type, date_created, last_modified) VALUES ('APP-0000000000000000000', '/activities/update', '2024-04-22 14:29:52.295', '2024-04-22 14:29:52.295');
-INSERT INTO public.client_scope (client_details_id, scope_type, date_created, last_modified) VALUES ('APP-0000000000000000000', '/person/read-limited', '2024-04-22 14:29:52.295', '2024-04-22 14:29:52.295');
-INSERT INTO public.client_scope (client_details_id, scope_type, date_created, last_modified) VALUES ('APP-0000000000000000000', '/funding/create', '2024-04-22 14:29:52.295', '2024-04-22 14:29:52.295');
-INSERT INTO public.client_scope (client_details_id, scope_type, date_created, last_modified) VALUES ('APP-0000000000000000000', '/affiliations/read-limited', '2024-04-22 14:29:52.295', '2024-04-22 14:29:52.295');
-INSERT INTO public.client_scope (client_details_id, scope_type, date_created, last_modified) VALUES ('APP-0000000000000000000', '/orcid-bio/read-limited', '2024-04-22 14:29:52.295', '2024-04-22 14:29:52.295');
-INSERT INTO public.client_scope (client_details_id, scope_type, date_created, last_modified) VALUES ('APP-0000000000000000000', '/group-id-record/read', '2024-04-22 14:29:52.295', '2024-04-22 14:29:52.295');
-INSERT INTO public.client_scope (client_details_id, scope_type, date_created, last_modified) VALUES ('APP-0000000000000000000', '/affiliations/update', '2024-04-22 14:29:52.295', '2024-04-22 14:29:52.295');
-INSERT INTO public.client_scope (client_details_id, scope_type, date_created, last_modified) VALUES ('APP-0000000000000000000', '/affiliations/create', '2024-04-22 14:29:52.295', '2024-04-22 14:29:52.295');
-INSERT INTO public.client_scope (client_details_id, scope_type, date_created, last_modified) VALUES ('APP-0000000000000000000', '/peer-review/read-limited', '2024-04-22 14:29:52.295', '2024-04-22 14:29:52.295');
-INSERT INTO public.client_scope (client_details_id, scope_type, date_created, last_modified) VALUES ('APP-0000000000000000000', '/orcid-works/update', '2024-04-22 14:29:52.295', '2024-04-22 14:29:52.295');
-INSERT INTO public.client_scope (client_details_id, scope_type, date_created, last_modified) VALUES ('APP-0000000000000000000', '/orcid-bio/external-identifiers/create', '2024-04-22 14:29:52.296', '2024-04-22 14:29:52.296');
-INSERT INTO public.client_scope (client_details_id, scope_type, date_created, last_modified) VALUES ('APP-0000000000000000000', '/funding/update', '2024-04-22 14:29:52.296', '2024-04-22 14:29:52.296');
-INSERT INTO public.client_scope (client_details_id, scope_type, date_created, last_modified) VALUES ('APP-0000000000000000000', '/activities/read-limited', '2024-04-22 14:29:52.296', '2024-04-22 14:29:52.296');
-INSERT INTO public.client_scope (client_details_id, scope_type, date_created, last_modified) VALUES ('APP-0000000000000000000', '/read-limited', '2024-04-22 14:29:52.296', '2024-04-22 14:29:52.296');
-INSERT INTO public.client_scope (client_details_id, scope_type, date_created, last_modified) VALUES ('APP-0000000000000000000', '/person/update', '2024-04-22 14:29:52.296', '2024-04-22 14:29:52.296');
-INSERT INTO public.client_scope (client_details_id, scope_type, date_created, last_modified) VALUES ('APP-0000000000000000000', '/orcid-works/read-limited', '2024-04-22 14:29:52.296', '2024-04-22 14:29:52.296');

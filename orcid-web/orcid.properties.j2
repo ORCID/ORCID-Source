@@ -89,6 +89,7 @@ org.orcid.core.oauth.supportRefreshToken={{ ORG_ORCID_CORE_OAUTH_SUPPORT_REFRESH
 org.orcid.core.token.implicit_validity_seconds={{ ORG_ORCID_CORE_TOKEN_IMPLICIT_VALIDITY_SECONDS }}
 org.orcid.core.token.read_validity_seconds={{ ORG_ORCID_CORE_TOKEN_READ_VALIDITY_SECONDS }}
 org.orcid.core.token.write_validity_seconds={{ ORG_ORCID_CORE_TOKEN_WRITE_VALIDITY_SECONDS }}
+org.orcid.authorization.server.url={{ ORG_ORCID_AUTHORIZATION_SERVER_URI }}
 
 # OpenID connect JWKS location.  Use filesystem location for prod, or an escaped JSON string in jwks_test_key for dev.
 # Generate a key here: https://mkjwk.org/
@@ -228,3 +229,28 @@ org.orcid.core.utils.cache.session.redis.pool.max={{ ORG_ORCID_CORE_UTILS_CACHE_
 org.orcid.core.utils.cache.session.redis.pool.wait.millis={{ ORG_ORCID_CORE_UTILS_CACHE_SESSION_REDIS_POOL_WAIT_MILLIS }}
 org.orcid.core.utils.cache.session.redis.connection_timeout_millis={{ ORG_ORCID_CORE_UTILS_CACHE_SESSION_REDIS_CONNECTION_TIMEOUT_MILLIS }}
 org.orcid.core.utils.cache.session.redis.session.timeout={{ ORG_ORCID_CORE_UTILS_CACHE_SESSION_REDIS_SESSION_TIMEOUT }}
+
+# Email domain cache
+org.orcid.core.cache.email_domain.timeToIdleSeconds={{ ORG_ORCID_CORE_CACHE_EMAIL_DOMAIN_TIME_TO_IDLE_SECONDS }}
+
+# Token introspection - DO NOT MODIFY!
+org.orcid.authorization.server.tokenIntrospection.clientId={{ ORG_ORCID_AUTHORIZATION_SERVER_TOKEN_INTROSPECTION_CLIENT_ID }}
+org.orcid.authorization.server.tokenIntrospection.clientSecret={{ ORG_ORCID_AUTHORIZATION_SERVER_TOKEN_INTROSPECTION_CLIENT_SECRET }}
+
+# Expiration link service
+org.orcid.utils.jwtKey={{ ORG_ORCID_UTILS_JWT_KEY }}
+org.orcid.utils.jwtExpirationInMinutes={{ ORG_ORCID_UTILS_JWT_EXPIRATION_IN_MINUTES }}
+
+# SMS POC - managed verification (AWS End User Messaging Notify / Twilio Verify)
+org.orcid.sms.provider={{ ORG_ORCID_SMS_PROVIDER }}
+org.orcid.sms.regexFilter={{ ORG_ORCID_SMS_REGEX_FILTER }}
+org.orcid.sms.code.length={{ ORG_ORCID_SMS_CODE_LENGTH }}
+org.orcid.sms.code.ttlSeconds={{ ORG_ORCID_SMS_CODE_TTL_SECONDS }}
+org.orcid.sms.code.maxAttempts={{ ORG_ORCID_SMS_CODE_MAX_ATTEMPTS }}
+org.orcid.sms.twilio.accountSid={{ ORG_ORCID_SMS_TWILIO_ACCOUNT_SID }}
+org.orcid.sms.twilio.authToken={{ ORG_ORCID_SMS_TWILIO_AUTH_TOKEN }}
+org.orcid.sms.twilio.verifyServiceSid={{ ORG_ORCID_SMS_TWILIO_VERIFY_SERVICE_SID }}
+org.orcid.sms.aws.region={{ ORG_ORCID_SMS_AWS_REGION }}
+org.orcid.sms.aws.accessKey={{ ORG_ORCID_SMS_AWS_ACCESS_KEY }}
+org.orcid.sms.aws.secretKey={{ ORG_ORCID_SMS_AWS_SECRET_KEY }}
+org.orcid.sms.aws.notifyConfigurationId={{ ORG_ORCID_SMS_AWS_NOTIFY_CONFIGURATION_ID }}
