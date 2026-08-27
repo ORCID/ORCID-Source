@@ -1,3 +1,9 @@
+## v3.0.46 - 2026-08-27
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.0.45...v3.0.46)
+
+- [#7652](https://github.com/ORCID/ORCID-Source/pull/7652): PD-6176 Index version-of and funded-by external identifiers in Solr
+
 ## v3.0.45 - 2026-08-25
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.0.44...v3.0.45)
