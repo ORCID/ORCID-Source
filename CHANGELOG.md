@@ -1,3 +1,33 @@
+## v3.0.45 - 2026-08-25
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.0.44...v3.0.45)
+
+- [#7651](https://github.com/ORCID/ORCID-Source/pull/7651): PD-6181 Send password reset link to all verified emails on the account
+
+## v3.0.44 - 2026-08-24
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.0.43...v3.0.44)
+
+- [#7649](https://github.com/ORCID/ORCID-Source/pull/7649): PD-6180 Resolve PubMed identifiers via EuropePMC instead of the NCBI landing page
+
+## v3.0.43 - 2026-08-21
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.0.42...v3.0.43)
+
+- [#7646](https://github.com/ORCID/ORCID-Source/pull/7646): PD-5900 add the OAUTH_BACKUP_EMAIL_INTERSTITIAL togglz
+
+## v3.0.42 - 2026-08-19
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.0.41...v3.0.42)
+
+- [#7644](https://github.com/ORCID/ORCID-Source/pull/7644): Add back the code to log the user out
+
+## v3.0.41 - 2026-08-19
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.0.40...v3.0.41)
+
+- [#7593](https://github.com/ORCID/ORCID-Source/pull/7593): Aromanovv/pd 5943 make pw reset link one time use
+
 ## v3.0.40 - 2026-08-18
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.0.39...v3.0.40)

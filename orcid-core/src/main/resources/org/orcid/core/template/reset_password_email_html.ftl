@@ -10,7 +10,7 @@
 			<img src="https://orcid.org/sites/all/themes/orcid/img/orcid-logo.png" alt="ORCID.org"/>
 		    <hr />
 		    <p style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #494A4C;">
-		    	<@emailMacros.msg "email.reset_password.orcid_id" /> ${submittedEmail} <@emailMacros.msg "email.reset_password.is" /> <a href="${baseUri}/${orcid}?lang=${locale}">${baseUri}/${orcid}</a>
+		    	<@emailMacros.msg "email.reset_password.orcid_id" /> {recipientEmail} <@emailMacros.msg "email.reset_password.is" /> <a href="${baseUri}/${orcid}?lang=${locale}">${baseUri}/${orcid}</a>
 		    </p>
 		    <p style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #494A4C;">
                 <@emailMacros.msg "email.reset_password.to_reset" />

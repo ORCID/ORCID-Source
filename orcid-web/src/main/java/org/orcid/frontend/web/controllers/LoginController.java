@@ -58,6 +58,7 @@ public class LoginController extends BaseController {
     @RequestMapping(value = { "/signout" }, method = RequestMethod.GET)
     public ModelAndView signout(HttpServletRequest request, HttpServletResponse response) {
         String redirectString = "redirect:" + calculateRedirectUrl("/login");
+        logoutCurrentUser(request, response);
         return new ModelAndView(redirectString);
     }
 
