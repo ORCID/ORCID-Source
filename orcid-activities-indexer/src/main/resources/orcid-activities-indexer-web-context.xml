@@ -96,10 +96,10 @@
         <property name="password" value="${org.orcid.message-listener.db.password}" />
         <property name="minimumIdle" value="${org.orcid.message-listener.db.minPoolSize}" />
         <property name="maximumPoolSize" value="${org.orcid.message-listener.db.maxPoolSize}" />
-        <property name="connectionTestQuery" value="${org.orcid.message-listener.db.preferredTestQuery}" />
         <property name="connectionTimeout" value="${org.orcid.activities-indexer.db.hikari.connectionTimeout:30000}" />
         <property name="idleTimeout" value="${org.orcid.activities-indexer.db.hikari.idleTimeout:600000}" />
         <property name="maxLifetime" value="${org.orcid.activities-indexer.db.hikari.maxLifetime:1800000}" />
+        <property name="keepaliveTime" value="${org.orcid.activities-indexer.db.hikari.keepaliveTime:120000}" />
     </bean>
     
     <bean id="mqEntityManagerFactory" class="org.orcid.activitiesindexer.persistence.spring.OrcidEntityManagerFactory">
