@@ -50,6 +50,9 @@
     <bean id="internalApiServiceImplBase" class="org.orcid.internal.server.InternalApiServiceImplBase">
     	<property name="serviceDelegator" ref="internalApiServiceDelegator"/>
     </bean> 
-    <bean id="internalApiServiceDelegator" class="org.orcid.internal.server.delegator.impl.InternalApiServiceDelegatorImpl" />
+    <bean id="internalApiServiceDelegator" class="org.orcid.internal.server.delegator.impl.InternalApiServiceDelegatorImpl">
+        <!-- Set here rather than with @Value: this bean is declared in XML, not component scanned. -->
+        <property name="resetLinkExpirationInMinutes" value="${org.orcid.utils.adminJwtExpirationInMinutes:1440}"/>
+    </bean>
     
 </beans>

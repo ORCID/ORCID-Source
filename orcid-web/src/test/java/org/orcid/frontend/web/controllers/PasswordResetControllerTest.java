@@ -41,7 +41,7 @@ import org.orcid.core.utils.cache.redis.RedisClient;
 import org.orcid.core.togglz.Features;
 import org.orcid.frontend.email.RecordEmailSender;
 import org.orcid.frontend.web.forms.OneTimeResetPasswordForm;
-import org.orcid.frontend.web.util.PasswordResetTokenEntry;
+import org.orcid.core.utils.cache.redis.PasswordResetTokenEntry;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.pojo.EmailRequest;
 import org.orcid.pojo.ajaxForm.Text;

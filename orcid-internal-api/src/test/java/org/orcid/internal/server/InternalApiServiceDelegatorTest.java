@@ -18,6 +18,10 @@ import org.orcid.core.exception.OrcidAccessControlException;
 import org.orcid.core.manager.v3.read_only.ProfileEntityManagerReadOnly;
 import org.orcid.core.utils.SecurityContextTestUtils;
 import org.orcid.internal.server.delegator.InternalApiServiceDelegator;
+import org.orcid.internal.util.AccountRecoveryMatchRequest;
+import org.orcid.internal.util.AccountRecoveryMatchResponse;
+import org.orcid.internal.util.AccountRecoveryResetLinkRequest;
+import org.orcid.internal.util.AccountRecoveryResetLinkResponse;
 import org.orcid.internal.util.EmailResponse;
 import org.orcid.internal.util.LastModifiedResponse;
 import org.orcid.internal.util.MemberInfo;
@@ -119,5 +123,88 @@ public class InternalApiServiceDelegatorTest extends DBUnitTest {
     public void findOrcidByEmailWrongScopeTest() {
         SecurityContextTestUtils.setUpSecurityContextForClientOnly("APP-5555555555555555", ScopePathType.INTERNAL_PERSON_LAST_MODIFIED);
         internalApiServiceDelegator.findOrcidByEmail("5555-5555-5555-5558@user.com");        
+    }
+
+    private static final String USER_EMAIL = "5555-5555-5555-5558@user.com";
+
+    private AccountRecoveryMatchRequest matchRequest(String orcid, String email) {
+        AccountRecoveryMatchRequest request = new AccountRecoveryMatchRequest();
+        request.setOrcid(orcid);
+        request.setEmail(email);
+        return request;
+    }
+
+    private AccountRecoveryResetLinkRequest resetLinkRequest(String orcid) {
+        AccountRecoveryResetLinkRequest request = new AccountRecoveryResetLinkRequest();
+        request.setOrcid(orcid);
+        return request;
+    }
+
+    @Test
+    public void accountRecoveryMatchTest() {
+        SecurityContextTestUtils.setUpSecurityContextForClientOnly("APP-5555555555555555", ScopePathType.INTERNAL_ACCOUNT_RECOVERY);
+        Response response = internalApiServiceDelegator.accountRecoveryMatch(matchRequest(USER_ORCID, USER_EMAIL));
+        assertNotNull(response);
+        AccountRecoveryMatchResponse info = (AccountRecoveryMatchResponse) response.getEntity();
+        assertTrue(info.isMatch());
+        assertEquals(AccountRecoveryMatchResponse.RecordStatus.ACTIVE, info.getRecordStatus());
+    }
+
+    /**
+     * Every kind of non match has to look the same from the outside, otherwise the endpoint tells a
+     * caller whether an address is registered.
+     */
+    @Test
+    public void accountRecoveryMatchIsNotAnEmailOracleTest() {
+        SecurityContextTestUtils.setUpSecurityContextForClientOnly("APP-5555555555555555", ScopePathType.INTERNAL_ACCOUNT_RECOVERY);
+
+        // A registered email, paired with the wrong iD
+        Response wrongPair = internalApiServiceDelegator.accountRecoveryMatch(matchRequest("0000-0000-0000-0000", USER_EMAIL));
+        AccountRecoveryMatchResponse wrongPairInfo = (AccountRecoveryMatchResponse) wrongPair.getEntity();
+
+        // An address nobody has registered
+        Response unknownEmail = internalApiServiceDelegator.accountRecoveryMatch(matchRequest(USER_ORCID, "nobody@user.com"));
+        AccountRecoveryMatchResponse unknownEmailInfo = (AccountRecoveryMatchResponse) unknownEmail.getEntity();
+
+        assertEquals(wrongPair.getStatus(), unknownEmail.getStatus());
+        assertFalse(wrongPairInfo.isMatch());
+        assertFalse(unknownEmailInfo.isMatch());
+        assertNull(wrongPairInfo.getRecordStatus());
+        assertNull(unknownEmailInfo.getRecordStatus());
+    }
+
+    @Test(expected = OrcidAccessControlException.class)
+    public void accountRecoveryMatchWrongScopeTest() {
+        SecurityContextTestUtils.setUpSecurityContextForClientOnly("APP-5555555555555555", ScopePathType.INTERNAL);
+        internalApiServiceDelegator.accountRecoveryMatch(matchRequest(USER_ORCID, USER_EMAIL));
+    }
+
+    @Test
+    public void accountRecoveryResetLinkTest() {
+        SecurityContextTestUtils.setUpSecurityContextForClientOnly("APP-5555555555555555", ScopePathType.INTERNAL_ACCOUNT_RECOVERY);
+        Response response = internalApiServiceDelegator.accountRecoveryResetLink(resetLinkRequest(USER_ORCID));
+        assertNotNull(response);
+        assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
+        AccountRecoveryResetLinkResponse info = (AccountRecoveryResetLinkResponse) response.getEntity();
+        assertNotNull(info.getResetLink());
+        assertTrue(info.getResetLink().contains("/reset-password-email/"));
+        assertNotNull(info.getIssueDate());
+        assertNotNull(info.getExpiryDate());
+        // Proves the expiry is wired from the Spring context rather than left at zero.
+        assertTrue(info.getExpiryDate().after(info.getIssueDate()));
+    }
+
+    @Test
+    public void accountRecoveryResetLinkUnknownRecordTest() {
+        SecurityContextTestUtils.setUpSecurityContextForClientOnly("APP-5555555555555555", ScopePathType.INTERNAL_ACCOUNT_RECOVERY);
+        Response response = internalApiServiceDelegator.accountRecoveryResetLink(resetLinkRequest("0000-0000-0000-0000"));
+        assertNotNull(response);
+        assertEquals(Response.Status.NOT_FOUND.getStatusCode(), response.getStatus());
+    }
+
+    @Test(expected = OrcidAccessControlException.class)
+    public void accountRecoveryResetLinkWrongScopeTest() {
+        SecurityContextTestUtils.setUpSecurityContextForClientOnly("APP-5555555555555555", ScopePathType.INTERNAL);
+        internalApiServiceDelegator.accountRecoveryResetLink(resetLinkRequest(USER_ORCID));
     }
 }

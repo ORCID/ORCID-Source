@@ -23,7 +23,7 @@ import org.orcid.core.manager.v3.read_only.EmailManagerReadOnly;
 import org.orcid.core.utils.SourceEntityUtils;
 import org.orcid.core.utils.VerifyEmailUtils;
 import org.orcid.core.utils.cache.redis.RedisClient;
-import org.orcid.frontend.web.util.PasswordResetTokenEntry;
+import org.orcid.core.utils.cache.redis.PasswordResetTokenEntry;
 import org.orcid.jaxb.model.common.AvailableLocales;
 import org.orcid.jaxb.model.v3.release.record.Email;
 import org.orcid.jaxb.model.v3.release.record.Emails;

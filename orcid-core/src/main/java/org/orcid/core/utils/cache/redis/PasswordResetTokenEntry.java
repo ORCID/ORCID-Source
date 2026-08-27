@@ -1,4 +1,4 @@
-package org.orcid.frontend.web.util;
+package org.orcid.core.utils.cache.redis;
 
 import org.apache.commons.lang3.StringUtils;
 import org.codehaus.jettison.json.JSONException;
