@@ -1,14 +1,16 @@
-package org.orcid.pojo;
+package org.orcid.frontend.recoveryphone;
 
 import org.orcid.pojo.ajaxForm.Date;
 
-public class TwoFactorAuthStatus extends AuthChallenge {
-    
-    private boolean enabled;
+/**
+ * The outcome of saving a recovery phone number, carrying the refreshed panel
+ * state so the settings page does not have to re-read the status straight away.
+ */
+public class RecoveryPhoneSaveResponse {
 
-    private Date twoFactorCreationDate;
+    private boolean success;
 
-    private Date recoveryCodeCreationDate;
+    private String errorCode;
 
     private String maskedRecoveryPhoneNumber;
 
@@ -18,28 +20,27 @@ public class TwoFactorAuthStatus extends AuthChallenge {
 
     private boolean recoveryPhoneModified;
 
-    public boolean isEnabled() {
-        return enabled;
+    public static RecoveryPhoneSaveResponse failure(String errorCode) {
+        RecoveryPhoneSaveResponse response = new RecoveryPhoneSaveResponse();
+        response.setSuccess(false);
+        response.setErrorCode(errorCode);
+        return response;
     }
 
-    public void setEnabled(boolean enabled) {
-        this.enabled = enabled;
+    public boolean isSuccess() {
+        return success;
     }
 
-    public Date getTwoFactorCreationDate() {
-        return twoFactorCreationDate;
+    public void setSuccess(boolean success) {
+        this.success = success;
     }
 
-    public void setTwoFactorCreationDate(Date twoFactorCreationDate) {
-        this.twoFactorCreationDate = twoFactorCreationDate;
+    public String getErrorCode() {
+        return errorCode;
     }
 
-    public Date getRecoveryCodeCreationDate() {
-        return recoveryCodeCreationDate;
-    }
-
-    public void setRecoveryCodeCreationDate(Date recoveryCodeCreationDate) {
-        this.recoveryCodeCreationDate = recoveryCodeCreationDate;
+    public void setErrorCode(String errorCode) {
+        this.errorCode = errorCode;
     }
 
     public String getMaskedRecoveryPhoneNumber() {
@@ -73,4 +74,5 @@ public class TwoFactorAuthStatus extends AuthChallenge {
     public void setRecoveryPhoneModified(boolean recoveryPhoneModified) {
         this.recoveryPhoneModified = recoveryPhoneModified;
     }
+
 }
