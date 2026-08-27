@@ -70,7 +70,9 @@ public interface ClientMapperV3 {
                 }
             }
         }
-        if (entity.getRegisteredRedirectUri() != null) {
+        
+        // FIXED: Now checks the correct collection getter
+        if (entity.getClientRegisteredRedirectUris() != null) {
             Set<ClientRedirectUri> redirectUris = new HashSet<ClientRedirectUri>();
             for (ClientRedirectUriEntity redirectUriEntity : entity.getClientRegisteredRedirectUris()) {
                 ClientRedirectUri element = new ClientRedirectUri();
@@ -84,6 +86,7 @@ public interface ClientMapperV3 {
             }
             client.setClientRedirectUris(redirectUris);
         }
+        
         if (entity.getAuthorizedGrantTypes() != null && entity.getAuthorizedGrantTypes().contains(IETF_EXCHANGE_GRANT_TYPE)) {
             client.setOboEnabled(true);
         } else {

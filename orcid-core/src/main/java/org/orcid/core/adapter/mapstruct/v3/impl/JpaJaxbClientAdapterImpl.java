@@ -19,6 +19,7 @@ import org.orcid.jaxb.model.v3.release.client.ClientRedirectUri;
 import org.orcid.jaxb.model.v3.release.client.ClientSummary;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.ClientRedirectUriEntity;
+import org.orcid.persistence.jpa.entities.ClientSecretEntity;
 
 /**
  * MapStruct implementation for V3 JpaJaxbClientAdapter.
@@ -38,39 +39,57 @@ public abstract class JpaJaxbClientAdapterImpl implements JpaJaxbClientAdapter {
     @Mapping(source = "clientName", target = "name")
     @Mapping(source = "clientDescription", target = "description")
     @Mapping(source = "clientWebsite", target = "website")
+    @Mapping(source = "decryptedClientSecret", target = "decryptedSecret")
     @Mapping(source = "allowAutoDeprecate", target = "allowAutoDeprecate")
     @Mapping(source = "persistentTokensEnabled", target = "persistentTokensEnabled")
-    @Mapping(source = "userOBOEnabled", target = "userOBOEnabled")
     @Mapping(source = "clientType", target = "clientType")
     @Mapping(source = "groupProfileId", target = "groupProfileId")
     @Mapping(source = "authenticationProviderId", target = "authenticationProviderId")
-    @Mapping(source = "emailAccessReason", target = "emailAccessReason")
-    @Mapping(target = "decryptedSecret", ignore = true) // Handled in AfterMapping
+    @Mapping(source = "userOBOEnabled", target = "userOBOEnabled") 
+    @Mapping(target = "emailAccessReason", ignore = true) 
+    @Mapping(target = "oboEnabled", ignore = true)
+    @Mapping(target = "clientRedirectUris", ignore = true)
     public abstract Client toClient(ClientDetailsEntity entity);
 
     @AfterMapping
-    protected void populateClient(ClientDetailsEntity entity, @MappingTarget Client client) {
-        // Runs your custom method to decrypt the secret and calculate oboEnabled
-        ClientMapperV3.INSTANCE.populateClientFromEntity(entity, client, encryptionManager);
-
-        // Map Redirect URIs
-        if (entity.getClientRegisteredRedirectUris() == null) {
-            return;
-        }
-        Set<ClientRedirectUri> redirectUris = new HashSet<>();
-        for (ClientRedirectUriEntity redirectUriEntity : entity.getClientRegisteredRedirectUris()) {
-            ClientRedirectUri element = new ClientRedirectUri();
-            element.setRedirectUri(redirectUriEntity.getRedirectUri());
-            element.setRedirectUriType(redirectUriEntity.getRedirectUriType());
-            element.setUriActType(redirectUriEntity.getUriActType());
-            element.setUriGeoArea(redirectUriEntity.getUriGeoArea());
-            element.setPredefinedClientScopes(ScopePathType.getScopesFromSpaceSeparatedString(redirectUriEntity.getPredefinedClientScope()));
-            if (redirectUriEntity.getStatus() != null) {
-                element.setStatus(redirectUriEntity.getStatus().name());
+    protected void populateClientExtras(ClientDetailsEntity entity, @MappingTarget Client client) {
+        // 1. Restore ORIGINAL redirect URI logic exactly to pass equals() checks
+        if (entity.getClientRegisteredRedirectUris() != null) {
+            Set<ClientRedirectUri> redirectUris = new HashSet<>();
+            for (ClientRedirectUriEntity redirectUriEntity : entity.getClientRegisteredRedirectUris()) {
+                ClientRedirectUri element = new ClientRedirectUri();
+                element.setRedirectUri(redirectUriEntity.getRedirectUri());
+                element.setRedirectUriType(redirectUriEntity.getRedirectUriType());
+                element.setUriActType(redirectUriEntity.getUriActType());
+                element.setUriGeoArea(redirectUriEntity.getUriGeoArea());
+                element.setPredefinedClientScopes(ScopePathType.getScopesFromSpaceSeparatedString(redirectUriEntity.getPredefinedClientScope()));
+                if (redirectUriEntity.getStatus() != null) {
+                    element.setStatus(redirectUriEntity.getStatus().name());
+                }
+                redirectUris.add(element);
             }
-            redirectUris.add(element);
+            client.setClientRedirectUris(redirectUris);
         }
-        client.setClientRedirectUris(redirectUris);
+
+        // 2. Safely extract OBO Flag
+        if (entity.getAuthorizedGrantTypes() != null && entity.getAuthorizedGrantTypes().contains("urn:ietf:params:oauth:grant-type:token-exchange")) {
+            client.setOboEnabled(true);
+        } else {
+            client.setOboEnabled(false);
+        }
+
+        // 3. Safely extract Decrypted Secret
+        if (entity.getClientSecrets() != null) {
+            for (ClientSecretEntity secretEntity : entity.getClientSecrets()) {
+                if (secretEntity.isPrimary() && secretEntity.getClientSecret() != null) {
+                    String secret = secretEntity.getClientSecret();
+                    if (encryptionManager != null) {
+                        secret = encryptionManager.decryptForInternalUse(secret);
+                    }
+                    client.setDecryptedSecret(secret);
+                }
+            }
+        }
     }
 
     @Override
@@ -90,20 +109,15 @@ public abstract class JpaJaxbClientAdapterImpl implements JpaJaxbClientAdapter {
     @Mapping(source = "name", target = "clientName")
     @Mapping(source = "description", target = "clientDescription")
     @Mapping(source = "website", target = "clientWebsite")
-    @Mapping(target = "decryptedClientSecret", ignore = true)
-    
-    // IGNORED: Config fields handled manually by ClientManagerImpl during creation
-    @Mapping(target = "allowAutoDeprecate", ignore = true)
-    @Mapping(target = "persistentTokensEnabled", ignore = true)
-    @Mapping(target = "userOBOEnabled", ignore = true)
-    @Mapping(target = "authenticationProviderId", ignore = true)
-    @Mapping(target = "emailAccessReason", ignore = true)
-    
-    // IGNORED: Core/Audit fields
+    @Mapping(source = "decryptedSecret", target = "decryptedClientSecret") 
+    @Mapping(source = "allowAutoDeprecate", target = "allowAutoDeprecate")
+    @Mapping(target = "persistentTokensEnabled", ignore = true) 
     @Mapping(target = "dateCreated", ignore = true)
     @Mapping(target = "lastModified", ignore = true)
-    @Mapping(target = "clientType", ignore = true)
-    @Mapping(target = "groupProfileId", ignore = true)
+    @Mapping(target = "authenticationProviderId", ignore = true) 
+    @Mapping(target = "clientType", ignore = true) // Restored back to ignore!
+    @Mapping(target = "groupProfileId", ignore = true) // Restored back to ignore!
+    @Mapping(target = "emailAccessReason", ignore = true) 
     public abstract ClientDetailsEntity toEntity(Client client);
 
     // ========================================================================
@@ -117,7 +131,7 @@ public abstract class JpaJaxbClientAdapterImpl implements JpaJaxbClientAdapter {
     @Mapping(source = "website", target = "clientWebsite")
     @Mapping(target = "decryptedClientSecret", ignore = true)
     
-    // IGNORED: Un-editable core fields (Prevents FK Violations)
+    // IGNORED: Un-editable core fields (Prevents FK Violations!)
     @Mapping(target = "groupProfileId", ignore = true)
     @Mapping(target = "clientType", ignore = true)
     

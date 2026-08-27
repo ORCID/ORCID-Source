@@ -177,16 +177,6 @@
             <artifactId>opencsv</artifactId>
         </dependency>
         <dependency>
-            <groupId>ma.glasnost.orika</groupId>
-            <artifactId>orika-core</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>ma.glasnost.orika</groupId>
-            <artifactId>orika-eclipse-tools</artifactId>
-            <version>1.4.6</version><!-- please verify the latest version -->
-            <scope>compile</scope><!-- compile scope is also present on test classpath -->
-        </dependency>
-        <dependency>
             <groupId>org.mapstruct</groupId>
             <artifactId>mapstruct</artifactId>
             <version>1.6.3</version>
