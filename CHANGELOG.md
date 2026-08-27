@@ -1,3 +1,15 @@
+## v3.0.45 - 2026-08-25
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.0.44...v3.0.45)
+
+- [#7651](https://github.com/ORCID/ORCID-Source/pull/7651): PD-6181 Send password reset link to all verified emails on the account
+
+## v3.0.44 - 2026-08-24
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.0.43...v3.0.44)
+
+- [#7649](https://github.com/ORCID/ORCID-Source/pull/7649): PD-6180 Resolve PubMed identifiers via EuropePMC instead of the NCBI landing page
+
 ## v3.0.43 - 2026-08-21
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.0.42...v3.0.43)
