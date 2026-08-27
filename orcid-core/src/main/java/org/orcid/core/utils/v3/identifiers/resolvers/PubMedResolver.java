@@ -13,6 +13,8 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
 
 import jakarta.annotation.Resource;
 import jakarta.ws.rs.core.MediaType;
@@ -46,11 +48,19 @@ import org.orcid.pojo.IdentifierType;
 import org.orcid.pojo.PIDResolutionResult;
 import org.orcid.pojo.WorkExtended;
 import org.orcid.pojo.ajaxForm.PojoUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
+
 @Component
 public class PubMedResolver implements LinkResolver, MetadataResolver {
+
+    private static final Logger LOG = LoggerFactory.getLogger(PubMedResolver.class);
 
     @Resource
     PIDNormalizationService normalizationService;
@@ -73,15 +83,31 @@ public class PubMedResolver implements LinkResolver, MetadataResolver {
 
     private String metadataEndpoint = "https://www.ebi.ac.uk/europepmc/webservices/rest/search?query={type}:{id}&resultType=core&format=json";
 
+    /**
+     * Existence of an identifier is decided by EuropePMC, never by fetching the
+     * pubmed.ncbi.nlm.nih.gov landing page: NCBI serves that page behind a
+     * cookie/bot challenge that answers HTTP 203 to non-browser clients, which
+     * made every PubMed import fail (PD-6180). Cached so that repeated form
+     * validations of the same identifier only call EuropePMC once. A loader that
+     * throws is not cached by Guava, so transient EuropePMC failures do not stick
+     * for the life of the entry.
+     */
+    private final LoadingCache<String, Boolean> existsInEuropePmc = CacheBuilder.newBuilder().expireAfterWrite(20, TimeUnit.MINUTES).maximumSize(10000)
+            .build(new CacheLoader<String, Boolean>() {
+                public Boolean load(String endpoint) throws IOException, JSONException {
+                    return hasResults(fetchMetadata(endpoint));
+                }
+            });
+
     @Override
     public List<String> canHandle() {
         return types;
     }
 
     /**
-     * Checks for a http 200 normalizing the value and creating a URL using the
-     * resolution prefix
-     * 
+     * Checks that EuropePMC knows the identifier, normalizing the value and
+     * creating a URL using the resolution prefix
+     *
      */
     @Override
     public PIDResolutionResult resolve(String apiTypeName, String value) {
@@ -90,7 +116,7 @@ public class PubMedResolver implements LinkResolver, MetadataResolver {
 
         String normUrl = normalizationService.generateNormalisedURL(apiTypeName, value);
         if (!StringUtils.isEmpty(normUrl)) {
-            if (cache.isHttp200(normUrl)) {
+            if (exists(apiTypeName, value)) {
                 return new PIDResolutionResult(true, true, true, normUrl);
             } else {
                 return new PIDResolutionResult(false, true, true, null);
@@ -102,35 +128,54 @@ public class PubMedResolver implements LinkResolver, MetadataResolver {
 
     @Override
     public WorkExtended resolveMetadata(String apiTypeName, String value) {
-        PIDResolutionResult rr = this.resolve(apiTypeName, value);
-        if (!rr.isResolved())
+        if (StringUtils.isEmpty(value) || StringUtils.isEmpty(normalizationService.normalise(apiTypeName, value)))
             return null;
 
         try {
-            String endpoint = getPubMedEndpoint(apiTypeName, value);
-            InputStream inputStream = cache.get(endpoint, MediaType.APPLICATION_JSON);
-            BufferedReader in = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8.name()));
-
-            StringBuffer response = new StringBuffer();
-            in.lines().forEach(i -> response.append(i));
-            in.close();
-
-            // Read JSON response and print
-            JSONObject json = new JSONObject(response.toString());
-
-            if (json != null) {
+            JSONObject json = fetchMetadata(getPubMedEndpoint(apiTypeName, value));
+            if (hasResults(json)) {
                 return getWork(json);
             }
         } catch (UnexpectedResponseCodeException e) {
             // TODO: For future projects, we might want to retry when
             // e.getReceivedCode() tell us that we can retry later, like 503 or
             // 504
+            LOG.warn(String.format("UnexpectedResponseCode retrieving %s %s from EuropePMC. Expected %s, got %s", apiTypeName, value, e.getExpectedCode(),
+                    e.getReceivedCode()), e);
         } catch (IOException | JSONException | ParseException e) {
-            throw new RuntimeException(e);
+            // Returning null asks the caller to report "unable to import", which
+            // is a better outcome than a 500 the work modal cannot handle.
+            LOG.warn(String.format("Error retrieving %s %s from EuropePMC", apiTypeName, value), e);
         }
         return null;
     }
-    
+
+    private boolean exists(String apiTypeName, String value) {
+        try {
+            return existsInEuropePmc.get(getPubMedEndpoint(apiTypeName, value));
+        } catch (ExecutionException e) {
+            LOG.warn(String.format("Error resolving %s %s against EuropePMC", apiTypeName, value), e.getCause());
+            return false;
+        }
+    }
+
+    private JSONObject fetchMetadata(String endpoint) throws IOException, JSONException {
+        InputStream inputStream = cache.get(endpoint, MediaType.APPLICATION_JSON);
+        try (BufferedReader in = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8.name()))) {
+            StringBuffer response = new StringBuffer();
+            in.lines().forEach(i -> response.append(i));
+            return new JSONObject(response.toString());
+        }
+    }
+
+    private boolean hasResults(JSONObject json) throws JSONException {
+        if (json == null || !json.has("resultList")) {
+            return false;
+        }
+        JSONObject resultList = json.getJSONObject("resultList");
+        return resultList != null && resultList.has("result") && resultList.getJSONArray("result").length() > 0;
+    }
+
     // returns PID without prefix or URL etc
     private String getPubMedEndpoint(String apiTypeName, String userInput) {
         String normalised = normalizationService.normalise(apiTypeName, userInput);
