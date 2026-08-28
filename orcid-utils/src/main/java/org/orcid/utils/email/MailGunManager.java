@@ -55,6 +55,13 @@ public class MailGunManager {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MailGunManager.class);
 
+    // Delimiters for local email capture. Kept as constants because the dev
+    // CLI parses these exact strings; changing one breaks `orcid mail`.
+    private static final String EMAIL_LOG_BEGIN = "===== ORCID EMAIL =====";
+    private static final String EMAIL_LOG_TEXT = "----- text -----";
+    private static final String EMAIL_LOG_HTML = "----- html -----";
+    private static final String EMAIL_LOG_END = "===== END ORCID EMAIL =====";
+
     @PostConstruct
     public void initJerseyClientHelper() {
         // Mailgun username and password 
@@ -75,7 +82,28 @@ public class MailGunManager {
         return sendEmail(from, to, cc, subject, text, html, false);
     }
 
+    /**
+     * Writes the whole outgoing email to the log, delimited so tooling can
+     * extract it (the orcid dev CLI's `orcid mail` reads these markers).
+     *
+     * Enabled only by -Dorcid.mail.logToConsole=true, so it costs nothing and
+     * changes nothing unless a developer asks for it. It runs before the
+     * regexFilter check below: that filter is what stops local addresses ever
+     * reaching MailGun, so capturing after it would log nothing on exactly
+     * the machines that need this.
+     */
+    private void logToConsole(String from, String to, String cc, String subject, String text, String html) {
+        if (!Boolean.getBoolean("orcid.mail.logToConsole")) {
+            return;
+        }
+        LOGGER.info("{}\nFrom: {}\nTo: {}\nCc: {}\nSubject: {}\n{}\n{}\n{}\n{}\n{}",
+                new Object[] { EMAIL_LOG_BEGIN, from, to, cc == null ? "" : cc, subject,
+                        EMAIL_LOG_TEXT, text == null ? "" : text,
+                        EMAIL_LOG_HTML, html == null ? "" : html, EMAIL_LOG_END });
+    }
+
     private boolean sendEmail(String from, String to, String cc, String subject, String text, String html, boolean marketing) {
+        logToConsole(from, to, cc, subject, text, html);
         String fromEmail = getFromEmail(from);
         String apiUrl;
         if(marketing)
