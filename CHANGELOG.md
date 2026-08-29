@@ -1,3 +1,9 @@
+## v3.1.2 - 2026-08-29
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.1.1...v3.1.2)
+
+- [#7656](https://github.com/ORCID/ORCID-Source/pull/7656): Refactor ApiRateLimitFilterTest
+
 ## v3.1.1 - 2026-08-29
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.1.0...v3.1.1)
