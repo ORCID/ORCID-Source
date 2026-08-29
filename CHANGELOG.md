@@ -1,3 +1,9 @@
+## v3.1.1 - 2026-08-29
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.1.0...v3.1.1)
+
+- [#7647](https://github.com/ORCID/ORCID-Source/pull/7647): PD-5942 remove deprecated v1 reset-password-email.json endpoint that …
+
 ## v3.1.0 - 2026-08-27
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.0.46...v3.1.0)
