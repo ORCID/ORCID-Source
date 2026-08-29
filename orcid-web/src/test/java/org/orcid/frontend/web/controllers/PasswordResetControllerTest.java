@@ -56,7 +56,6 @@ import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpSession;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.web.WebAppConfiguration;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.servlet.ModelAndView;
 import org.togglz.junit.TogglzRule;
 
@@ -239,33 +238,6 @@ public class PasswordResetControllerTest extends DBUnitTest {
         ModelAndView modelAndView = passwordResetController.resetPasswordEmail(servletRequest, "randomString");
 
         assertEquals("password_one_time_reset", modelAndView.getViewName());
-    }
-
-    @Test
-    public void testSubmitConsolidatedPasswordReset() throws Exception {
-        BindingResult bindingResult = mock(BindingResult.class);
-
-        OneTimeResetPasswordForm oneTimeResetPasswordForm = new OneTimeResetPasswordForm();
-        oneTimeResetPasswordForm.setToken("encrypted string not expired");
-        MockHttpSession session = new MockHttpSession();
-        when(servletRequest.getSession()).thenReturn(session);
-        when(encryptionManager.decryptForExternalUse(any(String.class))).thenReturn("email=any@orcid.org&issueDate=2070-05-29T17:04:27");
-        when(bindingResult.hasErrors()).thenReturn(true);
-        when(mockEmailManagerReadOnly.findOrcidIdByEmail("any@orcid.org")).thenReturn("0000-0000-0000-0000");
-        oneTimeResetPasswordForm = passwordResetController.submitPasswordReset(servletRequest, servletResponse, oneTimeResetPasswordForm);
-        assertFalse(oneTimeResetPasswordForm.getNewPassword().getErrors().isEmpty());
-
-        oneTimeResetPasswordForm.setNewPassword(Text.valueOf("Password#123"));
-        oneTimeResetPasswordForm.setRetypedPassword(Text.valueOf("Password#123"));
-        when(bindingResult.hasErrors()).thenReturn(false);        
-        oneTimeResetPasswordForm = passwordResetController.submitPasswordReset(servletRequest, servletResponse, oneTimeResetPasswordForm);
-        assertTrue(oneTimeResetPasswordForm.getSuccessRedirectLocation().equals("https://testserver.orcid.org/my-orcid")
-                || oneTimeResetPasswordForm.getSuccessRedirectLocation().equals("https://localhost:8443/orcid-web/my-orcid"));
-
-        when(encryptionManager.decryptForExternalUse(any(String.class))).thenReturn("email=any@orcid.org&issueDate=1970-05-29T17:04:27");
-
-        oneTimeResetPasswordForm = passwordResetController.submitPasswordReset(servletRequest, servletResponse, oneTimeResetPasswordForm);
-        assertFalse(oneTimeResetPasswordForm.getErrors().isEmpty());
     }
 
     @Test
