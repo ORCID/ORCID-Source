@@ -1,3 +1,36 @@
+## v3.1.0 - 2026-08-27
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.0.46...v3.1.0)
+
+- [#7645](https://github.com/ORCID/ORCID-Source/pull/7645): feat/hikari-tuning
+- [#7654](https://github.com/ORCID/ORCID-Source/pull/7654): PD-7613 Bump the pinned node version in orcid-web-frontend
+- [#7643](https://github.com/ORCID/ORCID-Source/pull/7643): fix/jdk21-docker-fixes
+- [#7641](https://github.com/ORCID/ORCID-Source/pull/7641): Bump org.springframework:spring-core from 6.2.17 to 6.2.19
+
+## v3.0.46 - 2026-08-27
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.0.45...v3.0.46)
+
+- [#7652](https://github.com/ORCID/ORCID-Source/pull/7652): PD-6176 Index version-of and funded-by external identifiers in Solr
+
+## v3.0.45 - 2026-08-25
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.0.44...v3.0.45)
+
+- [#7651](https://github.com/ORCID/ORCID-Source/pull/7651): PD-6181 Send password reset link to all verified emails on the account
+
+## v3.0.44 - 2026-08-24
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.0.43...v3.0.44)
+
+- [#7649](https://github.com/ORCID/ORCID-Source/pull/7649): PD-6180 Resolve PubMed identifiers via EuropePMC instead of the NCBI landing page
+
+## v3.0.43 - 2026-08-21
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.0.42...v3.0.43)
+
+- [#7646](https://github.com/ORCID/ORCID-Source/pull/7646): PD-5900 add the OAUTH_BACKUP_EMAIL_INTERSTITIAL togglz
+
 ## v3.0.42 - 2026-08-19
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.0.41...v3.0.42)

@@ -176,7 +176,9 @@ public class PasswordResetController extends BaseController {
                     LOGGER.info("Password reset: API record creation email sent to '{}'", passwordResetRequest.getEmail());
                     recordEmailSender.sendClaimReminderEmail(orcid,0,passwordResetRequest.getEmail());
                 } else {
-                    LOGGER.info("Password reset: Reset password email sent to '{}'", passwordResetRequest.getEmail());
+                    // The sender fans the link out to every verified address on the record and
+                    // logs the recipient counts itself, so this only records the request.
+                    LOGGER.info("Password reset: Reset password requested for '{}'", passwordResetRequest.getEmail());
                     recordEmailSender.sendPasswordResetEmail(passwordResetRequest.getEmail(), orcid);
                 }
             } else {
