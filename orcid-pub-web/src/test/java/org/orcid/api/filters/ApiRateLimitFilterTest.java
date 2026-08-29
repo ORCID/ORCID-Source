@@ -2,17 +2,17 @@ package org.orcid.api.filters;
 
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
+import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.orcid.core.api.rate_limit.PapiRateLimitRedisClient;
-import org.orcid.test.OrcidJUnit4ClassRunner;
-import org.orcid.test.TargetProxyHelper;
+import org.orcid.core.togglz.Features;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
-import org.springframework.test.context.ContextConfiguration;
-import jakarta.annotation.Resource;
+import org.springframework.test.util.ReflectionTestUtils;
+import org.togglz.junit.TogglzRule;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import java.io.IOException;
@@ -22,12 +22,9 @@ import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
-@RunWith(OrcidJUnit4ClassRunner.class)
-@ContextConfiguration(locations = { "classpath:test-orcid-t1-web-context.xml" })
 public class ApiRateLimitFilterTest {
 
-    @Resource
-    public ApiRateLimitFilter apiRateLimitFilter;
+    private ApiRateLimitFilter apiRateLimitFilter;
 
     @Mock
     private FilterChain filterChainMock;
@@ -35,15 +32,37 @@ public class ApiRateLimitFilterTest {
     @Mock
     private PapiRateLimitRedisClient papiRateLimitRedisMock;
 
-    MockHttpServletRequest httpServletRequestMock = new MockHttpServletRequest();
+    private MockHttpServletRequest httpServletRequestMock;
 
-    MockHttpServletResponse httpServletResponseMock = new MockHttpServletResponse();
+    private MockHttpServletResponse httpServletResponseMock;
+
+    @Rule
+    public TogglzRule togglzRule = TogglzRule.allEnabled(Features.class);
+
+    @Before
+    public void setUp() throws ServletException {
+        MockitoAnnotations.initMocks(this);
+        apiRateLimitFilter = new ApiRateLimitFilter();
+        httpServletRequestMock = new MockHttpServletRequest();
+        httpServletResponseMock = new MockHttpServletResponse();
+
+        ReflectionTestUtils.setField(apiRateLimitFilter, "papiRedisClient", papiRateLimitRedisMock);
+        ReflectionTestUtils.setField(apiRateLimitFilter, "anonymousRequestLimit", 10000);
+        ReflectionTestUtils.setField(apiRateLimitFilter, "knownRequestLimit", 40000);
+        ReflectionTestUtils.setField(apiRateLimitFilter, "papiWhiteSpaceSeparatedWhiteList", "127.0.0.1");
+        ReflectionTestUtils.setField(apiRateLimitFilter, "papiClientIdWhiteSpaceSeparatedWhiteList", "");
+        ReflectionTestUtils.setField(apiRateLimitFilter, "papiReferrerWhiteSpaceSeparatedWhiteList", "");
+        ReflectionTestUtils.setField(apiRateLimitFilter, "papiCidrRangeWhiteSpaceSeparatedWhiteList", "10.0.0.0/8");
+        apiRateLimitFilter.afterPropertiesSet();
+    }
+
+    private void setRateLimitingEnabled(boolean enabled) {
+        ReflectionTestUtils.setField(apiRateLimitFilter, "enableRateLimiting", enabled);
+    }
 
     @Test
     public void doFilterInternal_rateLimitingDisabledTest() throws ServletException, IOException {
-        MockitoAnnotations.initMocks(this);
-        TargetProxyHelper.injectIntoProxy(apiRateLimitFilter, "enableRateLimiting", false);
-        TargetProxyHelper.injectIntoProxy(apiRateLimitFilter, "papiRedisClient", papiRateLimitRedisMock);
+        setRateLimitingEnabled(false);
 
         apiRateLimitFilter.doFilterInternal(httpServletRequestMock, httpServletResponseMock, filterChainMock);
 
@@ -55,11 +74,9 @@ public class ApiRateLimitFilterTest {
 
     @Test
     public void doFilterInternal_annonymousRequest_newEntry_X_FORWARDED_FOR_header_Test() throws ServletException, IOException {
-        MockitoAnnotations.initMocks(this);
         String ip = "127.0.0.2";
 
-        TargetProxyHelper.injectIntoProxy(apiRateLimitFilter, "enableRateLimiting", true);
-        TargetProxyHelper.injectIntoProxy(apiRateLimitFilter, "papiRedisClient", papiRateLimitRedisMock);
+        setRateLimitingEnabled(true);
 
         when(papiRateLimitRedisMock.getTodayDailyLimitsForClient(eq(ip))).thenReturn(null);
         httpServletRequestMock.addHeader("X-FORWARDED-FOR", ip);
@@ -71,11 +88,9 @@ public class ApiRateLimitFilterTest {
 
     @Test
     public void doFilterInternal_annonymousRequest_newEntry_X_REAL_IP_header_Test() throws ServletException, IOException {
-        MockitoAnnotations.initMocks(this);
         String ip = "127.0.0.2";
 
-        TargetProxyHelper.injectIntoProxy(apiRateLimitFilter, "enableRateLimiting", true);
-        TargetProxyHelper.injectIntoProxy(apiRateLimitFilter, "papiRedisClient", papiRateLimitRedisMock);
+        setRateLimitingEnabled(true);
 
         when(papiRateLimitRedisMock.getTodayDailyLimitsForClient(eq(ip))).thenReturn(null);
         httpServletRequestMock.addHeader("X-REAL-IP", ip);
@@ -88,11 +103,9 @@ public class ApiRateLimitFilterTest {
 
     @Test
     public void doFilterInternal_annonymousRequest_newEntry_whitelisted_IP_Test() throws ServletException, IOException {
-        MockitoAnnotations.initMocks(this);
         String ip = "127.0.0.1";
 
-        TargetProxyHelper.injectIntoProxy(apiRateLimitFilter, "enableRateLimiting", true);
-        TargetProxyHelper.injectIntoProxy(apiRateLimitFilter, "papiRedisClient", papiRateLimitRedisMock);
+        setRateLimitingEnabled(true);
 
         when(papiRateLimitRedisMock.getTodayDailyLimitsForClient(eq(ip))).thenReturn(null);
         httpServletRequestMock.addHeader("X-REAL-IP", ip);
@@ -104,7 +117,6 @@ public class ApiRateLimitFilterTest {
 
     @Test
     public void doFilterInternal_annonymousRequest_existingEntryTest() throws ServletException, IOException, JSONException {
-        MockitoAnnotations.initMocks(this);
         String ip = "127.0.0.2";
         JSONObject dailyLimitsObj = new JSONObject();
         dailyLimitsObj.put(PapiRateLimitRedisClient.KEY_DATE_CREATED, System.currentTimeMillis());
@@ -114,8 +126,7 @@ public class ApiRateLimitFilterTest {
         dailyLimitsObj.put(PapiRateLimitRedisClient.KEY_REQUEST_COUNT, 1);
         dailyLimitsObj.put(PapiRateLimitRedisClient.KEY_LAST_MODIFIED, System.currentTimeMillis());
 
-        TargetProxyHelper.injectIntoProxy(apiRateLimitFilter, "enableRateLimiting", true);
-        TargetProxyHelper.injectIntoProxy(apiRateLimitFilter, "papiRedisClient", papiRateLimitRedisMock);
+        setRateLimitingEnabled(true);
 
         when(papiRateLimitRedisMock.getTodayDailyLimitsForClient(eq(ip))).thenReturn(dailyLimitsObj);
         httpServletRequestMock.addHeader("X-REAL-IP", ip);
@@ -127,13 +138,10 @@ public class ApiRateLimitFilterTest {
 
     @Test
     public void doFilterInternal_clientRequest_newEntryTest() throws ServletException, IOException {
-        MockitoAnnotations.initMocks(this);
         String ip = "127.0.0.2";
-        String clientId = "clientId1";
 
         httpServletRequestMock.addHeader("Authorization", "TEST_TOKEN");
-        TargetProxyHelper.injectIntoProxy(apiRateLimitFilter, "enableRateLimiting", true);
-        TargetProxyHelper.injectIntoProxy(apiRateLimitFilter, "papiRedisClient", papiRateLimitRedisMock);
+        setRateLimitingEnabled(true);
 
         when(papiRateLimitRedisMock.getTodayDailyLimitsForClient(eq(ip))).thenReturn(null);
         httpServletRequestMock.addHeader("X-REAL-IP", ip);
@@ -145,7 +153,6 @@ public class ApiRateLimitFilterTest {
 
     @Test
     public void doFilterInternal_clientRequest_existingEntryTest() throws ServletException, IOException, JSONException {
-        MockitoAnnotations.initMocks(this);
         String ip = "127.0.0.2";
         String clientId = "clientId1";
 
@@ -158,8 +165,7 @@ public class ApiRateLimitFilterTest {
         dailyLimitsObj.put(PapiRateLimitRedisClient.KEY_LAST_MODIFIED, System.currentTimeMillis());
 
         httpServletRequestMock.addHeader("Authorization", "TEST_TOKEN");
-        TargetProxyHelper.injectIntoProxy(apiRateLimitFilter, "enableRateLimiting", true);
-        TargetProxyHelper.injectIntoProxy(apiRateLimitFilter, "papiRedisClient", papiRateLimitRedisMock);
+        setRateLimitingEnabled(true);
 
         when(papiRateLimitRedisMock.getDailyLimitsForClient(eq(clientId), any())).thenReturn(dailyLimitsObj);
         httpServletRequestMock.addHeader("X-REAL-IP", ip);
@@ -171,7 +177,6 @@ public class ApiRateLimitFilterTest {
 
     @Test
     public void doFilterInternal_checkLimitReachedTest() throws ServletException, IOException, JSONException {
-        MockitoAnnotations.initMocks(this);
         String ip = "127.0.0.2";
 
         JSONObject dailyLimitsObj = new JSONObject();
@@ -182,8 +187,7 @@ public class ApiRateLimitFilterTest {
         dailyLimitsObj.put(PapiRateLimitRedisClient.KEY_REQUEST_COUNT, 100000001L);
         dailyLimitsObj.put(PapiRateLimitRedisClient.KEY_LAST_MODIFIED, System.currentTimeMillis());
 
-        TargetProxyHelper.injectIntoProxy(apiRateLimitFilter, "enableRateLimiting", true);
-        TargetProxyHelper.injectIntoProxy(apiRateLimitFilter, "papiRedisClient", papiRateLimitRedisMock);
+        setRateLimitingEnabled(true);
 
         when(papiRateLimitRedisMock.getTodayDailyLimitsForClient(eq(ip))).thenReturn(dailyLimitsObj);
         httpServletRequestMock.addHeader("X-REAL-IP", ip);
@@ -199,11 +203,9 @@ public class ApiRateLimitFilterTest {
 
     @Test
     public void doFilterInternal_annonymousRequest_whitelisted_cidr_IP_Test() throws ServletException, IOException {
-        MockitoAnnotations.initMocks(this);
         String ip_in_cidr = "10.0.0.0";
 
-        TargetProxyHelper.injectIntoProxy(apiRateLimitFilter, "enableRateLimiting", true);
-        TargetProxyHelper.injectIntoProxy(apiRateLimitFilter, "papiRedisClient", papiRateLimitRedisMock);
+        setRateLimitingEnabled(true);
 
         when(papiRateLimitRedisMock.getTodayDailyLimitsForClient(eq(ip_in_cidr))).thenReturn(null);
         httpServletRequestMock.addHeader("X-REAL-IP", ip_in_cidr);
@@ -215,11 +217,9 @@ public class ApiRateLimitFilterTest {
 
     @Test
     public void doFilterInternal_annonymousRequest_not_whitelisted_cidr_IP_Test() throws ServletException, IOException {
-        MockitoAnnotations.initMocks(this);
         String ip_not_cidr = "20.0.0.0";
 
-        TargetProxyHelper.injectIntoProxy(apiRateLimitFilter, "enableRateLimiting", true);
-        TargetProxyHelper.injectIntoProxy(apiRateLimitFilter, "papiRedisClient", papiRateLimitRedisMock);
+        setRateLimitingEnabled(true);
 
         when(papiRateLimitRedisMock.getTodayDailyLimitsForClient(eq(ip_not_cidr))).thenReturn(null);
         httpServletRequestMock.addHeader("X-REAL-IP", ip_not_cidr);
