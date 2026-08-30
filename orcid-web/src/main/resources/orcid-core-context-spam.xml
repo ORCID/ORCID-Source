@@ -700,6 +700,8 @@
     <bean id="twoFactorAuthenticationManager" class="org.orcid.core.manager.impl.TwoFactorAuthenticationManagerImpl" />
 
     <bean id="backupCodeManager" class="org.orcid.core.manager.impl.BackupCodeManagerImpl" />
+
+    <bean id="recoveryPhoneManager" class="org.orcid.core.manager.impl.RecoveryPhoneManagerImpl" />
     
     <bean id="mailGunManager" class="org.orcid.utils.email.MailGunManager" />
     <bean id="recordEmailSender" class="org.orcid.frontend.email.RecordEmailSender" />

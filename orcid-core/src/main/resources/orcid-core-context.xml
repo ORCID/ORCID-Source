@@ -728,6 +728,8 @@
     <bean id="twoFactorAuthenticationManager" class="org.orcid.core.manager.impl.TwoFactorAuthenticationManagerImpl" />
 
     <bean id="backupCodeManager" class="org.orcid.core.manager.impl.BackupCodeManagerImpl" />
+
+    <bean id="recoveryPhoneManager" class="org.orcid.core.manager.impl.RecoveryPhoneManagerImpl" />
     
 	<bean id="messageSource" primary="true"
 		class="org.springframework.context.support.ReloadableResourceBundleMessageSource">

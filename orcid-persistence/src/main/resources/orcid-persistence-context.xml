@@ -258,6 +258,8 @@
     <bean id="identifierTypeDao" class="org.orcid.persistence.dao.impl.IdentifierTypeDaoImpl" />
     
     <bean id="backupCodeDao" class="org.orcid.persistence.dao.impl.BackupCodeDaoImpl" />
+
+    <bean id="profileRecoveryPhoneDao" class="org.orcid.persistence.dao.impl.ProfileRecoveryPhoneDaoImpl" />
     
     <bean id="orgImportLogDao" class="org.orcid.persistence.dao.impl.OrgImportLogDaoImpl" />
     

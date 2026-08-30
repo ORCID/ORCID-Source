@@ -10,6 +10,7 @@ import org.orcid.core.exception.UserAlreadyUsing2FAException;
 import org.orcid.core.manager.BackupCodeManager;
 import org.orcid.core.manager.EncryptionManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
+import org.orcid.core.manager.RecoveryPhoneManager;
 import org.orcid.core.manager.TwoFactorAuthenticationManager;
 import org.orcid.core.manager.read_only.EmailManagerReadOnly;
 import org.orcid.jaxb.model.record_v2.Email;
@@ -43,6 +44,9 @@ public class TwoFactorAuthenticationManagerImpl implements TwoFactorAuthenticati
 
     @Resource
     private BackupCodeManager backupCodeManager;
+
+    @Resource
+    private RecoveryPhoneManager recoveryPhoneManager;
 
     @Resource
     private ProfileEventDao profileEventDao;
@@ -102,6 +106,7 @@ public class TwoFactorAuthenticationManagerImpl implements TwoFactorAuthenticati
             public Boolean doInTransaction(TransactionStatus status) {
                 profileDao.disable2FA(orcid);
                 backupCodeManager.removeUnusedBackupCodes(orcid);
+                recoveryPhoneManager.removeRecoveryPhone(orcid);
                 profileEventDao.persist(new ProfileEventEntity(orcid, ProfileEventType.PROFILE_2FA_DISABLED));
                 return true;
             }
@@ -118,6 +123,7 @@ public class TwoFactorAuthenticationManagerImpl implements TwoFactorAuthenticati
             public Boolean doInTransaction(TransactionStatus status) {
                 profileDao.disable2FA(orcid);
                 backupCodeManager.removeUnusedBackupCodes(orcid);
+                recoveryPhoneManager.removeRecoveryPhone(orcid);
                 profileEventDao.persist(new ProfileEventEntity(orcid, ProfileEventType.PROFILE_2FA_DISABLED_BY_ADMIN, message));
                 return true;
             }
