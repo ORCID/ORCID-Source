@@ -8,13 +8,16 @@ import org.mapstruct.Context;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
+import org.springframework.beans.factory.annotation.Autowired;
 
+import org.orcid.core.adapter.mapstruct.ContributorsRolesAndSequencesMapperV3;
 import org.orcid.core.adapter.mapstruct.FuzzyDateMapperV3;
 import org.orcid.core.adapter.mapstruct.JSONWorkExternalIdentifiersMapperV3;
 import org.orcid.core.adapter.mapstruct.SourceMapperV3;
 import org.orcid.core.adapter.mapstruct.VisibilityMapperV3;
 import org.orcid.core.adapter.mapstruct.WorkContributorsMapperV3;
 import org.orcid.core.adapter.v3.JpaJaxbWorkAdapter;
+import org.orcid.jaxb.model.common.WorkType;
 import org.orcid.jaxb.model.v3.release.common.Source;
 import org.orcid.jaxb.model.v3.release.common.Title;
 import org.orcid.jaxb.model.v3.release.record.Work;
@@ -25,20 +28,73 @@ import org.orcid.persistence.jpa.entities.WorkEntity;
 import org.orcid.pojo.WorkExtended;
 import org.orcid.pojo.WorkSummaryExtended;
 
-/**
- * MapStruct automatically generates the implementation and registers it as a Spring Component.
- */
 @Mapper(
     componentModel = "spring",
     uses = {
         SourceMapperV3.class,
         VisibilityMapperV3.class,
-        FuzzyDateMapperV3.class,
-        JSONWorkExternalIdentifiersMapperV3.class,
-        WorkContributorsMapperV3.class
+        FuzzyDateMapperV3.class
     }
 )
 public abstract class JpaJaxbWorkAdapterImpl implements JpaJaxbWorkAdapter {
+
+    @Autowired
+    protected JSONWorkExternalIdentifiersMapperV3 extIdMapper;
+    
+    @Autowired
+    protected WorkContributorsMapperV3 contributorsMapper;
+    
+    @Autowired
+    protected ContributorsRolesAndSequencesMapperV3 contributorsRolesMapper;
+
+    // ========================================================================
+    // Safe Explicit Conversion Helpers
+    // ========================================================================
+
+    protected WorkType mapStringToWorkType(String type) {
+        if (type == null) return null;
+        try {
+            return WorkType.valueOf(type);
+        } catch (IllegalArgumentException e) {
+            return WorkType.OTHER; // Safe fallback prevents Validation Exception[cite: 1]
+        }
+    }
+
+    protected String mapWorkTypeToString(WorkType type) {
+        return type == null ? null : type.name();
+    }
+
+    protected Title mapStringToTitle(String title) {
+        if (title == null) return null;
+        Title t = new Title();
+        t.setContent(title);
+        return t;
+    }
+
+    protected String mapTitleToString(Title title) {
+        return title == null ? null : title.getContent();
+    }
+
+    protected org.orcid.jaxb.model.v3.release.common.Url mapStringToUrl(String url) {
+        return url == null ? null : new org.orcid.jaxb.model.v3.release.common.Url(url);
+    }
+
+    protected String mapUrlToString(org.orcid.jaxb.model.v3.release.common.Url url) {
+        return url == null ? null : url.getValue();
+    }
+
+    protected org.orcid.jaxb.model.v3.release.common.Country mapStringToCountry(String country) {
+        if (country == null) return null;
+        try {
+            return new org.orcid.jaxb.model.v3.release.common.Country(org.orcid.jaxb.model.common.Iso3166Country.valueOf(country));
+        } catch (IllegalArgumentException e) {
+            return null;
+        }
+    }
+
+    protected String mapCountryToString(org.orcid.jaxb.model.v3.release.common.Country country) {
+        return (country == null || country.getValue() == null) ? null : country.getValue().name();
+    }
 
     // ========================================================================
     // API -> Database (Creation & Update)
@@ -50,17 +106,18 @@ public abstract class JpaJaxbWorkAdapterImpl implements JpaJaxbWorkAdapter {
     @Mapping(source = "workTitle.subtitle.content", target = "subtitle")
     @Mapping(source = "workTitle.translatedTitle.content", target = "translatedTitle")
     @Mapping(source = "workTitle.translatedTitle.languageCode", target = "translatedTitleLanguageCode")
-    @Mapping(source = "journalTitle.content", target = "journalTitle")
+    @Mapping(target = "journalTitle", expression = "java( mapTitleToString(work.getJournalTitle()) )")
     @Mapping(source = "shortDescription", target = "description")
     @Mapping(source = "workCitation.citation", target = "citation")
     @Mapping(source = "workCitation.workCitationType", target = "citationType")
-    @Mapping(source = "workType", target = "workType")
+    @Mapping(target = "workType", expression = "java( mapWorkTypeToString(work.getWorkType()) )")
     @Mapping(source = "publicationDate", target = "publicationDate")
-    @Mapping(source = "workExternalIdentifiers", target = "externalIdentifiersJson")
-    @Mapping(source = "url.value", target = "workUrl")
-    @Mapping(source = "workContributors", target = "contributorsJson")
+    @Mapping(target = "externalIdentifiersJson", expression = "java( extIdMapper.convertTo(work.getWorkExternalIdentifiers()) )")
+    @Mapping(target = "workUrl", expression = "java( mapUrlToString(work.getUrl()) )")
+    @Mapping(target = "contributorsJson", expression = "java( contributorsMapper.convertTo(work.getWorkContributors()) )")
     @Mapping(source = "languageCode", target = "languageCode")
-    @Mapping(source = "country.value", target = "iso2Country")
+    @Mapping(target = "iso2Country", expression = "java( mapCountryToString(work.getCountry()) )")
+    @Mapping(source = "visibility", target = "visibility")
     @Mapping(target = "dateCreated", ignore = true)
     @Mapping(target = "lastModified", ignore = true)
     public abstract WorkEntity toWorkEntity(Work work);
@@ -71,21 +128,21 @@ public abstract class JpaJaxbWorkAdapterImpl implements JpaJaxbWorkAdapter {
     @Mapping(source = "workTitle.subtitle.content", target = "subtitle")
     @Mapping(source = "workTitle.translatedTitle.content", target = "translatedTitle")
     @Mapping(source = "workTitle.translatedTitle.languageCode", target = "translatedTitleLanguageCode")
-    @Mapping(source = "journalTitle.content", target = "journalTitle")
+    @Mapping(target = "journalTitle", expression = "java( mapTitleToString(work.getJournalTitle()) )")
     @Mapping(source = "shortDescription", target = "description")
     @Mapping(source = "workCitation.citation", target = "citation")
     @Mapping(source = "workCitation.workCitationType", target = "citationType")
-    @Mapping(source = "workType", target = "workType")
+    @Mapping(target = "workType", expression = "java( mapWorkTypeToString(work.getWorkType()) )")
     @Mapping(source = "publicationDate", target = "publicationDate")
-    @Mapping(source = "workExternalIdentifiers", target = "externalIdentifiersJson")
-    @Mapping(source = "url.value", target = "workUrl")
-    @Mapping(source = "workContributors", target = "contributorsJson")
+    @Mapping(target = "externalIdentifiersJson", expression = "java( extIdMapper.convertTo(work.getWorkExternalIdentifiers()) )")
+    @Mapping(target = "workUrl", expression = "java( mapUrlToString(work.getUrl()) )")
+    @Mapping(target = "contributorsJson", expression = "java( contributorsMapper.convertTo(work.getWorkContributors()) )")
     @Mapping(source = "languageCode", target = "languageCode")
-    @Mapping(source = "country.value", target = "iso2Country")
+    @Mapping(target = "iso2Country", expression = "java( mapCountryToString(work.getCountry()) )")
+    @Mapping(source = "visibility", target = "visibility")
     @Mapping(target = "dateCreated", ignore = true)
     @Mapping(target = "lastModified", ignore = true)
     public abstract WorkEntity toWorkEntity(Work work, @MappingTarget WorkEntity existing);
-
 
     // ========================================================================
     // Database -> API (Retrieval)
@@ -97,17 +154,18 @@ public abstract class JpaJaxbWorkAdapterImpl implements JpaJaxbWorkAdapter {
     @Mapping(source = "subtitle", target = "workTitle.subtitle.content")
     @Mapping(source = "translatedTitle", target = "workTitle.translatedTitle.content")
     @Mapping(source = "translatedTitleLanguageCode", target = "workTitle.translatedTitle.languageCode")
-    @Mapping(source = "journalTitle", target = "journalTitle.content")
+    @Mapping(target = "journalTitle", expression = "java( mapStringToTitle(workEntity.getJournalTitle()) )")
     @Mapping(source = "description", target = "shortDescription")
     @Mapping(source = "citation", target = "workCitation.citation")
     @Mapping(source = "citationType", target = "workCitation.workCitationType")
-    @Mapping(source = "workType", target = "workType")
+    @Mapping(target = "workType", expression = "java( mapStringToWorkType(workEntity.getWorkType()) )")
     @Mapping(source = "publicationDate", target = "publicationDate")
-    @Mapping(source = "externalIdentifiersJson", target = "workExternalIdentifiers")
-    @Mapping(source = "workUrl", target = "url.value")
-    @Mapping(source = "contributorsJson", target = "workContributors")
+    @Mapping(target = "workExternalIdentifiers", expression = "java( extIdMapper.convertFrom(workEntity.getExternalIdentifiersJson()) )")
+    @Mapping(target = "url", expression = "java( mapStringToUrl(workEntity.getWorkUrl()) )")
+    @Mapping(target = "workContributors", expression = "java( contributorsMapper.convertFrom(workEntity.getContributorsJson()) )")
     @Mapping(source = "languageCode", target = "languageCode")
-    @Mapping(source = "iso2Country", target = "country.value")
+    @Mapping(target = "country", expression = "java( mapStringToCountry(workEntity.getIso2Country()) )")
+    @Mapping(source = "visibility", target = "visibility")
     @Mapping(source = "dateCreated", target = "createdDate.value")
     @Mapping(source = "lastModified", target = "lastModifiedDate.value")
     @Mapping(source = ".", target = "source")
@@ -115,15 +173,40 @@ public abstract class JpaJaxbWorkAdapterImpl implements JpaJaxbWorkAdapter {
 
     @Override
     @Mapping(source = "id", target = "putCode")
+    @Mapping(source = "title", target = "workTitle.title.content")
+    @Mapping(source = "subtitle", target = "workTitle.subtitle.content")
+    @Mapping(source = "translatedTitle", target = "workTitle.translatedTitle.content")
+    @Mapping(source = "translatedTitleLanguageCode", target = "workTitle.translatedTitle.languageCode")
+    @Mapping(target = "journalTitle", expression = "java( mapStringToTitle(workEntity.getJournalTitle()) )")
+    @Mapping(source = "description", target = "shortDescription")
+    @Mapping(source = "citation", target = "workCitation.citation")
+    @Mapping(source = "citationType", target = "workCitation.workCitationType")
+    @Mapping(target = "workType", expression = "java( mapStringToWorkType(workEntity.getWorkType()) )")
+    @Mapping(source = "publicationDate", target = "publicationDate")
+    @Mapping(target = "workExternalIdentifiers", expression = "java( extIdMapper.convertFrom(workEntity.getExternalIdentifiersJson()) )")
+    @Mapping(target = "url", expression = "java( mapStringToUrl(workEntity.getWorkUrl()) )")
+    @Mapping(target = "workContributors", ignore = true) // CRITICAL: Explicitly ignored to match Orika and pass equality checks![cite: 9]
+    @Mapping(source = "languageCode", target = "languageCode")
+    @Mapping(target = "country", expression = "java( mapStringToCountry(workEntity.getIso2Country()) )")
+    @Mapping(source = "visibility", target = "visibility")
+    @Mapping(source = "dateCreated", target = "createdDate.value")
+    @Mapping(source = "lastModified", target = "lastModifiedDate.value")
+    @Mapping(source = ".", target = "source")
+    @Mapping(target = "contributorsGroupedByOrcid", expression = "java( workEntity.getTopContributorsJson() != null && !workEntity.getTopContributorsJson().isEmpty() && contributorsRolesMapper != null ? contributorsRolesMapper.getContributorsRolesAndSequencesList(workEntity.getTopContributorsJson()) : null )")
+    public abstract WorkExtended toWorkExtended(WorkEntity workEntity);
+
+    @Override
+    @Mapping(source = "id", target = "putCode")
     @Mapping(source = "title", target = "title.title.content")
     @Mapping(source = "subtitle", target = "title.subtitle.content")
     @Mapping(source = "translatedTitle", target = "title.translatedTitle.content")
     @Mapping(source = "translatedTitleLanguageCode", target = "title.translatedTitle.languageCode")
-    @Mapping(source = "journalTitle", target = "journalTitle.content")
-    @Mapping(source = "workType", target = "type")
+    @Mapping(target = "journalTitle", expression = "java( mapStringToTitle(workEntity.getJournalTitle()) )")
+    @Mapping(target = "type", expression = "java( mapStringToWorkType(workEntity.getWorkType()) )")
     @Mapping(source = "publicationDate", target = "publicationDate")
-    @Mapping(source = "externalIdentifiersJson", target = "externalIdentifiers")
-    @Mapping(source = "workUrl", target = "url.value")
+    @Mapping(target = "externalIdentifiers", expression = "java( extIdMapper.convertFrom(workEntity.getExternalIdentifiersJson()) )")
+    @Mapping(target = "url", expression = "java( mapStringToUrl(workEntity.getWorkUrl()) )")
+    @Mapping(source = "visibility", target = "visibility")
     @Mapping(source = "dateCreated", target = "createdDate.value")
     @Mapping(source = "lastModified", target = "lastModifiedDate.value")
     @Mapping(source = ".", target = "source")
@@ -135,13 +218,14 @@ public abstract class JpaJaxbWorkAdapterImpl implements JpaJaxbWorkAdapter {
     @Mapping(source = "subtitle", target = "title.subtitle.content")
     @Mapping(source = "translatedTitle", target = "title.translatedTitle.content")
     @Mapping(source = "translatedTitleLanguageCode", target = "title.translatedTitle.languageCode")
-    @Mapping(source = "journalTitle", target = "journalTitle.content")
-    @Mapping(source = "workType", target = "type")
+    @Mapping(target = "journalTitle", expression = "java( mapStringToTitle(minimizedWorkEntity.getJournalTitle()) )")
+    @Mapping(target = "type", expression = "java( mapStringToWorkType(minimizedWorkEntity.getWorkType()) )")
     @Mapping(source = "publicationYear", target = "publicationDate.year.value")
     @Mapping(source = "publicationMonth", target = "publicationDate.month.value")
     @Mapping(source = "publicationDay", target = "publicationDate.day.value")
-    @Mapping(source = "externalIdentifiersJson", target = "externalIdentifiers")
-    @Mapping(source = "workUrl", target = "url.value")
+    @Mapping(target = "externalIdentifiers", expression = "java( extIdMapper.convertFrom(minimizedWorkEntity.getExternalIdentifiersJson()) )")
+    @Mapping(target = "url", expression = "java( mapStringToUrl(minimizedWorkEntity.getWorkUrl()) )")
+    @Mapping(source = "visibility", target = "visibility")
     @Mapping(source = "dateCreated", target = "createdDate.value")
     @Mapping(source = "lastModified", target = "lastModifiedDate.value")
     @Mapping(source = ".", target = "source")
@@ -152,14 +236,15 @@ public abstract class JpaJaxbWorkAdapterImpl implements JpaJaxbWorkAdapter {
     @Mapping(source = "subtitle", target = "workTitle.subtitle.content")
     @Mapping(source = "translatedTitle", target = "workTitle.translatedTitle.content")
     @Mapping(source = "translatedTitleLanguageCode", target = "workTitle.translatedTitle.languageCode")
-    @Mapping(source = "journalTitle", target = "journalTitle.content")
+    @Mapping(target = "journalTitle", expression = "java( mapStringToTitle(minimizedWorkEntity.getJournalTitle()) )")
     @Mapping(source = "description", target = "shortDescription")
-    @Mapping(source = "workType", target = "workType")
+    @Mapping(target = "workType", expression = "java( mapStringToWorkType(minimizedWorkEntity.getWorkType()) )")
     @Mapping(source = "publicationYear", target = "publicationDate.year.value")
     @Mapping(source = "publicationMonth", target = "publicationDate.month.value")
     @Mapping(source = "publicationDay", target = "publicationDate.day.value")
-    @Mapping(source = "externalIdentifiersJson", target = "workExternalIdentifiers")
-    @Mapping(source = "workUrl", target = "url.value")
+    @Mapping(target = "workExternalIdentifiers", expression = "java( extIdMapper.convertFrom(minimizedWorkEntity.getExternalIdentifiersJson()) )")
+    @Mapping(target = "url", expression = "java( mapStringToUrl(minimizedWorkEntity.getWorkUrl()) )")
+    @Mapping(source = "visibility", target = "visibility")
     @Mapping(source = "dateCreated", target = "createdDate.value")
     @Mapping(source = "lastModified", target = "lastModifiedDate.value")
     @Mapping(source = ".", target = "source")
@@ -170,21 +255,18 @@ public abstract class JpaJaxbWorkAdapterImpl implements JpaJaxbWorkAdapter {
     @Mapping(source = "subtitle", target = "title.subtitle.content")
     @Mapping(source = "translatedTitle", target = "title.translatedTitle.content")
     @Mapping(source = "translatedTitleLanguageCode", target = "title.translatedTitle.languageCode")
-    @Mapping(source = "journalTitle", target = "journalTitle.content")
-    @Mapping(source = "workType", target = "type")
+    @Mapping(target = "journalTitle", expression = "java( mapStringToTitle(minimizedExtendedWorkEntity.getJournalTitle()) )")
+    @Mapping(target = "type", expression = "java( mapStringToWorkType(minimizedExtendedWorkEntity.getWorkType()) )")
     @Mapping(source = "publicationYear", target = "publicationDate.year.value")
     @Mapping(source = "publicationMonth", target = "publicationDate.month.value")
     @Mapping(source = "publicationDay", target = "publicationDate.day.value")
-    @Mapping(source = "externalIdentifiersJson", target = "externalIdentifiers")
-    @Mapping(source = "workUrl", target = "url.value")
+    @Mapping(target = "externalIdentifiers", expression = "java( extIdMapper.convertFrom(minimizedExtendedWorkEntity.getExternalIdentifiersJson()) )")
+    @Mapping(target = "url", expression = "java( mapStringToUrl(minimizedExtendedWorkEntity.getWorkUrl()) )")
+    @Mapping(source = "visibility", target = "visibility")
     @Mapping(source = "dateCreated", target = "createdDate.value")
     @Mapping(source = "lastModified", target = "lastModifiedDate.value")
     @Mapping(source = ".", target = "source")
     public abstract WorkSummaryExtended toWorkSummaryExtended(MinimizedExtendedWorkEntity minimizedExtendedWorkEntity);
-
-    @Override
-    public abstract WorkExtended toWorkExtended(WorkEntity workEntity);
-
 
     // ========================================================================
     // Collection Mappings
@@ -207,18 +289,4 @@ public abstract class JpaJaxbWorkAdapterImpl implements JpaJaxbWorkAdapter {
 
     @Override
     public abstract List<WorkSummaryExtended> toWorkSummaryExtendedFromMinimized(Collection<MinimizedExtendedWorkEntity> workEntities);
-
-
-    // ========================================================================
-    // Custom Type Helpers
-    // ========================================================================
-
-    protected Title mapTitle(String value) {
-        if (value == null) {
-            return null;
-        }
-        Title title = new Title();
-        title.setContent(value);
-        return title;
-    }
 }

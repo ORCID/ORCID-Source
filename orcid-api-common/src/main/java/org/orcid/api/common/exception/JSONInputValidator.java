@@ -1,6 +1,6 @@
 package org.orcid.api.common.exception;
 
-import java.net.URL;
+import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -8,6 +8,7 @@ import javax.xml.XMLConstants;
 import jakarta.xml.bind.JAXBContext;
 import jakarta.xml.bind.JAXBException;
 import jakarta.xml.bind.util.JAXBSource;
+import javax.xml.transform.stream.StreamSource;
 import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
 import javax.xml.validation.Validator;
@@ -66,20 +67,38 @@ public class JSONInputValidator {
         SCHEMA_LOCATIONS.put(org.orcid.jaxb.model.record_v2.PersonExternalIdentifier.class, "/record_2.0/person-external-identifier-2.0.xsd");
         SCHEMA_LOCATIONS.put(org.orcid.jaxb.model.record_v2.Keyword.class, "/record_2.0/keyword-2.0.xsd");
         SCHEMA_LOCATIONS.put(org.orcid.jaxb.model.record_v2.Address.class, "/record_2.0/address-2.0.xsd");
-      
+       
         VALIDATORS = new HashMap<Class<?>, Validator>();
         CONTEXTS = new HashMap<Class<?>, JAXBContext>();
         SchemaFactory sf = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
+        
         for (Class<?> c : SCHEMA_LOCATIONS.keySet()){
             try {
-                URL u = JSONInputValidator.class.getResource(SCHEMA_LOCATIONS.get(c));
-                Schema schema = sf.newSchema(u);
+                String schemaPath = SCHEMA_LOCATIONS.get(c);
+                
+                // Strategy 1: Ask the model's classloader directly (most reliable for external JARs)
+                InputStream stream = c.getResourceAsStream(schemaPath);
+                
+                // Strategy 2: Ask the validator's classloader
+                if (stream == null) {
+                    stream = JSONInputValidator.class.getResourceAsStream(schemaPath);
+                }
+                
+                // Strategy 3: Ask the thread context classloader
+                if (stream == null) {
+                    String clPath = schemaPath.startsWith("/") ? schemaPath.substring(1) : schemaPath;
+                    stream = Thread.currentThread().getContextClassLoader().getResourceAsStream(clPath);
+                }
+                
+                if (stream == null) {
+                    throw new IllegalStateException("CRITICAL ERROR: Missing schema file on classpath: " + schemaPath);
+                }
+                
+                Schema schema = sf.newSchema(new StreamSource(stream));
                 Validator validator = schema.newValidator();            
                 VALIDATORS.put(c, validator);
                 CONTEXTS.put(c, JAXBContext.newInstance(c));
-            } catch (JAXBException e) {
-                throw new ApplicationException(e);
-            } catch (SAXException e) {
+            } catch (JAXBException | SAXException e) {
                 throw new ApplicationException(e);
             } 
         }                
@@ -104,14 +123,31 @@ public class JSONInputValidator {
         
         for(Class<?> c : SCHEMA_LOCATIONS_2_1_API.keySet()) {
             try {
-                URL u = JSONInputValidator.class.getResource(SCHEMA_LOCATIONS_2_1_API.get(c));
-                Schema schema = sf.newSchema(u);
+                String schemaPath = SCHEMA_LOCATIONS_2_1_API.get(c);
+                
+                // Strategy 1: Ask the model's classloader directly
+                InputStream stream = c.getResourceAsStream(schemaPath);
+                
+                // Strategy 2: Ask the validator's classloader
+                if (stream == null) {
+                    stream = JSONInputValidator.class.getResourceAsStream(schemaPath);
+                }
+                
+                // Strategy 3: Ask the thread context classloader
+                if (stream == null) {
+                    String clPath = schemaPath.startsWith("/") ? schemaPath.substring(1) : schemaPath;
+                    stream = Thread.currentThread().getContextClassLoader().getResourceAsStream(clPath);
+                }
+                
+                if (stream == null) {
+                    throw new IllegalStateException("CRITICAL ERROR: Missing schema file on classpath: " + schemaPath);
+                }
+                
+                Schema schema = sf.newSchema(new StreamSource(stream));
                 Validator validator = schema.newValidator();            
                 VALIDATORS_2_1_API.put(c, validator);
                 CONTEXTS_2_1_API.put(c, JAXBContext.newInstance(c));
-            } catch (JAXBException e) {
-                throw new ApplicationException(e);
-            } catch (SAXException e) {
+            } catch (JAXBException | SAXException e) {
                 throw new ApplicationException(e);
             }
         }
@@ -140,7 +176,6 @@ public class JSONInputValidator {
             if(rootCause != null) {
                 throw new InvalidJSONException(rootCause.getMessage(), e);
             } else {
-                // For SAXException, the message is usually 2 levels deep
                 throw new InvalidJSONException(e.getCause().getCause().getMessage(), e);
             }
         } catch (Exception e) {
@@ -173,7 +208,6 @@ public class JSONInputValidator {
             if(rootCause != null) {
                 throw new InvalidJSONException(rootCause.getMessage(), e);
             } else {
-                // For SAXException, the message is usually 2 levels deep
                 throw new InvalidJSONException(e.getCause().getCause().getMessage(), e);
             }
         } catch (Exception e) {
@@ -184,5 +218,4 @@ public class JSONInputValidator {
     public boolean canValidate(Class<?> clazz){
         return SCHEMA_LOCATIONS.containsKey(clazz);
     }
-
 }

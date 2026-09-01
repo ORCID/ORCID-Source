@@ -14,12 +14,10 @@ public interface WorkMapperV2 {
     WorkMapperV2 INSTANCE = Mappers.getMapper(WorkMapperV2.class);
 
     default void mapWorkAtoB(Work work, WorkEntity entity) {
-        if (work.getWorkType() != null) {
-            if (WorkType.DISSERTATION.equals(work.getWorkType())) {
-                entity.setWorkType(org.orcid.jaxb.model.common.WorkType.DISSERTATION_THESIS.name());
-            } else {
-                entity.setWorkType(work.getWorkType().name());
-            }
+        if (WorkType.DISSERTATION.equals(work.getWorkType())) {
+            entity.setWorkType(org.orcid.jaxb.model.common.WorkType.DISSERTATION_THESIS.name());
+        } else {
+            entity.setWorkType(work.getWorkType().name());
         }
         entity.setWorkUrl(work.getUrl() == null ? null : work.getUrl().getValue());
         entity.setIso2Country((work.getCountry() == null || work.getCountry().getValue() == null) ? null : work.getCountry().getValue().toString());
@@ -33,69 +31,51 @@ public interface WorkMapperV2 {
     }
 
     default void mapWorkBtoA(WorkEntity entity, Work work) {
-        if (entity.getWorkType() != null) {
-            WorkType resolvedType = resolveWorkType(entity.getWorkType());
-            if (WorkType.REVIEW.equals(resolvedType)) {
-                work.setWorkType(WorkType.OTHER);
-            } else {
-                work.setWorkType(resolvedType);
-            }
+        WorkType resolvedType = resolveWorkType(entity.getWorkType());
+        if (WorkType.REVIEW.equals(resolvedType)) {
+            work.setWorkType(WorkType.OTHER);
+        } else {
+            work.setWorkType(resolvedType);
         }
     }
 
     default void mapWorkSummaryAtoB(WorkSummary summary, WorkEntity entity) {
-        if (summary.getType() != null) {
-            if (WorkType.DISSERTATION.equals(summary.getType())) {
-                entity.setWorkType(org.orcid.jaxb.model.common.WorkType.DISSERTATION_THESIS.name());
-            } else {
-                entity.setWorkType(summary.getType().name());
-            }
+        if (WorkType.DISSERTATION.equals(summary.getType())) {
+            entity.setWorkType(org.orcid.jaxb.model.common.WorkType.DISSERTATION_THESIS.name());
+        } else {
+            entity.setWorkType(summary.getType().name());
         }
     }
 
     default void mapWorkSummaryBtoA(WorkEntity entity, WorkSummary summary) {
-        if (entity.getWorkType() != null) {
-            summary.setType(resolveWorkType(entity.getWorkType()));
-        }
+        summary.setType(resolveWorkType(entity.getWorkType()));
     }
 
     default void mapWorkSummaryToMinimizedAtoB(WorkSummary summary, MinimizedWorkEntity entity) {
-        if (summary.getType() != null) {
-            if (WorkType.DISSERTATION.equals(summary.getType())) {
-                entity.setWorkType(org.orcid.jaxb.model.common.WorkType.DISSERTATION_THESIS.name());
-            } else {
-                entity.setWorkType(summary.getType().name());
-            }
+        if (WorkType.DISSERTATION.equals(summary.getType())) {
+            entity.setWorkType(org.orcid.jaxb.model.common.WorkType.DISSERTATION_THESIS.name());
+        } else {
+            entity.setWorkType(summary.getType().name());
         }
     }
 
     default void mapWorkSummaryToMinimizedBtoA(MinimizedWorkEntity entity, WorkSummary summary) {
-        if (entity.getWorkType() != null) {
-            summary.setType(resolveWorkType(entity.getWorkType()));
-        }
+        summary.setType(resolveWorkType(entity.getWorkType()));
     }
 
     default void mapMinimizedWorkAtoB(Work work, MinimizedWorkEntity entity) {
-        if (work.getWorkType() != null) {
-            if (WorkType.DISSERTATION.equals(work.getWorkType())) {
-                entity.setWorkType(org.orcid.jaxb.model.common.WorkType.DISSERTATION_THESIS.name());
-            } else {
-                entity.setWorkType(work.getWorkType().name());
-            }
+        if (WorkType.DISSERTATION.equals(work.getWorkType())) {
+            entity.setWorkType(org.orcid.jaxb.model.common.WorkType.DISSERTATION_THESIS.name());
+        } else {
+            entity.setWorkType(work.getWorkType().name());
         }
     }
 
     default void mapMinimizedWorkBtoA(MinimizedWorkEntity entity, Work work) {
-        if (entity.getWorkType() != null) {
-            work.setWorkType(resolveWorkType(entity.getWorkType()));
-        }
+        work.setWorkType(resolveWorkType(entity.getWorkType()));
     }
 
     default WorkType resolveWorkType(String name) {
-        if (name == null) {
-            return null;
-        }
-        
         if (org.orcid.jaxb.model.common.WorkType.SOFTWARE.name().equals(name)
                 || org.orcid.jaxb.model.common.WorkType.PREPRINT.name().equals(name)
                 || org.orcid.jaxb.model.common.WorkType.PHYSICAL_OBJECT.name().equals(name)
@@ -122,10 +102,6 @@ public interface WorkMapperV2 {
             return WorkType.DISSERTATION;
         }
 
-        try {
-            return WorkType.valueOf(name);
-        } catch (IllegalArgumentException e) {
-            return WorkType.OTHER;
-        }
+        return WorkType.valueOf(name);
     }
 }
