@@ -37,6 +37,7 @@ public class RedisClient {
 
     private static final int DEFAULT_CACHE_EXPIRY = 60;
     private static final int DEFAULT_TIMEOUT = 10000;
+    private static final boolean DEFAULT_USE_SSL = true;
     public static final int MACH_KEY_BATCH_SIZE = 1000;
 
     private final String redisHost;
@@ -44,6 +45,10 @@ public class RedisClient {
     private final String redisPassword;
     private final int cacheExpiryInSecs;
     private final int clientTimeoutInMillis;
+    // TLS is on unless a deployment says otherwise. A plaintext Redis with TLS forced on does not
+    // reject the handshake, it simply never answers, so the connect blocks until the socket read
+    // times out -- once per client, per Spring context.
+    private final boolean useSsl;
     public JedisPool pool;
     private SetParams defaultSetParams;
 
@@ -54,34 +59,47 @@ public class RedisClient {
     private boolean enabled = false;
 
     public RedisClient(String redisHost, int redisPort, String password) {
-        this.redisHost = redisHost;
-        this.redisPort = redisPort;
-        this.redisPassword = password;
-        this.cacheExpiryInSecs = DEFAULT_CACHE_EXPIRY;
-        this.clientTimeoutInMillis = DEFAULT_TIMEOUT;
+        this(redisHost, redisPort, password, DEFAULT_CACHE_EXPIRY, DEFAULT_TIMEOUT, DEFAULT_USE_SSL);
     }
 
     public RedisClient(String redisHost, int redisPort, String password, int cacheExpiryInSecs) {
-        this.redisHost = redisHost;
-        this.redisPort = redisPort;
-        this.redisPassword = password;
-        this.cacheExpiryInSecs = cacheExpiryInSecs;
-        this.clientTimeoutInMillis = DEFAULT_TIMEOUT;
+        this(redisHost, redisPort, password, cacheExpiryInSecs, DEFAULT_TIMEOUT, DEFAULT_USE_SSL);
     }
 
     public RedisClient(String redisHost, int redisPort, String password, int cacheExpiryInSecs, int clientTimeoutInMillis) {
+        this(redisHost, redisPort, password, cacheExpiryInSecs, clientTimeoutInMillis, DEFAULT_USE_SSL);
+    }
+
+    public RedisClient(String redisHost, int redisPort, String password, int cacheExpiryInSecs, int clientTimeoutInMillis, boolean useSsl) {
         this.redisHost = redisHost;
         this.redisPort = redisPort;
         this.redisPassword = password;
         this.cacheExpiryInSecs = cacheExpiryInSecs;
         this.clientTimeoutInMillis = clientTimeoutInMillis;
+        this.useSsl = useSsl;
+    }
+
+    /** The Jedis configuration this client would connect with. Package-private so it can be
+     *  asserted on without opening a connection. */
+    JedisClientConfig buildClientConfig() {
+        DefaultJedisClientConfig.Builder builder = DefaultJedisClientConfig.builder()
+                .connectionTimeoutMillis(this.clientTimeoutInMillis)
+                .socketTimeoutMillis(this.clientTimeoutInMillis)
+                .ssl(this.useSsl);
+        // A blank password means "no authentication". Setting it anyway makes Jedis send
+        // AUTH "", which a Redis with no requirepass rejects outright:
+        //   ERR AUTH <password> called without any password configured for the default user
+        // so the client would fail to connect against an unauthenticated server.
+        if (this.redisPassword != null && !this.redisPassword.trim().isEmpty()) {
+            builder.password(this.redisPassword);
+        }
+        return builder.build();
     }
 
     @PostConstruct
     private void init() {
         try {
-            JedisClientConfig config = DefaultJedisClientConfig.builder().connectionTimeoutMillis(this.clientTimeoutInMillis)
-                    .socketTimeoutMillis(this.clientTimeoutInMillis).password(this.redisPassword).ssl(true).build();
+            JedisClientConfig config = buildClientConfig();
             pool = new JedisPool(new HostAndPort(this.redisHost, this.redisPort), config);
             defaultSetParams = new SetParams();
             defaultSetParams.ex(Long.valueOf(this.cacheExpiryInSecs));
