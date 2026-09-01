@@ -1,3 +1,10 @@
+## v3.0.48 - 2026-08-29
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.0.47...v3.0.48)
+
+- [#7658](https://github.com/ORCID/ORCID-Source/pull/7658): Refactor the internal api unit tests so they only use mocks and dont …
+- [#7657](https://github.com/ORCID/ORCID-Source/pull/7657): Refactor IdentifierApiServiceDelegatorTest so it only use mocks
+
 ## v3.1.3 - 2026-08-29
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.1.2...v3.1.3)
