@@ -8,6 +8,7 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.time.Duration;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Pattern;
 
 import jakarta.annotation.Resource;
@@ -59,7 +60,8 @@ public class InstitutionalSignInManagerImpl implements InstitutionalSignInManage
     @Resource(name = "notificationManagerV3")
     private NotificationManager notificationManager;
 
-    private final Map<String, String> institutionNames = new HashMap<>();
+    // Written by the warm-up thread while request threads read it, so it must be concurrent.
+    private final Map<String, String> institutionNames = new ConcurrentHashMap<>();
 
     private final Duration discoFeedConnectTimeout;
 
@@ -68,16 +70,34 @@ public class InstitutionalSignInManagerImpl implements InstitutionalSignInManage
     public InstitutionalSignInManagerImpl(
             @Value("${org.orcid.shibboleth.discoFeedSource:https://orcid.org/Shibboleth.sso/DiscoFeed}") String discoFeedSource,
             @Value("${org.orcid.shibboleth.discoFeed.connectTimeoutMillis:5000}") long connectTimeoutMillis,
-            @Value("${org.orcid.shibboleth.discoFeed.requestTimeoutMillis:60000}") long requestTimeoutMillis) {
+            @Value("${org.orcid.shibboleth.discoFeed.requestTimeoutMillis:60000}") long requestTimeoutMillis,
+            @Value("${org.orcid.shibboleth.discoFeed.warmUpAsync:true}") boolean warmUpAsync) {
         this.discoFeedConnectTimeout = Duration.ofMillis(connectTimeoutMillis);
         this.discoFeedRequestTimeout = Duration.ofMillis(requestTimeoutMillis);
-        // Init the institution names map
+        if (warmUpAsync) {
+            // The feed is an 11 MB document served by a remote host. Fetching it inline made
+            // Spring context construction wait for a network round trip it does not need: the
+            // map is only a display-name fallback, and every consumer already handles its
+            // absence, because a failed fetch has always left it empty.
+            Thread warmUp = new Thread(() -> loadInstitutionNames(discoFeedSource), "discofeed-warm-up");
+            warmUp.setDaemon(true);
+            warmUp.start();
+        } else {
+            loadInstitutionNames(discoFeedSource);
+        }
+    }
+
+    /** Populate the display-name map, logging rather than propagating. Never throws. */
+    private void loadInstitutionNames(String discoFeedSource) {
         try {
             LOGGER.info("Populating institution names from DiscoFeed");
             populateInsitutionNames(discoFeedSource);
-            LOGGER.info("Institution names populated");
+            LOGGER.info("Institution names populated: {}", institutionNames.size());
         } catch (IOException | InterruptedException | JSONException e) {
             LOGGER.error("Error populating institution names from DiscoFeed, institutional linking email might not contain accurate data", e);
+            if (e instanceof InterruptedException) {
+                Thread.currentThread().interrupt();
+            }
         }
     }
 
