@@ -24,6 +24,7 @@ import org.orcid.core.manager.v3.RecordNameManager;
 import org.orcid.core.manager.v3.read_only.*;
 import org.orcid.core.togglz.Features;
 import org.orcid.core.utils.JsonUtils;
+import org.orcid.core.utils.OrcidRequestUtil;
 import org.orcid.core.utils.cache.redis.RedisClient;
 import org.orcid.core.utils.v3.OrcidIdentifierUtils;
 import org.orcid.frontend.email.RecordEmailSender;
@@ -42,6 +43,7 @@ import org.orcid.utils.OrcidStringUtils;
 import org.orcid.utils.alerting.SlackManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.MapBindingResult;
@@ -139,6 +141,8 @@ public class ManageProfileController extends BaseWorkspaceController {
 
     @Resource
     private InstitutionalSignInManager institutionalSignInManager;
+    @Autowired
+    private ProfileHistoryEventManager profileHistoryEventManager;
 
     @RequestMapping
     public ModelAndView manageProfile() {
@@ -718,17 +722,17 @@ public class ManageProfileController extends BaseWorkspaceController {
             newEmailCasted.setVisibility(newEmail.getVisibility());
             newEmailCasted.setPrimary(false);
             newEmailCasted.setVerified(false);
-            org.orcid.pojo.ajaxForm.Email response  = addEmails ( request, newEmailCasted);
+            org.orcid.pojo.ajaxForm.Email response = addEmails(request, newEmailCasted);
             errors.addAll(response.getErrors());
             if (newEmail.isPrimary() != null &&  newEmail.isPrimary()) {
-                org.orcid.pojo.ajaxForm.Email setAsPrimaryResponse  = setPrimary(request, newEmail);
+                org.orcid.pojo.ajaxForm.Email setAsPrimaryResponse = setPrimary(request, newEmail);
                 errors.addAll(setAsPrimaryResponse.getErrors());
             }
             
         }
         
         for (org.orcid.jaxb.model.v3.release.record.Email deletedEmail : deletedEmails) {
-            deleteEmailJson ( deletedEmail.getEmail() );    
+            deleteEmailJson(request, deletedEmail.getEmail());
         }
 
         // send security email
@@ -792,7 +796,11 @@ public class ManageProfileController extends BaseWorkspaceController {
             if(!keys.isEmpty()) {
                 request.getSession().setAttribute(EmailConstants.CHECK_EMAIL_VALIDATED, false);
             }
-            recordEmailSender.sendVerificationEmail(currentUserOrcid, OrcidStringUtils.filterEmailAddress(email.getValue()), email.isPrimary());
+            String emailAddress = OrcidStringUtils.filterEmailAddress(email.getValue());
+            // Store event
+            profileHistoryEventManager.recordEmailUpdateEvent(currentUserOrcid, OrcidRequestUtil.getIpAddress(request), "Email " + emailAddress + " was added to " + currentUserOrcid);
+            // Send email
+            recordEmailSender.sendVerificationEmail(currentUserOrcid, emailAddress, email.isPrimary());
         } else {
             email.setErrors(errors);
         }
@@ -825,7 +833,7 @@ public class ManageProfileController extends BaseWorkspaceController {
     }
 
     @RequestMapping(value = "/deleteEmail.json", method = RequestMethod.DELETE)
-    public @ResponseBody Errors deleteEmailJson(@RequestParam("email") String email) {
+    public @ResponseBody Errors deleteEmailJson(HttpServletRequest request, @RequestParam("email") String email) {
         Errors errors = new Errors();
         if (PojoUtil.isEmpty(email)) {
             errors.getErrors().add(getMessage("Email.personalInfoForm.email"));
@@ -857,7 +865,11 @@ public class ManageProfileController extends BaseWorkspaceController {
             return errors;
         } 
         
-        emailManager.removeEmail(currentUserOrcid, email);
+        boolean removed = emailManager.removeEmail(currentUserOrcid, email);
+        if(removed) {
+            // Store event
+            profileHistoryEventManager.recordEmailUpdateEvent(currentUserOrcid, OrcidRequestUtil.getIpAddress(request), "Email " + email + " was removed from " + currentUserOrcid);
+        }
         return errors;
     }
     

@@ -47,6 +47,7 @@ import org.orcid.core.manager.v3.NotificationManager;
 import org.orcid.core.manager.v3.OrcidSecurityManager;
 import org.orcid.core.manager.v3.ProfileEmailDomainManager;
 import org.orcid.core.manager.v3.ProfileEntityManager;
+import org.orcid.core.manager.v3.ProfileHistoryEventManager;
 import org.orcid.core.manager.v3.ProfileInterstitialFlagManager;
 import org.orcid.core.manager.v3.RecordNameManager;
 import org.orcid.core.utils.cache.redis.RedisClient;
@@ -186,6 +187,9 @@ public class ManageProfileControllerTest {
     @Mock
     private RecordEmailSender mockRecordEmailSender;
 
+    @Mock
+    private ProfileHistoryEventManager mockProfileHistoryEventManager;
+
     @Mock(name="profileEntityManagerReadOnlyV3")
     private ProfileEntityManagerReadOnly mockProfileEntityManagerReadOnly;
 
@@ -247,6 +251,7 @@ public class ManageProfileControllerTest {
         TargetProxyHelper.injectIntoProxy(controller, "recordNameManagerReadOnlyV3", mockRecordNameManagerReadOnlyV3);
         TargetProxyHelper.injectIntoProxy(controller, "twoFactorAuthenticationManager", twoFactorAuthenticationManager);
         TargetProxyHelper.injectIntoProxy(controller, "recordEmailSender", mockRecordEmailSender);
+        TargetProxyHelper.injectIntoProxy(controller, "profileHistoryEventManager", mockProfileHistoryEventManager);
         TargetProxyHelper.injectIntoProxy(controller, "profileEntityManagerReadOnly", mockProfileEntityManagerReadOnly);
         TargetProxyHelper.injectIntoProxy(controller, "personalDetailsManagerReadOnly", mockPersonalDetailsManagerReadOnly);
         TargetProxyHelper.injectIntoProxy(controller, "addressManagerReadOnly", mockAddressManagerReadOnly);
@@ -1070,7 +1075,8 @@ public class ManageProfileControllerTest {
 
     @Test
     public void testDeleteEmailJsonBlankEmail() {
-        Errors errors = controller.deleteEmailJson("");
+        MockHttpServletRequest mockRequest = new MockHttpServletRequest();
+        Errors errors = controller.deleteEmailJson(mockRequest, "");
         assertNotNull(errors);
         assertEquals(1, errors.getErrors().size());
     }
@@ -1078,9 +1084,10 @@ public class ManageProfileControllerTest {
     @Test
     public void testDeleteEmailJsonWrongOwner() {
         SecurityContextHolder.getContext().setAuthentication(getAuthentication(USER_ORCID));
+        MockHttpServletRequest mockRequest = new MockHttpServletRequest();
         when(mockEmailManager.findOrcidIdByEmail(eq("email@email.com"))).thenReturn("another-orcid-id");
 
-        Errors errors = controller.deleteEmailJson("email@email.com");
+        Errors errors = controller.deleteEmailJson(mockRequest, "email@email.com");
         assertNotNull(errors);
         assertEquals(1, errors.getErrors().size());
 
@@ -1090,10 +1097,11 @@ public class ManageProfileControllerTest {
     @Test
     public void testDeleteEmailPrimaryEmail() {
         SecurityContextHolder.getContext().setAuthentication(getAuthentication(USER_ORCID));
+        MockHttpServletRequest mockRequest = new MockHttpServletRequest();
         when(mockEmailManager.findOrcidIdByEmail(eq("email@email.com"))).thenReturn(USER_ORCID);
         when(mockEmailManager.isPrimaryEmail(eq(USER_ORCID), eq("email@email.com"))).thenReturn(true);
 
-        Errors errors = controller.deleteEmailJson("email@email.com");
+        Errors errors = controller.deleteEmailJson(mockRequest, "email@email.com");
         assertNotNull(errors);
         assertEquals(1, errors.getErrors().size());
 
@@ -1104,11 +1112,12 @@ public class ManageProfileControllerTest {
     @Test
     public void testDeleteEmailOnlyEmail() {
         SecurityContextHolder.getContext().setAuthentication(getAuthentication(USER_ORCID));
+        MockHttpServletRequest mockRequest = new MockHttpServletRequest();
         when(mockEmailManager.findOrcidIdByEmail(eq("email@email.com"))).thenReturn(USER_ORCID);
         when(mockEmailManager.isPrimaryEmail(eq(USER_ORCID), eq("email@email.com"))).thenReturn(false);
         when(mockEmailManager.isUsersOnlyEmail(eq(USER_ORCID), eq("email@email.com"))).thenReturn(true);
 
-        Errors errors = controller.deleteEmailJson("email@email.com");
+        Errors errors = controller.deleteEmailJson(mockRequest, "email@email.com");
         assertNotNull(errors);
         assertEquals(1, errors.getErrors().size());
 
@@ -1120,12 +1129,13 @@ public class ManageProfileControllerTest {
     @Test
     public void testDeleteEmail() {
         SecurityContextHolder.getContext().setAuthentication(getAuthentication(USER_ORCID));
+        MockHttpServletRequest mockRequest = new MockHttpServletRequest();
         when(mockEmailManager.findOrcidIdByEmail(eq("email@email.com"))).thenReturn(USER_ORCID);
         when(mockEmailManager.isPrimaryEmail(eq(USER_ORCID), eq("email@email.com"))).thenReturn(false);
         when(mockEmailManager.isUsersOnlyEmail(eq(USER_ORCID), eq("email@email.com"))).thenReturn(false);
-        Mockito.doNothing().when(mockEmailManager).removeEmail(eq(USER_ORCID), eq("email@email.com"));
+        when(mockEmailManager.removeEmail(eq(USER_ORCID), eq("email@email.com"))).thenReturn(true);
 
-        Errors errors = controller.deleteEmailJson("email@email.com");
+        Errors errors = controller.deleteEmailJson(mockRequest, "email@email.com");
         assertNotNull(errors);
         assertEquals(0, errors.getErrors().size());
 
@@ -1133,6 +1143,7 @@ public class ManageProfileControllerTest {
         verify(mockEmailManager, Mockito.times(1)).isPrimaryEmail(eq(USER_ORCID), eq("email@email.com"));
         verify(mockEmailManager, Mockito.times(1)).isUsersOnlyEmail(eq(USER_ORCID), eq("email@email.com"));
         verify(mockEmailManager, Mockito.times(1)).removeEmail(eq(USER_ORCID), eq("email@email.com"));
+        verify(mockProfileHistoryEventManager, Mockito.times(1)).recordEmailUpdateEvent(eq(USER_ORCID), eq("127.0.0.1"), eq("Email email@email.com was removed from " + USER_ORCID));
     }
 
     @Test
@@ -1171,6 +1182,7 @@ public class ManageProfileControllerTest {
         controller.addEmails(mockRequest, newEmail);
 
         verify(mockRecordEmailSender, Mockito.times(1)).sendVerificationEmail(eq(USER_ORCID), eq("new@email.com"), eq(false));
+        verify(mockProfileHistoryEventManager, Mockito.times(1)).recordEmailUpdateEvent(eq(USER_ORCID), eq("127.0.0.1"), eq("Email new@email.com was added to " + USER_ORCID));
     }
 
     @Test
@@ -1193,6 +1205,7 @@ public class ManageProfileControllerTest {
         controller.addEmails(mockRequest, newEmail);
 
         verify(mockRecordEmailSender, Mockito.times(1)).sendVerificationEmail(eq(USER_ORCID), eq("new@email.com"), eq(false));
+        verify(mockProfileHistoryEventManager, Mockito.times(1)).recordEmailUpdateEvent(eq(USER_ORCID), eq("127.0.0.1"), eq("Email new@email.com was added to " + USER_ORCID));
     }
 
     @Test

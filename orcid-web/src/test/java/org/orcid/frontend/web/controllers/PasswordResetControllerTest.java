@@ -140,6 +140,7 @@ public class PasswordResetControllerTest extends DBUnitTest {
         TargetProxyHelper.injectIntoProxy(passwordResetController, "redisClient", redisClient);
         
         when(expiringLinkService.verifyToken(any())).thenReturn(ExpiringLinkService.VerificationResult.invalid());
+        when(servletRequest.getRemoteAddr()).thenReturn("127.0.0.1");
     }
     
     @Test
@@ -308,6 +309,7 @@ public class PasswordResetControllerTest extends DBUnitTest {
         assertTrue(form.getErrors().isEmpty());
         assertFalse(form.isTwoFactorEnabled());
         verify(profileEntityManager).updatePassword("0000-0000-0000-0000", "Password#123");
+        verify(profileEntityManager).updateLastLoginDetails("0000-0000-0000-0000", "127.0.0.1");
         verify(profileEntityManager).resetSigninLock("0000-0000-0000-0000");
     }
 
@@ -347,6 +349,7 @@ public class PasswordResetControllerTest extends DBUnitTest {
 
         assertTrue(form.getErrors().isEmpty());
         verify(profileEntityManager).updatePassword("0000-0000-0000-0000", "Password#123");
+        verify(profileEntityManager).updateLastLoginDetails("0000-0000-0000-0000", "127.0.0.1");
     }
 
     @Test
@@ -386,6 +389,7 @@ public class PasswordResetControllerTest extends DBUnitTest {
 
         assertTrue(form.getErrors().isEmpty());
         verify(profileEntityManager).updatePassword("0000-0000-0000-0000", "Password#123");
+        verify(profileEntityManager).updateLastLoginDetails("0000-0000-0000-0000", "127.0.0.1");
     }
 
     @Test
@@ -501,6 +505,7 @@ public class PasswordResetControllerTest extends DBUnitTest {
 
         OneTimeResetPasswordForm returnedForm = passwordResetController.submitPasswordResetV2(servletRequest, servletResponse, form);
         assertTrue(returnedForm.getErrors().isEmpty());
+        verify(profileEntityManager).updateLastLoginDetails(orcid, "127.0.0.1");
         // The entry is kept, flagged as used, so a second click can be told apart from an expired link
         verify(redisClient).set(eq("password-reset-token-" + orcid), eq(new PasswordResetTokenEntry(token, true).serialize()), anyInt());
         verify(redisClient, never()).remove(any(String.class));

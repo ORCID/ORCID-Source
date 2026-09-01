@@ -64,6 +64,9 @@ public class EmailManagerTest extends BaseTest {
     @Resource(name = "sourceManagerV3")
     private SourceManager sourceManager;
 
+    @Resource(name = "profileHistoryEventManagerV3")
+    private ProfileHistoryEventManager profileHistoryEventManager;
+
     @Resource
     private EmailDao emailDao;    
     
@@ -75,6 +78,9 @@ public class EmailManagerTest extends BaseTest {
     
     @Mock
     private EmailDao mockEmailDao;
+
+    @Mock
+    private ProfileHistoryEventManager mockProfileHistoryEventManager;
     
     @Before
     public void before() throws JAXBException {
@@ -85,6 +91,7 @@ public class EmailManagerTest extends BaseTest {
         when(mockSourceManager.retrieveActiveSourceEntity()).thenReturn(source);
         //Set the default manager and dao
         ReflectionTestUtils.setField(emailManager, "emailDao", emailDao);
+        ReflectionTestUtils.setField(emailManager, "profileHistoryEventManager", mockProfileHistoryEventManager);
     }
     
     @BeforeClass
@@ -96,6 +103,7 @@ public class EmailManagerTest extends BaseTest {
     public void after() throws JAXBException {
         ReflectionTestUtils.setField(emailManager, "sourceManager", sourceManager);
         ReflectionTestUtils.setField(emailManager, "emailDao", emailDao);
+        ReflectionTestUtils.setField(emailManager, "profileHistoryEventManager", profileHistoryEventManager);
     }
     
     @AfterClass
@@ -296,6 +304,7 @@ public class EmailManagerTest extends BaseTest {
         assertTrue(mergedEntity.getPrimary());
         assertFalse(mergedEntity.getVerified());
         assertEquals("PRIVATE", mergedEntity.getVisibility());
+        Mockito.verify(mockProfileHistoryEventManager).recordEmailUpdateEvent("orcid", "127.0.0.1", "Email changed from original to edited");
     }
     
     @Test
@@ -321,6 +330,7 @@ public class EmailManagerTest extends BaseTest {
         assertFalse(mergedEntity.getPrimary());
         assertFalse(mergedEntity.getVerified());
         assertEquals("PRIVATE", mergedEntity.getVisibility());
+        Mockito.verify(mockProfileHistoryEventManager).recordEmailUpdateEvent("orcid", "127.0.0.1", "Email changed from original to edited");
     }
     
     @Test
@@ -346,6 +356,30 @@ public class EmailManagerTest extends BaseTest {
         assertTrue(mergedEntity.getPrimary());
         assertFalse(mergedEntity.getVerified());
         assertEquals("PRIVATE", mergedEntity.getVisibility());
+        Mockito.verify(mockProfileHistoryEventManager, Mockito.never()).recordEmailUpdateEvent(Mockito.anyString(), Mockito.anyString(), Mockito.anyString());
+    }
+
+    @Test
+    public void testSetPrimaryRecordsHistoryEvent() {
+        ReflectionTestUtils.setField(emailManager, "emailDao", mockEmailDao);
+
+        EmailEntity currentPrimary = new EmailEntity();
+        currentPrimary.setEmail("old@orcid.org");
+        currentPrimary.setPrimary(Boolean.TRUE);
+
+        EmailEntity newPrimary = new EmailEntity();
+        newPrimary.setEmail("new@orcid.org");
+        newPrimary.setPrimary(Boolean.FALSE);
+        newPrimary.setVerified(Boolean.TRUE);
+
+        Mockito.when(mockEmailDao.findPrimaryEmail("orcid")).thenReturn(currentPrimary);
+        Mockito.when(mockEmailDao.findByEmail("new@orcid.org")).thenReturn(newPrimary);
+
+        emailManager.setPrimary("orcid", "new@orcid.org", new MockHttpServletRequest());
+
+        Mockito.verify(mockEmailDao).updatePrimary("orcid", "new@orcid.org");
+        Mockito.verify(mockProfileHistoryEventManager).recordEmailUpdateEvent("orcid", "127.0.0.1",
+                "Primary email changed from old@orcid.org to new@orcid.org");
     }
     
     @Test
