@@ -6,6 +6,7 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.time.Duration;
 import java.util.*;
 import java.util.regex.Pattern;
 
@@ -60,7 +61,16 @@ public class InstitutionalSignInManagerImpl implements InstitutionalSignInManage
 
     private final Map<String, String> institutionNames = new HashMap<>();
 
-    public InstitutionalSignInManagerImpl(@Value("${org.orcid.shibboleth.discoFeedSource:https://orcid.org/Shibboleth.sso/DiscoFeed}") String discoFeedSource) {
+    private final Duration discoFeedConnectTimeout;
+
+    private final Duration discoFeedRequestTimeout;
+
+    public InstitutionalSignInManagerImpl(
+            @Value("${org.orcid.shibboleth.discoFeedSource:https://orcid.org/Shibboleth.sso/DiscoFeed}") String discoFeedSource,
+            @Value("${org.orcid.shibboleth.discoFeed.connectTimeoutMillis:5000}") long connectTimeoutMillis,
+            @Value("${org.orcid.shibboleth.discoFeed.requestTimeoutMillis:60000}") long requestTimeoutMillis) {
+        this.discoFeedConnectTimeout = Duration.ofMillis(connectTimeoutMillis);
+        this.discoFeedRequestTimeout = Duration.ofMillis(requestTimeoutMillis);
         // Init the institution names map
         try {
             LOGGER.info("Populating institution names from DiscoFeed");
@@ -205,10 +215,15 @@ public class InstitutionalSignInManagerImpl implements InstitutionalSignInManage
     }
 
     private void populateInsitutionNames(String discoFeedSource) throws IOException, InterruptedException, JSONException {
-        // 1. Build and send the HTTP GET request
-        HttpClient client = HttpClient.newHttpClient();
+        // 1. Build and send the HTTP GET request.
+        // Both timeouts are required: without them a slow or unresponsive DiscoFeed host blocks
+        // this constructor, and therefore Spring context startup, indefinitely.
+        HttpClient client = HttpClient.newBuilder()
+                .connectTimeout(discoFeedConnectTimeout)
+                .build();
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(discoFeedSource))
+                .timeout(discoFeedRequestTimeout)
                 .GET()
                 .build();
 
