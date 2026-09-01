@@ -2,26 +2,36 @@
 
 ## Prerequisites 
 
-* Install [Java OpenJDK 8](https://openjdk.java.net/install/) by preference or the [Oracle version](http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html)
-* Add JAVA_HOME environment variable:
+* Install **Java JDK 21**. The build targets 21 (`<java.version>` in the root `pom.xml`) and CI
+  builds with 21, so anything older will not compile and anything newer is untested.
+* Add a JAVA_HOME environment variable pointing at that JDK:
   * Windows - control panel -> system -> advanced system settings -> environment variables
-  * Mac - create or edit .bash_profile file in home directory, add EXPORT JAVA_HOME=/Library/Java/JavaVirtualMachines/jdk1.8.0_111.jdk/Contents/Home
-
-* Install [Java JCE](http://www.oracle.com/technetwork/java/javase/downloads/jce8-download-2133166.html)
-  --> replace local_policy.jar and US_export_policy.jar in <JAVA_HOME>/jre/lib/security/policy with those from JCE download
+  * Mac - add to your shell profile, for example
+    ```
+    export JAVA_HOME=/opt/homebrew/opt/openjdk@21
+    ```
+    Do not use `$(/usr/libexec/java_home -v 21)` — on a machine with several JDKs installed via
+    Homebrew it can return a different major version, because Homebrew kegs are not registered as
+    system JVMs. Check with `java -version` after setting it.
 
 * Install [Maven](http://maven.apache.org/index.html) - ensure you add maven/bin directory to PATH environment variable. Verify installation with mvn -version
 
-* Install Postgres version 10.9:
+* Install **Postgres 13** (the version `docker-compose.yml` pins):
   * [Windows](http://www.postgresql.org/download/) - verify with psql -U postgres in postgres installation's bin directory in command prompt
   * [Mac](http://postgresapp.com/) - add postgres bin directory to .bash_profile directory
   ```
   export PATH=/Applications/Postgres.app/Contents/Versions/latest/bin:$PATH
   ```
 
-* Install [Tomcat 8.5.5](http://tomcat.apache.org/) and ensure it starts
+* Install **Tomcat 11** ([download](http://tomcat.apache.org/)) and ensure it starts
+
+* Install **Redis**, and note that it must be reachable without TLS locally. See
+  `properties/local.properties` for the `...redis.ssl.enabled` settings.
 
 * Ensure a git client is installed
+
+> The Java JCE policy-file step that used to be here is gone: unlimited cryptography has been the
+> default since Java 9.
 
 ## Setup Postgres DB
 
@@ -311,6 +321,36 @@ For background about webpack see [Webpack setup](https://github.com/ORCID/ORCID-
 * Point your browser to https://localhost:8443/orcid-web/signin
 
 * You should see a login page.
+
+### Signing in
+
+The seeded database (`docker-entrypoint-initdb.d/8-create-profiles.sql`) creates three accounts,
+all with the password `orcidLocalDev1`:
+
+| account | ORCID iD | role |
+|---|---|---|
+| `user@orcid.org` | 0000-0000-0000-0000 | USER |
+| `admin@orcid.org` | 0000-0000-0000-0001 | ADMIN |
+| `member@orcid.org` | 0009-0000-0000-0000 | GROUP |
+
+These are local fixtures. `encrypted_password` holds a one-way jasypt digest (SHA-512, 250000
+iterations, 16-byte salt), so changing the password means generating a new digest with those same
+settings — see the comment at the top of that SQL file.
+
+### Attaching a debugger from the command line
+
+`catalina.sh jpda start` (or `jpda run`) opens a JDWP port without any IDE involvement. It defaults
+to `dt_socket` on port 8000 with `suspend=n`, so the server starts normally and you can attach
+whenever you like:
+
+```
+export JPDA_ADDRESS=8000
+export JPDA_TRANSPORT=dt_socket
+$CATALINA_HOME/bin/catalina.sh jpda run
+```
+
+Attach with `jdb -attach localhost:8000`, or point your IDE's remote-debug configuration at the
+same port.
 
 
 ## Updating
