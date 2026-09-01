@@ -16,6 +16,7 @@ import static org.mockito.Mockito.when;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.time.Duration;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
@@ -65,13 +66,28 @@ public class InstitutionalSignInManagerTest {
     public void before() {
         MockitoAnnotations.initMocks(this);
         // Use a dummy discoFeedSource to avoid network calls in constructor
-        institutionalSignInManager = new InstitutionalSignInManagerImpl("http://localhost/dummy");
+        institutionalSignInManager = new InstitutionalSignInManagerImpl("http://localhost/dummy", 5000, 60000);
         
         ReflectionTestUtils.setField(institutionalSignInManager, "userConnectionDao", mock_userConnectionDao);
         ReflectionTestUtils.setField(institutionalSignInManager, "clientDetailsEntityCacheManager", mock_clientDetailsEntityCacheManager);
         ReflectionTestUtils.setField(institutionalSignInManager, "notificationManager", mock_notificationManager);
         ReflectionTestUtils.setField(institutionalSignInManager, "orcidOauth2TokenDetailService", mock_orcidOauth2TokenDetailService);
         ReflectionTestUtils.setField(institutionalSignInManager, "orcidUrlManager", mock_orcidUrlManager);
+    }
+
+    @Test
+    public void testDiscoFeedTimeoutsAreApplied() {
+        InstitutionalSignInManagerImpl manager = new InstitutionalSignInManagerImpl("http://localhost/dummy", 1234, 5678);
+        assertEquals(Duration.ofMillis(1234), ReflectionTestUtils.getField(manager, "discoFeedConnectTimeout"));
+        assertEquals(Duration.ofMillis(5678), ReflectionTestUtils.getField(manager, "discoFeedRequestTimeout"));
+    }
+
+    @Test
+    public void testConstructorSurvivesAnUnreachableDiscoFeed() {
+        // The DiscoFeed fetch happens in the constructor. If it stops being swallowed, or if it
+        // ever becomes unbounded again, context startup breaks rather than degrading.
+        InstitutionalSignInManagerImpl manager = new InstitutionalSignInManagerImpl("http://localhost:1/unreachable", 250, 250);
+        assertNotNull(manager);
     }
 
     @Test
