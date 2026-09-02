@@ -1,3 +1,125 @@
+## v3.0.48 - 2026-08-29
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.0.47...v3.0.48)
+
+- [#7658](https://github.com/ORCID/ORCID-Source/pull/7658): Refactor the internal api unit tests so they only use mocks and dont …
+- [#7657](https://github.com/ORCID/ORCID-Source/pull/7657): Refactor IdentifierApiServiceDelegatorTest so it only use mocks
+
+## v3.1.3 - 2026-08-29
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.1.2...v3.1.3)
+
+- [#7657](https://github.com/ORCID/ORCID-Source/pull/7657): Refactor IdentifierApiServiceDelegatorTest so it only use mocks
+
+## v3.0.47 - 2026-08-29
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.1.2...v3.0.47)
+
+## v3.1.2 - 2026-08-29
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.1.1...v3.1.2)
+
+- [#7656](https://github.com/ORCID/ORCID-Source/pull/7656): Refactor ApiRateLimitFilterTest
+
+## v3.1.1 - 2026-08-29
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.1.0...v3.1.1)
+
+- [#7647](https://github.com/ORCID/ORCID-Source/pull/7647): PD-5942 remove deprecated v1 reset-password-email.json endpoint that …
+
+## v3.1.0 - 2026-08-27
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.0.46...v3.1.0)
+
+- [#7645](https://github.com/ORCID/ORCID-Source/pull/7645): feat/hikari-tuning
+- [#7654](https://github.com/ORCID/ORCID-Source/pull/7654): PD-7613 Bump the pinned node version in orcid-web-frontend
+- [#7643](https://github.com/ORCID/ORCID-Source/pull/7643): fix/jdk21-docker-fixes
+- [#7641](https://github.com/ORCID/ORCID-Source/pull/7641): Bump org.springframework:spring-core from 6.2.17 to 6.2.19
+
+## v3.0.46 - 2026-08-27
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.0.45...v3.0.46)
+
+- [#7652](https://github.com/ORCID/ORCID-Source/pull/7652): PD-6176 Index version-of and funded-by external identifiers in Solr
+
+## v3.0.45 - 2026-08-25
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.0.44...v3.0.45)
+
+- [#7651](https://github.com/ORCID/ORCID-Source/pull/7651): PD-6181 Send password reset link to all verified emails on the account
+
+## v3.0.44 - 2026-08-24
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.0.43...v3.0.44)
+
+- [#7649](https://github.com/ORCID/ORCID-Source/pull/7649): PD-6180 Resolve PubMed identifiers via EuropePMC instead of the NCBI landing page
+
+## v3.0.43 - 2026-08-21
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.0.42...v3.0.43)
+
+- [#7646](https://github.com/ORCID/ORCID-Source/pull/7646): PD-5900 add the OAUTH_BACKUP_EMAIL_INTERSTITIAL togglz
+
+## v3.0.42 - 2026-08-19
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.0.41...v3.0.42)
+
+- [#7644](https://github.com/ORCID/ORCID-Source/pull/7644): Add back the code to log the user out
+
+## v3.0.41 - 2026-08-19
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.0.40...v3.0.41)
+
+- [#7593](https://github.com/ORCID/ORCID-Source/pull/7593): Aromanovv/pd 5943 make pw reset link one time use
+
+## v3.0.40 - 2026-08-18
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.0.39...v3.0.40)
+
+- [#7623](https://github.com/ORCID/ORCID-Source/pull/7623): PD-5888 Fix the redirect in the PublicProfileController
+
+## v3.0.39 - 2026-08-18
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.0.38...v3.0.39)
+
+- [#7620](https://github.com/ORCID/ORCID-Source/pull/7620): Bump org.springframework.security:spring-security-web from 6.5.9 to 6.5.11
+
+## v3.0.38 - 2026-08-18
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.0.37...v3.0.38)
+
+## v3.0.37 - 2026-08-18
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.0.36...v3.0.37)
+
+## v3.0.36 - 2026-08-18
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.0.35...v3.0.36)
+
+### Feature
+
+- add member_id column to client_details table (#7631)
+
+## v3.0.35 - 2026-08-18
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.0.34...v3.0.35)
+
+## v3.0.34 - 2026-08-18
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.0.33...v3.0.34)
+
+## v3.0.33 - 2026-08-18
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.0.32...v3.0.33)
+
+## v3.0.32 - 2026-08-17
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.0.31...v3.0.32)
+
+## v3.0.31 - 2026-08-17
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.0.30...v3.0.31)
+
 ## v3.0.30 - 2026-08-13
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.0.29...v3.0.30)

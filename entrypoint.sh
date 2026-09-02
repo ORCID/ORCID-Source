@@ -17,7 +17,7 @@ CATALINA_OPTS=" -Dorg.orcid.config.file=file://${CATALINA_HOME}/orcid.properties
 GC_OPTS=" -XX:+UseG1GC  -XX:+UseStringDeduplication  -XX:+UseAdaptiveSizePolicy  -Xlog:gc*,safepoint=info:file=${CATALINA_HOME}/logs/gc.log:time,uptime:filecount=10,filesize=2M "
 NETWORK_OPTS=" -Dsun.net.inetaddr.ttl=60  -Djava.net.preferIPv4Stack=true  -Djdk.tls.ephemeralDHKeySize=2048 "
 
-JVM_OPTS=" -Dorg.apache.jasper.runtime.BodyContentImpl.LIMIT_BUFFER=true  -Djdk.tls.ephemeralDHKeySize=2048  -Djava.protocol.handler.pkgs=org.apache.catalina.webresources  -Dorg.apache.catalina.security.SecurityListener.UMASK=0027  -Dorg.apache.tomcat.util.buf.UDecoder.ALLOW_ENCODED_SLASH=true  -Dfile.encoding=utf-8  -Djdk.module.illegalAccess=warn  -Djdk.attach.allowAttachSelf=true "
+JVM_OPTS=" -Dorg.apache.jasper.runtime.BodyContentImpl.LIMIT_BUFFER=true  -Djdk.tls.ephemeralDHKeySize=2048  -Djava.protocol.handler.pkgs=org.apache.catalina.webresources  -Dorg.apache.catalina.security.SecurityListener.UMASK=0027  -Dfile.encoding=utf-8  -Djdk.module.illegalAccess=warn  -Djdk.attach.allowAttachSelf=true  --add-opens=java.base/java.lang=ALL-UNNAMED  --add-opens=java.base/java.io=ALL-UNNAMED  --add-opens=java.base/java.util=ALL-UNNAMED  --add-opens=java.base/java.util.concurrent=ALL-UNNAMED  --add-opens=java.rmi/sun.rmi.transport=ALL-UNNAMED  --enable-native-access=ALL-UNNAMED "
 
 JMX_OPTS=" -Dcom.sun.management.jmxremote  -Dcom.sun.management.jmxremote.port=8081  -Dcom.sun.management.jmxremote.rmi.port=8082 -Dcom.sun.management.jmxremote.authenticate=false  -Dcom.sun.management.jmxremote.ssl=false "
 

@@ -24,12 +24,14 @@ import org.orcid.core.manager.v3.ProfileEntityManager;
 import org.orcid.core.manager.v3.read_only.EmailManagerReadOnly;
 import org.orcid.core.togglz.Features;
 import org.orcid.core.utils.PasswordResetToken;
+import org.orcid.core.utils.cache.redis.RedisClient;
 import org.orcid.frontend.email.RecordEmailSender;
 import org.orcid.frontend.spring.ShibbolethAjaxAuthenticationSuccessHandler;
 import org.orcid.frontend.spring.SocialAjaxAuthenticationSuccessHandler;
 import org.orcid.frontend.spring.web.social.config.SocialSignInUtils;
 import org.orcid.frontend.web.forms.OneTimeResetPasswordForm;
 import org.orcid.frontend.web.util.CommonPasswords;
+import org.orcid.frontend.web.util.PasswordResetTokenEntry;
 import org.orcid.jaxb.model.v3.release.record.Emails;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.pojo.EmailRequest;
@@ -39,6 +41,7 @@ import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.pojo.ajaxForm.Reactivation;
 import org.orcid.pojo.ajaxForm.Registration;
 import org.orcid.pojo.ajaxForm.Text;
+import org.orcid.utils.ExpiringLinkService;
 import org.orcid.utils.OrcidStringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -94,6 +97,12 @@ public class PasswordResetController extends BaseController {
     
     @Resource
     private RecordEmailSender recordEmailSender;
+
+    @Resource
+    private ExpiringLinkService expiringLinkService;
+
+    @Resource
+    private RedisClient redisClient;
 
     private static final List<String> RESET_PASSWORD_PARAMS_WHITELIST = Arrays.asList("_");
 
@@ -167,7 +176,9 @@ public class PasswordResetController extends BaseController {
                     LOGGER.info("Password reset: API record creation email sent to '{}'", passwordResetRequest.getEmail());
                     recordEmailSender.sendClaimReminderEmail(orcid,0,passwordResetRequest.getEmail());
                 } else {
-                    LOGGER.info("Password reset: Reset password email sent to '{}'", passwordResetRequest.getEmail());
+                    // The sender fans the link out to every verified address on the record and
+                    // logs the recipient counts itself, so this only records the request.
+                    LOGGER.info("Password reset: Reset password requested for '{}'", passwordResetRequest.getEmail());
                     recordEmailSender.sendPasswordResetEmail(passwordResetRequest.getEmail(), orcid);
                 }
             } else {
@@ -201,8 +212,8 @@ public class PasswordResetController extends BaseController {
     	resetPasswordForm.setErrors(new ArrayList<String>());
 
     	Emails emails = null;
-    	if (resetPasswordForm.getEncryptedEmail() != null) {
-	    	PasswordResetToken passwordResetToken = buildResetTokenFromEncryptedLink(resetPasswordForm.getEncryptedEmail());
+    	if (resetPasswordForm.getToken() != null) {
+	    	PasswordResetToken passwordResetToken = buildResetTokenFromEncryptedLink(resetPasswordForm.getToken());
 	    	String orcid = emailManagerReadOnly.findOrcidIdByEmail(passwordResetToken.getEmail());
 	    	emails = emailManager.getEmails(orcid);
     	} 
@@ -226,80 +237,59 @@ public class PasswordResetController extends BaseController {
         return oneTimeResetPasswordForm;
     }
 
-    @Deprecated //TODO remove once the card https://trello.com/c/TqSd7ojs/7973-reset-password is stable on prod
-    @RequestMapping(value = "/reset-password-email.json", method = RequestMethod.POST)
-    public @ResponseBody OneTimeResetPasswordForm submitPasswordReset(HttpServletRequest request, HttpServletResponse response,
-            @RequestBody OneTimeResetPasswordForm oneTimeResetPasswordForm) {
-        oneTimeResetPasswordForm.setErrors(new ArrayList<String>());
-
-        PasswordResetToken passwordResetToken = buildResetTokenFromEncryptedLink(oneTimeResetPasswordForm.getEncryptedEmail());
-        if (isTokenExpired(passwordResetToken)) {
-            String message = getMessage("orcid.frontend.reset.password.resetLinkExpired_1");
-            message += "<a href='/reset-password'>";
-            message += getMessage("orcid.frontend.reset.password.resetLinkExpired_2");
-            message += "</a>";
-            oneTimeResetPasswordForm.getErrors().add(message);
-            return oneTimeResetPasswordForm;
-        }
-
-        passwordConfirmValidate(oneTimeResetPasswordForm.getRetypedPassword(), oneTimeResetPasswordForm.getNewPassword());
-        
-    	String orcid = emailManagerReadOnly.findOrcidIdByEmail(passwordResetToken.getEmail());
-    	Emails emails = emailManager.getEmails(orcid);
-    	
-        passwordChecklistValidate(oneTimeResetPasswordForm.getRetypedPassword(), oneTimeResetPasswordForm.getNewPassword(), emails);
-        if (!oneTimeResetPasswordForm.getNewPassword().getErrors().isEmpty() || !oneTimeResetPasswordForm.getRetypedPassword().getErrors().isEmpty()) {
-            return oneTimeResetPasswordForm;
-        }
-
-        profileEntityManager.updatePassword(orcid, oneTimeResetPasswordForm.getNewPassword().getValue());
-        //reset the lock fields
-        profileEntityManager.resetSigninLock(orcid);
-        profileEntityCacheManager.remove(orcid);
-        
-
-        String redirectUrl = calculateRedirectUrl(request, response, false);
-        oneTimeResetPasswordForm.setSuccessRedirectLocation(redirectUrl);
-        return oneTimeResetPasswordForm;
-    }
-    
     @RequestMapping(value = "/reset-password-email-v2.json", method = RequestMethod.POST)
     public @ResponseBody OneTimeResetPasswordForm submitPasswordResetV2(HttpServletRequest request, HttpServletResponse response,
             @RequestBody OneTimeResetPasswordForm oneTimeResetPasswordForm) {
         oneTimeResetPasswordForm.setErrors(new ArrayList<String>());
 
-        PasswordResetToken passwordResetToken;
-        
-        try {
-             passwordResetToken = buildResetTokenFromEncryptedLink(oneTimeResetPasswordForm.getEncryptedEmail());
-        } catch (EncryptionOperationNotPossibleException e) {
-            oneTimeResetPasswordForm.getErrors().add("invalidPasswordResetToken");
-            return oneTimeResetPasswordForm;
-        }
-        
-        if (isTokenExpired(passwordResetToken)) {
-            String message = "expiredPasswordResetToken";
-            oneTimeResetPasswordForm.getErrors().add(message);
-            return oneTimeResetPasswordForm;
-        }
-
-        passwordConfirmValidate(oneTimeResetPasswordForm.getRetypedPassword(), oneTimeResetPasswordForm.getNewPassword());
-        
         String orcid = null;
-        //check first if valid orcid as the admin portal can send either and email or an orcid
-        if(OrcidStringUtils.isValidOrcid(passwordResetToken.getEmail()) ){
-            if(profileEntityManager.orcidExists(passwordResetToken.getEmail())) {
-                orcid = passwordResetToken.getEmail();
+        String token = oneTimeResetPasswordForm.getToken();
+        ExpiringLinkService.VerificationResult verificationResult = expiringLinkService.verifyToken(token);
+        
+        if (verificationResult.getStatus() == ExpiringLinkService.VerificationStatus.VALID) {
+            orcid = verificationResult.getClaims().getSubject();
+            String error = validateLatestResetTokenEntry(orcid, token);
+            if (error != null) {
+                oneTimeResetPasswordForm.getErrors().add(error);
+                return oneTimeResetPasswordForm;
             }
-            else {
-                String message = "invalidPasswordResetToken";
+        } else if (verificationResult.getStatus() == ExpiringLinkService.VerificationStatus.EXPIRED) {
+            oneTimeResetPasswordForm.getErrors().add("expiredPasswordResetToken");
+            return oneTimeResetPasswordForm;
+        } else {
+            // Old logic support
+            // TODO: remove once PD-6002 is stable on prod
+            PasswordResetToken passwordResetToken;
+            try {
+                 passwordResetToken = buildResetTokenFromEncryptedLink(oneTimeResetPasswordForm.getToken());
+            } catch (EncryptionOperationNotPossibleException e) {
+                oneTimeResetPasswordForm.getErrors().add("invalidPasswordResetToken");
+                return oneTimeResetPasswordForm;
+            }
+            
+            if (isTokenExpired(passwordResetToken)) {
+                String message = "expiredPasswordResetToken";
                 oneTimeResetPasswordForm.getErrors().add(message);
                 return oneTimeResetPasswordForm;
             }
+    
+            //check first if valid orcid as the admin portal can send either and email or an orcid
+            if(OrcidStringUtils.isValidOrcid(passwordResetToken.getEmail()) ){
+                if(profileEntityManager.orcidExists(passwordResetToken.getEmail())) {
+                    orcid = passwordResetToken.getEmail();
+                }
+                else {
+                    String message = "invalidPasswordResetToken";
+                    oneTimeResetPasswordForm.getErrors().add(message);
+                    return oneTimeResetPasswordForm;
+                }
+            }
+            else {
+                orcid = emailManagerReadOnly.findOrcidIdByEmail(passwordResetToken.getEmail());
+            }
         }
-        else {
-            orcid = emailManagerReadOnly.findOrcidIdByEmail(passwordResetToken.getEmail());
-        }
+
+        passwordConfirmValidate(oneTimeResetPasswordForm.getRetypedPassword(), oneTimeResetPasswordForm.getNewPassword());
 
         Emails emails = emailManager.getEmails(orcid);
         oneTimeResetPasswordForm.setOrcid(orcid);
@@ -342,6 +332,9 @@ public class PasswordResetController extends BaseController {
         //reset the lock fields
         profileEntityManager.resetSigninLock(orcid);
         profileEntityCacheManager.remove(orcid);
+
+        markResetTokenAsUsed(orcid, token, verificationResult);
+
         String redirectUrl = calculateRedirectUrl(request, response, false);
         oneTimeResetPasswordForm.setSuccessRedirectLocation(redirectUrl);
         // Remove credentials before return
@@ -355,10 +348,27 @@ public class PasswordResetController extends BaseController {
             @RequestBody OneTimeResetPasswordForm oneTimeResetPasswordForm) {
         oneTimeResetPasswordForm.setErrors(new ArrayList<String>());
 
+        String token = oneTimeResetPasswordForm.getToken();
+        ExpiringLinkService.VerificationResult verificationResult = expiringLinkService.verifyToken(token);
+        
+        if (verificationResult.getStatus() == ExpiringLinkService.VerificationStatus.VALID) {
+            String orcid = verificationResult.getClaims().getSubject();
+            String error = validateLatestResetTokenEntry(orcid, token);
+            if (error != null) {
+                oneTimeResetPasswordForm.getErrors().add(error);
+            }
+            return oneTimeResetPasswordForm;
+        } else if (verificationResult.getStatus() == ExpiringLinkService.VerificationStatus.EXPIRED) {
+            oneTimeResetPasswordForm.getErrors().add("expiredPasswordResetToken");
+            return oneTimeResetPasswordForm;
+        }
+
+        // Old logic support
+        // TODO: remove once PD-6002 is stable on prod
         PasswordResetToken passwordResetToken;
         
         try {
-             passwordResetToken = buildResetTokenFromEncryptedLink(oneTimeResetPasswordForm.getEncryptedEmail());
+             passwordResetToken = buildResetTokenFromEncryptedLink(oneTimeResetPasswordForm.getToken());
 
         } catch (EncryptionOperationNotPossibleException e) {
             oneTimeResetPasswordForm.getErrors().add("invalidPasswordResetToken");
@@ -375,6 +385,40 @@ public class PasswordResetController extends BaseController {
         
     }
     
+
+    /**
+     * Checks the submitted token against the single entry we keep in redis for the record.
+     *
+     * @return the error to report, or null when the token is the latest one and has not been used yet
+     */
+    private String validateLatestResetTokenEntry(String orcid, String token) {
+        PasswordResetTokenEntry entry = PasswordResetTokenEntry.parse(redisClient.get(PasswordResetTokenEntry.redisKey(orcid)));
+        if (entry == null || !token.equals(entry.getToken())) {
+            // The link was superseded by a newer one, or the entry is already gone
+            return "expiredPasswordResetToken";
+        }
+        if (entry.isUsed()) {
+            return "alreadyUsedPasswordResetToken";
+        }
+        return null;
+    }
+
+    /**
+     * Keeps the entry around until the token expires on its own, so a second click on the same link can be
+     * told apart from an expired one.
+     */
+    private void markResetTokenAsUsed(String orcid, String token, ExpiringLinkService.VerificationResult verificationResult) {
+        if (verificationResult.getStatus() != ExpiringLinkService.VerificationStatus.VALID) {
+            // Legacy encrypted links have no redis entry
+            return;
+        }
+        Date expiration = verificationResult.getClaims().getExpirationTime();
+        long remainingSeconds = expiration == null ? 1 : (expiration.getTime() - System.currentTimeMillis()) / 1000;
+        if (remainingSeconds < 1) {
+            remainingSeconds = 1;
+        }
+        redisClient.set(PasswordResetTokenEntry.redisKey(orcid), new PasswordResetTokenEntry(token, true).serialize(), (int) remainingSeconds);
+    }
 
     private PasswordResetToken buildResetTokenFromEncryptedLink(String encryptedLink) {
         try {

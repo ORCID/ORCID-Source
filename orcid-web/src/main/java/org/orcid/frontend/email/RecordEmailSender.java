@@ -1,6 +1,10 @@
 package org.orcid.frontend.email;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
@@ -18,6 +22,8 @@ import org.orcid.core.manager.v3.SourceManager;
 import org.orcid.core.manager.v3.read_only.EmailManagerReadOnly;
 import org.orcid.core.utils.SourceEntityUtils;
 import org.orcid.core.utils.VerifyEmailUtils;
+import org.orcid.core.utils.cache.redis.RedisClient;
+import org.orcid.frontend.web.util.PasswordResetTokenEntry;
 import org.orcid.jaxb.model.common.AvailableLocales;
 import org.orcid.jaxb.model.v3.release.record.Email;
 import org.orcid.jaxb.model.v3.release.record.Emails;
@@ -37,17 +43,28 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
 import org.springframework.context.NoSuchMessageException;
 import org.springframework.stereotype.Component;
+import org.springframework.web.util.HtmlUtils;
 
 @Component
 public class RecordEmailSender {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(RecordEmailSender.class);
 
+    /**
+     * Literal text in reset_password_email.ftl / _html.ftl. The reset templates are rendered once
+     * per request and this token is swapped per recipient, rather than re-rendering N times for a
+     * single differing value.
+     */
+    private static final String RECIPIENT_EMAIL_PLACEHOLDER = "{recipientEmail}";
+
     @Value("${org.orcid.core.mail.apiRecordCreationEmailEnabled:true}")
     private boolean apiRecordCreationEmailEnabled;
 
     @Value("${org.orcid.utils.jwtExpirationInMinutes:240}")
     private long jwtExpirationInMinutes;
+
+    @Value("${org.orcid.core.mail.passwordReset.maxRecipients:25}")
+    private int passwordResetMaxRecipients;
     
     @Resource
     private ProfileEventDao profileEventDao;
@@ -90,6 +107,9 @@ public class RecordEmailSender {
 
     @Resource
     private ExpiringLinkService expiringLinkService;
+
+    @Resource
+    private RedisClient redisClient;
 
     public void sendWelcomeEmail(String userOrcid, String email) {
         ProfileEntity profileEntity = profileEntityCacheManager.retrieve(userOrcid);
@@ -252,26 +272,100 @@ public class RecordEmailSender {
 
     public void sendPasswordResetEmail(String submittedEmail, String userOrcid) {
         ProfileEntity record = profileEntityCacheManager.retrieve(userOrcid);
-        String primaryEmail = emailManager.findPrimaryEmail(userOrcid).getEmail();
         Locale locale = getUserLocaleFromProfileEntity(record);
 
         // Create map of template params
         Map<String, Object> templateParams = new HashMap<String, Object>();
-        templateParams.put("submittedEmail", submittedEmail);
         templateParams.put("orcid", userOrcid);
         templateParams.put("subject", verifyEmailUtils.getSubject("email.subject.reset", getUserLocaleFromProfileEntity(record)));
         templateParams.put("baseUri", orcidUrlManager.getBaseUrl());
         templateParams.put("baseUriHttp", orcidUrlManager.getBaseUriHttp());
-        // Generate body from template
-        String resetUrl = verifyEmailUtils.createResetEmail(primaryEmail, orcidUrlManager.getBaseUrl());
+        // Mint the token and record it as the only redeemable one for this record before sending
+        // anything. The fan out below is one network round trip per recipient, so the link has to
+        // be redeemable by the time the first message lands; overwriting the entry is also what
+        // invalidates every previously issued link.
+        String token;
+        try {
+            token = expiringLinkService.generateExpiringToken(userOrcid, jwtExpirationInMinutes, ExpiringLinkService.ExpiringLinkType.PASSWORD_RESET);
+            redisClient.set(PasswordResetTokenEntry.redisKey(userOrcid), new PasswordResetTokenEntry(token, false).serialize(), (int) (jwtExpirationInMinutes * 60));
+        } catch (com.nimbusds.jose.JOSEException e) {
+            LOGGER.error("Failed to generate password reset token", e);
+            throw new RuntimeException("Password reset token generation failed", e);
+        }
+        String resetUrl = orcidUrlManager.getBaseUrl() + "/reset-password-email/" + token;
         templateParams.put("passwordResetUrl", resetUrl);
-
         verifyEmailUtils.addMessageParams(templateParams, locale);
 
-        // Generate body from template
-        String body = templateManager.processTemplate("reset_password_email.ftl", templateParams);
-        String htmlBody = templateManager.processTemplate("reset_password_email_html.ftl", templateParams);
-        mailgunManager.sendEmail(EmailConstants.DO_NOT_REPLY_NOTIFY_ORCID_ORG, submittedEmail, verifyEmailUtils.getSubject("email.subject.reset", locale), body, htmlBody);
+        String subject = verifyEmailUtils.getSubject("email.subject.reset", locale);
+        Collection<String> recipients = buildPasswordResetRecipients(submittedEmail, userOrcid);
+        // Rendered once for the whole request: only the recipient's own address differs between
+        // copies, and it is substituted below. Rendering also stays outside the per-recipient
+        // catch, because a broken template fails for every recipient alike and swallowing that
+        // would turn "nobody got a link" into a warning nobody reads.
+        String bodyTemplate = templateManager.processTemplate("reset_password_email.ftl", templateParams);
+        String htmlBodyTemplate = templateManager.processTemplate("reset_password_email_html.ftl", templateParams);
+        int accepted = 0;
+        int failed = 0;
+        for (String recipient : recipients) {
+            String body = bodyTemplate.replace(RECIPIENT_EMAIL_PLACEHOLDER, recipient);
+            // The HTML template renders inside <#escape x as x?html>, but this substitution runs
+            // after FreeMarker has finished, so the address has to be escaped here or it would be
+            // the one unescaped value in the document.
+            String htmlBody = htmlBodyTemplate.replace(RECIPIENT_EMAIL_PLACEHOLDER, HtmlUtils.htmlEscape(recipient));
+            // One send per recipient on purpose. Putting every address in a single "to" would
+            // disclose the record's whole verified email list to each of them.
+            try {
+                if (mailgunManager.sendEmail(EmailConstants.DO_NOT_REPLY_NOTIFY_ORCID_ORG, recipient, subject, body, htmlBody)) {
+                    accepted++;
+                }
+            } catch (Exception e) {
+                // The token is already redeemable, so one bad recipient must not deny the rest
+                // their copy of the link. Log the orcid only, never the address list.
+                failed++;
+                LOGGER.warn("Password reset: failed to send reset link for '" + userOrcid + "' to one of its recipients", e);
+            }
+        }
+        if (!recipients.isEmpty() && failed == recipients.size()) {
+            LOGGER.error("Password reset: could not send the reset link for '{}' to any of its {} recipients", userOrcid, recipients.size());
+        } else {
+            LOGGER.info("Password reset: reset link for '{}' accepted for {} of {} recipients", new Object[] { userOrcid, accepted, recipients.size() });
+        }
+    }
+
+    /**
+     * The reset link goes to the submitted address plus every verified address on the record, so a
+     * user who has lost access to the mailbox they typed can still recover through one they still
+     * hold. Addresses resolve case insensitively, so entries are de-duplicated on a normalized key
+     * while the stored form is what actually gets mailed.
+     */
+    private Collection<String> buildPasswordResetRecipients(String submittedEmail, String userOrcid) {
+        Map<String, String> recipients = new LinkedHashMap<String, String>();
+        // The submitted address goes first: it is the one named on the confirmation screen the
+        // user is watching. Keeping it also means an account with no verified address at all can
+        // still reset, exactly as it could before.
+        if (!PojoUtil.isEmpty(submittedEmail)) {
+            recipients.put(normalizePasswordResetRecipient(submittedEmail), submittedEmail);
+        }
+        Emails verifiedEmails = emailManager.getVerifiedEmails(userOrcid);
+        if (verifiedEmails != null && verifiedEmails.getEmails() != null) {
+            for (Email email : verifiedEmails.getEmails()) {
+                if (!PojoUtil.isEmpty(email.getEmail())) {
+                    // Overwrites the value but keeps the insertion order, so the submitted address
+                    // stays first and is mailed in its stored casing rather than as typed.
+                    recipients.put(normalizePasswordResetRecipient(email.getEmail()), email.getEmail());
+                }
+            }
+        }
+        if (recipients.size() <= passwordResetMaxRecipients) {
+            return recipients.values();
+        }
+        LOGGER.warn("Password reset: record '{}' has {} recipients, capping at {}", new Object[] { userOrcid, recipients.size(), passwordResetMaxRecipients });
+        List<String> capped = new ArrayList<String>(recipients.values());
+        return capped.subList(0, passwordResetMaxRecipients);
+    }
+
+    private String normalizePasswordResetRecipient(String email) {
+        return OrcidStringUtils.filterEmailAddress(email).toLowerCase(Locale.ROOT);
     }
 
     public void sendPasswordResetNotFoundEmail(String submittedEmail, Locale locale) {
