@@ -4,6 +4,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
+import org.mapstruct.AfterMapping;
 import org.mapstruct.Context;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -56,7 +57,7 @@ public abstract class JpaJaxbWorkAdapterImpl implements JpaJaxbWorkAdapter {
         try {
             return WorkType.valueOf(type);
         } catch (IllegalArgumentException e) {
-            return WorkType.OTHER; // Safe fallback prevents Validation Exception[cite: 1]
+            return null;
         }
     }
 
@@ -170,6 +171,40 @@ public abstract class JpaJaxbWorkAdapterImpl implements JpaJaxbWorkAdapter {
     @Mapping(source = "lastModified", target = "lastModifiedDate.value")
     @Mapping(source = ".", target = "source")
     public abstract Work toWork(WorkEntity workEntity);
+
+    @AfterMapping
+    protected void removeEmptyCitation(@MappingTarget Work work) {
+        removeEmptyOptionalTitleFields(work);
+        if (work.getWorkCitation() != null
+                && work.getWorkCitation().getCitation() == null
+                && work.getWorkCitation().getWorkCitationType() == null) {
+            work.setWorkCitation(null);
+        }
+    }
+
+    @AfterMapping
+    protected void removeEmptyCitation(@MappingTarget WorkExtended work) {
+        removeEmptyOptionalTitleFields(work);
+        if (work.getWorkCitation() != null
+                && work.getWorkCitation().getCitation() == null
+                && work.getWorkCitation().getWorkCitationType() == null) {
+            work.setWorkCitation(null);
+        }
+    }
+
+    private void removeEmptyOptionalTitleFields(Work work) {
+        if (work.getWorkTitle() == null) {
+            return;
+        }
+        if (work.getWorkTitle().getSubtitle() != null && work.getWorkTitle().getSubtitle().getContent() == null) {
+            work.getWorkTitle().setSubtitle(null);
+        }
+        if (work.getWorkTitle().getTranslatedTitle() != null
+                && work.getWorkTitle().getTranslatedTitle().getContent() == null
+                && work.getWorkTitle().getTranslatedTitle().getLanguageCode() == null) {
+            work.getWorkTitle().setTranslatedTitle(null);
+        }
+    }
 
     @Override
     @Mapping(source = "id", target = "putCode")

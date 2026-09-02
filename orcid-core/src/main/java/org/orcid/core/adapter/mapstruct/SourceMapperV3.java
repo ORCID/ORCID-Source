@@ -2,21 +2,17 @@ package org.orcid.core.adapter.mapstruct;
 
 import java.util.Map;
 
-import org.mapstruct.Mapper;
-import org.mapstruct.factory.Mappers;
-import org.springframework.beans.factory.annotation.Autowired;
-
 import org.orcid.core.utils.SourceEntityUtils;
 import org.orcid.jaxb.model.v3.release.common.Source;
 import org.orcid.persistence.jpa.entities.SourceAwareEntity;
 
-@Mapper(componentModel = "spring")
-public abstract class SourceMapperV3 {
+public class SourceMapperV3 {
 
-    public static final SourceMapperV3 INSTANCE = Mappers.getMapper(SourceMapperV3.class);
+    private final SourceEntityUtils sourceEntityUtils;
 
-    @Autowired
-    protected SourceEntityUtils sourceEntityUtils;
+    public SourceMapperV3(SourceEntityUtils sourceEntityUtils) {
+        this.sourceEntityUtils = sourceEntityUtils;
+    }
 
     /**
      * Single-entity conversion used by MapStruct's implicit "source = ." mapping.

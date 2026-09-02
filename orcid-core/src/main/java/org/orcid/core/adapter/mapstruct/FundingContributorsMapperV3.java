@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang3.StringUtils;
 import org.orcid.core.contributors.roles.ContributorRoleConverter;
 import org.orcid.core.contributors.roles.InvalidContributorRoleException;
 import org.orcid.core.contributors.roles.credit.CreditRole;
@@ -26,6 +27,10 @@ public class FundingContributorsMapperV3 {
     }
 
     public String convertTo(FundingContributors source) {
+        if (source == null) {
+            return null;
+        }
+
         // convert role to db format
         source.getContributor().forEach(c -> {
             if (c.getContributorAttributes() != null && c.getContributorAttributes().getContributorRole() != null) {
@@ -53,7 +58,15 @@ public class FundingContributorsMapperV3 {
     }
 
     public FundingContributors convertFrom(String source) {
+        if (StringUtils.isBlank(source)) {
+            return null;
+        }
+
         FundingContributors fundingContributors = JsonUtils.readObjectFromJsonString(source, FundingContributors.class);
+        if (fundingContributors == null || fundingContributors.getContributor() == null) {
+            return fundingContributors;
+        }
+
         fundingContributors.getContributor().forEach(c -> c.setCreditName("".equals(c.getCreditName()) ? null : c.getCreditName()));
 
         // convert role to API format

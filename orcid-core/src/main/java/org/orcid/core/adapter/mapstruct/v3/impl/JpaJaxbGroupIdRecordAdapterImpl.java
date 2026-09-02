@@ -48,6 +48,7 @@ public abstract class JpaJaxbGroupIdRecordAdapterImpl implements JpaJaxbGroupIdR
     @Mapping(source = "groupType", target = "type")
     @Mapping(source = "dateCreated", target = "createdDate.value")
     @Mapping(source = "lastModified", target = "lastModifiedDate.value")
+    @Mapping(source = ".", target = "source")
     public abstract GroupIdRecord toGroupIdRecord(GroupIdRecordEntity groupIdRecordEntity);
 
     @Override

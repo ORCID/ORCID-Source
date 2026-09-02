@@ -158,7 +158,7 @@ public class BibtexManagerImpl extends ManagerReadOnlyBaseImpl implements Bibtex
         //title
         out.append(",\ntitle={"+escapeStringForBibtex((work.getWorkTitle() != null) ? work.getWorkTitle().getTitle().getContent() : "No Title")+"}");        
         //journal title
-        if (work.getJournalTitle() != null) {
+        if (work.getJournalTitle() != null && work.getJournalTitle().getContent() != null && !work.getJournalTitle().getContent().trim().isEmpty()) {
             out.append(",\njournal={"+escapeStringForBibtex(work.getJournalTitle().getContent())+"}");
         }
         //name

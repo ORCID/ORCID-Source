@@ -985,7 +985,10 @@
         <property name="jmsTemplate" ref="jmsTemplate" />
     </bean>
     
-    <bean id="sourceEntityUtils" class="org.orcid.core.utils.SourceEntityUtils" />
+	<bean id="sourceEntityUtils" class="org.orcid.core.utils.SourceEntityUtils" />
+	<bean id="sourceMapperV3" class="org.orcid.core.adapter.mapstruct.SourceMapperV3">
+		<constructor-arg ref="sourceEntityUtils" />
+	</bean>
 
 	<bean id="openIDConnectDiscoveryServiceConfig" class="org.orcid.core.oauth.openid.OpenIDConnectDiscoveryService$OpenIDConnectDiscoveryServiceConfig" />
 
