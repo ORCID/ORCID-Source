@@ -135,8 +135,10 @@ public abstract class JpaJaxbClientAdapterImpl implements JpaJaxbClientAdapter {
     @Mapping(target = "groupProfileId", ignore = true)
     @Mapping(target = "clientType", ignore = true)
     
+    // allowAutoDeprecate is always editable, unlike the config fields below
+    @Mapping(source = "allowAutoDeprecate", target = "allowAutoDeprecate")
+    
     // IGNORED: Config fields handled manually by ClientManagerImpl during updates
-    @Mapping(target = "allowAutoDeprecate", ignore = true)
     @Mapping(target = "persistentTokensEnabled", ignore = true)
     @Mapping(target = "userOBOEnabled", ignore = true)
     @Mapping(target = "authenticationProviderId", ignore = true)

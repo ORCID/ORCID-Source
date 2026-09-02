@@ -14,6 +14,7 @@ import org.orcid.frontend.salesforce.model.Member;
 import org.orcid.frontend.salesforce.model.Opportunity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
 
 // Orika import removed, MapStruct will be used instead.
 
@@ -22,11 +23,12 @@ import org.slf4j.LoggerFactory;
  * @author Camelia Dumitru
  *
  */
+@Component
 public class SalesForceAdapter {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SalesForceAdapter.class);
 
-    @Resource(name = "salesForceMapper")
+    @Resource
     private SalesForceMapper salesForceMapper;
 
     public void setSalesForceMapper(SalesForceMapper salesForceMapper) {

@@ -1,6 +1,6 @@
 package org.orcid.api.common.exception;
 
-import java.io.InputStream;
+import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -77,24 +77,25 @@ public class JSONInputValidator {
                 String schemaPath = SCHEMA_LOCATIONS.get(c);
                 
                 // Strategy 1: Ask the model's classloader directly (most reliable for external JARs)
-                InputStream stream = c.getResourceAsStream(schemaPath);
+                URL url = c.getResource(schemaPath);
                 
                 // Strategy 2: Ask the validator's classloader
-                if (stream == null) {
-                    stream = JSONInputValidator.class.getResourceAsStream(schemaPath);
+                if (url == null) {
+                    url = JSONInputValidator.class.getResource(schemaPath);
                 }
                 
                 // Strategy 3: Ask the thread context classloader
-                if (stream == null) {
+                if (url == null) {
                     String clPath = schemaPath.startsWith("/") ? schemaPath.substring(1) : schemaPath;
-                    stream = Thread.currentThread().getContextClassLoader().getResourceAsStream(clPath);
+                    url = Thread.currentThread().getContextClassLoader().getResource(clPath);
                 }
                 
-                if (stream == null) {
+                if (url == null) {
                     throw new IllegalStateException("CRITICAL ERROR: Missing schema file on classpath: " + schemaPath);
                 }
                 
-                Schema schema = sf.newSchema(new StreamSource(stream));
+                // systemId is required so relative xsd:import schemaLocations resolve correctly
+                Schema schema = sf.newSchema(new StreamSource(url.toExternalForm()));
                 Validator validator = schema.newValidator();            
                 VALIDATORS.put(c, validator);
                 CONTEXTS.put(c, JAXBContext.newInstance(c));
@@ -126,24 +127,25 @@ public class JSONInputValidator {
                 String schemaPath = SCHEMA_LOCATIONS_2_1_API.get(c);
                 
                 // Strategy 1: Ask the model's classloader directly
-                InputStream stream = c.getResourceAsStream(schemaPath);
+                URL url = c.getResource(schemaPath);
                 
                 // Strategy 2: Ask the validator's classloader
-                if (stream == null) {
-                    stream = JSONInputValidator.class.getResourceAsStream(schemaPath);
+                if (url == null) {
+                    url = JSONInputValidator.class.getResource(schemaPath);
                 }
                 
                 // Strategy 3: Ask the thread context classloader
-                if (stream == null) {
+                if (url == null) {
                     String clPath = schemaPath.startsWith("/") ? schemaPath.substring(1) : schemaPath;
-                    stream = Thread.currentThread().getContextClassLoader().getResourceAsStream(clPath);
+                    url = Thread.currentThread().getContextClassLoader().getResource(clPath);
                 }
                 
-                if (stream == null) {
+                if (url == null) {
                     throw new IllegalStateException("CRITICAL ERROR: Missing schema file on classpath: " + schemaPath);
                 }
                 
-                Schema schema = sf.newSchema(new StreamSource(stream));
+                // systemId is required so relative xsd:import schemaLocations resolve correctly
+                Schema schema = sf.newSchema(new StreamSource(url.toExternalForm()));
                 Validator validator = schema.newValidator();            
                 VALIDATORS_2_1_API.put(c, validator);
                 CONTEXTS_2_1_API.put(c, JAXBContext.newInstance(c));

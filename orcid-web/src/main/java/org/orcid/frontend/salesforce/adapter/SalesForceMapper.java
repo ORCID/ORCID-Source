@@ -8,7 +8,6 @@ import java.util.List;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
-import org.mapstruct.Mapper;
 import org.orcid.core.salesforce.model.CommunityType;
 import org.orcid.frontend.salesforce.model.Achievement;
 import org.orcid.frontend.salesforce.model.Contact;
@@ -17,11 +16,13 @@ import org.orcid.frontend.salesforce.model.ContactRoleType;
 import org.orcid.frontend.salesforce.model.Integration;
 import org.orcid.frontend.salesforce.model.Member;
 import org.orcid.frontend.salesforce.model.Opportunity;
+import org.springframework.stereotype.Component;
 
-@Mapper(componentModel = "spring")
-public interface SalesForceMapper {
+// Plain component: methods are hand-written JSON mapping, not MapStruct-generated
+@Component
+public class SalesForceMapper {
 
-    default Member toMember(JSONObject json) {
+    public Member toMember(JSONObject json) {
         if (json == null) return null;
         Member m = new Member();
         m.setId(getString(json, "Id"));
@@ -65,7 +66,7 @@ public interface SalesForceMapper {
         return m;
     }
 
-    default Opportunity toOpportunity(JSONObject json) {
+    public Opportunity toOpportunity(JSONObject json) {
         if (json == null) return null;
         Opportunity o = new Opportunity();
         o.setId(getString(json, "Id"));
@@ -93,7 +94,7 @@ public interface SalesForceMapper {
         return o;
     }
 
-    default Contact toContact(JSONObject json) {
+    public Contact toContact(JSONObject json) {
         if (json == null) return null;
         Contact c = new Contact();
         
@@ -133,7 +134,7 @@ public interface SalesForceMapper {
         return c;
     }
 
-    default ContactRole toContactRole(JSONObject json) {
+    public ContactRole toContactRole(JSONObject json) {
         if (json == null) return null;
         ContactRole cr = new ContactRole();
         cr.setId(getString(json, "Id"));
@@ -150,7 +151,7 @@ public interface SalesForceMapper {
         return cr;
     }
 
-    default Integration toIntegration(JSONObject json) {
+    public Integration toIntegration(JSONObject json) {
         if (json == null) return null;
         Integration i = new Integration();
         i.setId(getString(json, "Id"));
@@ -191,21 +192,21 @@ public interface SalesForceMapper {
     // Safe JSON Extractor Helpers
     // ========================================================================
 
-    default String getString(JSONObject json, String key) {
+    private String getString(JSONObject json, String key) {
         if (json == null || !json.has(key) || JSONObject.NULL.equals(json.opt(key))) {
             return null;
         }
         return json.optString(key, null);
     }
 
-    default Boolean getBoolean(JSONObject json, String key) {
+    private Boolean getBoolean(JSONObject json, String key) {
         if (json == null || !json.has(key) || JSONObject.NULL.equals(json.opt(key))) {
             return null;
         }
         return json.optBoolean(key);
     }
 
-    default URL getUrl(JSONObject json, String key) {
+    private URL getUrl(JSONObject json, String key) {
         String val = getString(json, key);
         if (val == null) return null;
         if (!val.startsWith("http")) {
@@ -218,12 +219,12 @@ public interface SalesForceMapper {
         }
     }
 
-    default CommunityType getCommunityType(JSONObject json, String key) {
+    private CommunityType getCommunityType(JSONObject json, String key) {
         String val = getString(json, key);
         return val == null ? null : CommunityType.fromValue(val);
     }
 
-    default ContactRoleType getContactRoleType(JSONObject json, String key) {
+    private ContactRoleType getContactRoleType(JSONObject json, String key) {
         String val = getString(json, key);
         return val == null ? null : ContactRoleType.fromValue(val);
     }

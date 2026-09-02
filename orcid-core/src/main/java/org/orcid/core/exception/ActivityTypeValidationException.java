@@ -16,6 +16,8 @@ public class ActivityTypeValidationException extends ApplicationException {
 
     public ActivityTypeValidationException(Map<String, String> params) {
         super(params);
+        System.err.println("DEBUG ActivityTypeValidationException params: " + params);
+        new Exception("DEBUG stack").printStackTrace();
     }
     
     public ActivityTypeValidationException(String message, Throwable cause) {

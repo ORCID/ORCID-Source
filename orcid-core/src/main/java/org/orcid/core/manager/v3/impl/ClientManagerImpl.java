@@ -219,10 +219,10 @@ public class ClientManagerImpl implements ClientManager {
         clientDetails.manuallyUpdateLastModified();
         
         // We only manually map the config values if the flag is true
+        // allowAutoDeprecate is mapped unconditionally by the adapter above
         if (updateConfigValues) {
             clientDetails.setAuthenticationProviderId(existingClient.getAuthenticationProviderId());
             clientDetails.setEmailAccessReason(existingClient.getEmailAccessReason());
-            clientDetails.setAllowAutoDeprecate(existingClient.isAllowAutoDeprecate());
             clientDetails.setPersistentTokensEnabled(existingClient.isPersistentTokensEnabled());
             clientDetails.setUserOBOEnabled(existingClient.isUserOBOEnabled());
             
