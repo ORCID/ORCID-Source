@@ -25,8 +25,28 @@
 
 * Install **Tomcat 11** ([download](http://tomcat.apache.org/)) and ensure it starts
 
-* Install **Redis**, and note that it must be reachable without TLS locally. See
-  `properties/local.properties` for the `...redis.ssl.enabled` settings.
+* Install **Redis**. A local Redis speaks plaintext, so both pools that point at it need TLS
+  turned off explicitly. In `properties/local.properties` (which is not in the repository -- you
+  create it, and last-one-wins, so append at the end):
+
+  ```
+  org.orcid.core.utils.cache.redis.host=localhost
+  org.orcid.core.utils.cache.redis.password=
+  org.orcid.core.utils.cache.redis.ssl.enabled=false
+  org.orcid.core.utils.cache.session.redis.host=localhost
+  org.orcid.core.utils.cache.session.redis.password=
+  org.orcid.core.utils.cache.session.redis.ssl.enabled=false
+  ```
+
+  Both halves matter, and the failure if you set the host without the flag is not obvious: Jedis
+  defers the TLS handshake to the first command and `isConnected()` only checks the TCP socket, so
+  the client starts up reporting itself connected and then throws the first time anything reads
+  from it. In orcid-web that first read happens during startup, in a bean that does not catch, so
+  the whole context fails and every URL returns 404 -- with the cause in Tomcat's
+  `logs/localhost.<date>.log`, not in `catalina.out`.
+
+  Leave the `...papi.redis...` pool alone unless you have also pointed it at localhost: it is
+  configured against a remote cache that genuinely speaks TLS.
 
 * Ensure a git client is installed
 
