@@ -11,4 +11,13 @@
         <sql>ALTER TABLE profile_history_event ADD ip inet NULL;</sql>
     </changeSet>
 
+    <changeSet id="ADD-IP-TO-PROFILE-HISTORY-EVENT-HSQLDB" author="amontenegro" dbms="hsqldb">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <columnExists tableName="profile_history_event" columnName="ip"/>
+            </not>
+        </preConditions>
+        <sql>ALTER TABLE profile_history_event ADD ip VARCHAR(45) NULL;</sql>
+    </changeSet>
+
 </databaseChangeLog>
