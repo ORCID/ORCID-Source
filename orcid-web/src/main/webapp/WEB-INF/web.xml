@@ -104,9 +104,26 @@
     <servlet>
         <servlet-name>dispatcher</servlet-name>
         <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+        <!--
+            Deliberately empty. The root ContextLoaderListener above already loads
+            orcid-frontend-web-servlet.xml; naming it here as well built the entire bean graph a
+            second time - the component-scan over org.orcid across every jar, the Hibernate factory,
+            every Redis client - and the two Liquibase runs in each startup log were the symptom.
+
+            An empty contextConfigLocation gives the DispatcherServlet an empty child context that
+            delegates to the root. It still finds its HandlerMappings, HandlerAdapters and
+            ViewResolvers, because DispatcherServlet resolves those with
+            beansOfTypeIncludingAncestors, and the controllers live in the same context as the
+            RequestMappingHandlerMapping that scans for them.
+
+            Empty the SERVLET config, never the root one: springSecurityFilterChain is a
+            DelegatingFilterProxy and resolves against the root context. For the same reason the
+            file must not be split in two - mvcHandlerMappingIntrospector has to share a context
+            with the sec:http chains for Spring Security's MvcRequestMatcher.
+        -->
         <init-param>
             <param-name>contextConfigLocation</param-name>
-            <param-value>classpath*:/orcid-frontend-web-servlet.xml</param-value>
+            <param-value></param-value>
         </init-param>
         <load-on-startup>1</load-on-startup>
     </servlet>
