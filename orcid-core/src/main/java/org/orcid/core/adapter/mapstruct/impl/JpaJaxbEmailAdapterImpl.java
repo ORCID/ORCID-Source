@@ -30,6 +30,7 @@ public abstract class JpaJaxbEmailAdapterImpl implements JpaJaxbEmailAdapter {
     @Override
     @Mapping(source = "dateCreated", target = "createdDate.value")
     @Mapping(source = "lastModified", target = "lastModifiedDate.value")
+    @Mapping(source = ".", target = "source")
     public abstract Email toEmail(EmailEntity entity);
 
 
