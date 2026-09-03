@@ -189,23 +189,27 @@ def changed_file_table(modules, changed_paths):
     JaCoCo keys files by package path (`org/orcid/.../Foo.java`) within a module,
     so match on the module prefix plus the package-relative tail.
     """
+    by_module = {name: files for name, _totals, files, _surefire in modules}
     rows = []
     for path in changed_paths:
         if not path.endswith(".java") or "/src/main/java/" not in path:
             continue
         module, tail = path.split("/src/main/java/", 1)
-        for name, _totals, files, _surefire in modules:
-            if name != module:
-                continue
-            file_counters = files.get(tail)
-            if file_counters is None:
-                # Compiled but never loaded by any test, or not compiled at all.
-                rows.append((path, None, None))
-            else:
-                lc, lm = file_counters.get("LINE", (0, 0))
-                bc, bm = file_counters.get("BRANCH", (0, 0))
-                rows.append((path, pct(lc, lm), pct(bc, bm)))
-            break
+        if module not in by_module:
+            # A module the matrix did not report on -- one whose tests failed
+            # before JaCoCo ran, or one outside the matrix entirely. Say so
+            # rather than dropping the row, which would read as "no files
+            # changed here".
+            rows.append((path, "no coverage report for this module"))
+        elif tail not in by_module[module]:
+            # In the module's source tree but absent from its report: not
+            # compiled, or the class was never loaded by any test in it.
+            rows.append((path, "not in this module's report"))
+        else:
+            counters = by_module[module][tail]
+            lc, lm = counters.get("LINE", (0, 0))
+            bc, bm = counters.get("BRANCH", (0, 0))
+            rows.append((path, (pct(lc, lm), pct(bc, bm))))
     if not rows:
         return []
     out = [
@@ -215,10 +219,11 @@ def changed_file_table(modules, changed_paths):
         "| File | Lines | Branches |",
         "| --- | ---: | ---: |",
     ]
-    for path, line_pct, branch_pct in sorted(rows):
-        if line_pct is None:
-            out.append(f"| `{path}` | not covered by this module's tests | — |")
+    for path, value in sorted(rows, key=lambda r: r[0]):
+        if isinstance(value, str):
+            out.append(f"| `{path}` | {value} | — |")
         else:
+            line_pct, branch_pct = value
             out.append(f"| `{path}` | {fmt_pct(line_pct)} | {fmt_pct(branch_pct)} |")
     return out
 
