@@ -18,6 +18,7 @@ import jakarta.ws.rs.core.Response;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.http.HttpResponse;
+import java.net.http.HttpTimeoutException;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
@@ -320,24 +321,57 @@ public class AuthorizationServerUtil {
     }
 
     private Response doPost(String uri, String basicAuthorizationHeader, Map<String, String> parameters) throws IOException, URISyntaxException, InterruptedException {
-        HttpResponse<String> tokenResponse = null;
-
-        if(StringUtils.isNotBlank(basicAuthorizationHeader)) {
-            tokenResponse = httpRequestUtils.doPost(uri, basicAuthorizationHeader, parameters);
-        } else {
-            tokenResponse = httpRequestUtils.doPost(uri, parameters);
+        HttpResponse<String> tokenResponse;
+        try {
+            tokenResponse = executePost(uri, basicAuthorizationHeader, parameters);
+        } catch (HttpTimeoutException e) {
+            logger.warn("Timeout posting to authorization server endpoint={}, retrying once after 500ms", uri);
+            Thread.sleep(500);
+            try {
+                tokenResponse = executePost(uri, basicAuthorizationHeader, parameters);
+            } catch (HttpTimeoutException retryException) {
+                logger.warn("Timeout posting to authorization server endpoint={} on retry, returning 504", uri);
+                return buildTimeoutResponse();
+            }
         }
 
-        int statusCode = tokenResponse.statusCode();
-        String tokenResult = tokenResponse.body();
+        if (isTimeoutStatus(tokenResponse.statusCode())) {
+            logger.warn("Authorization server timeout status={} from endpoint={}, retrying once after 500ms", tokenResponse.statusCode(), uri);
+            Thread.sleep(500);
+            tokenResponse = executePost(uri, basicAuthorizationHeader, parameters);
+            if (isTimeoutStatus(tokenResponse.statusCode())) {
+                logger.warn("Authorization server timeout status={} from endpoint={} on retry, returning 504", tokenResponse.statusCode(), uri);
+                return buildTimeoutResponse();
+            }
+        }
 
-        Response.ResponseBuilder responseBuilder = Response.status(statusCode);
-        responseBuilder.entity(tokenResult);
+        Response.ResponseBuilder responseBuilder = Response.status(tokenResponse.statusCode());
+        responseBuilder.entity(tokenResponse.body());
         // TODO: Remove this header when the togglz is removed
         responseBuilder.header(Features.OAUTH_AUTHORIZATION_CODE_EXCHANGE.name(), "ON");
         tokenResponse.headers()
                 .firstValue("Content-Type")
                 .ifPresent(contentType -> responseBuilder.type(MediaType.valueOf(contentType)));
+        return responseBuilder.build();
+    }
+
+    private HttpResponse<String> executePost(String uri, String basicAuthorizationHeader, Map<String, String> parameters) throws IOException, URISyntaxException, InterruptedException {
+        if(StringUtils.isNotBlank(basicAuthorizationHeader)) {
+            return httpRequestUtils.doPost(uri, basicAuthorizationHeader, parameters);
+        }
+        return httpRequestUtils.doPost(uri, parameters);
+    }
+
+    private boolean isTimeoutStatus(int statusCode) {
+        return statusCode == Response.Status.REQUEST_TIMEOUT.getStatusCode()
+                || statusCode == Response.Status.GATEWAY_TIMEOUT.getStatusCode();
+    }
+
+    private Response buildTimeoutResponse() {
+        Response.ResponseBuilder responseBuilder = Response.status(Response.Status.GATEWAY_TIMEOUT);
+        responseBuilder.entity("Gateway Timeout");
+        // TODO: Remove this header when the togglz is removed
+        responseBuilder.header(Features.OAUTH_AUTHORIZATION_CODE_EXCHANGE.name(), "ON");
         return responseBuilder.build();
     }
 }
