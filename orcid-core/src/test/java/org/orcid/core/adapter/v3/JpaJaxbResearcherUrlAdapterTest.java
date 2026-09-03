@@ -131,6 +131,16 @@ public class JpaJaxbResearcherUrlAdapterTest extends MockSourceNameCache {
         // no user obo
         assertNull(r.getSource().getAssertionOriginOrcid());
     }      
+
+    @Test
+    public void fromResearcherUrlEntityWithBlankUrlDoesNotCreateUrlWrapper() throws IllegalAccessException {
+        ResearcherUrlEntity entity = getResearcherUrlEntity();
+        entity.setUrl(" ");
+
+        ResearcherUrl researcherUrl = jpaJaxbResearcherUrlAdapter.toResearcherUrl(entity);
+
+        assertNull(researcherUrl.getUrl());
+    }
     
     @Test
     public void fromResearcherUrlEntityToUserOBOResearcherUrl() throws IllegalAccessException {

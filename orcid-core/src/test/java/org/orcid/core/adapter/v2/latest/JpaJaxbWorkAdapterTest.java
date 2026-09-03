@@ -236,6 +236,16 @@ public class JpaJaxbWorkAdapterTest extends MockSourceNameCache {
     }
 
     @Test
+    public void fromWorkEntityWithBlankSubtitleDoesNotCreateSubtitleWrapper() throws IllegalAccessException {
+        WorkEntity work = getWorkEntity();
+        work.setSubtitle(" ");
+
+        Work mappedWork = jpaJaxbWorkAdapter.toWork(work);
+
+        assertNull(mappedWork.getWorkTitle().getSubtitle());
+    }
+
+    @Test
     public void fromWorkEntityToWorkSummaryTest() throws IllegalAccessException {
         WorkEntity work = getWorkEntity();
         assertNotNull(work);

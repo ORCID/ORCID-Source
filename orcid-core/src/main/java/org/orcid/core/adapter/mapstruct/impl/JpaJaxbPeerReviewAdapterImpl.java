@@ -40,6 +40,9 @@ public abstract class JpaJaxbPeerReviewAdapterImpl implements JpaJaxbPeerReviewA
         if (subjectType == null) {
             return null;
         }
+        if (org.orcid.jaxb.model.common.WorkType.DISSERTATION_THESIS.name().equals(subjectType)) {
+            return WorkType.DISSERTATION;
+        }
         try {
             return WorkType.valueOf(subjectType);
         } catch (IllegalArgumentException e) {

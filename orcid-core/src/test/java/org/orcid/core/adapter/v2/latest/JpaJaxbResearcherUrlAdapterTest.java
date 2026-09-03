@@ -79,6 +79,16 @@ public class JpaJaxbResearcherUrlAdapterTest extends MockSourceNameCache {
         //Source
         assertEquals(CLIENT_SOURCE_ID, r.getSource().retrieveSourcePath());
     }      
+
+    @Test
+    public void fromResearcherUrlEntityWithBlankUrlDoesNotCreateUrlWrapper() throws IllegalAccessException {
+        ResearcherUrlEntity entity = getResearcherUrlEntity();
+        entity.setUrl(" ");
+
+        ResearcherUrl researcherUrl = jpaJaxbResearcherUrlAdapter.toResearcherUrl(entity);
+
+        assertNull(researcherUrl.getUrl());
+    }
     
     private ResearcherUrls getResearcherUrls() throws JAXBException {
         JAXBContext context = JAXBContext.newInstance(new Class[] { ResearcherUrls.class });

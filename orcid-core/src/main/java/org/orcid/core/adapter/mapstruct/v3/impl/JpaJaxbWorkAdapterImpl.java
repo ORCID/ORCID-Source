@@ -4,6 +4,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang3.StringUtils;
 import org.mapstruct.AfterMapping;
 import org.mapstruct.Context;
 import org.mapstruct.Mapper;
@@ -20,6 +21,7 @@ import org.orcid.core.adapter.mapstruct.WorkContributorsMapperV3;
 import org.orcid.core.adapter.v3.JpaJaxbWorkAdapter;
 import org.orcid.jaxb.model.common.WorkType;
 import org.orcid.jaxb.model.v3.release.common.Source;
+import org.orcid.jaxb.model.v3.release.common.Subtitle;
 import org.orcid.jaxb.model.v3.release.common.Title;
 import org.orcid.jaxb.model.v3.release.record.Work;
 import org.orcid.jaxb.model.v3.release.record.summary.WorkSummary;
@@ -76,6 +78,19 @@ public abstract class JpaJaxbWorkAdapterImpl implements JpaJaxbWorkAdapter {
         return title == null ? null : title.getContent();
     }
 
+    protected String map(Subtitle subtitle) {
+        return subtitle == null || StringUtils.isBlank(subtitle.getContent()) ? null : subtitle.getContent().trim();
+    }
+
+    protected Subtitle mapSubtitle(String subtitle) {
+        if (StringUtils.isBlank(subtitle)) {
+            return null;
+        }
+        Subtitle result = new Subtitle();
+        result.setContent(subtitle.trim());
+        return result;
+    }
+
     protected org.orcid.jaxb.model.v3.release.common.Url mapStringToUrl(String url) {
         return url == null ? null : new org.orcid.jaxb.model.v3.release.common.Url(url);
     }
@@ -104,7 +119,7 @@ public abstract class JpaJaxbWorkAdapterImpl implements JpaJaxbWorkAdapter {
     @Override
     @Mapping(source = "putCode", target = "id")
     @Mapping(source = "workTitle.title.content", target = "title")
-    @Mapping(source = "workTitle.subtitle.content", target = "subtitle")
+    @Mapping(source = "workTitle.subtitle", target = "subtitle")
     @Mapping(source = "workTitle.translatedTitle.content", target = "translatedTitle")
     @Mapping(source = "workTitle.translatedTitle.languageCode", target = "translatedTitleLanguageCode")
     @Mapping(target = "journalTitle", expression = "java( mapTitleToString(work.getJournalTitle()) )")
@@ -126,7 +141,7 @@ public abstract class JpaJaxbWorkAdapterImpl implements JpaJaxbWorkAdapter {
     @Override
     @Mapping(source = "putCode", target = "id")
     @Mapping(source = "workTitle.title.content", target = "title")
-    @Mapping(source = "workTitle.subtitle.content", target = "subtitle")
+    @Mapping(source = "workTitle.subtitle", target = "subtitle")
     @Mapping(source = "workTitle.translatedTitle.content", target = "translatedTitle")
     @Mapping(source = "workTitle.translatedTitle.languageCode", target = "translatedTitleLanguageCode")
     @Mapping(target = "journalTitle", expression = "java( mapTitleToString(work.getJournalTitle()) )")
@@ -152,7 +167,7 @@ public abstract class JpaJaxbWorkAdapterImpl implements JpaJaxbWorkAdapter {
     @Override
     @Mapping(source = "id", target = "putCode")
     @Mapping(source = "title", target = "workTitle.title.content")
-    @Mapping(source = "subtitle", target = "workTitle.subtitle.content")
+    @Mapping(source = "subtitle", target = "workTitle.subtitle")
     @Mapping(source = "translatedTitle", target = "workTitle.translatedTitle.content")
     @Mapping(source = "translatedTitleLanguageCode", target = "workTitle.translatedTitle.languageCode")
     @Mapping(target = "journalTitle", expression = "java( mapStringToTitle(workEntity.getJournalTitle()) )")
@@ -209,7 +224,7 @@ public abstract class JpaJaxbWorkAdapterImpl implements JpaJaxbWorkAdapter {
     @Override
     @Mapping(source = "id", target = "putCode")
     @Mapping(source = "title", target = "workTitle.title.content")
-    @Mapping(source = "subtitle", target = "workTitle.subtitle.content")
+    @Mapping(source = "subtitle", target = "workTitle.subtitle")
     @Mapping(source = "translatedTitle", target = "workTitle.translatedTitle.content")
     @Mapping(source = "translatedTitleLanguageCode", target = "workTitle.translatedTitle.languageCode")
     @Mapping(target = "journalTitle", expression = "java( mapStringToTitle(workEntity.getJournalTitle()) )")
@@ -233,7 +248,7 @@ public abstract class JpaJaxbWorkAdapterImpl implements JpaJaxbWorkAdapter {
     @Override
     @Mapping(source = "id", target = "putCode")
     @Mapping(source = "title", target = "title.title.content")
-    @Mapping(source = "subtitle", target = "title.subtitle.content")
+    @Mapping(source = "subtitle", target = "title.subtitle")
     @Mapping(source = "translatedTitle", target = "title.translatedTitle.content")
     @Mapping(source = "translatedTitleLanguageCode", target = "title.translatedTitle.languageCode")
     @Mapping(target = "journalTitle", expression = "java( mapStringToTitle(workEntity.getJournalTitle()) )")
@@ -250,7 +265,7 @@ public abstract class JpaJaxbWorkAdapterImpl implements JpaJaxbWorkAdapter {
     @Override
     @Mapping(source = "id", target = "putCode")
     @Mapping(source = "title", target = "title.title.content")
-    @Mapping(source = "subtitle", target = "title.subtitle.content")
+    @Mapping(source = "subtitle", target = "title.subtitle")
     @Mapping(source = "translatedTitle", target = "title.translatedTitle.content")
     @Mapping(source = "translatedTitleLanguageCode", target = "title.translatedTitle.languageCode")
     @Mapping(target = "journalTitle", expression = "java( mapStringToTitle(minimizedWorkEntity.getJournalTitle()) )")
@@ -268,7 +283,7 @@ public abstract class JpaJaxbWorkAdapterImpl implements JpaJaxbWorkAdapter {
 
     @Mapping(source = "id", target = "putCode")
     @Mapping(source = "title", target = "workTitle.title.content")
-    @Mapping(source = "subtitle", target = "workTitle.subtitle.content")
+    @Mapping(source = "subtitle", target = "workTitle.subtitle")
     @Mapping(source = "translatedTitle", target = "workTitle.translatedTitle.content")
     @Mapping(source = "translatedTitleLanguageCode", target = "workTitle.translatedTitle.languageCode")
     @Mapping(target = "journalTitle", expression = "java( mapStringToTitle(minimizedWorkEntity.getJournalTitle()) )")
@@ -287,7 +302,7 @@ public abstract class JpaJaxbWorkAdapterImpl implements JpaJaxbWorkAdapter {
 
     @Mapping(source = "id", target = "putCode")
     @Mapping(source = "title", target = "title.title.content")
-    @Mapping(source = "subtitle", target = "title.subtitle.content")
+    @Mapping(source = "subtitle", target = "title.subtitle")
     @Mapping(source = "translatedTitle", target = "title.translatedTitle.content")
     @Mapping(source = "translatedTitleLanguageCode", target = "title.translatedTitle.languageCode")
     @Mapping(target = "journalTitle", expression = "java( mapStringToTitle(minimizedExtendedWorkEntity.getJournalTitle()) )")

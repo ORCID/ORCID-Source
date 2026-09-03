@@ -3,6 +3,7 @@ package org.orcid.core.adapter.mapstruct.impl;
 import java.util.Collection;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
@@ -10,6 +11,7 @@ import org.mapstruct.MappingTarget;
 import org.orcid.core.adapter.JpaJaxbResearcherUrlAdapter;
 import org.orcid.core.adapter.mapstruct.SourceMapperV2;
 import org.orcid.core.adapter.mapstruct.VisibilityMapperV2;
+import org.orcid.jaxb.model.common_v2.Url;
 import org.orcid.jaxb.model.record_v2.ResearcherUrl;
 import org.orcid.jaxb.model.record_v2.ResearcherUrls;
 import org.orcid.persistence.jpa.entities.ResearcherUrlEntity;
@@ -38,7 +40,7 @@ public abstract class JpaJaxbResearcherUrlAdapterImpl implements JpaJaxbResearch
 
     @Mapping(source = "putCode", target = "id")
     @Mapping(source = "urlName", target = "urlName")
-    @Mapping(source = "url.value", target = "url")
+    @Mapping(source = "url", target = "url")
     // Security & Auditing ignore guards
     @Mapping(target = "dateCreated", ignore = true)
     @Mapping(target = "lastModified", ignore = true)
@@ -48,11 +50,24 @@ public abstract class JpaJaxbResearcherUrlAdapterImpl implements JpaJaxbResearch
     @Override
     @Mapping(source = "id", target = "putCode")
     @Mapping(source = "urlName", target = "urlName")
-    @Mapping(source = "url", target = "url.value")
+    @Mapping(source = "url", target = "url")
     @Mapping(source = "dateCreated", target = "createdDate.value")
     @Mapping(source = "lastModified", target = "lastModifiedDate.value")
     @Mapping(source = ".", target = "source")
     public abstract ResearcherUrl toResearcherUrl(ResearcherUrlEntity entity);
+
+    protected String map(Url url) {
+        return url == null || StringUtils.isBlank(url.getValue()) ? null : url.getValue().trim();
+    }
+
+    protected Url mapUrl(String url) {
+        if (StringUtils.isBlank(url)) {
+            return null;
+        }
+        Url result = new Url();
+        result.setValue(url.trim());
+        return result;
+    }
 
     @Override
     public ResearcherUrls toResearcherUrlList(Collection<ResearcherUrlEntity> entities) {
@@ -72,7 +87,7 @@ public abstract class JpaJaxbResearcherUrlAdapterImpl implements JpaJaxbResearch
     @Override
     @Mapping(source = "putCode", target = "id")
     @Mapping(source = "urlName", target = "urlName")
-    @Mapping(source = "url.value", target = "url")
+    @Mapping(source = "url", target = "url")
     @Mapping(target = "dateCreated", ignore = true)
     @Mapping(target = "lastModified", ignore = true)
     @Mapping(target = "displayIndex", ignore = true)

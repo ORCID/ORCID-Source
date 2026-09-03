@@ -3,6 +3,7 @@ package org.orcid.core.adapter.mapstruct.impl;
 import java.util.Collection;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
 import org.mapstruct.AfterMapping;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -19,6 +20,7 @@ import org.orcid.core.adapter.mapstruct.WorkMapperV2;
 import org.orcid.jaxb.model.common_v2.Country;
 import org.orcid.jaxb.model.common_v2.Iso3166Country;
 import org.orcid.jaxb.model.common_v2.PublicationDate;
+import org.orcid.jaxb.model.common_v2.Subtitle;
 import org.orcid.jaxb.model.record.summary_v2.WorkSummary;
 import org.orcid.jaxb.model.record_v2.Work;
 import org.orcid.persistence.jpa.entities.MinimizedWorkEntity;
@@ -49,7 +51,7 @@ public abstract class JpaJaxbWorkAdapterImpl implements JpaJaxbWorkAdapter {
     @Mapping(source = "workTitle.title.content", target = "title")
     @Mapping(source = "workTitle.translatedTitle.content", target = "translatedTitle")
     @Mapping(source = "workTitle.translatedTitle.languageCode", target = "translatedTitleLanguageCode")
-    @Mapping(source = "workTitle.subtitle.content", target = "subtitle")
+    @Mapping(source = "workTitle.subtitle", target = "subtitle")
     @Mapping(source = "shortDescription", target = "description")
     @Mapping(source = "workCitation.workCitationType", target = "citationType")
     @Mapping(source = "workCitation.citation", target = "citation")
@@ -76,7 +78,7 @@ public abstract class JpaJaxbWorkAdapterImpl implements JpaJaxbWorkAdapter {
     @Mapping(source = "workTitle.title.content", target = "title")
     @Mapping(source = "workTitle.translatedTitle.content", target = "translatedTitle")
     @Mapping(source = "workTitle.translatedTitle.languageCode", target = "translatedTitleLanguageCode")
-    @Mapping(source = "workTitle.subtitle.content", target = "subtitle")
+    @Mapping(source = "workTitle.subtitle", target = "subtitle")
     @Mapping(source = "shortDescription", target = "description")
     @Mapping(source = "workCitation.workCitationType", target = "citationType")
     @Mapping(source = "workCitation.citation", target = "citation")
@@ -104,7 +106,7 @@ public abstract class JpaJaxbWorkAdapterImpl implements JpaJaxbWorkAdapter {
     @Mapping(source = "title", target = "workTitle.title.content")
     @Mapping(source = "translatedTitle", target = "workTitle.translatedTitle.content")
     @Mapping(source = "translatedTitleLanguageCode", target = "workTitle.translatedTitle.languageCode")
-    @Mapping(source = "subtitle", target = "workTitle.subtitle.content")
+    @Mapping(source = "subtitle", target = "workTitle.subtitle")
     @Mapping(source = "description", target = "shortDescription")
     @Mapping(source = "citationType", target = "workCitation.workCitationType")
     @Mapping(source = "citation", target = "workCitation.citation")
@@ -140,6 +142,19 @@ public abstract class JpaJaxbWorkAdapterImpl implements JpaJaxbWorkAdapter {
         return country;
     }
 
+    protected String map(Subtitle subtitle) {
+        return subtitle == null || StringUtils.isBlank(subtitle.getContent()) ? null : subtitle.getContent().trim();
+    }
+
+    protected Subtitle mapSubtitle(String subtitle) {
+        if (StringUtils.isBlank(subtitle)) {
+            return null;
+        }
+        Subtitle result = new Subtitle();
+        result.setContent(subtitle.trim());
+        return result;
+    }
+
     // WorkEntity -> WorkSummary
     @Override
     @Mapping(source = "id", target = "putCode")
@@ -167,7 +182,7 @@ public abstract class JpaJaxbWorkAdapterImpl implements JpaJaxbWorkAdapter {
     @Mapping(source = "title", target = "workTitle.title.content")
     @Mapping(source = "translatedTitle", target = "workTitle.translatedTitle.content")
     @Mapping(source = "translatedTitleLanguageCode", target = "workTitle.translatedTitle.languageCode")
-    @Mapping(source = "subtitle", target = "workTitle.subtitle.content")
+    @Mapping(source = "subtitle", target = "workTitle.subtitle")
     @Mapping(source = "description", target = "shortDescription")
     @Mapping(source = "publicationYear", target = "publicationDate.year.value")
     @Mapping(source = "publicationMonth", target = "publicationDate.month.value")
