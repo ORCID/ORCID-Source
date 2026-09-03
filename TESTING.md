@@ -147,6 +147,26 @@ when the R2 mapping explains it. An unexplained drop is a defect.
 **R6 — Delete the old test in the same pull request as its replacement**, never
 earlier.
 
+**R7 — Mutate before you trust.** A green suite is not evidence that it proves
+anything. Break the guard the test claims to cover, run the test, and check it
+fails:
+
+```bash
+# disable the guard, temporarily
+#   public void checkSourceAndThrow(...) { if (true) { return; } ... }
+mvn test --projects orcid-core -Dtest='org.orcid.core.manager.v3.OrcidSecurityManager*Test'
+# then restore the production file
+```
+
+This costs minutes and is the only thing that distinguishes a test which proves
+a rule from one that merely exercises it. It is how we learned that
+`checkSourceAndThrow` — the rule stopping one member from modifying an item
+another member created — could be deleted outright with all 190 tests still
+green, before *and* after the migration.
+
+Restore the production file immediately afterwards, and never stage it. Stage
+explicit paths, never `git add -A`.
+
 ## What not to do
 
 - Do not assert on call order when the outcome is what matters. A test that
