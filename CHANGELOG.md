@@ -1,3 +1,9 @@
+## v3.0.51 - 2026-09-03
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.0.50...v3.0.51)
+
+- [#7665](https://github.com/ORCID/ORCID-Source/pull/7665): PD-6145  fixes for failing cypress testcases in mapi and papi 
+
 ## v3.0.50 - 2026-09-03
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.0.49...v3.0.50)
