@@ -11,6 +11,13 @@ on:
 
   workflow_dispatch:
 
+# The coverage_report job in test_mvn.yml posts its table as a pull request
+# comment. Without pull-requests: write here it falls back to the job summary.
+permissions:
+  contents: read
+  checks: write
+  pull-requests: write
+
 # cancel running job if another commit comes in
 concurrency:
   group: pr-${{ github.ref }}-1

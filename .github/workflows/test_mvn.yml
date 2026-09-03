@@ -179,6 +179,26 @@ jobs:
               -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn \
               --projects ${{ matrix.project }} --fail-at-end
 
+      - name: Collect coverage and test reports
+        if: always()
+        run: |
+          mkdir -p artifact/surefire
+          cp "$project/target/site/jacoco/jacoco.xml" artifact/ 2>/dev/null || \
+            echo "no jacoco.xml for $project (tests may have failed before the report ran)"
+          cp "$project"/target/surefire-reports/TEST-*.xml artifact/surefire/ 2>/dev/null || \
+            echo "no surefire reports for $project"
+        env:
+          project: "${{ matrix.project }}"
+
+      - name: Upload coverage and test reports
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: coverage-${{ matrix.project }}
+          path: artifact
+          if-no-files-found: ignore
+          retention-days: 7
+
       - name: Publish unit test report for non forked repo
         if: ${{ failure() && (github.event.pull_request.head.repo.full_name == github.repository) }} # only report if a test has failed and we are a non forked repo
         uses: dorny/test-reporter@31a54ee7ebcacc03a09ea97a7e5465a47b84aea5 # v1.9.1
@@ -194,3 +214,175 @@ jobs:
         with:
           report_paths: ${{ matrix.project }}/target/surefire-reports/*.xml
           annotate_only: true # forked repo cannot write to checks so just do annotations
+
+  db_tests:
+    # The tests that genuinely need a database, marked
+    # @Category(org.orcid.test.DatabaseTest.class). They are excluded from the
+    # unit matrix above, so this job is where they run -- beside it rather than
+    # inside its slowest members.
+    #
+    # One job over all the modules rather than a matrix: the stage is small by
+    # design, and a matrix would repeat the two-minute dependency install per
+    # module for a handful of tests.
+    runs-on: ubuntu-latest
+    steps:
+      - name: Harden the runner (Audit all outbound calls)
+        uses: step-security/harden-runner@fa2e9d605c4eeb9fcad4c99c224cee0c6c7f3594 # v2.16.0
+        with:
+          egress-policy: audit
+
+      - name: git-checkout-ref-action
+        id: ref
+        uses: ORCID/git-checkout-ref-action@4258c0cbe4b164e410d0263416034787fb300f26 # main
+        with:
+          default_branch: ${{ github.event.repository.default_branch }}
+          ref: ${{ inputs.ref }}
+
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+        with:
+          ref: ${{ steps.ref.outputs.ref }}
+          fetch-depth: 100
+
+      - name: find next version
+        id: version
+        uses: ORCID/version-bump-action@75233259407ae3728171973d09bc66fcf4b15b6a # main
+        with:
+          version_tag: ${{ inputs.version_tag }}
+          bump: ${{ inputs.bump }}
+
+      - name: Set up Open JDK
+        uses: actions/setup-java@c1e323688fd81a25caa38c78aa6df2d33d3e20d9 # v4.8.0
+        with:
+          distribution: 'temurin'
+          java-version: ${{ inputs.java_version }}
+
+      - name: restore maven cache
+        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
+        with:
+          path: ~/.m2/repository
+          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}-seed-cache
+          restore-keys: |
+            ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}-seed-cache
+
+      - name: seed_maven_cache
+        if: ${{ inputs.seed_maven_cache }}
+        uses: ORCID/ORCID-Source-cache-action@9831e0ffb2e9db46bffa6bb55fb897d159da5668 # main
+        with:
+          version_tag_numeric: ${{ steps.version.outputs.version_tag_numeric }}
+
+      - name: install_dependencies and bump version
+        if: ${{ inputs.install_maven_dependencies }}
+        uses: ORCID/ORCID-Source-dependencies-action@e470d485ef8dc69858100998d77d03ccefb06ef1 # main
+        with:
+          version_tag_numeric: ${{ steps.version.outputs.version_tag_numeric }}
+
+      - name: Run database tests
+        run: |
+          mvn -T 1C --batch-mode test -P db-tests \
+              -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn \
+              --projects orcid-persistence,orcid-core,orcid-api-web,orcid-pub-web,orcid-web,orcid-scheduler-web,orcid-message-listener \
+              --fail-at-end
+
+      - name: Collect database-stage coverage
+        if: always()
+        run: |
+          for m in orcid-persistence orcid-core orcid-api-web orcid-pub-web orcid-web orcid-scheduler-web orcid-message-listener; do
+            if [ -f "$m/target/site/jacoco/jacoco.xml" ]; then
+              mkdir -p "db-artifact/$m"
+              cp "$m/target/site/jacoco/jacoco.xml" "db-artifact/$m/"
+            fi
+          done
+          ls -R db-artifact 2>/dev/null || echo "no database-stage coverage yet"
+
+      - name: Upload database-stage coverage
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: coverage-db
+          path: db-artifact
+          if-no-files-found: ignore
+          retention-days: 7
+
+      - name: Publish database test report
+        if: ${{ failure() && (github.event.pull_request.head.repo.full_name == github.repository) }}
+        uses: dorny/test-reporter@31a54ee7ebcacc03a09ea97a7e5465a47b84aea5 # v1.9.1
+        with:
+          name: "Database test report"
+          path: "*/target/surefire-reports/*.xml"
+          reporter: java-junit
+          fail-on-error: true
+
+  coverage_report:
+    # Renders the JaCoCo results the matrix produced. Measures only: no
+    # thresholds, and this job never fails the build.
+    needs: [test_mvn, db_tests]
+    if: always()
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
+    steps:
+      - name: Harden the runner (Audit all outbound calls)
+        uses: step-security/harden-runner@fa2e9d605c4eeb9fcad4c99c224cee0c6c7f3594 # v2.16.0
+        with:
+          egress-policy: audit
+
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+
+      - name: Download coverage artifacts
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
+        with:
+          pattern: coverage-*
+          path: coverage
+
+      - name: Reshape the database-stage artifact
+        run: |
+          # The db job uploads one artifact holding every module; the report
+          # script keys off directory names, so split it out per module.
+          for d in coverage/coverage-db/*/; do
+            [ -d "$d" ] || continue
+            m=$(basename "$d")
+            mkdir -p "coverage/coverage-db-$m"
+            mv "$d/jacoco.xml" "coverage/coverage-db-$m/" 2>/dev/null || true
+          done
+          rm -rf coverage/coverage-db
+          ls coverage
+
+      - name: List changed files
+        if: github.event_name == 'pull_request'
+        run: |
+          git fetch --no-tags --depth=1 origin "$base"
+          git diff --name-only "origin/$base"...HEAD > changed-files.txt || : > changed-files.txt
+          wc -l < changed-files.txt
+        env:
+          base: ${{ github.base_ref }}
+
+      - name: Render report
+        run: |
+          if [ -f changed-files.txt ]; then
+            python3 .github/scripts/coverage_report.py coverage \
+              --changed-files changed-files.txt > coverage-report.md
+          else
+            python3 .github/scripts/coverage_report.py coverage > coverage-report.md
+          fi
+          cat coverage-report.md >> "$GITHUB_STEP_SUMMARY"
+
+      # Same-repo pull requests get the report as a comment, created once and
+      # updated in place on later pushes. Forked pull requests cannot be
+      # commented on with a read-only token; the step summary above is their
+      # copy, so nothing is lost and nothing fails.
+      - name: Comment on the pull request
+        if: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository }}
+        continue-on-error: true
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR: ${{ github.event.pull_request.number }}
+          REPO: ${{ github.repository }}
+        run: |
+          existing=$(gh api "repos/$REPO/issues/$PR/comments" --paginate \
+            --jq 'map(select(.body | startswith("<!-- orcid-coverage-report -->"))) | .[0].id // empty')
+          if [ -n "$existing" ]; then
+            gh api -X PATCH "repos/$REPO/issues/comments/$existing" -F body=@coverage-report.md
+          else
+            gh api -X POST "repos/$REPO/issues/$PR/comments" -F body=@coverage-report.md
+          fi
