@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 
@@ -22,12 +23,13 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
+import org.orcid.core.aop.ProfileLastModifiedAspect;
 import org.orcid.core.manager.EmailMessage;
 import org.orcid.core.manager.EncryptionManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.impl.OrcidUrlManager;
 import org.orcid.core.manager.impl.TemplateManagerImpl;
-import org.orcid.core.manager.v3.RecordNameManager;
+import org.orcid.core.manager.v3.impl.RecordNameManagerImpl;
 import org.orcid.core.togglz.Features;
 import org.orcid.utils.DateUtils;
 import org.orcid.jaxb.model.common.ActionType;
@@ -50,7 +52,9 @@ import org.orcid.jaxb.model.v3.release.notification.permission.Items;
 import org.orcid.jaxb.model.v3.release.notification.permission.NotificationPermission;
 import org.orcid.jaxb.model.v3.release.record.ExternalID;
 import org.orcid.jaxb.model.v3.release.record.ExternalIDs;
+import org.orcid.persistence.dao.RecordNameDao;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
+import org.orcid.persistence.jpa.entities.RecordNameEntity;
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.togglz.junit.TogglzRule;
@@ -94,9 +98,6 @@ public class EmailMessageSenderTest {
     @Mock
     private EncryptionManager encryptionManager;
 
-    @Mock
-    private RecordNameManager recordNameManagerV3;
-
     @Rule
     public TogglzRule togglzRule = TogglzRule.allDisabled(Features.class);
 
@@ -108,7 +109,31 @@ public class EmailMessageSenderTest {
         when(profileEntityCacheManager.retrieve(anyString())).thenReturn(entity);
 
         when(encryptionManager.encryptForExternalUse(Mockito.anyString())).thenReturn("encrypted");
-        when(recordNameManagerV3.deriveEmailFriendlyName(ORCID)).thenReturn("John Watson");
+
+        // recordNameManagerV3 is REAL, over a mocked RecordNameDao, exactly as it was under
+        // Spring. Stubbing deriveEmailFriendlyName directly would delete the only coverage
+        // this repository has of deriveEmailFriendlyName -> fetchDisplayableCreditName ->
+        // RecordNameUtils.getCreditName, the code that produces the name asserted in the
+        // subject line and rendered into both golden files.
+        //
+        // These two are local mocks rather than @Mock fields on purpose: neither type is a
+        // collaborator of EmailMessageSenderImpl, and RecordNameDao extends GenericDao, so an
+        // @Mock of it is raw-type-assignable to the GenericDao<EmailEventEntity, Long>
+        // emailEventDao field and @InjectMocks silently wires it there.
+        RecordNameDao recordNameDao = Mockito.mock(RecordNameDao.class);
+        ProfileLastModifiedAspect profileLastModifiedAspect = Mockito.mock(ProfileLastModifiedAspect.class);
+
+        RecordNameEntity recordName = new RecordNameEntity();
+        recordName.setCreditName("John Watson");
+        recordName.setGivenNames("Watson");
+        recordName.setFamilyName("John");
+        recordName.setOrcid(ORCID);
+        when(recordNameDao.getRecordName(anyString(), anyLong())).thenReturn(recordName);
+
+        RecordNameManagerImpl recordNameManagerV3 = new RecordNameManagerImpl();
+        recordNameManagerV3.setRecordNameDao(recordNameDao);
+        recordNameManagerV3.setProfileLastModifiedAspect(profileLastModifiedAspect);
+        ReflectionTestUtils.setField(emailMessageSender, "recordNameManagerV3", recordNameManagerV3);
 
         // The rendering collaborators are deliberately REAL, not mocks. Both tests below
         // assert that the rendered body equals a golden file byte for byte; the rendering
