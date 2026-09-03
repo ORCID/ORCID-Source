@@ -1071,19 +1071,6 @@ the software.
         </dependencies>
     </dependencyManagement>
 
-    <repositories>        
-        <repository>
-            <id>maven-restlet</id>
-            <name>Public online Restlet repository</name>
-            <url>https://maven.restlet.talend.com</url>
-        </repository>
-        <repository>
-            <id>swagger2markup</id>
-            <name>Swagger2markup</name>
-            <url>https://jcenter.bintray.com</url>
-        </repository>
-    </repositories>
-
     <profiles>
         <!--  Localhost deployments -->
         <profile>
