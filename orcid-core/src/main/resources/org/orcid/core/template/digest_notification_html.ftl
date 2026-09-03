@@ -183,13 +183,13 @@
                             <#if notificationType == 'ADMINISTRATIVE'>
                                 <#if subjectDelegate??>
                                     <#if subjectDelegate?ends_with("has made you an Account Delegate for their ORCID record")>
-                                        <@bodyHtmlDelegateRecipient?interpret />
+                                        <#noescape>${bodyHtmlDelegateRecipient}</#noescape>
                                     <#elseif subjectDelegate?ends_with("has been added as a Trusted Individual")>
-                                        <@bodyHtmlDelegate?interpret />
+                                        <#noescape>${bodyHtmlDelegate}</#noescape>
                                     <#elseif subjectDelegate?ends_with("has revoked their Account Delegate access to your record")>
-                                    	<@bodyHtmlDelegate?interpret />
+                                    	<#noescape>${bodyHtmlDelegate}</#noescape>
                                     <#elseif subjectDelegate?starts_with("[ORCID] Trusting")>
-                                        <@bodyHtmlAdminDelegate?interpret />
+                                        <#noescape>${bodyHtmlAdminDelegate}</#noescape>
                                     <#else>
                                         ${(notification.subject)}
                                     </#if>

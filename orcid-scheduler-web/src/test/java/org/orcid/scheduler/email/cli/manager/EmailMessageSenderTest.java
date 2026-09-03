@@ -1,7 +1,9 @@
 package org.orcid.scheduler.email.cli.manager;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
@@ -34,10 +36,13 @@ import org.orcid.jaxb.model.common.AvailableLocales;
 import org.orcid.jaxb.model.common.Relationship;
 import org.orcid.jaxb.model.v3.release.common.Source;
 import org.orcid.jaxb.model.v3.release.common.SourceClientId;
+import org.orcid.jaxb.model.v3.release.common.SourceOrcid;
 import org.orcid.jaxb.model.v3.release.common.SourceName;
 import org.orcid.jaxb.model.v3.release.notification.Notification;
+import org.orcid.jaxb.model.v3.release.notification.NotificationType;
 import org.orcid.jaxb.model.v3.release.notification.amended.AmendedSection;
 import org.orcid.jaxb.model.v3.release.notification.amended.NotificationAmended;
+import org.orcid.jaxb.model.v3.release.notification.custom.NotificationAdministrative;
 import org.orcid.jaxb.model.v3.release.notification.custom.NotificationCustom;
 import org.orcid.jaxb.model.v3.release.notification.permission.AuthorizationUrl;
 import org.orcid.jaxb.model.v3.release.notification.permission.Item;
@@ -144,6 +149,42 @@ public class EmailMessageSenderTest {
         assertEquals("[ORCID] Add Research Outputs to your ORCID record", emailMessage.getSubject());
         assertEquals(expectedBodyText, text);
         assertEquals(expectedBodyHtml, html);
+    }
+
+    /**
+     * A delegate notification body is stored verbatim and re-read by the digest job. It must be
+     * emitted as data, never compiled as a template: a FreeMarker expression sitting in the
+     * stored HTML (it gets there through the granting user's own display name) would otherwise
+     * run inside this JVM.
+     */
+    @Test
+    public void digestDoesNotEvaluateStoredNotificationBody() {
+        String payload = "${'freemarker.template.utility.Execute'?new()('/usr/bin/id')}";
+
+        NotificationAdministrative delegateNotification = new NotificationAdministrative();
+        delegateNotification.setPutCode(7L);
+        delegateNotification.setNotificationType(NotificationType.ADMINISTRATIVE);
+        delegateNotification.setSubject("Jane Doe has made you an Account Delegate for their ORCID record");
+        delegateNotification.setBodyHtml("<html><body><p>Hello from <b>" + payload + "</b></p></body></html>");
+        delegateNotification.setCreatedDate(DateUtils.convertToXMLGregorianCalendar("2014-07-12T18:44:36"));
+        Source delegateSource = new Source();
+        delegateSource.setSourceOrcid(new SourceOrcid("0000-0000-0000-0009"));
+        delegateSource.setSourceName(new SourceName("Jane Doe"));
+        delegateNotification.setSource(delegateSource);
+
+        List<Notification> notifications = generateNotifications();
+        notifications.add(delegateNotification);
+
+        EmailMessage emailMessage = emailMessageSender.createDigest("0000-0000-0000-0000", notifications);
+        assertNotNull(emailMessage);
+        String html = emailMessage.getBodyHtml();
+
+        // the expression survives as text ...
+        assertTrue("stored expression should be emitted literally, not evaluated", html.contains(payload));
+        // ... and nothing ran
+        assertFalse("command output must not appear in the digest", html.contains("uid="));
+        // the surrounding markup is still rendered as HTML rather than escaped away
+        assertTrue("stored markup should still render", html.contains("<p>Hello from <b>"));
     }
 
     private List<Notification> generateNotifications() {
