@@ -21,7 +21,10 @@ import org.orcid.jaxb.model.record.summary_v2.Fundings;
 import org.orcid.jaxb.model.record.summary_v2.PeerReviews;
 import org.orcid.jaxb.model.record.summary_v2.Works;
 import org.orcid.jaxb.model.record_v2.Addresses;
+import org.junit.experimental.categories.Category;
+import org.orcid.test.DatabaseTest;
 
+@Category(DatabaseTest.class)
 public class ConvertV2ToV2_1Test extends BaseTest {
 
     @Resource

@@ -66,12 +66,15 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import org.junit.experimental.categories.Category;
+import org.orcid.test.DatabaseTest;
 
 /**
  * @author: Declan Newman (declan) Date: 10/02/2012
  */
 @RunWith(OrcidJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:test-orcid-core-context.xml" })
+@Category(DatabaseTest.class)
 public class ProfileEntityManagerImplTest extends DBUnitTest {
     private static final String CLIENT_ID_1 = "APP-5555555555555555";   
     private static final String CLIENT_ID_2 = "APP-5555555555555556";

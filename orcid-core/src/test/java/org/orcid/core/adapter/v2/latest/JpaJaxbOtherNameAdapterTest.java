@@ -7,7 +7,6 @@ import static org.junit.Assert.assertNull;
 import java.io.InputStream;
 import java.util.Date;
 
-import jakarta.annotation.Resource;
 import jakarta.xml.bind.JAXBContext;
 import jakarta.xml.bind.JAXBException;
 import jakarta.xml.bind.Unmarshaller;
@@ -15,29 +14,39 @@ import jakarta.xml.bind.Unmarshaller;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.orcid.core.adapter.JpaJaxbOtherNameAdapter;
-import org.orcid.core.adapter.MockSourceNameCache;
 import org.orcid.jaxb.model.common_v2.Visibility;
 import org.orcid.jaxb.model.record_v2.OtherName;
 import org.orcid.persistence.jpa.entities.OtherNameEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
-import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.orcid.core.utils.DateFieldsOnBaseEntityUtils;
 import org.orcid.utils.DateUtils;
-import org.springframework.test.context.ContextConfiguration;
+import org.junit.Before;
+import org.mockito.junit.MockitoJUnitRunner;
+import org.orcid.core.adapter.mapstruct.impl.JpaJaxbOtherNameAdapterImpl;
+import org.orcid.core.adapter.MockedMapStructAdapters;
 
 /**
- * 
+ *
  * @author Angel Montenegro
- * 
+ *
  */
-@RunWith(OrcidJUnit4ClassRunner.class)
-@ContextConfiguration(locations = { "classpath:test-orcid-core-context.xml" })
-public class JpaJaxbOtherNameAdapterTest extends MockSourceNameCache {
-    @Resource
-    private JpaJaxbOtherNameAdapter adapter;        
-    
+@RunWith(MockitoJUnitRunner.Silent.class)
+public class JpaJaxbOtherNameAdapterTest {
+
+    private static final String CLIENT_SOURCE_ID = MockedMapStructAdapters.CLIENT_SOURCE_ID;
+
+    private final MockedMapStructAdapters adapters = new MockedMapStructAdapters();
+    private JpaJaxbOtherNameAdapter adapter;
+
+    @Before
+    public void setUpAdapter() throws Exception {
+        // REAL MapStruct mapper: the whole behaviour under test is the mapping configuration,
+        // so a mocked mapper would make every assertion below an assertion about a mock.
+        adapter = adapters.get(JpaJaxbOtherNameAdapterImpl.class);
+    }
+
     @Test
-    public void fromOtherNameToOtherNameEntityTest() throws JAXBException {                
+    public void fromOtherNameToOtherNameEntityTest() throws JAXBException {
         OtherName otherName = getOtherName();
         assertNotNull(otherName);
         assertNotNull(otherName.getCreatedDate());
@@ -46,15 +55,15 @@ public class JpaJaxbOtherNameAdapterTest extends MockSourceNameCache {
         assertNotNull(otherNameEntity);
         assertNull(otherNameEntity.getDateCreated());
         assertNull(otherNameEntity.getLastModified());
-        assertEquals("Other Name #1", otherNameEntity.getDisplayName());        
+        assertEquals("Other Name #1", otherNameEntity.getDisplayName());
         // Source
-        assertNull(otherNameEntity.getSourceId());        
-        assertNull(otherNameEntity.getClientSourceId());        
-        assertNull(otherNameEntity.getElementSourceId());    
+        assertNull(otherNameEntity.getSourceId());
+        assertNull(otherNameEntity.getClientSourceId());
+        assertNull(otherNameEntity.getElementSourceId());
     }
-    
+
     @Test
-    public void fromOtherNameEntityToOtherNameTest() throws IllegalAccessException {                
+    public void fromOtherNameEntityToOtherNameTest() throws IllegalAccessException {
         OtherNameEntity entity = getOtherNameEntity();
         OtherName otherName = adapter.toOtherName(entity);
         assertNotNull(otherName);
@@ -70,7 +79,7 @@ public class JpaJaxbOtherNameAdapterTest extends MockSourceNameCache {
         assertEquals(CLIENT_SOURCE_ID, otherName.getSource().retrieveSourcePath());
         assertEquals(Visibility.PUBLIC, otherName.getVisibility());
     }
-    
+
     private OtherName getOtherName() throws JAXBException {
         JAXBContext context = JAXBContext.newInstance(new Class[] { OtherName.class });
         Unmarshaller unmarshaller = context.createUnmarshaller();
@@ -78,7 +87,7 @@ public class JpaJaxbOtherNameAdapterTest extends MockSourceNameCache {
         InputStream inputStream = getClass().getResourceAsStream(name);
         return (OtherName) unmarshaller.unmarshal(inputStream);
     }
-    
+
     private OtherNameEntity getOtherNameEntity() throws IllegalAccessException {
         Date date = DateUtils.convertToDate("2015-06-05T10:15:20");
         OtherNameEntity result = new OtherNameEntity();

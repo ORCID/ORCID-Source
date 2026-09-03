@@ -5,24 +5,31 @@ import static org.junit.Assert.assertNotNull;
 
 import java.util.Date;
 
-import jakarta.annotation.Resource;
-
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.orcid.core.adapter.JpaJaxbInvalidRecordDataChangeAdapter;
 import org.orcid.model.record_correction.RecordCorrection;
 import org.orcid.persistence.jpa.entities.InvalidRecordDataChangeEntity;
-import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.orcid.core.utils.DateFieldsOnBaseEntityUtils;
-import org.springframework.test.context.ContextConfiguration;
+import org.junit.Before;
+import org.mockito.junit.MockitoJUnitRunner;
+import org.orcid.core.adapter.mapstruct.impl.JpaJaxbInvalidRecordDataChangeAdapterImpl;
+import org.orcid.core.adapter.MockedMapStructAdapters;
 
-@RunWith(OrcidJUnit4ClassRunner.class)
-@ContextConfiguration(locations = { "classpath:test-orcid-core-context.xml" })
+@RunWith(MockitoJUnitRunner.Silent.class)
 public class JpaJaxbInvalidRecordDataChangeAdapterTest {
 
-    @Resource
+    private final MockedMapStructAdapters adapters = new MockedMapStructAdapters();
+
     private JpaJaxbInvalidRecordDataChangeAdapter adapter;
-   
+
+    @Before
+    public void setUpAdapter() throws Exception {
+        // REAL MapStruct mapper: the whole behaviour under test is the mapping configuration,
+        // so a mocked mapper would make every assertion below an assertion about a mock.
+        adapter = adapters.get(JpaJaxbInvalidRecordDataChangeAdapterImpl.class);
+    }
+
     @Test
     public void fromEntityTest() throws IllegalAccessException {
         InvalidRecordDataChangeEntity entity = getEntity();
@@ -38,7 +45,7 @@ public class JpaJaxbInvalidRecordDataChangeAdapterTest {
         assertEquals(element.getSqlUsedToUpdate(), entity.getSqlUsedToUpdate());
         assertEquals(element.getType(), entity.getType());
     }
-    
+
     private InvalidRecordDataChangeEntity getEntity() throws IllegalAccessException {
         InvalidRecordDataChangeEntity entity = new InvalidRecordDataChangeEntity();
         DateFieldsOnBaseEntityUtils.setDateFields(entity, new Date());

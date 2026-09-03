@@ -45,9 +45,12 @@ import org.springframework.test.context.ContextConfiguration;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
+import org.junit.experimental.categories.Category;
+import org.orcid.test.DatabaseTest;
 
 @RunWith(OrcidJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:test-orcid-core-context.xml" })
+@Category(DatabaseTest.class)
 public class FindMyStuffManagerTest extends DBUnitTest{
 
     @Mock

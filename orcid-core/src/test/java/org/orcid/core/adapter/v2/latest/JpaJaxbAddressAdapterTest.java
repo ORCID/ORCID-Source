@@ -7,7 +7,6 @@ import static org.junit.Assert.assertNull;
 import java.io.InputStream;
 import java.util.Date;
 
-import jakarta.annotation.Resource;
 import jakarta.xml.bind.JAXBContext;
 import jakarta.xml.bind.JAXBException;
 import jakarta.xml.bind.Unmarshaller;
@@ -15,7 +14,6 @@ import jakarta.xml.bind.Unmarshaller;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.orcid.core.adapter.JpaJaxbAddressAdapter;
-import org.orcid.core.adapter.MockSourceNameCache;
 import org.orcid.core.utils.DateFieldsOnBaseEntityUtils;
 import org.orcid.utils.DateUtils;
 import org.orcid.jaxb.model.common_v2.Iso3166Country;
@@ -23,37 +21,48 @@ import org.orcid.jaxb.model.common_v2.Visibility;
 import org.orcid.jaxb.model.record_v2.Address;
 import org.orcid.persistence.jpa.entities.AddressEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
-import org.orcid.test.OrcidJUnit4ClassRunner;
-import org.springframework.test.context.ContextConfiguration;
+import org.junit.Before;
+import org.mockito.junit.MockitoJUnitRunner;
+import org.orcid.core.adapter.mapstruct.impl.JpaJaxbAddressAdapterImpl;
+import org.orcid.core.adapter.MockedMapStructAdapters;
 
 /**
- * 
+ *
  * @author Angel Montenegro
- * 
+ *
  */
-@RunWith(OrcidJUnit4ClassRunner.class)
-@ContextConfiguration(locations = { "classpath:test-orcid-core-context.xml" })
-public class JpaJaxbAddressAdapterTest extends MockSourceNameCache {
+@RunWith(MockitoJUnitRunner.Silent.class)
+public class JpaJaxbAddressAdapterTest {
+
+    private static final String CLIENT_SOURCE_ID = MockedMapStructAdapters.CLIENT_SOURCE_ID;
+
+    private final MockedMapStructAdapters adapters = new MockedMapStructAdapters();
     private final Date now = new Date();
-    
-    @Resource
-    private JpaJaxbAddressAdapter adapter;        
-        
+
+    private JpaJaxbAddressAdapter adapter;
+
+    @Before
+    public void setUpAdapter() throws Exception {
+        // REAL MapStruct mapper: the whole behaviour under test is the mapping configuration,
+        // so a mocked mapper would make every assertion below an assertion about a mock.
+        adapter = adapters.get(JpaJaxbAddressAdapterImpl.class);
+    }
+
     @Test
-    public void fromAddressToAddressEntityTest() throws JAXBException {                
+    public void fromAddressToAddressEntityTest() throws JAXBException {
         Address address = getAddress();
         AddressEntity addressEntity = adapter.toAddressEntity(address);
         assertNotNull(addressEntity);
         assertNull(addressEntity.getDateCreated());
         assertNull(addressEntity.getLastModified());
-        assertEquals(Iso3166Country.US.name(), addressEntity.getIso2Country());  
+        assertEquals(Iso3166Country.US.name(), addressEntity.getIso2Country());
         assertNull(addressEntity.getSourceId());
         assertNull(addressEntity.getClientSourceId());
         assertNull(addressEntity.getElementSourceId());
     }
-    
+
     @Test
-    public void fromAddressEntityToAddressTest() throws IllegalAccessException {                
+    public void fromAddressEntityToAddressTest() throws IllegalAccessException {
         AddressEntity entity = getAddressEntity();
         Address address = adapter.toAddress(entity);
         assertNotNull(address);
@@ -67,7 +76,7 @@ public class JpaJaxbAddressAdapterTest extends MockSourceNameCache {
         assertEquals(CLIENT_SOURCE_ID, address.getSource().retrieveSourcePath());
         assertEquals(Visibility.PUBLIC, address.getVisibility());
     }
-    
+
     private Address getAddress() throws JAXBException {
         JAXBContext context = JAXBContext.newInstance(new Class[] { Address.class });
         Unmarshaller unmarshaller = context.createUnmarshaller();
@@ -75,8 +84,8 @@ public class JpaJaxbAddressAdapterTest extends MockSourceNameCache {
         InputStream inputStream = getClass().getResourceAsStream(name);
         return (Address) unmarshaller.unmarshal(inputStream);
     }
-    
-    private AddressEntity getAddressEntity() throws IllegalAccessException {        
+
+    private AddressEntity getAddressEntity() throws IllegalAccessException {
         AddressEntity result = new AddressEntity();
         DateFieldsOnBaseEntityUtils.setDateFields(result, now);
         result.setId(Long.valueOf(1));

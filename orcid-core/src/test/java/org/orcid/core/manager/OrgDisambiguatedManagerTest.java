@@ -27,7 +27,10 @@ import org.orcid.persistence.jpa.entities.OrgDisambiguatedEntity;
 import org.orcid.persistence.jpa.entities.OrgDisambiguatedExternalIdentifierEntity;
 import org.orcid.pojo.OrgDisambiguated;
 import org.orcid.test.TargetProxyHelper;
+import org.junit.experimental.categories.Category;
+import org.orcid.test.DatabaseTest;
 
+@Category(DatabaseTest.class)
 public class OrgDisambiguatedManagerTest extends BaseTest {
 
     @Resource

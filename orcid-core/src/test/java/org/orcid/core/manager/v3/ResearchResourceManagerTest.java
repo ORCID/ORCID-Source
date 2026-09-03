@@ -49,7 +49,10 @@ import org.orcid.jaxb.model.v3.release.record.summary.ResearchResourceSummary;
 import org.orcid.jaxb.model.v3.release.record.summary.ResearchResources;
 import org.orcid.persistence.dao.ResearchResourceDao;
 import org.orcid.test.TargetProxyHelper;
+import org.junit.experimental.categories.Category;
+import org.orcid.test.DatabaseTest;
 
+@Category(DatabaseTest.class)
 public class ResearchResourceManagerTest extends BaseTest {
     private static final List<String> DATA_FILES = Arrays.asList("/data/SourceClientDetailsEntityData.xml",
             "/data/ProfileEntityData.xml", "/data/RecordNameEntityData.xml", "/data/ClientDetailsEntityData.xml", "/data/OrgsEntityData.xml", "/data/ResearchResourceEntityData.xml");

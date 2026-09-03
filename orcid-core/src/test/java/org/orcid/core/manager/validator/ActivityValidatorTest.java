@@ -95,9 +95,10 @@ public class ActivityValidatorTest {
     private PIDResolverService resolverService;
 
     /**
-     * Real: getSourceId(SourceEntity) and getSourceName(Source) are static and would run for real
-     * against a mock anyway, and isTheSameSource is the actual comparison the duplicate rule turns on.
-     * None of the paths reached here touch its Spring collaborators.
+     * Real, not mocked. getSourceId(SourceEntity) is static: it is invoked through the instance
+     * reference in ActivityValidator, so it would execute for real even against a mock and cannot be
+     * stubbed. getSourceName(SourceEntity) only reads the entity. Neither path touches its Spring
+     * collaborators, so a real instance with no wiring is both correct and honest.
      */
     private final SourceEntityUtils sourceEntityUtils = new SourceEntityUtils();
 
