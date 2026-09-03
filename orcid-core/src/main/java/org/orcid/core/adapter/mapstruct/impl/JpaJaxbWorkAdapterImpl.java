@@ -18,10 +18,13 @@ import org.orcid.core.adapter.mapstruct.VisibilityMapperV2;
 import org.orcid.core.adapter.mapstruct.WorkContributorsMapperV2;
 import org.orcid.core.adapter.mapstruct.WorkMapperV2;
 import org.orcid.jaxb.model.common_v2.Country;
+import org.orcid.jaxb.model.common_v2.Day;
 import org.orcid.jaxb.model.common_v2.Iso3166Country;
+import org.orcid.jaxb.model.common_v2.Month;
 import org.orcid.jaxb.model.common_v2.PublicationDate;
 import org.orcid.jaxb.model.common_v2.Subtitle;
 import org.orcid.jaxb.model.common_v2.Url;
+import org.orcid.jaxb.model.common_v2.Year;
 import org.orcid.jaxb.model.record.summary_v2.WorkSummary;
 import org.orcid.jaxb.model.record_v2.Work;
 import org.orcid.persistence.jpa.entities.MinimizedWorkEntity;
@@ -198,9 +201,7 @@ public abstract class JpaJaxbWorkAdapterImpl implements JpaJaxbWorkAdapter {
     @Mapping(source = "translatedTitleLanguageCode", target = "workTitle.translatedTitle.languageCode")
     @Mapping(source = "subtitle", target = "workTitle.subtitle")
     @Mapping(source = "description", target = "shortDescription")
-    @Mapping(source = "publicationYear", target = "publicationDate.year.value")
-    @Mapping(source = "publicationMonth", target = "publicationDate.month.value")
-    @Mapping(source = "publicationDay", target = "publicationDate.day.value")
+    @Mapping(target = "publicationDate", expression = "java( mapPublicationDate(entity.getPublicationDate()) )")
     @Mapping(source = "externalIdentifiersJson", target = "workExternalIdentifiers")
     @Mapping(source = "workUrl", target = "url")
     @Mapping(source = ".", target = "source")
@@ -219,9 +220,7 @@ public abstract class JpaJaxbWorkAdapterImpl implements JpaJaxbWorkAdapter {
     @Mapping(source = "title", target = "title.title.content")
     @Mapping(source = "translatedTitle", target = "title.translatedTitle.content")
     @Mapping(source = "translatedTitleLanguageCode", target = "title.translatedTitle.languageCode")
-    @Mapping(source = "publicationYear", target = "publicationDate.year.value")
-    @Mapping(source = "publicationMonth", target = "publicationDate.month.value")
-    @Mapping(source = "publicationDay", target = "publicationDate.day.value")
+    @Mapping(target = "publicationDate", expression = "java( mapPublicationDate(entity.getPublicationDate()) )")
     @Mapping(source = "externalIdentifiersJson", target = "externalIdentifiers")
     @Mapping(source = ".", target = "source")
     @Mapping(target = "type", ignore = true) // Handled by WorkMapperV2
@@ -252,9 +251,21 @@ public abstract class JpaJaxbWorkAdapterImpl implements JpaJaxbWorkAdapter {
     @Mapping(source = "day.value", target = "day")
     protected abstract PublicationDateEntity mapPublicationDate(PublicationDate date);
 
-    @Mapping(source = "year", target = "year.value")
-    @Mapping(source = "month", target = "month.value")
-    @Mapping(source = "day", target = "day.value")
-    protected abstract PublicationDate mapPublicationDate(PublicationDateEntity entity);
+    protected PublicationDate mapPublicationDate(PublicationDateEntity entity) {
+        if (entity == null) {
+            return null;
+        }
+        PublicationDate result = new PublicationDate();
+        if (entity.getYear() != null) {
+            result.setYear(new Year(entity.getYear()));
+        }
+        if (entity.getMonth() != null) {
+            result.setMonth(new Month(entity.getMonth()));
+        }
+        if (entity.getDay() != null) {
+            result.setDay(new Day(entity.getDay()));
+        }
+        return result;
+    }
 
 }

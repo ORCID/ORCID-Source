@@ -38,6 +38,7 @@ import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.orcid.core.utils.DateFieldsOnBaseEntityUtils;
 import org.orcid.utils.DateUtils;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.util.ReflectionTestUtils;
 
 /**
  * 
@@ -299,6 +300,18 @@ public class JpaJaxbWorkAdapterTest extends MockSourceNameCache {
         mWork.setWorkType(org.orcid.jaxb.model.common.WorkType.DISSERTATION_THESIS.name());
         List<WorkSummary> summaries = jpaJaxbWorkAdapter.toWorkSummaryFromMinimized(Arrays.asList(mWork));
         assertEquals(WorkType.DISSERTATION, summaries.get(0).getType());
+    }
+
+    @Test
+    public void minimizedWorkWithPartialPublicationDateDoesNotCreateEmptyYearWrapper() {
+        PublicationDateEntity entity = new PublicationDateEntity(null, 1, 1);
+
+        org.orcid.jaxb.model.common_v2.PublicationDate publicationDate = ReflectionTestUtils.invokeMethod(
+                jpaJaxbWorkAdapter, "mapPublicationDate", entity);
+
+        assertNull(publicationDate.getYear());
+        assertNotNull(publicationDate.getMonth());
+        assertNotNull(publicationDate.getDay());
     }
     
     @Test
