@@ -1,663 +1,300 @@
 package org.orcid.api.memberV2.server.delegator;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
 
-import jakarta.annotation.Resource;
 import jakarta.ws.rs.core.Response;
 
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.orcid.core.exception.OrcidUnauthorizedException;
-import org.orcid.core.utils.SecurityContextTestUtils;
+import org.orcid.jaxb.model.common_v2.Country;
+import org.orcid.jaxb.model.common_v2.CreditName;
+import org.orcid.jaxb.model.common_v2.Iso3166Country;
+import org.orcid.jaxb.model.common_v2.Source;
+import org.orcid.jaxb.model.common_v2.Url;
 import org.orcid.jaxb.model.common_v2.Visibility;
-import org.orcid.jaxb.model.groupid_v2.GroupIdRecord;
-import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.record_v2.Address;
 import org.orcid.jaxb.model.record_v2.Addresses;
 import org.orcid.jaxb.model.record_v2.Biography;
-import org.orcid.jaxb.model.record_v2.Education;
 import org.orcid.jaxb.model.record_v2.Email;
 import org.orcid.jaxb.model.record_v2.Emails;
-import org.orcid.jaxb.model.record_v2.Employment;
-import org.orcid.jaxb.model.record_v2.Funding;
+import org.orcid.jaxb.model.record_v2.FamilyName;
+import org.orcid.jaxb.model.record_v2.GivenNames;
 import org.orcid.jaxb.model.record_v2.Keyword;
 import org.orcid.jaxb.model.record_v2.Keywords;
+import org.orcid.jaxb.model.record_v2.Name;
 import org.orcid.jaxb.model.record_v2.OtherName;
 import org.orcid.jaxb.model.record_v2.OtherNames;
-import org.orcid.jaxb.model.record_v2.PeerReview;
 import org.orcid.jaxb.model.record_v2.Person;
 import org.orcid.jaxb.model.record_v2.PersonExternalIdentifier;
 import org.orcid.jaxb.model.record_v2.PersonExternalIdentifiers;
+import org.orcid.jaxb.model.record_v2.Relationship;
 import org.orcid.jaxb.model.record_v2.ResearcherUrl;
 import org.orcid.jaxb.model.record_v2.ResearcherUrls;
-import org.orcid.jaxb.model.record_v2.Work;
-import org.orcid.jaxb.model.record_v2.WorkBulk;
-import org.orcid.test.DBUnitTest;
-import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.orcid.test.helper.Utils;
-import org.springframework.test.context.ContextConfiguration;
 
-import static org.junit.Assert.*;
-
-@RunWith(OrcidJUnit4ClassRunner.class)
-@ContextConfiguration(locations = { "classpath:test-orcid-api-web-context.xml" })
-public class MemberV2ApiServiceDelegator_ReadPersonTest extends DBUnitTest {
-    protected static final List<String> DATA_FILES = Arrays.asList("/data/EmptyEntityData.xml",
-            "/data/SourceClientDetailsEntityData.xml", "/data/ProfileEntityData.xml", "/data/ClientDetailsEntityData.xml", "/data/Oauth2TokenDetailsData.xml",
-            "/data/RecordNameEntityData.xml", "/data/BiographyEntityData.xml");
-
-    // Now on, for any new test, PLAESE USER THIS ORCID ID
-    protected final String ORCID = "0000-0000-0000-0003";
-
-    @Resource(name = "memberV2ApiServiceDelegator")
-    protected MemberV2ApiServiceDelegator<Education, Employment, PersonExternalIdentifier, Funding, GroupIdRecord, OtherName, PeerReview, ResearcherUrl, Work, WorkBulk, Address, Keyword> serviceDelegator;
-
-    @BeforeClass
-    public static void initDBUnitData() throws Exception {
-        initDBUnitData(DATA_FILES);
-    }
-
-    @AfterClass
-    public static void removeDBUnitData() throws Exception {
-        Collections.reverse(DATA_FILES);
-        removeDBUnitData(DATA_FILES);
-    }
+/**
+ * The person endpoint of the member v2 delegator, on mocks.
+ *
+ * <p>
+ * {@code viewPerson} fetches the composed person, hands the whole object to
+ * {@code checkAndFilter(String, Person)}, then walks it setting a path on every
+ * sub-element and resolving every source name. The walk is the delegator's own
+ * behaviour and is what is asserted here, sub-element by sub-element.
+ *
+ * <p>
+ * The filtering is not asserted. That overload of {@code checkAndFilter} strips
+ * elements from the object it is given and returns nothing, so against a mock
+ * every "only the public parts came back" assertion would hold trivially. Those
+ * belong to {@code OrcidSecurityManager_PersonTest}.
+ */
+public class MemberV2ApiServiceDelegator_ReadPersonTest extends MemberV2ApiServiceDelegatorMockBase {
 
     @Test(expected = OrcidUnauthorizedException.class)
     public void testViewPersonWrongToken() {
-        SecurityContextTestUtils.setUpSecurityContext("some-other-user", ScopePathType.READ_LIMITED);
-        serviceDelegator.viewPerson(ORCID);
+        Person person = person();
+        when(personDetailsManagerReadOnly.getPersonDetails(ORCID)).thenReturn(person);
+        doThrow(new OrcidUnauthorizedException("Access token is for a different record")).when(orcidSecurityManager).checkAndFilter(ORCID, person);
+
+        try {
+            serviceDelegator.viewPerson(ORCID);
+        } finally {
+            assertNull("nothing must be decorated once the guard has refused", person.getPath());
+        }
     }
 
     @Test
     public void testViewPersonReadPublic() {
-        SecurityContextTestUtils.setUpSecurityContextForClientOnly("APP-5555555555555555", ScopePathType.READ_PUBLIC);
+        Person person = person();
+        when(personDetailsManagerReadOnly.getPersonDetails(ORCID)).thenReturn(person);
+
         Response r = serviceDelegator.viewPerson(ORCID);
+
         Person element = (Person) r.getEntity();
         assertNotNull(element);
         assertEquals("/0000-0000-0000-0003/person", element.getPath());
-        Utils.assertIsPublicOrSource(element, "APP-5555555555555555");
-        assertNotNull(element.getEmails());
-        assertEquals(4, element.getEmails().getEmails().size());
-        List<String> emails = new ArrayList<>();
-        emails.add("public_0000-0000-0000-0003@test.orcid.org");
-        emails.add("public_0000-0000-0000-0003@orcid.org");
-        emails.add("limited_0000-0000-0000-0003@test.orcid.org");
-        emails.add("private_0000-0000-0000-0003@test.orcid.org");
-
-        for(Email e : element.getEmails().getEmails()) {
-            if(!emails.contains(e.getEmail())) {
-                fail(e.getEmail() + " is not in the email list");
-            }
-            emails.remove(e.getEmail());
-        }
-
-        assertTrue(emails.isEmpty());
+        assertEquals("/0000-0000-0000-0003/address", element.getAddresses().getPath());
+        assertEquals("/0000-0000-0000-0003/biography", element.getBiography().getPath());
+        assertEquals("/0000-0000-0000-0003/email", element.getEmails().getPath());
+        assertEquals("/0000-0000-0000-0003/external-identifiers", element.getExternalIdentifiers().getPath());
+        assertEquals("/0000-0000-0000-0003/keywords", element.getKeywords().getPath());
+        assertEquals("/0000-0000-0000-0003/other-names", element.getOtherNames().getPath());
+        assertEquals("/0000-0000-0000-0003/researcher-urls", element.getResearcherUrls().getPath());
+        verify(orcidSecurityManager).checkAndFilter(ORCID, person);
     }
 
     @Test
     public void testReadPublicScope_Person() {
-        SecurityContextTestUtils.setUpSecurityContext(ORCID, ScopePathType.READ_PUBLIC);
+        Person person = person();
+        when(personDetailsManagerReadOnly.getPersonDetails(ORCID)).thenReturn(person);
+
         Response r = serviceDelegator.viewPerson(ORCID);
+
         assertNotNull(r);
         assertEquals(Person.class.getName(), r.getEntity().getClass().getName());
-        Person p = (Person) r.getEntity();
-        testPerson(p, ORCID);
+        Person returned = (Person) r.getEntity();
+        assertEquals("/0000-0000-0000-0003/person", returned.getPath());
+        Utils.verifyLastModified(returned.getLastModifiedDate());
+        verify(orcidSecurityManager).checkAndFilter(ORCID, person);
     }
 
     @Test
     public void testViewPerson() {
-        SecurityContextTestUtils.setUpSecurityContext(ORCID, ScopePathType.PERSON_READ_LIMITED);
+        Person person = person();
+        when(personDetailsManagerReadOnly.getPersonDetails(ORCID)).thenReturn(person);
+
         Response response = serviceDelegator.viewPerson(ORCID);
+
         assertNotNull(response);
-        assertEquals(Person.class.getName(), response.getEntity().getClass().getName());
-        Person p = (Person) response.getEntity();
-        assertNotNull(p);
-        assertEquals("/0000-0000-0000-0003/person", p.getPath());
-        Utils.verifyLastModified(p.getLastModifiedDate());
+        Person returned = (Person) response.getEntity();
+        assertNotNull(returned);
+        assertEquals("/0000-0000-0000-0003/person", returned.getPath());
+        Utils.verifyLastModified(returned.getLastModifiedDate());
 
-        // Address
-        assertNotNull(p.getAddresses());
-        Addresses a = p.getAddresses();
-        assertNotNull(a);
-        Utils.verifyLastModified(a.getLastModifiedDate());
-        assertEquals(4, a.getAddress().size());
+        // every sub-element must carry its own path, not just the container
+        assertEquals("/0000-0000-0000-0003/address/9", returned.getAddresses().getAddress().get(0).getPath());
+        assertEquals("/0000-0000-0000-0003/external-identifiers/13", returned.getExternalIdentifiers().getExternalIdentifiers().get(0).getPath());
+        assertEquals("/0000-0000-0000-0003/keywords/9", returned.getKeywords().getKeywords().get(0).getPath());
+        assertEquals("/0000-0000-0000-0003/other-names/13", returned.getOtherNames().getOtherNames().get(0).getPath());
+        assertEquals("/0000-0000-0000-0003/researcher-urls/13", returned.getResearcherUrls().getResearcherUrls().get(0).getPath());
+        assertEquals("/0000-0000-0000-0003/biography", returned.getBiography().getPath());
 
-        boolean found1 = false, found2 = false, found3 = false, found4 = false, found5 = false, found6 = false;
-        for (Address element : a.getAddress()) {
-            Utils.verifyLastModified(element.getLastModifiedDate());
-            if (element.getPutCode() == 9) {
-                found1 = true;
-            } else if (element.getPutCode() == 10) {
-                found2 = true;
-            } else if (element.getPutCode() == 11) {
-                found3 = true;
-            } else if (element.getPutCode() == 12) {
-                found4 = true;
-            } else {
-                fail("Invalid put code " + element.getPutCode());
-            }
+        // and every source name must have been resolved through SourceUtils
+        assertEquals(CLIENT_1_NAME, returned.getAddresses().getAddress().get(0).getSource().getSourceName().getContent());
+        assertEquals(CLIENT_1_NAME, returned.getKeywords().getKeywords().get(0).getSource().getSourceName().getContent());
+        assertEquals(CLIENT_1_NAME, returned.getOtherNames().getOtherNames().get(0).getSource().getSourceName().getContent());
+        assertEquals(CLIENT_1_NAME, returned.getResearcherUrls().getResearcherUrls().get(0).getSource().getSourceName().getContent());
+        assertEquals(CLIENT_1_NAME, returned.getExternalIdentifiers().getExternalIdentifiers().get(0).getSource().getSourceName().getContent());
 
-        }
-        assertTrue(found1);
-        assertTrue(found2);
-        assertTrue(found3);
-        assertTrue(found4);
-
-        // Biography
-        assertNotNull(p.getBiography());
-        Biography b = p.getBiography();
-        assertNotNull(b);
-        Utils.verifyLastModified(b.getLastModifiedDate());
-
-        assertEquals("Biography for 0000-0000-0000-0003", b.getContent());
-
-        // Email
-        assertNotNull(p.getEmails());
-        Emails email = p.getEmails();
-        assertNotNull(email);
-        Utils.verifyLastModified(email.getLastModifiedDate());
-        assertEquals(5, email.getEmails().size());
-
-        found1 = false;
-        found2 = false;
-        found3 = false;
-        found4 = false;
-
-        for (Email element : email.getEmails()) {
-            if (element.getEmail().equals("public_0000-0000-0000-0003@test.orcid.org")) {
-                found1 = true;
-            } else if (element.getEmail().equals("limited_0000-0000-0000-0003@test.orcid.org")) {
-                found2 = true;
-            } else if (element.getEmail().equals("private_0000-0000-0000-0003@test.orcid.org")) {
-                found3 = true;
-            } else if (element.getEmail().equals("self_limited_0000-0000-0000-0003@test.orcid.org")) {
-                found4 = true;
-            } else if (element.getEmail().equals("public_0000-0000-0000-0003@orcid.org")) {
-                found5 = true;
-            } else {
-                fail("Invalid email " + element.getEmail());
-            }
-        }
-
-        assertTrue(found1);
-        assertTrue(found2);
-        assertTrue(found3);
-        assertTrue(found4);
-        assertTrue(found5);
-
-        // External identifiers
-        assertNotNull(p.getExternalIdentifiers());
-        PersonExternalIdentifiers extIds = p.getExternalIdentifiers();
-        assertNotNull(extIds);
-        Utils.verifyLastModified(extIds.getLastModifiedDate());
-        assertEquals(6, extIds.getExternalIdentifiers().size());
-        found1 = false;
-        found2 = false;
-        found3 = false;
-        found4 = false;
-        found5 = false;
-        found6 = false;
-
-        for (PersonExternalIdentifier element : extIds.getExternalIdentifiers()) {
-            Utils.verifyLastModified(element.getLastModifiedDate());
-            if (element.getPutCode() == 13) {
-                found1 = true;
-            } else if (element.getPutCode() == 14) {
-                found2 = true;
-            } else if (element.getPutCode() == 15) {
-                found3 = true;
-            } else if (element.getPutCode() == 16) {
-                found4 = true;
-            } else if (element.getPutCode() == 18) {
-                found5 = true;
-            } else if (element.getPutCode() == 19) {
-                found6 = true;
-            } else {
-                fail("Invalid put code " + element.getPutCode());
-            }
-
-        }
-        assertTrue(found1);
-        assertTrue(found2);
-        assertTrue(found3);
-        assertTrue(found4);
-        assertTrue(found5);
-        assertTrue(found6);
-
-        // Keywords
-        assertNotNull(p.getKeywords());
-        Keywords k = p.getKeywords();
-        assertNotNull(k);
-        Utils.verifyLastModified(k.getLastModifiedDate());
-        assertEquals(4, k.getKeywords().size());
-        found1 = false;
-        found2 = false;
-        found3 = false;
-        found4 = false;
-        for (Keyword element : k.getKeywords()) {
-            Utils.verifyLastModified(element.getLastModifiedDate());
-            if (element.getPutCode() == 9) {
-                found1 = true;
-            } else if (element.getPutCode() == 10) {
-                found2 = true;
-            } else if (element.getPutCode() == 11) {
-                found3 = true;
-            } else if (element.getPutCode() == 12) {
-                found4 = true;
-            } else {
-                fail("Invalid put code " + element.getPutCode());
-            }
-
-        }
-        assertTrue(found1);
-        assertTrue(found2);
-        assertTrue(found3);
-        assertTrue(found4);
-
-        // Name
-        assertNotNull(p.getName());
-        assertEquals("Credit Name", p.getName().getCreditName().getContent());
-        assertEquals("Given Names", p.getName().getGivenNames().getContent());
-        assertEquals("Family Name", p.getName().getFamilyName().getContent());
-
-        // Other names
-        assertNotNull(p.getOtherNames());
-        OtherNames o = p.getOtherNames();
-        assertNotNull(o);
-        Utils.verifyLastModified(o.getLastModifiedDate());
-        assertEquals(4, o.getOtherNames().size());
-        found1 = false;
-        found2 = false;
-        found3 = false;
-        found4 = false;
-        for (OtherName element : o.getOtherNames()) {
-            Utils.verifyLastModified(element.getLastModifiedDate());
-            if (element.getPutCode() == 13) {
-                found1 = true;
-            } else if (element.getPutCode() == 14) {
-                found2 = true;
-            } else if (element.getPutCode() == 15) {
-                found3 = true;
-            } else if (element.getPutCode() == 16) {
-                found4 = true;
-            } else {
-                fail("Invalid put code " + element.getPutCode());
-            }
-
-        }
-        assertTrue(found1);
-        assertTrue(found2);
-        assertTrue(found3);
-        assertTrue(found4);
-
-        // Researcher urls
-        assertNotNull(p.getResearcherUrls());
-        ResearcherUrls ru = p.getResearcherUrls();
-        assertNotNull(ru);
-        Utils.verifyLastModified(ru.getLastModifiedDate());
-        assertEquals(4, ru.getResearcherUrls().size());
-        found1 = false;
-        found2 = false;
-        found3 = false;
-        found4 = false;
-        for (ResearcherUrl element : ru.getResearcherUrls()) {
-            Utils.verifyLastModified(element.getLastModifiedDate());
-            if (element.getPutCode() == 13) {
-                found1 = true;
-            } else if (element.getPutCode() == 14) {
-                found2 = true;
-            } else if (element.getPutCode() == 15) {
-                found3 = true;
-            } else if (element.getPutCode() == 16) {
-                found4 = true;
-            } else {
-                fail("Invalid put code " + element.getPutCode());
-            }
-
-        }
-        assertTrue(found1);
-        assertTrue(found2);
-        assertTrue(found3);
-        assertTrue(found4);
-
-        assertNotNull(p.getPath());
-    }
-
-    private void testPerson(Person p, String orcid) {
-        // This is more an utility that will work only for 0000-0000-0000-0003
-        assertEquals("0000-0000-0000-0003", orcid);
-        assertNotNull(p);
-        assertEquals("/0000-0000-0000-0003/person", p.getPath());
-        Utils.verifyLastModified(p.getLastModifiedDate());
-        // Address
-        assertNotNull(p.getAddresses());
-        Addresses a = p.getAddresses();
-        assertNotNull(a);
-        Utils.verifyLastModified(a.getLastModifiedDate());
-        assertEquals(3, a.getAddress().size());
-
-        boolean found1 = false, found2 = false, found3 = false, found4 = false, found5 = false;
-        for (Address element : a.getAddress()) {
-            Utils.verifyLastModified(element.getLastModifiedDate());
-            if (element.getPutCode() == 9) {
-                found1 = true;
-            } else if (element.getPutCode() == 10) {
-                found2 = true;
-            } else if (element.getPutCode() == 11) {
-                found3 = true;
-            } else {
-                fail("Invalid put code " + element.getPutCode());
-            }
-
-        }
-        assertTrue(found1);
-        assertTrue(found2);
-        assertTrue(found3);
-
-        // Biography
-        assertNotNull(p.getBiography());
-        Biography b = p.getBiography();
-        assertNotNull(b);
-        Utils.verifyLastModified(b.getLastModifiedDate());
-
-        assertEquals("Biography for 0000-0000-0000-0003", b.getContent());
-
-        // Email
-        assertNotNull(p.getEmails());
-        Emails email = p.getEmails();
-        assertNotNull(email);
-        Utils.verifyLastModified(email.getLastModifiedDate());
-        assertEquals(4, email.getEmails().size());
-        assertEquals("public_0000-0000-0000-0003@test.orcid.org", email.getEmails().get(0).getEmail());
-        assertEquals("public_0000-0000-0000-0003@orcid.org", email.getEmails().get(1).getEmail());
-
-        found1 = false;
-        found2 = false;
-        found3 = false;
-        found4 = false;
-
-        for (Email element : email.getEmails()) {
-            if (element.getEmail().equals("public_0000-0000-0000-0003@test.orcid.org")) {
-                found1 = true;
-            } else if (element.getEmail().equals("limited_0000-0000-0000-0003@test.orcid.org")) {
-                found2 = true;
-            } else if (element.getEmail().equals("private_0000-0000-0000-0003@test.orcid.org")) {
-                found3 = true;
-            } else if (element.getEmail().equals("public_0000-0000-0000-0003@orcid.org")) {
-                found4 = true;
-            } else {
-                fail("Invalid email " + element.getEmail());
-            }
-        }
-
-        assertTrue(found1);
-        assertTrue(found2);
-        assertTrue(found3);
-        assertTrue(found4);
-
-        // External identifiers
-        assertNotNull(p.getExternalIdentifiers());
-        PersonExternalIdentifiers extIds = p.getExternalIdentifiers();
-        assertNotNull(extIds);
-        Utils.verifyLastModified(extIds.getLastModifiedDate());
-        assertEquals(5, extIds.getExternalIdentifiers().size());
-        found1 = false;
-        found2 = false;
-        found3 = false;
-        found4 = false;
-        found5 = false;
-        for (PersonExternalIdentifier element : extIds.getExternalIdentifiers()) {
-            Utils.verifyLastModified(element.getLastModifiedDate());
-            if (element.getPutCode() == 13) {
-                found1 = true;
-            } else if (element.getPutCode() == 14) {
-                found2 = true;
-            } else if (element.getPutCode() == 15) {
-                found3 = true;
-            } else if (element.getPutCode() == 18) {
-                found4 = true;
-            } else if (element.getPutCode() == 19) {
-                found5 = true;
-            } else {
-                fail("Invalid put code " + element.getPutCode());
-            }
-
-        }
-        assertTrue(found1);
-        assertTrue(found2);
-        assertTrue(found3);
-        assertTrue(found4);
-        assertTrue(found5);
-
-        // Keywords
-        assertNotNull(p.getKeywords());
-        Keywords k = p.getKeywords();
-        assertNotNull(k);
-        Utils.verifyLastModified(k.getLastModifiedDate());
-        assertEquals(3, k.getKeywords().size());
-        found1 = false;
-        found2 = false;
-        found3 = false;
-        for (Keyword element : k.getKeywords()) {
-            Utils.verifyLastModified(element.getLastModifiedDate());
-            if (element.getPutCode() == 9) {
-                found1 = true;
-            } else if (element.getPutCode() == 10) {
-                found2 = true;
-            } else if (element.getPutCode() == 11) {
-                found3 = true;
-            } else {
-                fail("Invalid put code " + element.getPutCode());
-            }
-
-        }
-        assertTrue(found1);
-        assertTrue(found2);
-        assertTrue(found3);
-
-        // Name
-        assertNotNull(p.getName());
-        assertEquals("Credit Name", p.getName().getCreditName().getContent());
-        assertEquals("Given Names", p.getName().getGivenNames().getContent());
-        assertEquals("Family Name", p.getName().getFamilyName().getContent());
-
-        // Other names
-        assertNotNull(p.getOtherNames());
-        OtherNames o = p.getOtherNames();
-        assertNotNull(o);
-        Utils.verifyLastModified(o.getLastModifiedDate());
-        assertEquals(3, o.getOtherNames().size());
-        found1 = false;
-        found2 = false;
-        found3 = false;
-        for (OtherName element : o.getOtherNames()) {
-            Utils.verifyLastModified(element.getLastModifiedDate());
-            if (element.getPutCode() == 13) {
-                found1 = true;
-            } else if (element.getPutCode() == 14) {
-                found2 = true;
-            } else if (element.getPutCode() == 15) {
-                found3 = true;
-            } else {
-                fail("Invalid put code " + element.getPutCode());
-            }
-
-        }
-        assertTrue(found1);
-        assertTrue(found2);
-        assertTrue(found3);
-
-        // Researcher urls
-        assertNotNull(p.getResearcherUrls());
-        ResearcherUrls ru = p.getResearcherUrls();
-        assertNotNull(ru);
-        Utils.verifyLastModified(ru.getLastModifiedDate());
-        assertEquals(3, ru.getResearcherUrls().size());
-        found1 = false;
-        found2 = false;
-        found3 = false;
-        for (ResearcherUrl element : ru.getResearcherUrls()) {
-            Utils.verifyLastModified(element.getLastModifiedDate());
-            if (element.getPutCode() == 13) {
-                found1 = true;
-            } else if (element.getPutCode() == 14) {
-                found2 = true;
-            } else if (element.getPutCode() == 15) {
-                found3 = true;
-            } else {
-                fail("Invalid put code " + element.getPutCode());
-            }
-
-        }
-        assertTrue(found1);
-        assertTrue(found2);
-        assertTrue(found3);
-
-        assertNotNull(p.getPath());
+        assertTrue(returned.getEmails().getEmails().size() > 0);
+        verify(orcidSecurityManager).checkAndFilter(ORCID, person);
     }
 
     @Test
     public void testReadPrivateEmails_OtherThingsJustPublic_Person() {
-        SecurityContextTestUtils.setUpSecurityContext(ORCID, "APP-5555555555555556", ScopePathType.EMAIL_READ_PRIVATE);
-        Response response = serviceDelegator.viewPerson(ORCID);
-        assertNotNull(response);
-        assertEquals(Person.class.getName(), response.getEntity().getClass().getName());
-        Person p = (Person) response.getEntity();
-        assertEquals("/0000-0000-0000-0003/person", p.getPath());
-        // Check email
-        // Email
-        assertNotNull(p.getEmails());
-        Emails email = p.getEmails();
-        assertNotNull(email);
-        Utils.verifyLastModified(email.getLastModifiedDate());
-        assertEquals(5, email.getEmails().size());
+        // With an /email/read-private token the security manager keeps every
+        // email and drops the non-public rest. It does that by editing the Person
+        // in place, so what is modelled here is the object it would have left
+        // behind; the filtering itself is OrcidSecurityManager_PersonTest's.
+        Person filtered = new Person();
+        Emails emails = emails(email(1L, "public_0000-0000-0000-0003@test.orcid.org", Visibility.PUBLIC),
+                email(2L, "limited_0000-0000-0000-0003@test.orcid.org", Visibility.LIMITED),
+                email(3L, "private_0000-0000-0000-0003@test.orcid.org", Visibility.PRIVATE));
+        filtered.setEmails(emails);
+        filtered.setAddresses(new Addresses());
+        filtered.getAddresses().setAddress(new ArrayList<>());
+        when(personDetailsManagerReadOnly.getPersonDetails(ORCID)).thenReturn(filtered);
 
-        boolean found1 = false, found2 = false, found3 = false, found4 = false, found5 = false;
+        Response r = serviceDelegator.viewPerson(ORCID);
 
-        for (Email element : email.getEmails()) {
-            if (element.getEmail().equals("public_0000-0000-0000-0003@test.orcid.org")) {
-                found1 = true;
-            } else if (element.getEmail().equals("limited_0000-0000-0000-0003@test.orcid.org")) {
-                found2 = true;
-            } else if (element.getEmail().equals("private_0000-0000-0000-0003@test.orcid.org")) {
-                found3 = true;
-            } else if (element.getEmail().equals("self_limited_0000-0000-0000-0003@test.orcid.org")) {
-                found4 = true;
-            } else if (element.getEmail().equals("public_0000-0000-0000-0003@orcid.org")) {
-                found5 = true;
-            } else {
-                fail("Invalid email " + element.getEmail());
-            }
-        }
-
-        assertTrue(found1);
-        assertTrue(found2);
-        assertTrue(found3);
-        assertTrue(found4);
-        assertTrue(found5);
-        this.assertAllPublicButEmails(p);
-    }    
-    
-    private void assertAllPublicButEmails(Person p) {
-        assertNotNull(p);
-        Utils.verifyLastModified(p.getLastModifiedDate());
-
-        // Address
-        assertNotNull(p.getAddresses());
-        Addresses a = p.getAddresses();
-        assertNotNull(a);
-        Utils.verifyLastModified(a.getLastModifiedDate());
-        assertEquals(1, a.getAddress().size());
-        assertEquals(Long.valueOf(9), a.getAddress().get(0).getPutCode());
-        assertEquals(Visibility.PUBLIC, a.getAddress().get(0).getVisibility());
-
-        // Biography
-        assertNotNull(p.getBiography());
-        Biography b = p.getBiography();
-        assertNotNull(b);
-        Utils.verifyLastModified(b.getLastModifiedDate());
-
-        assertEquals("Biography for 0000-0000-0000-0003", b.getContent());
-
-        // External identifiers
-        assertNotNull(p.getExternalIdentifiers());
-        PersonExternalIdentifiers extIds = p.getExternalIdentifiers();
-        assertNotNull(extIds);
-        Utils.verifyLastModified(extIds.getLastModifiedDate());
-        assertEquals(3, extIds.getExternalIdentifiers().size());
-        assertEquals(Long.valueOf(19), extIds.getExternalIdentifiers().get(0).getPutCode());
-        assertEquals(Visibility.PUBLIC, extIds.getExternalIdentifiers().get(0).getVisibility());
-        assertEquals(Long.valueOf(18), extIds.getExternalIdentifiers().get(1).getPutCode());
-        assertEquals(Visibility.PUBLIC, extIds.getExternalIdentifiers().get(1).getVisibility());
-        assertEquals(Long.valueOf(13), extIds.getExternalIdentifiers().get(2).getPutCode());
-        assertEquals(Visibility.PUBLIC, extIds.getExternalIdentifiers().get(2).getVisibility());
-
-        // Keywords
-        assertNotNull(p.getKeywords());
-        Keywords k = p.getKeywords();
-        assertNotNull(k);
-        Utils.verifyLastModified(k.getLastModifiedDate());
-        assertEquals(1, k.getKeywords().size());
-        assertEquals(Long.valueOf(9), k.getKeywords().get(0).getPutCode());
-        assertEquals(Visibility.PUBLIC, k.getKeywords().get(0).getVisibility());
-
-        // Name
-        assertNotNull(p.getName());
-        assertEquals("Credit Name", p.getName().getCreditName().getContent());
-        assertEquals("Given Names", p.getName().getGivenNames().getContent());
-        assertEquals("Family Name", p.getName().getFamilyName().getContent());
-
-        // Other names
-        assertNotNull(p.getOtherNames());
-        OtherNames o = p.getOtherNames();
-        assertNotNull(o);
-        Utils.verifyLastModified(o.getLastModifiedDate());
-        assertEquals(1, o.getOtherNames().size());
-        assertEquals(Long.valueOf(13), o.getOtherNames().get(0).getPutCode());
-        assertEquals(Visibility.PUBLIC, o.getOtherNames().get(0).getVisibility());
-
-        // Researcher urls
-        assertNotNull(p.getResearcherUrls());
-        ResearcherUrls ru = p.getResearcherUrls();
-        assertNotNull(ru);
-        Utils.verifyLastModified(ru.getLastModifiedDate());
-        assertEquals(1, ru.getResearcherUrls().size());
-        assertEquals(Long.valueOf(13), ru.getResearcherUrls().get(0).getPutCode());
-        assertEquals(Visibility.PUBLIC, ru.getResearcherUrls().get(0).getVisibility());
+        Person returned = (Person) r.getEntity();
+        assertNotNull(returned);
+        assertEquals("/0000-0000-0000-0003/person", returned.getPath());
+        assertEquals("/0000-0000-0000-0003/email", returned.getEmails().getPath());
+        assertEquals(3, returned.getEmails().getEmails().size());
+        assertTrue(returned.getAddresses().getAddress().isEmpty());
+        assertNull(returned.getKeywords());
+        verify(orcidSecurityManager).checkAndFilter(ORCID, filtered);
     }
 
     @Test
     public void checkSourceOnEmail_PersonEndpointTest() {
         String orcid = "0000-0000-0000-0001";
-        SecurityContextTestUtils.setUpSecurityContextForClientOnly("APP-5555555555555555", ScopePathType.READ_LIMITED);
+        Person person = new Person();
+        person.setEmails(emails(email(1L, "limited_verified_0000-0000-0000-0001@test.orcid.org", Visibility.LIMITED),
+                email(2L, "verified_non_professional@nonprofessional.org", Visibility.LIMITED)));
+        person.getEmails().getEmails().forEach(e -> e.setVerified(Boolean.TRUE));
+        when(personDetailsManagerReadOnly.getPersonDetails(orcid)).thenReturn(person);
+
         Response r = serviceDelegator.viewPerson(orcid);
-        Person p = (Person) r.getEntity();
-        assertNotNull(p.getEmails());
-        checkEmails(p.getEmails());
+
+        Person returned = (Person) r.getEntity();
+        assertEquals(2, returned.getEmails().getEmails().size());
+        for (Email e : returned.getEmails().getEmails()) {
+            assertTrue(e.isVerified());
+            assertEquals("APP-5555555555555555", e.getSource().retrieveSourcePath());
+            assertEquals("Source Client 1", e.getSource().getSourceName().getContent());
+        }
     }
 
-    private void checkEmails(Emails emails) {
-        assertEquals(2, emails.getEmails().size());
-        for(Email e : emails.getEmails()) {
-            if(e.getEmail().equals("limited_verified_0000-0000-0000-0001@test.orcid.org")) {
-                assertTrue(e.isVerified());
-                // The source and name on verified professional email addresses should change
-                assertEquals("APP-5555555555555555", e.getSource().retrieveSourcePath());
-                assertEquals("Source Client 1", e.getSource().getSourceName().getContent());
-            } else if(e.getEmail().equals("verified_non_professional@nonprofessional.org")) {
-                assertTrue(e.isVerified());
-                // The source and name on non professional email addresses should not change
-                assertEquals("APP-5555555555555555", e.getSource().retrieveSourcePath());
-                assertEquals("Source Client 1", e.getSource().getSourceName().getContent());
-            } else {
-                fail("Unexpected email " + e.getEmail());
-            }
-        }
+    // ------------------------------------------------------------- fixtures
+
+    private Person person() {
+        Person person = new Person();
+
+        Name name = new Name();
+        name.setCreditName(new CreditName("Credit Name"));
+        name.setGivenNames(new GivenNames("Given Names"));
+        name.setFamilyName(new FamilyName("Family Name"));
+        name.setVisibility(Visibility.PUBLIC);
+        name.setCreatedDate(createdDate());
+        name.setLastModifiedDate(lastModified());
+        person.setName(name);
+
+        Biography biography = new Biography();
+        biography.setContent("Biography for 0000-0000-0000-0003");
+        biography.setVisibility(Visibility.PUBLIC);
+        biography.setCreatedDate(createdDate());
+        biography.setLastModifiedDate(lastModified());
+        person.setBiography(biography);
+
+        Address address = new Address();
+        address.setPutCode(9L);
+        address.setCountry(new Country(Iso3166Country.US));
+        address.setVisibility(Visibility.PUBLIC);
+        address.setSource(clientSource(CLIENT_1));
+        address.setCreatedDate(createdDate());
+        address.setLastModifiedDate(lastModified());
+        Addresses addresses = new Addresses();
+        addresses.setAddress(new ArrayList<>(Arrays.asList(address)));
+        addresses.setLastModifiedDate(lastModified());
+        person.setAddresses(addresses);
+
+        Keyword keyword = new Keyword();
+        keyword.setPutCode(9L);
+        keyword.setContent("Keyword PUBLIC");
+        keyword.setVisibility(Visibility.PUBLIC);
+        keyword.setSource(clientSource(CLIENT_1));
+        keyword.setCreatedDate(createdDate());
+        keyword.setLastModifiedDate(lastModified());
+        Keywords keywords = new Keywords();
+        keywords.setKeywords(new ArrayList<>(Arrays.asList(keyword)));
+        keywords.setLastModifiedDate(lastModified());
+        person.setKeywords(keywords);
+
+        OtherName otherName = new OtherName();
+        otherName.setPutCode(13L);
+        otherName.setContent("Other Name PUBLIC");
+        otherName.setVisibility(Visibility.PUBLIC);
+        otherName.setSource(clientSource(CLIENT_1));
+        otherName.setCreatedDate(createdDate());
+        otherName.setLastModifiedDate(lastModified());
+        OtherNames otherNames = new OtherNames();
+        otherNames.setOtherNames(new ArrayList<>(Arrays.asList(otherName)));
+        otherNames.setLastModifiedDate(lastModified());
+        person.setOtherNames(otherNames);
+
+        ResearcherUrl researcherUrl = new ResearcherUrl();
+        researcherUrl.setPutCode(13L);
+        researcherUrl.setUrl(new Url("http://www.researcherurl.com/13"));
+        researcherUrl.setUrlName("Researcher url PUBLIC");
+        researcherUrl.setVisibility(Visibility.PUBLIC);
+        researcherUrl.setSource(clientSource(CLIENT_1));
+        researcherUrl.setCreatedDate(createdDate());
+        researcherUrl.setLastModifiedDate(lastModified());
+        ResearcherUrls researcherUrls = new ResearcherUrls();
+        researcherUrls.setResearcherUrls(new ArrayList<>(Arrays.asList(researcherUrl)));
+        researcherUrls.setLastModifiedDate(lastModified());
+        person.setResearcherUrls(researcherUrls);
+
+        PersonExternalIdentifier extId = new PersonExternalIdentifier();
+        extId.setPutCode(13L);
+        extId.setType("type-13");
+        extId.setValue("value-13");
+        extId.setUrl(new Url("http://extId.com/13"));
+        extId.setRelationship(Relationship.SELF);
+        extId.setVisibility(Visibility.PUBLIC);
+        extId.setSource(clientSource(CLIENT_1));
+        extId.setCreatedDate(createdDate());
+        extId.setLastModifiedDate(lastModified());
+        PersonExternalIdentifiers extIds = new PersonExternalIdentifiers();
+        extIds.setExternalIdentifiers(new ArrayList<>(Arrays.asList(extId)));
+        extIds.setLastModifiedDate(lastModified());
+        person.setExternalIdentifiers(extIds);
+
+        person.setEmails(emails(email(1L, "public_0000-0000-0000-0003@test.orcid.org", Visibility.PUBLIC)));
+
+        return person;
+    }
+
+    private Email email(Long putCode, String address, Visibility visibility) {
+        return email(putCode, address, visibility, clientSource(CLIENT_1));
+    }
+
+    private Email email(Long putCode, String address, Visibility visibility, Source source) {
+        Email email = new Email();
+        email.setPutCode(putCode);
+        email.setEmail(address);
+        email.setVisibility(visibility);
+        email.setSource(source);
+        email.setCreatedDate(createdDate());
+        email.setLastModifiedDate(lastModified());
+        return email;
+    }
+
+    private Emails emails(Email... elements) {
+        Emails emails = new Emails();
+        emails.setEmails(new ArrayList<>(Arrays.asList(elements)));
+        emails.setLastModifiedDate(lastModified());
+        return emails;
     }
 }
