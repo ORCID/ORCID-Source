@@ -16,7 +16,6 @@ import java.util.Locale;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
-import jakarta.annotation.Resource;
 import jakarta.ws.rs.core.MediaType;
 
 import org.apache.commons.lang3.StringUtils;
@@ -48,9 +47,14 @@ import org.orcid.pojo.IdentifierType;
 import org.orcid.pojo.PIDResolutionResult;
 import org.orcid.pojo.WorkExtended;
 import org.orcid.pojo.ajaxForm.PojoUtil;
+
+import org.springframework.beans.factory.annotation.Autowired;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
 import com.google.common.cache.CacheBuilder;
@@ -60,18 +64,20 @@ import com.google.common.cache.LoadingCache;
 @Component
 public class PubMedResolver implements LinkResolver, MetadataResolver {
 
+
+    private PIDNormalizationService normalizationService;
+
     private static final Logger LOG = LoggerFactory.getLogger(PubMedResolver.class);
 
-    @Resource
-    PIDNormalizationService normalizationService;
 
-    @Resource
-    PIDResolverCache cache;
+    @Autowired
+    private PIDResolverCache cache;
 
-    @Resource
+    @Autowired
+    @Lazy
     private IdentifierTypeManager identifierTypeManager;
 
-    @Resource
+    @Autowired
     protected LocaleManager localeManager;
 
     @Value("${org.orcid.core.work.contributors.ui.max:50}")

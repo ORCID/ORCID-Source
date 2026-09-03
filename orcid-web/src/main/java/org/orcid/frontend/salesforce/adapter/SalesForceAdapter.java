@@ -14,23 +14,25 @@ import org.orcid.frontend.salesforce.model.Member;
 import org.orcid.frontend.salesforce.model.Opportunity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
 
-import ma.glasnost.orika.MapperFacade;
+// Orika import removed, MapStruct will be used instead.
 
 /**
  * 
- * @author Will Simpson
+ * @author Camelia Dumitru
  *
  */
+@Component
 public class SalesForceAdapter {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SalesForceAdapter.class);
 
-    @Resource(name = "salesForceMemberMapperFacade")
-    private MapperFacade mapperFacade;
+    @Resource
+    private SalesForceMapper salesForceMapper;
 
-    public void setMapperFacade(MapperFacade mapperFacade) {
-        this.mapperFacade = mapperFacade;        
+    public void setSalesForceMapper(SalesForceMapper salesForceMapper) {
+        this.salesForceMapper = salesForceMapper;        
     }
 
     public List<Member> createMembersListFromJson(JSONObject results) {
@@ -48,14 +50,16 @@ public class SalesForceAdapter {
     }
     
     public Member createMemberFromSalesForceRecord(JSONObject record) throws JSONException {
-        return mapperFacade.map(record, Member.class);        
+        // Updated to use MapStruct generated mapper
+        return salesForceMapper.toMember(record);        
     }
     
     public List<Integration> createIntegrationsListFromJson(JSONObject results) {
         List<JSONObject> objectsList;
         try {
             objectsList = extractObjectListFromRecords(results);
-            return objectsList.stream().map(e -> mapperFacade.map(e, Integration.class)).collect(Collectors.toList());                       
+            // Updated to use MapStruct generated mapper
+            return objectsList.stream().map(e -> salesForceMapper.toIntegration(e)).collect(Collectors.toList());                       
         } catch (JSONException e) {
             LOGGER.error("Error getting integrations from SalesForce JSON", e);
             throw new RuntimeException("Error getting integrations from SalesForce JSON", e);
@@ -63,10 +67,11 @@ public class SalesForceAdapter {
     }
     
     public List<Integration> createIntegrationsList(JSONArray integrations) {
-        List<Integration> integrationList = new ArrayList<Integration>();
+        List<Integration> integrationList = new ArrayList<>();
         try {
             for (int i = 0; i < integrations.length(); i++) {
-                integrationList.add(mapperFacade.map(integrations.getJSONObject(i), Integration.class));
+                // Updated to use MapStruct generated mapper
+                integrationList.add(salesForceMapper.toIntegration(integrations.getJSONObject(i)));
             }
         } catch (JSONException e) {
             throw new RuntimeException("Error getting integrations from SalesForce JSON", e);
@@ -75,10 +80,11 @@ public class SalesForceAdapter {
     }
     
     public List<Opportunity> createOpportunitiesList(JSONArray opportunities) {
-        List<Opportunity> opportunityList = new ArrayList<Opportunity>();
+        List<Opportunity> opportunityList = new ArrayList<>();
         try {
             for (int i = 0; i < opportunities.length(); i++) {
-                opportunityList.add(mapperFacade.map(opportunities.getJSONObject(i), Opportunity.class));
+                // Updated to use MapStruct generated mapper
+                opportunityList.add(salesForceMapper.toOpportunity(opportunities.getJSONObject(i)));
             }
         } catch (JSONException e) {
             LOGGER.error("Error getting opportunities from SalesForce JSON", e);
@@ -100,7 +106,7 @@ public class SalesForceAdapter {
     
     private List<JSONObject> extractObjectListFromRecords(JSONObject object) throws JSONException {
         List<JSONObject> objects = new ArrayList<>();
-        if (object != null) {
+        if (object != null && object.has("records")) {
             JSONArray records = object.getJSONArray("records");
             for (int i = 0; i < records.length(); i++) {
                 objects.add(records.getJSONObject(i));

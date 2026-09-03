@@ -213,16 +213,19 @@ public class ClientManagerImpl implements ClientManager {
             }
         }
 
+        // This is now 100% safe! MapStruct will ignore core/config fields.
         jpaJaxbClientAdapter.toEntity(existingClient, clientDetails);        
+        
         clientDetails.manuallyUpdateLastModified();
         
-        // Check if we should update client configuration values
+        // We only manually map the config values if the flag is true
+        // allowAutoDeprecate is mapped unconditionally by the adapter above
         if (updateConfigValues) {
-            // Authentication provider id
             clientDetails.setAuthenticationProviderId(existingClient.getAuthenticationProviderId());
-            // Enable persistent tokens
+            clientDetails.setEmailAccessReason(existingClient.getEmailAccessReason());
             clientDetails.setPersistentTokensEnabled(existingClient.isPersistentTokensEnabled());
             clientDetails.setUserOBOEnabled(existingClient.isUserOBOEnabled());
+            
             refreshGrantTypesForObo(clientDetails, existingClient.isOboEnabled());
         }
 

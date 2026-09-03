@@ -12,8 +12,8 @@ import jakarta.annotation.Resource;
 import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
 import org.kohsuke.args4j.Option;
+import org.orcid.core.adapter.mapstruct.ContributorsRolesAndSequencesMapperV3;
 import org.orcid.core.adapter.v3.JpaJaxbWorkAdapter;
-import org.orcid.core.adapter.v3.converter.ContributorsRolesAndSequencesConverter;
 import org.orcid.core.cli.anonymize.WorkPojoFromCsv;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 
@@ -64,7 +64,7 @@ public class AnonymizeWorksFromCSV {
     private ContributorUtils contributorUtils;
 
     @Resource
-    private ContributorsRolesAndSequencesConverter contributorsRolesAndSequencesConverter;
+    private ContributorsRolesAndSequencesMapperV3 contributorsRolesAndSequencesConverter;
     
     @Value("${org.orcid.core.work.contributors.ui.max:50}")
     private int maxContributorsForUI;
@@ -94,7 +94,7 @@ public class AnonymizeWorksFromCSV {
         workDao = (WorkDao) context.getBean("workDao");
         jpaJaxbWorkAdapter = (JpaJaxbWorkAdapter) context.getBean("jpaJaxbWorkAdapterV3");
         contributorUtils = (ContributorUtils) context.getBean("contributorUtilsV3");
-        contributorsRolesAndSequencesConverter=context.getBean(ContributorsRolesAndSequencesConverter.class);
+        contributorsRolesAndSequencesConverter=context.getBean(ContributorsRolesAndSequencesMapperV3.class);
         bootstrapTogglz(context.getBean(OrcidTogglzConfiguration.class));
     }
 
@@ -156,7 +156,7 @@ public class AnonymizeWorksFromCSV {
                 }
                 List<ContributorsRolesAndSequences> topContributors = contributorUtils.getContributorsGroupedByOrcid(work.getWorkContributors().getContributor(), maxContributorsForUI);
                 if (topContributors.size() > 0) {
-                    workEntity.setTopContributorsJson(contributorsRolesAndSequencesConverter.convertTo(topContributors, null));
+                    workEntity.setTopContributorsJson(contributorsRolesAndSequencesConverter.convertTo(topContributors));
                 }
             } else {
                 workEntity.setContributorsJson("{\"contributor\":[]}");
