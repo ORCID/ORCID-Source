@@ -5,53 +5,47 @@ import static org.mockito.Mockito.when;
 import java.util.Calendar;
 import java.util.Date;
 
-import jakarta.annotation.Resource;
 import jakarta.persistence.NoResultException;
 
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.orcid.core.exception.DeactivatedException;
 import org.orcid.core.exception.LockedException;
 import org.orcid.core.exception.OrcidDeprecatedException;
 import org.orcid.core.exception.OrcidNotClaimedException;
 import org.orcid.core.manager.ProfileEntityCacheManager;
-import org.orcid.core.manager.v3.SourceManager;
+import org.orcid.core.manager.v3.impl.OrcidSecurityManagerImpl;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.SourceEntity;
-import org.orcid.test.OrcidJUnit4ClassRunner;
-import org.orcid.test.TargetProxyHelper;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.util.ReflectionTestUtils;
 
 /**
  * 
  * @author Will Simpson
  *
  */
-@RunWith(OrcidJUnit4ClassRunner.class)
-@ContextConfiguration(locations = { "classpath:test-orcid-core-context.xml" })
+@RunWith(MockitoJUnitRunner.class)
 public class OrcidSecurityManagerTest {
     
     private static final String ORCID = "0000-0000-0000-0000";
     private static final String CLIENT_ID = "APP-0000000000000001";
 
-    @Resource(name = "orcidSecurityManagerV3")
-    protected OrcidSecurityManager orcidSecurityManager;
+    /**
+     * Matches the @Value default on OrcidSecurityManagerImpl. It has to be
+     * non-zero, or DateUtils.olderThan(justCreatedDate, 0) is already true a
+     * millisecond later and checkProfile_NotClaimed_NotOldEnough_NotSourceTest
+     * stops throwing.
+     */
+    private static final int CLAIM_WAIT_PERIOD_DAYS = 10;
 
-    @Value("${org.orcid.core.claimWaitPeriodDays:10}")
-    private int claimWaitPeriodDays;
-    
-    @Resource(name = "sourceManagerV3")
-    private SourceManager sourceManager;
-    
-    @Resource 
-    private ProfileEntityCacheManager profileEntityCacheManager;
-    
+    @InjectMocks
+    protected OrcidSecurityManagerImpl orcidSecurityManager = new OrcidSecurityManagerImpl();
+
     @Mock
     protected ProfileEntityCacheManager profileEntityCacheManagerMock;
 
@@ -60,21 +54,14 @@ public class OrcidSecurityManagerTest {
     
     @Before
     public void before() {
-        MockitoAnnotations.initMocks(this);
-        TargetProxyHelper.injectIntoProxy(orcidSecurityManager, "profileEntityCacheManager", profileEntityCacheManagerMock);
-        TargetProxyHelper.injectIntoProxy(orcidSecurityManager, "sourceManager", sourceManagerMock);
+        // @InjectMocks does not resolve @Value fields, so they are set here.
+        ReflectionTestUtils.setField(orcidSecurityManager, "claimWaitPeriodDays", CLAIM_WAIT_PERIOD_DAYS);
+        ReflectionTestUtils.setField(orcidSecurityManager, "baseUrl", "https://testserver.orcid.org");
         SourceEntity source = new SourceEntity();
         source.setSourceClient(new ClientDetailsEntity(CLIENT_ID));
         when(sourceManagerMock.retrieveActiveSourceEntity()).thenReturn(source);        
     }
    
-    @After
-    public void after() {
-        //Restore the original beans
-        TargetProxyHelper.injectIntoProxy(orcidSecurityManager, "profileEntityCacheManager", profileEntityCacheManager);
-        TargetProxyHelper.injectIntoProxy(orcidSecurityManager, "sourceManager", sourceManager);
-    }
-    
     @Test(expected = NoResultException.class)
     public void checkProfile_InvalidOrcidTest() {
         when(profileEntityCacheManagerMock.retrieve(ORCID)).thenThrow(NoResultException.class);
@@ -143,7 +130,7 @@ public class OrcidSecurityManagerTest {
         entity.setClaimed(false);
         Calendar cal = Calendar.getInstance();
         cal.setTime(new Date());
-        cal.add(Calendar.DAY_OF_YEAR, -(claimWaitPeriodDays + 1));
+        cal.add(Calendar.DAY_OF_YEAR, -(CLAIM_WAIT_PERIOD_DAYS + 1));
         entity.setSubmissionDate(cal.getTime());
         when(profileEntityCacheManagerMock.retrieve(ORCID)).thenReturn(entity);
         orcidSecurityManager.checkProfile(ORCID);
