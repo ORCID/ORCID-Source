@@ -23,6 +23,7 @@ import org.orcid.jaxb.model.common.WorkType;
 import org.orcid.jaxb.model.v3.release.common.Source;
 import org.orcid.jaxb.model.v3.release.common.Subtitle;
 import org.orcid.jaxb.model.v3.release.common.Title;
+import org.orcid.jaxb.model.v3.release.common.Url;
 import org.orcid.jaxb.model.v3.release.record.Work;
 import org.orcid.jaxb.model.v3.release.record.summary.WorkSummary;
 import org.orcid.persistence.jpa.entities.MinimizedExtendedWorkEntity;
@@ -91,12 +92,12 @@ public abstract class JpaJaxbWorkAdapterImpl implements JpaJaxbWorkAdapter {
         return result;
     }
 
-    protected org.orcid.jaxb.model.v3.release.common.Url mapStringToUrl(String url) {
-        return url == null ? null : new org.orcid.jaxb.model.v3.release.common.Url(url);
+    protected Url mapStringToUrl(String url) {
+        return StringUtils.isBlank(url) ? null : new Url(url.trim());
     }
 
-    protected String mapUrlToString(org.orcid.jaxb.model.v3.release.common.Url url) {
-        return url == null ? null : url.getValue();
+    protected String mapUrlToString(Url url) {
+        return url == null || StringUtils.isBlank(url.getValue()) ? null : url.getValue().trim();
     }
 
     protected org.orcid.jaxb.model.v3.release.common.Country mapStringToCountry(String country) {

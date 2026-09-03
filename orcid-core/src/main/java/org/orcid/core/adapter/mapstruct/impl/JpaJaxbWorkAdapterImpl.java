@@ -21,6 +21,7 @@ import org.orcid.jaxb.model.common_v2.Country;
 import org.orcid.jaxb.model.common_v2.Iso3166Country;
 import org.orcid.jaxb.model.common_v2.PublicationDate;
 import org.orcid.jaxb.model.common_v2.Subtitle;
+import org.orcid.jaxb.model.common_v2.Url;
 import org.orcid.jaxb.model.record.summary_v2.WorkSummary;
 import org.orcid.jaxb.model.record_v2.Work;
 import org.orcid.persistence.jpa.entities.MinimizedWorkEntity;
@@ -56,7 +57,7 @@ public abstract class JpaJaxbWorkAdapterImpl implements JpaJaxbWorkAdapter {
     @Mapping(source = "workCitation.workCitationType", target = "citationType")
     @Mapping(source = "workCitation.citation", target = "citation")
     @Mapping(source = "workExternalIdentifiers", target = "externalIdentifiersJson")
-    @Mapping(source = "url.value", target = "workUrl")
+    @Mapping(source = "url", target = "workUrl")
     @Mapping(source = "workContributors", target = "contributorsJson")
     @Mapping(source = "languageCode", target = "languageCode")
     @Mapping(source = "country.value", target = "iso2Country")
@@ -83,7 +84,7 @@ public abstract class JpaJaxbWorkAdapterImpl implements JpaJaxbWorkAdapter {
     @Mapping(source = "workCitation.workCitationType", target = "citationType")
     @Mapping(source = "workCitation.citation", target = "citation")
     @Mapping(source = "workExternalIdentifiers", target = "externalIdentifiersJson")
-    @Mapping(source = "url.value", target = "workUrl")
+    @Mapping(source = "url", target = "workUrl")
     @Mapping(source = "workContributors", target = "contributorsJson")
     @Mapping(source = "languageCode", target = "languageCode")
     @Mapping(source = "country.value", target = "iso2Country")
@@ -111,7 +112,7 @@ public abstract class JpaJaxbWorkAdapterImpl implements JpaJaxbWorkAdapter {
     @Mapping(source = "citationType", target = "workCitation.workCitationType")
     @Mapping(source = "citation", target = "workCitation.citation")
     @Mapping(source = "externalIdentifiersJson", target = "workExternalIdentifiers")
-    @Mapping(source = "workUrl", target = "url.value")
+    @Mapping(source = "workUrl", target = "url")
     @Mapping(source = "contributorsJson", target = "workContributors")
     @Mapping(source = "languageCode", target = "languageCode")
     @Mapping(source = "iso2Country", target = "country", qualifiedByName = "iso2CountryToCountry")
@@ -155,6 +156,19 @@ public abstract class JpaJaxbWorkAdapterImpl implements JpaJaxbWorkAdapter {
         return result;
     }
 
+    protected String map(Url url) {
+        return url == null || StringUtils.isBlank(url.getValue()) ? null : url.getValue().trim();
+    }
+
+    protected Url mapUrl(String url) {
+        if (StringUtils.isBlank(url)) {
+            return null;
+        }
+        Url result = new Url();
+        result.setValue(url.trim());
+        return result;
+    }
+
     // WorkEntity -> WorkSummary
     @Override
     @Mapping(source = "id", target = "putCode")
@@ -188,7 +202,7 @@ public abstract class JpaJaxbWorkAdapterImpl implements JpaJaxbWorkAdapter {
     @Mapping(source = "publicationMonth", target = "publicationDate.month.value")
     @Mapping(source = "publicationDay", target = "publicationDate.day.value")
     @Mapping(source = "externalIdentifiersJson", target = "workExternalIdentifiers")
-    @Mapping(source = "workUrl", target = "url.value")
+    @Mapping(source = "workUrl", target = "url")
     @Mapping(source = ".", target = "source")
     @Mapping(target = "workType", ignore = true) // Handled by WorkMapperV2
     protected abstract Work toWorkFromMinimized(MinimizedWorkEntity entity);
