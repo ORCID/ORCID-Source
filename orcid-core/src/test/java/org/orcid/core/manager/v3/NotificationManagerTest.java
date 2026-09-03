@@ -9,7 +9,7 @@ import org.mockito.MockitoAnnotations;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 import org.orcid.core.adapter.v3.JpaJaxbNotificationAdapter;
-import org.orcid.core.adapter.v3.impl.JpaJaxbNotificationAdapterImpl;
+import org.orcid.core.adapter.mapstruct.v3.impl.JpaJaxbNotificationAdapterImpl;
 import org.orcid.core.api.OrcidApiConstants;
 import org.orcid.core.manager.EncryptionManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;

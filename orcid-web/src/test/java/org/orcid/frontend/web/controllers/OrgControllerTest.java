@@ -14,11 +14,9 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.orcid.core.manager.v3.read_only.EmailManagerReadOnly;
 import org.orcid.core.manager.v3.read_only.ProfileEntityManagerReadOnly;
 import org.orcid.core.security.OrcidRoles;
 import org.orcid.frontend.web.util.BaseControllerTest;
-import org.orcid.jaxb.model.v3.release.record.Email;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.pojo.OrgDisambiguated;
 import org.orcid.test.OrcidJUnit4ClassRunner;
@@ -55,14 +53,10 @@ public class OrgControllerTest extends BaseControllerTest {
         @Resource(name = "profileEntityManagerReadOnlyV3")
         private ProfileEntityManagerReadOnly profileEntityManagerReadOnly;
         
-        @Resource(name = "emailManagerReadOnlyV3")
-        private EmailManagerReadOnly emailManagerReadOnly;
-        
         @Override
         protected Authentication getAuthentication() {
             String orcid = "4444-4444-4444-4443";
             ProfileEntity p = profileEntityManagerReadOnly.findByOrcid(orcid);
-            Email e = emailManagerReadOnly.findPrimaryEmail(orcid);
             List<GrantedAuthority> roles = Arrays.asList(new SimpleGrantedAuthority(OrcidRoles.ROLE_USER.name()));
             UserDetails details = new User(orcid,
                     "password", roles);

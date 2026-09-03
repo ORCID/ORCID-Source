@@ -1,3 +1,9 @@
+## v3.0.49 - 2026-09-03
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.0.48...v3.0.49)
+
+- [#7632](https://github.com/ORCID/ORCID-Source/pull/7632): PD-6145 upgrade to MapStruct
+
 ## v3.0.48 - 2026-08-29
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.0.47...v3.0.48)
