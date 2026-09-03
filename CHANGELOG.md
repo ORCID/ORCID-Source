@@ -1,3 +1,9 @@
+## v3.0.50 - 2026-09-03
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.0.49...v3.0.50)
+
+- [#7664](https://github.com/ORCID/ORCID-Source/pull/7664): PD-12881 PD-12882 PD-12883
+
 ## v3.0.49 - 2026-09-03
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.0.48...v3.0.49)

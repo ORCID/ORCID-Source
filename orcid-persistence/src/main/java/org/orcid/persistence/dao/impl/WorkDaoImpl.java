@@ -2,6 +2,7 @@ package org.orcid.persistence.dao.impl;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -100,10 +101,14 @@ public class WorkDaoImpl extends GenericDaoImpl<WorkEntity, Long> implements Wor
     @Transactional
     @UpdateProfileLastModifiedAndIndexingStatus
     public boolean updateVisibilities(String orcid, List<Long> workIds, String visibility) {
-        Query query = entityManager.createNativeQuery("UPDATE work SET visibility=:visibility, last_modified=now() WHERE work_id in (:workIds)");
+        Query query = entityManager
+                .createNativeQuery("UPDATE work SET visibility=:visibility, last_modified=now() WHERE work_id in (:workIds) and orcid = :orcid");
         query.setParameter("visibility", visibility);
         query.setParameter("workIds", workIds);
-        return query.executeUpdate() > 0;
+        query.setParameter("orcid", orcid);
+        // Anything the caller does not own is filtered out by the predicate, so a short count
+        // means the request was not fully applied and must not be reported as a success.
+        return query.executeUpdate() == new HashSet<Long>(workIds).size();
     }
     
     /**
@@ -120,9 +125,12 @@ public class WorkDaoImpl extends GenericDaoImpl<WorkEntity, Long> implements Wor
     @Transactional
     @UpdateProfileLastModifiedAndIndexingStatus
     public boolean removeWorks(String clientOrcid, List<Long> workIds) {
-        Query query = entityManager.createNativeQuery("DELETE FROM work WHERE work_id in (:workIds)");        
+        Query query = entityManager.createNativeQuery("DELETE FROM work WHERE work_id in (:workIds) and orcid = :clientOrcid");
         query.setParameter("workIds", workIds);
-        return query.executeUpdate() > 0;
+        query.setParameter("clientOrcid", clientOrcid);
+        // Anything the caller does not own is filtered out by the predicate, so a short count
+        // means the request was not fully applied and must not be reported as a success.
+        return query.executeUpdate() == new HashSet<Long>(workIds).size();
     }
         
     /**
