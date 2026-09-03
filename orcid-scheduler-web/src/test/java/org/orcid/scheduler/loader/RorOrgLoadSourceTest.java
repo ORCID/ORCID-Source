@@ -28,6 +28,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.mockito.invocation.InvocationOnMock;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.mockito.stubbing.Answer;
 import org.orcid.core.manager.OrgDisambiguatedManager;
 import org.orcid.core.orgs.OrgDisambiguatedSourceType;
@@ -46,12 +47,9 @@ import org.orcid.scheduler.loader.source.fighshare.api.FigshareCollectionArticle
 import org.orcid.scheduler.loader.source.fighshare.api.FigshareCollectionArticleSummary;
 import org.orcid.scheduler.loader.source.fighshare.api.FigshareCollectionTimeline;
 import org.orcid.scheduler.loader.source.ror.RorOrgLoadSource;
-import org.orcid.test.OrcidJUnit4ClassRunner;
-import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.util.ReflectionTestUtils;
 
-@RunWith(OrcidJUnit4ClassRunner.class)
-@ContextConfiguration(locations = { "classpath:test-orcid-scheduler-context.xml" })
+@RunWith(MockitoJUnitRunner.Silent.class)
 public class RorOrgLoadSourceTest {
 
     @Mock

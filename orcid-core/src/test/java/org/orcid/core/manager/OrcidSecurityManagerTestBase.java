@@ -1,7 +1,7 @@
 package org.orcid.core.manager;
 
 import static org.junit.Assert.fail;
-import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.isA;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
@@ -21,6 +21,7 @@ import org.mockito.junit.MockitoJUnitRunner;
 import org.orcid.core.common.util.AuthenticationUtils;
 import org.orcid.core.exception.OrcidAccessControlException;
 import org.orcid.core.exception.OrcidCoreExceptionMapper;
+import org.orcid.core.exception.OrcidVisibilityException;
 import org.orcid.core.manager.impl.OrcidSecurityManagerImpl;
 import org.orcid.core.manager.read_only.PeerReviewManagerReadOnly;
 import org.orcid.core.manager.read_only.ProfileFundingManagerReadOnly;
@@ -176,7 +177,11 @@ public abstract class OrcidSecurityManagerTestBase {
         // asserts on its type, so this must return a fresh non-null OrcidError.
         // The v2 mapper entry point is getOrcidError(Throwable); getV3OrcidError
         // is the v3 one and is not reachable from this impl.
-        when(orcidCoreExceptionMapper.getOrcidError(any(Throwable.class))).thenAnswer(invocation -> new OrcidError());
+        // Narrowed to the one throwable that actually reaches the mapper. The
+        // WorkBulk loop catches Exception, so a blanket any(Throwable) stub would
+        // map a future NullPointerException to a value that still satisfies
+        // `instanceof OrcidError` and let that bug through green.
+        when(orcidCoreExceptionMapper.getOrcidError(isA(OrcidVisibilityException.class))).thenAnswer(invocation -> new OrcidError());
     }
 
     @After

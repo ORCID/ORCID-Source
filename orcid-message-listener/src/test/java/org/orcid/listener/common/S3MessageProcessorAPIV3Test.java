@@ -21,7 +21,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
-import jakarta.annotation.Resource;
 import jakarta.xml.bind.JAXBException;
 import javax.xml.datatype.XMLGregorianCalendar;
 
@@ -29,8 +28,9 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.orcid.jaxb.model.v3.release.common.LastModifiedDate;
 import org.orcid.jaxb.model.v3.release.common.OrcidIdentifier;
 import org.orcid.jaxb.model.v3.release.error.OrcidError;
@@ -80,10 +80,8 @@ import org.orcid.listener.persistence.util.APIVersion;
 import org.orcid.listener.persistence.util.ActivityType;
 import org.orcid.listener.s3.S3Manager;
 import org.orcid.listener.s3.S3MessageProcessorAPIV3;
-import org.orcid.test.OrcidJUnit4ClassRunner;
-import org.orcid.test.TargetProxyHelper;
 import org.orcid.utils.DateUtils;
-import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.util.SerializationUtils;
 
 import com.amazonaws.AmazonClientException;
@@ -92,8 +90,7 @@ import com.amazonaws.services.s3.model.S3ObjectSummary;
 import com.fasterxml.jackson.core.JsonProcessingException;
 
 @SuppressWarnings("unchecked")
-@RunWith(OrcidJUnit4ClassRunner.class)
-@ContextConfiguration(locations = { "classpath:orcid-message-listener-test-context.xml" })
+@RunWith(MockitoJUnitRunner.Silent.class)
 public class S3MessageProcessorAPIV3Test {
 
     private final String orcid = "0000-0000-0000-0000";
@@ -103,8 +100,8 @@ public class S3MessageProcessorAPIV3Test {
     private final XMLGregorianCalendar now = DateUtils.convertToXMLGregorianCalendar(dateNow);
     private final XMLGregorianCalendar after = DateUtils.convertToXMLGregorianCalendar(dateAfter);
 
-    @Resource
-    private S3MessageProcessorAPIV3 processor;
+    @InjectMocks
+    private S3MessageProcessorAPIV3 processor = new S3MessageProcessorAPIV3();
 
     @Mock
     private Orcid30Manager mock_orcid30ApiClient;
@@ -117,11 +114,7 @@ public class S3MessageProcessorAPIV3Test {
 
     @Before
     public void before() throws LockedRecordException, DeprecatedRecordException, ExecutionException, IOException, InterruptedException {
-        MockitoAnnotations.initMocks(this);
-        TargetProxyHelper.injectIntoProxy(processor, "isV3IndexingEnabled", true);
-        TargetProxyHelper.injectIntoProxy(processor, "orcid30ApiClient", mock_orcid30ApiClient);
-        TargetProxyHelper.injectIntoProxy(processor, "api30RecordStatusManager", mock_api30RecordStatusManager);
-        TargetProxyHelper.injectIntoProxy(processor, "s3Manager", mock_s3Manager);
+        ReflectionTestUtils.setField(processor, "isV3IndexingEnabled", true);
 
         // Setup mocks
         when(mock_orcid30ApiClient.fetchPublicRecord(any())).thenReturn(getRecord());

@@ -4,7 +4,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 
@@ -14,20 +13,20 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import jakarta.annotation.Resource;
-
 import org.apache.commons.io.IOUtils;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.orcid.core.manager.EmailMessage;
 import org.orcid.core.manager.EncryptionManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
+import org.orcid.core.manager.impl.OrcidUrlManager;
+import org.orcid.core.manager.impl.TemplateManagerImpl;
 import org.orcid.core.manager.v3.RecordNameManager;
 import org.orcid.core.togglz.Features;
 import org.orcid.utils.DateUtils;
@@ -51,12 +50,9 @@ import org.orcid.jaxb.model.v3.release.notification.permission.Items;
 import org.orcid.jaxb.model.v3.release.notification.permission.NotificationPermission;
 import org.orcid.jaxb.model.v3.release.record.ExternalID;
 import org.orcid.jaxb.model.v3.release.record.ExternalIDs;
-import org.orcid.persistence.dao.RecordNameDao;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
-import org.orcid.persistence.jpa.entities.RecordNameEntity;
-import org.orcid.test.OrcidJUnit4ClassRunner;
-import org.orcid.test.TargetProxyHelper;
-import org.springframework.test.context.ContextConfiguration;
+import org.springframework.context.support.ReloadableResourceBundleMessageSource;
+import org.springframework.test.util.ReflectionTestUtils;
 import org.togglz.junit.TogglzRule;
 
 /**
@@ -64,70 +60,79 @@ import org.togglz.junit.TogglzRule;
  * @author Will Simpson
  *
  */
-@RunWith(OrcidJUnit4ClassRunner.class)
-@ContextConfiguration(locations = { "classpath:test-orcid-scheduler-context.xml" })
+@RunWith(MockitoJUnitRunner.Silent.class)
 public class EmailMessageSenderTest {
 
-    @Resource
-    private EmailMessageSender emailMessageSender;
+    private static final String ORCID = "0000-0000-0000-0000";
 
-    @Resource(name = "recordNameManagerV3")
-    private RecordNameManager recordNameManagerV3;
+    /**
+     * The base URL baked into the golden fixtures under src/test/resources/email.
+     * Under Spring this arrived as org.orcid.core.baseUri from test-core.properties;
+     * with the context gone the test has to supply it itself.
+     */
+    private static final String BASE_URL = "https://testserver.orcid.org";
 
-    @Resource
+    /**
+     * Copied verbatim from the "messageSource" bean in orcid-core-context.xml.
+     */
+    private static final String MESSAGE_SOURCE_BASENAMES = "classpath:i18n/about,classpath:i18n/api,classpath:i18n/email_deprecated,classpath:i18n/email_admin_delegate_request,classpath:i18n/email_added_as_delegate,classpath:i18n/email_auto_deprecate,classpath:i18n/email_new_claim_reminder,classpath:i18n/email_common,classpath:i18n/email_deactivate,classpath:i18n/email_digest,classpath:i18n/email_forgotten_id,classpath:i18n/email_institutional_connection,classpath:i18n/email_locked,classpath:i18n/email_notification,classpath:i18n/email_reactivation,classpath:i18n/email_removed,classpath:i18n/email_reset_password,classpath:i18n/email_reset_password_not_found,classpath:i18n/email_subject,classpath:i18n/email_tips,classpath:i18n/email_verify,classpath:i18n/email_welcome,classpath:i18n/javascript,classpath:i18n/messages,classpath:i18n/admin,classpath:i18n/identifiers,classpath:i18n/notranslate,classpath:i18n/2019-07-emailVisibilitySettings,classpath:i18n/ng_orcid,classpath:i18n/ng_orcid_signin,classpath:i18n/email2faDisabled,classpath:i18n/email2faEnabled,classpath:i18n/layout,classpath:i18n/notification_share,classpath:i18n/notification_digest,classpath:i18n/notification_delegate,classpath:i18n/notification_admin_delegate,classpath:i18n/email_add_works_to_record,classpath:i18n/papi_rate_limit_email,classpath:i18n/notification_mvp";
+
+    /**
+     * The @Value default on EmailMessageSenderImpl. No property overrides it, so this
+     * is the value that was in force under the Spring context. It is auto-unboxed by
+     * ClientUpdates.addElement, so leaving it null throws NPE on the first amended
+     * notification.
+     */
+    private static final Integer MAX_NOTIFICATIONS_PER_CLIENT = 20;
+
+    @InjectMocks
+    private EmailMessageSenderImpl emailMessageSender = new EmailMessageSenderImpl(8, 3);
+
+    @Mock
     private ProfileEntityCacheManager profileEntityCacheManager;
 
-    @Resource
+    @Mock
     private EncryptionManager encryptionManager;
 
-    @Resource
-    private RecordNameDao recordNameDao;
-
     @Mock
-    private ProfileEntityCacheManager mockProfileEntityCacheManager;
-
-    @Mock
-    private EncryptionManager mockEncryptionManager;
-
-    @Mock
-    private RecordNameDao mockRecordNameDao;
+    private RecordNameManager recordNameManagerV3;
 
     @Rule
     public TogglzRule togglzRule = TogglzRule.allDisabled(Features.class);
 
     @Before
-    public void beforeClass() {
-        MockitoAnnotations.initMocks(this);
-        String orcid = "0000-0000-0000-0000";
+    public void beforeClass() throws IOException {
         ProfileEntity entity = new ProfileEntity();
-        entity.setId(orcid);
+        entity.setId(ORCID);
         entity.setLocale(AvailableLocales.EN.name());
-        when(mockProfileEntityCacheManager.retrieve(anyString())).thenReturn(entity);
+        when(profileEntityCacheManager.retrieve(anyString())).thenReturn(entity);
 
-        RecordNameEntity recordName = new RecordNameEntity();
-        recordName.setCreditName("John Watson");
-        recordName.setGivenNames("Watson");
-        recordName.setFamilyName("John");
-        recordName.setOrcid(orcid);
+        when(encryptionManager.encryptForExternalUse(Mockito.anyString())).thenReturn("encrypted");
+        when(recordNameManagerV3.deriveEmailFriendlyName(ORCID)).thenReturn("John Watson");
 
-        when(mockEncryptionManager.encryptForExternalUse(Mockito.anyString())).thenReturn("encrypted");
-        when(mockRecordNameDao.getRecordName(anyString(), anyLong())).thenReturn(recordName);
+        // The rendering collaborators are deliberately REAL, not mocks. Both tests below
+        // assert that the rendered body equals a golden file byte for byte; the rendering
+        // IS the behaviour under test. Mocking TemplateManager or MessageSource turns
+        // assertEquals(expected, actual) into a tautology that passes while proving nothing.
+        TemplateManagerImpl templateManager = new TemplateManagerImpl();
+        templateManager.afterPropertiesSet();
+        ReflectionTestUtils.setField(emailMessageSender, "templateManager", templateManager);
 
-        TargetProxyHelper.injectIntoProxy(emailMessageSender, "profileEntityCacheManager", mockProfileEntityCacheManager);
-        TargetProxyHelper.injectIntoProxy(emailMessageSender, "encryptionManager", mockEncryptionManager);
-        TargetProxyHelper.injectIntoProxy(recordNameManagerV3, "recordNameDao", mockRecordNameDao);
-    }
+        ReloadableResourceBundleMessageSource messages = new ReloadableResourceBundleMessageSource();
+        messages.setBasenames(MESSAGE_SOURCE_BASENAMES.split(","));
+        messages.setDefaultEncoding("UTF-8");
+        ReflectionTestUtils.setField(emailMessageSender, "messages", messages);
 
-    @After
-    public void after() {
-        TargetProxyHelper.injectIntoProxy(emailMessageSender, "profileEntityCacheManager", profileEntityCacheManager);
-        TargetProxyHelper.injectIntoProxy(emailMessageSender, "encryptionManager", encryptionManager);
-        TargetProxyHelper.injectIntoProxy(recordNameManagerV3, "recordNameDao", recordNameDao);
+        OrcidUrlManager orcidUrlManager = new OrcidUrlManager();
+        orcidUrlManager.setBaseUrl(BASE_URL);
+        ReflectionTestUtils.setField(emailMessageSender, "orcidUrlManager", orcidUrlManager);
+
+        ReflectionTestUtils.setField(emailMessageSender, "maxNotificationsToShowPerClient", MAX_NOTIFICATIONS_PER_CLIENT);
     }
 
     @Test
     public void testCreateDigest() throws IOException {
-        EmailMessage emailMessage = emailMessageSender.createDigest("0000-0000-0000-0000", generateNotifications());
+        EmailMessage emailMessage = emailMessageSender.createDigest(ORCID, generateNotifications());
         assertNotNull(emailMessage);
         String html = emailMessage.getBodyHtml();
         String text = emailMessage.getBodyText();
@@ -140,7 +145,7 @@ public class EmailMessageSenderTest {
 
     @Test
     public void testAddWorksToRecordEmail() throws IOException {
-        EmailMessage emailMessage = emailMessageSender.createAddWorksToRecordEmail("email@orcid.org", "0000-0000-0000-0000");
+        EmailMessage emailMessage = emailMessageSender.createAddWorksToRecordEmail("email@orcid.org", ORCID);
         assertNotNull(emailMessage);
         String text = emailMessage.getBodyText();
         String html = emailMessage.getBodyHtml();

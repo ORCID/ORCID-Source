@@ -3,21 +3,30 @@ package org.orcid.api.publicV3.server.security;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+import static org.mockito.ArgumentMatchers.isA;
+import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
-
-import jakarta.annotation.Resource;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.orcid.api.publicV3.server.security.PublicAPISecurityManagerV3;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.MockitoJUnitRunner;
+import org.orcid.api.publicV3.server.security.impl.PublicAPISecurityManagerV3Impl;
+import org.orcid.core.exception.OrcidCoreExceptionMapper;
+import org.orcid.core.exception.OrcidNoBioException;
 import org.orcid.core.exception.OrcidNonPublicElementException;
+import org.orcid.jaxb.model.record.bulk.BulkElement;
 import org.orcid.jaxb.model.v3.release.common.Filterable;
 import org.orcid.jaxb.model.v3.release.common.Visibility;
 import org.orcid.jaxb.model.v3.release.common.VisibilityType;
+import org.orcid.jaxb.model.v3.release.error.OrcidError;
 import org.orcid.jaxb.model.v3.release.record.ActivitiesContainer;
 import org.orcid.jaxb.model.v3.release.record.Address;
 import org.orcid.jaxb.model.v3.release.record.Addresses;
@@ -38,6 +47,8 @@ import org.orcid.jaxb.model.v3.release.record.PersonalDetails;
 import org.orcid.jaxb.model.v3.release.record.Record;
 import org.orcid.jaxb.model.v3.release.record.ResearcherUrl;
 import org.orcid.jaxb.model.v3.release.record.ResearcherUrls;
+import org.orcid.jaxb.model.v3.release.record.Work;
+import org.orcid.jaxb.model.v3.release.record.WorkBulk;
 import org.orcid.jaxb.model.v3.release.record.summary.ActivitiesSummary;
 import org.orcid.jaxb.model.v3.release.record.summary.AffiliationGroup;
 import org.orcid.jaxb.model.v3.release.record.summary.DistinctionSummary;
@@ -64,15 +75,26 @@ import org.orcid.jaxb.model.v3.release.record.summary.Services;
 import org.orcid.jaxb.model.v3.release.record.summary.WorkGroup;
 import org.orcid.jaxb.model.v3.release.record.summary.WorkSummary;
 import org.orcid.jaxb.model.v3.release.record.summary.Works;
-import org.orcid.test.OrcidJUnit4ClassRunner;
-import org.springframework.test.context.ContextConfiguration;
 
-@RunWith(OrcidJUnit4ClassRunner.class)
-@ContextConfiguration(locations = { "classpath:test-orcid-t1-web-context.xml" })
+/**
+ * The class under test holds one collaborator, an exception mapper that only
+ * the WorkBulk path reaches, so it needs no Spring context and no database.
+ * MockitoJUnitRunner.Silent is used rather than the strict runner because the
+ * exception mapper stub is declared per test and most tests never reach it.
+ */
+@RunWith(MockitoJUnitRunner.Silent.class)
 public class PublicAPISecurityManagerV3Test {
 
-    @Resource
-    PublicAPISecurityManagerV3 publicAPISecurityManagerV3;
+    /**
+     * Declared as the implementation rather than the interface because
+     * {@code @InjectMocks} needs a concrete type; every call below is an
+     * interface method.
+     */
+    @InjectMocks
+    private PublicAPISecurityManagerV3Impl publicAPISecurityManagerV3 = new PublicAPISecurityManagerV3Impl();
+
+    @Mock
+    private OrcidCoreExceptionMapper orcidCoreExceptionMapper;
 
     @Test
     public void checkIsPublicFilterableTest() {
@@ -134,6 +156,74 @@ public class PublicAPISecurityManagerV3Test {
         } catch (OrcidNonPublicElementException e) {
 
         }
+    }
+
+    @Test
+    public void checkIsPublicBiography_NullTest() {
+        try {
+            publicAPISecurityManagerV3.checkIsPublic((Biography) null);
+            fail();
+        } catch (OrcidNoBioException e) {
+
+        }
+    }
+
+    @Test
+    public void checkIsPublicBiography_EmptyContentAndNullVisibilityTest() {
+        // A record with no biography row at all still has to read as a
+        // successful empty response, not as a non public element.
+        publicAPISecurityManagerV3.checkIsPublic(new Biography());
+
+        Biography emptyString = new Biography();
+        emptyString.setContent("");
+        publicAPISecurityManagerV3.checkIsPublic(emptyString);
+    }
+
+    @Test
+    public void checkIsPublicBiography_EmptyContentButNonPublicVisibilityTest() {
+        Biography b = new Biography();
+        b.setContent("");
+        b.setVisibility(Visibility.LIMITED);
+        try {
+            publicAPISecurityManagerV3.checkIsPublic(b);
+            fail();
+        } catch (OrcidNonPublicElementException e) {
+
+        }
+    }
+
+    @Test
+    public void filterWorkBulkTest() {
+        OrcidError mapped = new OrcidError();
+        when(orcidCoreExceptionMapper.getV3OrcidError(isA(OrcidNonPublicElementException.class))).thenReturn(mapped);
+
+        OrcidError preExisting = new OrcidError();
+        Work publicWork = getWork(Visibility.PUBLIC);
+        WorkBulk bulk = new WorkBulk();
+        bulk.setBulk(new ArrayList<BulkElement>(
+                Arrays.asList(publicWork, getWork(Visibility.LIMITED), getWork(Visibility.PRIVATE), preExisting)));
+
+        publicAPISecurityManagerV3.filter(bulk);
+
+        assertEquals(4, bulk.getBulk().size());
+        assertSame(publicWork, bulk.getBulk().get(0));
+        assertSame(mapped, bulk.getBulk().get(1));
+        assertSame(mapped, bulk.getBulk().get(2));
+        assertSame(preExisting, bulk.getBulk().get(3));
+    }
+
+    @Test
+    public void filterWorkBulkKeepsAllPublicElementsTest() {
+        Work first = getWork(Visibility.PUBLIC);
+        Work second = getWork(Visibility.PUBLIC);
+        WorkBulk bulk = new WorkBulk();
+        bulk.setBulk(new ArrayList<BulkElement>(Arrays.asList(first, second)));
+
+        publicAPISecurityManagerV3.filter(bulk);
+
+        assertEquals(2, bulk.getBulk().size());
+        assertSame(first, bulk.getBulk().get(0));
+        assertSame(second, bulk.getBulk().get(1));
     }
 
     @Test
@@ -1252,6 +1342,12 @@ public class PublicAPISecurityManagerV3Test {
     /**
      * Utilities
      */
+    private Work getWork(Visibility v) {
+        Work w = new Work();
+        w.setVisibility(v);
+        return w;
+    }
+
     private Filterable getFilterableElement(Visibility v) {
         EducationSummary s = new EducationSummary();
         s.setVisibility(v);

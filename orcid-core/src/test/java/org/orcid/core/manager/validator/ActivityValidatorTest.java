@@ -1,16 +1,21 @@
 package org.orcid.core.manager.validator;
 
 import static org.junit.Assert.fail;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import jakarta.annotation.Resource;
-
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.junit.MockitoJUnitRunner;
+import org.orcid.core.utils.SourceEntityUtils;
+import org.orcid.core.utils.v3.identifiers.PIDResolverService;
 import org.orcid.core.exception.ActivityIdentifierValidationException;
 import org.orcid.core.exception.ActivityTitleValidationException;
 import org.orcid.core.exception.ActivityTypeValidationException;
@@ -70,15 +75,41 @@ import org.orcid.jaxb.model.record_v2.WorkContributors;
 import org.orcid.jaxb.model.record_v2.WorkTitle;
 import org.orcid.jaxb.model.record_v2.WorkType;
 import org.orcid.persistence.jpa.entities.SourceEntity;
-import org.orcid.test.OrcidJUnit4ClassRunner;
-import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.util.ReflectionTestUtils;
 
-@RunWith(OrcidJUnit4ClassRunner.class)
-@ContextConfiguration(locations = { "classpath:test-orcid-core-context.xml" })
+@RunWith(MockitoJUnitRunner.Silent.class)
 public class ActivityValidatorTest {
 
-    @Resource
+    /**
+     * ExternalIDValidator is a collaborator, not part of this unit. Every "the external
+     * identifiers are not valid" rule is enforced inside it and is proven for real by
+     * org.orcid.core.manager.validator.ExternalIDValidatorTest. What is proven here is the
+     * boundary: that ActivityValidator hands the right identifiers to it and that the
+     * exception it raises stops the operation.
+     */
+    @Mock
+    private ExternalIDValidator externalIDValidator;
+
+    /** Resolving a DOI reaches the network in production; the validator only swallows its IllegalArgumentException. */
+    @Mock
+    private PIDResolverService resolverService;
+
+    /**
+     * Real: getSourceId(SourceEntity) and getSourceName(Source) are static and would run for real
+     * against a mock anyway, and isTheSameSource is the actual comparison the duplicate rule turns on.
+     * None of the paths reached here touch its Spring collaborators.
+     */
+    private final SourceEntityUtils sourceEntityUtils = new SourceEntityUtils();
+
     private ActivityValidator activityValidator;
+
+    @Before
+    public void before() {
+        activityValidator = new ActivityValidator();
+        ReflectionTestUtils.setField(activityValidator, "externalIDValidator", externalIDValidator);
+        ReflectionTestUtils.setField(activityValidator, "sourceEntityUtils", sourceEntityUtils);
+        ReflectionTestUtils.setField(activityValidator, "resolverService", resolverService);
+    }
 
     /**
      * VALIDATE WORKS
@@ -303,14 +334,28 @@ public class ActivityValidatorTest {
     public void validateWork_invalidExternalIdentifierTypeTest() {
         Work work = getWork();
         work.getExternalIdentifiers().getExternalIdentifier().get(0).setType("invalid");
+        // The "these external identifiers are not valid" rule belongs to ExternalIDValidator and is
+        // proven there (ExternalIDValidatorTest). Here we prove the boundary: the exact identifiers are
+        // handed over, and the refusal stops the operation.
+        doThrow(new ActivityIdentifierValidationException()).when(externalIDValidator).validateWorkOrPeerReview(work.getExternalIdentifiers());
         activityValidator.validateWork(work, null, true, true, Visibility.PUBLIC);
+    }
+
+    @Test
+    public void validateWork_delegatesExternalIdentifierValidationTest() {
+        Work work = getWork();
+        activityValidator.validateWork(work, null, true, true, Visibility.PUBLIC);
+        verify(externalIDValidator).validateWorkOrPeerReview(work.getExternalIdentifiers());
     }
 
     @Test(expected = ActivityIdentifierValidationException.class)
     public void validateWork_emptyExternalIdentifierValueTest() {
         Work work = getWork();
         work.getExternalIdentifiers().getExternalIdentifier().get(0).setValue("");
-        ;
+        // The "these external identifiers are not valid" rule belongs to ExternalIDValidator and is
+        // proven there (ExternalIDValidatorTest). Here we prove the boundary: the exact identifiers are
+        // handed over, and the refusal stops the operation.
+        doThrow(new ActivityIdentifierValidationException()).when(externalIDValidator).validateWorkOrPeerReview(work.getExternalIdentifiers());
         activityValidator.validateWork(work, null, true, true, Visibility.PUBLIC);
     }
 
@@ -417,7 +462,18 @@ public class ActivityValidatorTest {
     public void validateFunding_invalidExternalIdentifiersTest() {
         Funding funding = getFunding();
         funding.getExternalIdentifiers().getExternalIdentifier().get(0).setType(null);
+        // The "these external identifiers are not valid" rule belongs to ExternalIDValidator and is
+        // proven there (ExternalIDValidatorTest). Here we prove the boundary: the exact identifiers are
+        // handed over, and the refusal stops the operation.
+        doThrow(new ActivityIdentifierValidationException()).when(externalIDValidator).validateFunding(funding.getExternalIdentifiers());
         activityValidator.validateFunding(funding, null, true, true, Visibility.PUBLIC);
+    }
+
+    @Test
+    public void validateFunding_delegatesExternalIdentifierValidationTest() {
+        Funding funding = getFunding();
+        activityValidator.validateFunding(funding, null, true, true, Visibility.PUBLIC);
+        verify(externalIDValidator).validateFunding(funding.getExternalIdentifiers());
     }
 
     public Funding getFunding() {
@@ -805,7 +861,19 @@ public class ActivityValidatorTest {
     public void validatePeerReview_invalidExternalIdentifiersTest() {
         PeerReview pr = getPeerReview();
         pr.getExternalIdentifiers().getExternalIdentifier().get(0).setType(null);
+        // The "these external identifiers are not valid" rule belongs to ExternalIDValidator and is
+        // proven there (ExternalIDValidatorTest). Here we prove the boundary: the exact identifiers are
+        // handed over, and the refusal stops the operation.
+        doThrow(new ActivityIdentifierValidationException()).when(externalIDValidator).validateWorkOrPeerReview(pr.getExternalIdentifiers());
         activityValidator.validatePeerReview(pr, null, true, true, Visibility.PUBLIC);
+    }
+
+    @Test
+    public void validatePeerReview_delegatesExternalIdentifierValidationTest() {
+        PeerReview pr = getPeerReview();
+        activityValidator.validatePeerReview(pr, null, true, true, Visibility.PUBLIC);
+        verify(externalIDValidator).validateWorkOrPeerReview(pr.getExternalIdentifiers());
+        verify(externalIDValidator).validateWorkOrPeerReview(pr.getSubjectExternalIdentifier());
     }
 
     @Test(expected = InvalidPutCodeException.class)
@@ -835,6 +903,10 @@ public class ActivityValidatorTest {
     public void validatePeerReview_emptyExternalIdentifierValueTest() {
         PeerReview pr = getPeerReview();
         pr.getExternalIdentifiers().getExternalIdentifier().get(0).setValue("");
+        // The "these external identifiers are not valid" rule belongs to ExternalIDValidator and is
+        // proven there (ExternalIDValidatorTest). Here we prove the boundary: the exact identifiers are
+        // handed over, and the refusal stops the operation.
+        doThrow(new ActivityIdentifierValidationException()).when(externalIDValidator).validateWorkOrPeerReview(pr.getExternalIdentifiers());
         activityValidator.validatePeerReview(pr, null, true, true, Visibility.PUBLIC);
     }
 
@@ -842,6 +914,10 @@ public class ActivityValidatorTest {
     public void validatePeerReview_invalidSubjectExternalIdentifiersTest() {
         PeerReview pr = getPeerReview();
         pr.getSubjectExternalIdentifier().setType(null);
+        // The "these external identifiers are not valid" rule belongs to ExternalIDValidator and is
+        // proven there (ExternalIDValidatorTest). Here we prove the boundary: the exact identifiers are
+        // handed over, and the refusal stops the operation.
+        doThrow(new ActivityIdentifierValidationException()).when(externalIDValidator).validateWorkOrPeerReview(pr.getSubjectExternalIdentifier());
         activityValidator.validatePeerReview(pr, null, true, true, Visibility.PUBLIC);
     }
 
