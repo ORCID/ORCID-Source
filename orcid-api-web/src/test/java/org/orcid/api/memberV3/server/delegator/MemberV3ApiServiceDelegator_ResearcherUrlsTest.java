@@ -239,7 +239,12 @@ public class MemberV3ApiServiceDelegator_ResearcherUrlsTest extends MemberV3ApiS
         when(researcherUrlManager.createResearcherUrl(eq(USER_4441), any(ResearcherUrl.class), eq(true))).thenReturn(created);
         when(researcherUrlManagerReadOnly.getResearcherUrl(USER_4441, 1000L)).thenReturn(created);
 
-        Response response = serviceDelegator.createResearcherUrl(USER_4441, Utils.getResearcherUrl());
+        ResearcherUrl toCreate = Utils.getResearcherUrl();
+        // Planted so that assertNull below proves clearSource ran, rather than
+        // only proving the fixture never had a source to begin with.
+        toCreate.setSource(clientSource(CLIENT_2));
+
+        Response response = serviceDelegator.createResearcherUrl(USER_4441, toCreate);
         assertNotNull(response);
         assertEquals(Response.Status.CREATED.getStatusCode(), response.getStatus());
         Long putCode = Utils.getPutCode(response);

@@ -280,13 +280,13 @@ jobs:
         run: |
           mvn -T 1C --batch-mode test -P db-tests \
               -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn \
-              --projects orcid-persistence,orcid-core,orcid-api-web,orcid-pub-web,orcid-web,orcid-scheduler-web,orcid-message-listener \
+              --projects orcid-message-listener,orcid-activemq,orcid-api-web,orcid-internal-api,orcid-pub-web,orcid-scheduler-web,orcid-web,orcid-utils,orcid-core,orcid-persistence,orcid-api-common \
               --fail-at-end
 
       - name: Collect database-stage coverage
         if: always()
         run: |
-          for m in orcid-persistence orcid-core orcid-api-web orcid-pub-web orcid-web orcid-scheduler-web orcid-message-listener; do
+          for m in orcid-message-listener orcid-activemq orcid-api-web orcid-internal-api orcid-pub-web orcid-scheduler-web orcid-web orcid-utils orcid-core orcid-persistence orcid-api-common; do
             if [ -f "$m/target/site/jacoco/jacoco.xml" ]; then
               mkdir -p "db-artifact/$m"
               cp "$m/target/site/jacoco/jacoco.xml" "db-artifact/$m/"

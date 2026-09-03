@@ -54,10 +54,19 @@ import org.orcid.jaxb.model.v3.release.record.summary.Works;
  * {@code OrcidSecurityManagerImpl.checkProfile}'s business, and orcid-core's
  * {@code OrcidSecurityManagerTest.checkProfile_*} proves it. What this class
  * proves is the other half, and it is worth two hundred and ninety tests: that
- * there is no endpoint on this delegator that forgets to ask, and none that
- * swallows the refusal. The {@code @Before} below makes the security manager
- * refuse each of the five records, and every test then asserts the refusal came
- * out of its endpoint unchanged.
+ * the endpoints listed below ask, and that none of them swallows the refusal.
+ * The {@code @Before} makes the security manager refuse each of the five
+ * records, and every test then asserts the refusal came out of its endpoint
+ * unchanged.
+ *
+ * <p>
+ * The list is not the whole delegator, and never was. Twenty-eight of its
+ * ninety-four record-scoped endpoints are absent from this matrix -- every
+ * distinction, invited-position, membership, qualification and service
+ * endpoint, plus {@code createWorks}, {@code viewResearchResourceSummary} and
+ * {@code getRecordSummary}. That gap predates the mocked conversion; it is
+ * recorded here so nobody reads this class as proof of coverage it does not
+ * have.
  *
  * <p>
  * The unclaimed group used to push a profile's submission date back through

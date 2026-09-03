@@ -14,16 +14,16 @@ import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
-import jakarta.annotation.Resource;
-
 import org.apache.commons.lang.RandomStringUtils;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.mockito.junit.MockitoJUnitRunner;
+import org.orcid.core.adapter.MockedMapStructAdapters;
+import org.orcid.core.adapter.mapstruct.impl.JpaJaxbClientAdapterImpl;
 import org.orcid.core.manager.read_only.ClientManagerReadOnly;
+import org.orcid.core.manager.read_only.impl.ClientManagerReadOnlyImpl;
 import org.orcid.core.utils.DateFieldsOnBaseEntityUtils;
 import org.orcid.jaxb.model.client_v2.Client;
 import org.orcid.jaxb.model.client_v2.ClientRedirectUri;
@@ -41,36 +41,56 @@ import org.orcid.persistence.jpa.entities.ClientScopeEntity;
 import org.orcid.persistence.jpa.entities.CustomEmailEntity;
 import org.orcid.persistence.jpa.entities.EmailType;
 import org.orcid.persistence.jpa.entities.keys.*;
-import org.orcid.test.OrcidJUnit4ClassRunner;
-import org.orcid.test.TargetProxyHelper;
-import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.util.ReflectionTestUtils;
 
-@RunWith(OrcidJUnit4ClassRunner.class)
-@ContextConfiguration(locations = { "classpath:test-orcid-core-context.xml" })
+/**
+ * ClientManagerReadOnlyImpl is a two line delegation -- ask the DAO for the last modified
+ * date, ask it again for the entity as of that date, hand the entity to the adapter -- so it
+ * needs no Spring context. It is built here by hand over a mocked ClientDetailsDao.
+ *
+ * <p>
+ * The adapter is REAL, over the real Orika facade from
+ * {@link MockedMapStructAdapters}. Every assertion in this class compares a fully populated
+ * Client / ClientSummary against an expected object, and that comparison is only about the
+ * Orika mapping configuration; a mocked JpaJaxbClientAdapter would have to be told to return
+ * the expected object, and each assertEquals would then be comparing the stub's argument with
+ * itself. Only the DAO is faked.
+ *
+ * <p>
+ * Silent runner, and NOT for the reason the shared getLastModified stub suggests. Mockito's
+ * unnecessary-stubbing check groups stubbings by source location and counts a location as used
+ * when any one test method used it -- see
+ * {@code UnusedStubbingsFinder.getUnusedStubbingsByLocation}, whose javadoc calls out exactly
+ * this case -- so a stub declared in {@code @Before} and reached by only some of the tests is
+ * never reported. getLastModified is reached by getClientTest and getSummaryTest, so it is fine.
+ * What the strict runner WOULD report is the two stubs in the {@link MockedMapStructAdapters}
+ * constructor, sourceNameCacheManager.retrieve and clientDetailsEntityCacheManager.retrieve:
+ * they are created while the runner's listener is attached, and the client mapping registers no
+ * source converters, so neither is ever called. Every test built on that factory runs Silent for
+ * this reason.
+ */
+@RunWith(MockitoJUnitRunner.Silent.class)
 public class ClientManagerReadOnlyTest {
 
     private final Date now = new Date();
-    
-    @Resource
-    private ClientManagerReadOnly clientManagerReadOnly;
 
-    @Resource(name = "clientDetailsDao")
-    private ClientDetailsDao dao;
-    
+    private final MockedMapStructAdapters adapters = new MockedMapStructAdapters();
+
     @Mock
     private ClientDetailsDao daoMock;
 
+    private ClientManagerReadOnly clientManagerReadOnly;
+
     @Before
     public void before() {
-        MockitoAnnotations.initMocks(this);
-        TargetProxyHelper.injectIntoProxy(clientManagerReadOnly, "clientDetailsDao", daoMock);
+        JpaJaxbClientAdapterImpl adapter = adapters.get(JpaJaxbClientAdapterImpl.class);
+
+        ClientManagerReadOnlyImpl impl = new ClientManagerReadOnlyImpl();
+        impl.setClientDetailsDao(daoMock);
+        ReflectionTestUtils.setField(impl, "jpaJaxbClientAdapter", adapter);
+        clientManagerReadOnly = impl;
+
         when(daoMock.getLastModified(anyString())).thenReturn(new Date());
-    }
-    
-    @After
-    public void after() {
-        //Restore the original bean
-        TargetProxyHelper.injectIntoProxy(clientManagerReadOnly, "clientDetailsDao", dao);        
     }
 
     @Test

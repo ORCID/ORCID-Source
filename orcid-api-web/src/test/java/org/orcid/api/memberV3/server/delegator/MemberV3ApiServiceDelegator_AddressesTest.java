@@ -297,7 +297,12 @@ public class MemberV3ApiServiceDelegator_AddressesTest extends MemberV3ApiServic
         when(addressManager.createAddress(eq(USER_4442), any(Address.class), eq(true))).thenReturn(created);
         when(addressManagerReadOnly.getAddress(USER_4442, 1000L)).thenReturn(created);
 
-        Response response = serviceDelegator.createAddress(USER_4442, Utils.getAddress());
+        Address toCreate = Utils.getAddress();
+        // Planted so that assertNull below proves clearSource ran, rather than
+        // only proving the fixture never had a source to begin with.
+        toCreate.setSource(clientSource(CLIENT_2));
+
+        Response response = serviceDelegator.createAddress(USER_4442, toCreate);
         assertNotNull(response);
         assertEquals(Response.Status.CREATED.getStatusCode(), response.getStatus());
         Long putCode = Utils.getPutCode(response);

@@ -448,6 +448,9 @@ public class MemberV3ApiServiceDelegator_FundingTest extends MemberV3ApiServiceD
         assertEquals("Public Funding # 1", summary.getFundings().getFundingGroup().get(0).getFundingSummary().get(0).getTitle().getTitle().getContent());
 
         Funding newFunding = Utils.getFunding();
+        // Planted so that assertNull below proves clearSource ran, rather than
+        // only proving the fixture never had a source to begin with.
+        newFunding.setSource(clientSource(CLIENT_2));
         response = serviceDelegator.createFunding(USER_4447, newFunding);
         assertNotNull(response);
         assertEquals(Response.Status.CREATED.getStatusCode(), response.getStatus());

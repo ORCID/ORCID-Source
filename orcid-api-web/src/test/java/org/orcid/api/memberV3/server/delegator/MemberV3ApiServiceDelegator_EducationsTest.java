@@ -22,6 +22,7 @@ import jakarta.ws.rs.core.Response;
 import org.apache.hc.core5.http.HttpStatus;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
+import org.orcid.core.exception.InvalidOrgAddressException;
 import org.orcid.core.exception.OrcidAccessControlException;
 import org.orcid.core.exception.OrcidDuplicatedActivityException;
 import org.orcid.core.exception.OrcidUnauthorizedException;
@@ -414,17 +415,22 @@ public class MemberV3ApiServiceDelegator_EducationsTest extends MemberV3ApiServi
         verify(affiliationsManager).checkSourceAndDelete(ORCID, 9999L);
     }
 
-    @Test
+    /**
+     * An education whose organization carries neither a city nor a country is
+     * refused. The rule is {@code ActivityValidator.validateOrgAddress}, which
+     * runs inside {@code AffiliationsManager} and is proved by orcid-core's
+     * {@code ActivityValidatorTest.validateEducationNoCountryNorCity}; the half
+     * that belongs here is that {@code createEducation} lets the refusal out
+     * rather than answering 201. Only educations and employments are subject to
+     * it -- see {@code testAddQualificationNoCityNoCountry}, which asserts the
+     * opposite for a qualification on purpose.
+     */
+    @Test(expected = InvalidOrgAddressException.class)
     public void testAddEducationNoCityNoCountry() {
         Education toCreate = (Education) Utils.getAffiliationNoCityNoCountry(AffiliationType.EDUCATION);
-        Education created = education(9998L, Visibility.PUBLIC, "My department name", clientSource(CLIENT_1));
-        when(affiliationsManager.createEducationAffiliation(eq(ORCID), any(Education.class), eq(true))).thenReturn(created);
+        doThrow(new InvalidOrgAddressException()).when(affiliationsManager).createEducationAffiliation(eq(ORCID), any(Education.class), eq(true));
 
-        Response response = serviceDelegator.createEducation(ORCID, toCreate);
-        assertNotNull(response);
-        assertEquals(Response.Status.CREATED.getStatusCode(), response.getStatus());
-        assertEquals(Long.valueOf(9998L), Utils.getPutCode(response));
-        verify(affiliationsManager).createEducationAffiliation(eq(ORCID), any(Education.class), eq(true));
+        serviceDelegator.createEducation(ORCID, toCreate);
     }
 
     @Test(expected = OrcidDuplicatedActivityException.class)

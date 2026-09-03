@@ -17,6 +17,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -45,7 +46,7 @@ public class ShibbolethControllerTest {
 
     private ShibbolethController shibbolethController;
 
-    private InstitutionalSignInManager institutionalSignInManager;
+    private static InstitutionalSignInManager institutionalSignInManager;
 
     @Mock
     private UserConnectionManager userConnectionManager;
@@ -59,10 +60,21 @@ public class ShibbolethControllerTest {
     @Mock
     private HttpServletResponse servletResponse;
 
+    /**
+     * The constructor is the only way to build the real implementation and it
+     * fetches the DiscoFeed over HTTP, swallowing the failure. Build it once for
+     * the class rather than once per test method: the three header readers used
+     * below hold no state, and each construction otherwise costs an outbound
+     * connection attempt.
+     */
+    @BeforeClass
+    public static void beforeClass() {
+        institutionalSignInManager = new InstitutionalSignInManagerImpl("http://localhost:1/dummy-disco-feed");
+    }
+
     @Before
     public void before() {
         shibbolethController = new ShibbolethController();
-        institutionalSignInManager = new InstitutionalSignInManagerImpl("http://localhost:1/dummy-disco-feed");
 
         ReflectionTestUtils.setField(shibbolethController, "institutionalSignInManager", institutionalSignInManager);
         ReflectionTestUtils.setField(shibbolethController, "userConnectionManager", userConnectionManager);

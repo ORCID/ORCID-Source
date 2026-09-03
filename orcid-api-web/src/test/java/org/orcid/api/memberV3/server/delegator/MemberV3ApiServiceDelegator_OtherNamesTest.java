@@ -231,7 +231,12 @@ public class MemberV3ApiServiceDelegator_OtherNamesTest extends MemberV3ApiServi
         when(otherNameManager.createOtherName(eq(USER_4441), any(OtherName.class), eq(true))).thenReturn(created);
         when(otherNameManagerReadOnly.getOtherName(USER_4441, 1000L)).thenReturn(created);
 
-        Response response = serviceDelegator.createOtherName(USER_4441, Utils.getOtherName());
+        OtherName toCreate = Utils.getOtherName();
+        // Planted so that assertNull below proves clearSource ran, rather than
+        // only proving the fixture never had a source to begin with.
+        toCreate.setSource(clientSource(CLIENT_2));
+
+        Response response = serviceDelegator.createOtherName(USER_4441, toCreate);
         assertNotNull(response);
         assertEquals(Response.Status.CREATED.getStatusCode(), response.getStatus());
         Long putCode = Utils.getPutCode(response);

@@ -170,10 +170,10 @@ public class MemberV3ApiServiceDelegator_GroupIdTest extends MemberV3ApiServiceD
         assertNotNull(groupIdRecords1);
         assertNotNull(groupIdRecords1.getGroupIdRecord());
         Utils.verifyLastModified(groupIdRecords1.getLastModifiedDate());
-        int total = groupIdRecords1.getTotal();
-        if (total < 3 || total > 5) {
-            fail("There are more group ids than the expected, we are expecting between 3 and 5, total: " + total);
-        }
+        // The DBUnit version could only bound this, because other tests in the
+        // same context created group ids. The fixture is fixed now, so assert it.
+        assertEquals(4, groupIdRecords1.getTotal());
+        assertEquals(4, groupIdRecords1.getGroupIdRecord().size());
         verify(orcidSecurityManager).checkScopes(ScopePathType.GROUP_ID_RECORD_READ);
     }
 

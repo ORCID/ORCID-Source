@@ -129,6 +129,10 @@ public class MemberV2ApiServiceDelegator_GroupIdTest extends MemberV2ApiServiceD
         assertNotNull(groupIdRecord);
         // Delete the record
         serviceDelegator.deleteGroupIdRecord(5L);
+        // deleteGroupIdRecord is the one guarded endpoint in this family that no
+        // other test reaches, so the scope check has to be asserted here or it is
+        // asserted nowhere
+        verify(orcidSecurityManager).checkScopes(ScopePathType.GROUP_ID_RECORD_UPDATE);
         verify(groupIdRecordManager).deleteGroupIdRecord(5L);
         // Throws a record not found exception
         serviceDelegator.viewGroupIdRecord(5L);

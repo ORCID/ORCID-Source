@@ -724,6 +724,12 @@ public class FundingsControllerTest {
         assertEquals(3, fundings.size());
         assertEquals("4444-4444-4444-4441", fundings.get(0).getFundings().get(0).getSource());
         assertEquals("4444-4444-4444-4443", fundings.get(2).getFundings().get(0).getSource());
+        // The validated funding leads, and the two self asserted ones keep title
+        // order behind it: both halves of FundingComparators.sortBySource, over
+        // input the manager handed back in neither order.
+        assertEquals(Text.valueOf(3l), fundings.get(0).getFundings().get(0).getPutCode());
+        assertEquals(Text.valueOf(1l), fundings.get(1).getFundings().get(0).getPutCode());
+        assertEquals(Text.valueOf(2l), fundings.get(2).getFundings().get(0).getPutCode());
     }
 
     // ------------------------------------- /data/ProfileFundingEntityData.xml
@@ -732,10 +738,15 @@ public class FundingsControllerTest {
      * Fundings 1 and 2 are sourced by the record itself, funding 3 by
      * 4444-4444-4444-4441. Titles carry the ordering the title sort asserts on,
      * and the sources carry the self-asserted split the source sort asserts on.
+     *
+     * The manager deliberately hands them back out of order. Handed back in put
+     * code order, testGetFundingsJson's assertions on positions 0 to 2 would hold
+     * even if FundingComparators.TITLE_COMPARATOR were never applied, which is
+     * the whole of what that test still owns now the grouping is a stub.
      */
     private void stubTheRecordsThreeFundings() {
-        List<FundingSummary> summaries = Arrays.asList(summary(1L, "Grant # 1", userSource()), summary(2L, "Grant # 2", userSource()),
-                summary(3L, "Grant # 3", otherSource()));
+        List<FundingSummary> summaries = Arrays.asList(summary(3L, "Grant # 3", otherSource()), summary(1L, "Grant # 1", userSource()),
+                summary(2L, "Grant # 2", userSource()));
         when(profileFundingManager.getFundingSummaryList(USER_ORCID)).thenReturn(summaries);
         when(profileFundingManager.groupFundings(summaries, false)).thenReturn(oneGroupPerSummary(summaries));
     }

@@ -232,7 +232,12 @@ public class MemberV3ApiServiceDelegator_KeywordsTest extends MemberV3ApiService
         when(profileKeywordManager.createKeyword(eq(USER_4441), any(Keyword.class), eq(true))).thenReturn(created);
         when(profileKeywordManagerReadOnly.getKeyword(USER_4441, 1000L)).thenReturn(created);
 
-        Response response = serviceDelegator.createKeyword(USER_4441, Utils.getKeyword());
+        Keyword toCreate = Utils.getKeyword();
+        // Planted so that assertNull below proves clearSource ran, rather than
+        // only proving the fixture never had a source to begin with.
+        toCreate.setSource(clientSource(CLIENT_2));
+
+        Response response = serviceDelegator.createKeyword(USER_4441, toCreate);
         assertNotNull(response);
         assertEquals(Response.Status.CREATED.getStatusCode(), response.getStatus());
         Long putCode = Utils.getPutCode(response);

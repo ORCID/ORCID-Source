@@ -308,6 +308,19 @@ public class WorksControllerTest {
         assertEquals(Arrays.asList(5L, 6L), idsCaptor.getValue());
     }
 
+    /**
+     * WARNING, and the reason this file cannot carry the assertion it looks like
+     * it carries. WorkForm.valueOf copies contributorsGroupedByOrcid straight
+     * through from WorkExtended, so with workManager stubbed the credit names and
+     * the null emails below are the fixture's own values read back: they would
+     * still hold if the email stripping in WorkManagerImpl/ContributorUtils were
+     * deleted tomorrow. What is genuinely asserted here is WorkForm's own
+     * mapping -- that getExtendedWorkForm carries the list over and derives
+     * numberOfContributors from it rather than leaving it at zero. The
+     * top_contributors_json deserialisation and the email stripping need a
+     * WorkManagerImpl or adapter test in orcid-core; nothing in orcid-web can
+     * stand in for one.
+     */
     @Test
     public void testGetWorkInfoWithContributors() throws Exception {
         when(workManagerMock.getWorkExtended(USER_ORCID, 5L)).thenReturn(workFive());
@@ -337,6 +350,7 @@ public class WorksControllerTest {
         assertEquals(4, work.getNumberOfContributors());
     }
 
+    /** Same caveat as testGetWorkInfoWithContributors. */
     @Test
     public void testGetWorkInfoWithContributorsGroupedByOrcid() throws Exception {
         when(workManagerMock.getWorkExtended(USER_ORCID, 5L)).thenReturn(workFive());
@@ -349,18 +363,24 @@ public class WorksControllerTest {
         ContributorsRolesAndSequences contributor = work.getContributorsGroupedByOrcid().get(0);
         assertNull(contributor.getContributorEmail());
         assertEquals("Jaylen Kessler", contributor.getCreditName().getContent());
+        assertEquals("0000-0003-0172-7925", contributor.getContributorOrcid().getPath());
 
         contributor = work.getContributorsGroupedByOrcid().get(1);
         assertNull(contributor.getContributorEmail());
         assertEquals("John Smith", contributor.getCreditName().getContent());
+        // A contributor with no ORCID iD stays in the group with a null iD
+        // rather than being dropped or collapsed into another entry.
+        assertNull(contributor.getContributorOrcid());
 
         contributor = work.getContributorsGroupedByOrcid().get(2);
         assertNull(contributor.getContributorEmail());
         assertEquals("Not This Name", contributor.getCreditName().getContent());
+        assertEquals("0000-0000-0000-0003", contributor.getContributorOrcid().getPath());
 
         contributor = work.getContributorsGroupedByOrcid().get(3);
         assertNull(contributor.getContributorEmail());
         assertEquals("Not This Name", contributor.getCreditName().getContent());
+        assertEquals("1000-0000-0000-0001", contributor.getContributorOrcid().getPath());
     }
 
     @Test

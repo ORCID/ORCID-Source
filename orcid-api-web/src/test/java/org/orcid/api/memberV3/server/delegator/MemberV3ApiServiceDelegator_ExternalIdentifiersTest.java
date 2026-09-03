@@ -250,7 +250,12 @@ public class MemberV3ApiServiceDelegator_ExternalIdentifiersTest extends MemberV
         assertEquals("http://www.facebook.com/d3clan", extIds.getExternalIdentifiers().get(0).getUrl().getValue());
         assertEquals("d3clan", extIds.getExternalIdentifiers().get(0).getValue());
 
-        response = serviceDelegator.createExternalIdentifier(USER_4443, Utils.getPersonExternalIdentifier());
+        PersonExternalIdentifier toCreate = Utils.getPersonExternalIdentifier();
+        // Planted so that assertNull below proves clearSource ran, rather than
+        // only proving the fixture never had a source to begin with.
+        toCreate.setSource(clientSource(CLIENT_2));
+
+        response = serviceDelegator.createExternalIdentifier(USER_4443, toCreate);
         assertNotNull(response);
         assertEquals(Response.Status.CREATED.getStatusCode(), response.getStatus());
         assertEquals(Long.valueOf(1000L), Utils.getPutCode(response));

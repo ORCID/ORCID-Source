@@ -9,8 +9,6 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
 
-import jakarta.annotation.Resource;
-
 import org.junit.Test;
 import org.mockito.Mockito;
 import org.orcid.core.utils.v3.identifiers.resolvers.MetadataResolver;
@@ -23,11 +21,27 @@ import org.orcid.pojo.PIDResolutionResult;
 import org.orcid.pojo.WorkExtended;
 import org.springframework.test.util.ReflectionTestUtils;
 
+/**
+ * This class was already off the Spring context: the runner and
+ * {@code @ContextConfiguration} below were commented out long before this
+ * migration, so the {@code @Resource} field was never populated and the single
+ * live test builds its own {@link PIDResolverService}. All that changes here is
+ * that the annotation goes -- it was advertising an injection that never
+ * happened.
+ *
+ * <p>
+ * {@link #workingTests()} is deliberately not a test. It is a manual harness
+ * that resolves real identifiers against doi.org, worldcat, europepmc, arxiv
+ * and friends over the network, and its own comment says "Only use locally".
+ * It must stay disabled: enabling it would make the build depend on nine
+ * third-party services being up and on their 404 behaviour not changing. It is
+ * kept, unmodified, because it documents the resolution rules that a future
+ * offline test would have to reproduce.
+ */
 //@RunWith(OrcidJUnit4ClassRunner.class)
 //@ContextConfiguration(locations = { "classpath:test-orcid-core-context.xml" })
 public class PIDResolverServiceTest {
 
-    @Resource
     PIDResolverService resolverService;
 
     public void checkFail(String type, String value) {

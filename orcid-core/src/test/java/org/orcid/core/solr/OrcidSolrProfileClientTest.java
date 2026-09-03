@@ -6,8 +6,6 @@ import static org.mockito.Mockito.when;
 
 import java.io.IOException;
 
-import jakarta.annotation.Resource;
-
 import org.apache.solr.client.solrj.SolrClient;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.response.QueryResponse;
@@ -17,40 +15,40 @@ import org.apache.solr.common.params.SolrParams;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
-import org.orcid.test.OrcidJUnit4ClassRunner;
-import org.orcid.test.TargetProxyHelper;
-import org.springframework.test.context.ContextConfiguration;
+import org.mockito.junit.MockitoJUnitRunner;
 
 /**
- * Integration tests for Solr Daos. In particular these are used to test that
- * query strings return the Orcids that are expected from SOLR. You may need to
- * compare the queries given in the test methods below with those of the
- * SearchOrcidFormToQueryMapperTest.
- * 
- * @author jamesb
- * @See SearchOrcidFormToQueryMapperTest
+ * No Solr server is involved and none ever was: the {@link SolrClient} was
+ * already a mock and the Spring context was booted only to obtain the bean,
+ * which this now constructs directly.
  *
+ * <p>
+ * The class javadoc used to call these "integration tests ... used to test that
+ * query strings return the Orcids that are expected from SOLR". That was
+ * already untrue of the one surviving method -- with a mocked SolrClient
+ * nothing is matched, scored or returned by Solr -- so the claim is dropped
+ * rather than carried forward. What {@code searchByOrcid} actually proves is
+ * the mapping half of {@code findByOrcid}: that the first document of the
+ * response is read, and that its {@code score} and {@code orcid} fields land on
+ * the right properties of {@link OrcidSolrResult}. Whether the query string it
+ * builds retrieves the right documents can only be shown against a real index.
  */
-@RunWith(OrcidJUnit4ClassRunner.class)
-@ContextConfiguration(locations = { "classpath:test-orcid-core-context.xml" })
+@RunWith(MockitoJUnitRunner.class)
 public class OrcidSolrProfileClientTest {
 
     private final String ORCID = "0000-0000-0000-0000";
 
     @Mock
-    private SolrClient mockSolrClient;
+    private SolrClient solrReadOnlyProfileClient;
 
-    @Resource
-    private OrcidSolrProfileClient orcidSolrProfileClient;
+    @InjectMocks
+    private OrcidSolrProfileClient orcidSolrProfileClient = new OrcidSolrProfileClient();
 
     @Before
     public void before() throws SolrServerException, IOException {
-        MockitoAnnotations.initMocks(this);
-        TargetProxyHelper.injectIntoProxy(orcidSolrProfileClient, "solrReadOnlyProfileClient", mockSolrClient);
-
         SolrDocumentList solrDocumentList = new SolrDocumentList();
         SolrDocument solrDocument = new SolrDocument();
         solrDocument.setField("score", 0.0f);
@@ -59,7 +57,7 @@ public class OrcidSolrProfileClientTest {
 
         QueryResponse mockResponse = Mockito.mock(QueryResponse.class);
         when(mockResponse.getResults()).thenReturn(solrDocumentList);
-        when(mockSolrClient.query(Mockito.any(SolrParams.class))).thenReturn(mockResponse);
+        when(solrReadOnlyProfileClient.query(Mockito.any(SolrParams.class))).thenReturn(mockResponse);
     }
 
     @Test
