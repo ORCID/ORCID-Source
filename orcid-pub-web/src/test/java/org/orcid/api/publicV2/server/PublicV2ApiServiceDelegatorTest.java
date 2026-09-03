@@ -19,8 +19,10 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import jakarta.persistence.NoResultException;
 import jakarta.ws.rs.WebApplicationException;
@@ -35,6 +37,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.orcid.api.common.writer.schemaorg.SchemaOrgDocument;
+import org.orcid.api.common.writer.schemaorg.SchemaOrgDocument.SchemaOrgExternalID;
 import org.orcid.api.common.writer.schemaorg.SchemaOrgMBWriterV2;
 import org.orcid.api.publicV2.server.delegator.impl.PublicV2ApiServiceDelegatorImpl;
 import org.orcid.api.publicV2.server.security.PublicAPISecurityManagerV2;
@@ -71,10 +74,13 @@ import org.orcid.core.utils.SourceUtils;
 import org.orcid.core.utils.v3.identifiers.PIDNormalizationService;
 import org.orcid.jaxb.model.client_v2.ClientSummary;
 import org.orcid.jaxb.model.common_v2.Country;
+import org.orcid.jaxb.model.common_v2.DisambiguatedOrganization;
 import org.orcid.jaxb.model.common_v2.CreditName;
 import org.orcid.jaxb.model.common_v2.Iso3166Country;
 import org.orcid.jaxb.model.common_v2.LastModifiedDate;
 import org.orcid.jaxb.model.common_v2.OrcidIdentifier;
+import org.orcid.jaxb.model.common_v2.Organization;
+import org.orcid.jaxb.model.common_v2.Title;
 import org.orcid.jaxb.model.common_v2.Url;
 import org.orcid.jaxb.model.common_v2.Visibility;
 import org.orcid.jaxb.model.common_v2.VisibilityType;
@@ -101,8 +107,10 @@ import org.orcid.jaxb.model.record_v2.Education;
 import org.orcid.jaxb.model.record_v2.Email;
 import org.orcid.jaxb.model.record_v2.Emails;
 import org.orcid.jaxb.model.record_v2.Employment;
+import org.orcid.jaxb.model.record_v2.ExternalID;
 import org.orcid.jaxb.model.record_v2.FamilyName;
 import org.orcid.jaxb.model.record_v2.Funding;
+import org.orcid.jaxb.model.record_v2.FundingTitle;
 import org.orcid.jaxb.model.record_v2.GivenNames;
 import org.orcid.jaxb.model.record_v2.Keyword;
 import org.orcid.jaxb.model.record_v2.Keywords;
@@ -119,6 +127,7 @@ import org.orcid.jaxb.model.record_v2.ResearcherUrl;
 import org.orcid.jaxb.model.record_v2.ResearcherUrls;
 import org.orcid.jaxb.model.record_v2.Work;
 import org.orcid.jaxb.model.record_v2.WorkBulk;
+import org.orcid.jaxb.model.record_v2.WorkTitle;
 import org.orcid.jaxb.model.search_v2.Result;
 import org.orcid.jaxb.model.search_v2.Search;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
@@ -143,6 +152,14 @@ import com.fasterxml.jackson.databind.ObjectMapper;
  * not call orcidSecurityManager.checkProfile at all. The profile state guard
  * lives on PublicV2ApiServiceVersionedDelegatorImpl, which wraps this one, and
  * is tested in PublicV2ApiServiceVersionedDelegatorTest.
+ *
+ * <p>
+ * The runner is Silent rather than strict because
+ * {@code SecurityContextTestUtils} builds its token out of nine stubs, of which
+ * a given endpoint only ever reaches some; under the strict runner every test
+ * that installs a token fails with UnnecessaryStubbingException. That utility
+ * lives in orcid-core, so the stubs cannot be trimmed from here. No stub
+ * declared in this file is unused.
  */
 @RunWith(MockitoJUnitRunner.Silent.class)
 public class PublicV2ApiServiceDelegatorTest {
@@ -1335,42 +1352,52 @@ public class PublicV2ApiServiceDelegatorTest {
     public void testSearchByQueryTooManyRows() throws ParseException {
         Map<String, List<String>> params = new HashMap<String, List<String>>();
         params.put("rows", Arrays.asList(Integer.toString(OrcidSearchManager.MAX_SEARCH_ROWS + 20)));
-        when(localeManager.resolveMessage(anyString())).thenReturn("a message");
+        // resolveMessage is varargs and the production call passes the limit as
+        // one vararg, so the matcher has to cover the array or the stub never
+        // fires and the exception carries a null message.
+        when(localeManager.resolveMessage(ArgumentMatchers.eq("apiError.badrequest_invalid_search_rows.exception"), ArgumentMatchers.<Object> any())).thenReturn("a message");
 
         try {
             serviceDelegator.searchByQuery(params);
             fail();
         } catch (OrcidBadRequestException expected) {
+            assertEquals("a message", expected.getMessage());
         }
         verifyNoInteractions(orcidSearchManager);
+        verify(localeManager).resolveMessage("apiError.badrequest_invalid_search_rows.exception", OrcidSearchManager.MAX_SEARCH_ROWS);
     }
 
     @Test
     public void testSearchByQueryIllegalStart() throws ParseException {
         Map<String, List<String>> params = new HashMap<String, List<String>>();
         params.put("start", Arrays.asList(Integer.toString(OrcidSearchManager.MAX_SEARCH_START + 20)));
-        when(localeManager.resolveMessage(anyString())).thenReturn("a message");
+        when(localeManager.resolveMessage(ArgumentMatchers.eq("apiError.badrequest_invalid_search_start.exception"), ArgumentMatchers.<Object> any())).thenReturn("a message");
         when(orcidSecurityManager.getClientIdFromAPIRequest()).thenReturn(null);
 
         try {
             serviceDelegator.searchByQuery(params);
             fail();
         } catch (SearchStartParameterLimitExceededException expected) {
+            assertEquals("a message", expected.getMessage());
         }
         verifyNoInteractions(orcidSearchManager);
+        verify(localeManager).resolveMessage("apiError.badrequest_invalid_search_start.exception", OrcidSearchManager.MAX_SEARCH_START);
     }
 
     @Test
     public void testSearchByQueryLegalStart() throws ParseException {
         Map<String, List<String>> params = new HashMap<String, List<String>>();
         params.put("start", Arrays.asList(Integer.toString(OrcidSearchManager.MAX_SEARCH_START)));
-        when(localeManager.resolveMessage(anyString())).thenReturn("a message");
         when(orcidSearchManager.findOrcidIds(ArgumentMatchers.<Map<String, List<String>>> any())).thenReturn(new Search());
         when(orcidSecurityManager.getClientIdFromAPIRequest()).thenReturn(null);
 
         Response response = serviceDelegator.searchByQuery(params);
 
         assertNotNull(response);
+        // the boundary value is legal, so no error message is resolved and the
+        // search actually runs
+        verifyNoInteractions(localeManager);
+        verify(orcidSearchManager).findOrcidIds(ArgumentMatchers.<Map<String, List<String>>> any());
     }
 
     /**
@@ -1458,6 +1485,7 @@ public class PublicV2ApiServiceDelegatorTest {
         addresses.getAddress().add(address(9L, Visibility.PUBLIC));
         person.setAddresses(addresses);
         record.setPerson(person);
+        record.setActivitiesSummary(schemaOrgActivities());
         when(recordManagerReadOnly.getPublicRecord(ORCID)).thenReturn(record);
 
         SchemaOrgMBWriterV2 writerV2 = new SchemaOrgMBWriterV2();
@@ -1478,6 +1506,18 @@ public class PublicV2ApiServiceDelegatorTest {
         assertEquals("Given Names", doc.givenName);
         assertEquals("Family Name", doc.familyName);
         assertEquals("Other Name PUBLIC", doc.alternateName.get(0));
+        // educations become alumniOf and employments become affiliation; a WDB
+        // disambiguated organization is neither LEI, FUNDREF nor GRID so it
+        // lands in identifier rather than in @id
+        assertEquals("WDB", doc.alumniOf.iterator().next().identifier.iterator().next().propertyID);
+        assertEquals("WDB", doc.affiliation.iterator().next().identifier.iterator().next().propertyID);
+        Set<String> fundingIds = new HashSet<String>();
+        for (SchemaOrgExternalID i : doc.worksAndFunding.funder.iterator().next().identifier) {
+            fundingIds.add(i.propertyID);
+        }
+        // a funder carries both its own organization id and the grant number
+        assertEquals(new HashSet<String>(Arrays.asList("WDB", "grant_number")), fundingIds);
+        assertEquals("PUBLIC", doc.worksAndFunding.creator.iterator().next().name);
         assertEquals("http://www.researcherurl.com?id=13", doc.url.get(0));
         assertEquals("self_public_user_obo_type", doc.identifier.get(0).propertyID);
         assertEquals("self_public_user_obo_ref", doc.identifier.get(0).value);
@@ -1863,6 +1903,62 @@ public class PublicV2ApiServiceDelegatorTest {
         record.setPerson(person());
         record.setActivitiesSummary(activitiesSummary());
         return record;
+    }
+
+    /**
+     * The graph SchemaOrgMBWriterV2 walks: an organization on the education and
+     * the employment it maps, a funding group carrying both an organization id
+     * and a grant number, and one work group with a title. The V2 writer reads
+     * flat summary lists, not affiliation groups.
+     */
+    private static ActivitiesSummary schemaOrgActivities() {
+        ActivitiesSummary summary = new ActivitiesSummary();
+
+        Educations educations = new Educations();
+        EducationSummary education = educationSummary(20L, Visibility.PUBLIC);
+        education.setOrganization(organization());
+        educations.getSummaries().add(education);
+        summary.setEducations(educations);
+
+        Employments employments = new Employments();
+        EmploymentSummary employment = employmentSummary(17L, Visibility.PUBLIC);
+        employment.setOrganization(organization());
+        employments.getSummaries().add(employment);
+        summary.setEmployments(employments);
+
+        FundingSummary fundingSummary = fundingSummary(10L, Visibility.PUBLIC);
+        fundingSummary.setOrganization(organization());
+        FundingTitle fundingTitle = new FundingTitle();
+        fundingTitle.setTitle(new Title("PUBLIC"));
+        fundingSummary.setTitle(fundingTitle);
+        FundingGroup fundingGroup = new FundingGroup();
+        fundingGroup.getFundingSummary().add(fundingSummary);
+        ExternalID grantNumber = new ExternalID();
+        grantNumber.setType("grant_number");
+        grantNumber.setValue("GRANT-1");
+        fundingGroup.getIdentifiers().getExternalIdentifier().add(grantNumber);
+        Fundings fundings = new Fundings();
+        fundings.getFundingGroup().add(fundingGroup);
+        summary.setFundings(fundings);
+
+        WorkSummary workSummary = workSummary(11L, Visibility.PUBLIC);
+        WorkTitle workTitle = new WorkTitle();
+        workTitle.setTitle(new Title("PUBLIC"));
+        workSummary.setTitle(workTitle);
+        summary.setWorks(works(workSummary));
+
+        return summary;
+    }
+
+    /** A WDB disambiguated organization, the shape the old fixture used. */
+    private static Organization organization() {
+        Organization organization = new Organization();
+        organization.setName("An Organization");
+        DisambiguatedOrganization disambiguated = new DisambiguatedOrganization();
+        disambiguated.setDisambiguationSource("WDB");
+        disambiguated.setDisambiguatedOrganizationIdentifier("WDB-ORG-1");
+        organization.setDisambiguatedOrganization(disambiguated);
+        return organization;
     }
 
     private static ClientSummary clientSummary() {

@@ -15,26 +15,23 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
-import java.util.Arrays;
 import java.util.Date;
-import java.util.List;
 
-import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import javax.xml.datatype.DatatypeConfigurationException;
 
 import org.jasypt.exceptions.EncryptionOperationNotPossibleException;
-import org.junit.AfterClass;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.orcid.core.manager.*;
 import org.orcid.core.manager.v3.EmailManager;
+import org.orcid.core.locale.LocaleManager;
+import org.orcid.core.manager.impl.OrcidUrlManager;
 import org.orcid.core.manager.v3.ProfileEntityManager;
 import org.orcid.core.manager.v3.read_only.EmailManagerReadOnly;
 import org.orcid.core.utils.cache.redis.RedisClient;
@@ -45,31 +42,28 @@ import org.orcid.frontend.web.util.PasswordResetTokenEntry;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.pojo.EmailRequest;
 import org.orcid.pojo.ajaxForm.Text;
-import org.orcid.test.DBUnitTest;
-import org.orcid.test.OrcidJUnit4ClassRunner;
-import org.orcid.test.TargetProxyHelper;
 import org.orcid.utils.ExpiringLinkService;
 import com.nimbusds.jwt.JWTClaimsSet;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpSession;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.web.WebAppConfiguration;
+import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.web.servlet.ModelAndView;
 import org.togglz.junit.TogglzRule;
 
-import com.google.common.collect.Lists;
 
-@RunWith(OrcidJUnit4ClassRunner.class)
-@WebAppConfiguration
-@ContextConfiguration(locations = { "classpath:test-frontend-web-servlet.xml" })
-public class PasswordResetControllerTest extends DBUnitTest {
-    private static final List<String> DATA_FILES = Arrays.asList("/data/EmptyEntityData.xml",
-            "/data/SourceClientDetailsEntityData.xml", "/data/ProfileEntityData.xml", "/data/ClientDetailsEntityData.xml", "/data/RecordNameEntityData.xml",
-            "/data/BiographyEntityData.xml");
+/**
+ * Every collaborator this controller reaches was already a mock; the Spring
+ * context and the DBUnit load were dead weight, and nothing in the file read the
+ * seeded rows. The two collaborators the context used to supply silently --
+ * localeManager, behind BaseController.getMessage(), and orcidUrlManager, behind
+ * calculateRedirectUrl -- are explicit mocks now, with orcidUrlManager answering
+ * the same base URL the test properties carried.
+ */
+@RunWith(MockitoJUnitRunner.Silent.class)
+public class PasswordResetControllerTest {
 
-    @Resource(name = "passwordResetController")
     private PasswordResetController passwordResetController;
 
     @Mock
@@ -110,35 +104,52 @@ public class PasswordResetControllerTest extends DBUnitTest {
 
     @Mock
     private RedisClient redisClient;
-        
+
+    @Mock
+    private LocaleManager localeManager;
+
+    @Mock
+    private OrcidUrlManager orcidUrlManager;
+
     @Rule
     public TogglzRule togglzRule = TogglzRule.allDisabled(Features.class);
-    
-    @BeforeClass
-    public static void beforeClass() throws Exception {
-        initDBUnitData(DATA_FILES);
-    }
-
-    @AfterClass
-    public static void afterClass() throws Exception {
-        removeDBUnitData(Lists.reverse(DATA_FILES));
-    }
 
     @Before
     public void before() {
-        MockitoAnnotations.initMocks(this);
-        TargetProxyHelper.injectIntoProxy(passwordResetController, "registrationManager", registrationManager);       
-        TargetProxyHelper.injectIntoProxy(passwordResetController, "emailManager", emailManager); 
-        TargetProxyHelper.injectIntoProxy(passwordResetController, "encryptionManager", encryptionManager);
-        TargetProxyHelper.injectIntoProxy(passwordResetController, "emailManagerReadOnly", mockEmailManagerReadOnly);
-        TargetProxyHelper.injectIntoProxy(passwordResetController, "profileEntityManager", profileEntityManager);
-        TargetProxyHelper.injectIntoProxy(passwordResetController, "profileEntityCacheManager", profileEntityCacheManager);
-        TargetProxyHelper.injectIntoProxy(passwordResetController, "recordEmailSender", mockRecordEmailSender);
-        TargetProxyHelper.injectIntoProxy(passwordResetController, "twoFactorAuthenticationManager", twoFactorAuthenticationManager);
-        TargetProxyHelper.injectIntoProxy(passwordResetController, "backupCodeManager", backupCodeManager);
-        TargetProxyHelper.injectIntoProxy(passwordResetController, "expiringLinkService", expiringLinkService);
-        TargetProxyHelper.injectIntoProxy(passwordResetController, "redisClient", redisClient);
-        
+        passwordResetController = new PasswordResetController();
+
+        ReflectionTestUtils.setField(passwordResetController, "registrationManager", registrationManager);
+        ReflectionTestUtils.setField(passwordResetController, "encryptionManager", encryptionManager);
+        ReflectionTestUtils.setField(passwordResetController, "profileEntityCacheManager", profileEntityCacheManager);
+        ReflectionTestUtils.setField(passwordResetController, "recordEmailSender", mockRecordEmailSender);
+        ReflectionTestUtils.setField(passwordResetController, "twoFactorAuthenticationManager", twoFactorAuthenticationManager);
+        ReflectionTestUtils.setField(passwordResetController, "backupCodeManager", backupCodeManager);
+        ReflectionTestUtils.setField(passwordResetController, "expiringLinkService", expiringLinkService);
+        ReflectionTestUtils.setField(passwordResetController, "redisClient", redisClient);
+
+        // emailManager, localeManager and orcidUrlManager are declared only on
+        // BaseController.
+        ReflectionTestUtils.setField(passwordResetController, BaseController.class, "emailManager", emailManager, EmailManager.class);
+        ReflectionTestUtils.setField(passwordResetController, BaseController.class, "localeManager", localeManager, LocaleManager.class);
+        ReflectionTestUtils.setField(passwordResetController, BaseController.class, "orcidUrlManager", orcidUrlManager, OrcidUrlManager.class);
+
+        // PasswordResetController re-declares profileEntityManager (line 84) and
+        // emailManagerReadOnly (line 93) over BaseController's copies. Spring's
+        // @Resource fills both; anything that fills only the most derived one
+        // leaves the inherited helpers pointing at null.
+        ReflectionTestUtils.setField(passwordResetController, PasswordResetController.class, "profileEntityManager", profileEntityManager,
+                ProfileEntityManager.class);
+        ReflectionTestUtils.setField(passwordResetController, BaseController.class, "profileEntityManager", profileEntityManager, ProfileEntityManager.class);
+        ReflectionTestUtils.setField(passwordResetController, PasswordResetController.class, "emailManagerReadOnly", mockEmailManagerReadOnly,
+                EmailManagerReadOnly.class);
+        ReflectionTestUtils.setField(passwordResetController, BaseController.class, "emailManagerReadOnly", mockEmailManagerReadOnly,
+                EmailManagerReadOnly.class);
+
+        when(localeManager.resolveMessage(anyString(), any())).thenAnswer(invocation -> invocation.getArgument(0));
+        // The value the test properties carried, which the redirect assertions
+        // below are written against.
+        when(orcidUrlManager.getBaseUrl()).thenReturn("https://testserver.orcid.org");
+
         when(expiringLinkService.verifyToken(any())).thenReturn(ExpiringLinkService.VerificationResult.invalid());
     }
     

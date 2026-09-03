@@ -22,6 +22,7 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -47,6 +48,7 @@ import org.orcid.pojo.PublicRecordPersonDetails;
 import org.orcid.pojo.ajaxForm.AffiliationGroupContainer;
 import org.orcid.pojo.ajaxForm.AffiliationGroupForm;
 import org.orcid.test.DBUnitTest;
+import org.orcid.test.DatabaseTest;
 import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.orcid.test.TargetProxyHelper;
 import org.springframework.test.context.ContextConfiguration;
@@ -62,6 +64,18 @@ import org.springframework.web.servlet.ModelAndView;
 @RunWith(OrcidJUnit4ClassRunner.class)
 @WebAppConfiguration
 @ContextConfiguration(locations = { "classpath:test-frontend-web-servlet.xml" })
+/*
+ * Kept as a database test. testGetPersonDetails, testGetGroupedAffiliations and
+ * testViewClaimedUserWhenIsLongEnough read seeded rows through the read only
+ * managers, the ProfileDao and a real TransactionTemplate, and
+ * testGetGroupedAffiliations' "there should be only one public element" is
+ * AffiliationsManagerReadOnly.getGroupedAffiliations(orcid, true) doing the
+ * filtering -- with a mocked manager it would pass while proving nothing.
+ * getUserInfoTest and publicPreview_getInvalidRecordGenerateRedirectTest are
+ * already mock driven and would convert on their own; they cannot be split out
+ * without moving them to another class.
+ */
+@Category(DatabaseTest.class)
 public class PublicProfileControllerTest extends DBUnitTest {
     
     private static final List<String> DATA_FILES = Arrays.asList("/data/SourceClientDetailsEntityData.xml",

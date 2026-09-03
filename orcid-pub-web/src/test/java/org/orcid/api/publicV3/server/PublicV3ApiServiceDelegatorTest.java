@@ -22,8 +22,10 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import jakarta.persistence.NoResultException;
 import jakarta.ws.rs.WebApplicationException;
@@ -41,6 +43,7 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.orcid.api.common.util.v3.PublicRecordUtils;
 import org.orcid.api.common.writer.schemaorg.SchemaOrgDocument;
+import org.orcid.api.common.writer.schemaorg.SchemaOrgDocument.SchemaOrgExternalID;
 import org.orcid.api.common.writer.schemaorg.SchemaOrgMBWriterV3;
 import org.orcid.api.publicV3.server.delegator.impl.PublicV3ApiServiceDelegatorImpl;
 import org.orcid.api.publicV3.server.security.PublicAPISecurityManagerV3;
@@ -83,9 +86,12 @@ import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.record.bulk.BulkElement;
 import org.orcid.jaxb.model.v3.release.client.ClientSummary;
 import org.orcid.jaxb.model.v3.release.common.Country;
+import org.orcid.jaxb.model.v3.release.common.DisambiguatedOrganization;
 import org.orcid.jaxb.model.v3.release.common.CreditName;
 import org.orcid.jaxb.model.v3.release.common.LastModifiedDate;
+import org.orcid.jaxb.model.v3.release.common.Organization;
 import org.orcid.jaxb.model.v3.release.common.OrcidIdentifier;
+import org.orcid.jaxb.model.v3.release.common.Title;
 import org.orcid.jaxb.model.v3.release.common.Url;
 import org.orcid.jaxb.model.v3.release.common.Visibility;
 import org.orcid.jaxb.model.v3.release.record.Address;
@@ -97,8 +103,10 @@ import org.orcid.jaxb.model.v3.release.record.Education;
 import org.orcid.jaxb.model.v3.release.record.Email;
 import org.orcid.jaxb.model.v3.release.record.Emails;
 import org.orcid.jaxb.model.v3.release.record.Employment;
+import org.orcid.jaxb.model.v3.release.record.ExternalID;
 import org.orcid.jaxb.model.v3.release.record.FamilyName;
 import org.orcid.jaxb.model.v3.release.record.Funding;
+import org.orcid.jaxb.model.v3.release.record.FundingTitle;
 import org.orcid.jaxb.model.v3.release.record.GivenNames;
 import org.orcid.jaxb.model.v3.release.record.InvitedPosition;
 import org.orcid.jaxb.model.v3.release.record.Keyword;
@@ -119,6 +127,7 @@ import org.orcid.jaxb.model.v3.release.record.ResearcherUrls;
 import org.orcid.jaxb.model.v3.release.record.Service;
 import org.orcid.jaxb.model.v3.release.record.Work;
 import org.orcid.jaxb.model.v3.release.record.WorkBulk;
+import org.orcid.jaxb.model.v3.release.record.WorkTitle;
 import org.orcid.jaxb.model.v3.release.record.summary.ActivitiesSummary;
 import org.orcid.jaxb.model.v3.release.record.summary.AffiliationGroup;
 import org.orcid.jaxb.model.v3.release.record.summary.AffiliationSummary;
@@ -189,6 +198,14 @@ import com.fasterxml.jackson.databind.ObjectMapper;
  * positional order of external identifiers, which is a DAO ordering claim -
  * have been dropped rather than reproduced against the test's own stubs. See
  * the commit message for where each of them now lives.
+ *
+ * <p>
+ * The runner is Silent rather than strict because
+ * {@code SecurityContextTestUtils} builds its token out of nine stubs, of which
+ * a given endpoint only ever reaches some; under the strict runner every test
+ * that installs a token fails with UnnecessaryStubbingException. That utility
+ * lives in orcid-core, so the stubs cannot be trimmed from here. No stub
+ * declared in this file is unused.
  */
 @RunWith(MockitoJUnitRunner.Silent.class)
 public class PublicV3ApiServiceDelegatorTest {
@@ -1421,6 +1438,7 @@ public class PublicV3ApiServiceDelegatorTest {
         assertEquals("/0000-0000-0000-0003/other-names", otherNames.getPath());
         assertEquals("/0000-0000-0000-0003/other-names/13", otherName.getPath());
         assertEquals(otherName.getLastModifiedDate(), otherNames.getLastModifiedDate());
+        verify(orcidSecurityManager).checkProfile(ORCID);
         verify(publicAPISecurityManagerV3).filter(otherNames);
         verify(sourceUtilsReadOnly).setSourceName(otherNames);
     }
@@ -1482,6 +1500,7 @@ public class PublicV3ApiServiceDelegatorTest {
         assertEquals("/0000-0000-0000-0003/keywords", keywords.getPath());
         assertEquals("/0000-0000-0000-0003/keywords/9", keyword.getPath());
         assertEquals(keyword.getLastModifiedDate(), keywords.getLastModifiedDate());
+        verify(orcidSecurityManager).checkProfile(ORCID);
         verify(publicAPISecurityManagerV3).filter(keywords);
         verify(sourceUtilsReadOnly).setSourceName(keywords);
     }
@@ -1554,6 +1573,7 @@ public class PublicV3ApiServiceDelegatorTest {
         assertEquals("/0000-0000-0000-0003/external-identifiers/13", second.getPath());
         // the container carries the latest of its elements, put code 19 here
         assertEquals(first.getLastModifiedDate(), extIds.getLastModifiedDate());
+        verify(orcidSecurityManager).checkProfile(ORCID);
         verify(publicAPISecurityManagerV3).filter(extIds);
         verify(sourceUtilsReadOnly).setSourceName(extIds);
     }
@@ -1621,6 +1641,7 @@ public class PublicV3ApiServiceDelegatorTest {
         assertEquals("/0000-0000-0000-0003/researcher-urls", rUrls.getPath());
         assertEquals("/0000-0000-0000-0003/researcher-urls/13", rUrl.getPath());
         assertEquals(rUrl.getLastModifiedDate(), rUrls.getLastModifiedDate());
+        verify(orcidSecurityManager).checkProfile(ORCID);
         verify(researcherUrlManagerReadOnly).getPublicResearcherUrls(ORCID);
         verifyNoInteractions(publicAPISecurityManagerV3);
         verify(sourceUtilsReadOnly).setSourceName(rUrls);
@@ -1683,6 +1704,7 @@ public class PublicV3ApiServiceDelegatorTest {
         assertEquals("/0000-0000-0000-0003/address", addresses.getPath());
         assertEquals("/0000-0000-0000-0003/address/9", address.getPath());
         assertEquals(address.getLastModifiedDate(), addresses.getLastModifiedDate());
+        verify(orcidSecurityManager).checkProfile(ORCID);
         verify(publicAPISecurityManagerV3).filter(addresses);
         verify(sourceUtilsReadOnly).setSourceName(addresses);
     }
@@ -1951,42 +1973,52 @@ public class PublicV3ApiServiceDelegatorTest {
     public void testSearchByQueryTooManyRows() throws ParseException {
         Map<String, List<String>> params = new HashMap<String, List<String>>();
         params.put("rows", Arrays.asList(Integer.toString(OrcidSearchManager.MAX_SEARCH_ROWS + 20)));
-        when(localeManager.resolveMessage(anyString())).thenReturn("a message");
+        // resolveMessage is varargs and the production call passes the limit as
+        // one vararg, so the matcher has to cover the array or the stub never
+        // fires and the exception carries a null message.
+        when(localeManager.resolveMessage(ArgumentMatchers.eq("apiError.badrequest_invalid_search_rows.exception"), ArgumentMatchers.<Object> any())).thenReturn("a message");
 
         try {
             serviceDelegator.searchByQuery(params);
             fail();
         } catch (OrcidBadRequestException expected) {
+            assertEquals("a message", expected.getMessage());
         }
         verifyNoInteractions(orcidSearchManager);
+        verify(localeManager).resolveMessage("apiError.badrequest_invalid_search_rows.exception", OrcidSearchManager.MAX_SEARCH_ROWS);
     }
 
     @Test
     public void testSearchByQueryIllegalStart() throws ParseException {
         Map<String, List<String>> params = new HashMap<String, List<String>>();
         params.put("start", Arrays.asList(Integer.toString(OrcidSearchManager.MAX_SEARCH_START + 20)));
-        when(localeManager.resolveMessage(anyString())).thenReturn("a message");
+        when(localeManager.resolveMessage(ArgumentMatchers.eq("apiError.badrequest_invalid_search_start.exception"), ArgumentMatchers.<Object> any())).thenReturn("a message");
         when(orcidSecurityManager.getClientIdFromAPIRequest()).thenReturn(null);
 
         try {
             serviceDelegator.searchByQuery(params);
             fail();
         } catch (SearchStartParameterLimitExceededException expected) {
+            assertEquals("a message", expected.getMessage());
         }
         verifyNoInteractions(orcidSearchManager);
+        verify(localeManager).resolveMessage("apiError.badrequest_invalid_search_start.exception", OrcidSearchManager.MAX_SEARCH_START);
     }
 
     @Test
     public void testSearchByQueryLegalStart() throws ParseException {
         Map<String, List<String>> params = new HashMap<String, List<String>>();
         params.put("start", Arrays.asList(Integer.toString(OrcidSearchManager.MAX_SEARCH_START)));
-        when(localeManager.resolveMessage(anyString())).thenReturn("a message");
         when(orcidSearchManager.findOrcidIds(ArgumentMatchers.<Map<String, List<String>>> any())).thenReturn(new Search());
         when(orcidSecurityManager.getClientIdFromAPIRequest()).thenReturn(null);
 
         Response response = serviceDelegator.searchByQuery(params);
 
         assertNotNull(response);
+        // the boundary value is legal, so no error message is resolved and the
+        // search actually runs
+        verifyNoInteractions(localeManager);
+        verify(orcidSearchManager).findOrcidIds(ArgumentMatchers.<Map<String, List<String>>> any());
     }
 
     /**
@@ -2111,6 +2143,7 @@ public class PublicV3ApiServiceDelegatorTest {
         addresses.getAddress().add(address(9L, Visibility.PUBLIC));
         person.setAddresses(addresses);
         record.setPerson(person);
+        record.setActivitiesSummary(schemaOrgActivities());
         when(publicRecordUtils.getPublicRecord(ORCID, false)).thenReturn(record);
 
         SchemaOrgMBWriterV3 writerV3 = new SchemaOrgMBWriterV3();
@@ -2131,6 +2164,20 @@ public class PublicV3ApiServiceDelegatorTest {
         assertEquals("Given Names", doc.givenName);
         assertEquals("Family Name", doc.familyName);
         assertEquals("Other Name PUBLIC", doc.alternateName.get(0));
+        // educations and qualifications become alumniOf, employments and the
+        // other four affiliation types become affiliation; a WDB disambiguated
+        // organization is neither LEI, FUNDREF nor GRID so it lands in
+        // identifier rather than in @id
+        assertEquals("WDB", doc.alumniOf.iterator().next().identifier.iterator().next().propertyID);
+        // they have been squashed into one because they are all the same Org
+        assertEquals("WDB", doc.affiliation.iterator().next().identifier.iterator().next().propertyID);
+        Set<String> fundingIds = new HashSet<String>();
+        for (SchemaOrgExternalID i : doc.worksAndFunding.funder.iterator().next().identifier) {
+            fundingIds.add(i.propertyID);
+        }
+        // a funder carries both its own organization id and the grant number
+        assertEquals(new HashSet<String>(Arrays.asList("WDB", "grant_number")), fundingIds);
+        assertEquals("PUBLIC", doc.worksAndFunding.creator.iterator().next().name);
         assertEquals("http://www.researcherurl.com?id=13", doc.url.get(0));
         assertEquals("self_public_user_obo_type", doc.identifier.get(0).propertyID);
         assertEquals("self_public_user_obo_ref", doc.identifier.get(0).value);
@@ -2522,6 +2569,64 @@ public class PublicV3ApiServiceDelegatorTest {
         assertEquals("/0000-0000-0000-0003/qualifications", summary.getQualifications().getPath());
         assertEquals("/0000-0000-0000-0003/services", summary.getServices().getPath());
         assertNotNull(summary.getLastModifiedDate());
+    }
+
+    /**
+     * The graph SchemaOrgMBWriterV3 walks: an organization on every affiliation
+     * type it maps, a funding group carrying both an organization id and a
+     * grant number, and one work group with a title. Built here rather than
+     * reused from activitiesSummary() because only this test needs the
+     * organizations, and the writer skips any affiliation whose organization
+     * has no disambiguated organization.
+     */
+    private static ActivitiesSummary schemaOrgActivities() {
+        ActivitiesSummary summary = new ActivitiesSummary();
+
+        summary.setEducations(new Educations(affiliationGroups(withOrganization(affiliationSummary(new EducationSummary(), 20L, Visibility.PUBLIC)))));
+        summary.setEmployments(new Employments(affiliationGroups(withOrganization(affiliationSummary(new EmploymentSummary(), 17L, Visibility.PUBLIC)))));
+
+        FundingSummary fundingSummary = withOrganization(fundingSummary(10L, Visibility.PUBLIC));
+        FundingTitle fundingTitle = new FundingTitle();
+        fundingTitle.setTitle(new Title("PUBLIC"));
+        fundingSummary.setTitle(fundingTitle);
+        FundingGroup fundingGroup = new FundingGroup();
+        fundingGroup.getFundingSummary().add(fundingSummary);
+        ExternalID grantNumber = new ExternalID();
+        grantNumber.setType("grant_number");
+        grantNumber.setValue("GRANT-1");
+        fundingGroup.getIdentifiers().getExternalIdentifier().add(grantNumber);
+        Fundings fundings = new Fundings();
+        fundings.getFundingGroup().add(fundingGroup);
+        summary.setFundings(fundings);
+
+        WorkSummary workSummary = workSummary(11L, Visibility.PUBLIC);
+        WorkTitle workTitle = new WorkTitle();
+        workTitle.setTitle(new Title("PUBLIC"));
+        workSummary.setTitle(workTitle);
+        summary.setWorks(works(workSummary));
+
+        return summary;
+    }
+
+    /** A WDB disambiguated organization, the shape the old fixture used. */
+    private static Organization organization() {
+        Organization organization = new Organization();
+        organization.setName("An Organization");
+        DisambiguatedOrganization disambiguated = new DisambiguatedOrganization();
+        disambiguated.setDisambiguationSource("WDB");
+        disambiguated.setDisambiguatedOrganizationIdentifier("WDB-ORG-1");
+        organization.setDisambiguatedOrganization(disambiguated);
+        return organization;
+    }
+
+    private static <T extends AffiliationSummary> T withOrganization(T summary) {
+        summary.setOrganization(organization());
+        return summary;
+    }
+
+    private static FundingSummary withOrganization(FundingSummary summary) {
+        summary.setOrganization(organization());
+        return summary;
     }
 
     private static ClientSummary clientSummary() {
