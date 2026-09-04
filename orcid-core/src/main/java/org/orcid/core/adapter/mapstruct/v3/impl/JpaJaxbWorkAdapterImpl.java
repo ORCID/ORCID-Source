@@ -16,6 +16,7 @@ import org.orcid.core.adapter.mapstruct.ContributorsRolesAndSequencesMapperV3;
 import org.orcid.core.adapter.mapstruct.FuzzyDateMapperV3;
 import org.orcid.core.adapter.mapstruct.JSONWorkExternalIdentifiersMapperV3;
 import org.orcid.core.adapter.mapstruct.SourceMapperV3;
+import org.orcid.core.adapter.mapstruct.UrlMapperV3;
 import org.orcid.core.adapter.mapstruct.VisibilityMapperV3;
 import org.orcid.core.adapter.mapstruct.WorkContributorsMapperV3;
 import org.orcid.core.adapter.v3.JpaJaxbWorkAdapter;
@@ -27,7 +28,6 @@ import org.orcid.jaxb.model.v3.release.common.Source;
 import org.orcid.jaxb.model.v3.release.common.Subtitle;
 import org.orcid.jaxb.model.v3.release.common.Title;
 import org.orcid.jaxb.model.v3.release.common.Year;
-import org.orcid.jaxb.model.v3.release.common.Url;
 import org.orcid.jaxb.model.v3.release.record.Work;
 import org.orcid.jaxb.model.v3.release.record.summary.WorkSummary;
 import org.orcid.persistence.jpa.entities.MinimizedExtendedWorkEntity;
@@ -41,6 +41,7 @@ import org.orcid.pojo.WorkSummaryExtended;
     componentModel = "spring",
     uses = {
         SourceMapperV3.class,
+        UrlMapperV3.class,
         VisibilityMapperV3.class,
         FuzzyDateMapperV3.class
     }
@@ -97,14 +98,6 @@ public abstract class JpaJaxbWorkAdapterImpl implements JpaJaxbWorkAdapter {
         return result;
     }
 
-    protected Url mapStringToUrl(String url) {
-        return StringUtils.isBlank(url) ? null : new Url(url.trim());
-    }
-
-    protected String mapUrlToString(Url url) {
-        return url == null || StringUtils.isBlank(url.getValue()) ? null : url.getValue().trim();
-    }
-
     protected org.orcid.jaxb.model.v3.release.common.Country mapStringToCountry(String country) {
         if (country == null) return null;
         try {
@@ -152,7 +145,7 @@ public abstract class JpaJaxbWorkAdapterImpl implements JpaJaxbWorkAdapter {
     @Mapping(target = "workType", expression = "java( mapWorkTypeToString(work.getWorkType()) )")
     @Mapping(source = "publicationDate", target = "publicationDate")
     @Mapping(target = "externalIdentifiersJson", expression = "java( extIdMapper.convertTo(work.getWorkExternalIdentifiers()) )")
-    @Mapping(target = "workUrl", expression = "java( mapUrlToString(work.getUrl()) )")
+    @Mapping(source = "url", target = "workUrl")
     @Mapping(target = "contributorsJson", expression = "java( contributorsMapper.convertTo(work.getWorkContributors()) )")
     @Mapping(source = "languageCode", target = "languageCode")
     @Mapping(target = "iso2Country", expression = "java( mapCountryToString(work.getCountry()) )")
@@ -174,7 +167,7 @@ public abstract class JpaJaxbWorkAdapterImpl implements JpaJaxbWorkAdapter {
     @Mapping(target = "workType", expression = "java( mapWorkTypeToString(work.getWorkType()) )")
     @Mapping(source = "publicationDate", target = "publicationDate")
     @Mapping(target = "externalIdentifiersJson", expression = "java( extIdMapper.convertTo(work.getWorkExternalIdentifiers()) )")
-    @Mapping(target = "workUrl", expression = "java( mapUrlToString(work.getUrl()) )")
+    @Mapping(source = "url", target = "workUrl")
     @Mapping(target = "contributorsJson", expression = "java( contributorsMapper.convertTo(work.getWorkContributors()) )")
     @Mapping(source = "languageCode", target = "languageCode")
     @Mapping(target = "iso2Country", expression = "java( mapCountryToString(work.getCountry()) )")
@@ -200,7 +193,7 @@ public abstract class JpaJaxbWorkAdapterImpl implements JpaJaxbWorkAdapter {
     @Mapping(target = "workType", expression = "java( mapStringToWorkType(workEntity.getWorkType()) )")
     @Mapping(source = "publicationDate", target = "publicationDate")
     @Mapping(target = "workExternalIdentifiers", expression = "java( extIdMapper.convertFrom(workEntity.getExternalIdentifiersJson()) )")
-    @Mapping(target = "url", expression = "java( mapStringToUrl(workEntity.getWorkUrl()) )")
+    @Mapping(source = "workUrl", target = "url")
     @Mapping(target = "workContributors", expression = "java( contributorsMapper.convertFrom(workEntity.getContributorsJson()) )")
     @Mapping(source = "languageCode", target = "languageCode")
     @Mapping(target = "country", expression = "java( mapStringToCountry(workEntity.getIso2Country()) )")
@@ -257,7 +250,7 @@ public abstract class JpaJaxbWorkAdapterImpl implements JpaJaxbWorkAdapter {
     @Mapping(target = "workType", expression = "java( mapStringToWorkType(workEntity.getWorkType()) )")
     @Mapping(source = "publicationDate", target = "publicationDate")
     @Mapping(target = "workExternalIdentifiers", expression = "java( extIdMapper.convertFrom(workEntity.getExternalIdentifiersJson()) )")
-    @Mapping(target = "url", expression = "java( mapStringToUrl(workEntity.getWorkUrl()) )")
+    @Mapping(source = "workUrl", target = "url")
     @Mapping(target = "workContributors", ignore = true) // CRITICAL: Explicitly ignored to match Orika and pass equality checks![cite: 9]
     @Mapping(source = "languageCode", target = "languageCode")
     @Mapping(target = "country", expression = "java( mapStringToCountry(workEntity.getIso2Country()) )")
@@ -278,7 +271,7 @@ public abstract class JpaJaxbWorkAdapterImpl implements JpaJaxbWorkAdapter {
     @Mapping(target = "type", expression = "java( mapStringToWorkType(workEntity.getWorkType()) )")
     @Mapping(source = "publicationDate", target = "publicationDate")
     @Mapping(target = "externalIdentifiers", expression = "java( extIdMapper.convertFrom(workEntity.getExternalIdentifiersJson()) )")
-    @Mapping(target = "url", expression = "java( mapStringToUrl(workEntity.getWorkUrl()) )")
+    @Mapping(source = "workUrl", target = "url")
     @Mapping(source = "visibility", target = "visibility")
     @Mapping(source = "dateCreated", target = "createdDate.value")
     @Mapping(source = "lastModified", target = "lastModifiedDate.value")
@@ -295,7 +288,7 @@ public abstract class JpaJaxbWorkAdapterImpl implements JpaJaxbWorkAdapter {
     @Mapping(target = "type", expression = "java( mapStringToWorkType(minimizedWorkEntity.getWorkType()) )")
     @Mapping(target = "publicationDate", expression = "java( mapPublicationDate(minimizedWorkEntity.getPublicationDate()) )")
     @Mapping(target = "externalIdentifiers", expression = "java( extIdMapper.convertFrom(minimizedWorkEntity.getExternalIdentifiersJson()) )")
-    @Mapping(target = "url", expression = "java( mapStringToUrl(minimizedWorkEntity.getWorkUrl()) )")
+    @Mapping(source = "workUrl", target = "url")
     @Mapping(source = "visibility", target = "visibility")
     @Mapping(source = "dateCreated", target = "createdDate.value")
     @Mapping(source = "lastModified", target = "lastModifiedDate.value")
@@ -312,7 +305,7 @@ public abstract class JpaJaxbWorkAdapterImpl implements JpaJaxbWorkAdapter {
     @Mapping(target = "workType", expression = "java( mapStringToWorkType(minimizedWorkEntity.getWorkType()) )")
     @Mapping(target = "publicationDate", expression = "java( mapPublicationDate(minimizedWorkEntity.getPublicationDate()) )")
     @Mapping(target = "workExternalIdentifiers", expression = "java( extIdMapper.convertFrom(minimizedWorkEntity.getExternalIdentifiersJson()) )")
-    @Mapping(target = "url", expression = "java( mapStringToUrl(minimizedWorkEntity.getWorkUrl()) )")
+    @Mapping(source = "workUrl", target = "url")
     @Mapping(source = "visibility", target = "visibility")
     @Mapping(source = "dateCreated", target = "createdDate.value")
     @Mapping(source = "lastModified", target = "lastModifiedDate.value")
@@ -328,7 +321,7 @@ public abstract class JpaJaxbWorkAdapterImpl implements JpaJaxbWorkAdapter {
     @Mapping(target = "type", expression = "java( mapStringToWorkType(minimizedExtendedWorkEntity.getWorkType()) )")
     @Mapping(target = "publicationDate", expression = "java( mapPublicationDate(minimizedExtendedWorkEntity.getPublicationDate()) )")
     @Mapping(target = "externalIdentifiers", expression = "java( extIdMapper.convertFrom(minimizedExtendedWorkEntity.getExternalIdentifiersJson()) )")
-    @Mapping(target = "url", expression = "java( mapStringToUrl(minimizedExtendedWorkEntity.getWorkUrl()) )")
+    @Mapping(source = "workUrl", target = "url")
     @Mapping(source = "visibility", target = "visibility")
     @Mapping(source = "dateCreated", target = "createdDate.value")
     @Mapping(source = "lastModified", target = "lastModifiedDate.value")

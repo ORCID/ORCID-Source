@@ -13,6 +13,7 @@ import org.orcid.core.adapter.mapstruct.JSONPeerReviewWorkExternalIdentifierMapp
 import org.orcid.core.adapter.mapstruct.JSONWorkExternalIdentifiersMapperV2;
 import org.orcid.core.adapter.mapstruct.OrgMapperV2;
 import org.orcid.core.adapter.mapstruct.SourceMapperV2;
+import org.orcid.core.adapter.mapstruct.UrlMapperV2;
 import org.orcid.core.adapter.mapstruct.VisibilityMapperV2;
 import org.orcid.jaxb.model.record.summary_v2.PeerReviewSummary;
 import org.orcid.jaxb.model.record_v2.PeerReview;
@@ -28,6 +29,7 @@ import org.orcid.persistence.jpa.entities.PeerReviewEntity;
         OrgMapperV2.class,
         JSONWorkExternalIdentifiersMapperV2.class,
         JSONPeerReviewWorkExternalIdentifierMapperV2.class
+        , UrlMapperV2.class
     }
 )
 public abstract class JpaJaxbPeerReviewAdapterImpl implements JpaJaxbPeerReviewAdapter {
@@ -58,7 +60,7 @@ public abstract class JpaJaxbPeerReviewAdapterImpl implements JpaJaxbPeerReviewA
     @Override
     @Mapping(source = "putCode", target = "id")
     @Mapping(source = "role", target = "role")
-    @Mapping(source = "url.value", target = "url")
+    @Mapping(source = "url", target = "url")
     @Mapping(source = "type", target = "type")
     @Mapping(source = "groupId", target = "groupId")
     @Mapping(source = "subjectExternalIdentifier", target = "subjectExternalIdentifiersJson")
@@ -67,7 +69,7 @@ public abstract class JpaJaxbPeerReviewAdapterImpl implements JpaJaxbPeerReviewA
     @Mapping(source = "subjectName.title.content", target = "subjectName")
     @Mapping(source = "subjectName.translatedTitle.content", target = "subjectTranslatedName")
     @Mapping(source = "subjectName.translatedTitle.languageCode", target = "subjectTranslatedNameLanguageCode")
-    @Mapping(source = "subjectUrl.value", target = "subjectUrl")
+    @Mapping(source = "subjectUrl", target = "subjectUrl")
     @Mapping(source = "externalIdentifiers", target = "externalIdentifiersJson")
     @Mapping(source = "completionDate", target = "completionDate")
     @Mapping(source = "organization", target = "org")
@@ -85,7 +87,7 @@ public abstract class JpaJaxbPeerReviewAdapterImpl implements JpaJaxbPeerReviewA
     @Mapping(source = "dateCreated", target = "createdDate.value")
     @Mapping(source = "lastModified", target = "lastModifiedDate.value")
     @Mapping(source = "role", target = "role")
-    @Mapping(source = "url", target = "url.value")
+    @Mapping(source = "url", target = "url")
     @Mapping(source = "type", target = "type")
     @Mapping(source = "groupId", target = "groupId")
     @Mapping(source = "subjectExternalIdentifiersJson", target = "subjectExternalIdentifier")
@@ -94,7 +96,7 @@ public abstract class JpaJaxbPeerReviewAdapterImpl implements JpaJaxbPeerReviewA
     @Mapping(source = "subjectName", target = "subjectName.title.content")
     @Mapping(source = "subjectTranslatedName", target = "subjectName.translatedTitle.content")
     @Mapping(source = "subjectTranslatedNameLanguageCode", target = "subjectName.translatedTitle.languageCode")
-    @Mapping(source = "subjectUrl", target = "subjectUrl.value")
+    @Mapping(source = "subjectUrl", target = "subjectUrl")
     @Mapping(source = "externalIdentifiersJson", target = "externalIdentifiers")
     @Mapping(source = "completionDate", target = "completionDate")
     @Mapping(source = "org", target = "organization")
@@ -131,7 +133,7 @@ public abstract class JpaJaxbPeerReviewAdapterImpl implements JpaJaxbPeerReviewA
     @Override
     @Mapping(source = "putCode", target = "id")
     @Mapping(source = "role", target = "role")
-    @Mapping(source = "url.value", target = "url")
+    @Mapping(source = "url", target = "url")
     @Mapping(source = "type", target = "type")
     @Mapping(source = "groupId", target = "groupId")
     @Mapping(source = "subjectExternalIdentifier", target = "subjectExternalIdentifiersJson")
@@ -140,7 +142,7 @@ public abstract class JpaJaxbPeerReviewAdapterImpl implements JpaJaxbPeerReviewA
     @Mapping(source = "subjectName.title.content", target = "subjectName")
     @Mapping(source = "subjectName.translatedTitle.content", target = "subjectTranslatedName")
     @Mapping(source = "subjectName.translatedTitle.languageCode", target = "subjectTranslatedNameLanguageCode")
-    @Mapping(source = "subjectUrl.value", target = "subjectUrl")
+    @Mapping(source = "subjectUrl", target = "subjectUrl")
     @Mapping(source = "externalIdentifiers", target = "externalIdentifiersJson")
     @Mapping(source = "completionDate", target = "completionDate")
     @Mapping(source = "organization", target = "org")

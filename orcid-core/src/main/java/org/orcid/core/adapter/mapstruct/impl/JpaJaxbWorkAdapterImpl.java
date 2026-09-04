@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.orcid.core.adapter.JpaJaxbWorkAdapter;
 import org.orcid.core.adapter.mapstruct.JSONWorkExternalIdentifiersMapperV2;
 import org.orcid.core.adapter.mapstruct.SourceMapperV2;
+import org.orcid.core.adapter.mapstruct.UrlMapperV2;
 import org.orcid.core.adapter.mapstruct.VisibilityMapperV2;
 import org.orcid.core.adapter.mapstruct.WorkContributorsMapperV2;
 import org.orcid.core.adapter.mapstruct.WorkMapperV2;
@@ -23,7 +24,6 @@ import org.orcid.jaxb.model.common_v2.Iso3166Country;
 import org.orcid.jaxb.model.common_v2.Month;
 import org.orcid.jaxb.model.common_v2.PublicationDate;
 import org.orcid.jaxb.model.common_v2.Subtitle;
-import org.orcid.jaxb.model.common_v2.Url;
 import org.orcid.jaxb.model.common_v2.Year;
 import org.orcid.jaxb.model.record.summary_v2.WorkSummary;
 import org.orcid.jaxb.model.record_v2.Work;
@@ -39,6 +39,7 @@ import org.orcid.persistence.jpa.entities.WorkEntity;
     uses = {
         SourceMapperV2.class,
         VisibilityMapperV2.class,
+        UrlMapperV2.class,
         JSONWorkExternalIdentifiersMapperV2.class,
         WorkContributorsMapperV2.class
     }
@@ -156,19 +157,6 @@ public abstract class JpaJaxbWorkAdapterImpl implements JpaJaxbWorkAdapter {
         }
         Subtitle result = new Subtitle();
         result.setContent(subtitle.trim());
-        return result;
-    }
-
-    protected String map(Url url) {
-        return url == null || StringUtils.isBlank(url.getValue()) ? null : url.getValue().trim();
-    }
-
-    protected Url mapUrl(String url) {
-        if (StringUtils.isBlank(url)) {
-            return null;
-        }
-        Url result = new Url();
-        result.setValue(url.trim());
         return result;
     }
 

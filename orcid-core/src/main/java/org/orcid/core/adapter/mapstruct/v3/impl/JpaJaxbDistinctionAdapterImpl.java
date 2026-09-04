@@ -12,6 +12,7 @@ import org.orcid.core.adapter.mapstruct.FuzzyDateMapperV3;
 import org.orcid.core.adapter.mapstruct.JSONExternalIdentifiersMapperV3;
 import org.orcid.core.adapter.mapstruct.OrgMapperV3;
 import org.orcid.core.adapter.mapstruct.SourceMapperV3;
+import org.orcid.core.adapter.mapstruct.UrlMapperV3;
 import org.orcid.core.adapter.mapstruct.VisibilityMapperV3;
 import org.orcid.jaxb.model.v3.release.record.Distinction;
 import org.orcid.jaxb.model.v3.release.record.summary.DistinctionSummary;
@@ -25,7 +26,8 @@ import org.orcid.persistence.jpa.entities.OrgAffiliationRelationEntity;
         VisibilityMapperV3.class,
         JSONExternalIdentifiersMapperV3.class,
         OrgMapperV3.class,
-        FuzzyDateMapperV3.class
+        FuzzyDateMapperV3.class,
+        UrlMapperV3.class
     }
 )
 public abstract class JpaJaxbDistinctionAdapterImpl implements JpaJaxbDistinctionAdapter {
@@ -34,7 +36,7 @@ public abstract class JpaJaxbDistinctionAdapterImpl implements JpaJaxbDistinctio
     @Mapping(source = "putCode", target = "id")
     @Mapping(source = "departmentName", target = "department")
     @Mapping(source = "roleTitle", target = "title")
-    @Mapping(source = "url.value", target = "url")
+    @Mapping(source = "url", target = "url")
     @Mapping(source = "externalIdentifiers", target = "externalIdentifiersJson")
     @Mapping(source = "organization", target = "org")
     @Mapping(source = "startDate", target = "startDate")
@@ -48,7 +50,7 @@ public abstract class JpaJaxbDistinctionAdapterImpl implements JpaJaxbDistinctio
     @Mapping(source = "putCode", target = "id")
     @Mapping(source = "departmentName", target = "department")
     @Mapping(source = "roleTitle", target = "title")
-    @Mapping(source = "url.value", target = "url")
+    @Mapping(source = "url", target = "url")
     @Mapping(source = "externalIdentifiers", target = "externalIdentifiersJson")
     @Mapping(source = "organization", target = "org")
     @Mapping(source = "startDate", target = "startDate")
@@ -61,7 +63,7 @@ public abstract class JpaJaxbDistinctionAdapterImpl implements JpaJaxbDistinctio
     @Mapping(source = "id", target = "putCode")
     @Mapping(source = "department", target = "departmentName")
     @Mapping(source = "title", target = "roleTitle")
-    @Mapping(source = "url", target = "url.value")
+    @Mapping(source = "url", target = "url")
     @Mapping(source = "externalIdentifiersJson", target = "externalIdentifiers")
     @Mapping(source = "org", target = "organization")
     @Mapping(source = "startDate", target = "startDate")
@@ -75,7 +77,7 @@ public abstract class JpaJaxbDistinctionAdapterImpl implements JpaJaxbDistinctio
     @Mapping(source = "id", target = "putCode")
     @Mapping(source = "department", target = "departmentName")
     @Mapping(source = "title", target = "roleTitle")
-    @Mapping(source = "url", target = "url.value")
+    @Mapping(source = "url", target = "url")
     @Mapping(source = "externalIdentifiersJson", target = "externalIdentifiers")
     @Mapping(source = "org", target = "organization")
     @Mapping(source = "startDate", target = "startDate")
