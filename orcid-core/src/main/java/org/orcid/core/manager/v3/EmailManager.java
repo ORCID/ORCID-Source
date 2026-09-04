@@ -27,7 +27,7 @@ public interface EmailManager extends EmailManagerReadOnly {
      */
     Map<String, String> addEmail(String orcid, Email email);
     
-    void removeEmail(String orcid, String email);        
+    boolean removeEmail(String orcid, String email);
     
     boolean verifyEmail(String orcid, String email);
     

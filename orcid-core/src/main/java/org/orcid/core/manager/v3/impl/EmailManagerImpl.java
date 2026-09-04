@@ -12,9 +12,11 @@ import org.apache.commons.lang3.StringUtils;
 import org.orcid.core.manager.v3.EmailManager;
 import org.orcid.core.manager.v3.OrcidSecurityManager;
 import org.orcid.core.manager.v3.ProfileEmailDomainManager;
+import org.orcid.core.manager.v3.ProfileHistoryEventManager;
 import org.orcid.core.manager.v3.SourceManager;
 import org.orcid.core.manager.v3.read_only.impl.EmailManagerReadOnlyImpl;
 import org.orcid.core.togglz.Features;
+import org.orcid.core.utils.OrcidRequestUtil;
 import org.orcid.jaxb.model.v3.release.common.Visibility;
 import org.orcid.jaxb.model.v3.release.record.Email;
 import org.orcid.persistence.aop.UpdateProfileLastModifiedAndIndexingStatus;
@@ -53,10 +55,13 @@ public class EmailManagerImpl extends EmailManagerReadOnlyImpl implements EmailM
 
     @Resource(name = "orcidSecurityManagerV3")
     protected OrcidSecurityManager orcidSecurityManager;
+
+    @Resource(name = "profileHistoryEventManagerV3")
+    private ProfileHistoryEventManager profileHistoryEventManager;
     
     @Override
     @Transactional
-    public void removeEmail(String orcid, String email) {
+    public boolean removeEmail(String orcid, String email) {
         if (isPrimaryEmail(orcid, email)) {
             throw new IllegalArgumentException("Can't mark primary email as deleted");
         }
@@ -64,8 +69,7 @@ public class EmailManagerImpl extends EmailManagerReadOnlyImpl implements EmailM
         if (isUsersOnlyEmail(orcid, email)) {
             throw new IllegalArgumentException("Can't mark user's only email as deleted");
         }
-        emailDao.removeEmail(orcid, email);
-
+        return emailDao.removeEmail(orcid, email);
     }
 
     @Override
@@ -208,6 +212,8 @@ public class EmailManagerImpl extends EmailManagerReadOnlyImpl implements EmailM
             emailDao.updatePrimary(orcid, email);
             keys.put("new", email);
             keys.put("old", currentPrimaryEmail.getEmail());
+            profileHistoryEventManager.recordEmailUpdateEvent(orcid, getRequestIpAddress(request),
+                    "Primary email changed from " + currentPrimaryEmail.getEmail() + " to " + email);
             
             if (!newPrimary.getVerified()) {
                 keys.put("sendVerification", "true");                
@@ -247,6 +253,10 @@ public class EmailManagerImpl extends EmailManagerReadOnlyImpl implements EmailM
         
         emailDao.persist(updatedEntity);
         emailDao.remove(originalEntity.getId());
+        if (!StringUtils.equals(original, emailKeys.get(FILTERED_EMAIL))) {
+            profileHistoryEventManager.recordEmailUpdateEvent(orcid, getRequestIpAddress(request),
+                    "Email changed from " + original + " to " + emailKeys.get(FILTERED_EMAIL));
+        }
         keys.put("verifyAddress", emailKeys.get(FILTERED_EMAIL));
         return keys;
     }
@@ -357,5 +367,12 @@ public class EmailManagerImpl extends EmailManagerReadOnlyImpl implements EmailM
 
     private List<Email> toEmailList(List<EmailEntity> entities) {
         return jpaJaxbEmailAdapter.toEmailList(entities);
+    }
+
+    private String getRequestIpAddress(HttpServletRequest request) {
+        if (request == null) {
+            return "unknown";
+        }
+        return OrcidRequestUtil.getIpAddress(request);
     }
 }

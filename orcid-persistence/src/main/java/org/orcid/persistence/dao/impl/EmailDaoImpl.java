@@ -86,7 +86,7 @@ public class EmailDaoImpl extends GenericDaoImpl<EmailEntity, String> implements
     @Override
     @Transactional
     @UpdateProfileLastModifiedAndIndexingStatus
-    public void removeEmail(String orcid, String email) {
+    public boolean removeEmail(String orcid, String email) {
         String deleteEmailEvent = "delete from email_event where trim(lower(email)) = trim(lower(:email))";
         String deleteEmail = "delete from email where orcid = :orcid and trim(lower(email)) = trim(lower(:email))";
 
@@ -97,7 +97,7 @@ public class EmailDaoImpl extends GenericDaoImpl<EmailEntity, String> implements
         query = entityManager.createNativeQuery(deleteEmail);
         query.setParameter("email", email);
         query.setParameter("orcid", orcid);
-        query.executeUpdate();
+        return query.executeUpdate() > 0;
     }
 
     @Override
