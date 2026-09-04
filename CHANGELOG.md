@@ -1,3 +1,9 @@
+## v3.0.53 - 2026-09-04
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.0.52...v3.0.53)
+
+- [#7669](https://github.com/ORCID/ORCID-Source/pull/7669): PD-6145 reusable url mappers accross all adapters for v2 and v3
+
 ## v3.0.52 - 2026-09-03
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.0.51...v3.0.52)
