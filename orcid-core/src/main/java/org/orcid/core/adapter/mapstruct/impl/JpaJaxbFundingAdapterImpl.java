@@ -13,6 +13,7 @@ import org.mapstruct.Named;
 import org.orcid.core.adapter.JpaJaxbFundingAdapter;
 import org.orcid.core.adapter.mapstruct.FuzzyDateMapperV2;
 import org.orcid.core.adapter.mapstruct.SourceMapperV2;
+import org.orcid.core.adapter.mapstruct.UrlMapperV2;
 import org.orcid.core.adapter.mapstruct.VisibilityMapperV2;
 import org.orcid.core.adapter.mapstruct.JSONFundingExternalIdentifiersMapperV2;
 import org.orcid.core.adapter.mapstruct.FundingContributorsMapperV2;
@@ -27,6 +28,7 @@ import org.orcid.persistence.jpa.entities.ProfileFundingEntity;
         SourceMapperV2.class, 
         VisibilityMapperV2.class, 
         FuzzyDateMapperV2.class,
+        UrlMapperV2.class,
         JSONFundingExternalIdentifiersMapperV2.class, 
         FundingContributorsMapperV2.class
     }
@@ -45,7 +47,7 @@ public abstract class JpaJaxbFundingAdapterImpl implements JpaJaxbFundingAdapter
     @Mapping(source = "title.translatedTitle.languageCode", target = "translatedTitleLanguageCode")
     @Mapping(source = "amount.content", target = "numericAmount", qualifiedByName = "amountContentToNumericAmount")
     @Mapping(source = "amount.currencyCode", target = "currencyCode")
-    @Mapping(source = "url.value", target = "url")
+    @Mapping(source = "url", target = "url")
     @Mapping(source = "externalIdentifiers", target = "externalIdentifiersJson")
     @Mapping(source = "contributors", target = "contributorsJson")
     // Orika mapped these as fieldBToA (Database -> API only)
@@ -75,7 +77,7 @@ public abstract class JpaJaxbFundingAdapterImpl implements JpaJaxbFundingAdapter
     @Mapping(source = "translatedTitleLanguageCode", target = "title.translatedTitle.languageCode")
     @Mapping(source = "numericAmount", target = "amount.content")
     @Mapping(source = "currencyCode", target = "amount.currencyCode")
-    @Mapping(source = "url", target = "url.value")
+    @Mapping(source = "url", target = "url")
     @Mapping(source = "externalIdentifiersJson", target = "externalIdentifiers")
     @Mapping(source = "contributorsJson", target = "contributors")
     // Nested org mappings
@@ -129,7 +131,7 @@ public abstract class JpaJaxbFundingAdapterImpl implements JpaJaxbFundingAdapter
     @Mapping(source = "title.translatedTitle.languageCode", target = "translatedTitleLanguageCode")
     @Mapping(source = "amount.content", target = "numericAmount", qualifiedByName = "amountContentToNumericAmount")
     @Mapping(source = "amount.currencyCode", target = "currencyCode")
-    @Mapping(source = "url.value", target = "url")
+    @Mapping(source = "url", target = "url")
     @Mapping(source = "externalIdentifiers", target = "externalIdentifiersJson")
     @Mapping(source = "contributors", target = "contributorsJson")
     // Ignore security-sensitive fields on update

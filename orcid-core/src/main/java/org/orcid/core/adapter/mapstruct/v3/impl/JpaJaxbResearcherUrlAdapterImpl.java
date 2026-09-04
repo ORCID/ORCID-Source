@@ -3,15 +3,14 @@ package org.orcid.core.adapter.mapstruct.v3.impl;
 import java.util.Collection;
 import java.util.List;
 
-import org.apache.commons.lang3.StringUtils;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 
 import org.orcid.core.adapter.mapstruct.SourceMapperV3;
+import org.orcid.core.adapter.mapstruct.UrlMapperV3;
 import org.orcid.core.adapter.mapstruct.VisibilityMapperV3;
 import org.orcid.core.adapter.v3.JpaJaxbResearcherUrlAdapter;
-import org.orcid.jaxb.model.v3.release.common.Url;
 import org.orcid.jaxb.model.v3.release.record.ResearcherUrl;
 import org.orcid.jaxb.model.v3.release.record.ResearcherUrls;
 import org.orcid.persistence.jpa.entities.ResearcherUrlEntity;
@@ -20,6 +19,7 @@ import org.orcid.persistence.jpa.entities.ResearcherUrlEntity;
     componentModel = "spring",
     uses = {
         SourceMapperV3.class,
+        UrlMapperV3.class,
         VisibilityMapperV3.class
     }
 )
@@ -65,19 +65,6 @@ public abstract class JpaJaxbResearcherUrlAdapterImpl implements JpaJaxbResearch
     @Mapping(source = "lastModified", target = "lastModifiedDate.value")
     @Mapping(source = ".", target = "source")
     public abstract ResearcherUrl toResearcherUrl(ResearcherUrlEntity entity);
-
-    protected String map(Url url) {
-        return url == null || StringUtils.isBlank(url.getValue()) ? null : url.getValue().trim();
-    }
-
-    protected Url mapUrl(String url) {
-        if (StringUtils.isBlank(url)) {
-            return null;
-        }
-        Url result = new Url();
-        result.setValue(url.trim());
-        return result;
-    }
 
     @Override
     public ResearcherUrls toResearcherUrlList(Collection<ResearcherUrlEntity> entities) {

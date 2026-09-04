@@ -22,6 +22,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import org.orcid.core.adapter.mapstruct.ExternalIdentifierTypeMapper;
 import org.orcid.core.adapter.mapstruct.SourceMapperV3;
+import org.orcid.core.adapter.mapstruct.UrlMapperV3;
 import org.orcid.core.adapter.v3.JpaJaxbNotificationAdapter;
 import org.orcid.core.exception.OrcidValidationException;
 import org.orcid.core.manager.IdentityProviderManager;
@@ -52,7 +53,7 @@ import org.orcid.pojo.ajaxForm.PojoUtil;
 
 @Mapper(
     componentModel = "spring", 
-    uses = {SourceMapperV3.class, ExternalIdentifierTypeMapper.class}
+    uses = {SourceMapperV3.class, ExternalIdentifierTypeMapper.class, UrlMapperV3.class}
 )
 public abstract class JpaJaxbNotificationAdapterImpl implements JpaJaxbNotificationAdapter {
 
@@ -269,14 +270,14 @@ public abstract class JpaJaxbNotificationAdapterImpl implements JpaJaxbNotificat
     // Notification Items Mapping
     @Mapping(source = "externalIdentifier.type", target = "externalIdType", qualifiedByName = "apiToDb")
     @Mapping(source = "externalIdentifier.value", target = "externalIdValue")
-    @Mapping(source = "externalIdentifier.url.value", target = "externalIdUrl")
+    @Mapping(source = "externalIdentifier.url", target = "externalIdUrl")
     @Mapping(source = "externalIdentifier.relationship", target = "externalIdRelationship")
     @Mapping(source = "additionalInfo", target = "additionalInfo")
     protected abstract NotificationItemEntity mapItem(Item item);
 
     @Mapping(source = "externalIdType", target = "externalIdentifier.type", qualifiedByName = "dbToApi")
     @Mapping(source = "externalIdValue", target = "externalIdentifier.value")
-    @Mapping(source = "externalIdUrl", target = "externalIdentifier.url.value")
+    @Mapping(source = "externalIdUrl", target = "externalIdentifier.url")
     @Mapping(source = "externalIdRelationship", target = "externalIdentifier.relationship")
     @Mapping(source = "additionalInfo", target = "additionalInfo")
     protected abstract Item mapItem(NotificationItemEntity entity);
