@@ -1,3 +1,9 @@
+## v3.0.54 - 2026-09-04
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.0.53...v3.0.54)
+
+- [#7670](https://github.com/ORCID/ORCID-Source/pull/7670): Set the @Autowired property to the normalization service
+
 ## v3.0.53 - 2026-09-04
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.0.52...v3.0.53)
