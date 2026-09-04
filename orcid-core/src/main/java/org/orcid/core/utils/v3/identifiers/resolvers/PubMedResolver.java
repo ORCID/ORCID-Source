@@ -64,11 +64,10 @@ import com.google.common.cache.LoadingCache;
 @Component
 public class PubMedResolver implements LinkResolver, MetadataResolver {
 
-
-    private PIDNormalizationService normalizationService;
-
     private static final Logger LOG = LoggerFactory.getLogger(PubMedResolver.class);
 
+    @Autowired
+    private PIDNormalizationService normalizationService;
 
     @Autowired
     private PIDResolverCache cache;
