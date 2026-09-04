@@ -14,6 +14,7 @@ import org.orcid.core.adapter.mapstruct.FuzzyDateMapperV3;
 import org.orcid.core.adapter.mapstruct.JSONWorkExternalIdentifiersMapperV3;
 import org.orcid.core.adapter.mapstruct.OrgMapperV3;
 import org.orcid.core.adapter.mapstruct.SourceMapperV3;
+import org.orcid.core.adapter.mapstruct.UrlMapperV3;
 import org.orcid.core.adapter.mapstruct.VisibilityMapperV3;
 import org.orcid.core.adapter.v3.JpaJaxbResearchResourceAdapter;
 import org.orcid.jaxb.model.v3.release.common.Organization;
@@ -37,6 +38,7 @@ import org.orcid.persistence.jpa.entities.ResearchResourceItemEntity;
         OrgMapperV3.class,
         FuzzyDateMapperV3.class,
         JSONWorkExternalIdentifiersMapperV3.class
+        , UrlMapperV3.class
     }
 )
 public abstract class JpaJaxbResearchResourceAdapterImpl implements JpaJaxbResearchResourceAdapter {
@@ -57,7 +59,7 @@ public abstract class JpaJaxbResearchResourceAdapterImpl implements JpaJaxbResea
     @Mapping(source = "proposal.title.translatedTitle.content", target = "translatedTitle")
     @Mapping(source = "proposal.title.translatedTitle.languageCode", target = "translatedTitleLanguageCode")
     @Mapping(source = "proposal.externalIdentifiers", target = "externalIdentifiersJson")
-    @Mapping(source = "proposal.url.value", target = "url")
+    @Mapping(source = "proposal.url", target = "url")
     @Mapping(source = "proposal.startDate", target = "startDate")
     @Mapping(source = "proposal.endDate", target = "endDate")
     @Mapping(source = "proposal.hosts", target = "hosts")
@@ -72,7 +74,7 @@ public abstract class JpaJaxbResearchResourceAdapterImpl implements JpaJaxbResea
     @Mapping(source = "proposal.title.translatedTitle.content", target = "translatedTitle")
     @Mapping(source = "proposal.title.translatedTitle.languageCode", target = "translatedTitleLanguageCode")
     @Mapping(source = "proposal.externalIdentifiers", target = "externalIdentifiersJson")
-    @Mapping(source = "proposal.url.value", target = "url")
+    @Mapping(source = "proposal.url", target = "url")
     @Mapping(source = "proposal.startDate", target = "startDate")
     @Mapping(source = "proposal.endDate", target = "endDate")
     @Mapping(source = "proposal.hosts", target = "hosts")
@@ -100,7 +102,7 @@ public abstract class JpaJaxbResearchResourceAdapterImpl implements JpaJaxbResea
     @Mapping(source = "translatedTitle", target = "proposal.title.translatedTitle.content")
     @Mapping(source = "translatedTitleLanguageCode", target = "proposal.title.translatedTitle.languageCode")
     @Mapping(source = "externalIdentifiersJson", target = "proposal.externalIdentifiers")
-    @Mapping(source = "url", target = "proposal.url.value")
+    @Mapping(source = "url", target = "proposal.url")
     @Mapping(source = "startDate", target = "proposal.startDate")
     @Mapping(source = "endDate", target = "proposal.endDate")
     @Mapping(source = "hosts", target = "proposal.hosts")
@@ -116,7 +118,7 @@ public abstract class JpaJaxbResearchResourceAdapterImpl implements JpaJaxbResea
     @Mapping(source = "translatedTitle", target = "proposal.title.translatedTitle.content")
     @Mapping(source = "translatedTitleLanguageCode", target = "proposal.title.translatedTitle.languageCode")
     @Mapping(source = "externalIdentifiersJson", target = "proposal.externalIdentifiers")
-    @Mapping(source = "url", target = "proposal.url.value")
+    @Mapping(source = "url", target = "proposal.url")
     @Mapping(source = "startDate", target = "proposal.startDate")
     @Mapping(source = "endDate", target = "proposal.endDate")
     @Mapping(source = "hosts", target = "proposal.hosts")
@@ -162,14 +164,14 @@ public abstract class JpaJaxbResearchResourceAdapterImpl implements JpaJaxbResea
     // ========================================================================
 
     @Mapping(source = "externalIdentifiers", target = "externalIdentifiersJson")
-    @Mapping(source = "url.value", target = "url")
+    @Mapping(source = "url", target = "url")
     @Mapping(target = "researchResourceEntity", ignore = true)
     public abstract ResearchResourceItemEntity toItemEntity(ResearchResourceItem item);
 
     @Mapping(source = "resourceName", target = "resourceName")
     @Mapping(source = "resourceType", target = "resourceType")
     @Mapping(source = "hosts", target = "hosts")
-    @Mapping(source = "url", target = "url.value")
+    @Mapping(source = "url", target = "url")
     @Mapping(source = "externalIdentifiersJson", target = "externalIdentifiers")
     public abstract ResearchResourceItem toItem(ResearchResourceItemEntity entity);
 

@@ -9,6 +9,7 @@ import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 
 import org.orcid.core.adapter.mapstruct.SourceMapperV3;
+import org.orcid.core.adapter.mapstruct.UrlMapperV3;
 import org.orcid.core.adapter.mapstruct.VisibilityMapperV3;
 import org.orcid.core.adapter.v3.JpaJaxbExternalIdentifierAdapter;
 import org.orcid.jaxb.model.common.Relationship;
@@ -20,6 +21,7 @@ import org.orcid.persistence.jpa.entities.ExternalIdentifierEntity;
     componentModel = "spring",
     uses = {
         SourceMapperV3.class,
+        UrlMapperV3.class,
         VisibilityMapperV3.class
     }
 )
@@ -43,7 +45,7 @@ public abstract class JpaJaxbExternalIdentifierAdapterImpl implements JpaJaxbExt
     @Mapping(source = "putCode", target = "id")
     @Mapping(source = "type", target = "externalIdCommonName")
     @Mapping(source = "value", target = "externalIdReference")
-    @Mapping(source = "url.value", target = "externalIdUrl")
+    @Mapping(source = "url", target = "externalIdUrl")
     @Mapping(target = "dateCreated", ignore = true)
     @Mapping(target = "lastModified", ignore = true)
     @Mapping(target = "displayIndex", ignore = true)
@@ -53,7 +55,7 @@ public abstract class JpaJaxbExternalIdentifierAdapterImpl implements JpaJaxbExt
     @Mapping(source = "putCode", target = "id")
     @Mapping(source = "type", target = "externalIdCommonName")
     @Mapping(source = "value", target = "externalIdReference")
-    @Mapping(source = "url.value", target = "externalIdUrl")
+    @Mapping(source = "url", target = "externalIdUrl")
     @Mapping(target = "dateCreated", ignore = true)
     @Mapping(target = "lastModified", ignore = true)
     @Mapping(target = "displayIndex", ignore = true)
@@ -63,7 +65,7 @@ public abstract class JpaJaxbExternalIdentifierAdapterImpl implements JpaJaxbExt
     @Mapping(source = "id", target = "putCode")
     @Mapping(source = "externalIdCommonName", target = "type")
     @Mapping(source = "externalIdReference", target = "value")
-    @Mapping(source = "externalIdUrl", target = "url.value")
+    @Mapping(source = "externalIdUrl", target = "url")
     @Mapping(source = "dateCreated", target = "createdDate.value")
     @Mapping(source = "lastModified", target = "lastModifiedDate.value")
     @Mapping(source = ".", target = "source")

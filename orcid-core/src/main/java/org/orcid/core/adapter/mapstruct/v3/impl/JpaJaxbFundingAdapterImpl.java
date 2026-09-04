@@ -15,6 +15,7 @@ import org.orcid.core.adapter.mapstruct.FuzzyDateMapperV3;
 import org.orcid.core.adapter.mapstruct.JSONFundingExternalIdentifiersMapperV3;
 import org.orcid.core.adapter.mapstruct.OrgMapperV3;
 import org.orcid.core.adapter.mapstruct.SourceMapperV3;
+import org.orcid.core.adapter.mapstruct.UrlMapperV3;
 import org.orcid.core.adapter.mapstruct.VisibilityMapperV3;
 import org.orcid.core.adapter.v3.JpaJaxbFundingAdapter;
 import org.orcid.jaxb.model.v3.release.record.Funding;
@@ -28,6 +29,7 @@ import org.orcid.persistence.jpa.entities.ProfileFundingEntity;
         VisibilityMapperV3.class,
         OrgMapperV3.class,
         FuzzyDateMapperV3.class,
+        UrlMapperV3.class,
         JSONFundingExternalIdentifiersMapperV3.class,
         FundingContributorsMapperV3.class
     }
@@ -42,7 +44,7 @@ public abstract class JpaJaxbFundingAdapterImpl implements JpaJaxbFundingAdapter
     @Mapping(source = "title.translatedTitle.languageCode", target = "translatedTitleLanguageCode")
     @Mapping(source = "amount.content", target = "numericAmount", qualifiedByName = "amountContentToNumericAmount")
     @Mapping(source = "amount.currencyCode", target = "currencyCode")
-    @Mapping(source = "url.value", target = "url")
+    @Mapping(source = "url", target = "url")
     @Mapping(source = "organization", target = "org")
     @Mapping(source = "externalIdentifiers", target = "externalIdentifiersJson")
     @Mapping(source = "contributors", target = "contributorsJson")
@@ -66,7 +68,7 @@ public abstract class JpaJaxbFundingAdapterImpl implements JpaJaxbFundingAdapter
     @Mapping(source = "title.translatedTitle.languageCode", target = "translatedTitleLanguageCode")
     @Mapping(source = "amount.content", target = "numericAmount", qualifiedByName = "amountContentToNumericAmount")
     @Mapping(source = "amount.currencyCode", target = "currencyCode")
-    @Mapping(source = "url.value", target = "url")
+    @Mapping(source = "url", target = "url")
     @Mapping(source = "organization", target = "org")
     @Mapping(source = "externalIdentifiers", target = "externalIdentifiersJson")
     @Mapping(source = "contributors", target = "contributorsJson")
@@ -85,7 +87,7 @@ public abstract class JpaJaxbFundingAdapterImpl implements JpaJaxbFundingAdapter
     @Mapping(source = "translatedTitleLanguageCode", target = "title.translatedTitle.languageCode")
     @Mapping(source = "numericAmount", target = "amount.content")
     @Mapping(source = "currencyCode", target = "amount.currencyCode")
-    @Mapping(source = "url", target = "url.value")
+    @Mapping(source = "url", target = "url")
     @Mapping(source = "org", target = "organization")
     @Mapping(source = "externalIdentifiersJson", target = "externalIdentifiers")
     @Mapping(source = "contributorsJson", target = "contributors")
@@ -101,7 +103,7 @@ public abstract class JpaJaxbFundingAdapterImpl implements JpaJaxbFundingAdapter
     @Mapping(source = "title", target = "title.title.content")
     @Mapping(source = "translatedTitle", target = "title.translatedTitle.content")
     @Mapping(source = "translatedTitleLanguageCode", target = "title.translatedTitle.languageCode")
-    @Mapping(source = "url", target = "url.value")
+    @Mapping(source = "url", target = "url")
     @Mapping(source = "org", target = "organization")
     @Mapping(source = "externalIdentifiersJson", target = "externalIdentifiers")
     @Mapping(source = "startDate", target = "startDate")

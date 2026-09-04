@@ -12,6 +12,7 @@ import org.orcid.core.adapter.mapstruct.JSONPeerReviewWorkExternalIdentifierMapp
 import org.orcid.core.adapter.mapstruct.JSONWorkExternalIdentifiersMapperV3;
 import org.orcid.core.adapter.mapstruct.OrgMapperV3;
 import org.orcid.core.adapter.mapstruct.SourceMapperV3;
+import org.orcid.core.adapter.mapstruct.UrlMapperV3;
 import org.orcid.core.adapter.mapstruct.VisibilityMapperV3;
 import org.orcid.core.adapter.v3.JpaJaxbPeerReviewAdapter;
 import org.orcid.jaxb.model.v3.release.record.PeerReview;
@@ -27,6 +28,7 @@ import org.orcid.persistence.jpa.entities.PeerReviewEntity;
         FuzzyDateMapperV3.class,
         JSONWorkExternalIdentifiersMapperV3.class,
         JSONPeerReviewWorkExternalIdentifierMapperV3.class
+        , UrlMapperV3.class
     }
 )
 public abstract class JpaJaxbPeerReviewAdapterImpl implements JpaJaxbPeerReviewAdapter {
@@ -37,8 +39,8 @@ public abstract class JpaJaxbPeerReviewAdapterImpl implements JpaJaxbPeerReviewA
 
     @Override
     @Mapping(source = "putCode", target = "id")
-    @Mapping(source = "url.value", target = "url")
-    @Mapping(source = "subjectUrl.value", target = "subjectUrl")
+    @Mapping(source = "url", target = "url")
+    @Mapping(source = "subjectUrl", target = "subjectUrl")
     @Mapping(source = "subjectName.title.content", target = "subjectName")
     @Mapping(source = "subjectName.translatedTitle.content", target = "subjectTranslatedName")
     @Mapping(source = "subjectName.translatedTitle.languageCode", target = "subjectTranslatedNameLanguageCode")
@@ -53,8 +55,8 @@ public abstract class JpaJaxbPeerReviewAdapterImpl implements JpaJaxbPeerReviewA
 
     @Override
     @Mapping(source = "putCode", target = "id")
-    @Mapping(source = "url.value", target = "url")
-    @Mapping(source = "subjectUrl.value", target = "subjectUrl")
+    @Mapping(source = "url", target = "url")
+    @Mapping(source = "subjectUrl", target = "subjectUrl")
     @Mapping(source = "subjectName.title.content", target = "subjectName")
     @Mapping(source = "subjectName.translatedTitle.content", target = "subjectTranslatedName")
     @Mapping(source = "subjectName.translatedTitle.languageCode", target = "subjectTranslatedNameLanguageCode")
@@ -74,8 +76,8 @@ public abstract class JpaJaxbPeerReviewAdapterImpl implements JpaJaxbPeerReviewA
 
     @Override
     @Mapping(source = "id", target = "putCode")
-    @Mapping(source = "url", target = "url.value")
-    @Mapping(source = "subjectUrl", target = "subjectUrl.value")
+    @Mapping(source = "url", target = "url")
+    @Mapping(source = "subjectUrl", target = "subjectUrl")
     @Mapping(source = "subjectName", target = "subjectName.title.content")
     @Mapping(source = "subjectTranslatedName", target = "subjectName.translatedTitle.content")
     @Mapping(source = "subjectTranslatedNameLanguageCode", target = "subjectName.translatedTitle.languageCode")
@@ -91,7 +93,7 @@ public abstract class JpaJaxbPeerReviewAdapterImpl implements JpaJaxbPeerReviewA
 
     @Override
     @Mapping(source = "id", target = "putCode")
-    @Mapping(source = "url", target = "url.value")
+    @Mapping(source = "url", target = "url")
     @Mapping(source = "externalIdentifiersJson", target = "externalIdentifiers")
     @Mapping(source = "org", target = "organization")
     @Mapping(source = "completionDate", target = "completionDate")
