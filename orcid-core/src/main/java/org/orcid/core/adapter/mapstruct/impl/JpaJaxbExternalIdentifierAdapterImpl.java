@@ -10,6 +10,7 @@ import org.mapstruct.MappingTarget;
 
 import org.orcid.core.adapter.JpaJaxbExternalIdentifierAdapter;
 import org.orcid.core.adapter.mapstruct.SourceMapperV2;
+import org.orcid.core.adapter.mapstruct.UrlMapperV2;
 import org.orcid.core.adapter.mapstruct.VisibilityMapperV2;
 import org.orcid.jaxb.model.record_v2.PersonExternalIdentifier;
 import org.orcid.jaxb.model.record_v2.PersonExternalIdentifiers;
@@ -18,7 +19,7 @@ import org.orcid.persistence.jpa.entities.ExternalIdentifierEntity;
 
 @Mapper(
     componentModel = "spring", 
-    uses = {SourceMapperV2.class, VisibilityMapperV2.class}
+    uses = {SourceMapperV2.class, VisibilityMapperV2.class, UrlMapperV2.class}
 )
 public abstract class JpaJaxbExternalIdentifierAdapterImpl implements JpaJaxbExternalIdentifierAdapter {
 
@@ -42,7 +43,7 @@ public abstract class JpaJaxbExternalIdentifierAdapterImpl implements JpaJaxbExt
     @Mapping(source = "putCode", target = "id")
     @Mapping(source = "type", target = "externalIdCommonName")
     @Mapping(source = "value", target = "externalIdReference")
-    @Mapping(source = "url.value", target = "externalIdUrl")
+    @Mapping(source = "url", target = "externalIdUrl")
     // Orika used fieldBToA for these, meaning we ignore them on the way in
     @Mapping(target = "displayIndex", ignore = true)
     @Mapping(target = "dateCreated", ignore = true)
@@ -54,7 +55,7 @@ public abstract class JpaJaxbExternalIdentifierAdapterImpl implements JpaJaxbExt
     @Mapping(source = "id", target = "putCode")
     @Mapping(source = "externalIdCommonName", target = "type")
     @Mapping(source = "externalIdReference", target = "value")
-    @Mapping(source = "externalIdUrl", target = "url.value")
+    @Mapping(source = "externalIdUrl", target = "url")
     @Mapping(source = "dateCreated", target = "createdDate.value")
     @Mapping(source = "lastModified", target = "lastModifiedDate.value")
     @Mapping(source = ".", target = "source")
@@ -94,7 +95,7 @@ public abstract class JpaJaxbExternalIdentifierAdapterImpl implements JpaJaxbExt
     @Mapping(source = "putCode", target = "id")
     @Mapping(source = "type", target = "externalIdCommonName")
     @Mapping(source = "value", target = "externalIdReference")
-    @Mapping(source = "url.value", target = "externalIdUrl")
+    @Mapping(source = "url", target = "externalIdUrl")
     @Mapping(target = "displayIndex", ignore = true)
     @Mapping(target = "dateCreated", ignore = true)
     @Mapping(target = "lastModified", ignore = true)
