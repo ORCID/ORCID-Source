@@ -12,9 +12,11 @@ import jakarta.ws.rs.core.Response;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.After;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.orcid.core.oauth.authorizationServer.AuthorizationServerConnectionException;
 import org.orcid.core.oauth.authorizationServer.AuthorizationServerUtil;
 import org.orcid.core.utils.SecurityContextTestUtils;
 import org.springframework.http.ResponseEntity;
@@ -34,6 +36,11 @@ public class RevokeControllerTest {
     @Before
     public void before() {
         MockitoAnnotations.initMocks(this);
+    }
+
+    @After
+    public void after() {
+        SecurityContextHolder.clearContext();
     }
 
     @Test
@@ -103,5 +110,81 @@ public class RevokeControllerTest {
         } catch (IllegalArgumentException e) {
             assertEquals("Please provide the token to be param", e.getMessage());
         }
+    }
+
+    @Test
+    public void testRevokeReturnsGatewayTimeoutOnAuthorizationServerTimeout() throws Exception {
+        String authorization = "Basic Y2xpZW50LWlkOnNlY3JldA==";
+        String token = "some-token";
+
+        when(request.getParameter("token")).thenReturn(token);
+        when(request.getHeader("Authorization")).thenReturn(authorization);
+        when(authorizationServerUtil.forwardTokenRevocationRequest(authorization, token))
+                .thenThrow(new AuthorizationServerConnectionException("Authorization server timeout", null));
+
+        ResponseEntity<?> result = revokeController.revoke(request);
+
+        assertNotNull(result);
+        assertEquals(504, result.getStatusCodeValue());
+        assertEquals("Authorization server timeout", result.getBody());
+        assertEquals("ON", result.getHeaders().getFirst("OAUTH_TOKEN_VALIDATION"));
+    }
+
+    @Test
+    public void testRevokeUsesRequestClientIdWhenNoAuthorizationHeader() throws Exception {
+        String requestClientId = "APP-REQUEST-CLIENT-ID";
+        String contextClientId = "APP-CONTEXT-CLIENT-ID";
+        String clientSecret = "some-secret";
+        String token = "some-token";
+
+        SecurityContextTestUtils.setUpSecurityContextForClientOnly(contextClientId);
+
+        when(request.getParameter("token")).thenReturn(token);
+        when(request.getParameter("client_id")).thenReturn(requestClientId);
+        when(request.getParameter("client_secret")).thenReturn(clientSecret);
+        when(request.getHeader("Authorization")).thenReturn(null);
+
+        Response mockResponse = mock(Response.class);
+        when(mockResponse.getStatus()).thenReturn(200);
+        when(mockResponse.getEntity()).thenReturn("Success");
+        when(authorizationServerUtil.forwardTokenRevocationRequest(requestClientId, clientSecret, token)).thenReturn(mockResponse);
+
+        ResponseEntity<?> result = revokeController.revoke(request);
+
+        assertEquals(200, result.getStatusCodeValue());
+        verify(authorizationServerUtil).forwardTokenRevocationRequest(requestClientId, clientSecret, token);
+    }
+
+    @Test
+    public void testRevokeNoAuthAndNoClientIdThrows() throws Exception {
+        when(request.getParameter("token")).thenReturn("some-token");
+        when(request.getParameter("client_id")).thenReturn(null);
+        when(request.getHeader("Authorization")).thenReturn(null);
+
+        try {
+            revokeController.revoke(request);
+            fail("Should have thrown IllegalArgumentException");
+        } catch (IllegalArgumentException e) {
+            assertEquals("Please provide client_id or Authorization header", e.getMessage());
+        }
+    }
+
+    @Test
+    public void testRevokeSetsValidationHeaderOnSuccess() throws Exception {
+        String authorization = "Basic Y2xpZW50LWlkOnNlY3JldA==";
+        String token = "some-token";
+
+        when(request.getParameter("token")).thenReturn(token);
+        when(request.getHeader("Authorization")).thenReturn(authorization);
+
+        Response mockResponse = mock(Response.class);
+        when(mockResponse.getStatus()).thenReturn(200);
+        when(mockResponse.getEntity()).thenReturn("Success");
+        when(authorizationServerUtil.forwardTokenRevocationRequest(authorization, token)).thenReturn(mockResponse);
+
+        ResponseEntity<?> result = revokeController.revoke(request);
+
+        assertEquals(200, result.getStatusCodeValue());
+        assertEquals("ON", result.getHeaders().getFirst("OAUTH_TOKEN_VALIDATION"));
     }
 }

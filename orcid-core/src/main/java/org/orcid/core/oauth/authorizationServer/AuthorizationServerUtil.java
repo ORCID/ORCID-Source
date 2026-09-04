@@ -18,6 +18,7 @@ import jakarta.ws.rs.core.Response;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.http.HttpResponse;
+import java.net.http.HttpTimeoutException;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
@@ -320,15 +321,23 @@ public class AuthorizationServerUtil {
     }
 
     private Response doPost(String uri, String basicAuthorizationHeader, Map<String, String> parameters) throws IOException, URISyntaxException, InterruptedException {
-        HttpResponse<String> tokenResponse = null;
-
-        if(StringUtils.isNotBlank(basicAuthorizationHeader)) {
-            tokenResponse = httpRequestUtils.doPost(uri, basicAuthorizationHeader, parameters);
-        } else {
-            tokenResponse = httpRequestUtils.doPost(uri, parameters);
+        HttpResponse<String> tokenResponse;
+        try {
+            if(StringUtils.isNotBlank(basicAuthorizationHeader)) {
+                tokenResponse = httpRequestUtils.doPost(uri, basicAuthorizationHeader, parameters);
+            } else {
+                tokenResponse = httpRequestUtils.doPost(uri, parameters);
+            }
+        } catch (HttpTimeoutException e) {
+            throw new AuthorizationServerConnectionException("Timeout while calling authorization server endpoint " + uri, e);
         }
 
         int statusCode = tokenResponse.statusCode();
+        if (isConnectionExceptionStatusCode(statusCode)) {
+            throw new AuthorizationServerConnectionException(
+                    "Authorization server returned connection exception status " + statusCode + " for endpoint " + uri,
+                    null);
+        }
         String tokenResult = tokenResponse.body();
 
         Response.ResponseBuilder responseBuilder = Response.status(statusCode);
@@ -339,5 +348,9 @@ public class AuthorizationServerUtil {
                 .firstValue("Content-Type")
                 .ifPresent(contentType -> responseBuilder.type(MediaType.valueOf(contentType)));
         return responseBuilder.build();
+    }
+
+    private boolean isConnectionExceptionStatusCode(int statusCode) {
+        return statusCode == 408 || statusCode == 502 || statusCode == 503 || statusCode == 504 || statusCode == 524;
     }
 }
