@@ -306,54 +306,65 @@ public class AuthorizationServerUtilTest {
     }
 
     @Test
-    public void doPost_retriesOnceOnTimeoutException_thenReturnsSuccessResponse() throws Exception {
+    public void doPost_throwsConnectionExceptionOnHttpTimeoutException() throws Exception {
         when(httpRequestUtils.doPost(eq(TOKEN_ENDPOINT), anyMap()))
-                .thenThrow(new HttpTimeoutException("timeout"))
-                .thenReturn(mockHttpResponse(200, "ok", "application/json"));
+                .thenThrow(new HttpTimeoutException("timeout"));
 
-        Response response = authorizationServerUtil.forwardRefreshTokenRequest("client-id", "client-secret", "refresh-1", "scope");
-
-        assertEquals(200, response.getStatus());
-        assertEquals("ok", response.getEntity());
-        verify(httpRequestUtils, times(2)).doPost(eq(TOKEN_ENDPOINT), anyMap());
+        try {
+            authorizationServerUtil.forwardRefreshTokenRequest("client-id", "client-secret", "refresh-1", "scope");
+        } catch (AuthorizationServerConnectionException e) {
+            assertTrue(e.getMessage().contains("Timeout while calling authorization server endpoint"));
+            return;
+        }
+        org.junit.Assert.fail("Expected AuthorizationServerConnectionException");
     }
 
     @Test
-    public void doPost_returns504WhenRetryAlsoTimesOutWithException() throws Exception {
-        when(httpRequestUtils.doPost(eq(TOKEN_ENDPOINT), anyMap()))
-                .thenThrow(new HttpTimeoutException("timeout-1"))
-                .thenThrow(new HttpTimeoutException("timeout-2"));
-
-        Response response = authorizationServerUtil.forwardRefreshTokenRequest("client-id", "client-secret", "refresh-1", "scope");
-
-        assertEquals(504, response.getStatus());
-        assertEquals("Gateway Timeout", response.getEntity());
-        assertEquals("ON", response.getHeaderString(Features.OAUTH_AUTHORIZATION_CODE_EXCHANGE.name()));
+    public void doPost_throwsConnectionExceptionOnConfiguredConnectionExceptionStatusCodes() throws Exception {
+        int[] timeoutStatuses = {408, 502, 503, 504, 524};
+        for (int status : timeoutStatuses) {
+            when(httpRequestUtils.doPost(eq(TOKEN_ENDPOINT), anyMap()))
+                    .thenReturn(mockHttpResponse(status, "upstream-timeout", "application/json"));
+            try {
+                authorizationServerUtil.forwardRefreshTokenRequest("client-id", "client-secret", "refresh-1", "scope");
+                org.junit.Assert.fail("Expected AuthorizationServerConnectionException for status " + status);
+            } catch (AuthorizationServerConnectionException e) {
+                assertTrue(e.getMessage().contains("connection exception status " + status));
+            }
+        }
     }
 
     @Test
-    public void doPost_retriesOnceOnTimeoutStatus_thenReturnsSecondResponse() throws Exception {
-        when(httpRequestUtils.doPost(eq(TOKEN_ENDPOINT), anyMap()))
-                .thenReturn(mockHttpResponse(408, "timeout", "application/json"))
-                .thenReturn(mockHttpResponse(200, "ok", "application/json"));
+    public void doPost_appliesConnectionExceptionStatusChecksToBasicAuthRequests() throws Exception {
+        when(httpRequestUtils.doPost(eq(TOKEN_ENDPOINT), eq(BASIC_AUTH), anyMap()))
+                .thenReturn(mockHttpResponse(503, "service-unavailable", "application/json"));
 
-        Response response = authorizationServerUtil.forwardRefreshTokenRequest("client-id", "client-secret", "refresh-1", "scope");
-
-        assertEquals(200, response.getStatus());
-        assertEquals("ok", response.getEntity());
-        verify(httpRequestUtils, times(2)).doPost(eq(TOKEN_ENDPOINT), anyMap());
+        try {
+            authorizationServerUtil.forwardRefreshTokenRequest(BASIC_AUTH, "refresh-1", "scope");
+        } catch (AuthorizationServerConnectionException e) {
+            assertTrue(e.getMessage().contains("connection exception status 503"));
+            return;
+        }
+        org.junit.Assert.fail("Expected AuthorizationServerConnectionException");
     }
 
     @Test
-    public void doPost_returns504WhenRetryAlsoReturnsTimeoutStatus() throws Exception {
+    public void doPost_doesNotThrowConnectionExceptionOnOtherStatuses() throws Exception {
         when(httpRequestUtils.doPost(eq(TOKEN_ENDPOINT), anyMap()))
-                .thenReturn(mockHttpResponse(504, "timeout-1", "application/json"))
-                .thenReturn(mockHttpResponse(408, "timeout-2", "application/json"));
+                .thenReturn(mockHttpResponse(500, "server-error", "application/json"));
 
         Response response = authorizationServerUtil.forwardRefreshTokenRequest("client-id", "client-secret", "refresh-1", "scope");
 
-        assertEquals(504, response.getStatus());
-        assertEquals("Gateway Timeout", response.getEntity());
+        assertEquals(500, response.getStatus());
+        assertEquals("server-error", response.getEntity());
+    }
+
+    @Test(expected = AuthorizationServerConnectionException.class)
+    public void tokenIntrospection_throwsConnectionExceptionOnConnectionExceptionStatus() throws Exception {
+        when(httpRequestUtils.doPost(eq(INTROSPECT_ENDPOINT), eq(expectedIntrospectionAuthHeader()), anyMap()))
+                .thenReturn(mockHttpResponse(504, "timeout", "application/json"));
+
+        authorizationServerUtil.tokenIntrospection("token-1");
     }
 
     @Test

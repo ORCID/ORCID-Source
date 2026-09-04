@@ -16,6 +16,7 @@ import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.UriInfo;
 import org.apache.commons.lang.StringUtils;
+import org.orcid.core.oauth.authorizationServer.AuthorizationServerConnectionException;
 import org.orcid.core.oauth.authorizationServer.AuthorizationServerUtil;
 import org.orcid.core.constants.OrcidOauth2Constants;
 import org.orcid.core.togglz.Features;
@@ -59,42 +60,49 @@ public class OrcidApiCommonEndpoints {
         }
 
         Response response = null;
-        if(hasBasicAuthorization) {
-            switch (grantType) {
-                case OrcidOauth2Constants.GRANT_TYPE_AUTHORIZATION_CODE:
-                    response = authorizationServerUtil.forwardAuthorizationCodeExchangeRequest(authorization, redirectUri, code);
-                    break;
-                case OrcidOauth2Constants.GRANT_TYPE_REFRESH_TOKEN:
-                    response = authorizationServerUtil.forwardRefreshTokenRequest(authorization, refreshToken, scopeList);
-                    break;
-                case OrcidOauth2Constants.GRANT_TYPE_CLIENT_CREDENTIALS:
-                    response = authorizationServerUtil.forwardClientCredentialsRequest(authorization, scopeList);
-                    break;
-                case IETF_EXCHANGE_GRANT_TYPE:
-                    response = authorizationServerUtil.forwardTokenExchangeRequest(authorization, subjectToken, subjectTokenType, requestedTokenType, scopeList);
-                    break;
-                default:
-                    response = authorizationServerUtil.forwardOtherTokenExchangeRequest(authorization, grantType, code, scopeList);
-                    break;
+        try {
+            if(hasBasicAuthorization) {
+                switch (grantType) {
+                    case OrcidOauth2Constants.GRANT_TYPE_AUTHORIZATION_CODE:
+                        response = authorizationServerUtil.forwardAuthorizationCodeExchangeRequest(authorization, redirectUri, code);
+                        break;
+                    case OrcidOauth2Constants.GRANT_TYPE_REFRESH_TOKEN:
+                        response = authorizationServerUtil.forwardRefreshTokenRequest(authorization, refreshToken, scopeList);
+                        break;
+                    case OrcidOauth2Constants.GRANT_TYPE_CLIENT_CREDENTIALS:
+                        response = authorizationServerUtil.forwardClientCredentialsRequest(authorization, scopeList);
+                        break;
+                    case IETF_EXCHANGE_GRANT_TYPE:
+                        response = authorizationServerUtil.forwardTokenExchangeRequest(authorization, subjectToken, subjectTokenType, requestedTokenType, scopeList);
+                        break;
+                    default:
+                        response = authorizationServerUtil.forwardOtherTokenExchangeRequest(authorization, grantType, code, scopeList);
+                        break;
+                }
+            } else {
+                switch (grantType) {
+                    case OrcidOauth2Constants.GRANT_TYPE_AUTHORIZATION_CODE:
+                        response = authorizationServerUtil.forwardAuthorizationCodeExchangeRequest(clientId, clientSecret, redirectUri, code);
+                        break;
+                    case OrcidOauth2Constants.GRANT_TYPE_REFRESH_TOKEN:
+                        response = authorizationServerUtil.forwardRefreshTokenRequest(clientId, clientSecret, refreshToken, scopeList);
+                        break;
+                    case OrcidOauth2Constants.GRANT_TYPE_CLIENT_CREDENTIALS:
+                        response = authorizationServerUtil.forwardClientCredentialsRequest(clientId, clientSecret, scopeList);
+                        break;
+                    case IETF_EXCHANGE_GRANT_TYPE:
+                        response = authorizationServerUtil.forwardTokenExchangeRequest(clientId, clientSecret, subjectToken, subjectTokenType, requestedTokenType, scopeList);
+                        break;
+                    default:
+                        response = authorizationServerUtil.forwardOtherTokenExchangeRequest(clientId, clientSecret, grantType, code, scopeList);
+                        break;
+                }
             }
-        } else {
-            switch (grantType) {
-                case OrcidOauth2Constants.GRANT_TYPE_AUTHORIZATION_CODE:
-                    response = authorizationServerUtil.forwardAuthorizationCodeExchangeRequest(clientId, clientSecret, redirectUri, code);
-                    break;
-                case OrcidOauth2Constants.GRANT_TYPE_REFRESH_TOKEN:
-                    response = authorizationServerUtil.forwardRefreshTokenRequest(clientId, clientSecret, refreshToken, scopeList);
-                    break;
-                case OrcidOauth2Constants.GRANT_TYPE_CLIENT_CREDENTIALS:
-                    response = authorizationServerUtil.forwardClientCredentialsRequest(clientId, clientSecret, scopeList);
-                    break;
-                case IETF_EXCHANGE_GRANT_TYPE:
-                    response = authorizationServerUtil.forwardTokenExchangeRequest(clientId, clientSecret, subjectToken, subjectTokenType, requestedTokenType, scopeList);
-                    break;
-                default:
-                    response = authorizationServerUtil.forwardOtherTokenExchangeRequest(clientId, clientSecret, grantType, code, scopeList);
-                    break;
-            }
+        } catch (AuthorizationServerConnectionException e) {
+            return Response.status(Response.Status.GATEWAY_TIMEOUT)
+                    .entity(e.getMessage())
+                    .header(Features.OAUTH_AUTHORIZATION_CODE_EXCHANGE.name(), "ON")
+                    .build();
         }
         Object entity = response.getEntity();
         int statusCode = response.getStatus();

@@ -323,30 +323,25 @@ public class AuthorizationServerUtil {
     private Response doPost(String uri, String basicAuthorizationHeader, Map<String, String> parameters) throws IOException, URISyntaxException, InterruptedException {
         HttpResponse<String> tokenResponse;
         try {
-            tokenResponse = executePost(uri, basicAuthorizationHeader, parameters);
+            if(StringUtils.isNotBlank(basicAuthorizationHeader)) {
+                tokenResponse = httpRequestUtils.doPost(uri, basicAuthorizationHeader, parameters);
+            } else {
+                tokenResponse = httpRequestUtils.doPost(uri, parameters);
+            }
         } catch (HttpTimeoutException e) {
-            logger.warn("Timeout posting to authorization server endpoint={}, retrying once after 500ms", uri);
-            Thread.sleep(500);
-            try {
-                tokenResponse = executePost(uri, basicAuthorizationHeader, parameters);
-            } catch (HttpTimeoutException retryException) {
-                logger.warn("Timeout posting to authorization server endpoint={} on retry, returning 504", uri);
-                return buildTimeoutResponse();
-            }
+            throw new AuthorizationServerConnectionException("Timeout while calling authorization server endpoint " + uri, e);
         }
 
-        if (isTimeoutStatus(tokenResponse.statusCode())) {
-            logger.warn("Authorization server timeout status={} from endpoint={}, retrying once after 500ms", tokenResponse.statusCode(), uri);
-            Thread.sleep(500);
-            tokenResponse = executePost(uri, basicAuthorizationHeader, parameters);
-            if (isTimeoutStatus(tokenResponse.statusCode())) {
-                logger.warn("Authorization server timeout status={} from endpoint={} on retry, returning 504", tokenResponse.statusCode(), uri);
-                return buildTimeoutResponse();
-            }
+        int statusCode = tokenResponse.statusCode();
+        if (isConnectionExceptionStatusCode(statusCode)) {
+            throw new AuthorizationServerConnectionException(
+                    "Authorization server returned connection exception status " + statusCode + " for endpoint " + uri,
+                    null);
         }
+        String tokenResult = tokenResponse.body();
 
-        Response.ResponseBuilder responseBuilder = Response.status(tokenResponse.statusCode());
-        responseBuilder.entity(tokenResponse.body());
+        Response.ResponseBuilder responseBuilder = Response.status(statusCode);
+        responseBuilder.entity(tokenResult);
         // TODO: Remove this header when the togglz is removed
         responseBuilder.header(Features.OAUTH_AUTHORIZATION_CODE_EXCHANGE.name(), "ON");
         tokenResponse.headers()
@@ -355,23 +350,7 @@ public class AuthorizationServerUtil {
         return responseBuilder.build();
     }
 
-    private HttpResponse<String> executePost(String uri, String basicAuthorizationHeader, Map<String, String> parameters) throws IOException, URISyntaxException, InterruptedException {
-        if(StringUtils.isNotBlank(basicAuthorizationHeader)) {
-            return httpRequestUtils.doPost(uri, basicAuthorizationHeader, parameters);
-        }
-        return httpRequestUtils.doPost(uri, parameters);
-    }
-
-    private boolean isTimeoutStatus(int statusCode) {
-        return statusCode == Response.Status.REQUEST_TIMEOUT.getStatusCode()
-                || statusCode == Response.Status.GATEWAY_TIMEOUT.getStatusCode();
-    }
-
-    private Response buildTimeoutResponse() {
-        Response.ResponseBuilder responseBuilder = Response.status(Response.Status.GATEWAY_TIMEOUT);
-        responseBuilder.entity("Gateway Timeout");
-        // TODO: Remove this header when the togglz is removed
-        responseBuilder.header(Features.OAUTH_AUTHORIZATION_CODE_EXCHANGE.name(), "ON");
-        return responseBuilder.build();
+    private boolean isConnectionExceptionStatusCode(int statusCode) {
+        return statusCode == 408 || statusCode == 502 || statusCode == 503 || statusCode == 504 || statusCode == 524;
     }
 }
