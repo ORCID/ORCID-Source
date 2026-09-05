@@ -17,6 +17,13 @@ mvn test -P all-tests --projects orcid-core         # both stages
 mvn test --projects orcid-core -Djacoco.skip=true   # skip coverage instrumentation
 ```
 
+`orcid-web`, `orcid-api-web` and `orcid-pub-web` read two shared security-context
+helpers from a jar that `orcid-core` attaches, so testing one of them on its own
+needs a current `orcid-core` in the local repository. If `--projects orcid-web`
+fails to resolve `org.orcid:orcid-core:jar:tests`, run `mvn install --projects
+orcid-core` once, or add `-am`. The same applies after switching branches, since
+every module carries the same fixed version.
+
 Two stages exist, and the difference is not "fast and slow" but "what the test
 is allowed to depend on".
 
@@ -84,6 +91,41 @@ group-id delete guards have no proof here because `main` has none either, so
 adding one would be new work rather than parity. And a run of the whole suite
 under mutation would be stronger still; these eleven were chosen because each is
 the sole catcher of a rule `main` proves.
+
+### Re-verified after the helpers moved out of production
+
+`Actors` and `SecurityContextTestUtils` were moved from `orcid-core/src/main` to
+that module's test tree so that Mockito could stop being a compile dependency.
+`Actors` is load-bearing for the table above, so the move was checked rather than
+assumed. Re-run on 2026-09-05 against `fd4dc071dd`:
+
+| Check | Result |
+| --- | --- |
+| Unit stage, clean tree | 3,597 green |
+| Database stage, clean tree | 763 green |
+| Web modules built alone, as CI does | 383, 1,232, 405 green |
+| First three mutations above, control first | each red on its own test, production restored byte-identically |
+| `mockito-core` in all seven WARs | 592KB present in every one before, absent from every one after |
+| `orcid-core` test jar contents | the two helper classes, no test resources |
+| Release-path build, `-Dmaven.test.skip`, jar deleted first | green, jar reattached with both classes |
+| `actionlint`, reactor-graph drift | both clean |
+
+The three web modules read the helpers from a test jar that `orcid-core` now
+attaches. It carries those two classes and nothing else on purpose: `orcid-core`'s
+test tree also holds a `test-core-context.xml` and a `log4j.xml` that those modules
+define themselves, and shipping the whole tree would leave which copy
+`DBUnitTest`'s `classpath:test-core-context.xml` resolves to a matter of classpath
+order. `byte-buddy` stays in the WARs; Hibernate needs it, and it is declared for
+that reason, not for Mockito.
+
+That jar is attached even under `-Dmaven.test.skip`, which the release path passes.
+The `test-jar` goal honours that flag by default, so without the override a release
+build would attach nothing and the three web modules could not be resolved at all.
+The two helper classes are compiled under the same flag for the same reason.
+
+One consequence for local work: the three web modules can no longer be tested alone
+against a local repository that predates this change. Run `mvn install --projects
+orcid-core` once, or add `-am`, before `mvn test --projects orcid-web`.
 
 ## The database stage runs only what a change can have affected
 
