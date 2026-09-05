@@ -221,9 +221,28 @@ jobs:
     # unit matrix above, so this job is where they run -- beside it rather than
     # inside its slowest members.
     #
-    # One job over all the modules rather than a matrix: the stage is small by
-    # design, and a matrix would repeat the two-minute dependency install per
-    # module for a handful of tests.
+    # A matrix, for the same reason the unit stage is one: run sequentially over
+    # every module this stage took 6m10s of Maven, which made the database job
+    # the thing the whole pull request waited on. Per module the worst is
+    # orcid-core at 2m23s of local Maven. What a matrix repeats per job is the
+    # whole pre-Maven setup, measured across a real run at 87s to 127s, median
+    # 102s -- real, but paid in parallel, where the single job's 6m10s was not.
+    #
+    # Only the modules that hold database tests are listed: the other five would
+    # each pay that setup to run nothing. The `db_stage_drift` job below fails
+    # if a module outside this list ever gains one, so the saving cannot turn
+    # into a silently skipped test.
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - project: orcid-message-listener
+          - project: orcid-activemq
+          - project: orcid-api-web
+          - project: orcid-web
+          - project: orcid-core
+          - project: orcid-persistence
+
     runs-on: ubuntu-latest
     steps:
       - name: Harden the runner (Audit all outbound calls)
@@ -280,25 +299,20 @@ jobs:
         run: |
           mvn -T 1C --batch-mode test -P db-tests \
               -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn \
-              --projects orcid-message-listener,orcid-activemq,orcid-api-web,orcid-internal-api,orcid-pub-web,orcid-scheduler-web,orcid-web,orcid-utils,orcid-core,orcid-persistence,orcid-api-common \
-              --fail-at-end
+              --projects ${{ matrix.project }} --fail-at-end
 
       - name: Collect database-stage coverage
         if: always()
         run: |
-          for m in orcid-message-listener orcid-activemq orcid-api-web orcid-internal-api orcid-pub-web orcid-scheduler-web orcid-web orcid-utils orcid-core orcid-persistence orcid-api-common; do
-            if [ -f "$m/target/site/jacoco/jacoco.xml" ]; then
-              mkdir -p "db-artifact/$m"
-              cp "$m/target/site/jacoco/jacoco.xml" "db-artifact/$m/"
-            fi
-          done
-          ls -R db-artifact 2>/dev/null || echo "no database-stage coverage yet"
+          mkdir -p db-artifact
+          cp "${{ matrix.project }}/target/site/jacoco/jacoco.xml" db-artifact/ 2>/dev/null || \
+            echo "no jacoco.xml for ${{ matrix.project }} (tests may have failed before the report ran)"
 
       - name: Upload database-stage coverage
         if: always()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
-          name: coverage-db
+          name: coverage-db-${{ matrix.project }}
           path: db-artifact
           if-no-files-found: ignore
           retention-days: 7
@@ -307,10 +321,69 @@ jobs:
         if: ${{ failure() && (github.event.pull_request.head.repo.full_name == github.repository) }}
         uses: dorny/test-reporter@31a54ee7ebcacc03a09ea97a7e5465a47b84aea5 # v1.9.1
         with:
-          name: "Database test report"
-          path: "*/target/surefire-reports/*.xml"
+          name: "Database test report for ${{ matrix.project }}"
+          path: ${{ matrix.project }}/target/surefire-reports/*.xml
           reporter: java-junit
           fail-on-error: true
+
+  db_stage_drift:
+    # The database matrix lists only the modules that hold database tests, so a
+    # module gaining its first one would otherwise stop running it silently --
+    # the same shape of failure the migration itself was written to avoid.
+    # Cheap enough to run on every pull request.
+    #
+    # It assumes the @Category is written in the module that owns the test.
+    # JUnit inherits categories, so an annotated base class in another module
+    # would defeat it; that is safe today because every `extends BaseTest` is
+    # inside orcid-core, no module depends on orcid-core's test jar, and the
+    # cross-module base orcid-test/.../DBUnitTest.java is deliberately not
+    # annotated. Revisit if DBUnitTest ever is.
+    runs-on: ubuntu-latest
+    steps:
+      - name: Harden the runner (Audit all outbound calls)
+        uses: step-security/harden-runner@fa2e9d605c4eeb9fcad4c99c224cee0c6c7f3594 # v2.16.0
+        with:
+          egress-policy: audit
+
+      - name: git-checkout-ref-action
+        id: ref
+        uses: ORCID/git-checkout-ref-action@4258c0cbe4b164e410d0263416034787fb300f26 # main
+        with:
+          default_branch: ${{ github.event.repository.default_branch }}
+          ref: ${{ inputs.ref }}
+
+      - name: Run actions/checkout
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+        with:
+          ref: ${{ steps.ref.outputs.ref }}
+
+      - name: Every module holding a database test must be in the db_tests matrix
+        run: |
+          # Both lists are read from the files the build itself reads, so the
+          # guard cannot drift from the thing it guards.
+          in_matrix=$(sed -n '/^  db_tests:/,/^  db_stage_drift:/p' .github/workflows/test_mvn.yml \
+                      | sed -n 's/^ *- project: //p' | tr '\n' ' ')
+          reactor=$(sed -n '/<modules>/,/<\/modules>/p' pom.xml \
+                    | sed -n 's/.*<module>\(.*\)<\/module>.*/\1/p')
+          echo "matrix: $in_matrix"
+          drift=0
+          for m in $reactor; do
+            [ -d "$m/src/test" ] || continue
+            if grep -rlqE '^[[:space:]]*@Category\([^)]*DatabaseTest\.class' "$m/src/test"; then
+              case " $in_matrix " in
+                *" $m "*) ;;
+                *) echo "::error::$m has @Category(DatabaseTest.class) tests but is not in the db_tests matrix, so they never run. Add it."; drift=1 ;;
+              esac
+            else
+              case " $in_matrix " in
+                *" $m "*) echo "::warning::$m is in the db_tests matrix but has no database tests; it costs ~100s of setup to run nothing and can be dropped." ;;
+              esac
+            fi
+          done
+          if [ "$drift" -eq 0 ]; then
+            echo "database stage matrix covers every module that needs it"
+          fi
+          exit $drift
 
   coverage_report:
     # Renders the JaCoCo results the matrix produced. Measures only: no
@@ -334,19 +407,6 @@ jobs:
         with:
           pattern: coverage-*
           path: coverage
-
-      - name: Reshape the database-stage artifact
-        run: |
-          # The db job uploads one artifact holding every module; the report
-          # script keys off directory names, so split it out per module.
-          for d in coverage/coverage-db/*/; do
-            [ -d "$d" ] || continue
-            m=$(basename "$d")
-            mkdir -p "coverage/coverage-db-$m"
-            mv "$d/jacoco.xml" "coverage/coverage-db-$m/" 2>/dev/null || true
-          done
-          rm -rf coverage/coverage-db
-          ls coverage
 
       - name: List changed files
         if: github.event_name == 'pull_request'
