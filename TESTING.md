@@ -85,6 +85,43 @@ adding one would be new work rather than parity. And a run of the whole suite
 under mutation would be stronger still; these eleven were chosen because each is
 the sole catcher of a rule `main` proves.
 
+## The database stage runs only what a change can have affected
+
+Every leg of the database stage reports on every pull request, but a leg whose
+module the change cannot have reached finishes green in seconds instead of
+spending two minutes proving nothing moved. Nothing is skipped: a skipped job
+never reports its check, and a required check that never reports blocks the
+merge for ever.
+
+The decision is Maven's dependency graph, never a list of paths. A file belongs
+to the module it sits in; the legs that run are those modules plus every module
+that depends on them. So a change in `orcid-web` runs the web leg alone, a
+change in `orcid-persistence` runs persistence, core, web and api-web, and a
+change in `orcid-core` runs core, web and api-web but not persistence, because
+persistence does not depend on core.
+
+Everything runs when the change cannot be attributed: the root pom, anything
+under `.github`, `orcid-test`, a directory that is not a reactor module, or any
+event without a pull-request base to diff against. Over-running is the intended
+failure mode; a silently skipped test is not.
+
+Two things keep it honest. The graph is parsed from the poms by
+`.github/scripts/reactor_graph.py`, and `db_stage_drift` fails if that parse
+stops matching `reactor-graph.txt`, the snapshot taken from Maven's own
+`dependency:tree`. And the parse keys on artifact names rather than group ids,
+because `orcid-web` declares `orcid-core` through
+`<groupId>${project.parent.groupId}</groupId>` -- a parser that insists on the
+literal `org.orcid` drops the most important edge in the graph and concludes
+that a change in `orcid-core` cannot affect `orcid-web`.
+
+To see the decision for a change you have in hand:
+
+```
+git diff --name-only origin/main...HEAD | python3 .github/scripts/reactor_graph.py --plan
+```
+
+A `workflow_dispatch` run has no pull-request base, so it always runs every leg.
+
 ## Writing a unit test
 
 Use `@RunWith(MockitoJUnitRunner.class)`, put `@InjectMocks` on the production

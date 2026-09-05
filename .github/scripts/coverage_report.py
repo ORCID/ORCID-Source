@@ -114,6 +114,11 @@ def collect(artifacts_dir):
     return modules
 
 
+# Marks a database leg that deliberately did not run, as opposed to one that
+# ran and produced nothing.
+NOT_NEEDED = object()
+
+
 def collect_db(artifacts_dir):
     """Line/branch totals from the database stage, keyed by module.
 
@@ -128,7 +133,14 @@ def collect_db(artifacts_dir):
         if not entry.startswith("coverage-db-"):
             continue
         module = entry[len("coverage-db-"):]
-        jacoco = os.path.join(artifacts_dir, entry, "jacoco.xml")
+        base = os.path.join(artifacts_dir, entry)
+        if os.path.isfile(os.path.join(base, "NOT_NEEDED")):
+            # The leg reported success without running: this change cannot have
+            # affected the module. Distinct from a leg that ran and produced
+            # nothing, which is a failure and must not read as "unchanged".
+            out[module] = NOT_NEEDED
+            continue
+        jacoco = os.path.join(base, "jacoco.xml")
         if not os.path.isfile(jacoco):
             out[module] = None
             continue
@@ -177,7 +189,10 @@ def module_table(modules, db_totals):
                f"| {lc:,} / {lc + lm:,} | {run} |")
         if show_db:
             db = db_totals.get(module)
-            if module in db_totals and db is None:
+            if db is NOT_NEEDED:
+                # the leg passed without running: this change cannot affect it
+                row += " unchanged |"
+            elif module in db_totals and db is None:
                 # the leg ran and produced nothing readable: not the same as no tests
                 row += " no report |"
             elif db is None:
