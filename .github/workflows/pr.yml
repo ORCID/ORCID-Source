@@ -30,7 +30,7 @@ jobs:
   test_mvn:
     uses: ./.github/workflows/test_mvn.yml
     with:
-      seed_maven_cache: true
+      seed_maven_cache: false
       install_maven_dependencies: true
 
 #   NOTE: codeql is only available on public repos or enterprise github accounts
