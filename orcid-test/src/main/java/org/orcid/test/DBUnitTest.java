@@ -5,15 +5,13 @@ import static org.junit.Assert.fail;
 import java.io.File;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.List;
 import java.util.UUID;
 
-import org.dbunit.DatabaseUnitException;
-import org.dbunit.database.AmbiguousTableNameException;
 import org.dbunit.database.DatabaseConfig;
 import org.dbunit.database.DatabaseConnection;
 import org.dbunit.database.IDatabaseConnection;
-import org.dbunit.database.QueryDataSet;
 import org.dbunit.dataset.IDataSet;
 import org.dbunit.operation.DatabaseOperation;
 import org.dbunit.util.fileloader.FlatXmlDataFileLoader;
@@ -42,12 +40,31 @@ public class DBUnitTest {
     private static final String TEST_CORE_CONTEXT = "classpath:test-core-context.xml";
     private static final String TEST_DB_CONTEXT = "classpath:test-db-context.xml";
 
-    private static final String[] tables = new String[] { "profile", "orcid_social", "profile_event", "work", "researcher_url",
+    /**
+     * Every table the fixtures write to. This is the union of the two sweeps this class used to
+     * run: the general one, and the "client sourced profiles" one that existed only to delete child
+     * rows and client-sourced profiles ahead of it so that foreign keys were satisfied on the way
+     * down. Referential integrity is switched off for the duration of the sweep below, so that
+     * ordering no longer matters and the two collapse into one pass.
+     *
+     * Reference data seeded by Liquibase is deliberately absent -- identifier types and the like are
+     * asserted by tests such as IdentifierTypeManagerTest and must survive the reset.
+     */
+    private static final String[] TABLES_TO_CLEAR = new String[] { "profile", "orcid_social", "profile_event", "work", "researcher_url",
             "given_permission_to", "external_identifier", "email", "email_domain", "email_event", "biography", "record_name", "other_name", "profile_keyword", "profile_patent",
             "org_disambiguated", "org_disambiguated_external_identifier", "org", "org_affiliation_relation", "profile_funding", "funding_external_identifier", "address",
             "institution", "affiliation", "notification", "client_details", "client_secret", "oauth2_token_detail", "custom_email", "webhook", "granted_authority",
             "orcid_props", "peer_review", "peer_review_subject", "shibboleth_account", "group_id_record", "invalid_record_data_changes",
-            "research_resource", "research_resource_item", "spam", "backup_code", "profile_history_event", "event"};
+            "research_resource", "research_resource_item", "spam", "backup_code", "profile_history_event", "event",
+            "research_resource_item_org", "research_resource_org", "profile_email_domain", "notification_item", "subject", "email_frequency",
+            "find_my_stuff_history",
+            // Rows the old sweep never named because ON DELETE CASCADE removed them when
+            // client_details or the authorisation code went. Switching referential integrity off
+            // switches the cascades off with it, so they have to be listed. Being explicit is worth
+            // more than the brevity: the list now states exactly what a reset clears.
+            "client_authorised_grant_type", "client_granted_authority", "client_redirect_uri", "client_resource_id", "client_scope",
+            "oauth2_authoriziation_code_detail", "orcidoauth2authoriziationcodedetail_authorities",
+            "orcidoauth2authoriziationcodedetail_resourceids", "orcidoauth2authoriziationcodedetail_scopes" };
 
     private static ApplicationContext context;
 
@@ -82,7 +99,6 @@ public class DBUnitTest {
     public static void initDBUnitData(List<String> flatXMLDataFiles) throws Exception {
         clearCacheManagers();
         IDatabaseConnection connection = getDBConnection();
-        cleanClientSourcedProfiles(connection);
         cleanAll(connection);
         for (String flatXMLDataFile : flatXMLDataFiles) {
             DatabaseOperation.INSERT.execute(connection, getDataSet(flatXMLDataFile));
@@ -92,7 +108,6 @@ public class DBUnitTest {
 
     public static void removeDBUnitData(List<String> flatXMLDataFiles) throws Exception {
         IDatabaseConnection connection = getDBConnection();
-        cleanClientSourcedProfiles(connection);
         cleanAll(connection);
         connection.close();
     }
@@ -130,70 +145,39 @@ public class DBUnitTest {
         });
     }
 
-    private static void cleanClientSourcedProfiles(IDatabaseConnection connection) throws AmbiguousTableNameException, DatabaseUnitException, SQLException {
-        QueryDataSet grandChildTableSet = new QueryDataSet(connection);
-        grandChildTableSet.addTable("research_resource_item_org");
-        grandChildTableSet.addTable("client_secret");
-        grandChildTableSet.addTable("external_identifier");
-        grandChildTableSet.addTable("email");
-        DatabaseOperation.DELETE.execute(connection, grandChildTableSet);
-        
-        QueryDataSet childTableSet = new QueryDataSet(connection);
-        childTableSet.addTable("research_resource_item");
-        childTableSet.addTable("research_resource_org");
-        childTableSet.addTable("profile_email_domain");
-        DatabaseOperation.DELETE.execute(connection, childTableSet);
-
-        QueryDataSet dataSet = new QueryDataSet(connection);
-        dataSet.addTable("profile",
-                "SELECT p1.* FROM profile p1 LEFT JOIN client_details c ON c.group_orcid = p1.orcid LEFT JOIN profile p2 ON p1.source_id = p2.source_id WHERE p2.source_id IS NULL AND (c.client_details_id IS NULL OR p1.client_source_id IS NOT NULL)");
-        dataSet.addTable("other_name");
-        dataSet.addTable("record_name");
-        dataSet.addTable("biography");
-        dataSet.addTable("profile_keyword");
-        dataSet.addTable("work");
-        dataSet.addTable("profile_event");
-        dataSet.addTable("researcher_url");
-        dataSet.addTable("email_domain");
-        dataSet.addTable("email_event");
-        dataSet.addTable("external_identifier");
-        dataSet.addTable("org");
-        dataSet.addTable("org_affiliation_relation");
-        dataSet.addTable("peer_review_subject");
-        dataSet.addTable("peer_review");
-        dataSet.addTable("profile_funding");
-        dataSet.addTable("funding_external_identifier");
-        dataSet.addTable("webhook");
-        dataSet.addTable("oauth2_token_detail");
-        dataSet.addTable("notification");
-        dataSet.addTable("notification_item");
-        dataSet.addTable("given_permission_to");
-        dataSet.addTable("subject");
-        dataSet.addTable("shibboleth_account");
-        dataSet.addTable("group_id_record");
-        dataSet.addTable("address");
-        dataSet.addTable("invalid_record_data_changes");
-        dataSet.addTable("email_frequency");
-        dataSet.addTable("research_resource");
-        dataSet.addTable("find_my_stuff_history");
-        dataSet.addTable("spam");
-        dataSet.addTable("event");
-        DatabaseOperation.DELETE.execute(connection, dataSet);
-
-        QueryDataSet theRest = new QueryDataSet(connection);
-        theRest.addTable("profile", "SELECT * FROM profile WHERE source_id IS NOT NULL AND source_id != orcid ORDER BY orcid DESC");
-        theRest.addTable("client_details");
-        theRest.addTable("client_secret");
-        theRest.addTable("custom_email");
-        DatabaseOperation.DELETE.execute(connection, theRest);
-    }
-
-    private static void cleanAll(IDatabaseConnection connection) throws DatabaseUnitException, SQLException {
-        QueryDataSet dataSet = new QueryDataSet(connection);
-        for (String table : tables) {
-            dataSet.addTable(table);
+    /**
+     * Empties every fixture table.
+     *
+     * This used to run two DBUnit DELETE sweeps, one ordered child-first so foreign keys held as it
+     * went. DBUnit implements a DELETE over a QueryDataSet by issuing SELECT * for each table,
+     * pulling every row into memory, reading the primary key from JDBC metadata, and then deleting
+     * one row at a time; across 86 table visits, twice per test class, that was about 1.2s per class
+     * and roughly a quarter of the whole database stage.
+     *
+     * A batch of DELETE statements does the same job in one round trip each. The ordering the old
+     * code preserved is what referential integrity requires, so this switches it off for the
+     * duration rather than trying to reproduce it -- profile carries two self-referential foreign
+     * keys (sponsor_id and deprecating_admin), both non-deferrable, which is why the old sweep
+     * needed an explicit ORDER BY orcid DESC to delete profiles safely at all.
+     *
+     * HSQLDB specific, which is what these tests run on (jdbc:hsqldb:mem:orcid). On any other engine
+     * the SET DATABASE statement fails loudly on the first test rather than degrading quietly.
+     */
+    private static void cleanAll(IDatabaseConnection connection) throws SQLException {
+        Connection jdbcConnection = connection.getConnection();
+        try (Statement statement = jdbcConnection.createStatement()) {
+            statement.execute("SET DATABASE REFERENTIAL INTEGRITY FALSE");
+            try {
+                for (String table : TABLES_TO_CLEAR) {
+                    statement.addBatch("DELETE FROM " + table);
+                }
+                statement.executeBatch();
+            } finally {
+                // Restore it even if a delete fails: leaving integrity off would let a later test
+                // write rows the schema forbids and still pass.
+                statement.execute("SET DATABASE REFERENTIAL INTEGRITY TRUE");
+            }
         }
-        DatabaseOperation.DELETE.execute(connection, dataSet);
     }
 
     public static IDatabaseConnection getDBConnection() throws Exception {
