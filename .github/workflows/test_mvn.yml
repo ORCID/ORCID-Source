@@ -317,6 +317,9 @@ jobs:
           - project: orcid-persistence
 
     needs: [db_plan]
+    # Run even if the plan job failed: a skipped leg never reports its check.
+    # With empty plan outputs the gate below runs the leg in full.
+    if: ${{ !cancelled() }}
     runs-on: ubuntu-latest
     steps:
       - name: Harden the runner (Audit all outbound calls)
@@ -348,7 +351,10 @@ jobs:
           REASON: ${{ needs.db_plan.outputs.reason }}
           PROJECT: ${{ matrix.project }}
         run: |
-          if [ "$EVERYTHING" != "true" ] && ! echo " $NEEDED " | grep -q " $PROJECT "; then
+          # Skip only when the plan said so explicitly. Empty outputs -- the plan job
+          # failed, or its outputs did not propagate -- must mean "run", or a broken
+          # planner would turn every leg green without running anything.
+          if [ "$EVERYTHING" = "false" ] && ! echo " $NEEDED " | grep -q " $PROJECT "; then
             echo "needed=false" >> "$GITHUB_OUTPUT"
             echo "::notice title=Database tests not needed::$PROJECT is unaffected by this change. $REASON"
             mkdir -p db-artifact

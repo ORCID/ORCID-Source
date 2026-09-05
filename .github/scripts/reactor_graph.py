@@ -150,11 +150,38 @@ def legs_from_workflow(path=".github/workflows/test_mvn.yml"):
     contains its own job names inside script blocks, and a text range over them
     matches the wrong thing.
     """
-    import yaml
-    with open(path) as fh:
-        wf = yaml.safe_load(fh)
-    include = wf["jobs"]["db_tests"]["strategy"]["matrix"]["include"]
-    return [entry["project"] for entry in include]
+    text = open(path).read()
+    try:
+        import yaml
+        wf = yaml.safe_load(text)
+        include = wf["jobs"]["db_tests"]["strategy"]["matrix"]["include"]
+        return [entry["project"] for entry in include]
+    except ImportError:
+        pass
+    # PyYAML is not guaranteed on a runner. Fall back to the one text shape the
+    # matrix can have, anchored so a job name quoted inside a script block --
+    # deeper indentation, more text on the line -- cannot match.
+    lines = text.splitlines()
+    try:
+        start = next(i for i, l in enumerate(lines) if l == "  db_tests:")
+    except StopIteration:
+        raise SystemExit("reactor_graph: no db_tests job in " + path)
+    legs = []
+    in_include = False
+    for l in lines[start + 1:]:
+        if re.match(r"^  [a-z_]+:\s*$", l):
+            break  # next top-level job
+        if l.strip() == "include:":
+            in_include = True
+            continue
+        m = re.match(r"^\s+- project:\s*([a-z-]+)\s*$", l)
+        if in_include and m:
+            legs.append(m.group(1))
+        elif in_include and l.strip() and not l.startswith("          "):
+            in_include = False
+    if not legs:
+        raise SystemExit("reactor_graph: could not read the db_tests matrix from " + path)
+    return legs
 
 
 def main():
