@@ -588,6 +588,11 @@ public class MemberV3ApiServiceDelegator_FundingTest extends MemberV3ApiServiceD
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
         funding = (Funding) response.getEntity();
         assertEquals(Visibility.PUBLIC, funding.getVisibility());
+        // Catches a delegator that sets a visibility on the element before handing it to
+        // the manager: what is submitted must still carry the null the request arrived with.
+        ArgumentCaptor<Funding> submitted = ArgumentCaptor.forClass(Funding.class);
+        verify(profileFundingManager).updateFunding(eq(USER_4447), submitted.capture(), eq(true));
+        assertNull("keeping the stored visibility is the manager's job, not the delegator's", submitted.getValue().getVisibility());
     }
 
     @Test(expected = NoResultException.class)

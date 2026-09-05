@@ -540,6 +540,11 @@ public class MemberV3ApiServiceDelegator_EducationsTest extends MemberV3ApiServi
         element = (Education) response.getEntity();
         assertNotNull(element);
         assertEquals(Visibility.PUBLIC, element.getVisibility());
+        // Catches a delegator that sets a visibility on the element before handing it to
+        // the manager: what is submitted must still carry the null the request arrived with.
+        ArgumentCaptor<Education> submitted = ArgumentCaptor.forClass(Education.class);
+        verify(affiliationsManager).updateEducationAffiliation(eq(ORCID), submitted.capture(), eq(true));
+        assertNull("keeping the stored visibility is the manager's job, not the delegator's", submitted.getValue().getVisibility());
     }
 
     @Test(expected = OrcidDuplicatedActivityException.class)

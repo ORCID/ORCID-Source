@@ -357,6 +357,11 @@ public class MemberV3ApiServiceDelegator_ResearcherUrlsTest extends MemberV3ApiS
         researcherUrl = (ResearcherUrl) response.getEntity();
         assertNotNull(researcherUrl);
         assertEquals(Visibility.PUBLIC, researcherUrl.getVisibility());
+        // Catches a delegator that sets a visibility on the element before handing it to
+        // the manager: what is submitted must still carry the null the request arrived with.
+        ArgumentCaptor<ResearcherUrl> submitted = ArgumentCaptor.forClass(ResearcherUrl.class);
+        verify(researcherUrlManager).updateResearcherUrl(eq(USER_4443), submitted.capture(), eq(true));
+        assertNull("keeping the stored visibility is the manager's job, not the delegator's", submitted.getValue().getVisibility());
     }
 
     @Test

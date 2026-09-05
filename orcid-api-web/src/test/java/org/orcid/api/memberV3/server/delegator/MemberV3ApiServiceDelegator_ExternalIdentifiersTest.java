@@ -382,6 +382,11 @@ public class MemberV3ApiServiceDelegator_ExternalIdentifiersTest extends MemberV
         extId = (PersonExternalIdentifier) response.getEntity();
         assertNotNull(extId);
         assertEquals(Visibility.PUBLIC, extId.getVisibility());
+        // Catches a delegator that sets a visibility on the element before handing it to
+        // the manager: what is submitted must still carry the null the request arrived with.
+        ArgumentCaptor<PersonExternalIdentifier> submitted = ArgumentCaptor.forClass(PersonExternalIdentifier.class);
+        verify(externalIdentifierManager).updateExternalIdentifier(eq(USER_4442), submitted.capture(), eq(true));
+        assertNull("keeping the stored visibility is the manager's job, not the delegator's", submitted.getValue().getVisibility());
     }
 
     @Test

@@ -515,6 +515,11 @@ public class MemberV3ApiServiceDelegator_InvitedPositionsTest extends MemberV3Ap
         element = (InvitedPosition) response.getEntity();
         assertNotNull(element);
         assertEquals(Visibility.PUBLIC, element.getVisibility());
+        // Catches a delegator that sets a visibility on the element before handing it to
+        // the manager: what is submitted must still carry the null the request arrived with.
+        ArgumentCaptor<InvitedPosition> submitted = ArgumentCaptor.forClass(InvitedPosition.class);
+        verify(affiliationsManager).updateInvitedPositionAffiliation(eq(ORCID), submitted.capture(), eq(true));
+        assertNull("keeping the stored visibility is the manager's job, not the delegator's", submitted.getValue().getVisibility());
     }
 
     @Test(expected = OrcidDuplicatedActivityException.class)

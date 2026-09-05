@@ -347,6 +347,11 @@ public class MemberV3ApiServiceDelegator_OtherNamesTest extends MemberV3ApiServi
         otherName = (OtherName) response.getEntity();
         assertNotNull(otherName);
         assertEquals(Visibility.PUBLIC, otherName.getVisibility());
+        // Catches a delegator that sets a visibility on the element before handing it to
+        // the manager: what is submitted must still carry the null the request arrived with.
+        ArgumentCaptor<OtherName> submitted = ArgumentCaptor.forClass(OtherName.class);
+        verify(otherNameManager).updateOtherName(eq(USER_4443), eq(1L), submitted.capture(), eq(true));
+        assertNull("keeping the stored visibility is the manager's job, not the delegator's", submitted.getValue().getVisibility());
     }
 
     @Test

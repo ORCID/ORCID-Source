@@ -740,6 +740,11 @@ public class MemberV3ApiServiceDelegator_WorksTest extends MemberV3ApiServiceDel
         assertNotNull(work);
         Utils.verifyLastModified(work.getLastModifiedDate());
         assertEquals(Visibility.PUBLIC, work.getVisibility());
+        // Catches a delegator that sets a visibility on the element before handing it to
+        // the manager: what is submitted must still carry the null the request arrived with.
+        ArgumentCaptor<Work> submitted = ArgumentCaptor.forClass(Work.class);
+        verify(workManager).updateWork(eq(USER_4447), submitted.capture(), eq(true));
+        assertNull("keeping the stored visibility is the manager's job, not the delegator's", submitted.getValue().getVisibility());
     }
 
     @Test

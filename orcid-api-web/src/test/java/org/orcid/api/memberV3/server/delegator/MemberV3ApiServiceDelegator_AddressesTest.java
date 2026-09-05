@@ -426,6 +426,11 @@ public class MemberV3ApiServiceDelegator_AddressesTest extends MemberV3ApiServic
         address = (Address) response.getEntity();
         assertNotNull(address);
         assertEquals(Visibility.PUBLIC, address.getVisibility());
+        // Catches a delegator that sets a visibility on the element before handing it to
+        // the manager: what is submitted must still carry the null the request arrived with.
+        ArgumentCaptor<Address> submitted = ArgumentCaptor.forClass(Address.class);
+        verify(addressManager).updateAddress(eq(USER_4442), eq(1L), submitted.capture(), eq(true));
+        assertNull("keeping the stored visibility is the manager's job, not the delegator's", submitted.getValue().getVisibility());
     }
 
     @Test

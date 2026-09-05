@@ -9,6 +9,7 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
 import java.util.HashMap;
@@ -16,6 +17,7 @@ import java.util.HashMap;
 import jakarta.persistence.NoResultException;
 import jakarta.ws.rs.core.Response;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.orcid.core.exception.DeactivatedException;
@@ -89,6 +91,27 @@ public class MemberV3ApiServiceDelegatorErrorsTest extends MemberV3ApiServiceDel
         doThrow(new OrcidDeprecatedException(new HashMap<String, String>())).when(orcidSecurityManager).checkProfile(deprecatedUserOrcid);
         doThrow(new OrcidNotClaimedException()).when(orcidSecurityManager).checkProfile(unclaimedUserOrcid);
         doThrow(new DeactivatedException("The record is deactivated", deactivatedUserOrcid)).when(orcidSecurityManager).checkProfile(deactivatedUserOrcid);
+    }
+
+    /**
+     * Every test in this class is a refusal: 291 of the 295 declare an
+     * {@code expected} exception, and the four that do not
+     * ({@code testViewClient}, {@code testViewBulkWorks},
+     * {@code testViewBulkWorksWithBadPutCode}, {@code test3_0}) are reads that
+     * go no further than a read-only manager. So no test here may reach a
+     * manager that writes, and proving the refusal happened is only half the
+     * proof - the other half is that nothing was written on the way out.
+     *
+     * Catches a guard moved below the manager call: e.g. moving
+     * {@code checkProfileStatus} under {@code workManager.checkSourceAndRemoveWork}
+     * in {@code MemberV3ApiServiceDelegatorImpl.deleteWork}, which still raises
+     * the expected exception - after the row is gone - and leaves every test in
+     * this class green without this check.
+     */
+    @After
+    public void nothingWasWritten() {
+        verifyNoInteractions(workManager, profileFundingManager, affiliationsManager, peerReviewManager, researcherUrlManager, researchResourceManager,
+                otherNameManager, externalIdentifierManager, profileKeywordManager, addressManager, groupIdRecordManager);
     }
 
     /**

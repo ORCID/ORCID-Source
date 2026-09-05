@@ -581,6 +581,11 @@ public class MemberV3ApiServiceDelegator_PeerReviewsTest extends MemberV3ApiServ
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
         peerReview = (PeerReview) response.getEntity();
         assertEquals(Visibility.PUBLIC, peerReview.getVisibility());
+        // Catches a delegator that sets a visibility on the element before handing it to
+        // the manager: what is submitted must still carry the null the request arrived with.
+        ArgumentCaptor<PeerReview> submitted = ArgumentCaptor.forClass(PeerReview.class);
+        verify(peerReviewManager).updatePeerReview(eq(USER_4447), submitted.capture(), eq(true));
+        assertNull("keeping the stored visibility is the manager's job, not the delegator's", submitted.getValue().getVisibility());
     }
 
     @Test

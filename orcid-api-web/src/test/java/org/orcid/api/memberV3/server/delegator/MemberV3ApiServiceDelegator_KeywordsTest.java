@@ -352,6 +352,11 @@ public class MemberV3ApiServiceDelegator_KeywordsTest extends MemberV3ApiService
         keyword = (Keyword) response.getEntity();
         assertNotNull(keyword);
         assertEquals(Visibility.PUBLIC, keyword.getVisibility());
+        // Catches a delegator that sets a visibility on the element before handing it to
+        // the manager: what is submitted must still carry the null the request arrived with.
+        ArgumentCaptor<Keyword> submitted = ArgumentCaptor.forClass(Keyword.class);
+        verify(profileKeywordManager).updateKeyword(eq(USER_4441), eq(6L), submitted.capture(), eq(true));
+        assertNull("keeping the stored visibility is the manager's job, not the delegator's", submitted.getValue().getVisibility());
     }
 
     @Test

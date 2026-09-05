@@ -8,6 +8,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -26,6 +27,7 @@ import java.util.Map;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
@@ -52,6 +54,7 @@ import org.orcid.jaxb.model.v3.release.common.CreatedDate;
 import org.orcid.jaxb.model.v3.release.common.PublicationDate;
 import org.orcid.jaxb.model.v3.release.common.Source;
 import org.orcid.jaxb.model.v3.release.common.Visibility;
+import org.orcid.jaxb.model.v3.release.error.OrcidError;
 import org.orcid.jaxb.model.v3.release.record.ExternalID;
 import org.orcid.jaxb.model.v3.release.record.ExternalIDs;
 import org.orcid.jaxb.model.v3.release.record.Work;
@@ -360,6 +363,53 @@ public class WorkManagerReadOnlyImplTest {
         assertNotNull(result);
         assertEquals(3, result.getBulk().size());
         verify(workDao, times(1)).getWorkEntities(anyString(), anyList());
+    }
+
+    /*
+     * Mutation this catches: deleting the leftover-put-code loop in
+     * WorkManagerReadOnlyImpl.findWorkBulk -- the block that turns every requested put code
+     * the DAO did not return into orcidCoreExceptionMapper.getV3OrcidError(new
+     * PutCodeFormatException(...)). Without it the bulk comes back with two elements instead
+     * of three and the caller never learns which put code was rejected.
+     */
+    @Test
+    public void testFindWorkBulkMissingPutCodeBecomesOrcidError() {
+        String putCodesAsString = "1,2,9999";
+        // The DAO only knows about 1 and 2; 9999 does not exist on this record.
+        List<WorkEntity> foundEntities = createWorkEntities(2);
+        List<Work> expectedWorks = createWorks(2);
+        OrcidError expectedError = new OrcidError();
+        expectedError.setResponseCode(400);
+        expectedError.setDeveloperMessage("invalid put code");
+
+        // findWorkBulk mutates the list it hands the DAO, so snapshot it at call time.
+        List<Long> requestedPutCodes = new ArrayList<>();
+        when(workDao.getWorkEntities(eq(ORCID_1), anyList())).thenAnswer(invocation -> {
+            List<Long> passed = invocation.getArgument(1);
+            requestedPutCodes.addAll(passed);
+            return new ArrayList<>(foundEntities);
+        });
+        when(jpaJaxbWorkAdapter.toWork(any(WorkEntity.class))).thenReturn(expectedWorks.get(0), expectedWorks.get(1));
+        when(orcidCoreExceptionMapper.getV3OrcidError(any(Throwable.class))).thenReturn(expectedError);
+
+        WorkBulk result = workManagerReadOnly.findWorkBulk(ORCID_1, putCodesAsString);
+
+        assertNotNull(result);
+        assertEquals(Arrays.asList(1L, 2L, 9999L), requestedPutCodes);
+
+        List<BulkElement> bulk = result.getBulk();
+        assertEquals(3, bulk.size());
+        assertTrue(bulk.get(0) instanceof Work);
+        assertTrue(bulk.get(1) instanceof Work);
+        assertTrue("the put code the DAO did not return must come back as an error", bulk.get(2) instanceof OrcidError);
+        assertEquals(expectedError, bulk.get(2));
+
+        // and the error must name the put code that was missing, not some other one
+        ArgumentCaptor<Throwable> errorCaptor = ArgumentCaptor.forClass(Throwable.class);
+        verify(orcidCoreExceptionMapper, times(1)).getV3OrcidError(errorCaptor.capture());
+        Throwable mapped = errorCaptor.getValue();
+        assertTrue(mapped instanceof PutCodeFormatException);
+        assertTrue("expected the message to name put code 9999 but was: " + mapped.getMessage(), mapped.getMessage().contains("9999"));
     }
 
     @Test
