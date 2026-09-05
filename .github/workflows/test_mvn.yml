@@ -196,7 +196,10 @@ jobs:
         with:
           name: coverage-${{ matrix.project }}
           path: artifact
-          if-no-files-found: ignore
+          # warn, not ignore, for the same reason as the database stage below: an
+          # artifact that never uploads makes the module vanish from the table
+          # rather than showing up as a module whose report is missing.
+          if-no-files-found: warn
           retention-days: 7
 
       - name: Publish unit test report for non forked repo
@@ -314,7 +317,10 @@ jobs:
         with:
           name: coverage-db-${{ matrix.project }}
           path: db-artifact
-          if-no-files-found: ignore
+          # warn, not ignore: an empty artifact still reaches coverage_report, which
+          # renders "no report" for a leg that died before JaCoCo ran. Ignoring it
+          # would upload nothing and read as "this module has no database tests".
+          if-no-files-found: warn
           retention-days: 7
 
       - name: Publish database test report

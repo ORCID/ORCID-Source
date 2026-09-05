@@ -48,6 +48,43 @@ retired.
 The JaCoCo agent costs about 12% of test time (measured on `orcid-persistence`:
 46.0s to 51.5s). Pass `-Djacoco.skip=true` locally when that matters.
 
+## Verified
+
+Run on 2026-09-05 against `4c802f0c13`, rebased on `origin/main` at `5c67777e9a`
+(v3.0.54). Unit stage 3,597 tests, database stage 763, both green from a clean
+tree.
+
+Parity with `main` is not a claim here, it is a table. Each row is a proof `main`
+holds by running a real delegator, manager and security manager over fixtures.
+Each mutation was applied to production code on its own, with a control run first,
+and reverted byte-identically afterwards; every one turned exactly the named test
+red and nothing else.
+
+| Mutation applied to production code | Went red |
+| --- | --- |
+| v3 work manager: delete the remove-path source guard | `v3.WorkManagerImplMockTest` |
+| v2 security manager: `checkSource` returns early | `OrcidSecurityManager_SourceTest` |
+| v3 `isMyToken`: delete the claimed-record refusal | `v3.OrcidSecurityManager_generalTest`, 2 cases |
+| v2 and v3 `isMyToken`: invert the claimed predicate | both general tests, 6 cases |
+| v2 address manager: delete the delete-path source guard | `AddressManagerImplMockTest` |
+| v2 address manager: pass null as the original visibility | `AddressManagerImplMockTest` |
+| v2 affiliations manager: drop the visibility re-apply | `AffiliationsManagerImplMockTest` |
+| v3 read-only work manager: delete the leftover put-code loop | `WorkManagerReadOnlyImplTest` |
+| v2 email read-only manager: delete the verified filter | `EmailManagerReadOnlyTest` |
+| v3 delegator: set a visibility before calling the manager | `..._WorksTest` visibility-null case |
+| v3 delegator: move the profile guard below the manager call | `...ErrorsTest`, 5 delete cases |
+
+The last row is the one worth understanding. Those five tests already asserted the
+right exception before the `@After` was added, and stayed green with the guard
+moved below the write. Only `verifyNoInteractions` catches it. That is R2's second
+half, and it is why the table is the evidence rather than the test names.
+
+Two things this table does not cover, deliberately. The research-resource and
+group-id delete guards have no proof here because `main` has none either, so
+adding one would be new work rather than parity. And a run of the whole suite
+under mutation would be stronger still; these eleven were chosen because each is
+the sole catcher of a rule `main` proves.
+
 ## Writing a unit test
 
 Use `@RunWith(MockitoJUnitRunner.class)`, put `@InjectMocks` on the production
@@ -56,10 +93,7 @@ touches.
 
 ```java
 @RunWith(MockitoJUnitRunner.class)
-public class WorkManagerImplTest {
-
-    @InjectMocks
-    private WorkManagerImpl workManager = new WorkManagerImpl();
+public class WorkManagerImplMockTest {
 
     @Mock
     private WorkDao workDao;
@@ -67,24 +101,57 @@ public class WorkManagerImplTest {
     @Mock
     private OrcidSecurityManager orcidSecurityManager;
 
-    @After
-    public void after() {
-        Actors.clear();
-    }
+    @Mock
+    private NotificationManager notificationManager;
+
+    @InjectMocks
+    private WorkManagerImpl workManager = new WorkManagerImpl(100, 100);
 
     @Test
-    public void deleteRefusesAWorkSourcedByAnotherClient() {
-        Actors.memberClient(Actors.CLIENT_A, Actors.USER_A, ScopePathType.ORCID_WORKS_UPDATE);
-        WorkEntity work = Works.sourcedBy(Actors.CLIENT_B);
-        when(workDao.getWork(Actors.USER_A, 1L)).thenReturn(work);
-        doThrow(new WrongSourceException()).when(orcidSecurityManager).checkSourceAndThrow(work);
+    public void checkSourceAndRemoveWorkRefusesAWorkSourcedByAnotherClient() {
+        WorkEntity work = new WorkEntity();
+        work.setId(WORK_ID);
+        work.setOrcid(Actors.USER_A);
+        work.setClientSourceId(Actors.CLIENT_B);
+        when(workDao.getWork(Actors.USER_A, WORK_ID)).thenReturn(work);
+        doThrow(wrongSource()).when(orcidSecurityManager).checkSourceAndThrow(work);
 
-        assertThrows(WrongSourceException.class,
-                () -> workManager.checkSourceAndRemoveWork(Actors.USER_A, 1L));
+        try {
+            workManager.checkSourceAndRemoveWork(Actors.USER_A, WORK_ID);
+            fail("a client must not be able to delete a work another client is the source of");
+        } catch (WrongSourceException expected) {
+            assertEquals("work", expected.getParams().get("activity"));
+        }
+
         verify(workDao, never()).removeWork(anyString(), anyLong());
+    }
+
+    private static WrongSourceException wrongSource() {
+        Map<String, String> params = new HashMap<>();
+        params.put("activity", "work");
+        return new WrongSourceException(params);
     }
 }
 ```
+
+Copied from `orcid-core/src/test/java/org/orcid/core/manager/v3/WorkManagerImplMockTest.java`,
+so it compiles and runs as written. Two details in it are the point of the whole
+example, and both were got wrong before:
+
+- **No actor is set.** At the manager layer nothing reads the security context:
+  `SourceManager` and `OrcidSecurityManager` are both mocks, so the five stubbings
+  `Actors.memberClient(...)` installs on a bearer token are never touched and the
+  strict runner fails the class with `UnnecessaryStubbingException`. Use the
+  `Actors` constants for vocabulary and set an actor only where something reads it,
+  which means the delegator and above.
+- **`WrongSourceException` has one constructor and it takes the params map.** The
+  parameters are worth asserting: they are what the API renders, and asserting the
+  type alone passes against an exception thrown for a different reason.
+
+The `verify(..., never())` line is the half that matters. Asserting the exception
+proves the guard ran; asserting the DAO was never called proves it ran *before*
+the write. A guard moved below the write still throws, and only the `never()`
+catches it -- see R2.
 
 ### Actors
 

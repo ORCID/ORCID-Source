@@ -115,7 +115,14 @@ def collect(artifacts_dir):
 
 
 def collect_db(artifacts_dir):
-    """Line/branch totals from the database stage, keyed by module."""
+    """Line/branch totals from the database stage, keyed by module.
+
+    A module whose leg ran but produced no readable report maps to None rather than
+    being dropped, so the table can tell "this module has no database tests" apart
+    from "this module's database leg blew up". The unit collector above already
+    makes that distinction; before the database stage became a matrix there was one
+    artifact for every module and the difference could not arise.
+    """
     out = {}
     for entry in sorted(os.listdir(artifacts_dir)):
         if not entry.startswith("coverage-db-"):
@@ -123,10 +130,13 @@ def collect_db(artifacts_dir):
         module = entry[len("coverage-db-"):]
         jacoco = os.path.join(artifacts_dir, entry, "jacoco.xml")
         if not os.path.isfile(jacoco):
+            out[module] = None
             continue
         try:
             totals, _files = read_jacoco(jacoco)
-        except ET.ParseError:
+        except ET.ParseError as exc:
+            print(f"warning: unreadable {jacoco}: {exc}", file=sys.stderr)
+            out[module] = None
             continue
         out[module] = totals
     return out
@@ -167,7 +177,10 @@ def module_table(modules, db_totals):
                f"| {lc:,} / {lc + lm:,} | {run} |")
         if show_db:
             db = db_totals.get(module)
-            if db is None:
+            if module in db_totals and db is None:
+                # the leg ran and produced nothing readable: not the same as no tests
+                row += " no report |"
+            elif db is None:
                 row += " — |"
             else:
                 dlc, dlm = db.get("LINE", (0, 0))
