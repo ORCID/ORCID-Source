@@ -444,9 +444,14 @@ jobs:
     # It assumes the @Category is written in the module that owns the test.
     # JUnit inherits categories, so an annotated base class in another module
     # would defeat it; that is safe today because every `extends BaseTest` is
-    # inside orcid-core, no module depends on orcid-core's test jar, and the
-    # cross-module base orcid-test/.../DBUnitTest.java is deliberately not
-    # annotated. Revisit if DBUnitTest ever is.
+    # inside orcid-core, and the cross-module base orcid-test/.../DBUnitTest.java
+    # is deliberately not annotated. Revisit if DBUnitTest ever is.
+    #
+    # orcid-core does publish a test jar, which the three web modules consume,
+    # but it carries only Actors and SecurityContextTestUtils: neither is
+    # annotated and neither is a base class, and surefire does not look for
+    # tests inside dependencies because dependenciesToScan is unset. Revisit if
+    # that jar is ever widened.
     runs-on: ubuntu-latest
     steps:
       - name: Harden the runner (Audit all outbound calls)

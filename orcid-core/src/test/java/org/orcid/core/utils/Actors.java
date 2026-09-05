@@ -59,11 +59,14 @@ import org.springframework.security.web.authentication.switchuser.SwitchUserGran
  * for the "item was created by another member" case.
  *
  * <p>
- * This class lives in {@code src/main} rather than a test source tree for the
- * same reason {@link SecurityContextTestUtils} does: it needs
- * {@link OrcidBearerTokenAuthentication} from this module, and {@code orcid-test}
- * cannot depend on {@code orcid-core} because the dependency already runs the
- * other way.
+ * This class cannot live in {@code orcid-test} with the rest of the shared test
+ * scaffolding: it needs {@link OrcidBearerTokenAuthentication} from this module,
+ * and {@code orcid-core} already depends on {@code orcid-test}, so the reverse
+ * edge would be a cycle. It stays in this module's test tree instead. The web
+ * modules get it through the test-jar that {@code orcid-core/pom.xml} attaches,
+ * which carries this class and {@link SecurityContextTestUtils} and nothing else:
+ * shipping the whole test tree would put a second {@code test-core-context.xml}
+ * on their classpath and leave which copy wins to classpath order.
  *
  * @see SecurityContextTestUtils the older, narrower helper this generalises
  */
