@@ -30,6 +30,7 @@ public class OrgDisambiguatedExternalIdentifierDaoImpl extends GenericDaoImpl<Or
     }
     
     @Override
+    @Transactional(readOnly = true)
     public OrgDisambiguatedExternalIdentifierEntity findByDetails(Long orgDisambiguatedId, String identifier, String identifierType) {
         try {
             TypedQuery<OrgDisambiguatedExternalIdentifierEntity> query = entityManager.createQuery("FROM OrgDisambiguatedExternalIdentifierEntity WHERE orgDisambiguated.id = :orgDisambiguatedId AND identifier = :identifier AND identifierType = :identifierType",
@@ -45,6 +46,7 @@ public class OrgDisambiguatedExternalIdentifierDaoImpl extends GenericDaoImpl<Or
     }
     
     @Override
+    @Transactional(readOnly = true)
     public List<OrgDisambiguatedExternalIdentifierEntity> findISNIsOfIncorrectLength(int batchSize) {
             TypedQuery<OrgDisambiguatedExternalIdentifierEntity> query = entityManager.createQuery("FROM OrgDisambiguatedExternalIdentifierEntity e WHERE LENGTH(e.identifier) != 16 AND e.identifierType = 'ISNI')",
                     OrgDisambiguatedExternalIdentifierEntity.class);
@@ -54,6 +56,7 @@ public class OrgDisambiguatedExternalIdentifierDaoImpl extends GenericDaoImpl<Or
     
     
     @Override
+    @Transactional(readOnly = true)
     public boolean exists(Long orgDisambiguatedId, String identifier, String identifierType) {
         try {
             TypedQuery<Long> query = entityManager.createQuery("SELECT count(e) FROM OrgDisambiguatedExternalIdentifierEntity e WHERE e.orgDisambiguated.id = :orgDisambiguatedId AND e.identifier = :identifier AND e.identifierType = :identifierType",
@@ -70,6 +73,7 @@ public class OrgDisambiguatedExternalIdentifierDaoImpl extends GenericDaoImpl<Or
     }
     
     @Override
+    @Transactional(readOnly = true)
     public List<OrgDisambiguatedExternalIdentifierEntity> findByIdentifierIdAndType(String identifier, String identifierType) {
         TypedQuery<OrgDisambiguatedExternalIdentifierEntity> query = entityManager.createQuery("FROM OrgDisambiguatedExternalIdentifierEntity WHERE identifier = :identifier AND identifierType = :identifierType",
                 OrgDisambiguatedExternalIdentifierEntity.class);

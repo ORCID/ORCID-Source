@@ -4,6 +4,8 @@ import java.util.List;
 
 import org.orcid.persistence.jpa.entities.ClientSecretEntity;
 import org.orcid.persistence.jpa.entities.keys.ClientSecretPk;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 public interface ClientSecretDao extends GenericDao<ClientSecretEntity, ClientSecretPk> {
     /**
@@ -13,6 +15,7 @@ public interface ClientSecretDao extends GenericDao<ClientSecretEntity, ClientSe
      * @param clientSecret
      * @return true if a entity is removed
      * */
+    @Transactional(propagation = Propagation.REQUIRED)
     boolean removeClientSecret(String clientId, String clientSecret);
 
     /**
@@ -22,6 +25,7 @@ public interface ClientSecretDao extends GenericDao<ClientSecretEntity, ClientSe
      * @param clientSecret
      * @return true if the entity was created
      * */
+    @Transactional(propagation = Propagation.REQUIRED)
     boolean createClientSecret(String clientId, String clientSecret);
 
     /**
@@ -30,6 +34,7 @@ public interface ClientSecretDao extends GenericDao<ClientSecretEntity, ClientSe
      * @param clientId
      * @return a list of all client secrets associated with a client
      * */
+    @Transactional(readOnly = true)
     List<ClientSecretEntity> getClientSecretsByClientId(String clientId);
 
     /**
@@ -38,6 +43,7 @@ public interface ClientSecretDao extends GenericDao<ClientSecretEntity, ClientSe
      * @param clientId
      * @return true if all keys where successfully revoked
      * */
+    @Transactional(propagation = Propagation.REQUIRED)
     boolean revokeAllKeys(String clientId);
 
     /**
@@ -46,6 +52,7 @@ public interface ClientSecretDao extends GenericDao<ClientSecretEntity, ClientSe
      * @param clientSecret
      * @return true if it was possible to set the client secret as primary
      * */
+    @Transactional(propagation = Propagation.REQUIRED)
     boolean setAsPrimary(ClientSecretEntity clientSecret);    
     
     /**
@@ -54,6 +61,7 @@ public interface ClientSecretDao extends GenericDao<ClientSecretEntity, ClientSe
      * @param limit the amount of results fetched by the query
      * @return A list of client secrets with non-primary keys
      * */
+    @Transactional(readOnly = true)
     List<ClientSecretEntity> getNonPrimaryKeys(Integer limit);
     
     /**
@@ -62,5 +70,6 @@ public interface ClientSecretDao extends GenericDao<ClientSecretEntity, ClientSe
      * @param conditional statement for the return query
      * @return true if the condition was met and all keys were removed
      * */
+    @Transactional(propagation = Propagation.REQUIRED)
     boolean removeWithCustomCondition(String condition);
 }

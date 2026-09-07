@@ -384,6 +384,7 @@
         <property name="idleTimeout" value="\${org.orcid.persistence.db.hikari.idleTimeout:600000}" />
         <property name="maxLifetime" value="\${org.orcid.persistence.db.hikari.maxLifetime:1800000}" />
         <property name="keepaliveTime" value="\${org.orcid.persistence.db.hikari.keepaliveTime:120000}" />
+        <property name="leakDetectionThreshold" value="\${org.orcid.persistence.db.hikari.leakDetectionThreshold:0}" />
         <!-- PostgreSQL JDBC Driver Properties -->
         <property name="dataSourceProperties">
             <props>
@@ -404,6 +405,7 @@
         <property name="idleTimeout" value="\${org.orcid.persistence.db.readonly.hikari.idleTimeout:600000}" />
         <property name="maxLifetime" value="\${org.orcid.persistence.db.readonly.hikari.maxLifetime:1800000}" />
         <property name="keepaliveTime" value="\${org.orcid.persistence.db.readonly.hikari.keepaliveTime:120000}" />
+        <property name="leakDetectionThreshold" value="\${org.orcid.persistence.db.readonly.hikari.leakDetectionThreshold:0}" />
         <property name="readOnly" value="true" />
         <!-- PostgreSQL JDBC Driver Properties -->
         <property name="dataSourceProperties">
