@@ -1,5 +1,6 @@
 package org.orcid.frontend.web.controllers;
 
+import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
@@ -72,6 +73,9 @@ public class WorksControllerTest extends BaseControllerTest {
 
     @Resource(name = "bibtexManagerV3")
     BibtexManager bibtexManager;
+
+    @Resource(name = "workDao")
+    org.orcid.persistence.dao.WorkDao workDao;
     
     @Mock
     WorkManager workManagerMock;
@@ -99,6 +103,36 @@ public class WorksControllerTest extends BaseControllerTest {
         removeDBUnitData(Lists.reverse(DATA_FILES));
     }
     
+    /**
+     * The put-code comes from the URL and the owner from the session. A work belonging to a
+     * different record must survive a delete asked for by this one.
+     */
+    @Test
+    public void removeWorkDoesNotDeleteAnotherRecordsWorkTest() {
+        String victimOrcid = "0000-0000-0000-0003";
+        Long victimPutCode = 11L;
+        // authenticated as 4444-4444-4444-4446 via BaseControllerTest
+        assertNotNull(workDao.getWork(victimOrcid, victimPutCode));
+
+        worksController.removeWork(String.valueOf(victimPutCode));
+
+        assertNotNull("another record's work must survive", workDao.getWork(victimOrcid, victimPutCode));
+    }
+
+    /**
+     * Changing visibility is a state change, so it must not be reachable by a GET: a GET is
+     * not CSRF-protected and can be triggered by a link or an image tag.
+     */
+    @Test
+    public void updateVisibilityIsNotReachableByGetTest() throws Exception {
+        java.lang.reflect.Method method = WorksController.class.getMethod("updateVisibility", String.class, String.class);
+        org.springframework.web.bind.annotation.RequestMapping mapping = method
+                .getAnnotation(org.springframework.web.bind.annotation.RequestMapping.class);
+        assertNotNull(mapping);
+        assertArrayEquals(new org.springframework.web.bind.annotation.RequestMethod[] {
+                org.springframework.web.bind.annotation.RequestMethod.POST }, mapping.method());
+    }
+
     @Test
     public void testGroupWorks() throws MissingGroupableExternalIDException {
         WorkManager oldWorkManager = (WorkManager) ReflectionTestUtils.getField(worksController, "workManager");

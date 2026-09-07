@@ -31,10 +31,10 @@ import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.orcid.core.aop.ProfileLastModifiedAspect;
-import org.orcid.core.adapter.jsonidentifier.converter.JSONWorkExternalIdentifiersConverterV3;
+import org.orcid.core.adapter.mapstruct.ContributorsRolesAndSequencesMapperV3;
 import org.orcid.core.adapter.v3.JpaJaxbWorkAdapter;
-import org.orcid.core.adapter.v3.converter.ContributorsRolesAndSequencesConverter;
-import org.orcid.core.adapter.v3.converter.WorkContributorsConverter;
+import org.orcid.core.adapter.mapstruct.JSONWorkExternalIdentifiersMapperV3;
+import org.orcid.core.adapter.mapstruct.WorkContributorsMapperV3;
 import org.orcid.core.exception.ExceedMaxNumberOfPutCodesException;
 import org.orcid.core.exception.OrcidCoreExceptionMapper;
 import org.orcid.core.exception.PutCodeFormatException;
@@ -100,10 +100,10 @@ public class WorkManagerReadOnlyImplTest {
     private ContributorUtils contributorUtils;
 
     @Mock
-    private WorkContributorsConverter workContributorsConverter;
+    private WorkContributorsMapperV3 workContributorsMapperV3;
 
     @Mock
-    private JSONWorkExternalIdentifiersConverterV3 jsonWorkExternalIdentifiersConverterV3;
+    private JSONWorkExternalIdentifiersMapperV3 jsonWorkExternalIdentifiersConverterV3;
 
     @Mock
     private ClientDetailsEntityCacheManager clientDetailsEntityCacheManager;
@@ -112,7 +112,7 @@ public class WorkManagerReadOnlyImplTest {
     private SourceNameCacheManager sourceNameCacheManager;
 
     @Mock
-    private ContributorsRolesAndSequencesConverter contributorsRolesAndSequencesConverter;
+    private ContributorsRolesAndSequencesMapperV3 contributorsRolesAndSequencesConverter;
 
     @Mock
     private SourceEntityUtils sourceEntityUtils;
@@ -134,7 +134,7 @@ public class WorkManagerReadOnlyImplTest {
         ReflectionTestUtils.setField(workManagerReadOnly, "worksExtendedCacheManager", worksExtendedCacheManager);
         ReflectionTestUtils.setField(workManagerReadOnly, "groupingSuggestionsManager", groupingSuggestionsManager);
         ReflectionTestUtils.setField(workManagerReadOnly, "contributorUtils", contributorUtils);
-        ReflectionTestUtils.setField(workManagerReadOnly, "workContributorsConverter", workContributorsConverter);
+        ReflectionTestUtils.setField(workManagerReadOnly, "workContributorsMapperV3", workContributorsMapperV3);
         ReflectionTestUtils.setField(workManagerReadOnly, "jsonWorkExternalIdentifiersConverterV3", jsonWorkExternalIdentifiersConverterV3);
         ReflectionTestUtils.setField(workManagerReadOnly, "clientDetailsEntityCacheManager", clientDetailsEntityCacheManager);
         ReflectionTestUtils.setField(workManagerReadOnly, "sourceNameCacheManager", sourceNameCacheManager);

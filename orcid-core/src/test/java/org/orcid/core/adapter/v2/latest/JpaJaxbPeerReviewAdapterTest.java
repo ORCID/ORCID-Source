@@ -249,6 +249,16 @@ public class JpaJaxbPeerReviewAdapterTest extends MockSourceNameCache {
         assertNotNull(peerReview.getSource());        
         assertEquals(CLIENT_SOURCE_ID, peerReview.getSource().retrieveSourcePath());
     }
+
+    @Test
+    public void fromPeerReviewEntityWithDissertationThesisSubjectTypeMapsToDissertation() throws IllegalAccessException {
+        PeerReviewEntity entity = getPeerReviewEntity();
+        entity.setSubjectType(org.orcid.jaxb.model.common.WorkType.DISSERTATION_THESIS.name());
+
+        PeerReview peerReview = jpaJaxbPeerReviewAdapter.toPeerReview(entity);
+
+        assertEquals(WorkType.DISSERTATION, peerReview.getSubjectType());
+    }
     
     @Test
     public void fromPeerReviewEntityToPeerReviewSummary() throws IllegalAccessException {

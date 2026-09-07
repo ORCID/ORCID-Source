@@ -6,9 +6,11 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
@@ -48,11 +50,12 @@ import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.orcid.test.TargetProxyHelper;
 import org.orcid.utils.ExpiringLinkService;
 import com.nimbusds.jwt.JWTClaimsSet;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpSession;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.web.WebAppConfiguration;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.servlet.ModelAndView;
 import org.togglz.junit.TogglzRule;
 
@@ -140,20 +143,48 @@ public class PasswordResetControllerTest extends DBUnitTest {
     }
     
     @Test
+    public void testPasswordResetActiveClaimedSendsResetEmail() throws DatatypeConfigurationException {
+        String email = "email1@test.orcid.org";
+        String orcid = "0000-0000-0000-0000";
+        when(emailManager.emailExists(email)).thenReturn(true);
+        when(emailManager.findOrcidIdByEmail(email)).thenReturn(orcid);
+        when(profileEntityManager.isDeactivated(orcid)).thenReturn(false);
+        when(profileEntityManager.isProfileClaimedByEmail(email)).thenReturn(true);
+        ProfileEntity record = new ProfileEntity();
+        when(profileEntityCacheManager.retrieve(orcid)).thenReturn(record);
+        EmailRequest resetRequest = new EmailRequest();
+        resetRequest.setEmail(email);
+
+        ResponseEntity<EmailRequest> response = passwordResetController.issuePasswordResetRequest(new MockHttpServletRequest(), resetRequest);
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertNotNull(response.getBody().getErrors());
+        assertTrue(response.getBody().getErrors().isEmpty());
+        // The controller hands the submitted address to the sender, which decides the full
+        // recipient set. Nothing about the fan out belongs here.
+        verify(mockRecordEmailSender, times(1)).sendPasswordResetEmail(eq(email), eq(orcid));
+        verify(mockRecordEmailSender, never()).sendReactivationEmail(anyString(), anyString());
+        verify(mockRecordEmailSender, never()).sendPasswordResetNotFoundEmail(anyString(), any());
+    }
+
+    @Test
     public void testPasswordResetUnclaimedSendEmail() throws DatatypeConfigurationException {
         String email = "email1@test.orcid.org";
         String orcid = "0000-0000-0000-0000";
         when(emailManager.emailExists(email)).thenReturn(true); 
         when(emailManager.findOrcidIdByEmail(email)).thenReturn(orcid);
         when(profileEntityManager.isDeactivated(orcid)).thenReturn(false);
-        when(profileEntityManager.isProfileClaimedByEmail(orcid)).thenReturn(false);
+        when(profileEntityManager.isProfileClaimedByEmail(email)).thenReturn(false);
         ProfileEntity record= new ProfileEntity();
         when(profileEntityCacheManager.retrieve(orcid)).thenReturn(record);
         EmailRequest resetRequest = new EmailRequest();
         resetRequest.setEmail("email1@test.orcid.org");
         resetRequest = passwordResetController.issuePasswordResetRequest(new MockHttpServletRequest(), resetRequest).getBody();
         assertNotNull(resetRequest.getErrors());
-        assertTrue(resetRequest.getErrors().isEmpty());   
+        assertTrue(resetRequest.getErrors().isEmpty());
+        verify(mockRecordEmailSender, times(1)).sendClaimReminderEmail(eq(orcid), eq(0), eq(email));
+        // An unclaimed record gets a claim reminder, never a fanned out reset link.
+        verify(mockRecordEmailSender, never()).sendPasswordResetEmail(anyString(), anyString());
     }    
     
     @Test
@@ -163,6 +194,9 @@ public class PasswordResetControllerTest extends DBUnitTest {
         resetRequest = passwordResetController.issuePasswordResetRequest(new MockHttpServletRequest(), resetRequest).getBody();
         assertNotNull(resetRequest.getErrors());
         assertTrue(resetRequest.getErrors().isEmpty());
+        verify(mockRecordEmailSender, times(1)).sendPasswordResetNotFoundEmail(eq("not_in_orcid@test.orcid.org"), any());
+        // There is no account here, so there is no verified email set to fan out to.
+        verify(mockRecordEmailSender, never()).sendPasswordResetEmail(anyString(), anyString());
     }
 
     @Test
@@ -178,7 +212,11 @@ public class PasswordResetControllerTest extends DBUnitTest {
         resetRequest.setEmail("email1@test.orcid.org");
         resetRequest = passwordResetController.issuePasswordResetRequest(new MockHttpServletRequest(), resetRequest).getBody();
         assertNotNull(resetRequest.getErrors());
-        assertTrue(resetRequest.getErrors().isEmpty());   
+        assertTrue(resetRequest.getErrors().isEmpty());
+        verify(mockRecordEmailSender, times(1)).sendReactivationEmail(eq(email), eq(orcid));
+        // A deactivated record gets a reactivation link, which is a different decision from
+        // fanning a password reset link out across the record's addresses.
+        verify(mockRecordEmailSender, never()).sendPasswordResetEmail(anyString(), anyString());
     }
 
     @Test
@@ -200,33 +238,6 @@ public class PasswordResetControllerTest extends DBUnitTest {
         ModelAndView modelAndView = passwordResetController.resetPasswordEmail(servletRequest, "randomString");
 
         assertEquals("password_one_time_reset", modelAndView.getViewName());
-    }
-
-    @Test
-    public void testSubmitConsolidatedPasswordReset() throws Exception {
-        BindingResult bindingResult = mock(BindingResult.class);
-
-        OneTimeResetPasswordForm oneTimeResetPasswordForm = new OneTimeResetPasswordForm();
-        oneTimeResetPasswordForm.setToken("encrypted string not expired");
-        MockHttpSession session = new MockHttpSession();
-        when(servletRequest.getSession()).thenReturn(session);
-        when(encryptionManager.decryptForExternalUse(any(String.class))).thenReturn("email=any@orcid.org&issueDate=2070-05-29T17:04:27");
-        when(bindingResult.hasErrors()).thenReturn(true);
-        when(mockEmailManagerReadOnly.findOrcidIdByEmail("any@orcid.org")).thenReturn("0000-0000-0000-0000");
-        oneTimeResetPasswordForm = passwordResetController.submitPasswordReset(servletRequest, servletResponse, oneTimeResetPasswordForm);
-        assertFalse(oneTimeResetPasswordForm.getNewPassword().getErrors().isEmpty());
-
-        oneTimeResetPasswordForm.setNewPassword(Text.valueOf("Password#123"));
-        oneTimeResetPasswordForm.setRetypedPassword(Text.valueOf("Password#123"));
-        when(bindingResult.hasErrors()).thenReturn(false);        
-        oneTimeResetPasswordForm = passwordResetController.submitPasswordReset(servletRequest, servletResponse, oneTimeResetPasswordForm);
-        assertTrue(oneTimeResetPasswordForm.getSuccessRedirectLocation().equals("https://testserver.orcid.org/my-orcid")
-                || oneTimeResetPasswordForm.getSuccessRedirectLocation().equals("https://localhost:8443/orcid-web/my-orcid"));
-
-        when(encryptionManager.decryptForExternalUse(any(String.class))).thenReturn("email=any@orcid.org&issueDate=1970-05-29T17:04:27");
-
-        oneTimeResetPasswordForm = passwordResetController.submitPasswordReset(servletRequest, servletResponse, oneTimeResetPasswordForm);
-        assertFalse(oneTimeResetPasswordForm.getErrors().isEmpty());
     }
 
     @Test

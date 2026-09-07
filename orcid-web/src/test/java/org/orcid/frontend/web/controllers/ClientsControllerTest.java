@@ -6,6 +6,7 @@ package org.orcid.frontend.web.controllers;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
@@ -32,6 +33,7 @@ import org.orcid.pojo.ajaxForm.Text;
 import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -293,6 +295,50 @@ public class ClientsControllerTest extends BaseControllerTest {
             }
         }
         assertTrue(found);
+    }
+
+    /**
+     * The group path has the same shape as the individual one: the client id comes from the
+     * request body, so a client belonging to another member must be refused.
+     */
+    @Test
+    public void editClientOfAnotherMemberIsRefusedTest() {
+        // other tests in this class create clients, and getClients() sorts, so pick by id
+        Client client = findClient("APP-5555555555555555");
+        assertNotNull(client);
+        String originalName = client.getDisplayName().getValue();
+
+        Authentication original = SecurityContextHolder.getContext().getAuthentication();
+        try {
+            // sign in as a different member; the client id in the body is left untouched
+            UserDetails other = new User("4444-4444-4444-4446", "password", List.of());
+            UsernamePasswordAuthenticationToken otherAuth = new UsernamePasswordAuthenticationToken("4444-4444-4444-4446", "password",
+                    Arrays.asList(new SimpleGrantedAuthority(OrcidRoles.ROLE_PREMIUM_INSTITUTION.name())));
+            otherAuth.setDetails(other);
+            SecurityContextHolder.getContext().setAuthentication(otherAuth);
+
+            client.getDisplayName().setValue("Taken over");
+            // an attacker constructs the body themselves, so it carries no secret
+            client.setClientSecret(null);
+            Client result = controller.editClient(client);
+
+            assertFalse("the edit should be refused", result.getErrors().isEmpty());
+            assertNull("the refusal must not hand back the client secret", result.getClientSecret());
+        } finally {
+            SecurityContextHolder.getContext().setAuthentication(original);
+        }
+
+        // the owner still sees the original configuration
+        assertEquals(originalName, findClient("APP-5555555555555555").getDisplayName().getValue());
+    }
+
+    private Client findClient(String clientId) {
+        for (Client candidate : controller.getClients()) {
+            if (clientId.equals(candidate.getClientId().getValue())) {
+                return candidate;
+            }
+        }
+        return null;
     }
 
     @Test

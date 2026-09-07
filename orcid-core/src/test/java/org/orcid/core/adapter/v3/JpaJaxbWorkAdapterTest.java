@@ -201,6 +201,38 @@ public class JpaJaxbWorkAdapterTest extends MockSourceNameCache {
         // Identifier URIs should always be http, event if base url is https
         assertEquals("https://testserver.orcid.org/client/" + CLIENT_SOURCE_ID, w.getSource().retriveSourceUri());
     }
+
+    @Test
+    public void fromWorkEntityWithBlankSubtitleDoesNotCreateSubtitleWrapper() throws IllegalAccessException {
+        WorkEntity work = getWorkEntity();
+        work.setSubtitle(" ");
+
+        Work mappedWork = jpaJaxbWorkAdapter.toWork(work);
+
+        assertNull(mappedWork.getWorkTitle().getSubtitle());
+    }
+
+    @Test
+    public void fromWorkEntityWithBlankUrlDoesNotCreateUrlWrapper() throws IllegalAccessException {
+        WorkEntity work = getWorkEntity();
+        work.setWorkUrl(" ");
+
+        Work mappedWork = jpaJaxbWorkAdapter.toWork(work);
+
+        assertNull(mappedWork.getUrl());
+    }
+
+    @Test
+    public void minimizedWorkWithPartialPublicationDateDoesNotCreateEmptyYearWrapper() {
+        PublicationDateEntity entity = new PublicationDateEntity(null, 1, 1);
+
+        org.orcid.jaxb.model.v3.release.common.PublicationDate publicationDate = ReflectionTestUtils.invokeMethod(
+                jpaJaxbWorkAdapter, "mapPublicationDate", entity);
+
+        assertNull(publicationDate.getYear());
+        assertNotNull(publicationDate.getMonth());
+        assertNotNull(publicationDate.getDay());
+    }
     
     @Test
     public void fromWorkEntityToUserOBOWorkTest() throws IllegalAccessException {

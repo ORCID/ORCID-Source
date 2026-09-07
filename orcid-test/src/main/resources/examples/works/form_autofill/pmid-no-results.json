@@ -1,0 +1,16 @@
+{
+	"version": "6.9",
+	"hitCount": 0,
+	"nextCursorMark": "xxx",
+	"request": {
+		"query": "EXT_ID:pmid404",
+		"resultType": "core",
+		"synonym": false,
+		"cursorMark": "*",
+		"pageSize": 25,
+		"sort": ""
+	},
+	"resultList": {
+		"result": []
+	}
+}

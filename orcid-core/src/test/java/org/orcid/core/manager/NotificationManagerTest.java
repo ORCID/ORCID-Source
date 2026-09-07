@@ -37,7 +37,7 @@ import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.orcid.core.adapter.JpaJaxbNotificationAdapter;
-import org.orcid.core.adapter.impl.JpaJaxbNotificationAdapterImpl;
+import org.orcid.core.adapter.mapstruct.impl.JpaJaxbNotificationAdapterImpl;
 import org.orcid.core.api.OrcidApiConstants;
 import org.orcid.core.manager.impl.NotificationManagerImpl;
 import org.orcid.core.manager.read_only.EmailManagerReadOnly;

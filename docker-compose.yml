@@ -30,9 +30,11 @@ services:
       POSTGRES_DB: postgres
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
+    command: postgres -c config_file=/etc/postgresql/postgresql.conf
     volumes:
       - postgres_data:/var/lib/postgresql/data
       - ./docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d
+      - ./postgres/postgresql.conf:/etc/postgresql/postgresql.conf:ro
     ports:
       - '5432:5432'
     profiles:
@@ -122,10 +124,9 @@ services:
       - papi
 
   ui_frontend:
+    # No build section: the frontend image is built in the separate orcid-angular
+    # repo (its Dockerfile.build) and published to the registry. It is pulled here.
     image: ${DOCKER_REG_PRIVATE}/orcid/registry/orcid-web-frontend-${FRONTEND_LABEL:-qa}:${FRONTEND_TAG:-0.0.1}
-    build:
-      context: .
-      dockerfile: 'FIXME: must build in the orcid-angular project first Dockerfile.build'
     ports:
       - 0.0.0.0:13106:80
     profiles:

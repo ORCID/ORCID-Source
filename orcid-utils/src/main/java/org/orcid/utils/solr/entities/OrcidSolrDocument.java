@@ -200,7 +200,11 @@ public class OrcidSolrDocument {
     // e.g. doi-version-of
     @Field("*" + SolrConstants.DYNAMIC_VERSION_OF)
     private Map<String, List<String>> versionOfIds;
-    
+
+    // e.g. grant_number-funded-by
+    @Field("*" + SolrConstants.DYNAMIC_FUNDED_BY)
+    private Map<String, List<String>> fundedByIds;
+
     // e.g. ringgold-org-id
     @Field("*" + SolrConstants.DYNAMIC_ORGANISATION_ID)
     private Map<String, Set<String>> organisationIds;
@@ -662,6 +666,14 @@ public class OrcidSolrDocument {
         this.versionOfIds = versionOfIds;
     }
 
+    public Map<String, List<String>> getFundedByIds() {
+        return fundedByIds;
+    }
+
+    public void setFundedByIds(Map<String, List<String>> fundedByIds) {
+        this.fundedByIds = fundedByIds;
+    }
+
     public Map<String, Set<String>> getOrganisationIds() {
         return organisationIds;
     }
@@ -784,6 +796,7 @@ public class OrcidSolrDocument {
         result = prime * result + ((externalIdSources == null) ? 0 : externalIdSources.hashCode());
         result = prime * result + ((externalIdTypeAndValue == null) ? 0 : externalIdTypeAndValue.hashCode());
         result = prime * result + ((familyName == null) ? 0 : familyName.hashCode());
+        result = prime * result + ((fundedByIds == null) ? 0 : fundedByIds.hashCode());
         result = prime * result + ((fundingTitles == null) ? 0 : fundingTitles.hashCode());
         result = prime * result + ((givenAndFamilyNames == null) ? 0 : givenAndFamilyNames.hashCode());
         result = prime * result + ((givenNames == null) ? 0 : givenNames.hashCode());
@@ -940,6 +953,11 @@ public class OrcidSolrDocument {
             if (other.familyName != null)
                 return false;
         } else if (!familyName.equals(other.familyName))
+            return false;
+        if (fundedByIds == null) {
+            if (other.fundedByIds != null)
+                return false;
+        } else if (!fundedByIds.equals(other.fundedByIds))
             return false;
         if (fundingTitles == null) {
             if (other.fundingTitles != null)

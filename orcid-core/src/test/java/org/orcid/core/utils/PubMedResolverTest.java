@@ -1,7 +1,10 @@
 package org.orcid.core.utils;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
@@ -32,6 +35,7 @@ import org.orcid.jaxb.model.common.WorkType;
 import org.orcid.jaxb.model.v3.release.record.Work;
 import org.orcid.pojo.ContributorsRolesAndSequences;
 import org.orcid.pojo.IdentifierType;
+import org.orcid.pojo.PIDResolutionResult;
 import org.orcid.pojo.WorkExtended;
 import org.orcid.test.TargetProxyHelper;
 import org.springframework.test.util.ReflectionTestUtils;
@@ -139,8 +143,6 @@ public class PubMedResolverTest {
             }
         });
 
-        when(cache.isHttp200(anyString())).thenReturn(true);
-
         when(cache.get("https://www.ebi.ac.uk/europepmc/webservices/rest/search?query=PMCID:PMC1&resultType=core&format=json", MediaType.APPLICATION_JSON))
                 .thenAnswer(new Answer<InputStream>() {
 
@@ -157,6 +159,16 @@ public class PubMedResolverTest {
                     @Override
                     public InputStream answer(InvocationOnMock invocation) throws Throwable {
                         return PubMedResolverTest.class.getResourceAsStream("/examples/works/form_autofill/pmid.json");
+                    }
+
+                });
+
+        when(cache.get("https://www.ebi.ac.uk/europepmc/webservices/rest/search?query=EXT_ID:pmid404&resultType=core&format=json", MediaType.APPLICATION_JSON))
+                .thenAnswer(new Answer<InputStream>() {
+
+                    @Override
+                    public InputStream answer(InvocationOnMock invocation) throws Throwable {
+                        return PubMedResolverTest.class.getResourceAsStream("/examples/works/form_autofill/pmid-no-results.json");
                     }
 
                 });
@@ -236,6 +248,57 @@ public class PubMedResolverTest {
         assertEquals(getRole(contributors, 1), "author");
         assertEquals("Author Two", getName(contributors, 1));
         assertEquals("ORCID Consortium", getName(contributors, 2));
+    }
+
+    /**
+     * PD-6180: NCBI answers HTTP 203 for pubmed.ncbi.nlm.nih.gov landing pages, so
+     * resolution must not depend on that page returning 200.
+     */
+    @Test
+    public void resolvePMIDMetadataWhenLandingPageIsNotHttp200Test() {
+        when(cache.isHttp200(anyString())).thenReturn(false);
+
+        WorkExtended work = resolver.resolveMetadata("pmid", "pmid1");
+        assertNotNull(work);
+        assertEquals("PMID title", work.getWorkTitle().getTitle().getContent());
+    }
+
+    @Test
+    public void resolvePMIDWhenLandingPageIsNotHttp200Test() {
+        when(cache.isHttp200(anyString())).thenReturn(false);
+
+        PIDResolutionResult result = resolver.resolve("pmid", "pmid1");
+        assertTrue(result.isResolved());
+        assertTrue(result.getAttemptedResolution());
+        assertTrue(result.isValidFormat());
+        assertEquals("https://www.ncbi.nlm.nih.gov/pubmed/pmid1", result.getGeneratedUrl());
+    }
+
+    @Test
+    public void resolvePMIDUnknownToEuropePMCTest() {
+        PIDResolutionResult result = resolver.resolve("pmid", "pmid404");
+        assertFalse(result.isResolved());
+        assertTrue(result.getAttemptedResolution());
+        assertTrue(result.isValidFormat());
+        assertNull(result.getGeneratedUrl());
+    }
+
+    @Test
+    public void resolveMetadataPMIDUnknownToEuropePMCTest() {
+        assertNull(resolver.resolveMetadata("pmid", "pmid404"));
+    }
+
+    @Test
+    public void resolvePMIDNotAttemptedForEmptyValueTest() {
+        PIDResolutionResult result = resolver.resolve("pmid", "");
+        assertFalse(result.isResolved());
+        assertFalse(result.getAttemptedResolution());
+    }
+
+    @Test
+    public void resolveMetadataCallsEuropePMCOnlyOnceTest() throws IOException {
+        assertNotNull(resolver.resolveMetadata("pmid", "pmid1"));
+        Mockito.verify(cache, Mockito.times(1)).get(anyString(), anyString());
     }
 
     private String getRole(List<ContributorsRolesAndSequences> contributors, Integer contributorsIndex) {

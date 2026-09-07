@@ -94,6 +94,7 @@ public class DeveloperToolsController extends BaseWorkspaceController {
 
         if (client.getErrors().isEmpty()) {
             org.orcid.jaxb.model.v3.release.client.Client clientToCreate = client.toModelObject();
+            clientToCreate.setGroupProfileId(getCurrentUserOrcid());
             try {
                 if(PojoUtil.isEmpty(client.getClientId())) {
                     clientToCreate = clientManager.createPublicClient(clientToCreate);
@@ -116,6 +117,12 @@ public class DeveloperToolsController extends BaseWorkspaceController {
         validateClient(client);
 
         if (client.getErrors().isEmpty()) {
+            if (!clientBelongsToCurrentUser(client.getClientId())) {
+                client.setErrors(new ArrayList<String>());
+                client.getErrors().add(getMessage("manage.developer_tools.group.unable_to_update"));
+                return client;
+            }
+
             org.orcid.jaxb.model.v3.release.client.Client clientToEdit = client.toModelObject();
             try {
                 clientToEdit = clientManager.edit(clientToEdit, false);
@@ -151,6 +158,24 @@ public class DeveloperToolsController extends BaseWorkspaceController {
         return clientManager.resetClientSecret(client.getClientId().getValue());
     }    
     
+    /**
+     * A client may only be edited by the member that owns it. The client id arrives in the
+     * request body, so it must be checked against the session rather than trusted.
+     */
+    private boolean clientBelongsToCurrentUser(Text clientId) {
+        if (PojoUtil.isEmpty(clientId)) {
+            return false;
+        }
+        try {
+            org.orcid.jaxb.model.v3.release.client.Client theClient = clientManagerReadOnly.get(clientId.getValue());
+            return theClient != null && theClient.getGroupProfileId() != null
+                    && theClient.getGroupProfileId().equals(getCurrentUserOrcid());
+        } catch (Exception e) {
+            LOGGER.warn("Unable to load client to verify ownership");
+            return false;
+        }
+    }
+
     /**
      * Validates the Client object
      * 

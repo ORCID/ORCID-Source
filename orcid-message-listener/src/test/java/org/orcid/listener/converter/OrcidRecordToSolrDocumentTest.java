@@ -1,6 +1,7 @@
 package org.orcid.listener.converter;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
@@ -13,13 +14,25 @@ import jakarta.xml.bind.Unmarshaller;
 
 import org.junit.Test;
 import org.orcid.jaxb.model.common.PeerReviewType;
+import org.orcid.jaxb.model.common.Relationship;
 import org.orcid.jaxb.model.common.Role;
 import org.orcid.jaxb.model.v3.release.common.DisambiguatedOrganization;
+import org.orcid.jaxb.model.v3.release.common.OrcidIdentifier;
 import org.orcid.jaxb.model.v3.release.common.Organization;
+import org.orcid.jaxb.model.v3.release.record.ExternalID;
+import org.orcid.jaxb.model.v3.release.record.ExternalIDs;
+import org.orcid.jaxb.model.v3.release.record.Person;
 import org.orcid.jaxb.model.v3.release.record.Record;
 import org.orcid.jaxb.model.v3.release.record.ResearchResource;
 import org.orcid.jaxb.model.v3.release.record.ResearchResourceHosts;
 import org.orcid.jaxb.model.v3.release.record.ResearchResourceItem;
+import org.orcid.jaxb.model.v3.release.record.summary.ActivitiesSummary;
+import org.orcid.jaxb.model.v3.release.record.summary.FundingGroup;
+import org.orcid.jaxb.model.v3.release.record.summary.FundingSummary;
+import org.orcid.jaxb.model.v3.release.record.summary.Fundings;
+import org.orcid.jaxb.model.v3.release.record.summary.WorkGroup;
+import org.orcid.jaxb.model.v3.release.record.summary.WorkSummary;
+import org.orcid.jaxb.model.v3.release.record.summary.Works;
 import org.orcid.listener.solr.OrcidRecordToSolrDocument;
 import org.orcid.utils.solr.entities.OrcidSolrDocument;
 import org.orcid.utils.solr.entities.SolrConstants;
@@ -112,10 +125,95 @@ public class OrcidRecordToSolrDocumentTest {
         assertTrue(v3Doc.getResearchResourceProposalTitles().contains("Giant Laser Award"));
         assertTrue(v3Doc.getResearchResourceProposalTitles().contains("Giant Laser Award2"));
         assertEquals(2, v3Doc.getResearchResourceItemNames().size());
-        assertTrue(v3Doc.getResearchResourceItemNames().contains("Giant Laser 1")); 
-        assertTrue(v3Doc.getResearchResourceItemNames().contains("Moon Targets"));        
+        assertTrue(v3Doc.getResearchResourceItemNames().contains("Giant Laser 1"));
+        assertTrue(v3Doc.getResearchResourceItemNames().contains("Moon Targets"));
+
+        // Relationship based identifiers. These were previously untested, so they are asserted here
+        // to protect the existing self/part-of behaviour.
+        assertNotNull(v3Doc.getSelfIds());
+        assertNotNull(v3Doc.getPartOfIds());
+        assertNotNull(v3Doc.getVersionOfIds());
+        assertNotNull(v3Doc.getFundedByIds());
+
+        // The funding in this record carries a grant_number external id with a 'self' relationship,
+        // but fundings do not contribute relationship based identifiers. Funding grant numbers stay
+        // searchable through the separate 'grant-numbers' field asserted above.
+        assertTrue(!v3Doc.getSelfIds().containsKey("grant_number" + SolrConstants.DYNAMIC_SELF));
+
+        // This record has no version-of or funded-by identifiers
+        assertTrue(v3Doc.getVersionOfIds().isEmpty());
+        assertTrue(v3Doc.getFundedByIds().isEmpty());
     }
-    
+
+    @Test
+    public void convertIndexesVersionOfAndFundedByTest() {
+        Record record = new Record();
+        record.setOrcidIdentifier(new OrcidIdentifier("0000-0001-2345-6789"));
+        // The activities are only indexed when a person is present on the record
+        record.setPerson(new Person());
+
+        WorkSummary work = new WorkSummary();
+        work.setExternalIdentifiers(externalIds(
+                externalId("doi", "10.1000/self", Relationship.SELF),
+                externalId("doi", "10.1000/part-of", Relationship.PART_OF),
+                externalId("doi", "10.1000/version-of", Relationship.VERSION_OF),
+                externalId("grant_number", "work-funded-by", Relationship.FUNDED_BY)));
+        WorkGroup workGroup = new WorkGroup();
+        workGroup.getWorkSummary().add(work);
+        Works works = new Works();
+        works.getWorkGroup().add(workGroup);
+
+        FundingSummary funding = new FundingSummary();
+        funding.setExternalIdentifiers(externalIds(
+                externalId("proposal-id", "funding-self", Relationship.SELF),
+                externalId("grant_number", "funding-funded-by", Relationship.FUNDED_BY)));
+        FundingGroup fundingGroup = new FundingGroup();
+        fundingGroup.getFundingSummary().add(funding);
+        Fundings fundings = new Fundings();
+        fundings.getFundingGroup().add(fundingGroup);
+
+        ActivitiesSummary activities = new ActivitiesSummary();
+        activities.setWorks(works);
+        activities.setFundings(fundings);
+        record.setActivitiesSummary(activities);
+
+        OrcidSolrDocument doc = new OrcidRecordToSolrDocument(false).convert(record, null);
+
+        // version-of on works is the gap this change closes
+        assertEquals(Arrays.asList("10.1000/version-of"), doc.getVersionOfIds().get("doi" + SolrConstants.DYNAMIC_VERSION_OF));
+
+        // funded-by was not indexed for any activity type before this change
+        assertEquals(Arrays.asList("work-funded-by"), doc.getFundedByIds().get("grant_number" + SolrConstants.DYNAMIC_FUNDED_BY));
+
+        // self and part-of keep working
+        assertEquals(Arrays.asList("10.1000/self"), doc.getSelfIds().get("doi" + SolrConstants.DYNAMIC_SELF));
+        assertEquals(Arrays.asList("10.1000/part-of"), doc.getPartOfIds().get("doi" + SolrConstants.DYNAMIC_PART_OF));
+
+        // Fundings deliberately contribute no relationship based identifiers. Indexing them would
+        // change the results of self and part-of queries that already work today, which is out of
+        // scope for PD-6176. The funding above carries both a 'self' and a 'funded-by' identifier
+        // and neither should appear.
+        assertNull(doc.getSelfIds().get("proposal-id" + SolrConstants.DYNAMIC_SELF));
+        assertNull(doc.getFundedByIds().get("proposal-id" + SolrConstants.DYNAMIC_FUNDED_BY));
+        assertTrue(!doc.getFundedByIds().get("grant_number" + SolrConstants.DYNAMIC_FUNDED_BY).contains("funding-funded-by"));
+    }
+
+    private ExternalIDs externalIds(ExternalID... ids) {
+        ExternalIDs externalIds = new ExternalIDs();
+        for (ExternalID id : ids) {
+            externalIds.getExternalIdentifier().add(id);
+        }
+        return externalIds;
+    }
+
+    private ExternalID externalId(String type, String value, Relationship relationship) {
+        ExternalID id = new ExternalID();
+        id.setType(type);
+        id.setValue(value);
+        id.setRelationship(relationship);
+        return id;
+    }
+
     private Record getRecord(String name) throws JAXBException {
         JAXBContext context = JAXBContext.newInstance(Record.class);
         Unmarshaller unmarshaller = context.createUnmarshaller();

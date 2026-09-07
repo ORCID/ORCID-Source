@@ -33,6 +33,7 @@ public class StatisticsDaoImpl implements StatisticsDao {
     }
     
     @Override
+    @Transactional(propagation = Propagation.REQUIRED)
     public Long createKey() {
         StatisticKeyEntity key = new StatisticKeyEntity();
         key.setGenerationDate(new Date());

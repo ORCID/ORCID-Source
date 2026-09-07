@@ -11,8 +11,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 
-import jakarta.annotation.Resource;
-
 import org.apache.commons.lang3.StringUtils;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
@@ -49,7 +47,9 @@ import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.utils.OrcidStringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -57,19 +57,20 @@ public class DOIResolver implements LinkResolver, MetadataResolver {
     
     private static final Logger LOG = LoggerFactory.getLogger(DOIResolver.class);
 
-    @Resource
-    PIDNormalizationService normalizationService;
+    @Autowired
+    private PIDNormalizationService normalizationService;
 
-    @Resource
-    DOINormalizer norm;
+    @Autowired
+    private DOINormalizer norm;
 
-    @Resource
-    PIDResolverCache cache;
+    @Autowired
+    private PIDResolverCache cache;
 
-    @Resource
+    @Autowired
+    @Lazy
     private IdentifierTypeManager identifierTypeManager;
 
-    @Resource
+    @Autowired
     protected LocaleManager localeManager;
 
     @Value("${org.orcid.core.work.contributors.ui.max:50}")
@@ -213,7 +214,7 @@ public class DOIResolver implements LinkResolver, MetadataResolver {
             }
             result.getWorkExternalIdentifiers().getExternalIdentifier().add(extId);
             //get Citation Data
-            String bibtexCitation = getBibtexCitationData(idType.getResolutionPrefix() + doi);
+            String bibtexCitation = getBibtexCitationData(idType != null ? idType.getResolutionPrefix() + doi : doi);
             if(!StringUtils.isBlank(bibtexCitation)) {
                 Citation citation = new Citation();
                 citation.setWorkCitationType(CitationType.BIBTEX);
@@ -388,10 +389,8 @@ public class DOIResolver implements LinkResolver, MetadataResolver {
         return result;
     }
     
-    
     private String getBibtexCitationData(String url) {
         try {
-            
             InputStream inputStream = cache.get(url, "application/x-bibtex");
             BufferedReader in = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8.name()));
 
@@ -412,7 +411,6 @@ public class DOIResolver implements LinkResolver, MetadataResolver {
             return null;
         }
         return null;
-        
     }
 
     private String removeSquareBrackets(String text) {
