@@ -536,7 +536,6 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
             public Boolean doInTransaction(TransactionStatus status) {
                 String encryptedPassword = encryptionManager.hashForInternalUse(password);
                 profileDao.changeEncryptedPassword(orcid, encryptedPassword);
-                profileHistoryEventManager.recordEvent(ProfileHistoryEventType.RESET_PASSWORD, orcid);
                 return true;
             }
         });

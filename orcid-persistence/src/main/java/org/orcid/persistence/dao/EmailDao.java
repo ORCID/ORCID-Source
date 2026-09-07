@@ -23,7 +23,7 @@ public interface EmailDao extends GenericDao<EmailEntity, String> {
 
     void addEmail(String orcid, String email, String emailHash, String visibility, String sourceId, String clientSourceId);      
 
-    void removeEmail(String orcid, String email);
+    boolean removeEmail(String orcid, String email);
     
     @SuppressWarnings("rawtypes")
     List findIdByCaseInsensitiveEmail(List<String> emails);

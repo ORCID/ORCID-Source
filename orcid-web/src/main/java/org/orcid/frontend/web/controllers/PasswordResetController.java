@@ -21,8 +21,11 @@ import org.jasypt.exceptions.EncryptionOperationNotPossibleException;
 import org.orcid.core.constants.OrcidOauth2Constants;
 import org.orcid.core.manager.*;
 import org.orcid.core.manager.v3.ProfileEntityManager;
+import org.orcid.core.manager.v3.ProfileHistoryEventManager;
 import org.orcid.core.manager.v3.read_only.EmailManagerReadOnly;
+import org.orcid.core.profile.history.ProfileHistoryEventType;
 import org.orcid.core.togglz.Features;
+import org.orcid.core.utils.OrcidRequestUtil;
 import org.orcid.core.utils.PasswordResetToken;
 import org.orcid.core.utils.cache.redis.RedisClient;
 import org.orcid.frontend.email.RecordEmailSender;
@@ -103,6 +106,9 @@ public class PasswordResetController extends BaseController {
 
     @Resource
     private RedisClient redisClient;
+
+    @Resource
+    private ProfileHistoryEventManager profileHistoryEventManager;
 
     private static final List<String> RESET_PASSWORD_PARAMS_WHITELIST = Arrays.asList("_");
 
@@ -334,6 +340,9 @@ public class PasswordResetController extends BaseController {
         profileEntityCacheManager.remove(orcid);
 
         markResetTokenAsUsed(orcid, token, verificationResult);
+
+        // Store reset password event
+        profileHistoryEventManager.recordResetPasswordEvent(orcid, OrcidRequestUtil.getIpAddress(request));
 
         String redirectUrl = calculateRedirectUrl(request, response, false);
         oneTimeResetPasswordForm.setSuccessRedirectLocation(redirectUrl);
