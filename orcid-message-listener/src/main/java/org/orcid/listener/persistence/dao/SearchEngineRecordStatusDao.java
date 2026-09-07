@@ -20,12 +20,14 @@ public class SearchEngineRecordStatusDao {
     @PersistenceContext
     protected EntityManager entityManager;
 
+    @Transactional(readOnly = true)
     public SearchEngineRecordStatusEntity get(String orcid) {
         Query query = entityManager.createNativeQuery("SELECT * FROM search_engine_record_status WHERE orcid = :orcid", SearchEngineRecordStatusEntity.class);
         query.setParameter("orcid", orcid);
         return (SearchEngineRecordStatusEntity) query.getSingleResult();
     }
 
+    @Transactional(readOnly = true)
     public boolean exists(String orcid) {
         Long count = entityManager.createQuery(
                         "SELECT COUNT(s) FROM SearchEngineRecordStatusEntity s WHERE s.id = :orcid",
@@ -63,6 +65,7 @@ public class SearchEngineRecordStatusDao {
         return query.executeUpdate() > 0;
     }
     
+    @Transactional(readOnly = true)
     public List<SearchEngineRecordStatusEntity> getFailedElements(int batchSize) {
         TypedQuery<SearchEngineRecordStatusEntity> query = entityManager.createQuery(
                 "FROM SearchEngineRecordStatusEntity WHERE solrStatus > 0 ORDER BY solrLastIndexed",
