@@ -1,3 +1,9 @@
+## v3.0.58 - 2026-09-07
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.0.57...v3.0.58)
+
+- [#7678](https://github.com/ORCID/ORCID-Source/pull/7678): More transactional  with readonly or propagation
+
 ## v3.0.57 - 2026-09-07
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.0.56...v3.0.57)
