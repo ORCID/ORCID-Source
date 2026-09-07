@@ -27,6 +27,7 @@ public class OrcidOauth2AuthoriziationCodeDetailDaoImpl extends GenericDaoImpl<O
     }
 
     @Override
+    @Transactional
     public OrcidOauth2AuthoriziationCodeDetail removeAndReturn(String code) {
         OrcidOauth2AuthoriziationCodeDetail orcidOauth2AuthoriziationCodeDetail = find(code);
 
