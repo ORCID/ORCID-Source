@@ -205,7 +205,6 @@ public class ClientDetailsManagerImpl extends ClientDetailsManagerReadOnlyImpl i
     }    
 
     @Override
-    @Transactional
     public void removeByClientId(String clientId) {
         clientDetailsDao.remove(clientId);
     }    
@@ -221,7 +220,6 @@ public class ClientDetailsManagerImpl extends ClientDetailsManagerReadOnlyImpl i
     }       
 
     @Override
-    @Transactional
     public void updateLastModified(String clientId) {
         clientDetailsDao.updateLastModified(clientId);
     }
