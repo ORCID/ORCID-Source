@@ -34,6 +34,12 @@ public class ClientDetailsEntityCacheManagerImpl implements ClientDetailsEntityC
     @Resource(name = "clientDetailsEntityIdPCache")
     private Cache<Object, ClientDetailsEntity> clientDetailsIdPCache;
 
+    // Short-lived ehcache for the last-modified freshness check itself, to collapse bursts of
+    // repeated retrieve() calls for the same client (e.g. one per activity in a record/list response)
+    // into a single DB round-trip instead of one per call.
+    @Resource(name = "clientDetailsLastModifiedCache")
+    private Cache<String, Date> clientDetailsLastModifiedCache;
+
     private final String releaseName = ReleaseNameUtils.getReleaseName();
 
     @Override
@@ -117,24 +123,35 @@ public class ClientDetailsEntityCacheManagerImpl implements ClientDetailsEntityC
     public void put(String clientId, ClientDetailsEntity client) {
         Object key = new ClientIdCacheKey(clientId, releaseName);
         clientDetailsCache.put(key, client);
+        clientDetailsLastModifiedCache.remove(clientId);
     }
 
     @Override
     public void removeAll() {
         clientDetailsCache.clear();
+        clientDetailsLastModifiedCache.clear();
     }
 
     @Override
     public void remove(String clientId) {
         clientDetailsCache.remove(new ClientIdCacheKey(clientId, releaseName));
+        clientDetailsLastModifiedCache.remove(clientId);
     }
 
     private Date retrieveLastModifiedDate(String clientId) {
+        Date cached = clientDetailsLastModifiedCache.get(clientId);
+        if (cached != null) {
+            return cached;
+        }
         Date date = null;
         try {
             date = clientDetailsManager.getLastModified(clientId);
         } catch (jakarta.persistence.NoResultException e) {
             LOG.debug("Missing lastModifiedDate clientId:" + clientId);
+        }
+        // ehcache rejects null values, so only cache a real hit; unknown clients keep hitting the DB
+        if (date != null) {
+            clientDetailsLastModifiedCache.put(clientId, date);
         }
         return date;
     }

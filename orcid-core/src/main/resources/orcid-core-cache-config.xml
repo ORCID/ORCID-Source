@@ -87,6 +87,16 @@
         <property name="maxMegaBytesInMemory" value="${org.orcid.core.cache.client_details.maxMegaBytesInMemory:16}" />
         <property name="maxMegaBytesOnDisk" value="${org.orcid.core.cache.client_details.maxMegaBytesOnDisk:128}" />
 	</bean>		       
+
+	<!-- Short-lived cache for the client-details freshness (last-modified) check, to collapse
+	     bursts of repeated retrieve() calls for the same client within one request into a single DB hit -->
+	<bean id="clientDetailsLastModifiedCache" class="org.orcid.core.utils.OrcidEhCacheFactoryBean">
+		<property name="cacheName" value="client-details-last-modified" />
+		<property name="cacheManager" ref="coreCacheManager" />
+		<property name="timeToIdleSeconds" value="${org.orcid.core.cache.client_details_last_modified.timeToIdleSeconds:3}" />
+        <property name="maxMegaBytesInMemory" value="${org.orcid.core.cache.client_details_last_modified.maxMegaBytesInMemory:4}" />
+        <property name="maxMegaBytesOnDisk" value="${org.orcid.core.cache.client_details_last_modified.maxMegaBytesOnDisk:0}" />
+	</bean>
     
     <bean id="identityProviderNameCache" class="org.orcid.core.utils.OrcidEhCacheFactoryBean">
         <property name="cacheName" value="identity-provider-name" />
