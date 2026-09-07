@@ -122,6 +122,7 @@
                 <entry key="hibernate.jdbc.batch_size" value="${org.orcid.persistence.db.batchSize:50}" />
                 <!-- Default Batch Fetch Size: Automatically batches lazy-loaded entities/collections (fixes N+1 queries) -->
                 <entry key="hibernate.default_batch_fetch_size" value="${org.orcid.persistence.db.defaultBatchFetchSize:32}" />
+                <entry key="hibernate.query.plan_cache_max_size" value="${org.orcid.persistence.db.queryPlanCacheMaxSize:4096}" />
             </map>
         </property>
     </bean>   
