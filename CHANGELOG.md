@@ -1,3 +1,9 @@
+## v3.0.57 - 2026-09-07
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.0.56...v3.0.57)
+
+- [#7677](https://github.com/ORCID/ORCID-Source/pull/7677): PD-6145 added transactional read.only where possible, and hibernate plan cache 
+
 ## v3.0.56 - 2026-09-07
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.0.55...v3.0.56)
