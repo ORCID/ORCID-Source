@@ -283,27 +283,36 @@
         <property name="entityManager" ref="entityManagerReadOnly" />
     </bean>
     
-    <bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean" depends-on="liquibase">
-        <property name="jpaVendorAdapter" ref="jpaVendorAdapter" />
-        <property name="dataSource" ref="\${org.orcid.persistence.db.dataSource}" />
-        <property name="persistenceUnitName" value="orcid" />
-        <property name="jpaPropertyMap">
-            <map>
-                <entry key="hibernate.generate_statistics" value="\${org.orcid.persistence.db.hibernateStatistics:false}" />
-            </map>
-        </property>
-    </bean>
-    
-    <bean id="entityManagerFactoryReadOnly" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean" depends-on="liquibase">
-        <property name="jpaVendorAdapter" ref="jpaVendorAdapter" />
-        <property name="dataSource" ref="\${org.orcid.persistence.db.readonly.dataSource}" />
-        <property name="persistenceUnitName" value="orcid" />
-        <property name="jpaPropertyMap">
-            <map>
-                <entry key="hibernate.generate_statistics" value="\${org.orcid.persistence.db.readonly.hibernateStatistics:false}" />
-            </map>
-        </property>
-    </bean>
+<bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean" depends-on="liquibase">
+    <property name="jpaVendorAdapter" ref="jpaVendorAdapter" />
+    <property name="dataSource" ref="${org.orcid.persistence.db.dataSource}" />
+    <property name="persistenceUnitName" value="orcid" />
+    <property name="jpaPropertyMap">
+        <map>
+            <entry key="hibernate.generate_statistics" value="${org.orcid.persistence.db.hibernateStatistics:false}" />
+            <!-- JDBC Fetch Size: Number of rows retrieved per DB network round-trip -->
+            <entry key="hibernate.jdbc.fetch_size" value="${org.orcid.persistence.db.fetchSize:100}" />
+            <!-- JDBC Batch Size: Batches INSERT/UPDATE statements -->
+            <entry key="hibernate.jdbc.batch_size" value="${org.orcid.persistence.db.batchSize:50}" />
+            <!-- Default Batch Fetch Size: Automatically batches lazy-loaded entities/collections (fixes N+1 queries) -->
+            <entry key="hibernate.default_batch_fetch_size" value="${org.orcid.persistence.db.defaultBatchFetchSize:32}" />
+        </map>
+    </property>
+</bean>
+
+<bean id="entityManagerFactoryReadOnly" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean" depends-on="liquibase">
+    <property name="jpaVendorAdapter" ref="jpaVendorAdapter" />
+    <property name="dataSource" ref="${org.orcid.persistence.db.readonly.dataSource}" />
+    <property name="persistenceUnitName" value="orcid" />
+    <property name="jpaPropertyMap">
+        <map>
+            <entry key="hibernate.generate_statistics" value="${org.orcid.persistence.db.readonly.hibernateStatistics:false}" />
+            <!-- Read-Only Fetch Configurations -->
+            <entry key="hibernate.jdbc.fetch_size" value="${org.orcid.persistence.db.readonly.fetchSize:100}" />
+            <entry key="hibernate.default_batch_fetch_size" value="${org.orcid.persistence.db.readonly.defaultBatchFetchSize:32}" />
+        </map>
+    </property>
+</bean>
     
     <bean id="orcidEntityManagerFactory" class="org.orcid.persistence.spring.OrcidEntityManagerFactory">
         <property name="entityManagerFactory" ref="entityManagerFactory" />
@@ -361,6 +370,12 @@
         <property name="idleTimeout" value="\${org.orcid.persistence.db.hikari.idleTimeout:600000}" />
         <property name="maxLifetime" value="\${org.orcid.persistence.db.hikari.maxLifetime:1800000}" />
         <property name="keepaliveTime" value="\${org.orcid.persistence.db.hikari.keepaliveTime:120000}" />
+        <!-- PostgreSQL JDBC Driver Properties -->
+        <property name="dataSourceProperties">
+            <props>
+                <prop key="defaultRowFetchSize">100</prop>
+            </props>
+        </property>
     </bean>
     
     <bean id="pooledDataSourceReadOnly" class="com.zaxxer.hikari.HikariDataSource" destroy-method="close">
@@ -376,6 +391,12 @@
         <property name="maxLifetime" value="\${org.orcid.persistence.db.readonly.hikari.maxLifetime:1800000}" />
         <property name="keepaliveTime" value="\${org.orcid.persistence.db.readonly.hikari.keepaliveTime:120000}" />
         <property name="readOnly" value="true" />
+        <!-- PostgreSQL JDBC Driver Properties -->
+        <property name="dataSourceProperties">
+            <props>
+                <prop key="defaultRowFetchSize">100</prop>
+            </props>
+        </property>
     </bean>
 
     <bean id="simpleDataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
