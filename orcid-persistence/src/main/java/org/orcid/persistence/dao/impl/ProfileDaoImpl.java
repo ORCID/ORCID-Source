@@ -51,6 +51,7 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
     }
 
     @Override
+    @Transactional
     public void remove(String id) {
         super.remove(id);
     }
