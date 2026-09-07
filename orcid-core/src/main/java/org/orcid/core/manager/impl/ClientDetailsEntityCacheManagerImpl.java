@@ -11,7 +11,7 @@ import jakarta.annotation.Resource;
 
 import org.ehcache.Cache;
 import org.orcid.core.manager.ClientDetailsEntityCacheManager;
-import org.orcid.core.manager.ClientDetailsManager;
+import org.orcid.core.manager.read_only.ClientDetailsManagerReadOnly;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.core.utils.ReleaseNameUtils;
 import org.slf4j.Logger;
@@ -21,8 +21,12 @@ public class ClientDetailsEntityCacheManagerImpl implements ClientDetailsEntityC
 
     private static final Logger LOG = LoggerFactory.getLogger(ClientDetailsEntityCacheManagerImpl.class);
 
-    @Resource
-    private ClientDetailsManager clientDetailsManager;
+    @Resource(name = "clientDetailsManagerReadOnly")
+    private ClientDetailsManagerReadOnly clientDetailsManager;
+
+    public void setClientDetailsManager(ClientDetailsManagerReadOnly clientDetailsManager) {
+        this.clientDetailsManager = clientDetailsManager;
+    }
 
     @Resource(name = "clientDetailsEntityCache")
     private Cache<Object, ClientDetailsEntity> clientDetailsCache;

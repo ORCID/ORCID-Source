@@ -2,6 +2,8 @@ package org.orcid.persistence.dao.impl;
 
 import jakarta.persistence.Query;
 
+import org.springframework.transaction.annotation.Transactional;
+
 import org.orcid.persistence.dao.ProfileEventDao;
 import org.orcid.persistence.jpa.entities.ProfileEventEntity;
 import org.orcid.persistence.jpa.entities.ProfileEventType;
@@ -16,6 +18,7 @@ public class ProfileEventDaoImpl extends GenericDaoImpl<ProfileEventEntity, Long
     public ProfileEventDaoImpl() { super(ProfileEventEntity.class); }
 
     @Override
+    @Transactional(readOnly = true)
     public boolean isAttemptSend(String orcid, ProfileEventType eventType) {
         Query query = entityManager.createNativeQuery("select count(*) from profile_event where orcid=:orcid and profile_event_type=:eventType");
         query.setParameter("orcid", orcid);

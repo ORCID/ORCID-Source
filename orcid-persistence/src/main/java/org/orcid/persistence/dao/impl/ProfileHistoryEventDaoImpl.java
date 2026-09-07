@@ -4,6 +4,8 @@ import java.util.List;
 
 import jakarta.persistence.Query;
 
+import org.springframework.transaction.annotation.Transactional;
+
 import org.orcid.persistence.dao.ProfileHistoryEventDao;
 import org.orcid.persistence.jpa.entities.ProfileHistoryEventEntity;
 
@@ -15,6 +17,7 @@ public class ProfileHistoryEventDaoImpl extends GenericDaoImpl<ProfileHistoryEve
 
     @SuppressWarnings("unchecked")
     @Override
+    @Transactional(readOnly = true)
     public List<ProfileHistoryEventEntity> findByProfile(String orcid) {
         Query query = entityManager.createQuery("FROM ProfileHistoryEventEntity WHERE orcid = :orcid ORDER BY dateCreated DESC");
         query.setParameter("orcid", orcid);

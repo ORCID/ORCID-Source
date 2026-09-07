@@ -4,7 +4,8 @@ import java.util.List;
 
 import jakarta.persistence.Query;
 import jakarta.persistence.TypedQuery;
-import jakarta.transaction.Transactional;
+
+import org.springframework.transaction.annotation.Transactional;
 
 import org.orcid.persistence.dao.FindMyStuffHistoryDao;
 import org.orcid.persistence.jpa.entities.FindMyStuffHistoryEntity;
@@ -17,6 +18,7 @@ public class FindMyStuffHistoryDaoImpl extends GenericDaoImpl<FindMyStuffHistory
     } 
 
     @Override
+    @Transactional(readOnly = true)
     public List<FindMyStuffHistoryEntity> findAll(String orcid) {
         TypedQuery<FindMyStuffHistoryEntity> query = entityManager.createQuery("from FindMyStuffHistoryEntity where orcid = :orcid", FindMyStuffHistoryEntity.class);
         query.setParameter("orcid", orcid);

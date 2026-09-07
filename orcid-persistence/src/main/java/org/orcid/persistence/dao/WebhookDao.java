@@ -6,17 +6,23 @@ import java.util.Set;
 
 import org.orcid.persistence.jpa.entities.WebhookEntity;
 import org.orcid.persistence.jpa.entities.keys.WebhookEntityPk;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * @author Will Simpson
  */
 public interface WebhookDao extends GenericDao<WebhookEntity, WebhookEntityPk> {
 
+    @Transactional(readOnly = true)
     List<WebhookEntity> findWebhooksReadyToProcess(Date profileModifiedBefore, int retryDelayMinutes, int maxResults, Set<String> clientsToExclude);
 
+    @Transactional(readOnly = true)
     long countWebhooksReadyToProcess(Date profileModifiedBefore, int retryDelayMinutes);
 
+    @Transactional(propagation = Propagation.REQUIRED)
     boolean markAsSent(String orcid, String uri);
     
+    @Transactional(propagation = Propagation.REQUIRED)
     boolean markAsFailed(String orcid, String uri);
 }

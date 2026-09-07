@@ -26,6 +26,7 @@ public class RecordNameDaoImpl extends GenericDaoImpl<RecordNameEntity, Long> im
     }
 
     @Override
+    @Transactional(readOnly = true)
     @Cacheable(value = "record-name", key = "#orcid.concat('-').concat(#lastModified)")
     public RecordNameEntity getRecordName(String orcid, long lastModified) {
         Query query = entityManager.createQuery("FROM RecordNameEntity WHERE orcid = :orcid");
@@ -34,6 +35,7 @@ public class RecordNameDaoImpl extends GenericDaoImpl<RecordNameEntity, Long> im
     }
 
     @Override
+    @Transactional(readOnly = true)
     public RecordNameEntity findByCreditName(String creditName) {
         Query query = entityManager.createQuery("FROM RecordNameEntity WHERE creditName = :creditName");
         query.setParameter("creditName", creditName);
@@ -61,6 +63,7 @@ public class RecordNameDaoImpl extends GenericDaoImpl<RecordNameEntity, Long> im
     }
     
     @Override
+    @Transactional(readOnly = true)
     public boolean exists(String orcid) {
         Query query = entityManager.createNativeQuery("select count(*) from record_name where orcid=:orcid");
         query.setParameter("orcid", orcid);
@@ -69,6 +72,7 @@ public class RecordNameDaoImpl extends GenericDaoImpl<RecordNameEntity, Long> im
     }   
     
     @Override
+    @Transactional(readOnly = true)
     public Date getLastModified(String orcid) {
         TypedQuery<Date> query = entityManager.createQuery("SELECT r.lastModified FROM RecordNameEntity r WHERE r.orcid = :orcid", Date.class);
         query.setParameter("orcid", orcid);
@@ -76,6 +80,7 @@ public class RecordNameDaoImpl extends GenericDaoImpl<RecordNameEntity, Long> im
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<RecordNameEntity> getRecordNames(List<String> orcids) {
         TypedQuery<RecordNameEntity> query = entityManager.createQuery("FROM RecordNameEntity WHERE orcid in :ids", RecordNameEntity.class);
         query.setParameter("ids", orcids);

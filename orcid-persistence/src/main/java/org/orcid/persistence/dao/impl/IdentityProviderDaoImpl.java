@@ -5,7 +5,8 @@ import java.util.List;
 
 import jakarta.persistence.Query;
 import jakarta.persistence.TypedQuery;
-import jakarta.transaction.Transactional;
+
+import org.springframework.transaction.annotation.Transactional;
 
 import org.orcid.persistence.dao.IdentityProviderDao;
 import org.orcid.persistence.jpa.entities.IdentityProviderEntity;
@@ -22,6 +23,7 @@ public class IdentityProviderDaoImpl extends GenericDaoImpl<IdentityProviderEnti
     }
 
     @Override
+    @Transactional(readOnly = true)
     public IdentityProviderEntity findByProviderid(String providerid) {
         TypedQuery<IdentityProviderEntity> query = entityManager.createQuery("from IdentityProviderEntity i where i.providerid = :providerid", IdentityProviderEntity.class);
         query.setParameter("providerid", providerid);

@@ -31,6 +31,7 @@ public class EventDaoImpl implements EventDao {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public EventEntity find(long id) {
         return entityManager.find(EventEntity.class, id);
     }
@@ -42,6 +43,7 @@ public class EventDaoImpl implements EventDao {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<EventEntity> findAll() {
         TypedQuery<EventEntity> query = entityManager.createQuery("from EventEntity", EventEntity.class);
         return query.getResultList();
@@ -68,6 +70,7 @@ public class EventDaoImpl implements EventDao {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<EventEntity> findByEventType(EventType eventType) {
         TypedQuery<EventEntity> query = entityManager.createQuery("from EventEntity where eventType = :eventType", EventEntity.class);
         query.setParameter("eventType", eventType.getValue());

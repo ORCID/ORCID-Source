@@ -4,6 +4,8 @@ import java.util.List;
 
 import org.orcid.jaxb.model.v3.release.common.Visibility;
 import org.orcid.persistence.jpa.entities.ExternalIdentifierEntity;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 public interface ExternalIdentifierDao extends GenericDao<ExternalIdentifierEntity, Long> {
 
@@ -17,6 +19,7 @@ public interface ExternalIdentifierDao extends GenericDao<ExternalIdentifierEnti
      * @param externalIdReference
      *            Identifier of the external id.
      */
+    @Transactional(propagation = Propagation.REQUIRED)
     boolean removeExternalIdentifier(String orcid, String externalIdReference);
 
     /**
@@ -26,6 +29,7 @@ public interface ExternalIdentifierDao extends GenericDao<ExternalIdentifierEnti
      * @return a list of all external identifiers associated with the given
      *         profile
      */
+    @Transactional(readOnly = true)
     List<ExternalIdentifierEntity> getExternalIdentifiers(String orcid, long lastModified);
 
     /**
@@ -37,6 +41,7 @@ public interface ExternalIdentifierDao extends GenericDao<ExternalIdentifierEnti
      * @return a list of all external identifiers associated with the given
      *         profile and that have the given visibility
      */
+    @Transactional(readOnly = true)
     List<ExternalIdentifierEntity> getExternalIdentifiers(String orcid, String visibility);
 
     /**
@@ -46,6 +51,7 @@ public interface ExternalIdentifierDao extends GenericDao<ExternalIdentifierEnti
      * @param id
      * @return an external identifier that matches the given id and profile id
      */
+    @Transactional(readOnly = true)
     ExternalIdentifierEntity getExternalIdentifierEntity(String orcid, Long id);
     
     /**
@@ -57,6 +63,7 @@ public interface ExternalIdentifierDao extends GenericDao<ExternalIdentifierEnti
      *            Identifier of the external id.
      * @return true if an external identifier was deleted           
      */
+    @Transactional(propagation = Propagation.REQUIRED)
     boolean removeExternalIdentifier(String orcid, Long id);
     
     /**
@@ -66,9 +73,12 @@ public interface ExternalIdentifierDao extends GenericDao<ExternalIdentifierEnti
      *            The ORCID iD of the record from which all external identifiers will be
      *            removed.
      */
+    @Transactional(propagation = Propagation.REQUIRED)
     void removeAllExternalIdentifiers(String orcid);
 
+    @Transactional(readOnly = true)
     List<ExternalIdentifierEntity> getPublicExternalIdentifiers(String orcid, long lastModified);
 
+    @Transactional(propagation = Propagation.REQUIRED)
     boolean updateVisibility(String orcid, Visibility visibility);
 }

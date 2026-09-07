@@ -259,7 +259,6 @@ public class OrgDisambiguatedManagerImpl implements OrgDisambiguatedManager {
     }
 
     @Override
-    @Transactional
     public OrgDisambiguated findInDB(Long id) {
         OrgDisambiguatedEntity orgDisambiguatedEntity = orgDisambiguatedDaoReadOnly.find(id);
         OrgDisambiguated org = convertEntity(orgDisambiguatedEntity);
@@ -267,7 +266,6 @@ public class OrgDisambiguatedManagerImpl implements OrgDisambiguatedManager {
     }
 
     @Override
-    @Transactional
     public OrgDisambiguated findInDB(String idValue, String idType) {
         OrgDisambiguatedEntity orgDisambiguatedEntity = orgDisambiguatedDaoReadOnly.findBySourceIdAndSourceType(idValue, idType);
         if (orgDisambiguatedEntity != null)

@@ -70,6 +70,7 @@ public class ProfileEmailDomainDaoImpl extends GenericDaoImpl<ProfileEmailDomain
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<ProfileEmailDomainEntity> findByOrcid(String orcid) {
         TypedQuery<ProfileEmailDomainEntity> query = entityManager.createQuery("from ProfileEmailDomainEntity where orcid = :orcid", ProfileEmailDomainEntity.class);
         query.setParameter("orcid", orcid);
@@ -78,6 +79,7 @@ public class ProfileEmailDomainDaoImpl extends GenericDaoImpl<ProfileEmailDomain
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<ProfileEmailDomainEntity> findPublicEmailDomains(String orcid) {
         TypedQuery<ProfileEmailDomainEntity> query = entityManager.createQuery("from ProfileEmailDomainEntity where orcid = :orcid and visibility = 'PUBLIC'",
                 ProfileEmailDomainEntity.class);
@@ -87,6 +89,7 @@ public class ProfileEmailDomainDaoImpl extends GenericDaoImpl<ProfileEmailDomain
     }
 
     @Override
+    @Transactional(readOnly = true)
     public ProfileEmailDomainEntity findByEmailDomain(String orcid, String emailDomain) {
         TypedQuery<ProfileEmailDomainEntity> query = entityManager.createQuery("from ProfileEmailDomainEntity where orcid = :orcid and emailDomain = :emailDomain",
                 ProfileEmailDomainEntity.class);
@@ -116,6 +119,7 @@ public class ProfileEmailDomainDaoImpl extends GenericDaoImpl<ProfileEmailDomain
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<ProfileEmailDomainEntity> findByEmailDomain(String emailDomain) {
         TypedQuery<ProfileEmailDomainEntity> query = entityManager.createQuery("from ProfileEmailDomainEntity where emailDomain = :emailDomain",
                 ProfileEmailDomainEntity.class);

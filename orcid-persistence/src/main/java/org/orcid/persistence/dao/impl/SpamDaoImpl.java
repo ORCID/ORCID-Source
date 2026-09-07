@@ -19,6 +19,7 @@ public class SpamDaoImpl extends GenericDaoImpl<SpamEntity, Long> implements Spa
     }    
 
     @Override
+    @Transactional(readOnly = true)
     public boolean exists(String orcid) {
         Query query = entityManager.createNativeQuery("select count(*) from spam where orcid=:orcid");
         query.setParameter("orcid", orcid);
@@ -27,6 +28,7 @@ public class SpamDaoImpl extends GenericDaoImpl<SpamEntity, Long> implements Spa
     }   
 
     @Override
+    @Transactional(readOnly = true)
     public SpamEntity getSpam(String orcid) {
         Query query = entityManager.createQuery("from SpamEntity where orcid=:orcid");
         query.setParameter("orcid", orcid);

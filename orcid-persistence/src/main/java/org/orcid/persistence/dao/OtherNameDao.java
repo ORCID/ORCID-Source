@@ -5,6 +5,8 @@ import java.util.List;
 
 import org.orcid.jaxb.model.v3.release.common.Visibility;
 import org.orcid.persistence.jpa.entities.OtherNameEntity;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 public interface OtherNameDao extends GenericDao<OtherNameEntity, Long> {
 
@@ -14,6 +16,7 @@ public interface OtherNameDao extends GenericDao<OtherNameEntity, Long> {
      * @return
      * The list of other names related with the specified orcid profile
      * */
+    @Transactional(readOnly = true)
     List<OtherNameEntity> getOtherNames(String orcid, long lastModified);
 
     /**
@@ -22,6 +25,7 @@ public interface OtherNameDao extends GenericDao<OtherNameEntity, Long> {
      * @return
      * The list of other names related with the specified orcid profile
      * */
+    @Transactional(readOnly = true)
     List<OtherNameEntity> getOtherNames(String orcid, String visibility);
 
     
@@ -31,6 +35,7 @@ public interface OtherNameDao extends GenericDao<OtherNameEntity, Long> {
      * @return
      *          true if the other name was sucessfully updated, false otherwise
      * */
+    @Transactional(propagation = Propagation.REQUIRED)
     boolean updateOtherName(OtherNameEntity otherName);
 
     /**
@@ -40,6 +45,7 @@ public interface OtherNameDao extends GenericDao<OtherNameEntity, Long> {
      * @return
      *          true if the other name was successfully created, false otherwise 
      * */
+    @Transactional(propagation = Propagation.REQUIRED)
     boolean addOtherName(String orcid, String displayName);
 
     /**
@@ -48,8 +54,10 @@ public interface OtherNameDao extends GenericDao<OtherNameEntity, Long> {
      * @return 
      *          true if the other name was successfully deleted, false otherwise
      * */
+    @Transactional(propagation = Propagation.REQUIRED)
     boolean deleteOtherName(OtherNameEntity otherName);
     
+    @Transactional(readOnly = true)
     OtherNameEntity getOtherName(String orcid, Long putCode);
     
     /**
@@ -59,29 +67,42 @@ public interface OtherNameDao extends GenericDao<OtherNameEntity, Long> {
      *            The ORCID iD of the record from which all other names will be
      *            removed.
      */
+    @Transactional(propagation = Propagation.REQUIRED)
     void removeAllOtherNames(String orcid);
 
+    @Transactional(readOnly = true)
     List<OtherNameEntity> getPublicOtherNames(String orcid, long lastModified);
 
+    @Transactional(readOnly = true)
     List<BigInteger> getIdsForClientSourceCorrection(int limit, List<String> nonPublicClients);
 
+    @Transactional(propagation = Propagation.REQUIRED)
     void correctClientSource(List<BigInteger> ids);
 
+    @Transactional(readOnly = true)
     List<BigInteger> getIdsForUserSourceCorrection(int limit, List<String> publicClients);
 
+    @Transactional(propagation = Propagation.REQUIRED)
     void correctUserSource(List<BigInteger> ids);
 
+    @Transactional(readOnly = true)
     List<BigInteger> getIdsForUserOBOUpdate(String clientDetailsId, int max);
 
+    @Transactional(propagation = Propagation.REQUIRED)
     void updateUserOBODetails(List<BigInteger> ids);
 
+    @Transactional(readOnly = true)
     List<BigInteger> getIdsForUserOBORecords(String clientDetailsId, int max);
 
+    @Transactional(propagation = Propagation.REQUIRED)
     void revertUserOBODetails(List<BigInteger> ids);
 
+    @Transactional(readOnly = true)
     List<BigInteger> getIdsForUserOBORecords(int max);
 
+    @Transactional(readOnly = true)
     List<BigInteger> getIdsOfOtherNamesReferencingClientProfiles(int max, List<String> clientProfileOrcidIds);
 
+    @Transactional(propagation = Propagation.REQUIRED)
     boolean updateVisibility(String orcid, Visibility visibility);
 }
