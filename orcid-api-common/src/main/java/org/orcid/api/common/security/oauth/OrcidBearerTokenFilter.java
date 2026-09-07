@@ -6,6 +6,7 @@ import org.apache.commons.lang.StringUtils;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.orcid.core.oauth.OrcidBearerTokenAuthentication;
+import org.orcid.core.oauth.authorizationServer.AuthorizationServerConnectionException;
 import org.orcid.core.oauth.authorizationServer.AuthorizationServerUtil;
 import org.orcid.utils.OrcidStringUtils;
 import org.springframework.security.access.AccessDeniedException;
@@ -90,10 +91,9 @@ public class OrcidBearerTokenFilter implements Filter {
             logger.warn("Access denied for token=" + tokenFingerprint(tokenValue) + " reason=" + e.getMessage());
             orcidAPIAccessDeniedHandler.handle(request, response, e);
             return;
-        } catch (AccessControlException e) {
-            // Invalid/fake token: authentication failure (401 Unauthorized)
-            logger.warn("Invalid access token for token=" + tokenFingerprint(tokenValue) + " reason=" + e.getMessage());
-            apiAuthenticationEntryPoint.commence(request, response, new BadCredentialsException(e.getMessage(), e));
+        } catch (AuthorizationServerConnectionException e) {
+            logger.warn("Authorization server connection exception for token=" + tokenFingerprint(tokenValue), e);
+            response.sendError(HttpServletResponse.SC_GATEWAY_TIMEOUT, e.getMessage());
             return;
         } catch (IOException | URISyntaxException | InterruptedException | JSONException e) {
             //TODO: Define error message and add exception type to it

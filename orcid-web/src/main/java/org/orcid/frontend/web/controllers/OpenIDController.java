@@ -13,6 +13,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.codehaus.jettison.json.JSONException;
+import org.orcid.core.oauth.authorizationServer.AuthorizationServerConnectionException;
 import org.orcid.core.manager.v3.read_only.PersonDetailsManagerReadOnly;
 import org.orcid.core.oauth.authorizationServer.AuthorizationServerUtil;
 import org.orcid.core.oauth.openid.OpenIDConnectDiscoveryService;
@@ -76,23 +77,31 @@ public class OpenIDController {
      */
     @RequestMapping(value = "/oauth/userinfo", method = RequestMethod.GET, produces = "application/json")
     public @ResponseBody ResponseEntity<OpenIDConnectUserInfo> getUserInfo(HttpServletRequest request) throws IOException, JSONException, URISyntaxException, InterruptedException {
-        if (request.getHeader("Authorization") != null) {//look in header
-            String tokenValue = request.getHeader("Authorization").replaceAll("Bearer|bearer", "").trim();
-            OpenIDConnectUserInfo info = getInfoFromToken(tokenValue);
-            if (info != null)
-                return ResponseEntity.ok(info);
-        }            
-        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new OpenIDConnectUserInfoAccessDenied());
+        try {
+            if (request.getHeader("Authorization") != null) {//look in header
+                String tokenValue = request.getHeader("Authorization").replaceAll("Bearer|bearer", "").trim();
+                OpenIDConnectUserInfo info = getInfoFromToken(tokenValue);
+                if (info != null)
+                    return ResponseEntity.ok(info);
+            }
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new OpenIDConnectUserInfoAccessDenied());
+        } catch (AuthorizationServerConnectionException e) {
+            return ResponseEntity.status(HttpStatus.GATEWAY_TIMEOUT).build();
+        }
     }
     
     @RequestMapping(value = "/oauth/userinfo", method = RequestMethod.POST, produces = "application/json")
     public @ResponseBody ResponseEntity<OpenIDConnectUserInfo> getUserInfoPOST(HttpServletRequest request) throws IOException, JSONException, URISyntaxException, InterruptedException {
-        if (request.getParameter("access_token") != null) {
-            OpenIDConnectUserInfo info = getInfoFromToken(request.getParameter("access_token"));
-            if (info != null)
-                return ResponseEntity.ok(info);                
+        try {
+            if (request.getParameter("access_token") != null) {
+                OpenIDConnectUserInfo info = getInfoFromToken(request.getParameter("access_token"));
+                if (info != null)
+                    return ResponseEntity.ok(info);
+            }
+            return getUserInfo(request);
+        } catch (AuthorizationServerConnectionException e) {
+            return ResponseEntity.status(HttpStatus.GATEWAY_TIMEOUT).build();
         }
-        return getUserInfo(request);
     }
     
     //lookup token, check it's valid, check scope.

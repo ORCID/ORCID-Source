@@ -15,6 +15,7 @@ import jakarta.ws.rs.core.UriInfo;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.orcid.core.oauth.authorizationServer.AuthorizationServerConnectionException;
 import org.orcid.core.oauth.authorizationServer.AuthorizationServerUtil;
 import org.orcid.core.constants.OrcidOauth2Constants;
 import org.orcid.core.oauth.OAuthError;
@@ -61,6 +62,11 @@ public class OauthGenericCallsController {
             responseHeaders.set(Features.OAUTH_AUTHORIZATION_CODE_EXCHANGE.name(),
                     "ON");
             return ResponseEntity.status(response.getStatus()).headers(responseHeaders).body(response.getEntity());
+        } catch(AuthorizationServerConnectionException e) {
+            OAuthError error = new OAuthError();
+            error.setError(OAuthError.SERVER_ERROR);
+            error.setErrorDescription(e.getMessage());
+            return ResponseEntity.status(HttpStatus.GATEWAY_TIMEOUT).body(error);
         } catch(Exception e) {
             OAuthError error = OAuthErrorUtils.getOAuthError(e);
             Map<String, String[]> params = request.getParameterMap();
