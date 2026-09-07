@@ -122,6 +122,11 @@
                 <entry key="hibernate.jdbc.batch_size" value="${org.orcid.persistence.db.batchSize:50}" />
                 <!-- Default Batch Fetch Size: Automatically batches lazy-loaded entities/collections (fixes N+1 queries) -->
                 <entry key="hibernate.default_batch_fetch_size" value="${org.orcid.persistence.db.defaultBatchFetchSize:32}" />
+                <entry key="hibernate.query.plan_cache_max_size" value="${org.orcid.persistence.db.queryPlanCacheMaxSize:4096}" />
+                <!-- Pretty-print SQL statements in logs (default: true) -->
+                <entry key="hibernate.format_sql" value="${org.orcid.persistence.db.formatSql:false}" />
+                <!-- Log inline SQL comments for origin tracing (default: true) -->
+                <entry key="hibernate.use_sql_comments" value="${org.orcid.persistence.db.useSqlComments:false}" />
             </map>
         </property>
     </bean>   
