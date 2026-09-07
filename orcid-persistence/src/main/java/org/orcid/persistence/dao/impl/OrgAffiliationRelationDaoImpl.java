@@ -233,6 +233,8 @@ public class OrgAffiliationRelationDaoImpl extends GenericDaoImpl<OrgAffiliation
      *            The entity to update
      * @return the updated OrgAffiliationRelationEntity
      */
+    @Override
+    @Transactional
     public OrgAffiliationRelationEntity updateOrgAffiliationRelationEntity(OrgAffiliationRelationEntity orgAffiliationRelationEntity) {
         OrgAffiliationRelationEntity toUpdate = this.find(orgAffiliationRelationEntity.getId());
         mergeOrgAffiliationRelationEntity(toUpdate, orgAffiliationRelationEntity);
