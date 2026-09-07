@@ -181,9 +181,10 @@ public class JSONInputValidator {
                 throw new InvalidJSONException(e.getCause().getCause().getMessage(), e);
             }
         } catch (Exception e) {
-            LOGGER.error("Unable to find validator for class " + clazz.getName());
-            Map<String, String> params = new HashMap<>();
             Throwable rootCause = ExceptionUtils.getRootCause(e);
+            LOGGER.error("Error validating class " + clazz.getName() + ": " + e.getClass().getName() + " - "
+                    + (rootCause != null ? rootCause.getMessage() : e.getMessage()), e);
+            Map<String, String> params = new HashMap<>();
             if(rootCause != null) {
                 throw new InvalidJSONException(rootCause.getMessage(), e);
             } else {
