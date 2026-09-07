@@ -42,6 +42,8 @@ public interface GenericDao<E extends OrcidEntity<I>, I extends Serializable> {
     @Transactional(propagation = Propagation.REQUIRED)
     void flush();
     
+    @Deprecated
+    @Transactional(propagation = Propagation.REQUIRED)
     void flushWithoutTransactional();
 
     @Transactional(propagation = Propagation.REQUIRED)

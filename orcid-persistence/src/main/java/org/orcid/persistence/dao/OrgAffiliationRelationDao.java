@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.orcid.persistence.jpa.entities.OrgAffiliationRelationEntity;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 public interface OrgAffiliationRelationDao extends GenericDao<OrgAffiliationRelationEntity, Long> {
 
@@ -89,6 +91,7 @@ public interface OrgAffiliationRelationDao extends GenericDao<OrgAffiliationRela
      *          The entity to update
      * @return the updated OrgAffiliationRelationEntity
      * */
+    @Transactional(propagation = Propagation.REQUIRED)
     OrgAffiliationRelationEntity updateOrgAffiliationRelationEntity(OrgAffiliationRelationEntity orgAffiliationRelationEntity);
     
     void removeOrgAffiliationByClientSourceId(String clientSourceId);

@@ -80,7 +80,13 @@
         <property name="persistenceUnitName" value="messageListener" />
         <property name="jpaPropertyMap">
             <map>
-                <entry key="hibernate.generate_statistics" value="${org.orcid.message-listener.db.hibernateStatistics:false}" />    
+                <entry key="hibernate.connection.autocommit" value="${org.orcid.message-listener.db.autocommit:false}" />
+                <entry key="hibernate.generate_statistics" value="${org.orcid.message-listener.db.hibernateStatistics:false}" />
+                <entry key="hibernate.jdbc.fetch_size" value="${org.orcid.persistence.db.fetchSize:100}" />
+                <!-- JDBC Batch Size: Batches INSERT/UPDATE statements -->
+                <entry key="hibernate.jdbc.batch_size" value="${org.orcid.persistence.db.batchSize:50}" />
+                <!-- Default Batch Fetch Size: Automatically batches lazy-loaded entities/collections (fixes N+1 queries) -->
+                <entry key="hibernate.default_batch_fetch_size" value="${org.orcid.persistence.db.defaultBatchFetchSize:32}" />
             </map>
         </property>
     </bean>   
