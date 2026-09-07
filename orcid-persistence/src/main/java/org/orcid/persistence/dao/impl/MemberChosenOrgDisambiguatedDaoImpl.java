@@ -4,7 +4,8 @@ import java.util.List;
 
 import jakarta.annotation.Resource;
 import jakarta.persistence.EntityManager;
-import jakarta.transaction.Transactional;
+
+import org.springframework.transaction.annotation.Transactional;
 
 import org.orcid.persistence.dao.MemberChosenOrgDisambiguatedDao;
 import org.orcid.persistence.jpa.entities.MemberChosenOrgDisambiguatedEntity;
@@ -16,6 +17,7 @@ public class MemberChosenOrgDisambiguatedDaoImpl implements MemberChosenOrgDisam
 
     @SuppressWarnings("unchecked")
     @Override
+    @Transactional(readOnly = true)
     public List<MemberChosenOrgDisambiguatedEntity> getAll() {
         return entityManager.createQuery("from MemberChosenOrgDisambiguatedEntity").getResultList();
     }

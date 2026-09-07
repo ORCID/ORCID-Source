@@ -40,6 +40,7 @@ public class NotificationDaoImpl extends GenericDaoImpl<NotificationEntity, Long
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<NotificationEntity> findByOrcid(String orcid, boolean includeArchived, int firstResult, int maxResults) {
         StringBuilder builder = new StringBuilder("from NotificationEntity where orcid = :orcid");
         if (!includeArchived) {
@@ -54,12 +55,14 @@ public class NotificationDaoImpl extends GenericDaoImpl<NotificationEntity, Long
     }
 
     @Override
+    @Transactional(readOnly = true)
     public NotificationEntity findLatestByOrcid(String orcid) {
         List<NotificationEntity> results = findByOrcid(orcid, false, 0, 1);
         return results.isEmpty() ? null : results.get(0);
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<NotificationEntity> findUnsentByOrcid(String orcid) {
         TypedQuery<NotificationEntity> query = entityManager.createQuery("from NotificationEntity where sentDate is null and orcid = :orcid", NotificationEntity.class);
         query.setParameter("orcid", orcid);
@@ -68,6 +71,7 @@ public class NotificationDaoImpl extends GenericDaoImpl<NotificationEntity, Long
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<NotificationEntity> findNotificationAlertsByOrcid(String orcid) {
         TypedQuery<NotificationEntity> query = entityManager.createQuery(
                 "select n from NotificationEntity n, ClientRedirectUriEntity r where n.notificationType = 'INSTITUTIONAL_CONNECTION' and n.readDate is null and n.archivedDate is null and n.orcid = :orcid and n.clientSourceId = r.clientId and r.redirectUriType = 'institutional-sign-in' order by n.dateCreated desc",
@@ -78,6 +82,7 @@ public class NotificationDaoImpl extends GenericDaoImpl<NotificationEntity, Long
     }
 
     @Override
+    @Transactional(readOnly = true)
     public int getUnreadCount(String orcid) {
         TypedQuery<Long> query = entityManager.createQuery("select count(n) from NotificationEntity n where n.readDate is null and n.archivedDate is null and n.orcid = :orcid",
                 Long.class);
@@ -87,6 +92,7 @@ public class NotificationDaoImpl extends GenericDaoImpl<NotificationEntity, Long
 
 
     @Override
+    @Transactional(readOnly = true)
     public int getTotalCount(String orcid, boolean archived) {
         StringBuffer sb = new StringBuffer();
         sb.append("select count(n) from NotificationEntity n where n.orcid = :orcid");
@@ -100,6 +106,7 @@ public class NotificationDaoImpl extends GenericDaoImpl<NotificationEntity, Long
     }
 
     @Override
+    @Transactional(readOnly = true)
     public NotificationEntity findByOricdAndId(String orcid, Long id) {
         TypedQuery<NotificationEntity> query = entityManager.createQuery("from NotificationEntity where orcid = :orcid and id = :id", NotificationEntity.class);
         query.setParameter("orcid", orcid);
@@ -198,6 +205,7 @@ public class NotificationDaoImpl extends GenericDaoImpl<NotificationEntity, Long
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<NotificationEntity> findPermissionsByOrcidAndClient(String orcid, String client, int firstResult, int maxResults) {
         TypedQuery<NotificationEntity> query = entityManager.createQuery(
                 "from NotificationEntity where orcid = :orcid and clientSourceId = :client and notificationType = :notificationType", NotificationEntity.class);
@@ -209,6 +217,7 @@ public class NotificationDaoImpl extends GenericDaoImpl<NotificationEntity, Long
 
     @SuppressWarnings("unchecked")
     @Override
+    @Transactional(readOnly = true)
     public List<Object[]> findRecordsWithUnsentNotifications() {
         Query query = entityManager.createNamedQuery(NotificationEntity.FIND_ORCIDS_WITH_UNSENT_NOTIFICATIONS_ON_EMAIL_FREQUENCIES_TABLE);
         query.setParameter("never", Float.MAX_VALUE);  
@@ -226,6 +235,7 @@ public class NotificationDaoImpl extends GenericDaoImpl<NotificationEntity, Long
                
 
     @Override
+    @Transactional(readOnly = true)
     public List<NotificationEntity> findNotificationsToSendLegacy(Date effectiveDate, String orcid, Float emailFrequency, Date recordActiveDate) {
         TypedQuery<NotificationEntity> query = entityManager.createNamedQuery(NotificationEntity.FIND_NOTIFICATIONS_TO_SEND_BY_ORCID, NotificationEntity.class);
         query.setParameter("orcid", orcid);
@@ -237,6 +247,7 @@ public class NotificationDaoImpl extends GenericDaoImpl<NotificationEntity, Long
     
     @SuppressWarnings("unchecked")
     @Override
+    @Transactional(readOnly = true)
     public List<NotificationEntity> findNotificationsToSend(Date effectiveDate, String orcid, Date recordActiveDate) {
         String unsentNotificationsQuery = notificationQueries.getProperty("notifications.unsent");
         Query query = entityManager.createNativeQuery(unsentNotificationsQuery, NotificationEntity.class);
@@ -282,6 +293,7 @@ public class NotificationDaoImpl extends GenericDaoImpl<NotificationEntity, Long
 
     @SuppressWarnings("unchecked")
     @Override
+    @Transactional(readOnly = true)
     public List<NotificationEntity> findUnsentServiceAnnouncements(int batchSize) {
         Query query = entityManager.createNativeQuery("select n.* from notification n where n.sent_date is NULL AND n.sendable != false AND n.notification_type = 'SERVICE_ANNOUNCEMENT'", NotificationEntity.class);
         query.setMaxResults(batchSize);
@@ -290,6 +302,7 @@ public class NotificationDaoImpl extends GenericDaoImpl<NotificationEntity, Long
 
     @SuppressWarnings("unchecked")
     @Override
+    @Transactional(readOnly = true)
     public List<NotificationEntity> findUnsentTips(int batchSize) {
         Query query = entityManager.createNativeQuery("select n.* from notification n join email_frequency ef on n.orcid = ef.orcid AND ef.send_quarterly_tips IS true where n.notification_type = 'TIP' AND n.sent_date is NULL AND n.sendable != false", NotificationEntity.class);
         query.setMaxResults(batchSize);
@@ -348,6 +361,7 @@ public class NotificationDaoImpl extends GenericDaoImpl<NotificationEntity, Long
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<Object[]> findNotificationsToDeleteByOffset(Integer offset, Integer recordsPerBatch) {
         Query selectQuery = entityManager.createNativeQuery("SELECT orcid FROM notification group by orcid having count(*) > :offset order by count(*) desc limit :limit");
         selectQuery.setParameter("offset", offset);
@@ -372,6 +386,7 @@ public class NotificationDaoImpl extends GenericDaoImpl<NotificationEntity, Long
 
     @SuppressWarnings("unchecked")
     @Override
+    @Transactional(readOnly = true)
     public List<BigInteger> getIdsForClientSourceCorrection(int limit, List<String> nonPublicClients) {
         Query query = entityManager.createNativeQuery("SELECT id FROM notification WHERE client_source_id = source_id AND client_source_id IN :nonPublicClients");
         query.setParameter("nonPublicClients", nonPublicClients);
@@ -389,6 +404,7 @@ public class NotificationDaoImpl extends GenericDaoImpl<NotificationEntity, Long
 
     @SuppressWarnings("unchecked")
     @Override
+    @Transactional(readOnly = true)
     public List<BigInteger> getIdsForUserSourceCorrection(int limit, List<String> publicClients) {
         Query query = entityManager.createNativeQuery("SELECT id FROM notification WHERE client_source_id = source_id AND client_source_id IN :publicClients");
         query.setParameter("publicClients", publicClients);
@@ -406,6 +422,7 @@ public class NotificationDaoImpl extends GenericDaoImpl<NotificationEntity, Long
 
     @SuppressWarnings("unchecked")
     @Override
+    @Transactional(readOnly = true)
     public List<BigInteger> getIdsOfNotificationsReferencingClientProfiles(int max, List<String> clientProfileOrcidIds) {
         Query query = entityManager.createNativeQuery("SELECT id FROM notification WHERE source_id IN :ids");
         query.setParameter("ids", clientProfileOrcidIds);
@@ -415,6 +432,7 @@ public class NotificationDaoImpl extends GenericDaoImpl<NotificationEntity, Long
     
     @SuppressWarnings("unchecked")
     @Override
+    @Transactional(readOnly = true)
     public List<NotificationEntity> findNotificationsByOrcidAndClientAndFamilyNoClientToken(String orcid, String clientId, String notificationFamily){
         Query query = entityManager.createNativeQuery("SELECT * FROM notification WHERE client_source_id = :clientId AND orcid = :orcid "
                 + "AND notification_family = :notificationFamily AND NOT EXISTS (SELECT 1  FROM oauth2_token_detail WHERE "

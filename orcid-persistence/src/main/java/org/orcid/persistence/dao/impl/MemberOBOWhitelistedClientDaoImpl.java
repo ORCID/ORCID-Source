@@ -4,6 +4,8 @@ import java.util.List;
 
 import jakarta.persistence.TypedQuery;
 
+import org.springframework.transaction.annotation.Transactional;
+
 import org.orcid.persistence.dao.MemberOBOWhitelistedClientDao;
 import org.orcid.persistence.jpa.entities.MemberOBOWhitelistedClientEntity;
 
@@ -14,6 +16,7 @@ public class MemberOBOWhitelistedClientDaoImpl extends GenericDaoImpl<MemberOBOW
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<MemberOBOWhitelistedClientEntity> getWhitelistForClient(String clientDetailsId) {
         TypedQuery<MemberOBOWhitelistedClientEntity> query = entityManager.createQuery("from MemberOBOWhitelistedClientEntity where clientDetailsEntity.id = :clientDetailsId", MemberOBOWhitelistedClientEntity.class);
         query.setParameter("clientDetailsId", clientDetailsId);

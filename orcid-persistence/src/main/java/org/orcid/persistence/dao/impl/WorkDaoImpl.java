@@ -88,6 +88,7 @@ public class WorkDaoImpl extends GenericDaoImpl<WorkEntity, Long> implements Wor
     }
     
     @Override
+    @Transactional
     public void detach(WorkBaseEntity workBaseEntity) {
         entityManager.detach(workBaseEntity);        
     }

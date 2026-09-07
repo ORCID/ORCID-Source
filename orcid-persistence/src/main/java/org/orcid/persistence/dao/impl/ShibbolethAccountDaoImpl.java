@@ -21,6 +21,7 @@ public class ShibbolethAccountDaoImpl extends GenericDaoImpl<ShibbolethAccountEn
     }
 
     @Override
+    @Transactional(readOnly = true)
     public ShibbolethAccountEntity findByRemoteUserAndShibIdentityProvider(String remoteUser, String shibIdentityProvider) {
         TypedQuery<ShibbolethAccountEntity> query = entityManager.createQuery(
                 "from ShibbolethAccountEntity where remoteUser = :remoteUser and shibIdentityProvider = :shibIdentityProvider", ShibbolethAccountEntity.class);
@@ -31,6 +32,7 @@ public class ShibbolethAccountDaoImpl extends GenericDaoImpl<ShibbolethAccountEn
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<ShibbolethAccountEntity> findByOrcid(String orcid) {
         TypedQuery<ShibbolethAccountEntity> query = entityManager.createQuery("from ShibbolethAccountEntity where orcid = :orcid", ShibbolethAccountEntity.class);
         query.setParameter("orcid", orcid);

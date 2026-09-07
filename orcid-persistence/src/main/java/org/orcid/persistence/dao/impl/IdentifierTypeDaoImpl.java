@@ -44,6 +44,7 @@ public class IdentifierTypeDaoImpl extends GenericDaoImpl<IdentifierTypeEntity, 
     }
 
     @Override
+    @Transactional(readOnly = true)
     public IdentifierTypeEntity getEntityByName(String idName) {
         TypedQuery<IdentifierTypeEntity> query = entityManager.createQuery("FROM IdentifierTypeEntity WHERE name = :idName", IdentifierTypeEntity.class);
         query.setParameter("idName", idName);
@@ -51,6 +52,7 @@ public class IdentifierTypeDaoImpl extends GenericDaoImpl<IdentifierTypeEntity, 
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<IdentifierTypeEntity> getEntities() {
         TypedQuery<IdentifierTypeEntity> query = entityManager.createQuery("FROM IdentifierTypeEntity order by name", IdentifierTypeEntity.class);
         return query.getResultList();
