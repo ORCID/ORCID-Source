@@ -12,7 +12,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-import org.ehcache.Cache;
+import com.github.benmanes.caffeine.cache.Cache;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
@@ -48,7 +48,7 @@ public class ClientDetailsEntityCacheManagerImplTest {
         Date lastModified = new Date();
         ClientDetailsEntity cached = client("A", lastModified);
         when(clientDetailsManager.getLastModifiedByClientIds(Arrays.asList("A"))).thenReturn(java.util.Collections.singletonMap("A", lastModified));
-        when(clientDetailsCache.get(any())).thenReturn(cached);
+        when(clientDetailsCache.getIfPresent(any())).thenReturn(cached);
 
         Map<String, ClientDetailsEntity> result = cacheManager.retrieveAll(Arrays.asList("A"));
 
@@ -66,7 +66,7 @@ public class ClientDetailsEntityCacheManagerImplTest {
         ClientDetailsEntity cached = client("A", oldLastModified);
         ClientDetailsEntity fresh = client("A", newLastModified);
         when(clientDetailsManager.getLastModifiedByClientIds(Arrays.asList("A"))).thenReturn(java.util.Collections.singletonMap("A", newLastModified));
-        when(clientDetailsCache.get(any())).thenReturn(cached);
+        when(clientDetailsCache.getIfPresent(any())).thenReturn(cached);
         when(clientDetailsManager.findByClientIds(Arrays.asList("A"))).thenReturn(Arrays.asList(fresh));
 
         Map<String, ClientDetailsEntity> result = cacheManager.retrieveAll(Arrays.asList("A"));

@@ -5,7 +5,7 @@ import java.util.Random;
 import jakarta.annotation.Resource;
 
 import org.apache.commons.lang3.StringUtils;
-import org.ehcache.Cache;
+import com.github.benmanes.caffeine.cache.Cache;
 import org.orcid.core.crypto.OrcidCheckDigitGenerator;
 import org.orcid.core.manager.OrcidGenerationManager;
 import org.orcid.core.manager.ProfileEntityManager;
@@ -45,7 +45,7 @@ public class OrcidGenerationManagerImpl implements OrcidGenerationManager {
     }
 
     private boolean isInRecentOrcidCache(String formattedOrcid) {
-        if (recentOrcidCache.containsKey(formattedOrcid)) {
+        if (recentOrcidCache.getIfPresent(formattedOrcid) != null) {
             LOGGER.debug("Same ORCID randomly generated a few moments ago: {}", formattedOrcid);
             return true;
         }

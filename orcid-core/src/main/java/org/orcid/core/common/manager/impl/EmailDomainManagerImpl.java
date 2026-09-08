@@ -5,7 +5,7 @@ import java.util.List;
 
 import jakarta.annotation.Resource;
 
-import org.ehcache.Cache;
+import com.github.benmanes.caffeine.cache.Cache;
 import org.orcid.core.common.manager.EmailDomainManager;
 import org.orcid.core.manager.v3.impl.ProfileEmailDomainManagerImpl;
 import org.orcid.core.utils.SourceEntityUtils;
@@ -64,10 +64,7 @@ public class EmailDomainManagerImpl implements EmailDomainManager {
     }
 
     private List<EmailDomain> getEmailDomainCache(String emailDomain) {
-        if (emailDomainCache.containsKey(emailDomain)) {
-            return emailDomainCache.get(emailDomain);
-        }
-        return null;
+        return emailDomainCache.getIfPresent(emailDomain);
     }
 
     @Override

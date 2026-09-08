@@ -13,7 +13,7 @@ import java.util.stream.Collectors;
 import jakarta.annotation.Resource;
 
 import org.apache.commons.collections4.ListUtils;
-import org.ehcache.Cache;
+import com.github.benmanes.caffeine.cache.Cache;
 import org.orcid.core.manager.WorkEntityCacheManager;
 import org.orcid.persistence.dao.WorkDao;
 import org.orcid.persistence.jpa.entities.MinimizedExtendedWorkEntity;
@@ -65,7 +65,7 @@ public class WorkEntityCacheManagerImpl implements WorkEntityCacheManager {
     @Override
     public List<WorkLastModifiedEntity> retrieveWorkLastModifiedList(String orcid, long profileLastModified) {
         ProfileCacheKey key = new ProfileCacheKey(orcid, profileLastModified, releaseName);
-        List<WorkLastModifiedEntity> workLastModifiedList = workLastModifiedCache.get(key);
+        List<WorkLastModifiedEntity> workLastModifiedList = workLastModifiedCache.getIfPresent(key);
         if (workLastModifiedList == null) {
             workLastModifiedList = workDao.getWorkLastModifiedList(orcid);
             workLastModifiedCache.put(key, workLastModifiedList);
@@ -76,7 +76,7 @@ public class WorkEntityCacheManagerImpl implements WorkEntityCacheManager {
     @Override
     public List<WorkLastModifiedEntity> retrievePublicWorkLastModifiedList(String orcid, long profileLastModified) {
         ProfileCacheKey key = new ProfileCacheKey(orcid, profileLastModified, releaseName);
-        List<WorkLastModifiedEntity> workLastModifiedList = publicWorkLastModifiedCache.get(key);
+        List<WorkLastModifiedEntity> workLastModifiedList = publicWorkLastModifiedCache.getIfPresent(key);
         if (workLastModifiedList == null) {
             workLastModifiedList = workDao.getPublicWorkLastModifiedList(orcid);
             publicWorkLastModifiedCache.put(key, workLastModifiedList);
@@ -87,9 +87,9 @@ public class WorkEntityCacheManagerImpl implements WorkEntityCacheManager {
     @Override
     public MinimizedWorkEntity retrieveMinimizedWork(long workId, long workLastModified) {
         WorkCacheKey key = new WorkCacheKey(workId, releaseName);
-        MinimizedWorkEntity minimizedWorkEntity = (MinimizedWorkEntity) minimizedWorkEntityCache.get(key);
+        MinimizedWorkEntity minimizedWorkEntity = (MinimizedWorkEntity) minimizedWorkEntityCache.getIfPresent(key);
         if (minimizedWorkEntity == null || minimizedWorkEntity.getLastModified().getTime() < workLastModified) {
-            minimizedWorkEntity = (MinimizedWorkEntity) minimizedWorkEntityCache.get(key);
+            minimizedWorkEntity = (MinimizedWorkEntity) minimizedWorkEntityCache.getIfPresent(key);
             if (minimizedWorkEntity == null || minimizedWorkEntity.getLastModified().getTime() < workLastModified) {
                 minimizedWorkEntity = workDao.getMinimizedWorkEntity(workId);
                 workDao.detach(minimizedWorkEntity);
@@ -109,7 +109,7 @@ public class WorkEntityCacheManagerImpl implements WorkEntityCacheManager {
     @Override
     public WorkEntity retrieveFullWork(String orcid, long workId, long workLastModified) {
         WorkCacheKey key = new WorkCacheKey(workId, releaseName);
-        WorkEntity workEntity = fullWorkEntityCache.get(key);
+        WorkEntity workEntity = fullWorkEntityCache.getIfPresent(key);
         if (workEntity == null || workEntity.getLastModified().getTime() < workLastModified) {
             workEntity = workDao.getWork(orcid, workId);
             workDao.detach(workEntity);
@@ -137,7 +137,7 @@ public class WorkEntityCacheManagerImpl implements WorkEntityCacheManager {
         for (Long workId : workIdsWithLastModified.keySet()) {
             // get works from the cache if we can
             WorkCacheKey key = new WorkCacheKey(workId, releaseName);
-            WorkBaseEntity cachedWork = workCache.get(key);
+            WorkBaseEntity cachedWork = workCache.getIfPresent(key);
             if (cachedWork == null || cachedWork.getLastModified().getTime() < workIdsWithLastModified.get(workId).getTime()) {
                 fetchListIndexOrder.put(workId, index);
                 fetchList.add(workId);
@@ -152,7 +152,7 @@ public class WorkEntityCacheManagerImpl implements WorkEntityCacheManager {
             List<? extends WorkBaseEntity> refreshedWorks = workRetriever.apply(fetchList);
             for (WorkBaseEntity mWorkRefreshedFromDB : refreshedWorks) {
                 WorkCacheKey key = new WorkCacheKey(mWorkRefreshedFromDB.getId(), releaseName);
-                WorkBaseEntity cachedWork = workCache.get(key);
+                WorkBaseEntity cachedWork = workCache.getIfPresent(key);
                 int returnListIndex = fetchListIndexOrder.get(mWorkRefreshedFromDB.getId());
                 if (cachedWork == null || cachedWork.getLastModified().getTime() < workIdsWithLastModified.get(mWorkRefreshedFromDB.getId()).getTime()) {
                     workCache.put(key, mWorkRefreshedFromDB);
@@ -225,14 +225,14 @@ public class WorkEntityCacheManagerImpl implements WorkEntityCacheManager {
         for (Long workId : workIdsWithLastModified.keySet()) {
             // get works from the cache if we can
             WorkCacheKey key = new WorkCacheKey(workId, releaseName);
-                WorkEntity cachedWork = fullWorkEntityCache.get(key);                        
-                if (cachedWork == null || cachedWork.getLastModified().getTime() < workIdsWithLastModified.get(workId).getTime()) {
-                    fetchListIndexOrder.put(workId, index);
-                    fetchList.add(workId);
-                } else {
-                    returnArray[index] = cachedWork;
-                }
-                index++;
+            WorkEntity cachedWork = fullWorkEntityCache.getIfPresent(key);                        
+            if (cachedWork == null || cachedWork.getLastModified().getTime() < workIdsWithLastModified.get(workId).getTime()) {
+                fetchListIndexOrder.put(workId, index);
+                fetchList.add(workId);
+            } else {
+                returnArray[index] = cachedWork;
+            }
+            index++;
         }
 
         // now fetch all the others that are *not* in the cache
@@ -240,14 +240,14 @@ public class WorkEntityCacheManagerImpl implements WorkEntityCacheManager {
             List<WorkEntity> refreshedWorks = workDao.getWorkEntities(orcid, fetchList);
             for (WorkEntity mWorkRefreshedFromDB : refreshedWorks) {
                 WorkCacheKey key = new WorkCacheKey(mWorkRefreshedFromDB.getId(), releaseName);
-                    WorkEntity cachedWork =fullWorkEntityCache.get(key);                        
-                    int returnListIndex = fetchListIndexOrder.get(mWorkRefreshedFromDB.getId());
-                    if (cachedWork == null || cachedWork.getLastModified().getTime() < workIdsWithLastModified.get(mWorkRefreshedFromDB.getId()).getTime()) {
-                        fullWorkEntityCache.put(key, mWorkRefreshedFromDB);
-                        returnArray[returnListIndex] = mWorkRefreshedFromDB;
-                    } else {
-                        returnArray[returnListIndex] = cachedWork;
-                    }
+                WorkEntity cachedWork = fullWorkEntityCache.getIfPresent(key);                        
+                int returnListIndex = fetchListIndexOrder.get(mWorkRefreshedFromDB.getId());
+                if (cachedWork == null || cachedWork.getLastModified().getTime() < workIdsWithLastModified.get(mWorkRefreshedFromDB.getId()).getTime()) {
+                    fullWorkEntityCache.put(key, mWorkRefreshedFromDB);
+                    returnArray[returnListIndex] = mWorkRefreshedFromDB;
+                } else {
+                    returnArray[returnListIndex] = cachedWork;
+                }
             }
         }
         return (List<WorkEntity>) Arrays.asList(returnArray);
@@ -263,7 +263,7 @@ public class WorkEntityCacheManagerImpl implements WorkEntityCacheManager {
         
         for(Long workId : workIds) {
             WorkCacheKey key = new WorkCacheKey(workId, releaseName);
-            WorkEntity workEntity = fullWorkEntityCache.get(key);
+            WorkEntity workEntity = fullWorkEntityCache.getIfPresent(key);
             if (workEntity == null || !lastModifiedMap.containsKey(workEntity.getId()) || workEntity.getLastModified().getTime() < lastModifiedMap.get(workEntity.getId())) {
                 worksToFetchFromDB.add(workId);
             } else {

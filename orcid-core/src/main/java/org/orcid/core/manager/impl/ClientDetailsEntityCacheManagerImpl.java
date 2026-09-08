@@ -9,7 +9,7 @@ import java.util.Map;
 
 import jakarta.annotation.Resource;
 
-import org.ehcache.Cache;
+import com.github.benmanes.caffeine.cache.Cache;
 import org.orcid.core.manager.ClientDetailsEntityCacheManager;
 import org.orcid.core.manager.read_only.ClientDetailsManagerReadOnly;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
@@ -34,7 +34,7 @@ public class ClientDetailsEntityCacheManagerImpl implements ClientDetailsEntityC
     @Resource(name = "clientDetailsEntityIdPCache")
     private Cache<Object, ClientDetailsEntity> clientDetailsIdPCache;
 
-    // Short-lived ehcache for the last-modified freshness check itself, to collapse bursts of
+    // Short-lived cache for the last-modified freshness check itself, to collapse bursts of
     // repeated retrieve() calls for the same client (e.g. one per activity in a record/list response)
     // into a single DB round-trip instead of one per call.
     @Resource(name = "clientDetailsLastModifiedCache")
@@ -46,9 +46,9 @@ public class ClientDetailsEntityCacheManagerImpl implements ClientDetailsEntityC
     public ClientDetailsEntity retrieve(String clientId) throws IllegalArgumentException {
         Object key = new ClientIdCacheKey(clientId, releaseName);
         Date dbDate = retrieveLastModifiedDate(clientId);
-        ClientDetailsEntity clientDetails = clientDetailsCache.get(key);
+        ClientDetailsEntity clientDetails = clientDetailsCache.getIfPresent(key);
         if (needsFresh(dbDate, clientDetails)) {
-            clientDetails = clientDetailsCache.get(key);
+            clientDetails = clientDetailsCache.getIfPresent(key);
             if (needsFresh(dbDate, clientDetails)) {
                 clientDetails = clientDetailsManager.findByClientId(clientId);
                 if (clientDetails == null)
@@ -79,7 +79,7 @@ public class ClientDetailsEntityCacheManagerImpl implements ClientDetailsEntityC
                 continue;
             }
             Object key = new ClientIdCacheKey(clientId, releaseName);
-            ClientDetailsEntity clientDetails = clientDetailsCache.get(key);
+            ClientDetailsEntity clientDetails = clientDetailsCache.getIfPresent(key);
             if (needsFresh(dbDate, clientDetails)) {
                 staleOrMissingClientIds.add(clientId);
             } else {
@@ -101,9 +101,9 @@ public class ClientDetailsEntityCacheManagerImpl implements ClientDetailsEntityC
     public ClientDetailsEntity retrieveByIdP(String idp) throws IllegalArgumentException {
         Object key = new ClientIdCacheKey("IdP+" + idp, releaseName);
         Date dbDate = retrieveLastModifiedDateByIdP(idp);
-        ClientDetailsEntity clientDetails = clientDetailsCache.get(key);
+        ClientDetailsEntity clientDetails = clientDetailsCache.getIfPresent(key);
         if (needsFresh(dbDate, clientDetails)) {
-            clientDetails = clientDetailsIdPCache.get(key);
+            clientDetails = clientDetailsIdPCache.getIfPresent(key);
             if (needsFresh(dbDate, clientDetails)) {
                 clientDetails = clientDetailsManager.findByIdP(idp);
                 if (clientDetails == null)
@@ -123,23 +123,23 @@ public class ClientDetailsEntityCacheManagerImpl implements ClientDetailsEntityC
     public void put(String clientId, ClientDetailsEntity client) {
         Object key = new ClientIdCacheKey(clientId, releaseName);
         clientDetailsCache.put(key, client);
-        clientDetailsLastModifiedCache.remove(clientId);
+        clientDetailsLastModifiedCache.invalidate(clientId);
     }
 
     @Override
     public void removeAll() {
-        clientDetailsCache.clear();
-        clientDetailsLastModifiedCache.clear();
+        clientDetailsCache.invalidateAll();
+        clientDetailsLastModifiedCache.invalidateAll();
     }
 
     @Override
     public void remove(String clientId) {
-        clientDetailsCache.remove(new ClientIdCacheKey(clientId, releaseName));
-        clientDetailsLastModifiedCache.remove(clientId);
+        clientDetailsCache.invalidate(new ClientIdCacheKey(clientId, releaseName));
+        clientDetailsLastModifiedCache.invalidate(clientId);
     }
 
     private Date retrieveLastModifiedDate(String clientId) {
-        Date cached = clientDetailsLastModifiedCache.get(clientId);
+        Date cached = clientDetailsLastModifiedCache.getIfPresent(clientId);
         if (cached != null) {
             return cached;
         }
@@ -149,7 +149,6 @@ public class ClientDetailsEntityCacheManagerImpl implements ClientDetailsEntityC
         } catch (jakarta.persistence.NoResultException e) {
             LOG.debug("Missing lastModifiedDate clientId:" + clientId);
         }
-        // ehcache rejects null values, so only cache a real hit; unknown clients keep hitting the DB
         if (date != null) {
             clientDetailsLastModifiedCache.put(clientId, date);
         }

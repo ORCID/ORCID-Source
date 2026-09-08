@@ -9,8 +9,8 @@ import jakarta.servlet.http.HttpServletResponse;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang3.StringUtils;
-import org.ehcache.UserManagedCache;
-import org.ehcache.config.builders.UserManagedCacheBuilder;
+import com.github.benmanes.caffeine.cache.Cache;
+import com.github.benmanes.caffeine.cache.Caffeine;
 import org.orcid.core.common.manager.EmailFrequencyManager;
 import org.orcid.core.manager.ClientDetailsEntityCacheManager;
 import org.orcid.core.manager.EncryptionManager;
@@ -72,11 +72,11 @@ public class NotificationController extends BaseController {
         return new ModelAndView("notifications");
     }
 
-    UserManagedCache<String, Boolean> isObsoleteNotificationAlertsCheckDone =
-            UserManagedCacheBuilder.newUserManagedCacheBuilder(String.class, Boolean.class).build(true);
+    private Cache<String, Boolean> isObsoleteNotificationAlertsCheckDone =
+            Caffeine.newBuilder().maximumSize(10000).build();
 
     public void shutdown() {
-        isObsoleteNotificationAlertsCheckDone.close();
+        isObsoleteNotificationAlertsCheckDone.invalidateAll();
     }
 
     @RequestMapping("/notifications.json")
@@ -93,9 +93,9 @@ public class NotificationController extends BaseController {
     }
 
     private List<Notification> archiveObsoleteNotifications(String currentOrcid, List<Notification> notifications) {
-        if (!isObsoleteNotificationAlertsCheckDone.containsKey(currentOrcid)) {
+        if (isObsoleteNotificationAlertsCheckDone.getIfPresent(currentOrcid) == null) {
             notifications = notificationManager.filterActionedNotificationAlerts(notifications, currentOrcid);
-            isObsoleteNotificationAlertsCheckDone.putIfAbsent(currentOrcid, Boolean.TRUE);
+            isObsoleteNotificationAlertsCheckDone.put(currentOrcid, Boolean.TRUE);
         }
         return notifications;
     }

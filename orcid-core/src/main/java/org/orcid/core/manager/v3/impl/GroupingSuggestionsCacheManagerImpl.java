@@ -6,7 +6,7 @@ import java.util.stream.Collectors;
 
 import jakarta.annotation.Resource;
 
-import org.ehcache.Cache;
+import com.github.benmanes.caffeine.cache.Cache;
 import org.orcid.core.manager.v3.GroupingSuggestionsCacheManager;
 import org.orcid.pojo.grouping.WorkGroupingSuggestion;
 
@@ -17,7 +17,7 @@ public class GroupingSuggestionsCacheManagerImpl implements GroupingSuggestionsC
 
     @Override
     public List<WorkGroupingSuggestion> getGroupingSuggestions(String orcid, int max) {
-        List<WorkGroupingSuggestion> suggestions = cache.get(orcid);
+        List<WorkGroupingSuggestion> suggestions = cache.getIfPresent(orcid);
         if (suggestions == null) {
             // could be null if never generated (feature switched on before caches refreshed)
             return new ArrayList<>();
@@ -32,14 +32,17 @@ public class GroupingSuggestionsCacheManagerImpl implements GroupingSuggestionsC
 
     @Override
     public int getGroupingSuggestionCount(String orcid) {
-        return cache.get(orcid) != null ? cache.get(orcid).size() : 0;
+        List<WorkGroupingSuggestion> suggestions = cache.getIfPresent(orcid);
+        return suggestions != null ? suggestions.size() : 0;
     }
     
     @Override
     public void removeGroupingSuggestion(WorkGroupingSuggestion suggestion) {
-        List<WorkGroupingSuggestion> suggestions = cache.get(suggestion.getOrcid());
-        List<WorkGroupingSuggestion> filtered = suggestions.stream().filter(s -> s.getPutCodesAsString().equals(suggestion.getPutCodesAsString())).collect(Collectors.toList());
-        cache.put(suggestion.getOrcid(), filtered);
+        List<WorkGroupingSuggestion> suggestions = cache.getIfPresent(suggestion.getOrcid());
+        if (suggestions != null) {
+            List<WorkGroupingSuggestion> filtered = suggestions.stream().filter(s -> !s.getPutCodesAsString().equals(suggestion.getPutCodesAsString())).collect(Collectors.toList());
+            cache.put(suggestion.getOrcid(), filtered);
+        }
     }
 
 }

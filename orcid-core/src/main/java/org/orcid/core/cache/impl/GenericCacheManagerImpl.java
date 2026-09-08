@@ -18,7 +18,7 @@ package org.orcid.core.cache.impl;
 
 import java.util.Date;
 
-import org.ehcache.Cache;
+import com.github.benmanes.caffeine.cache.Cache;
 import org.orcid.core.cache.GenericCacheManager;
 import org.orcid.core.cache.Retriever;
 import org.orcid.core.manager.v3.read_only.ProfileEntityManagerReadOnly;
@@ -55,14 +55,17 @@ public class GenericCacheManagerImpl<K extends OrcidAware, V> implements Generic
             return null;
         }
 
-        if (cache.containsKey(genericKey)) {
-            return cache.get(genericKey);
+        V cached = cache.getIfPresent(genericKey);
+        if (cached != null) {
+            return cached;
         } else {
             // Note that we retrieve from the retriever using key (which
             // does not contain profile last modified or release name)
             // not genericKey.
             V value = retriever.retrieve(key);
-            cache.put(genericKey, value);
+            if (value != null) {
+                cache.put(genericKey, value);
+            }
             return value;
         }
     }
@@ -77,7 +80,10 @@ public class GenericCacheManagerImpl<K extends OrcidAware, V> implements Generic
 
     @Override
     public void remove(K key) {
-        cache.remove(createGenericKey(key));
+        GenericCacheKey<K> genericKey = createGenericKey(key);
+        if (genericKey != null) {
+            cache.invalidate(genericKey);
+        }
     }
 
 }

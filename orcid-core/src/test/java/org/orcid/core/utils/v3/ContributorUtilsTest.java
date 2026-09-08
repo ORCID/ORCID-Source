@@ -12,7 +12,6 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
-import org.ehcache.Cache;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;

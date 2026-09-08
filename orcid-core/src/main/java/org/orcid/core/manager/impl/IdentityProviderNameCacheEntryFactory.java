@@ -2,7 +2,7 @@ package org.orcid.core.manager.impl;
 
 import jakarta.annotation.Resource;
 
-import org.ehcache.spi.loaderwriter.CacheLoaderWriter;
+import com.github.benmanes.caffeine.cache.CacheLoader;
 import org.orcid.core.manager.IdentityProviderManager;
 
 /**
@@ -10,7 +10,7 @@ import org.orcid.core.manager.IdentityProviderManager;
  * @author Will Simpson
  *
  */
-public class IdentityProviderNameCacheEntryFactory implements CacheLoaderWriter<Object, Object> {
+public class IdentityProviderNameCacheEntryFactory implements CacheLoader<Object, Object> {
 
     @Resource
     private IdentityProviderManager identityProviderManager;
@@ -19,16 +19,6 @@ public class IdentityProviderNameCacheEntryFactory implements CacheLoaderWriter<
     public Object load(Object key) throws Exception {
         IdentityProviderNameCacheKey idpNameKey = (IdentityProviderNameCacheKey) key;
         return identityProviderManager.retrieveFreshIdentitifyProviderName(idpNameKey.getProviderId(), idpNameKey.getLocale());
-    }
-
-    @Override
-    public void write(Object key, Object value) throws Exception {
-        // Not needed, populating only
-    }
-
-    @Override
-    public void delete(Object key) throws Exception {
-        // Not needed, populating only
     }
 
 }

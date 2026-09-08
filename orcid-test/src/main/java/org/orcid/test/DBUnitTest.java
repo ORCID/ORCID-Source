@@ -17,11 +17,9 @@ import org.dbunit.database.QueryDataSet;
 import org.dbunit.dataset.IDataSet;
 import org.dbunit.operation.DatabaseOperation;
 import org.dbunit.util.fileloader.FlatXmlDataFileLoader;
-import org.ehcache.Cache;
-import org.ehcache.CacheManager;
 import org.junit.Ignore;
+import org.orcid.core.utils.OrcidCaffeineCacheManager;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
-import org.springframework.cache.jcache.JCacheCacheManager;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.GenericXmlApplicationContext;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
@@ -99,35 +97,30 @@ public class DBUnitTest {
 
     private static void clearCacheManagers() {
         try {
-            JCacheCacheManager springCoreCacheManager = (JCacheCacheManager) context.getBean("springCoreCacheManager");
+            org.springframework.cache.CacheManager springCoreCacheManager = (org.springframework.cache.CacheManager) context.getBean("springCoreCacheManager");
             if (springCoreCacheManager != null) {
                 clearCaches(springCoreCacheManager);
             }
-            CacheManager coreCacheManager = (CacheManager) context.getBean("coreCacheManager");
+        } catch (NoSuchBeanDefinitionException e) {
+            // do nothing
+        }
+        try {
+            OrcidCaffeineCacheManager coreCacheManager = (OrcidCaffeineCacheManager) context.getBean("coreCacheManager");
             if (coreCacheManager != null) {
-                clearCaches(coreCacheManager);
+                coreCacheManager.clearAll();
             }
         } catch (NoSuchBeanDefinitionException e) {
             // do nothing
         }
     }
 
-    private static void clearCaches(JCacheCacheManager springCoreCacheManager) {
+    private static void clearCaches(org.springframework.cache.CacheManager springCoreCacheManager) {
         for (String cacheName: springCoreCacheManager.getCacheNames()) {
             org.springframework.cache.Cache cache = springCoreCacheManager.getCache(cacheName);
             if (cache != null) {
                 cache.clear();
             }
         }
-    }
-
-    private static void clearCaches(CacheManager cacheManager) {
-        cacheManager.getRuntimeConfiguration().getCacheConfigurations().forEach((alias, config) -> {
-            Cache<?, ?> cache = cacheManager.getCache(alias, config.getKeyType(), config.getValueType());
-            if (cache != null) {
-                cache.clear(); 
-            }
-        });
     }
 
     private static void cleanClientSourcedProfiles(IDatabaseConnection connection) throws AmbiguousTableNameException, DatabaseUnitException, SQLException {
@@ -208,8 +201,7 @@ public class DBUnitTest {
     public static IDataSet getDataSet(String flatXMLDataFile) {
         FlatXmlDataFileLoader loader = new FlatXmlDataFileLoader();
         loader.getBuilder().setColumnSensing(true);
-        IDataSet ds = loader.load(flatXMLDataFile);
-        return ds;
+        return loader.load(flatXMLDataFile);
     }
 
 }
