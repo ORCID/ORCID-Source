@@ -266,7 +266,6 @@ public class RegistrationManagerImpl implements RegistrationManager {
         newRecord.setAuthorities(authorities);
 
         profileDao.persist(newRecord);
-        profileDao.flush();
         
         // Set primary email
         EmailEntity primaryEmailEntity = new EmailEntity();

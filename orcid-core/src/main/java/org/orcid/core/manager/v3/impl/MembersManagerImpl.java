@@ -144,7 +144,6 @@ public class MembersManagerImpl implements MembersManager {
                 newRecord.setAuthorities(authorities);
 
                 profileDao.persist(newRecord);
-                profileDao.flush();         
                 
                 // Set primary email
                 EmailEntity emailEntity = new EmailEntity();

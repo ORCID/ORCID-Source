@@ -51,11 +51,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
-import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.transaction.support.TransactionCallbackWithoutResult;
-import org.springframework.transaction.support.TransactionTemplate;
-
 import org.apache.commons.lang3.StringUtils;
 
 public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkManager {
@@ -100,9 +95,6 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
 
     @Resource
     private SourceEntityUtils sourceEntityUtils;
-
-    @Resource
-    private TransactionTemplate transactionTemplate;
 
     @Value("${org.orcid.core.work.contributors.ui.max:50}")
     private int maxContributorsForUI;
@@ -204,12 +196,7 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
         if (isApiRequest) {
             filterContributors(work, workEntity);
         }
-        transactionTemplate.execute(new TransactionCallbackWithoutResult() {
-            @Override
-            protected void doInTransactionWithoutResult(TransactionStatus status) {
-                workDao.persist(workEntity);
-            }
-        });
+        workDao.persist(workEntity);
         notificationManager.sendAmendEmail(orcid, AmendedSection.WORK, createItemList(workEntity, work.getExternalIdentifiers(), ActionType.CREATE));
         Work updatedWork = jpaJaxbWorkAdapter.toWork(workEntity);
         return updatedWork;
@@ -286,12 +273,7 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
                         setIncomingWorkPrivacy(workEntity, profile);
                         DisplayIndexCalculatorHelper.setDisplayIndexOnNewEntity(workEntity, true);
                         filterContributors(work, workEntity);
-                        transactionTemplate.execute(new TransactionCallbackWithoutResult() {
-                            @Override
-                            protected void doInTransactionWithoutResult(TransactionStatus status) {
-                                workDao.persist(workEntity);
-                            }
-                        });
+                        workDao.persist(workEntity);
 
                         // Update the element in the bulk
                         Work updatedWork = jpaJaxbWorkAdapter.toWork(workEntity);
@@ -422,12 +404,7 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
         workEntity.setSourceId(existingSourceId);
         workEntity.setClientSourceId(existingClientSourceId);
 
-        transactionTemplate.execute(new TransactionCallbackWithoutResult() {
-            @Override
-            protected void doInTransactionWithoutResult(TransactionStatus status) {
-                workDao.merge(workEntity);
-            }
-        });
+        workDao.merge(workEntity);
         notificationManager.sendAmendEmail(orcid, AmendedSection.WORK, createItemList(workEntity, work.getExternalIdentifiers(), ActionType.UPDATE));
         return jpaJaxbWorkAdapter.toWork(workEntity);
     }
@@ -439,12 +416,7 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
         orcidSecurityManager.checkSource(workEntity);
         Work work = jpaJaxbWorkAdapter.toWork(workEntity);
         try {
-            transactionTemplate.execute(new TransactionCallbackWithoutResult() {
-                @Override
-                protected void doInTransactionWithoutResult(TransactionStatus status) {
-                    workDao.removeWork(orcid, workId);
-                }
-            });
+            workDao.removeWork(orcid, workId);
             notificationManager.sendAmendEmail(orcid, AmendedSection.WORK, createItemList(workEntity, work.getExternalIdentifiers(), ActionType.DELETE));
         } catch (Exception e) {
             LOGGER.error("Unable to delete work with ID: " + workId);

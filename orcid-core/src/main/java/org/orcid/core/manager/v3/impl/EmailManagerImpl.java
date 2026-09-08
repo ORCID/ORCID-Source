@@ -272,7 +272,6 @@ public class EmailManagerImpl extends EmailManagerReadOnlyImpl implements EmailM
             entity.setDateVerified(new Date());
         }
         emailDao.merge(entity);
-        emailDao.flush();
     }
 
     @Override
@@ -298,7 +297,6 @@ public class EmailManagerImpl extends EmailManagerReadOnlyImpl implements EmailM
                 entity.setVerified(false);
                 entity.setVisibility(visibility.name());
                 emailDao.merge(entity);  
-                emailDao.flush();
                 if(!entity.getVerified()) {
                     return true;
                 }

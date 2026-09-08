@@ -95,7 +95,6 @@ public class ResearchResourceManagerImpl extends ResearchResourceManagerReadOnly
         setIncomingPrivacy(researchResourceEntity, profile);
         DisplayIndexCalculatorHelper.setDisplayIndexOnNewEntity(researchResourceEntity, isApiRequest);
         rrDao.persist(researchResourceEntity);
-        rrDao.flush();
         if (isApiRequest) {
             notificationManager.sendAmendEmail(orcid, AmendedSection.RESEARCH_RESOURCE, createItemList(researchResourceEntity, rr.getExternalIdentifiers(), ActionType.CREATE));
         }
@@ -139,7 +138,6 @@ public class ResearchResourceManagerImpl extends ResearchResourceManagerReadOnly
         }
 
         rre = rrDao.merge(rre);
-        rrDao.flush();
         if (isApiRequest) {
             notificationManager.sendAmendEmail(orcid, AmendedSection.RESEARCH_RESOURCE, createItemList(rre, rr.getExternalIdentifiers(), ActionType.UPDATE));
         }

@@ -150,7 +150,6 @@ public class ProfileFundingManagerImpl extends ProfileFundingManagerReadOnlyImpl
         setIncomingPrivacy(profileFundingEntity, profile, isApiRequest);
         DisplayIndexCalculatorHelper.setDisplayIndexOnNewEntity(profileFundingEntity, isApiRequest);
         profileFundingDao.persist(profileFundingEntity);
-        profileFundingDao.flush();
         if (isApiRequest) {
             notificationManager.sendAmendEmail(orcid, AmendedSection.FUNDING, createItemList(profileFundingEntity, funding.getExternalIdentifiers(), ActionType.CREATE));
         }
@@ -212,7 +211,6 @@ public class ProfileFundingManagerImpl extends ProfileFundingManagerReadOnlyImpl
         pfe.setOrg(updatedOrganization);
 
         pfe = profileFundingDao.merge(pfe);
-        profileFundingDao.flush();
         if (isApiRequest) {
             notificationManager.sendAmendEmail(orcid, AmendedSection.FUNDING, createItemList(pfe, funding.getExternalIdentifiers(), ActionType.UPDATE));
         }

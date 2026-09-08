@@ -223,12 +223,7 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
         setIncomingWorkPrivacy(workEntity, profile, isApiRequest);
         DisplayIndexCalculatorHelper.setDisplayIndexOnNewEntity(workEntity, isApiRequest);
         filterContributors(work, workEntity);
-        transactionTemplate.execute(new TransactionCallbackWithoutResult() {
-            @Override
-            protected void doInTransactionWithoutResult(TransactionStatus status) {
-                workDao.persist(workEntity);
-            }
-        });
+        workDao.persist(workEntity);
         notificationManager.sendAmendEmail(orcid, AmendedSection.WORK, createItemList(workEntity, work.getExternalIdentifiers(), ActionType.CREATE));
         return jpaJaxbWorkAdapter.toWork(workEntity);
     }
@@ -301,12 +296,7 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
                         setIncomingWorkPrivacy(workEntity, profile);
                         DisplayIndexCalculatorHelper.setDisplayIndexOnNewEntity(workEntity, true);
                         filterContributors(work, workEntity);
-                        transactionTemplate.execute(new TransactionCallbackWithoutResult() {
-                            @Override
-                            protected void doInTransactionWithoutResult(TransactionStatus status) {
-                                workDao.persist(workEntity);
-                            }
-                        });
+                        workDao.persist(workEntity);
 
                         // Update the element in the bulk
                         Work updatedWork = jpaJaxbWorkAdapter.toWork(workEntity);
@@ -432,12 +422,7 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
         workEntity.setSourceId(existingSourceId);
         workEntity.setClientSourceId(existingClientSourceId);
         filterContributors(work, workEntity);
-        transactionTemplate.execute(new TransactionCallbackWithoutResult() {
-            @Override
-            protected void doInTransactionWithoutResult(TransactionStatus status) {
-                workDao.merge(workEntity);
-            }
-        });
+        workDao.merge(workEntity);
         notificationManager.sendAmendEmail(orcid, AmendedSection.WORK, createItemList(workEntity, work.getExternalIdentifiers(), ActionType.UPDATE));
         return jpaJaxbWorkAdapter.toWork(workEntity);
     }
@@ -449,12 +434,7 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
         Work work = jpaJaxbWorkAdapter.toWork(workEntity);
         orcidSecurityManager.checkSourceAndThrow(workEntity);
         try {
-            transactionTemplate.execute(new TransactionCallbackWithoutResult() {
-                @Override
-                protected void doInTransactionWithoutResult(TransactionStatus status) {
-                    workDao.removeWork(orcid, workId);
-                }
-            });
+            workDao.removeWork(orcid, workId);
             notificationManager.sendAmendEmail(orcid, AmendedSection.WORK, createItemList(workEntity, work.getExternalIdentifiers(), ActionType.DELETE));
         } catch (Exception e) {
             LOGGER.error("Unable to delete work with ID: " + workId);
@@ -552,12 +532,7 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
             WorkEntity allPreferredMetadata = createCopyOfUserPreferredWork(userPreferred);
             allPreferredMetadata.setExternalIdentifiersJson(externalIDsJson);
             allPreferredMetadata.setFeaturedDisplayIndex(0);
-            transactionTemplate.execute(new TransactionCallbackWithoutResult() {
-                @Override
-                protected void doInTransactionWithoutResult(TransactionStatus status) {
-                    workDao.persist(allPreferredMetadata);
-                }
-            });
+            workDao.persist(allPreferredMetadata);
         }
     }
 
@@ -588,12 +563,7 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
             workEntity.setContributorsJson("{\"contributor\":[]}");
             workEntity.setTopContributorsJson("[]");
         }
-        transactionTemplate.execute(new TransactionCallbackWithoutResult() {
-            @Override
-            protected void doInTransactionWithoutResult(TransactionStatus status) {
-                workDao.persist(workEntity);
-            }
-        });
+        workDao.persist(workEntity);
         notificationManager.sendAmendEmail(orcid, AmendedSection.WORK, createItemList(workEntity, work.getExternalIdentifiers(), ActionType.CREATE));
         return jpaJaxbWorkAdapter.toWork(workEntity);
     }
@@ -642,12 +612,7 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
             workEntity.setContributorsJson("{\"contributor\":[]}");
             workEntity.setTopContributorsJson("[]");
         }
-        transactionTemplate.execute(new TransactionCallbackWithoutResult() {
-            @Override
-            protected void doInTransactionWithoutResult(TransactionStatus status) {
-                workDao.merge(workEntity);
-            }
-        });
+        workDao.merge(workEntity);
         notificationManager.sendAmendEmail(orcid, AmendedSection.WORK, createItemList(workEntity, work.getExternalIdentifiers(), ActionType.UPDATE));
         return jpaJaxbWorkAdapter.toWork(workEntity);
     }

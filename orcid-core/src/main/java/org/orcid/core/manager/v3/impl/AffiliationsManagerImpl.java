@@ -302,7 +302,6 @@ public class AffiliationsManagerImpl extends AffiliationsManagerReadOnlyImpl imp
         DisplayIndexCalculatorHelper.setDisplayIndexOnNewEntity(entity, isApiRequest);
 
         orgAffiliationRelationDao.persist(entity);
-        orgAffiliationRelationDao.flush();
 
         Affiliation result = null;
         switch (type) {
@@ -396,7 +395,6 @@ public class AffiliationsManagerImpl extends AffiliationsManagerReadOnlyImpl imp
 
         entity.setAffiliationType(type.name());
         entity = orgAffiliationRelationDao.merge(entity);
-        orgAffiliationRelationDao.flush();
 
         Affiliation result = null;
         switch (type) {

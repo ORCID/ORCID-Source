@@ -398,7 +398,6 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
         }
         // Update profile entity in the DB
         profileDao.merge(profile);
-        profileDao.flush();
         
         // Update the visibility for every bio element to the visibility
         // selected by the user
