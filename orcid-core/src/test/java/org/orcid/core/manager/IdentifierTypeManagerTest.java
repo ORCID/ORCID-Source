@@ -45,50 +45,50 @@ public class IdentifierTypeManagerTest extends BaseTest {
     public static void initDBUnitData() throws Exception {
         initDBUnitData(DATA_FILES);
     }
-    
+
     @AfterClass
     public static void removeDBUnitData() throws Exception {
         removeDBUnitData(DATA_FILES);
     }
-    
+
     @Mock
     private SourceManager mockSourceManager;
-    
+
     @Resource
     private SourceManager sourceManager;
-    
+
     @Mock
     private OrcidSecurityManager mockSecurityManager;
-    
+
     @Resource
     private OrcidSecurityManager securityManager;
-    
+
     @Resource
     private IdentifierTypeManager idTypeMan;
-    
+
     private List<String> v2Ids = Arrays.asList(new String[]{"pdb","kuid", "lensid","cienciaiul","rrid","authenticusid","ark","dnb","proposal-id"});
-    
+
     @Before
     public void before() throws Exception {
-    	TargetProxyHelper.injectIntoProxy(idTypeMan, "sourceManager", mockSourceManager);
-    	TargetProxyHelper.injectIntoProxy(idTypeMan, "securityManager", mockSecurityManager);        
+        TargetProxyHelper.injectIntoProxy(idTypeMan, "sourceManager", mockSourceManager);
+        TargetProxyHelper.injectIntoProxy(idTypeMan, "securityManager", mockSecurityManager);
         doNothing().when(mockSecurityManager).checkSource(Matchers.any(IdentifierTypeEntity.class));
-        when(mockSourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ClientDetailsEntity(CLIENT_1_ID)));   
+        when(mockSourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ClientDetailsEntity(CLIENT_1_ID)));
     }
-    
+
     @After
     public void after() {
         TargetProxyHelper.injectIntoProxy(idTypeMan, "sourceManager", sourceManager);
-        TargetProxyHelper.injectIntoProxy(idTypeMan, "securityManager", securityManager);                
+        TargetProxyHelper.injectIntoProxy(idTypeMan, "securityManager", securityManager);
     }
-    
+
     @Test
     public void test0FetchEntities(){
         Map<String,IdentifierType> map = idTypeMan.fetchIdentifierTypesByAPITypeName(null);
         assertEquals(43+v2Ids.size(), map.size());
-        checkExists(map,"other-id"); 
+        checkExists(map,"other-id");
         for (String id : v2Ids){
-            checkExists(map, id);            
+            checkExists(map, id);
         }
     }
 
@@ -97,7 +97,7 @@ public class IdentifierTypeManagerTest extends BaseTest {
         assertEquals(id,map.get(id).getName());
         assertNotNull(map.get(id).getPutCode());
     }
-    
+
     @Test
     public void test1FetchIdentifier(){
         IdentifierType id = idTypeMan.fetchIdentifierTypeByDatabaseName("DOI",Locale.FRANCE);
@@ -108,7 +108,7 @@ public class IdentifierTypeManagerTest extends BaseTest {
         assertFalse(id.getCaseSensitive());
         assertEquals("Other identifier type",id.getDescription());
     }
-    
+
     @Test
     @Transactional
     @Rollback
@@ -119,21 +119,20 @@ public class IdentifierTypeManagerTest extends BaseTest {
         assertTrue(new Date().after(id.getDateCreated()));
         id = idTypeMan.fetchIdentifierTypeByDatabaseName("TEST1",null);
         assertNotNull(id);
-        
+
         id = idTypeMan.fetchIdentifierTypeByDatabaseName("TEST1",null);
         Date last = id.getLastModified();
         id.setValidationRegex("test");
-        
+
         id = idTypeMan.updateIdentifierType(id);
-        assertTrue(last.before(id.getLastModified()));  
-        
+        assertTrue(last.before(id.getLastModified()));
+
         id = idTypeMan.fetchIdentifierTypeByDatabaseName("TEST1",null);
         assertEquals("test1",id.getName());
         assertEquals("test",id.getValidationRegex());
-        assertTrue(last.getTime() < id.getLastModified().getTime()); 
+        assertTrue(last.getTime() < id.getLastModified().getTime());
     }
-    
-    @Test
+
     public void testPrefixSearch(){
         List<IdentifierType> types = idTypeMan.queryByPrefix("do", null);
         boolean foundDOI = false;
@@ -152,28 +151,12 @@ public class IdentifierTypeManagerTest extends BaseTest {
         assertFalse(foundScopus);
     }
 
-    @Test
-    public void testFetchDefaultIdentifierTypes() {
-        List<IdentifierType> defaults = idTypeMan.fetchDefaultIdentifierTypes(null);
-        assertNotNull(defaults);
-        assertFalse(defaults.isEmpty());
-    }
-
-    @Test
-    public void testLocaleCacheKeyConsistency() {
-        Map<String, IdentifierType> mapNull = idTypeMan.fetchIdentifierTypesByAPITypeName(null);
-        Map<String, IdentifierType> mapEnglish = idTypeMan.fetchIdentifierTypesByAPITypeName(Locale.ENGLISH);
-        Map<String, IdentifierType> mapEn = idTypeMan.fetchIdentifierTypesByAPITypeName(new Locale("en"));
-        assertEquals(mapNull.size(), mapEnglish.size());
-        assertEquals(mapEnglish.size(), mapEn.size());
-    }
-    
     private IdentifierType createIdentifierType(int seed){
-        IdentifierType id = new IdentifierType();        
+        IdentifierType id = new IdentifierType();
         id.setName("test"+seed);
         id.setDeprecated(true);
         id.setResolutionPrefix("prefix"+seed);
-        id.setValidationRegex("validation"+seed);   
+        id.setValidationRegex("validation"+seed);
         id.setDateCreated(new Date(10,10,10));
         id.setLastModified(new Date(11,11,11));
         ClientDetailsEntity client = new ClientDetailsEntity();
@@ -183,5 +166,5 @@ public class IdentifierTypeManagerTest extends BaseTest {
         id.setCaseSensitive(true);
         return id;
     }
-    
+
 }

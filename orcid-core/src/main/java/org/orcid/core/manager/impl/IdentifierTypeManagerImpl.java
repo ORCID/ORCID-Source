@@ -25,21 +25,19 @@ import org.orcid.persistence.dao.IdentifierTypeDao;
 import org.orcid.persistence.jpa.entities.IdentifierTypeEntity;
 import org.orcid.persistence.jpa.entities.SourceEntity;
 import org.orcid.pojo.IdentifierType;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
-import org.springframework.context.annotation.Lazy;
 
 import com.google.common.collect.ImmutableList.Builder;
 
 /**
  * Manages the map of external identifier types.
- * 
+ *
  * Identifier types cannot be deleted, but they can be marked as deprecated.
- * 
+ *
  * Identifier types are fun! In the API, they are (generally) lower case with
  * hyphens. In the DB they are (generally) upper case with underscores.
- * 
+ *
  * @author tom
  *
  */
@@ -63,25 +61,17 @@ public class IdentifierTypeManagerImpl implements IdentifierTypeManager {
 
     @Resource
     private OrcidSecurityManager securityManager;
-    
+
     @Resource
     private LocaleManager localeManager;
 
-    @Autowired
-    @Lazy
-    private IdentifierTypeManager self;
-
-    private ExternalIdentifierTypeMapper externalIdentifierTypeConverter = ExternalIdentifierTypeMapper.INSTANCE;    
-    
-    public void setSelf(IdentifierTypeManager self) {
-        this.self = self;
-    }
+    private ExternalIdentifierTypeMapper externalIdentifierTypeConverter = ExternalIdentifierTypeMapper.INSTANCE;
 
     /**
      * Null locale will result in Locale.ENGLISH
      */
     @Override
-    @Cacheable(value = "identifier-types", key = "(#name == null ? 'none' : #name).concat('-').concat(#loc != null ? #loc.language : 'en')")
+    @Cacheable("identifier-types")
     public IdentifierType fetchIdentifierTypeByDatabaseName(String name, Locale loc) {
         loc = (loc == null )? Locale.ENGLISH : loc;
         IdentifierTypeEntity entity = idTypeDao.getEntityByName(name);
@@ -93,10 +83,10 @@ public class IdentifierTypeManagerImpl implements IdentifierTypeManager {
     /**
      * Returns an immutable map of API Type Name->identifierType objects.
      * Null locale will result in Locale.ENGLISH
-     * 
+     *
      */
     @Override
-    @Cacheable(value = "identifier-types-map", key = "#loc != null ? #loc.language : 'en'")
+    @Cacheable("identifier-types-map")
     public Map<String, IdentifierType> fetchIdentifierTypesByAPITypeName(Locale loc) {
         loc = (loc == null )? Locale.ENGLISH : loc;
         List<IdentifierTypeEntity> entities = idTypeDao.getEntities();
@@ -110,7 +100,7 @@ public class IdentifierTypeManagerImpl implements IdentifierTypeManager {
     }
 
     @Override
-    @CacheEvict(value = { "identifier-types", "identifier-types-map", "identifier-types-map-top", "identifier-types-map-prefix" }, allEntries = true)
+    @CacheEvict(value = { "identifier-types", "identifier-types-map" }, allEntries = true)
     public IdentifierType createIdentifierType(IdentifierType id) {
         IdentifierTypeEntity entity = identifierTypeMapper.fromPojo(id);
         SourceEntity source = sourceManager.retrieveSourceEntity();
@@ -121,7 +111,7 @@ public class IdentifierTypeManagerImpl implements IdentifierTypeManager {
     }
 
     @Override
-    @CacheEvict(value = { "identifier-types", "identifier-types-map", "identifier-types-map-top", "identifier-types-map-prefix" }, allEntries = true)
+    @CacheEvict(value = { "identifier-types", "identifier-types-map" }, allEntries = true)
     public IdentifierType updateIdentifierType(IdentifierType id) {
         IdentifierTypeEntity entity = idTypeDao.getEntityByName(externalIdentifierTypeConverter.convertTo(id.getName()));
         SourceEntity sourceEntity = new SourceEntity();
@@ -135,7 +125,7 @@ public class IdentifierTypeManagerImpl implements IdentifierTypeManager {
         entity = idTypeDao.updateIdentifierType(entity);
         return identifierTypeMapper.fromEntity(entity);
     }
-    
+
     private String getMessage(String type, Locale locale) {
         try {
             String key = new StringBuffer("org.orcid.jaxb.model.record.WorkExternalIdentifierType.").append(type).toString();
@@ -146,9 +136,9 @@ public class IdentifierTypeManagerImpl implements IdentifierTypeManager {
     }
 
     @Override
-    @Cacheable(value = "identifier-types-map-top", key = "#loc != null ? #loc.language : 'en'")
+    @Cacheable("identifier-types-map-top")
     public List<IdentifierType> fetchDefaultIdentifierTypes(Locale loc) {
-        Map<String, IdentifierType> all = (self != null ? self : this).fetchIdentifierTypesByAPITypeName(loc);
+        Map<String, IdentifierType> all = this.fetchIdentifierTypesByAPITypeName(loc);
         SortedMap<String,IdentifierType> sorted = new TreeMap<String,IdentifierType>();
         for (String s: all.keySet())
             sorted.put(all.get(s).getDescription().toLowerCase(), all.get(s));
@@ -156,11 +146,11 @@ public class IdentifierTypeManagerImpl implements IdentifierTypeManager {
     }
 
     @Override
-    @Cacheable(value = "identifier-types-map-prefix", key = "(#query == null ? 'none' : #query).concat('-').concat(#loc != null ? #loc.language : 'en')")
+    @Cacheable("identifier-types-map-prefix")
     public List<IdentifierType> queryByPrefix(String query, Locale loc) {
         Map<String,IdentifierType> results = new HashMap<String,IdentifierType>();
-        Map<String, IdentifierType>types = (self != null ? self : this).fetchIdentifierTypesByAPITypeName(loc);
-        
+        Map<String, IdentifierType>types = fetchIdentifierTypesByAPITypeName(loc);
+
         //stick them in a trie so we can do a deep prefix search
         PatriciaTrie<Set<IdentifierType>> trie = new PatriciaTrie<Set<IdentifierType>>();
         for (String type : types.keySet()) {
@@ -174,16 +164,16 @@ public class IdentifierTypeManagerImpl implements IdentifierTypeManager {
                 trie.get(s).add(t);
             }
         }
-        
+
         //dedupe and sort
         SortedMap<String,Set<IdentifierType>> sorted = trie.prefixMap(query.toLowerCase());
         for (Set<IdentifierType> set : sorted.values()){
             for (IdentifierType t : set){
                 if (!results.containsKey(t.getDescription().toLowerCase()))
-                    results.put(t.getDescription().toLowerCase(),t);                
+                    results.put(t.getDescription().toLowerCase(),t);
             }
-        }        
-        
+        }
+
         //put anything that starts with query at the top of the list.
         Builder<IdentifierType> builder = new Builder<IdentifierType>();
         for (IdentifierType t : results.values()){
@@ -196,7 +186,7 @@ public class IdentifierTypeManagerImpl implements IdentifierTypeManager {
                 builder.add(t);
             }
         }
-        
+
         return builder.build();
     }
 }
