@@ -409,7 +409,7 @@ public class OrgDisambiguatedManagerImpl implements OrgDisambiguatedManager {
                     "About to remove " + duplicatedExtIdentifiersToBeRemoved.size() + " duplicate external Ids for Disambiguated Org " + orgDisambiguatedEntity.getId());
             duplicatedExtIdentifiersToBeRemoved.stream().forEach((e) -> {
                 try {
-                    orgDisambiguatedExternalIdentifierDao.remove(e);
+                    orgDisambiguatedExternalIdentifierDao.remove(e.getId());
                     LOGGER.debug("Removed ext id " + e.getIdentifierType() + "::" + e.getIdentifier() + "::" + e.getId());
                 } catch (Exception ex) {
                     LOGGER.error("Exception when removing duplicate external ids for Disambiguated Org " + orgDisambiguatedEntity.getId(), ex);
