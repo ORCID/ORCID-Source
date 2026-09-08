@@ -57,6 +57,7 @@ public class ClientSecretDaoImpl extends GenericDaoImpl<ClientSecretEntity, Clie
      * @return a list of all client secrets associated with a client
      * */
     @Override
+    @Transactional(readOnly = true)
     public List<ClientSecretEntity> getClientSecretsByClientId(String clientId) {
         TypedQuery<ClientSecretEntity> query = entityManager.createQuery("From ClientSecretEntity WHERE clientId=:clientId", ClientSecretEntity.class);
         query.setParameter("clientId", clientId);
@@ -94,7 +95,7 @@ public class ClientSecretDaoImpl extends GenericDaoImpl<ClientSecretEntity, Clie
     }
     
     @Override
-    @Transactional
+    @Transactional(readOnly = true)
     @SuppressWarnings("unchecked")
     public List<ClientSecretEntity> getNonPrimaryKeys(Integer limit) {
         DateTime dt = DateTime.now().minusDays(1);

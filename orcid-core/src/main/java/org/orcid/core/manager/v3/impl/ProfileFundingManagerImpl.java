@@ -28,7 +28,6 @@ import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.ProfileFundingEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.transaction.annotation.Transactional;
 
 public class ProfileFundingManagerImpl extends ProfileFundingManagerReadOnlyImpl implements ProfileFundingManager {
 
@@ -123,7 +122,6 @@ public class ProfileFundingManagerImpl extends ProfileFundingManagerReadOnlyImpl
      * @return the added funding
      */
     @Override
-    @Transactional
     public Funding createFunding(String orcid, Funding funding, boolean isApiRequest) {
         Source activeSource = sourceManager.retrieveActiveSource();
         activityValidator.validateFunding(funding, activeSource, true, isApiRequest, null);
@@ -152,7 +150,6 @@ public class ProfileFundingManagerImpl extends ProfileFundingManagerReadOnlyImpl
         setIncomingPrivacy(profileFundingEntity, profile, isApiRequest);
         DisplayIndexCalculatorHelper.setDisplayIndexOnNewEntity(profileFundingEntity, isApiRequest);
         profileFundingDao.persist(profileFundingEntity);
-        profileFundingDao.flush();
         if (isApiRequest) {
             notificationManager.sendAmendEmail(orcid, AmendedSection.FUNDING, createItemList(profileFundingEntity, funding.getExternalIdentifiers(), ActionType.CREATE));
         }
@@ -214,7 +211,6 @@ public class ProfileFundingManagerImpl extends ProfileFundingManagerReadOnlyImpl
         pfe.setOrg(updatedOrganization);
 
         pfe = profileFundingDao.merge(pfe);
-        profileFundingDao.flush();
         if (isApiRequest) {
             notificationManager.sendAmendEmail(orcid, AmendedSection.FUNDING, createItemList(pfe, funding.getExternalIdentifiers(), ActionType.UPDATE));
         }
@@ -232,7 +228,6 @@ public class ProfileFundingManagerImpl extends ProfileFundingManagerReadOnlyImpl
      * @return true if the funding was deleted, false otherwise
      */
     @Override
-    @Transactional
     public boolean checkSourceAndDelete(String orcid, Long fundingId) {
         ProfileFundingEntity pfe = profileFundingDao.getProfileFunding(orcid, fundingId);
         orcidSecurityManager.checkSourceAndThrow(pfe);

@@ -32,6 +32,7 @@ public class OrgDisambiguatedDaoImpl extends GenericDaoImpl<OrgDisambiguatedEnti
     }
 
     @Override
+    @Transactional(readOnly = true)
     public OrgDisambiguatedEntity findBySourceIdAndSourceType(String sourceId, String sourceType) {
         TypedQuery<OrgDisambiguatedEntity> query = entityManager.createQuery("from OrgDisambiguatedEntity where sourceId = :sourceId and sourceType = :sourceType",
                 OrgDisambiguatedEntity.class);
@@ -42,6 +43,7 @@ public class OrgDisambiguatedDaoImpl extends GenericDaoImpl<OrgDisambiguatedEnti
     }
     
     @Override
+    @Transactional(readOnly = true)
     public List<OrgDisambiguatedEntity> findBySourceType(String sourceType, int firstResult, int maxResults){
         TypedQuery<OrgDisambiguatedEntity> query = entityManager.createQuery("from OrgDisambiguatedEntity where sourceType = :sourceType",
                 OrgDisambiguatedEntity.class);
@@ -52,6 +54,7 @@ public class OrgDisambiguatedDaoImpl extends GenericDaoImpl<OrgDisambiguatedEnti
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<OrgDisambiguatedEntity> getChunk(int firstResult, int maxResults) {
         // Order by id so that we can page through in a predictable way
         TypedQuery<OrgDisambiguatedEntity> query = entityManager.createQuery("from OrgDisambiguatedEntity order by id", OrgDisambiguatedEntity.class);
@@ -61,6 +64,7 @@ public class OrgDisambiguatedDaoImpl extends GenericDaoImpl<OrgDisambiguatedEnti
     }
 
     @Override
+    @Transactional(readOnly = true)
     public OrgDisambiguatedEntity findByNameCityRegionCountryAndSourceType(String name, String city, String region, String country, String sourceType) {
         TypedQuery<OrgDisambiguatedEntity> query = entityManager.createQuery(
                 "from OrgDisambiguatedEntity where name = :name and city = :city and (region = :region or (region is null and :region is null)) and country = :country and sourceType = :sourceType",
@@ -75,6 +79,7 @@ public class OrgDisambiguatedDaoImpl extends GenericDaoImpl<OrgDisambiguatedEnti
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<OrgDisambiguatedEntity> findByName(String name) {
         TypedQuery<OrgDisambiguatedEntity> query = entityManager.createQuery("from OrgDisambiguatedEntity where lower(name) = lower(:name)",
                 OrgDisambiguatedEntity.class);
@@ -85,6 +90,7 @@ public class OrgDisambiguatedDaoImpl extends GenericDaoImpl<OrgDisambiguatedEnti
 
     @SuppressWarnings("unchecked")
     @Override
+    @Transactional(readOnly = true)
     @Cacheable("orgs")
     public List<OrgDisambiguatedEntity> getOrgs(String searchTerm, int firstResult, int maxResults) {
         String qStr = "select od.*, COUNT(*) as countAll from org_disambiguated od left join org_affiliation_relation oa on od.id = oa.org_id"
@@ -101,6 +107,7 @@ public class OrgDisambiguatedDaoImpl extends GenericDaoImpl<OrgDisambiguatedEnti
 
     @SuppressWarnings("unchecked")
     @Override
+    @Transactional(readOnly = true)
     public List<OrgDisambiguatedEntity> findOrgsToGroup(int firstResult, int maxResult) {
         Query query = entityManager.createNativeQuery(GROUPING_ORGS_QUERY, OrgDisambiguatedEntity.class);
         query.setFirstResult(firstResult);
@@ -109,6 +116,7 @@ public class OrgDisambiguatedDaoImpl extends GenericDaoImpl<OrgDisambiguatedEnti
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<Long> findOrgsPendingIndexing(int maxResult) {
         TypedQuery<Long> query = entityManager.createQuery("select o.id from OrgDisambiguatedEntity o where indexingStatus not in ('DONE', 'IGNORE') order by dateCreated",
                 Long.class);
@@ -135,6 +143,7 @@ public class OrgDisambiguatedDaoImpl extends GenericDaoImpl<OrgDisambiguatedEnti
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<Pair<Long, Integer>> findDisambuguatedOrgsWithIncorrectPopularity(int maxResults) {
         Query query = entityManager.createNativeQuery("SELECT od1.id, actual.popularity FROM org_disambiguated od1 JOIN"
                 + " (SELECT od2.id id, COUNT(*) popularity FROM org_disambiguated od2 JOIN org o ON o.org_disambiguated_id = od2.id JOIN org_affiliation_relation oar ON oar.org_id = o.id GROUP BY od2.id)"
@@ -177,6 +186,7 @@ public class OrgDisambiguatedDaoImpl extends GenericDaoImpl<OrgDisambiguatedEnti
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<OrgDisambiguatedEntity> findDuplicates() {
         TypedQuery<OrgDisambiguatedEntity> query = entityManager.createNamedQuery(OrgDisambiguatedEntity.FIND_DUPLICATES, OrgDisambiguatedEntity.class);
         return query.getResultList();

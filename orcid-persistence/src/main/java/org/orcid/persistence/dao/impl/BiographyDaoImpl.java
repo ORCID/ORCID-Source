@@ -20,6 +20,7 @@ public class BiographyDaoImpl extends GenericDaoImpl<BiographyEntity, Long> impl
     }
 
     @Override
+    @Transactional(readOnly = true)
     @Cacheable(value = "biography", key = "#orcid.concat('-').concat(#lastModified)")
     public BiographyEntity getBiography(String orcid, long lastModified) {
         Query query = entityManager.createQuery("FROM BiographyEntity WHERE orcid = :orcid");
@@ -51,6 +52,7 @@ public class BiographyDaoImpl extends GenericDaoImpl<BiographyEntity, Long> impl
     }
 
     @Override
+    @Transactional(readOnly = true)
     public boolean exists(String orcid) {
         Query query = entityManager.createNativeQuery("select count(*) from biography where orcid=:orcid");
         query.setParameter("orcid", orcid);

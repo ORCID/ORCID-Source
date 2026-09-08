@@ -17,6 +17,7 @@ public class BackupCodeDaoImpl extends GenericDaoImpl<BackupCodeEntity, Long> im
 
     @SuppressWarnings("unchecked")
     @Override
+    @Transactional(readOnly = true)
     public List<BackupCodeEntity> getUnusedBackupCodes(String orcid) {
         Query query = entityManager.createQuery("FROM BackupCodeEntity WHERE orcid = :orcid AND usedDate IS NULL");
         query.setParameter("orcid", orcid);
@@ -42,6 +43,7 @@ public class BackupCodeDaoImpl extends GenericDaoImpl<BackupCodeEntity, Long> im
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Date getBackupCodesCreationDate(String orcid) {
         Query query = entityManager.createQuery("SELECT MAX(b.dateCreated) FROM BackupCodeEntity b WHERE b.orcid = :orcid");
         query.setParameter("orcid", orcid);

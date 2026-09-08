@@ -29,6 +29,7 @@ public class OtherNameDaoImpl extends GenericDaoImpl<OtherNameEntity, Long> impl
      * */
     @Override
     @SuppressWarnings("unchecked")
+    @Transactional(readOnly = true)
     @Cacheable(value = "dao-other-names", key = "#orcid.concat('-').concat(#lastModified)")
     public List<OtherNameEntity> getOtherNames(String orcid, long lastModified) {
         Query query = entityManager.createQuery("FROM OtherNameEntity WHERE orcid=:orcid order by displayIndex desc, dateCreated asc");
@@ -37,6 +38,7 @@ public class OtherNameDaoImpl extends GenericDaoImpl<OtherNameEntity, Long> impl
     }
     
     @Override
+    @Transactional(readOnly = true)
     @Cacheable(value = "public-other-names", key = "#orcid.concat('-').concat(#lastModified)")
     public List<OtherNameEntity> getPublicOtherNames(String orcid, long lastModified) {
         return getOtherNames(orcid, PUBLIC_VISIBILITY);
@@ -44,6 +46,7 @@ public class OtherNameDaoImpl extends GenericDaoImpl<OtherNameEntity, Long> impl
 
     @Override
     @SuppressWarnings("unchecked")
+    @Transactional(readOnly = true)
     public List<OtherNameEntity> getOtherNames(String orcid, String visibility) {
         Query query = entityManager.createQuery("FROM OtherNameEntity WHERE orcid=:orcid AND visibility=:visibility order by displayIndex desc, dateCreated asc");
         query.setParameter("orcid", orcid);
@@ -98,6 +101,7 @@ public class OtherNameDaoImpl extends GenericDaoImpl<OtherNameEntity, Long> impl
     }
 
     @Override
+    @Transactional(readOnly = true)
     public OtherNameEntity getOtherName(String orcid, Long putCode) {
         Query query = entityManager.createQuery("FROM OtherNameEntity WHERE orcid=:orcid and id=:id");
         query.setParameter("orcid", orcid);
@@ -116,6 +120,7 @@ public class OtherNameDaoImpl extends GenericDaoImpl<OtherNameEntity, Long> impl
 
     @SuppressWarnings("unchecked")
     @Override
+    @Transactional(readOnly = true)
     public List<BigInteger> getIdsForClientSourceCorrection(int limit, List<String> nonPublicClients) {
         Query query = entityManager.createNativeQuery("SELECT other_name_id FROM other_name WHERE client_source_id = source_id AND client_source_id IN :nonPublicClients");
         query.setParameter("nonPublicClients", nonPublicClients);
@@ -133,6 +138,7 @@ public class OtherNameDaoImpl extends GenericDaoImpl<OtherNameEntity, Long> impl
 
     @SuppressWarnings("unchecked")
     @Override
+    @Transactional(readOnly = true)
     public List<BigInteger> getIdsForUserSourceCorrection(int limit, List<String> publicClients) {
         Query query = entityManager.createNativeQuery("SELECT other_name_id FROM other_name WHERE client_source_id = source_id AND client_source_id IN :publicClients");
         query.setParameter("publicClients", publicClients);
@@ -150,6 +156,7 @@ public class OtherNameDaoImpl extends GenericDaoImpl<OtherNameEntity, Long> impl
 
     @SuppressWarnings("unchecked")
     @Override
+    @Transactional(readOnly = true)
     public List<BigInteger> getIdsForUserOBOUpdate(String clientDetailsId, int max) {
         Query query = entityManager.createNativeQuery("SELECT other_name_id FROM other_name WHERE client_source_id = :clientDetailsId AND assertion_origin_source_id IS NULL");
         query.setParameter("clientDetailsId", clientDetailsId);
@@ -167,6 +174,7 @@ public class OtherNameDaoImpl extends GenericDaoImpl<OtherNameEntity, Long> impl
 
     @SuppressWarnings("unchecked")
     @Override
+    @Transactional(readOnly = true)
     public List<BigInteger> getIdsForUserOBORecords(String clientDetailsId, int max) {
         Query query = entityManager.createNativeQuery("SELECT other_name_id FROM other_name WHERE client_source_id = :clientDetailsId AND assertion_origin_source_id IS NOT NULL");
         query.setParameter("clientDetailsId", clientDetailsId);
@@ -184,6 +192,7 @@ public class OtherNameDaoImpl extends GenericDaoImpl<OtherNameEntity, Long> impl
 
     @SuppressWarnings("unchecked")
     @Override
+    @Transactional(readOnly = true)
     public List<BigInteger> getIdsForUserOBORecords(int max) {
         Query query = entityManager.createNativeQuery("SELECT other_name_id FROM other_name WHERE assertion_origin_source_id IS NOT NULL");
         query.setMaxResults(max);
@@ -192,6 +201,7 @@ public class OtherNameDaoImpl extends GenericDaoImpl<OtherNameEntity, Long> impl
 
     @SuppressWarnings("unchecked")
     @Override
+    @Transactional(readOnly = true)
     public List<BigInteger> getIdsOfOtherNamesReferencingClientProfiles(int max, List<String> clientProfileOrcidIds) {
         Query query = entityManager.createNativeQuery("SELECT other_name_id FROM other_name WHERE source_id IN :ids");
         query.setParameter("ids", clientProfileOrcidIds);

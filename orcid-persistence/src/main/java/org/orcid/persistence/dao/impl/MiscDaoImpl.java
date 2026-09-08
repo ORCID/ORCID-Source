@@ -7,6 +7,8 @@ import jakarta.annotation.Resource;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.Query;
 
+import org.springframework.transaction.annotation.Transactional;
+
 import org.orcid.persistence.dao.MiscDao;
 
 /**
@@ -22,6 +24,7 @@ public class MiscDaoImpl implements MiscDao {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Date retrieveDatabaseDatetime() {
         Query query = entityManager.createNativeQuery("SELECT now()");
         Object result = query.getSingleResult();

@@ -4,7 +4,8 @@ import java.util.Date;
 import java.util.List;
 
 import jakarta.persistence.Query;
-import jakarta.transaction.Transactional;
+
+import org.springframework.transaction.annotation.Transactional;
 
 import org.orcid.persistence.dao.ValidatedPublicProfileDao;
 import org.orcid.persistence.jpa.entities.ValidatedPublicProfileEntity;
@@ -16,6 +17,7 @@ public class ValidatedPublicProfileDaoImpl extends GenericDaoImpl<ValidatedPubli
     }
 
     @SuppressWarnings("unchecked")
+    @Transactional(readOnly = true)
     public List<String> getNextRecordsToValidate(int batchSize) {
         Query query = entityManager
                 .createNativeQuery("SELECT p.orcid FROM profile p LEFT JOIN validated_public_profile v ON  p.orcid = v.orcid WHERE v IS NULL AND p.enabled IS TRUE AND p.deprecated_date IS NULL AND p.record_locked IS NOT TRUE and p.profile_deactivation_date IS NULL");

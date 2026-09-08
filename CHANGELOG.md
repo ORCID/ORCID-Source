@@ -1,3 +1,39 @@
+## v3.0.62 - 2026-09-08
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.0.61...v3.0.62)
+
+- [#7684](https://github.com/ORCID/ORCID-Source/pull/7684): Pd-6145 More serialization fixes
+
+## v3.0.61 - 2026-09-08
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.0.60...v3.0.61)
+
+- [#7682](https://github.com/ORCID/ORCID-Source/pull/7682): Fixed the cache for identifier types
+
+## v3.0.60 - 2026-09-08
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.0.59...v3.0.60)
+
+- [#7681](https://github.com/ORCID/ORCID-Source/pull/7681): PD-6145 Optimize to keep transaction only for DB operation when creating works
+
+## v3.0.59 - 2026-09-07
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.0.58...v3.0.59)
+
+- [#7679](https://github.com/ORCID/ORCID-Source/pull/7679): Camelia orcid/mapstruct fixes9
+
+## v3.0.58 - 2026-09-07
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.0.57...v3.0.58)
+
+- [#7678](https://github.com/ORCID/ORCID-Source/pull/7678): More transactional  with readonly or propagation
+
+## v3.0.57 - 2026-09-07
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.0.56...v3.0.57)
+
+- [#7677](https://github.com/ORCID/ORCID-Source/pull/7677): PD-6145 added transactional read.only where possible, and hibernate plan cache 
+
 ## v3.0.56 - 2026-09-07
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.0.55...v3.0.56)

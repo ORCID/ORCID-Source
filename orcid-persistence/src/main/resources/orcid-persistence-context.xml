@@ -297,6 +297,12 @@
             <entry key="hibernate.jdbc.batch_size" value="${org.orcid.persistence.db.batchSize:50}" />
             <!-- Default Batch Fetch Size: Automatically batches lazy-loaded entities/collections (fixes N+1 queries) -->
             <entry key="hibernate.default_batch_fetch_size" value="${org.orcid.persistence.db.defaultBatchFetchSize:32}" />
+            <!-- Query Plan Cache Max Size: Maximum number of parsed query plans to cache in memory -->
+            <entry key="hibernate.query.plan_cache_max_size" value="${org.orcid.persistence.db.queryPlanCacheMaxSize:4096}" />
+            <!-- Pretty-print SQL statements in logs (default: true) -->
+            <entry key="hibernate.format_sql" value="${org.orcid.persistence.db.formatSql:false}" />
+            <!-- Log inline SQL comments for origin tracing (default: true) -->
+            <entry key="hibernate.use_sql_comments" value="${org.orcid.persistence.db.useSqlComments:false}" />
         </map>
     </property>
 </bean>
@@ -312,6 +318,12 @@
             <!-- Read-Only Fetch Configurations -->
             <entry key="hibernate.jdbc.fetch_size" value="${org.orcid.persistence.db.readonly.fetchSize:100}" />
             <entry key="hibernate.default_batch_fetch_size" value="${org.orcid.persistence.db.readonly.defaultBatchFetchSize:32}" />
+            <!-- Query Plan Cache Max Size: Maximum number of parsed query plans to cache in memory -->
+            <entry key="hibernate.query.plan_cache_max_size" value="${org.orcid.persistence.db.readonly.queryPlanCacheMaxSize:4096}" />
+            <!-- Pretty-print SQL statements in logs (default: true) -->
+            <entry key="hibernate.format_sql" value="${org.orcid.persistence.db.readonly.formatSql:false}" />
+            <!-- Log inline SQL comments for origin tracing (default: true) -->
+            <entry key="hibernate.use_sql_comments" value="${org.orcid.persistence.db.readonly.useSqlComments:false}" />
         </map>
     </property>
 </bean>
@@ -372,6 +384,7 @@
         <property name="idleTimeout" value="\${org.orcid.persistence.db.hikari.idleTimeout:600000}" />
         <property name="maxLifetime" value="\${org.orcid.persistence.db.hikari.maxLifetime:1800000}" />
         <property name="keepaliveTime" value="\${org.orcid.persistence.db.hikari.keepaliveTime:120000}" />
+        <property name="leakDetectionThreshold" value="\${org.orcid.persistence.db.hikari.leakDetectionThreshold:0}" />
         <!-- PostgreSQL JDBC Driver Properties -->
         <property name="dataSourceProperties">
             <props>
@@ -392,6 +405,7 @@
         <property name="idleTimeout" value="\${org.orcid.persistence.db.readonly.hikari.idleTimeout:600000}" />
         <property name="maxLifetime" value="\${org.orcid.persistence.db.readonly.hikari.maxLifetime:1800000}" />
         <property name="keepaliveTime" value="\${org.orcid.persistence.db.readonly.hikari.keepaliveTime:120000}" />
+        <property name="leakDetectionThreshold" value="\${org.orcid.persistence.db.readonly.hikari.leakDetectionThreshold:0}" />
         <property name="readOnly" value="true" />
         <!-- PostgreSQL JDBC Driver Properties -->
         <property name="dataSourceProperties">
