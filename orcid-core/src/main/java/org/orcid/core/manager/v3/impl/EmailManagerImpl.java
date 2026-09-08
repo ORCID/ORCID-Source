@@ -55,7 +55,6 @@ public class EmailManagerImpl extends EmailManagerReadOnlyImpl implements EmailM
     protected OrcidSecurityManager orcidSecurityManager;
     
     @Override
-    @Transactional
     public void removeEmail(String orcid, String email) {
         if (isPrimaryEmail(orcid, email)) {
             throw new IllegalArgumentException("Can't mark primary email as deleted");

@@ -47,7 +47,6 @@ import org.orcid.pojo.ajaxForm.Text;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionTemplate;
 
@@ -229,7 +228,6 @@ public class RegistrationManagerImpl implements RegistrationManager {
      * @return the new record
      * @throws NoSuchAlgorithmException 
      */
-    @Transactional
     private String createMinimalProfile(Registration registration, boolean usedCaptcha, Locale locale, String ip) {
         Date now = new Date();
         String orcid = orcidGenerationManager.createNewOrcid();

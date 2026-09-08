@@ -208,7 +208,6 @@ public class ClientDetailsManagerImpl extends ClientDetailsManagerReadOnlyImpl i
     }    
 
     @Override
-    @Transactional
     public ClientDetailsEntity merge(ClientDetailsEntity clientDetails) {
         ClientDetailsEntity result = clientDetailsDao.merge(clientDetails);
         clientDetailsDao.updateLastModified(result.getId());

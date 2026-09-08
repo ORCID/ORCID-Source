@@ -227,7 +227,6 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
             @Override
             protected void doInTransactionWithoutResult(TransactionStatus status) {
                 workDao.persist(workEntity);
-                workDao.flush();
             }
         });
         notificationManager.sendAmendEmail(orcid, AmendedSection.WORK, createItemList(workEntity, work.getExternalIdentifiers(), ActionType.CREATE));
@@ -306,7 +305,6 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
                             @Override
                             protected void doInTransactionWithoutResult(TransactionStatus status) {
                                 workDao.persist(workEntity);
-                                workDao.flush();
                             }
                         });
 
@@ -438,7 +436,6 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
             @Override
             protected void doInTransactionWithoutResult(TransactionStatus status) {
                 workDao.merge(workEntity);
-                workDao.flush();
             }
         });
         notificationManager.sendAmendEmail(orcid, AmendedSection.WORK, createItemList(workEntity, work.getExternalIdentifiers(), ActionType.UPDATE));
@@ -456,7 +453,6 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
                 @Override
                 protected void doInTransactionWithoutResult(TransactionStatus status) {
                     workDao.removeWork(orcid, workId);
-                    workDao.flush();
                 }
             });
             notificationManager.sendAmendEmail(orcid, AmendedSection.WORK, createItemList(workEntity, work.getExternalIdentifiers(), ActionType.DELETE));
@@ -596,7 +592,6 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
             @Override
             protected void doInTransactionWithoutResult(TransactionStatus status) {
                 workDao.persist(workEntity);
-                workDao.flush();
             }
         });
         notificationManager.sendAmendEmail(orcid, AmendedSection.WORK, createItemList(workEntity, work.getExternalIdentifiers(), ActionType.CREATE));
@@ -651,7 +646,6 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
             @Override
             protected void doInTransactionWithoutResult(TransactionStatus status) {
                 workDao.merge(workEntity);
-                workDao.flush();
             }
         });
         notificationManager.sendAmendEmail(orcid, AmendedSection.WORK, createItemList(workEntity, work.getExternalIdentifiers(), ActionType.UPDATE));
