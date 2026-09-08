@@ -9,73 +9,84 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import jakarta.annotation.Resource;
-
 import org.apache.hc.core5.http.ParseException;
 import org.apache.solr.common.SolrDocument;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.mockito.junit.MockitoJUnitRunner;
+import org.orcid.core.manager.impl.OrcidUrlManager;
+import org.orcid.core.manager.v3.impl.OrcidSearchManagerImpl;
+import org.orcid.core.manager.v3.read_only.RecordManagerReadOnly;
+import org.orcid.core.manager.v3.read_only.impl.RecordManagerReadOnlyImpl;
+import org.orcid.core.solr.CSVSolrClient;
 import org.orcid.core.solr.OrcidSolrProfileClient;
 import org.orcid.core.solr.OrcidSolrResult;
 import org.orcid.core.solr.OrcidSolrResults;
 import org.orcid.jaxb.model.message.OrcidMessage;
 import org.orcid.jaxb.model.v3.release.search.Result;
 import org.orcid.jaxb.model.v3.release.search.Search;
-import org.orcid.test.OrcidJUnit4ClassRunner;
-import org.orcid.test.TargetProxyHelper;
-import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.util.ReflectionTestUtils;
 
 /**
  * Tests for the invocation of Solr retrieval. This class isn't required to have
  * a Solr instance running as it uses Mockito. The purpose of these tests are to
  * check the inner mappings of the search manager return an OrcidMessage
  * instance mapped from a SolrDocument.
- * 
+ *
+ * <p>
+ * That was already true, which is why this no longer boots the Spring context:
+ * the Solr client was mocked and the context was serving the bean and nothing
+ * else. The class under test is now built directly.
+ *
+ * <p>
+ * {@link RecordManagerReadOnly} is a real {@link RecordManagerReadOnlyImpl},
+ * not a mock, because {@code setSearchResults} maps each Solr hit into a
+ * {@link Result} by calling {@code getOrcidIdentifier} on it, and every
+ * assertion below reads the path off that identifier. Against a mock the paths
+ * would be whatever this test stubbed and the mapping would not be exercised at
+ * all. The real method touches no database -- it builds an
+ * {@code OrcidIdentifier} from the orcid string and the base URL -- so only
+ * {@link OrcidUrlManager} has to be supplied, with the {@code
+ * org.orcid.core.baseUri} the test properties carry.
+ *
  * @see SolrDocument
  * @see OrcidMessage
  * 
  * @author jamesb
  * 
  */
-@RunWith(OrcidJUnit4ClassRunner.class)
-@ContextConfiguration(locations = { "classpath:test-orcid-core-context.xml" })
+@RunWith(MockitoJUnitRunner.class)
 public class OrcidSearchManagerTest {
 
-    @Resource(name = "orcidSearchManagerV3")
-    private OrcidSearchManager orcidSearchManager;
-
     @Mock
-    private OrcidSolrProfileClient mockOrcidSolrProfileClient;
-
-    @Mock
-    private OrcidSecurityManager mockOrcidSecurityManager;
-
-    @Resource
     private OrcidSolrProfileClient orcidSolrProfileClient;
 
-    @Resource(name = "orcidSecurityManagerV3")
+    @Mock
     private OrcidSecurityManager orcidSecurityManager;
+
+    @Mock
+    private CSVSolrClient csvSolrClient;
+
+    @InjectMocks
+    private OrcidSearchManagerImpl orcidSearchManager = new OrcidSearchManagerImpl();
 
     @Before
     public void initMocks() {
-        MockitoAnnotations.initMocks(this);
-        TargetProxyHelper.injectIntoProxy(orcidSearchManager, "orcidSolrProfileClient", mockOrcidSolrProfileClient);
-        TargetProxyHelper.injectIntoProxy(orcidSearchManager, "orcidSecurityManager", mockOrcidSecurityManager);
-    }
+        OrcidUrlManager orcidUrlManager = new OrcidUrlManager();
+        orcidUrlManager.setBaseUrl("https://testserver.orcid.org");
 
-    @After
-    public void after() {
-        TargetProxyHelper.injectIntoProxy(orcidSearchManager, "orcidSolrProfileClient", orcidSolrProfileClient);
-        TargetProxyHelper.injectIntoProxy(orcidSearchManager, "orcidSecurityManager", orcidSecurityManager);
+        RecordManagerReadOnlyImpl recordManagerReadOnly = new RecordManagerReadOnlyImpl();
+        ReflectionTestUtils.setField(recordManagerReadOnly, "orcidUrlManager", orcidUrlManager);
+
+        ReflectionTestUtils.setField(orcidSearchManager, "recordManagerReadOnly", recordManagerReadOnly);
     }
 
     @Test
     public void testFindOrcidIds() throws ParseException {
-        when(mockOrcidSolrProfileClient.findByDocumentCriteria(any())).thenReturn(multipleResultsForQuery());
+        when(orcidSolrProfileClient.findByDocumentCriteria(any())).thenReturn(multipleResultsForQuery());
         Search search = orcidSearchManager.findOrcidIds(new HashMap<>());
         assertNotNull(search);
         assertEquals(2, search.getResults().size());
@@ -86,7 +97,7 @@ public class OrcidSearchManagerTest {
 
     @Test
     public void testFindOrcidIdsNoResults() throws ParseException {
-        when(mockOrcidSolrProfileClient.findByDocumentCriteria(any())).thenReturn(new OrcidSolrResults());
+        when(orcidSolrProfileClient.findByDocumentCriteria(any())).thenReturn(new OrcidSolrResults());
         Search search = orcidSearchManager.findOrcidIds(new HashMap<>());
         assertNotNull(search);
         assertEquals(Long.valueOf(0), search.getNumFound());
@@ -95,7 +106,7 @@ public class OrcidSearchManagerTest {
 
     @Test
     public void orcidMultipleOrcidsIndexed() throws ParseException {
-        when(mockOrcidSolrProfileClient.findByDocumentCriteria("rndQuery", 0, 0)).thenReturn(multipleResultsForQuery());
+        when(orcidSolrProfileClient.findByDocumentCriteria("rndQuery", 0, 0)).thenReturn(multipleResultsForQuery());
         Search search = orcidSearchManager.findOrcidsByQuery("rndQuery", 0, 0);
         assertNotNull(search);
         assertNotNull(search.getResults());
@@ -110,7 +121,7 @@ public class OrcidSearchManagerTest {
 
     @Test
     public void allFineTest() throws ParseException {
-        when(mockOrcidSolrProfileClient.findByDocumentCriteria("rndQuery", 0, 0)).thenReturn(invalidRecordSearchResult());
+        when(orcidSolrProfileClient.findByDocumentCriteria("rndQuery", 0, 0)).thenReturn(invalidRecordSearchResult());
 
         Search search = orcidSearchManager.findOrcidsByQuery("rndQuery", 0, 0);
         assertNotNull(search);
@@ -122,7 +133,7 @@ public class OrcidSearchManagerTest {
     public void numFoundTest() throws ParseException {
         OrcidSolrResults osr = multipleResultsForQuery();
         osr.setNumFound(500);
-        when(mockOrcidSolrProfileClient.findByDocumentCriteria("rndQuery", 0, 0)).thenReturn(osr);
+        when(orcidSolrProfileClient.findByDocumentCriteria("rndQuery", 0, 0)).thenReturn(osr);
 
         Search search = orcidSearchManager.findOrcidsByQuery("rndQuery", 0, 0);
         assertNotNull(search);

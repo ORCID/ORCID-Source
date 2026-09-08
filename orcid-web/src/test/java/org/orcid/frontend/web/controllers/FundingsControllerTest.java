@@ -3,35 +3,61 @@ package org.orcid.frontend.web.controllers;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 
-import org.junit.AfterClass;
+import org.junit.After;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.mockito.junit.MockitoJUnitRunner;
+import org.orcid.core.exception.WrongSourceException;
 import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.OrgDisambiguatedManager;
-import org.orcid.core.manager.v3.read_only.ProfileEntityManagerReadOnly;
+import org.orcid.core.manager.ProfileEntityCacheManager;
+import org.orcid.core.manager.v3.ActivityManager;
+import org.orcid.core.manager.v3.ProfileEntityManager;
+import org.orcid.core.manager.v3.ProfileFundingManager;
 import org.orcid.core.orgs.OrgDisambiguatedSourceType;
-import org.orcid.core.security.OrcidUserDetailsService;
-import org.orcid.core.security.OrcidRoles;
-import org.orcid.frontend.web.util.BaseControllerTest;
+import org.orcid.core.utils.Actors;
+import org.orcid.core.utils.v3.ContributorUtils;
+import org.orcid.frontend.web.util.LanguagesMap;
+import org.orcid.jaxb.model.common.FundingType;
+import org.orcid.jaxb.model.common.Iso3166Country;
+import org.orcid.jaxb.model.v3.release.common.Amount;
+import org.orcid.jaxb.model.v3.release.common.Organization;
+import org.orcid.jaxb.model.v3.release.common.OrganizationAddress;
+import org.orcid.jaxb.model.v3.release.common.Source;
+import org.orcid.jaxb.model.v3.release.common.SourceName;
+import org.orcid.jaxb.model.v3.release.common.SourceOrcid;
+import org.orcid.jaxb.model.v3.release.common.Title;
+import org.orcid.jaxb.model.v3.release.common.Visibility;
+import org.orcid.jaxb.model.v3.release.record.Funding;
+import org.orcid.jaxb.model.v3.release.record.FundingTitle;
+import org.orcid.jaxb.model.v3.release.record.summary.FundingSummary;
+import org.orcid.jaxb.model.v3.release.record.summary.Fundings;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.pojo.OrgDisambiguated;
 import org.orcid.pojo.ajaxForm.Date;
@@ -41,31 +67,33 @@ import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.pojo.ajaxForm.Text;
 import org.orcid.pojo.ajaxForm.TranslatedTitleForm;
 import org.orcid.pojo.grouping.FundingGroup;
-import org.orcid.test.OrcidJUnit4ClassRunner;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.test.annotation.Rollback;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.util.ReflectionTestUtils;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
 
-import com.google.common.collect.Lists;
+/**
+ * The seven locale and BigDecimal tests below only ever needed a LocaleManager;
+ * the rest read /data/ProfileFundingEntityData.xml (fundings 1 and 2 sourced by
+ * the record itself, funding 3 sourced by 4444-4444-4444-4441) and are rebuilt
+ * here from hand made model objects carrying the same values.
+ *
+ * Two things deliberately do not stay at this boundary. The persistence round
+ * trips of testAddFunding/testEditFunding/testEditOrgOnExistingFunding are
+ * ProfileFundingManagerImpl and ProfileFundingDao behaviour, so what is asserted
+ * is that the whole edited form reaches the manager, scoped to the signed in
+ * record; the row surviving a write belongs in a ProfileFundingDao database
+ * test. And the WrongSourceException of testEditOtherSourceThrowsError is not
+ * thrown by this controller at all -- FundingsController.editFunding is a plain
+ * delegation, and the throw comes from ProfileFundingManagerImpl.updateFunding
+ * calling orcidSecurityManager.checkSourceAndThrow -- so the test now proves the
+ * guard's refusal escapes postFunding and stops the operation, and the guard
+ * itself belongs to OrcidSecurityManager's own tests.
+ */
+@RunWith(MockitoJUnitRunner.Silent.class)
+public class FundingsControllerTest {
 
-@RunWith(OrcidJUnit4ClassRunner.class)
-@WebAppConfiguration
-@ContextConfiguration(locations = { "classpath:test-frontend-web-servlet.xml" })
-@Transactional(propagation = Propagation.REQUIRES_NEW)
-public class FundingsControllerTest extends BaseControllerTest {
-    private static final List<String> DATA_FILES = Arrays.asList("/data/EmptyEntityData.xml",
-            "/data/SourceClientDetailsEntityData.xml", "/data/ProfileEntityData.xml", "/data/WorksEntityData.xml", "/data/ClientDetailsEntityData.xml",
-            "/data/Oauth2TokenDetailsData.xml", "/data/OrgsEntityData.xml", "/data/ProfileFundingEntityData.xml", "/data/OrgAffiliationEntityData.xml",
-            "/data/RecordNameEntityData.xml");
+    private static final String USER_ORCID = "4444-4444-4444-4443";
+    private static final String OTHER_SOURCE_ORCID = "4444-4444-4444-4441";
+
+    private FundingsController fundingController;
 
     @Mock
     private LocaleManager localeManager;
@@ -73,63 +101,73 @@ public class FundingsControllerTest extends BaseControllerTest {
     @Mock
     private HttpServletRequest servletRequest;
 
-    @Resource
-    FundingsController fundingController;
-    
-    @Resource
-    private OrcidUserDetailsService orcidUserDetailsService;
-    
-    @Resource(name = "profileEntityManagerReadOnlyV3")
-    private ProfileEntityManagerReadOnly profileEntityManagerReadOnly;
-    
-    @Override
-    protected Authentication getAuthentication() {
-        String orcid = "4444-4444-4444-4443";
-        ProfileEntity p = profileEntityManagerReadOnly.findByOrcid(orcid);
-        List<GrantedAuthority> roles = Arrays.asList(new SimpleGrantedAuthority(OrcidRoles.ROLE_USER.name()));
-        UserDetails details = new User(orcid,
-                "password", roles);
-        UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(orcid, p.getPassword(), roles);
-        auth.setDetails(details);
-        return auth;
-    }
+    @Mock
+    private ProfileFundingManager profileFundingManager;
+
+    @Mock
+    private OrgDisambiguatedManager orgDisambiguatedManager;
+
+    @Mock
+    private LanguagesMap lm;
+
+    @Mock
+    private ProfileEntityManager profileEntityManager;
+
+    @Mock
+    private ProfileEntityCacheManager profileEntityCacheManager;
+
+    @Mock
+    private ActivityManager cacheManager;
+
+    @Mock
+    private ContributorUtils contributorUtils;
 
     @Before
     public void initMocks() {
+        fundingController = new FundingsController();
+
+        ReflectionTestUtils.setField(fundingController, "profileFundingManager", profileFundingManager);
+        ReflectionTestUtils.setField(fundingController, "orgDisambiguatedManager", orgDisambiguatedManager);
+        ReflectionTestUtils.setField(fundingController, "lm", lm);
+        ReflectionTestUtils.setField(fundingController, "profileEntityCacheManager", profileEntityCacheManager);
+        ReflectionTestUtils.setField(fundingController, "cacheManager", cacheManager);
+        ReflectionTestUtils.setField(fundingController, "contributorUtils", contributorUtils);
+
+        // FundingsController re-declares localeManager (line 79) and
+        // profileEntityManager (line 85) over the copies BaseController and
+        // BaseWorkspaceController declare. setLocaleManager only reaches the
+        // controller's own copy, so BaseController.getMessage() would still see
+        // null; every declaring class has to be set.
         fundingController.setLocaleManager(localeManager);
+        ReflectionTestUtils.setField(fundingController, BaseController.class, "localeManager", localeManager, LocaleManager.class);
+        ReflectionTestUtils.setField(fundingController, FundingsController.class, "profileEntityManager", profileEntityManager, ProfileEntityManager.class);
+        ReflectionTestUtils.setField(fundingController, BaseWorkspaceController.class, "profileEntityManager", profileEntityManager, ProfileEntityManager.class);
+        ReflectionTestUtils.setField(fundingController, BaseController.class, "profileEntityManager", profileEntityManager, ProfileEntityManager.class);
+
+        when(localeManager.resolveMessage(anyString(), any())).thenAnswer(invocation -> invocation.getArgument(0));
+        when(lm.buildLanguageMap(any(Locale.class), eq(false))).thenReturn(new HashMap<String, String>());
+        when(profileEntityCacheManager.retrieve(USER_ORCID)).thenReturn(new ProfileEntity(USER_ORCID));
+
+        Actors.user(USER_ORCID);
     }
 
-    @Before
-    public void init() {
-        assertNotNull(fundingController);
+    @After
+    public void after() {
+        Actors.clear();
     }
 
-    @BeforeClass
-    public static void beforeClass() throws Exception {
-        initDBUnitData(DATA_FILES);
-    }
-
-    @AfterClass
-    public static void afterClass() throws Exception {
-        removeDBUnitData(Lists.reverse(DATA_FILES));
-    }
     
     @Test
     public void testSearchDisambiguated() {
-        OrgDisambiguatedManager mockOrgDisambiguatedManager = Mockito.mock(OrgDisambiguatedManager.class);
-        OrgDisambiguatedManager oldOrgDisambiguatedManager = (OrgDisambiguatedManager) ReflectionTestUtils.getField(fundingController, "orgDisambiguatedManager");
-        ReflectionTestUtils.setField(fundingController, "orgDisambiguatedManager", mockOrgDisambiguatedManager);
-        
-        Mockito.when(mockOrgDisambiguatedManager.searchOrgsFromSolr(Mockito.eq("search"), Mockito.eq(0), Mockito.eq(0), Mockito.eq(true))).thenReturn(getListOfMixedOrgsDiambiguated());
-        
+        Mockito.when(orgDisambiguatedManager.searchOrgsFromSolr(Mockito.eq("search"), Mockito.eq(0), Mockito.eq(0), Mockito.eq(true)))
+                .thenReturn(getListOfMixedOrgsDiambiguated());
+
         List<Map<String, String>> results = fundingController.searchDisambiguated("search", 0, true);
         assertEquals(4, results.size());
         assertEquals("first", results.get(0).get("value"));
         assertEquals("second", results.get(1).get("value"));
         assertEquals("third", results.get(2).get("value"));
         assertEquals("fourth", results.get(3).get("value"));
-        
-        ReflectionTestUtils.setField(fundingController, "orgDisambiguatedManager", oldOrgDisambiguatedManager);
     }
 
     private List<OrgDisambiguated> getListOfMixedOrgsDiambiguated() {
@@ -399,6 +437,7 @@ public class FundingsControllerTest extends BaseControllerTest {
         HttpSession session = mock(HttpSession.class);
         when(servletRequest.getSession()).thenReturn(session);
         when(localeManager.getLocale()).thenReturn(new Locale("us", "EN"));
+        stubTheRecordsThreeFundings();
 
         List<FundingGroup> fundings = fundingController.getFundingsJson("title", true);
         assertNotNull(fundings);
@@ -415,7 +454,6 @@ public class FundingsControllerTest extends BaseControllerTest {
     }
 
     @Test
-    @Rollback(true)
     public void testAddFundingWithoutAmount() throws Exception {
         HttpSession session = mock(HttpSession.class);
         when(servletRequest.getSession()).thenReturn(session);
@@ -439,10 +477,16 @@ public class FundingsControllerTest extends BaseControllerTest {
         assertEquals(funding.getCountry(), result.getCountry());
         assertNotNull(funding.getErrors());
         assertEquals(0, funding.getErrors().size());
+
+        ArgumentCaptor<Funding> created = ArgumentCaptor.forClass(Funding.class);
+        verify(profileFundingManager).createFunding(eq(USER_ORCID), created.capture(), eq(false));
+        assertEquals("Title", created.getValue().getTitle().getTitle().getContent());
+        assertEquals("OrgName", created.getValue().getOrganization().getName());
+        assertTrue(created.getValue().getAmount() == null || PojoUtil.isEmpty(created.getValue().getAmount().getContent()));
+        verify(profileFundingManager, never()).updateFunding(anyString(), any(Funding.class), eq(false));
     }
 
     @Test
-    @Rollback(true)
     public void testAddFunding() throws Exception {
         HttpSession session = mock(HttpSession.class);
         when(servletRequest.getSession()).thenReturn(session);
@@ -470,6 +514,15 @@ public class FundingsControllerTest extends BaseControllerTest {
         BigDecimal expected = fundingController.getAmountAsBigDecimal(funding.getAmount().getValue());
         BigDecimal resulting = fundingController.getAmountAsBigDecimal(result.getAmount().getValue());
         assertEquals(expected, resulting);
+
+        // Whether the row survives a write is ProfileFundingManagerImpl and
+        // ProfileFundingDao behaviour; what the controller owes is a create for
+        // the signed in record carrying the submitted amount and currency.
+        ArgumentCaptor<Funding> created = ArgumentCaptor.forClass(Funding.class);
+        verify(profileFundingManager).createFunding(eq(USER_ORCID), created.capture(), eq(false));
+        assertEquals("Title", created.getValue().getTitle().getTitle().getContent());
+        assertEquals(0, new BigDecimal("1000").compareTo(new BigDecimal(created.getValue().getAmount().getContent())));
+        assertEquals("USD", created.getValue().getAmount().getCurrencyCode());
     }
 
     @Test
@@ -500,6 +553,7 @@ public class FundingsControllerTest extends BaseControllerTest {
         HttpSession session = mock(HttpSession.class);
         when(servletRequest.getSession()).thenReturn(session);
         when(localeManager.getLocale()).thenReturn(new Locale("us", "EN"));
+        when(profileFundingManager.getFunding(USER_ORCID, 1L)).thenReturn(grantOne());
 
         FundingForm funding = fundingController.getFundingJson(Long.valueOf("1"));
         assertNotNull(funding);
@@ -515,28 +569,39 @@ public class FundingsControllerTest extends BaseControllerTest {
     }
 
     @Test
-    @Rollback(true)
     public void testEditOtherSourceThrowsError() {
         HttpSession session = mock(HttpSession.class);
         when(servletRequest.getSession()).thenReturn(session);
         when(localeManager.getLocale()).thenReturn(new Locale("us", "EN"));
+        when(profileFundingManager.getFunding(USER_ORCID, 3L)).thenReturn(grantThreeFromAnotherSource());
+        // The refusal is the security manager's, reached through
+        // ProfileFundingManagerImpl.updateFunding. All this boundary owes is
+        // that it lets the refusal through and does nothing else.
+        Map<String, String> params = new HashMap<String, String>();
+        params.put("activity", "funding");
+        doThrow(new WrongSourceException(params)).when(profileFundingManager).updateFunding(eq(USER_ORCID), any(Funding.class), eq(false));
 
         FundingForm funding = fundingController.getFundingJson(Long.valueOf("3"));
+        assertEquals(OTHER_SOURCE_ORCID, funding.getSource());
+
         boolean throwsError = false;
         try {
             fundingController.postFunding(funding);
         } catch (Exception e) {
             throwsError = true;
+            assertTrue(e instanceof WrongSourceException);
         }
         assertEquals(throwsError, true);
+        verify(profileFundingManager, never()).createFunding(anyString(), any(Funding.class), eq(false));
     }
 
     @Test
-    @Rollback(true)
     public void testEditFunding() throws Exception {
         HttpSession session = mock(HttpSession.class);
         when(servletRequest.getSession()).thenReturn(session);
         when(localeManager.getLocale()).thenReturn(new Locale("us", "EN"));
+
+        when(profileFundingManager.getFunding(USER_ORCID, 1L)).thenReturn(grantOne());
 
         FundingForm funding = fundingController.getFundingJson(Long.valueOf("1"));
         funding.getFundingTitle().getTitle().setValue("Grant # 1 - updated");
@@ -548,28 +613,33 @@ public class FundingsControllerTest extends BaseControllerTest {
         funding.getCurrencyCode().setValue("CRC");
 
         fundingController.postFunding(funding);
-        // Fetch the funding again
-        FundingForm updated = fundingController.getFundingJson(Long.valueOf("1"));
+
+        // The round trip these assertions used to make is ProfileFundingManagerImpl
+        // and ProfileFundingDao behaviour; what the controller owes is that the
+        // whole edited form reaches updateFunding, scoped to the signed in record.
+        ArgumentCaptor<Funding> updatedCaptor = ArgumentCaptor.forClass(Funding.class);
+        verify(profileFundingManager).updateFunding(eq(USER_ORCID), updatedCaptor.capture(), eq(false));
+        Funding updated = updatedCaptor.getValue();
         assertNotNull(updated);
-        assertNotNull(updated.getFundingTitle());
-        assertFalse(PojoUtil.isEmpty(updated.getFundingTitle().getTitle()));
-        assertEquals("Grant # 1 - updated", updated.getFundingTitle().getTitle().getValue());
-        assertEquals("Grant # 1 - translated title", updated.getFundingTitle().getTranslatedTitle().getContent());
-        assertEquals("en", updated.getFundingTitle().getTranslatedTitle().getLanguageCode());
-        assertFalse(PojoUtil.isEmpty(updated.getFundingType()));
-        assertEquals("salary-award", updated.getFundingType().getValue());
-        assertFalse(PojoUtil.isEmpty(updated.getAmount()));
-        assertEquals("3,500", updated.getAmount().getValue());
-        assertFalse(PojoUtil.isEmpty(updated.getCurrencyCode()));
-        assertEquals("CRC", updated.getCurrencyCode().getValue());
+        assertEquals(Long.valueOf(1L), updated.getPutCode());
+        assertNotNull(updated.getTitle());
+        assertEquals("Grant # 1 - updated", updated.getTitle().getTitle().getContent());
+        assertEquals("Grant # 1 - translated title", updated.getTitle().getTranslatedTitle().getContent());
+        assertEquals("en", updated.getTitle().getTranslatedTitle().getLanguageCode());
+        assertNotNull(updated.getType());
+        assertEquals("salary-award", updated.getType().value());
+        assertNotNull(updated.getAmount());
+        assertEquals(0, new BigDecimal("3500").compareTo(new BigDecimal(updated.getAmount().getContent())));
+        assertEquals("CRC", updated.getAmount().getCurrencyCode());
     }
 
     @Test
-    @Rollback(true)
     public void testEditOrgOnExistingFunding() throws Exception {
         HttpSession session = mock(HttpSession.class);
         when(servletRequest.getSession()).thenReturn(session);
         when(localeManager.getLocale()).thenReturn(new Locale("us", "EN"));
+
+        when(profileFundingManager.getFunding(USER_ORCID, 1L)).thenReturn(grantOne());
 
         FundingForm funding = fundingController.getFundingJson(Long.valueOf("1"));
         // Check old org
@@ -580,9 +650,16 @@ public class FundingsControllerTest extends BaseControllerTest {
         funding.getCountry().setValue("CR");
 
         fundingController.postFunding(funding);
-        // Fetch the funding again
-        FundingForm updated = fundingController.getFundingJson(Long.valueOf("1"));
+
+        // Whether the funding is re-pointed at a different organisation row is
+        // ProfileFundingManagerImpl/OrgManager behaviour; the controller owes the
+        // new address reaching the manager.
+        ArgumentCaptor<Funding> updatedCaptor = ArgumentCaptor.forClass(Funding.class);
+        verify(profileFundingManager).updateFunding(eq(USER_ORCID), updatedCaptor.capture(), eq(false));
+        Funding updated = updatedCaptor.getValue();
         assertNotNull(updated);
+        assertEquals("San Jose", updated.getOrganization().getAddress().getCity());
+        assertEquals(Iso3166Country.CR, updated.getOrganization().getAddress().getCountry());
         // Check new org
         assertEquals("San Jose", funding.getCity().getValue());
         assertEquals("CR", funding.getCountry().getValue());
@@ -640,11 +717,122 @@ public class FundingsControllerTest extends BaseControllerTest {
         when(servletRequest.getSession()).thenReturn(session);
         when(localeManager.getLocale()).thenReturn(new Locale("us", "EN"));
 
+        stubTheRecordsThreeFundings();
+
         List<FundingGroup> fundings = fundingController.getFundingsJson("source", true);
         assertNotNull(fundings);
         assertEquals(3, fundings.size());
         assertEquals("4444-4444-4444-4441", fundings.get(0).getFundings().get(0).getSource());
         assertEquals("4444-4444-4444-4443", fundings.get(2).getFundings().get(0).getSource());
+        // The validated funding leads, and the two self asserted ones keep title
+        // order behind it: both halves of FundingComparators.sortBySource, over
+        // input the manager handed back in neither order.
+        assertEquals(Text.valueOf(3l), fundings.get(0).getFundings().get(0).getPutCode());
+        assertEquals(Text.valueOf(1l), fundings.get(1).getFundings().get(0).getPutCode());
+        assertEquals(Text.valueOf(2l), fundings.get(2).getFundings().get(0).getPutCode());
+    }
+
+    // ------------------------------------- /data/ProfileFundingEntityData.xml
+
+    /**
+     * Fundings 1 and 2 are sourced by the record itself, funding 3 by
+     * 4444-4444-4444-4441. Titles carry the ordering the title sort asserts on,
+     * and the sources carry the self-asserted split the source sort asserts on.
+     *
+     * The manager deliberately hands them back out of order. Handed back in put
+     * code order, testGetFundingsJson's assertions on positions 0 to 2 would hold
+     * even if FundingComparators.TITLE_COMPARATOR were never applied, which is
+     * the whole of what that test still owns now the grouping is a stub.
+     */
+    private void stubTheRecordsThreeFundings() {
+        List<FundingSummary> summaries = Arrays.asList(summary(3L, "Grant # 3", otherSource()), summary(1L, "Grant # 1", userSource()),
+                summary(2L, "Grant # 2", userSource()));
+        when(profileFundingManager.getFundingSummaryList(USER_ORCID)).thenReturn(summaries);
+        when(profileFundingManager.groupFundings(summaries, false)).thenReturn(oneGroupPerSummary(summaries));
+    }
+
+    private Fundings oneGroupPerSummary(List<FundingSummary> summaries) {
+        Fundings fundings = new Fundings();
+        for (FundingSummary summary : summaries) {
+            org.orcid.jaxb.model.v3.release.record.summary.FundingGroup group = new org.orcid.jaxb.model.v3.release.record.summary.FundingGroup();
+            group.getFundingSummary().add(summary);
+            fundings.getFundingGroup().add(group);
+        }
+        return fundings;
+    }
+
+    private FundingSummary summary(Long putCode, String title, Source source) {
+        FundingSummary summary = new FundingSummary();
+        summary.setPutCode(putCode);
+        summary.setDisplayIndex(String.valueOf(putCode));
+        summary.setTitle(fundingTitle(title));
+        summary.setType(FundingType.SALARY_AWARD);
+        summary.setVisibility(Visibility.LIMITED);
+        summary.setSource(source);
+        summary.setOrganization(organization("An institution", "London", "GB"));
+        return summary;
+    }
+
+    /** profile_funding id=1: "Grant # 1", SALARY_AWARD, 2500 USD, org 1. */
+    private Funding grantOne() {
+        Funding funding = new Funding();
+        funding.setPutCode(1L);
+        funding.setTitle(fundingTitle("Grant # 1"));
+        funding.setType(FundingType.SALARY_AWARD);
+        funding.setVisibility(Visibility.LIMITED);
+        funding.setSource(userSource());
+        funding.setOrganization(organization("An institution", "London", "GB"));
+        Amount amount = new Amount();
+        amount.setContent("2500");
+        amount.setCurrencyCode("USD");
+        funding.setAmount(amount);
+        return funding;
+    }
+
+    /** profile_funding id=3: sourced by 4444-4444-4444-4441, not by the record. */
+    private Funding grantThreeFromAnotherSource() {
+        Funding funding = new Funding();
+        funding.setPutCode(3L);
+        funding.setTitle(fundingTitle("Grant # 3"));
+        funding.setType(FundingType.GRANT);
+        funding.setVisibility(Visibility.PRIVATE);
+        funding.setSource(otherSource());
+        funding.setOrganization(organization("Another institution", "London", "GB"));
+        Amount amount = new Amount();
+        amount.setContent("1650000");
+        amount.setCurrencyCode("CRC");
+        funding.setAmount(amount);
+        return funding;
+    }
+
+    private FundingTitle fundingTitle(String title) {
+        FundingTitle fundingTitle = new FundingTitle();
+        fundingTitle.setTitle(new Title(title));
+        return fundingTitle;
+    }
+
+    private Organization organization(String name, String city, String country) {
+        Organization organization = new Organization();
+        organization.setName(name);
+        OrganizationAddress address = new OrganizationAddress();
+        address.setCity(city);
+        address.setCountry(Iso3166Country.fromValue(country));
+        organization.setAddress(address);
+        return organization;
+    }
+
+    private Source userSource() {
+        Source source = new Source();
+        source.setSourceOrcid(new SourceOrcid(USER_ORCID));
+        source.setSourceName(new SourceName("Credit Name"));
+        return source;
+    }
+
+    private Source otherSource() {
+        Source source = new Source();
+        source.setSourceOrcid(new SourceOrcid(OTHER_SOURCE_ORCID));
+        source.setSourceName(new SourceName("Another member"));
+        return source;
     }
 
     private FundingForm getFundingForm() {

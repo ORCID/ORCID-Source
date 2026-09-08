@@ -21,9 +21,12 @@ import org.orcid.persistence.jpa.entities.OrgDisambiguatedEntity;
 import org.orcid.test.DBUnitTest;
 import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.springframework.test.context.ContextConfiguration;
+import org.junit.experimental.categories.Category;
+import org.orcid.test.DatabaseTest;
 
 @RunWith(OrcidJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:test-orcid-persistence-context.xml" })
+@Category(DatabaseTest.class)
 public class OrgDisambiguatedDaoTest extends DBUnitTest {
 
     private static final List<String> DATA_FILES = Arrays.asList("/data/SubjectEntityData.xml", "/data/SourceClientDetailsEntityData.xml",

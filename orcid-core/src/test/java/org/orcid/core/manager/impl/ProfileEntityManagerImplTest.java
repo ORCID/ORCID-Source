@@ -22,12 +22,15 @@ import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.test.DBUnitTest;
 import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.springframework.test.context.ContextConfiguration;
+import org.junit.experimental.categories.Category;
+import org.orcid.test.DatabaseTest;
 
 /**
  * @author: Declan Newman (declan) Date: 10/02/2012
  */
 @RunWith(OrcidJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:test-orcid-core-context.xml" })
+@Category(DatabaseTest.class)
 public class ProfileEntityManagerImplTest extends DBUnitTest {
     private static final String CLIENT_ID_1 = "APP-5555555555555555";   
     private static final String USER_ORCID = "0000-0000-0000-0001";    

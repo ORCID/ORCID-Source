@@ -7,27 +7,18 @@ import static org.junit.Assert.assertNull;
 import java.io.InputStream;
 import java.util.Date;
 
-import jakarta.annotation.Resource;
 import jakarta.xml.bind.JAXBContext;
 import jakarta.xml.bind.JAXBException;
 import jakarta.xml.bind.Unmarshaller;
 
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.orcid.core.adapter.MockSourceNameCache;
-import org.orcid.core.manager.ClientDetailsEntityCacheManager;
-import org.orcid.core.manager.ClientDetailsManager;
-import org.orcid.core.manager.SourceNameCacheManager;
-import org.orcid.core.manager.v3.read_only.RecordNameManagerReadOnly;
 import org.orcid.jaxb.model.v3.release.common.Visibility;
 import org.orcid.jaxb.model.v3.release.record.AffiliationType;
 import org.orcid.jaxb.model.v3.release.record.Service;
 import org.orcid.jaxb.model.v3.release.record.summary.ServiceSummary;
-import org.orcid.persistence.dao.RecordNameDao;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.EndDateEntity;
 import org.orcid.persistence.jpa.entities.OrgAffiliationRelationEntity;
@@ -35,65 +26,31 @@ import org.orcid.persistence.jpa.entities.OrgEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.SourceEntity;
 import org.orcid.persistence.jpa.entities.StartDateEntity;
-import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.orcid.core.utils.DateFieldsOnBaseEntityUtils;
 import org.orcid.utils.DateUtils;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.util.ReflectionTestUtils;
+import org.mockito.junit.MockitoJUnitRunner;
+import org.orcid.core.adapter.MockedMapStructAdapters;
+import org.orcid.core.adapter.mapstruct.v3.impl.JpaJaxbServiceAdapterImpl;
 
 /**
- * 
+ *
  * @author Angel Montenegro
- * 
+ *
  */
-@RunWith(OrcidJUnit4ClassRunner.class)
-@ContextConfiguration(locations = { "classpath:test-orcid-core-context.xml" })
-public class JpaJaxbServiceAdapterTest extends MockSourceNameCache {
+@RunWith(MockitoJUnitRunner.Silent.class)
+public class JpaJaxbServiceAdapterTest {
 
-    @Resource(name = "jpaJaxbServiceAdapterV3")
+    private static final String CLIENT_SOURCE_ID = MockedMapStructAdapters.CLIENT_SOURCE_ID;
+
+    private final MockedMapStructAdapters adapters = new MockedMapStructAdapters();
+
     private JpaJaxbServiceAdapter adapter;
 
-    @Resource
-    private ClientDetailsEntityCacheManager clientDetailsEntityCacheManager;
-
-    @Resource
-    private SourceNameCacheManager sourceNameCacheManager;
-    
-    @Resource
-    private ClientDetailsManager clientDetailsManager;
-    
-    @Resource
-    private RecordNameDao recordNameDao;
-    
-    @Resource(name = "recordNameManagerReadOnlyV3")
-    private RecordNameManagerReadOnly recordNameManager;
-
-    @Mock
-    private ClientDetailsManager mockClientDetailsManager;
-
-    @Mock
-    private RecordNameDao mockRecordNameDao;
-
-    @Mock
-    private RecordNameManagerReadOnly mockRecordNameManager;
-
     @Before
-    public void setUp() {
-        // by default return client details entity with user obo disabled
-        Mockito.when(mockClientDetailsManager.findByClientId(Mockito.anyString())).thenReturn(new ClientDetailsEntity());
-        ReflectionTestUtils.setField(clientDetailsEntityCacheManager, "clientDetailsManager", mockClientDetailsManager);
-
-        Mockito.when(mockRecordNameDao.exists(Mockito.anyString())).thenReturn(true);
-        Mockito.when(mockRecordNameManager.fetchDisplayablePublicName(Mockito.anyString())).thenReturn("test");
-        ReflectionTestUtils.setField(sourceNameCacheManager, "recordNameDao", mockRecordNameDao);
-        ReflectionTestUtils.setField(sourceNameCacheManager, "recordNameManagerReadOnlyV3", mockRecordNameManager);
-    }
-    
-    @After
-    public void tearDown() {
-        ReflectionTestUtils.setField(clientDetailsEntityCacheManager, "clientDetailsManager", clientDetailsManager);        
-        ReflectionTestUtils.setField(sourceNameCacheManager, "recordNameDao", recordNameDao);        
-        ReflectionTestUtils.setField(sourceNameCacheManager, "recordNameManagerReadOnlyV3", recordNameManager);   
+    public void setUpAdapter() throws Exception {
+        // REAL MapStruct mapper: the whole behaviour under test is the mapping configuration,
+        // so a mocked mapper would make every assertion below an assertion about a mock.
+        adapter = adapters.get(JpaJaxbServiceAdapterImpl.class);
     }
 
     @Test
@@ -102,7 +59,7 @@ public class JpaJaxbServiceAdapterTest extends MockSourceNameCache {
         assertNotNull(e);
         OrgAffiliationRelationEntity oar = adapter.toOrgAffiliationRelationEntity(e);
         assertNotNull(oar);
-        
+
         // General info
         assertEquals(Long.valueOf(0), oar.getId());
         assertNull(oar.getDateCreated());
@@ -232,7 +189,7 @@ public class JpaJaxbServiceAdapterTest extends MockSourceNameCache {
         // set client source to user obo enabled client
         ClientDetailsEntity userOBOClient = new ClientDetailsEntity();
         userOBOClient.setUserOBOEnabled(true);
-        Mockito.when(mockClientDetailsManager.findByClientId(Mockito.anyString())).thenReturn(userOBOClient);
+        Mockito.when(adapters.clientDetailsEntityCacheManager.retrieve(Mockito.anyString())).thenReturn(userOBOClient);
 
         OrgAffiliationRelationEntity entity = getEntity();
         assertNotNull(entity);
@@ -273,7 +230,7 @@ public class JpaJaxbServiceAdapterTest extends MockSourceNameCache {
         // set client source to user obo enabled client
         ClientDetailsEntity userOBOClient = new ClientDetailsEntity();
         userOBOClient.setUserOBOEnabled(true);
-        Mockito.when(mockClientDetailsManager.findByClientId(Mockito.anyString())).thenReturn(userOBOClient);
+        Mockito.when(adapters.clientDetailsEntityCacheManager.retrieve(Mockito.anyString())).thenReturn(userOBOClient);
 
         OrgAffiliationRelationEntity entity = getEntity();
         assertNotNull(entity);

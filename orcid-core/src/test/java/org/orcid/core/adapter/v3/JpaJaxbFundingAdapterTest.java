@@ -8,22 +8,14 @@ import java.io.InputStream;
 import java.math.BigDecimal;
 import java.util.Date;
 
-import jakarta.annotation.Resource;
 import jakarta.xml.bind.JAXBContext;
 import jakarta.xml.bind.JAXBException;
 import jakarta.xml.bind.Unmarshaller;
 
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
-import org.orcid.core.manager.ClientDetailsEntityCacheManager;
-import org.orcid.core.manager.ClientDetailsManager;
-import org.orcid.core.manager.SourceNameCacheManager;
-import org.orcid.core.manager.v3.read_only.RecordNameManagerReadOnly;
 import org.orcid.core.utils.DateFieldsOnBaseEntityUtils;
 import org.orcid.utils.DateUtils;
 import org.orcid.jaxb.model.common.FundingType;
@@ -34,71 +26,32 @@ import org.orcid.jaxb.model.v3.release.record.FundingContributor;
 import org.orcid.jaxb.model.v3.release.record.FundingContributorAttributes;
 import org.orcid.jaxb.model.v3.release.record.FundingContributors;
 import org.orcid.jaxb.model.v3.release.record.summary.FundingSummary;
-import org.orcid.persistence.dao.RecordNameDao;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.EndDateEntity;
 import org.orcid.persistence.jpa.entities.OrgEntity;
 import org.orcid.persistence.jpa.entities.ProfileFundingEntity;
 import org.orcid.persistence.jpa.entities.StartDateEntity;
-import org.orcid.test.OrcidJUnit4ClassRunner;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.util.ReflectionTestUtils;
+import org.mockito.junit.MockitoJUnitRunner;
+import org.orcid.core.adapter.MockedMapStructAdapters;
+import org.orcid.core.adapter.mapstruct.v3.impl.JpaJaxbFundingAdapterImpl;
 
 /**
- * 
+ *
  * @author Angel Montenegro
- * 
+ *
  */
-@RunWith(OrcidJUnit4ClassRunner.class)
-@ContextConfiguration(locations = { "classpath:test-orcid-core-context.xml" })
+@RunWith(MockitoJUnitRunner.Silent.class)
 public class JpaJaxbFundingAdapterTest {
 
-    @Resource(name = "jpaJaxbFundingAdapterV3")
+    private final MockedMapStructAdapters adapters = new MockedMapStructAdapters();
+
     private JpaJaxbFundingAdapter jpaJaxbFundingAdapter;
 
-    @Resource
-    private ClientDetailsEntityCacheManager clientDetailsEntityCacheManager;
-    
-    @Resource
-    private ClientDetailsManager clientDetailsManager;
-    
-    @Resource
-    private RecordNameDao recordNameDao;
-    
-    @Resource(name = "recordNameManagerReadOnlyV3")
-    private RecordNameManagerReadOnly recordNameManager;
-
-    @Resource
-    private SourceNameCacheManager sourceNameCacheManager;
-
-    @Mock
-    private ClientDetailsManager mockClientDetailsManager;
-
-    @Mock
-    private RecordNameDao mockRecordNameDao;
-
-    @Mock
-    private RecordNameManagerReadOnly mockRecordNameManager;
-
     @Before
-    public void setUp() {
-        MockitoAnnotations.initMocks(this);
-        
-        // by default return client details entity with user obo disabled
-        Mockito.when(mockClientDetailsManager.findByClientId(Mockito.anyString())).thenReturn(new ClientDetailsEntity());
-        ReflectionTestUtils.setField(clientDetailsEntityCacheManager, "clientDetailsManager", mockClientDetailsManager);
-
-        Mockito.when(mockRecordNameDao.exists(Mockito.anyString())).thenReturn(true);
-        Mockito.when(mockRecordNameManager.fetchDisplayablePublicName(Mockito.anyString())).thenReturn("test");
-        ReflectionTestUtils.setField(sourceNameCacheManager, "recordNameDao", mockRecordNameDao);
-        ReflectionTestUtils.setField(sourceNameCacheManager, "recordNameManagerReadOnlyV3", mockRecordNameManager);
-    }
-    
-    @After
-    public void tearDown() {
-        ReflectionTestUtils.setField(clientDetailsEntityCacheManager, "clientDetailsManager", clientDetailsManager);        
-        ReflectionTestUtils.setField(sourceNameCacheManager, "recordNameDao", recordNameDao);        
-        ReflectionTestUtils.setField(sourceNameCacheManager, "recordNameManagerReadOnlyV3", recordNameManager);   
+    public void setUpAdapter() throws Exception {
+        // REAL MapStruct mapper: the whole behaviour under test is the mapping configuration,
+        // so a mocked mapper would make every assertion below an assertion about a mock.
+        jpaJaxbFundingAdapter = adapters.get(JpaJaxbFundingAdapterImpl.class);
     }
 
     @Test
@@ -190,10 +143,10 @@ public class JpaJaxbFundingAdapterTest {
         assertEquals("es", funding.getTitle().getTranslatedTitle().getLanguageCode());
         assertEquals(FundingType.SALARY_AWARD, funding.getType());
         assertEquals(Visibility.PRIVATE, funding.getVisibility());
-        
+
         // no user obo
         assertNull(funding.getSource().getAssertionOriginOrcid());
-        
+
         assertNotNull(funding.getOrganization());
         assertNotNull(funding.getOrganization().getAddress());
     }
@@ -203,7 +156,7 @@ public class JpaJaxbFundingAdapterTest {
         // set client source to user obo enabled client
         ClientDetailsEntity userOBOClient = new ClientDetailsEntity();
         userOBOClient.setUserOBOEnabled(true);
-        Mockito.when(mockClientDetailsManager.findByClientId(Mockito.anyString())).thenReturn(userOBOClient);
+        Mockito.when(adapters.clientDetailsEntityCacheManager.retrieve(Mockito.anyString())).thenReturn(userOBOClient);
 
         ProfileFundingEntity entity = getProfileFundingEntity();
         assertNotNull(entity);
@@ -243,7 +196,7 @@ public class JpaJaxbFundingAdapterTest {
 
         // user obo
         assertNotNull(funding.getSource().getAssertionOriginOrcid());
-        
+
         assertNotNull(funding.getOrganization());
         assertNotNull(funding.getOrganization().getAddress());
     }
@@ -271,7 +224,7 @@ public class JpaJaxbFundingAdapterTest {
         assertEquals("funding:title", summary.getTitle().getTitle().getContent());
         assertEquals(FundingType.SALARY_AWARD, summary.getType());
         assertEquals(Visibility.PRIVATE, summary.getVisibility());
-        
+
         assertNotNull(summary.getOrganization());
         assertNotNull(summary.getOrganization().getAddress());
     }
@@ -281,12 +234,12 @@ public class JpaJaxbFundingAdapterTest {
         // set client source to user obo enabled client
         ClientDetailsEntity userOBOClient = new ClientDetailsEntity();
         userOBOClient.setUserOBOEnabled(true);
-        Mockito.when(mockClientDetailsManager.findByClientId(Mockito.anyString())).thenReturn(userOBOClient);
-        
+        Mockito.when(adapters.clientDetailsEntityCacheManager.retrieve(Mockito.anyString())).thenReturn(userOBOClient);
+
         ProfileFundingEntity entity = getProfileFundingEntity();
         assertNotNull(entity);
         assertEquals("123456", entity.getNumericAmount().toString());
-        
+
         FundingSummary summary = jpaJaxbFundingAdapter.toFundingSummary(entity);
         assertNotNull(summary);
         assertEquals(Long.valueOf(12345), summary.getPutCode());
@@ -305,14 +258,14 @@ public class JpaJaxbFundingAdapterTest {
         assertEquals("funding:title", summary.getTitle().getTitle().getContent());
         assertEquals(FundingType.SALARY_AWARD, summary.getType());
         assertEquals(Visibility.PRIVATE, summary.getVisibility());
-        
+
         // user obo
         assertNotNull(summary.getSource().getAssertionOriginOrcid());
-        
+
         assertNotNull(summary.getOrganization());
         assertNotNull(summary.getOrganization().getAddress());
     }
-    
+
     @Test
     public void clearFundingEntityFieldsTest() throws JAXBException {
         Funding f = getFunding(true);
@@ -383,45 +336,45 @@ public class JpaJaxbFundingAdapterTest {
     public void processLegacyContributorsTest() throws JAXBException {
         Funding f = getV30Funding();
         assertNotNull(f);
-        FundingContributors fcs = new FundingContributors(); 
+        FundingContributors fcs = new FundingContributors();
         FundingContributor fc = new FundingContributor();
-        FundingContributorAttributes fca = new FundingContributorAttributes(); 
+        FundingContributorAttributes fca = new FundingContributorAttributes();
         fca.setContributorRole("co-lead");
         fc.setContributorAttributes(fca);
         f.setContributors(fcs);
         fcs.getContributor().add(fc);
-                
+
         ProfileFundingEntity pfe = jpaJaxbFundingAdapter.toProfileFundingEntity(f);
         assertNotNull(pfe);
         assertNotNull(pfe.getContributorsJson());
-        assertEquals("{\"contributor\":[{\"contributorOrcid\":null,\"creditName\":null,\"contributorEmail\":null,\"contributorAttributes\":{\"contributorRole\":\"CO_LEAD\"}}]}", pfe.getContributorsJson());               
-    
+        assertEquals("{\"contributor\":[{\"contributorOrcid\":null,\"creditName\":null,\"contributorEmail\":null,\"contributorAttributes\":{\"contributorRole\":\"CO_LEAD\"}}]}", pfe.getContributorsJson());
+
         fca.setContributorRole("lead");
         pfe = jpaJaxbFundingAdapter.toProfileFundingEntity(f);
         assertNotNull(pfe);
         assertNotNull(pfe.getContributorsJson());
         assertEquals("{\"contributor\":[{\"contributorOrcid\":null,\"creditName\":null,\"contributorEmail\":null,\"contributorAttributes\":{\"contributorRole\":\"LEAD\"}}]}", pfe.getContributorsJson());
-        
+
         fca.setContributorRole("supported-by");
         pfe = jpaJaxbFundingAdapter.toProfileFundingEntity(f);
         assertNotNull(pfe);
         assertNotNull(pfe.getContributorsJson());
         assertEquals("{\"contributor\":[{\"contributorOrcid\":null,\"creditName\":null,\"contributorEmail\":null,\"contributorAttributes\":{\"contributorRole\":\"SUPPORTED_BY\"}}]}", pfe.getContributorsJson());
-        
+
         fca.setContributorRole("other-contribution");
         pfe = jpaJaxbFundingAdapter.toProfileFundingEntity(f);
         assertNotNull(pfe);
         assertNotNull(pfe.getContributorsJson());
         assertEquals("{\"contributor\":[{\"contributorOrcid\":null,\"creditName\":null,\"contributorEmail\":null,\"contributorAttributes\":{\"contributorRole\":\"OTHER_CONTRIBUTION\"}}]}", pfe.getContributorsJson());
-        
+
     }
-    
+
     @Test
     public void clearMonthFieldsForFundingDateTest() throws JAXBException {
         Funding f = getFunding(true);
         assertNotNull(f);
         ProfileFundingEntity pfe = jpaJaxbFundingAdapter.toProfileFundingEntity(f);
-        
+
         FuzzyDate startDate = FuzzyDate.valueOf(2021, null, null);
         FuzzyDate endDate = FuzzyDate.valueOf(2022, null, null);
         f.setStartDate(startDate);
@@ -432,7 +385,7 @@ public class JpaJaxbFundingAdapterTest {
         assertNull(pfe.getEndDate().getMonth());
         assertEquals(Integer.valueOf(2022),pfe.getEndDate().getYear());
     }
-    
+
     private Funding getFunding(boolean full) throws JAXBException {
         JAXBContext context = JAXBContext.newInstance(new Class[] { Funding.class });
         Unmarshaller unmarshaller = context.createUnmarshaller();
@@ -443,7 +396,7 @@ public class JpaJaxbFundingAdapterTest {
         InputStream inputStream = getClass().getResourceAsStream(name);
         return (Funding) unmarshaller.unmarshal(inputStream);
     }
-    
+
     private Funding getV30Funding() throws JAXBException {
         JAXBContext context = JAXBContext.newInstance(new Class[] { Funding.class });
         Unmarshaller unmarshaller = context.createUnmarshaller();
@@ -472,7 +425,7 @@ public class JpaJaxbFundingAdapterTest {
         entity.setType(org.orcid.jaxb.model.record_v2.FundingType.SALARY_AWARD.name());
         entity.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.PRIVATE.name());
         entity.setClientSourceId("client-source-id");
-        
+
         OrgEntity orgEntity = new OrgEntity();
         orgEntity.setCity("org:city");
         orgEntity.setCountry(org.orcid.jaxb.model.message.Iso3166Country.US.name());
@@ -480,9 +433,9 @@ public class JpaJaxbFundingAdapterTest {
         orgEntity.setRegion("org:region");
         orgEntity.setUrl("org:url");
         entity.setOrg(orgEntity);
-        
+
         entity.setOrcid("orcid");
-        
+
         return entity;
     }
 

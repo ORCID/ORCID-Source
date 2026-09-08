@@ -2,33 +2,32 @@ package org.orcid.api.memberV2.server.delegator;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyBoolean;
+import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
-import jakarta.annotation.Resource;
 import jakarta.persistence.NoResultException;
 import jakarta.ws.rs.core.Response;
 
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
-import org.orcid.api.common.filter.ApiVersionFilter;
+import org.mockito.ArgumentCaptor;
 import org.orcid.api.common.util.ActivityUtils;
-import org.orcid.core.common.manager.EmailFrequencyManager;
 import org.orcid.core.exception.ActivityIdentifierValidationException;
 import org.orcid.core.exception.ExceedMaxNumberOfPutCodesException;
 import org.orcid.core.exception.OrcidAccessControlException;
@@ -37,234 +36,167 @@ import org.orcid.core.exception.OrcidUnauthorizedException;
 import org.orcid.core.exception.OrcidVisibilityException;
 import org.orcid.core.exception.VisibilityMismatchException;
 import org.orcid.core.exception.WrongSourceException;
-import org.orcid.core.manager.NotificationManager;
-import org.orcid.core.utils.SecurityContextTestUtils;
 import org.orcid.jaxb.model.common_v2.LastModifiedDate;
+import org.orcid.jaxb.model.common_v2.Source;
 import org.orcid.jaxb.model.common_v2.Subtitle;
 import org.orcid.jaxb.model.common_v2.Title;
 import org.orcid.jaxb.model.common_v2.TranslatedTitle;
-import org.orcid.jaxb.model.common_v2.Url;
 import org.orcid.jaxb.model.common_v2.Visibility;
 import org.orcid.jaxb.model.error_v2.OrcidError;
-import org.orcid.jaxb.model.groupid_v2.GroupIdRecord;
 import org.orcid.jaxb.model.message.ScopePathType;
-import org.orcid.jaxb.model.message.WorkExternalIdentifierType;
-import org.orcid.jaxb.model.record.summary_v2.ActivitiesSummary;
 import org.orcid.jaxb.model.record.summary_v2.WorkGroup;
 import org.orcid.jaxb.model.record.summary_v2.WorkSummary;
 import org.orcid.jaxb.model.record.summary_v2.Works;
-import org.orcid.jaxb.model.record_v2.Address;
 import org.orcid.jaxb.model.record_v2.Citation;
 import org.orcid.jaxb.model.record_v2.CitationType;
-import org.orcid.jaxb.model.record_v2.Education;
-import org.orcid.jaxb.model.record_v2.Employment;
-import org.orcid.jaxb.model.record_v2.ExternalID;
-import org.orcid.jaxb.model.record_v2.ExternalIDs;
-import org.orcid.jaxb.model.record_v2.Funding;
-import org.orcid.jaxb.model.record_v2.Keyword;
-import org.orcid.jaxb.model.record_v2.OtherName;
-import org.orcid.jaxb.model.record_v2.PeerReview;
-import org.orcid.jaxb.model.record_v2.PersonExternalIdentifier;
-import org.orcid.jaxb.model.record_v2.Relationship;
-import org.orcid.jaxb.model.record_v2.ResearcherUrl;
 import org.orcid.jaxb.model.record_v2.Work;
 import org.orcid.jaxb.model.record_v2.WorkBulk;
 import org.orcid.jaxb.model.record_v2.WorkTitle;
 import org.orcid.jaxb.model.record_v2.WorkType;
-import org.orcid.test.DBUnitTest;
-import org.orcid.test.OrcidJUnit4ClassRunner;
-import org.orcid.test.TargetProxyHelper;
 import org.orcid.test.helper.Utils;
 import org.orcid.utils.DateUtils;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.mock.web.MockHttpServletRequest;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.web.context.request.RequestAttributes;
-import org.springframework.web.context.request.RequestContextHolder;
-import org.springframework.web.context.request.ServletRequestAttributes;
 
-@RunWith(OrcidJUnit4ClassRunner.class)
-@ContextConfiguration(locations = { "classpath:test-orcid-api-web-context.xml" })
-public class MemberV2ApiServiceDelegator_WorksTest extends DBUnitTest {
-    protected static final List<String> DATA_FILES = Arrays.asList("/data/EmptyEntityData.xml",
-            "/data/SourceClientDetailsEntityData.xml", "/data/ProfileEntityData.xml", "/data/WorksEntityData.xml", "/data/ClientDetailsEntityData.xml",
-            "/data/Oauth2TokenDetailsData.xml", "/data/OrgsEntityData.xml", "/data/ProfileFundingEntityData.xml", "/data/OrgAffiliationEntityData.xml",
-            "/data/PeerReviewEntityData.xml", "/data/GroupIdRecordEntityData.xml", "/data/RecordNameEntityData.xml", "/data/BiographyEntityData.xml");
+/**
+ * The work endpoints of the member v2 delegator, on mocks.
+ *
+ * <p>
+ * Two things this class deliberately does not try to prove. First, which works
+ * survive a read: {@code checkAndFilter} is void and edits the list -- and, for a
+ * {@code WorkBulk}, replaces denied entries with an {@code OrcidError} -- in
+ * place, so with a mocked security manager nothing is ever removed and any
+ * count-based assertion would hold for the wrong reason. That is
+ * {@code OrcidSecurityManager_generalTest} and
+ * {@code OrcidSecurityManager_WorkBulkTest}'s work. Second, the rules enforced in
+ * SQL: {@code WorkDaoImpl} selects and deletes on {@code (work_id, orcid)}
+ * together, which is what stops one record reading or deleting another's work.
+ * A mock stubbed to throw proves nothing about a SQL predicate, so those tests
+ * below assert only that the delegator does not swallow the miss.
+ */
+public class MemberV2ApiServiceDelegator_WorksTest extends MemberV2ApiServiceDelegatorMockBase {
 
-    // Now on, for any new test, PLAESE USER THIS ORCID ID
-    protected final String ORCID = "0000-0000-0000-0003";
-    
-    @Resource(name = "memberV2ApiServiceDelegator")
-    protected MemberV2ApiServiceDelegator<Education, Employment, PersonExternalIdentifier, Funding, GroupIdRecord, OtherName, PeerReview, ResearcherUrl, Work, WorkBulk, Address, Keyword> serviceDelegator;
-
-    @Resource
-    protected EmailFrequencyManager emailFrequencyManager;
-    
-    @Value("${org.orcid.core.works.bulk.read.max:100}")
-    private Long bulkReadSize;
-    
-    @Mock
-    protected EmailFrequencyManager mockEmailFrequencyManager;
-        
-    @Resource(name = "notificationManager")
-    private NotificationManager notificationManager;
-    
-    @Before
-    public void before() throws Exception {
-        initDBUnitData(DATA_FILES);
-        MockitoAnnotations.initMocks(this);
-        Map<String, String> map = new HashMap<String, String>();
-        map.put(EmailFrequencyManager.ADMINISTRATIVE_CHANGE_NOTIFICATIONS, String.valueOf(Float.MAX_VALUE));
-        map.put(EmailFrequencyManager.CHANGE_NOTIFICATIONS, String.valueOf(Float.MAX_VALUE));
-        map.put(EmailFrequencyManager.MEMBER_UPDATE_REQUESTS, String.valueOf(Float.MAX_VALUE));
-        map.put(EmailFrequencyManager.QUARTERLY_TIPS, String.valueOf(true));
-        
-        when(mockEmailFrequencyManager.getEmailFrequency(anyString())).thenReturn(map);
-        TargetProxyHelper.injectIntoProxy(notificationManager, "emailFrequencyManager", mockEmailFrequencyManager); 
-    }
-    
-    @After
-    public void after() {
-        TargetProxyHelper.injectIntoProxy(notificationManager, "emailFrequencyManager", emailFrequencyManager);         
-    }
-    
-    @BeforeClass
-    public static void initDBUnitData() throws Exception {
-        initDBUnitData(DATA_FILES);
-    }
-
-    @AfterClass
-    public static void removeDBUnitData() throws Exception {
-        Collections.reverse(DATA_FILES);
-        removeDBUnitData(DATA_FILES);
-    }
+    private static final String OTHER_ORCID = "4444-4444-4444-4446";
+    private static final String MY_ORCID = "4444-4444-4444-4443";
 
     @Test(expected = OrcidUnauthorizedException.class)
     public void testViewWorkWrongToken() {
-        SecurityContextTestUtils.setUpSecurityContext("some-other-user", ScopePathType.READ_LIMITED);
-        serviceDelegator.viewWork(ORCID, 11L);
+        Work work = work(11L, "PUBLIC", Visibility.PUBLIC, clientSource(CLIENT_1));
+        when(workManagerReadOnly.getWork(ORCID, 11L)).thenReturn(work);
+        doThrow(new OrcidUnauthorizedException("Access token is for a different record")).when(orcidSecurityManager).checkAndFilter(ORCID, work,
+                ScopePathType.ORCID_WORKS_READ_LIMITED);
+
+        try {
+            serviceDelegator.viewWork(ORCID, 11L);
+        } finally {
+            assertNull("the work must not be decorated once the guard has refused", work.getPath());
+        }
     }
 
     @Test(expected = OrcidUnauthorizedException.class)
     public void testViewWorkSummaryWrongToken() {
-        SecurityContextTestUtils.setUpSecurityContext("some-other-user", ScopePathType.READ_LIMITED);
-        serviceDelegator.viewWorkSummary(ORCID, 11L);
+        WorkSummary summary = workSummary(11L, "PUBLIC", Visibility.PUBLIC);
+        when(workManagerReadOnly.getWorkSummary(ORCID, 11L)).thenReturn(summary);
+        doThrow(new OrcidUnauthorizedException("Access token is for a different record")).when(orcidSecurityManager).checkAndFilter(ORCID, summary,
+                ScopePathType.ORCID_WORKS_READ_LIMITED);
+
+        try {
+            serviceDelegator.viewWorkSummary(ORCID, 11L);
+        } finally {
+            assertNull("the summary must not be decorated once the guard has refused", summary.getPath());
+        }
     }
 
     @Test
     public void testViewWorkReadPublic() {
-        SecurityContextTestUtils.setUpSecurityContextForClientOnly("APP-5555555555555555", ScopePathType.READ_PUBLIC);
+        Work work = work(11L, "PUBLIC", Visibility.PUBLIC, clientSource(CLIENT_1));
+        when(workManagerReadOnly.getWork(ORCID, 11L)).thenReturn(work);
+
         Response r = serviceDelegator.viewWork(ORCID, 11L);
-        Work work = (Work) r.getEntity();
-        assertNotNull(work);
-        assertEquals("/0000-0000-0000-0003/work/11", work.getPath());
-        assertNotNull(work);
-        assertNotNull(work.getLastModifiedDate());
-        assertNotNull(work.getLastModifiedDate().getValue());
-        assertNotNull(work.getWorkTitle());
-        assertNotNull(work.getWorkTitle().getTitle());
-        assertEquals("PUBLIC", work.getWorkTitle().getTitle().getContent());
-        assertEquals(Long.valueOf(11), work.getPutCode());
-        assertEquals("/0000-0000-0000-0003/work/11", work.getPath());
-        assertEquals(WorkType.JOURNAL_ARTICLE, work.getWorkType());
-        assertEquals("APP-5555555555555555", work.getSource().retrieveSourcePath());
-        assertNotNull(work.getWorkContributors());
-        assertNotNull(work.getWorkContributors().getContributor());
-        assertEquals(1, work.getWorkContributors().getContributor().size());
-        assertNotNull(work.getWorkContributors().getContributor().get(0).getContributorOrcid());
-        assertEquals("0000-0000-0000-0000", work.getWorkContributors().getContributor().get(0).getContributorOrcid().getPath());
-        assertNull(work.getWorkContributors().getContributor().get(0).getCreditName());
-        Utils.assertIsPublicOrSource(work, "APP-5555555555555555");
+
+        Work returned = (Work) r.getEntity();
+        assertNotNull(returned);
+        assertEquals("/0000-0000-0000-0003/work/11", returned.getPath());
+        assertNotNull(returned.getLastModifiedDate());
+        assertNotNull(returned.getLastModifiedDate().getValue());
+        assertNotNull(returned.getWorkTitle());
+        assertNotNull(returned.getWorkTitle().getTitle());
+        assertEquals("PUBLIC", returned.getWorkTitle().getTitle().getContent());
+        assertEquals(Long.valueOf(11), returned.getPutCode());
+        assertEquals(WorkType.JOURNAL_ARTICLE, returned.getWorkType());
+        assertEquals("APP-5555555555555555", returned.getSource().retrieveSourcePath());
+        assertEquals(CLIENT_1_NAME, returned.getSource().getSourceName().getContent());
+        verify(orcidSecurityManager).checkAndFilter(ORCID, work, ScopePathType.ORCID_WORKS_READ_LIMITED);
     }
 
     @Test
     public void testViewWorkSummaryReadPublic() {
-        SecurityContextTestUtils.setUpSecurityContextForClientOnly("APP-5555555555555555", ScopePathType.READ_PUBLIC);
+        WorkSummary summary = workSummary(11L, "PUBLIC", Visibility.PUBLIC);
+        when(workManagerReadOnly.getWorkSummary(ORCID, 11L)).thenReturn(summary);
+
         Response r = serviceDelegator.viewWorkSummary(ORCID, 11L);
+
         WorkSummary element = (WorkSummary) r.getEntity();
         assertNotNull(element);
         assertEquals("/0000-0000-0000-0003/work/11", element.getPath());
-        Utils.assertIsPublicOrSource(element, "APP-5555555555555555");
+        verify(orcidSecurityManager).checkAndFilter(ORCID, summary, ScopePathType.ORCID_WORKS_READ_LIMITED);
     }
 
     @Test
     public void testViewPublicWork() {
-        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4446", ScopePathType.READ_LIMITED);
-        Response response = serviceDelegator.viewWork("4444-4444-4444-4446", 5L);
-        assertNotNull(response);
-        Work work = (Work) response.getEntity();
-        assertNotNull(work);
-        assertEquals("/4444-4444-4444-4446/work/5", work.getPath());
-        Utils.verifyLastModified(work.getLastModifiedDate());
-        assertNotNull(work.getWorkTitle());
-        assertNotNull(work.getWorkTitle().getTitle());
-        assertEquals("Journal article A", work.getWorkTitle().getTitle().getContent());
-        assertEquals(Long.valueOf(5), work.getPutCode());
-        assertEquals("/4444-4444-4444-4446/work/5", work.getPath());
-        assertEquals(WorkType.JOURNAL_ARTICLE, work.getWorkType());
-        assertEquals(Visibility.PUBLIC.value(), work.getVisibility().value());
+        assertViewWorkDecorated(5L, "Journal article A", Visibility.PUBLIC, clientSource(CLIENT_1));
     }
 
     @Test
     public void testViewLimitedWork() {
-        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4446", ScopePathType.READ_LIMITED);
-        Response response = serviceDelegator.viewWork("4444-4444-4444-4446", 6L);
-        assertNotNull(response);
-        Work work = (Work) response.getEntity();
-        assertEquals("/4444-4444-4444-4446/work/6", work.getPath());
-        Utils.verifyLastModified(work.getLastModifiedDate());
-        assertNotNull(work.getWorkTitle());
-        assertNotNull(work.getWorkTitle().getTitle());
-        assertEquals("Journal article B", work.getWorkTitle().getTitle().getContent());
-        assertEquals(Long.valueOf(6), work.getPutCode());
-        assertEquals("/4444-4444-4444-4446/work/6", work.getPath());
-        assertEquals(WorkType.JOURNAL_ARTICLE, work.getWorkType());
-        assertEquals(Visibility.LIMITED.value(), work.getVisibility().value());
+        assertViewWorkDecorated(6L, "Journal article B", Visibility.LIMITED, userSource(OTHER_ORCID));
     }
 
     @Test
     public void testViewPrivateWork() {
-        // Use the smallest scope in the pyramid to verify that you can read
-        // your own limited and protected data
-        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4446", ScopePathType.READ_LIMITED);
-        Response response = serviceDelegator.viewWork("4444-4444-4444-4446", 7L);
-        assertNotNull(response);
-        Work work = (Work) response.getEntity();
-        Utils.verifyLastModified(work.getLastModifiedDate());
-        assertNotNull(work.getWorkTitle());
-        assertNotNull(work.getWorkTitle().getTitle());
-        assertEquals("Journal article C", work.getWorkTitle().getTitle().getContent());
-        assertEquals(Long.valueOf(7), work.getPutCode());
-        assertEquals("/4444-4444-4444-4446/work/7", work.getPath());
-        assertEquals(WorkType.JOURNAL_ARTICLE, work.getWorkType());
-        assertEquals(Visibility.PRIVATE.value(), work.getVisibility().value());
+        assertViewWorkDecorated(7L, "Journal article C", Visibility.PRIVATE, clientSource(CLIENT_1));
     }
 
     @Test(expected = OrcidVisibilityException.class)
     public void testViewPrivateWorkYouAreNotTheSourceOf() {
-        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4446", ScopePathType.READ_LIMITED);
-        serviceDelegator.viewWork("4444-4444-4444-4446", 8L);
+        Work work = work(8L, "Journal article D", Visibility.PRIVATE, userSource(OTHER_ORCID));
+        when(workManagerReadOnly.getWork(OTHER_ORCID, 8L)).thenReturn(work);
+        doThrow(new OrcidVisibilityException()).when(orcidSecurityManager).checkAndFilter(OTHER_ORCID, work, ScopePathType.ORCID_WORKS_READ_LIMITED);
+
+        serviceDelegator.viewWork(OTHER_ORCID, 8L);
         fail();
     }
 
     @Test(expected = NoResultException.class)
     public void testViewWorkThatDontBelongToTheUser() {
-        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4443", ScopePathType.READ_LIMITED);
-        serviceDelegator.viewWork("4444-4444-4444-4443", 5L);
-        fail();
+        // WorkDaoImpl selects on (id, orcid) together, so work 5 -- which belongs
+        // to another record -- is simply not found. The predicate is SQL and
+        // cannot be proved here; what can is that the delegator lets the miss out
+        // and never asks the guard about a work it did not get.
+        when(workManagerReadOnly.getWork(MY_ORCID, 5L)).thenThrow(new NoResultException());
+
+        try {
+            serviceDelegator.viewWork(MY_ORCID, 5L);
+            fail();
+        } finally {
+            verifyNoInteractions(orcidSecurityManager);
+        }
     }
 
     @Test
     public void viewWorksTest() {
-        SecurityContextTestUtils.setUpSecurityContext(ORCID, ScopePathType.READ_LIMITED);
+        List<WorkSummary> stored = new ArrayList<>(Arrays.asList(workSummary(11L, "PUBLIC", Visibility.PUBLIC),
+                workSummary(12L, "LIMITED", Visibility.LIMITED), workSummary(13L, "PRIVATE", Visibility.PRIVATE),
+                workSummary(14L, "SELF LIMITED", Visibility.LIMITED)));
+        when(workManagerReadOnly.getWorksSummaryList(ORCID)).thenReturn(stored);
+        when(workManager.groupWorks(anyList(), eq(false))).thenAnswer(invocation -> groupEachSeparately(invocation.getArgument(0)));
+
         Response r = serviceDelegator.viewWorks(ORCID);
+
         assertNotNull(r);
         Works works = (Works) r.getEntity();
         assertNotNull(works);
         assertEquals("/0000-0000-0000-0003/works", works.getPath());
         Utils.verifyLastModified(works.getLastModifiedDate());
         assertNotNull(works.getWorkGroup());
-        assertNotNull(works.getPath());
         assertEquals(4, works.getWorkGroup().size());
         boolean found1 = false, found2 = false, found3 = false, found4 = false;
 
@@ -279,6 +211,8 @@ public class MemberV2ApiServiceDelegator_WorksTest extends DBUnitTest {
             Utils.verifyLastModified(summary.getLastModifiedDate());
             assertNotNull(summary.getTitle());
             assertNotNull(summary.getTitle().getTitle());
+            // the path is the delegator's contribution to each summary
+            assertEquals("/0000-0000-0000-0003/work/" + summary.getPutCode(), summary.getPath());
             switch (workGroup.getIdentifiers().getExternalIdentifier().get(0).getValue()) {
             case "1":
                 assertEquals("PUBLIC", summary.getTitle().getTitle().getContent());
@@ -308,11 +242,41 @@ public class MemberV2ApiServiceDelegator_WorksTest extends DBUnitTest {
         assertTrue(found2);
         assertTrue(found3);
         assertTrue(found4);
+
+        // the cached summary list must be copied before it reaches a filter that
+        // edits in place
+        ArgumentCaptor<List<WorkSummary>> filtered = summaryListCaptor();
+        verify(orcidSecurityManager).checkAndFilter(eq(ORCID), filtered.capture(), eq(ScopePathType.ORCID_WORKS_READ_LIMITED));
+        assertNotSame(stored, filtered.getValue());
     }
 
     @Test
     public void testReadPublicScope_Works() {
-        SecurityContextTestUtils.setUpSecurityContext(ORCID, ScopePathType.READ_PUBLIC);
+        // Refused per work, never with a blanket matcher: refusing every work
+        // would also refuse 11, 12 and 13 and the "should work" half of this test
+        // would prove nothing.
+        Work eleven = work(11L, "PUBLIC", Visibility.PUBLIC, clientSource(CLIENT_1));
+        Work twelve = work(12L, "LIMITED", Visibility.LIMITED, clientSource(CLIENT_1));
+        Work thirteen = work(13L, "PRIVATE", Visibility.PRIVATE, clientSource(CLIENT_1));
+        Work fourteen = work(14L, "SELF LIMITED", Visibility.LIMITED, userSource(ORCID));
+        Work fifteen = work(15L, "SELF PRIVATE", Visibility.PRIVATE, userSource(ORCID));
+        when(workManagerReadOnly.getWork(ORCID, 11L)).thenReturn(eleven);
+        when(workManagerReadOnly.getWork(ORCID, 12L)).thenReturn(twelve);
+        when(workManagerReadOnly.getWork(ORCID, 13L)).thenReturn(thirteen);
+        when(workManagerReadOnly.getWork(ORCID, 14L)).thenReturn(fourteen);
+        when(workManagerReadOnly.getWork(ORCID, 15L)).thenReturn(fifteen);
+        WorkSummary elevenSummary = workSummary(11L, "PUBLIC", Visibility.PUBLIC);
+        WorkSummary twelveSummary = workSummary(12L, "LIMITED", Visibility.LIMITED);
+        WorkSummary thirteenSummary = workSummary(13L, "PRIVATE", Visibility.PRIVATE);
+        WorkSummary fourteenSummary = workSummary(14L, "SELF LIMITED", Visibility.LIMITED);
+        when(workManagerReadOnly.getWorkSummary(ORCID, 11L)).thenReturn(elevenSummary);
+        when(workManagerReadOnly.getWorkSummary(ORCID, 12L)).thenReturn(twelveSummary);
+        when(workManagerReadOnly.getWorkSummary(ORCID, 13L)).thenReturn(thirteenSummary);
+        when(workManagerReadOnly.getWorkSummary(ORCID, 14L)).thenReturn(fourteenSummary);
+        doThrow(new OrcidAccessControlException()).when(orcidSecurityManager).checkAndFilter(ORCID, fourteen, ScopePathType.ORCID_WORKS_READ_LIMITED);
+        doThrow(new OrcidAccessControlException()).when(orcidSecurityManager).checkAndFilter(ORCID, fifteen, ScopePathType.ORCID_WORKS_READ_LIMITED);
+        doThrow(new OrcidAccessControlException()).when(orcidSecurityManager).checkAndFilter(ORCID, fourteenSummary, ScopePathType.ORCID_WORKS_READ_LIMITED);
+
         // Public works
         Response r = serviceDelegator.viewWork(ORCID, 11L);
         assertNotNull(r);
@@ -397,294 +361,203 @@ public class MemberV2ApiServiceDelegator_WorksTest extends DBUnitTest {
 
     @Test
     public void testAddWork() {
-        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4445", ScopePathType.READ_LIMITED, ScopePathType.ACTIVITIES_UPDATE);
-        Response response = serviceDelegator.viewActivities("4444-4444-4444-4445");
-        assertNotNull(response);
-        ActivitiesSummary summary = (ActivitiesSummary) response.getEntity();
-        assertNotNull(summary);
-        Utils.verifyLastModified(summary.getLastModifiedDate());
-        // Check works
-        assertNotNull(summary.getWorks());
-        assertNotNull(summary.getWorks().getWorkGroup());
-        assertEquals(1, summary.getWorks().getWorkGroup().size());
-        Utils.verifyLastModified(summary.getWorks().getLastModifiedDate());
-        assertNotNull(summary.getWorks().getWorkGroup().get(0));
-        Utils.verifyLastModified(summary.getWorks().getWorkGroup().get(0).getLastModifiedDate());
-        assertNotNull(summary.getWorks().getWorkGroup().get(0).getWorkSummary());
-        assertEquals(1, summary.getWorks().getWorkGroup().get(0).getWorkSummary().size());
-
+        String orcid = "4444-4444-4444-4445";
         String title = "work # 1 " + System.currentTimeMillis();
-        Work work = Utils.getWork(title);
+        Work created = work(100L, title, Visibility.PUBLIC, clientSource(CLIENT_1));
+        when(workManager.createWork(eq(orcid), any(Work.class), anyBoolean())).thenReturn(created);
 
-        response = serviceDelegator.createWork("4444-4444-4444-4445", work);
+        Response response = serviceDelegator.createWork(orcid, Utils.getWork(title));
+
         assertEquals(Response.Status.CREATED.getStatusCode(), response.getStatus());
         Long putCode = Utils.getPutCode(response);
+        assertEquals(Long.valueOf(100), putCode);
+        verify(orcidSecurityManager).checkClientAccessAndScopes(orcid, ScopePathType.ORCID_WORKS_CREATE, ScopePathType.ORCID_WORKS_UPDATE);
+        ArgumentCaptor<Work> submitted = ArgumentCaptor.forClass(Work.class);
+        verify(workManager).createWork(eq(orcid), submitted.capture(), eq(true));
+        assertEquals(title, submitted.getValue().getWorkTitle().getTitle().getContent());
+        assertNull("a client may not choose its own source", submitted.getValue().getSource());
+        assertEquals(CLIENT_1_NAME, created.getSource().getSourceName().getContent());
 
-        response = serviceDelegator.viewActivities("4444-4444-4444-4445");
-        assertNotNull(response);
-        summary = (ActivitiesSummary) response.getEntity();
-        assertNotNull(summary);
-        Utils.verifyLastModified(summary.getLastModifiedDate());
-        // Check works
-        assertNotNull(summary.getWorks());
-        assertNotNull(summary.getWorks().getWorkGroup());
-        assertEquals(2, summary.getWorks().getWorkGroup().size());
-
-        boolean haveOld = false;
-        boolean haveNew = false;
-
-        for (WorkGroup group : summary.getWorks().getWorkGroup()) {
-            Utils.verifyLastModified(group.getLastModifiedDate());
-            assertNotNull(group.getWorkSummary());
-            assertNotNull(group.getWorkSummary().get(0));
-            WorkSummary workSummary = group.getWorkSummary().get(0);
-            Utils.verifyLastModified(workSummary.getLastModifiedDate());
-            assertNotNull(workSummary.getTitle());
-            assertNotNull(workSummary.getTitle().getTitle());
-            if ("A Book With Contributors JSON".equals(workSummary.getTitle().getTitle().getContent())) {
-                haveOld = true;
-            } else if (title.equals(workSummary.getTitle().getTitle().getContent())) {
-                haveNew = true;
-            }
-        }
-        assertTrue(haveOld);
-        assertTrue(haveNew);
-        // Delete them
-        serviceDelegator.deleteWork("4444-4444-4444-4445", putCode);
+        serviceDelegator.deleteWork(orcid, putCode);
+        verify(workManager).checkSourceAndRemoveWork(orcid, putCode);
     }
 
     @Test
     public void testCreateWorksWithBulkAllOK() {
-        RequestAttributes previousAttrs = RequestContextHolder.getRequestAttributes();
-        RequestAttributes attrs = new ServletRequestAttributes(new MockHttpServletRequest());
-        attrs.setAttribute(ApiVersionFilter.API_VERSION_REQUEST_ATTRIBUTE_NAME, "2.0",  RequestAttributes.SCOPE_REQUEST);
-        RequestContextHolder.setRequestAttributes(attrs);
-        
         Long time = System.currentTimeMillis();
-        SecurityContextTestUtils.setUpSecurityContext(ORCID, ScopePathType.READ_LIMITED, ScopePathType.ACTIVITIES_UPDATE);
-
         WorkBulk bulk = new WorkBulk();
         for (int i = 0; i < 5; i++) {
-            Work work = new Work();
-            WorkTitle title = new WorkTitle();
-            title.setTitle(new Title("Bulk work " + i + " " + time));
-            work.setWorkTitle(title);
-
-            ExternalIDs extIds = new ExternalIDs();
-            ExternalID extId = new ExternalID();
-            extId.setRelationship(Relationship.SELF);
-            extId.setType("doi");
-            extId.setUrl(new Url("http://doi/" + i + "/" + time));
-            extId.setValue("doi-" + i + "-" + time);
-            extIds.getExternalIdentifier().add(extId);
-            work.setWorkExternalIdentifiers(extIds);
-
-            work.setWorkType(WorkType.BOOK);
+            Work work = work(null, "Bulk work " + i + " " + time, Visibility.PUBLIC, clientSource(CLIENT_1));
+            work.setWorkExternalIdentifiers(externalIds("doi", "doi-" + i + "-" + time));
             bulk.getBulk().add(work);
         }
+        WorkBulk persisted = new WorkBulk();
+        for (int i = 0; i < 5; i++) {
+            Work work = work((long) (i + 1), "Bulk work " + i + " " + time, Visibility.PUBLIC, clientSource(CLIENT_1));
+            work.setWorkExternalIdentifiers(externalIds("doi", "doi-" + i + "-" + time));
+            persisted.getBulk().add(work);
+        }
+        when(workManager.createWorks(eq(ORCID), any(WorkBulk.class))).thenReturn(persisted);
 
         Response response = serviceDelegator.createWorks(ORCID, bulk);
+
         assertNotNull(response);
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
-        bulk = (WorkBulk) response.getEntity();
-        assertNotNull(bulk);
-        assertEquals(5, bulk.getBulk().size());
-
+        WorkBulk returned = (WorkBulk) response.getEntity();
+        assertNotNull(returned);
+        assertEquals(5, returned.getBulk().size());
         for (int i = 0; i < 5; i++) {
-            assertTrue(Work.class.isAssignableFrom(bulk.getBulk().get(i).getClass()));
-            Work w = (Work) bulk.getBulk().get(i);
+            assertTrue(Work.class.isAssignableFrom(returned.getBulk().get(i).getClass()));
+            Work w = (Work) returned.getBulk().get(i);
             Utils.verifyLastModified(w.getLastModifiedDate());
             assertNotNull(w.getPutCode());
             assertTrue(0L < w.getPutCode());
             assertEquals("Bulk work " + i + " " + time, w.getWorkTitle().getTitle().getContent());
             assertNotNull(w.getExternalIdentifiers().getExternalIdentifier());
             assertEquals("doi-" + i + "-" + time, w.getExternalIdentifiers().getExternalIdentifier().get(0).getValue());
-
-            Response r = serviceDelegator.viewWork(ORCID, w.getPutCode());
-            assertNotNull(r);
-            assertEquals(Response.Status.OK.getStatusCode(), r.getStatus());
-            assertEquals("Bulk work " + i + " " + time, ((Work) r.getEntity()).getWorkTitle().getTitle().getContent());
-
-            // Delete the work
-            r = serviceDelegator.deleteWork(ORCID, w.getPutCode());
-            assertNotNull(r);
-            assertEquals(Response.Status.NO_CONTENT.getStatusCode(), r.getStatus());
+            // the source name is resolved on every element of the bulk
+            assertEquals(CLIENT_1_NAME, w.getSource().getSourceName().getContent());
         }
-        RequestContextHolder.setRequestAttributes(previousAttrs);
+        verify(orcidSecurityManager).checkClientAccessAndScopes(ORCID, ScopePathType.ORCID_WORKS_CREATE, ScopePathType.ORCID_WORKS_UPDATE);
+        // every incoming work has had its source cleared before it is submitted
+        ArgumentCaptor<WorkBulk> submitted = ArgumentCaptor.forClass(WorkBulk.class);
+        verify(workManager).createWorks(eq(ORCID), submitted.capture());
+        submitted.getValue().getBulk().forEach(element -> assertNull(((Work) element).getSource()));
     }
-    
+
     @Test
     public void testCreateBulkWorksWithBlankTitles() {
-        RequestAttributes previousAttrs = RequestContextHolder.getRequestAttributes();
-        RequestAttributes attrs = new ServletRequestAttributes(new MockHttpServletRequest());
-        attrs.setAttribute(ApiVersionFilter.API_VERSION_REQUEST_ATTRIBUTE_NAME, "2.0",  RequestAttributes.SCOPE_REQUEST);
-        RequestContextHolder.setRequestAttributes(attrs);
-        
+        // A blank title becomes an OrcidError inside WorkManagerImpl, which is
+        // where that rule is proved. What the delegator owes is to return the
+        // mixed bulk unaltered and to decorate only the works in it -- an
+        // OrcidError has no path and no source.
         Long time = System.currentTimeMillis();
-        SecurityContextTestUtils.setUpSecurityContext(ORCID, ScopePathType.READ_LIMITED, ScopePathType.ACTIVITIES_UPDATE);
-
         WorkBulk bulk = new WorkBulk();
         for (int i = 0; i < 5; i++) {
-            Work work = new Work();
-            WorkTitle title = new WorkTitle();
-            title.setTitle(i == 0 ? new Title(" ") : new Title("title " + i));
-            work.setWorkTitle(title);
-
-            ExternalIDs extIds = new ExternalIDs();
-            ExternalID extId = new ExternalID();
-            extId.setRelationship(Relationship.SELF);
-            extId.setType("doi");
-            extId.setUrl(new Url("http://doi/" + i + "/" + time));
-            extId.setValue("doi-" + i + "-" + time);
-            extIds.getExternalIdentifier().add(extId);
-            work.setWorkExternalIdentifiers(extIds);
-
-            work.setWorkType(WorkType.BOOK);
+            Work work = work(null, i == 0 ? " " : "title " + i, Visibility.PUBLIC, clientSource(CLIENT_1));
+            work.setWorkExternalIdentifiers(externalIds("doi", "doi-" + i + "-" + time));
             bulk.getBulk().add(work);
         }
+        WorkBulk persisted = new WorkBulk();
+        persisted.getBulk().add(orcidError(9001, "Invalid title"));
+        for (int i = 1; i < 5; i++) {
+            persisted.getBulk().add(work((long) (i + 1), "title " + i, Visibility.PUBLIC, clientSource(CLIENT_1)));
+        }
+        when(workManager.createWorks(eq(ORCID), any(WorkBulk.class))).thenReturn(persisted);
 
         Response response = serviceDelegator.createWorks(ORCID, bulk);
+
         assertNotNull(response);
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
-        bulk = (WorkBulk) response.getEntity();
-        assertNotNull(bulk);
-        assertEquals(5, bulk.getBulk().size());
+        WorkBulk returned = (WorkBulk) response.getEntity();
+        assertNotNull(returned);
+        assertEquals(5, returned.getBulk().size());
 
         for (int i = 0; i < 5; i++) {
             if (i == 0) {
-                assertTrue(bulk.getBulk().get(i) instanceof OrcidError);
+                assertTrue(returned.getBulk().get(i) instanceof OrcidError);
             } else {
-                assertTrue(bulk.getBulk().get(i) instanceof Work);
-                serviceDelegator.deleteWork(ORCID, ((Work) bulk.getBulk().get(i)).getPutCode());
+                assertTrue(returned.getBulk().get(i) instanceof Work);
+                Work w = (Work) returned.getBulk().get(i);
+                assertEquals(CLIENT_1_NAME, w.getSource().getSourceName().getContent());
+                serviceDelegator.deleteWork(ORCID, w.getPutCode());
             }
         }
-        RequestContextHolder.setRequestAttributes(previousAttrs);
     }
 
     @Test
     public void testUpdateWork() {
-        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4443", ScopePathType.READ_LIMITED, ScopePathType.ACTIVITIES_UPDATE);
-        Response response = serviceDelegator.viewWork("4444-4444-4444-4443", 1L);
-        assertNotNull(response);
-        Work work = (Work) response.getEntity();
-        assertNotNull(work);
-        Utils.verifyLastModified(work.getLastModifiedDate());
-        assertEquals(Long.valueOf(1), work.getPutCode());
-        assertNotNull(work.getWorkTitle());
-        assertNotNull(work.getWorkTitle().getTitle());
-        assertEquals("A day in the life", work.getWorkTitle().getTitle().getContent());
-        assertEquals(WorkType.BOOK, work.getWorkType());
-        assertEquals(Visibility.PUBLIC, work.getVisibility());
-
+        Work work = work(1L, "Updated work title", Visibility.PUBLIC, clientSource(CLIENT_1));
         work.setWorkType(WorkType.EDITED_BOOK);
-        work.getWorkTitle().getTitle().setContent("Updated work title");
+        Work updated = work(1L, "Updated work title", Visibility.PUBLIC, clientSource(CLIENT_1));
+        updated.setWorkType(WorkType.EDITED_BOOK);
+        when(workManager.updateWork(eq(MY_ORCID), any(Work.class), anyBoolean())).thenReturn(updated);
 
-        response = serviceDelegator.updateWork("4444-4444-4444-4443", 1L, work);
+        Response response = serviceDelegator.updateWork(MY_ORCID, 1L, work);
+
         assertNotNull(response);
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
-
-        response = serviceDelegator.viewWork("4444-4444-4444-4443", 1L);
-        assertNotNull(response);
-        work = (Work) response.getEntity();
-        assertNotNull(work);
-        Utils.verifyLastModified(work.getLastModifiedDate());
-        assertEquals(Long.valueOf(1), work.getPutCode());
-        assertNotNull(work.getWorkTitle());
-        assertNotNull(work.getWorkTitle().getTitle());
-        assertEquals("Updated work title", work.getWorkTitle().getTitle().getContent());
-        assertEquals(WorkType.EDITED_BOOK, work.getWorkType());
-
-        // Rollback changes so we dont break other tests
-        work.setWorkType(WorkType.BOOK);
-        work.getWorkTitle().getTitle().setContent("A day in the life");
-        response = serviceDelegator.updateWork("4444-4444-4444-4443", 1L, work);
-        assertNotNull(response);
-        assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
+        Work returned = (Work) response.getEntity();
+        assertEquals("Updated work title", returned.getWorkTitle().getTitle().getContent());
+        assertEquals(WorkType.EDITED_BOOK, returned.getWorkType());
+        verify(orcidSecurityManager).checkClientAccessAndScopes(MY_ORCID, ScopePathType.ORCID_WORKS_UPDATE);
+        ArgumentCaptor<Work> submitted = ArgumentCaptor.forClass(Work.class);
+        verify(workManager).updateWork(eq(MY_ORCID), submitted.capture(), eq(true));
+        assertNull("a client may not choose its own source", submitted.getValue().getSource());
     }
 
     @Test(expected = WrongSourceException.class)
     public void testUpdateWorkYouAreNotTheSourceOf() {
-        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4443", ScopePathType.READ_LIMITED, ScopePathType.ACTIVITIES_UPDATE);
-        Response response = serviceDelegator.viewWork("4444-4444-4444-4443", 2L);
-        assertNotNull(response);
-        Work work = (Work) response.getEntity();
-        assertNotNull(work);
-        Utils.verifyLastModified(work.getLastModifiedDate());
-        assertEquals(Long.valueOf(2), work.getPutCode());
-        assertNotNull(work.getWorkTitle());
-        assertNotNull(work.getWorkTitle().getTitle());
-        assertEquals("Another day in the life", work.getWorkTitle().getTitle().getContent());
-        assertEquals(WorkType.BOOK, work.getWorkType());
+        // WorkManagerImpl calls orcidSecurityManager.checkSource on the stored
+        // entity; the rule belongs to that manager's tests.
+        Work work = work(2L, "Another day in the life", Visibility.PUBLIC, userSource(MY_ORCID));
+        doThrow(new WrongSourceException(Collections.singletonMap("activity", "work"))).when(workManager).updateWork(eq(MY_ORCID), any(Work.class),
+                anyBoolean());
 
-        work.setWorkType(WorkType.EDITED_BOOK);
-        work.getWorkTitle().getTitle().setContent("Updated work title");
-
-        ExternalIDs extIds = new ExternalIDs();
-        ExternalID extId = new ExternalID();
-        extId.setRelationship(Relationship.PART_OF);
-        extId.setType(WorkExternalIdentifierType.AGR.value());
-        extId.setValue("ext-id-" + System.currentTimeMillis());
-        extId.setUrl(new Url("http://thisIsANewUrl.com"));
-
-        extIds.getExternalIdentifier().add(extId);
-        work.setWorkExternalIdentifiers(extIds);
-
-        serviceDelegator.updateWork("4444-4444-4444-4443", 2L, work);
+        serviceDelegator.updateWork(MY_ORCID, 2L, work);
         fail();
     }
 
     @Test(expected = VisibilityMismatchException.class)
     public void testUpdateWorkChangingVisibilityTest() {
-        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4445", ScopePathType.READ_LIMITED, ScopePathType.ACTIVITIES_UPDATE);
-        Response response = serviceDelegator.viewWork("4444-4444-4444-4445", 3L);
-        assertNotNull(response);
-        Work work = (Work) response.getEntity();
-        assertNotNull(work);
-        assertEquals(Visibility.LIMITED, work.getVisibility());
+        String orcid = "4444-4444-4444-4445";
+        Work work = work(3L, "A Book With Contributors JSON", Visibility.PRIVATE, userSource(orcid));
+        doThrow(new VisibilityMismatchException()).when(workManager).updateWork(eq(orcid), any(Work.class), anyBoolean());
 
-        work.setVisibility(Visibility.PRIVATE);
-
-        response = serviceDelegator.updateWork("4444-4444-4444-4445", 3L, work);
+        serviceDelegator.updateWork(orcid, 3L, work);
         fail();
     }
 
     @Test
     public void testUpdateWorkLeavingVisibilityNullTest() {
-        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4447", ScopePathType.READ_LIMITED, ScopePathType.ACTIVITIES_UPDATE);
-        Response response = serviceDelegator.viewWork("4444-4444-4444-4447", 10L);
-        assertNotNull(response);
-        Work work = (Work) response.getEntity();
-        assertNotNull(work);
-        assertEquals(Visibility.PUBLIC, work.getVisibility());
+        String orcid = "4444-4444-4444-4447";
+        Work work = work(10L, "Journal article F", null, clientSource(CLIENT_1));
+        Work updated = work(10L, "Journal article F", Visibility.PUBLIC, clientSource(CLIENT_1));
+        when(workManager.updateWork(eq(orcid), any(Work.class), anyBoolean())).thenReturn(updated);
 
-        work.setVisibility(null);
+        Response response = serviceDelegator.updateWork(orcid, 10L, work);
 
-        response = serviceDelegator.updateWork("4444-4444-4444-4447", 10L, work);
         assertNotNull(response);
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
-        work = (Work) response.getEntity();
-        assertNotNull(work);
-        Utils.verifyLastModified(work.getLastModifiedDate());
-        assertEquals(Visibility.PUBLIC, work.getVisibility());
+        Work returned = (Work) response.getEntity();
+        assertNotNull(returned);
+        Utils.verifyLastModified(returned.getLastModifiedDate());
+        assertEquals(Visibility.PUBLIC, returned.getVisibility());
+        ArgumentCaptor<Work> submitted = ArgumentCaptor.forClass(Work.class);
+        verify(workManager).updateWork(eq(orcid), submitted.capture(), eq(true));
+        assertNull("keeping the stored visibility is the manager's job, not the delegator's", submitted.getValue().getVisibility());
     }
 
     @Test
     public void testDeleteWork() {
-        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4447", ScopePathType.READ_LIMITED, ScopePathType.ACTIVITIES_UPDATE);
-        Response response = serviceDelegator.viewWork("4444-4444-4444-4447", 9L);
+        String orcid = "4444-4444-4444-4447";
+        when(workManagerReadOnly.getWork(orcid, 9L)).thenReturn(work(9L, "Journal article E", Visibility.PRIVATE, clientSource(CLIENT_1)));
+
+        Response response = serviceDelegator.viewWork(orcid, 9L);
         assertNotNull(response);
         Work work = (Work) response.getEntity();
         assertNotNull(work);
 
-        response = serviceDelegator.deleteWork("4444-4444-4444-4447", 9L);
+        response = serviceDelegator.deleteWork(orcid, 9L);
         assertNotNull(response);
         assertEquals(Response.Status.NO_CONTENT.getStatusCode(), response.getStatus());
+        verify(orcidSecurityManager).checkClientAccessAndScopes(orcid, ScopePathType.ORCID_WORKS_UPDATE);
+        // whether the row can actually be removed is decided by the (work_id,
+        // orcid) predicate in WorkDaoImpl; at this boundary the manager is asked
+        verify(workManager).checkSourceAndRemoveWork(orcid, 9L);
     }
 
     @Test
     public void testAddWorkWithInvalidExtIdTypeFail() {
         String orcid = "4444-4444-4444-4499";
-        SecurityContextTestUtils.setUpSecurityContext(orcid, ScopePathType.ACTIVITIES_READ_LIMITED, ScopePathType.ACTIVITIES_UPDATE);
+        when(workManager.createWork(eq(orcid), any(Work.class), anyBoolean())).thenAnswer(invocation -> {
+            Work submitted = invocation.getArgument(1);
+            if ("INVALID".equals(submitted.getExternalIdentifiers().getExternalIdentifier().get(0).getType())) {
+                throw new ActivityIdentifierValidationException();
+            }
+            return work(100L, "work # 1", Visibility.PUBLIC, clientSource(CLIENT_1));
+        });
+
         Work work = Utils.getWork("work # 1 " + System.currentTimeMillis());
         try {
             work.getExternalIdentifiers().getExternalIdentifier().get(0).setType("INVALID");
@@ -709,61 +582,192 @@ public class MemberV2ApiServiceDelegator_WorksTest extends DBUnitTest {
 
     @Test(expected = WrongSourceException.class)
     public void testDeleteWorkYouAreNotTheSourceOf() {
-        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4446", ScopePathType.READ_LIMITED, ScopePathType.ACTIVITIES_UPDATE);
-        serviceDelegator.deleteWork("4444-4444-4444-4446", 8L);
+        doThrow(new WrongSourceException(Collections.singletonMap("activity", "work"))).when(workManager).checkSourceAndRemoveWork(OTHER_ORCID, 8L);
+
+        serviceDelegator.deleteWork(OTHER_ORCID, 8L);
         fail();
     }
-    
+
     @Test
     public void testViewBulkWorks() {
-        SecurityContextTestUtils.setUpSecurityContext(ORCID, ScopePathType.READ_LIMITED);
+        // The fourth entry is an OrcidError because checkAndFilter replaced a
+        // denied work with one -- that substitution is
+        // OrcidSecurityManager_WorkBulkTest's and is modelled here. What this
+        // test proves is that setPathToBulk decorates the works and leaves the
+        // error alone.
+        WorkBulk workBulk = new WorkBulk();
+        workBulk.getBulk().add(work(11L, "PUBLIC", Visibility.PUBLIC, clientSource(CLIENT_1)));
+        workBulk.getBulk().add(work(12L, "LIMITED", Visibility.LIMITED, clientSource(CLIENT_1)));
+        workBulk.getBulk().add(work(13L, "PRIVATE", Visibility.PRIVATE, clientSource(CLIENT_1)));
+        workBulk.getBulk().add(orcidError(9018, "The work is private"));
+        when(profileEntityManager.orcidExists(ORCID)).thenReturn(true);
+        when(workManagerReadOnly.findWorkBulk(ORCID, "11,12,13,16")).thenReturn(workBulk);
+
         Response response = serviceDelegator.viewBulkWorks(ORCID, "11,12,13,16");
-        WorkBulk workBulk = (WorkBulk) response.getEntity();
-        assertNotNull(workBulk);
-        assertNotNull(workBulk.getBulk());
-        assertEquals(4, workBulk.getBulk().size());
-        assertTrue(workBulk.getBulk().get(0) instanceof Work);
-        assertTrue(workBulk.getBulk().get(1) instanceof Work);
-        assertTrue(workBulk.getBulk().get(2) instanceof Work); // private work but matching source
-        assertTrue(workBulk.getBulk().get(3) instanceof OrcidError); // private work not matching source
-        assertEquals("/0000-0000-0000-0003/work/11", ((Work) workBulk.getBulk().get(0)).getPath());
-        assertEquals("/0000-0000-0000-0003/work/12", ((Work) workBulk.getBulk().get(1)).getPath());
-        assertEquals("/0000-0000-0000-0003/work/13", ((Work) workBulk.getBulk().get(2)).getPath());
+
+        WorkBulk returned = (WorkBulk) response.getEntity();
+        assertNotNull(returned);
+        assertNotNull(returned.getBulk());
+        assertEquals(4, returned.getBulk().size());
+        assertTrue(returned.getBulk().get(0) instanceof Work);
+        assertTrue(returned.getBulk().get(1) instanceof Work);
+        assertTrue(returned.getBulk().get(2) instanceof Work);
+        assertTrue(returned.getBulk().get(3) instanceof OrcidError);
+        assertEquals("/0000-0000-0000-0003/work/11", ((Work) returned.getBulk().get(0)).getPath());
+        assertEquals("/0000-0000-0000-0003/work/12", ((Work) returned.getBulk().get(1)).getPath());
+        assertEquals("/0000-0000-0000-0003/work/13", ((Work) returned.getBulk().get(2)).getPath());
+        verify(orcidSecurityManager).checkAndFilter(ORCID, workBulk, ScopePathType.ORCID_WORKS_READ_LIMITED);
     }
-    
+
     @Test
     public void testViewBulkWorksWithBadPutCode() {
-        SecurityContextTestUtils.setUpSecurityContext(ORCID, ScopePathType.READ_LIMITED);
+        // An unknown put code comes back from findWorkBulk as an OrcidError --
+        // WorkManagerReadOnlyImpl's doing, over a query that filters on the
+        // record's own works. The delegator must pass it through untouched.
+        WorkBulk workBulk = new WorkBulk();
+        workBulk.getBulk().add(work(11L, "PUBLIC", Visibility.PUBLIC, clientSource(CLIENT_1)));
+        workBulk.getBulk().add(work(12L, "LIMITED", Visibility.LIMITED, clientSource(CLIENT_1)));
+        workBulk.getBulk().add(work(13L, "PRIVATE", Visibility.PRIVATE, clientSource(CLIENT_1)));
+        workBulk.getBulk().add(orcidError(9016, "No work found with put code 9999"));
+        when(profileEntityManager.orcidExists(ORCID)).thenReturn(true);
+        when(workManagerReadOnly.findWorkBulk(ORCID, "11,12,13,9999")).thenReturn(workBulk);
+
         Response response = serviceDelegator.viewBulkWorks(ORCID, "11,12,13,9999");
-        WorkBulk workBulk = (WorkBulk) response.getEntity();
-        assertNotNull(workBulk);
-        assertNotNull(workBulk.getBulk());
-        assertEquals(4, workBulk.getBulk().size());
-        assertTrue(workBulk.getBulk().get(0) instanceof Work);
-        assertTrue(workBulk.getBulk().get(1) instanceof Work);
-        assertTrue(workBulk.getBulk().get(2) instanceof Work); // private work
-        assertTrue(workBulk.getBulk().get(3) instanceof OrcidError); // bad put code
+
+        WorkBulk returned = (WorkBulk) response.getEntity();
+        assertNotNull(returned);
+        assertNotNull(returned.getBulk());
+        assertEquals(4, returned.getBulk().size());
+        assertTrue(returned.getBulk().get(0) instanceof Work);
+        assertTrue(returned.getBulk().get(1) instanceof Work);
+        assertTrue(returned.getBulk().get(2) instanceof Work);
+        assertTrue(returned.getBulk().get(3) instanceof OrcidError);
+        verify(orcidSecurityManager).checkAndFilter(ORCID, workBulk, ScopePathType.ORCID_WORKS_READ_LIMITED);
     }
-    
+
     @Test(expected = OrcidNoResultException.class)
     public void testViewBulkWorksWithBadOrcid() {
-        SecurityContextTestUtils.setUpSecurityContext(ORCID, ScopePathType.READ_LIMITED);
-        serviceDelegator.viewBulkWorks("non-existent", "11,12,13");
+        // This one is genuinely the delegator's own guard, and the only place it
+        // is enforced.
+        when(profileEntityManager.orcidExists("non-existent")).thenReturn(false);
+
+        try {
+            serviceDelegator.viewBulkWorks("non-existent", "11,12,13");
+        } finally {
+            verify(workManagerReadOnly, never()).findWorkBulk(eq("non-existent"), anyString());
+        }
     }
-    
+
     @Test(expected = ExceedMaxNumberOfPutCodesException.class)
     public void testViewBulkWorksWithTooManyPutCodes() {
-        SecurityContextTestUtils.setUpSecurityContext(ORCID, ScopePathType.READ_LIMITED);
+        // The limit is checked inside WorkManagerReadOnlyImpl against its own
+        // configured maximum, so it is proved there.
+        when(profileEntityManager.orcidExists(ORCID)).thenReturn(true);
+        when(workManagerReadOnly.findWorkBulk(eq(ORCID), anyString())).thenThrow(new ExceedMaxNumberOfPutCodesException(100));
+
         StringBuilder tooManyPutCodes = new StringBuilder("0");
-        for (int i = 1; i <= bulkReadSize; i++) {
+        for (int i = 1; i <= 100; i++) {
             tooManyPutCodes.append(",").append(i);
         }
         serviceDelegator.viewBulkWorks(ORCID, tooManyPutCodes.toString());
     }
-    
+
     @Test(expected = OrcidUnauthorizedException.class)
     public void testViewBulkWrongToken() {
-        SecurityContextTestUtils.setUpSecurityContext("something-other-user", ScopePathType.READ_LIMITED);
-        serviceDelegator.viewBulkWorks(ORCID, "11,12,13");
+        WorkBulk workBulk = new WorkBulk();
+        workBulk.getBulk().add(work(11L, "PUBLIC", Visibility.PUBLIC, clientSource(CLIENT_1)));
+        when(profileEntityManager.orcidExists(ORCID)).thenReturn(true);
+        when(workManagerReadOnly.findWorkBulk(ORCID, "11,12,13")).thenReturn(workBulk);
+        doThrow(new OrcidUnauthorizedException("Access token is for a different record")).when(orcidSecurityManager).checkAndFilter(ORCID, workBulk,
+                ScopePathType.ORCID_WORKS_READ_LIMITED);
+
+        try {
+            serviceDelegator.viewBulkWorks(ORCID, "11,12,13");
+        } finally {
+            assertNull("the bulk must not be decorated once the guard has refused", ((Work) workBulk.getBulk().get(0)).getPath());
+        }
+    }
+
+    // ------------------------------------------------------------- helpers
+
+    private void assertViewWorkDecorated(long putCode, String title, Visibility visibility, Source source) {
+        Work work = work(putCode, title, visibility, source);
+        when(workManagerReadOnly.getWork(OTHER_ORCID, putCode)).thenReturn(work);
+
+        Response response = serviceDelegator.viewWork(OTHER_ORCID, putCode);
+
+        assertNotNull(response);
+        Work returned = (Work) response.getEntity();
+        assertNotNull(returned);
+        assertEquals("/4444-4444-4444-4446/work/" + putCode, returned.getPath());
+        Utils.verifyLastModified(returned.getLastModifiedDate());
+        assertNotNull(returned.getWorkTitle());
+        assertNotNull(returned.getWorkTitle().getTitle());
+        assertEquals(title, returned.getWorkTitle().getTitle().getContent());
+        assertEquals(Long.valueOf(putCode), returned.getPutCode());
+        assertEquals(WorkType.JOURNAL_ARTICLE, returned.getWorkType());
+        assertEquals(visibility.value(), returned.getVisibility().value());
+        verify(orcidSecurityManager).checkAndFilter(OTHER_ORCID, work, ScopePathType.ORCID_WORKS_READ_LIMITED);
+    }
+
+    /**
+     * A stand-in for {@code groupWorks}: one group per summary, keyed on the
+     * external identifier each summary carries. The grouping algorithm itself is
+     * {@code WorkManagerReadOnlyImpl}'s and is tested there.
+     */
+    private Works groupEachSeparately(List<WorkSummary> summaries) {
+        Works works = new Works();
+        for (WorkSummary summary : summaries) {
+            WorkGroup group = new WorkGroup();
+            group.setLastModifiedDate(summary.getLastModifiedDate());
+            group.getWorkSummary().add(summary);
+            group.getIdentifiers().getExternalIdentifier().addAll(summary.getExternalIdentifiers().getExternalIdentifier());
+            works.getWorkGroup().add(group);
+        }
+        return works;
+    }
+
+    @SuppressWarnings("unchecked")
+    private ArgumentCaptor<List<WorkSummary>> summaryListCaptor() {
+        return ArgumentCaptor.forClass(List.class);
+    }
+
+    private OrcidError orcidError(int code, String message) {
+        OrcidError error = new OrcidError();
+        error.setErrorCode(code);
+        error.setResponseCode(400);
+        error.setDeveloperMessage(message);
+        error.setUserMessage(message);
+        return error;
+    }
+
+    private Work work(Long putCode, String title, Visibility visibility, Source source) {
+        Work work = new Work();
+        work.setPutCode(putCode);
+        WorkTitle workTitle = new WorkTitle();
+        workTitle.setTitle(new Title(title));
+        work.setWorkTitle(workTitle);
+        work.setWorkType(WorkType.JOURNAL_ARTICLE);
+        work.setWorkExternalIdentifiers(externalIds("doi", String.valueOf(putCode)));
+        work.setVisibility(visibility);
+        work.setSource(source);
+        work.setCreatedDate(createdDate());
+        work.setLastModifiedDate(lastModified());
+        return work;
+    }
+
+    private WorkSummary workSummary(Long putCode, String title, Visibility visibility) {
+        WorkSummary summary = new WorkSummary();
+        summary.setPutCode(putCode);
+        WorkTitle workTitle = new WorkTitle();
+        workTitle.setTitle(new Title(title));
+        summary.setTitle(workTitle);
+        summary.setType(WorkType.JOURNAL_ARTICLE);
+        summary.setExternalIdentifiers(externalIds("doi", String.valueOf(putCode - 10)));
+        summary.setVisibility(visibility);
+        summary.setSource(clientSource(CLIENT_1));
+        summary.setCreatedDate(createdDate());
+        summary.setLastModifiedDate(lastModified());
+        return summary;
     }
 }

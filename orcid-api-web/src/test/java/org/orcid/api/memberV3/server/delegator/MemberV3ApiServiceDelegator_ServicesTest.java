@@ -2,215 +2,293 @@ package org.orcid.api.memberV3.server.delegator;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyList;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import java.util.Arrays;
-import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
-import jakarta.annotation.Resource;
 import jakarta.persistence.NoResultException;
 import jakarta.ws.rs.core.Response;
 
 import org.apache.hc.core5.http.HttpStatus;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
 import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.mockito.ArgumentCaptor;
 import org.orcid.core.exception.OrcidAccessControlException;
 import org.orcid.core.exception.OrcidDuplicatedActivityException;
 import org.orcid.core.exception.OrcidUnauthorizedException;
 import org.orcid.core.exception.OrcidVisibilityException;
 import org.orcid.core.exception.VisibilityMismatchException;
 import org.orcid.core.exception.WrongSourceException;
-import org.orcid.core.utils.SecurityContextTestUtils;
 import org.orcid.jaxb.model.common.Relationship;
-import org.orcid.jaxb.model.groupid_v2.GroupIdRecord;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.v3.release.common.DisambiguatedOrganization;
-import org.orcid.jaxb.model.v3.release.common.LastModifiedDate;
+import org.orcid.jaxb.model.v3.release.common.Source;
 import org.orcid.jaxb.model.v3.release.common.Url;
 import org.orcid.jaxb.model.v3.release.common.Visibility;
-import org.orcid.jaxb.model.v3.release.record.Address;
 import org.orcid.jaxb.model.v3.release.record.AffiliationType;
-import org.orcid.jaxb.model.v3.release.record.Distinction;
-import org.orcid.jaxb.model.v3.release.record.Education;
-import org.orcid.jaxb.model.v3.release.record.Employment;
 import org.orcid.jaxb.model.v3.release.record.ExternalID;
 import org.orcid.jaxb.model.v3.release.record.ExternalIDs;
-import org.orcid.jaxb.model.v3.release.record.Funding;
-import org.orcid.jaxb.model.v3.release.record.InvitedPosition;
-import org.orcid.jaxb.model.v3.release.record.Keyword;
-import org.orcid.jaxb.model.v3.release.record.Membership;
-import org.orcid.jaxb.model.v3.release.record.OtherName;
-import org.orcid.jaxb.model.v3.release.record.PeerReview;
-import org.orcid.jaxb.model.v3.release.record.PersonExternalIdentifier;
-import org.orcid.jaxb.model.v3.release.record.Qualification;
-import org.orcid.jaxb.model.v3.release.record.ResearchResource;
-import org.orcid.jaxb.model.v3.release.record.ResearcherUrl;
 import org.orcid.jaxb.model.v3.release.record.Service;
-import org.orcid.jaxb.model.v3.release.record.Work;
-import org.orcid.jaxb.model.v3.release.record.WorkBulk;
-import org.orcid.jaxb.model.v3.release.record.summary.ActivitiesSummary;
 import org.orcid.jaxb.model.v3.release.record.summary.AffiliationGroup;
 import org.orcid.jaxb.model.v3.release.record.summary.ServiceSummary;
 import org.orcid.jaxb.model.v3.release.record.summary.Services;
-import org.orcid.test.DBUnitTest;
-import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.orcid.test.helper.v3.Utils;
-import org.springframework.test.context.ContextConfiguration;
 
-@RunWith(OrcidJUnit4ClassRunner.class)
-@ContextConfiguration(locations = { "classpath:test-orcid-api-web-context.xml" })
-public class MemberV3ApiServiceDelegator_ServicesTest extends DBUnitTest {
-    protected static final List<String> DATA_FILES = Arrays.asList("/data/EmptyEntityData.xml",
-            "/data/SourceClientDetailsEntityData.xml", "/data/ProfileEntityData.xml", "/data/WorksEntityData.xml", "/data/ClientDetailsEntityData.xml",
-            "/data/Oauth2TokenDetailsData.xml", "/data/OrgsEntityData.xml", "/data/ProfileFundingEntityData.xml", "/data/OrgAffiliationEntityData.xml",
-            "/data/PeerReviewEntityData.xml", "/data/GroupIdRecordEntityData.xml", "/data/RecordNameEntityData.xml", "/data/BiographyEntityData.xml");
+/**
+ * Mocked boundary tests for the service endpoints of the member V3 API.
+ *
+ * <p>
+ * These used to run the real {@code OrcidSecurityManager} against a DBUnit
+ * fixture, so a "view" test proved both the delegator's own work (look the
+ * element up, set its path, resolve the source name, return 200) and the
+ * security manager's visibility table. Only the first half can be proved here:
+ * {@code checkAndFilter} is void and filters in place, so a mocked security
+ * manager filters nothing and any assertion of the form "only public elements
+ * came back" would pass without proving anything. What each test asserts now is
+ * the delegator's contract, plus a {@code verify} that the element really was
+ * handed to the security manager with the right scope. The visibility and scope
+ * tables themselves are proved in orcid-core, by
+ * {@code OrcidSecurityManager_generalTest} and its siblings.
+ */
+public class MemberV3ApiServiceDelegator_ServicesTest extends MemberV3ApiServiceDelegatorMockTestBase {
 
-    // Now on, for any new test, PLAESE USE THIS ORCID ID
-    protected final String ORCID = "0000-0000-0000-0003";
+    private static final ScopePathType SCOPE = ScopePathType.AFFILIATIONS_READ_LIMITED;
 
-    @Resource(name = "memberV3ApiServiceDelegator")
-    protected MemberV3ApiServiceDelegator<Distinction, Education, Employment, PersonExternalIdentifier, InvitedPosition, Funding, GroupIdRecord, Membership, OtherName, PeerReview, Qualification, ResearcherUrl, Service, Work, WorkBulk, Address, Keyword, ResearchResource> serviceDelegator;
-
-    @BeforeClass
-    public static void initDBUnitData() throws Exception {
-        initDBUnitData(DATA_FILES);
+    private Service service(long putCode, Visibility visibility, String department, Source source) {
+        Service element = new Service();
+        element.setPutCode(putCode);
+        element.setVisibility(visibility);
+        element.setDepartmentName(department);
+        element.setRoleTitle(visibility.value().toUpperCase());
+        element.setOrganization(Utils.getOrganization());
+        element.setLastModifiedDate(lastModified());
+        element.setSource(source);
+        return element;
     }
 
-    @AfterClass
-    public static void removeDBUnitData() throws Exception {
-        Collections.reverse(DATA_FILES);
-        removeDBUnitData(DATA_FILES);
+    private ServiceSummary summary(long putCode, Visibility visibility, String department, Source source) {
+        ServiceSummary element = new ServiceSummary();
+        element.setPutCode(putCode);
+        element.setVisibility(visibility);
+        element.setDepartmentName(department);
+        element.setRoleTitle(visibility.value().toUpperCase());
+        element.setOrganization(Utils.getOrganization());
+        element.setLastModifiedDate(lastModified());
+        element.setSource(source);
+        return element;
+    }
+
+    private AffiliationGroup<ServiceSummary> group(ServiceSummary... elements) {
+        AffiliationGroup<ServiceSummary> group = new AffiliationGroup<>();
+        for (ServiceSummary element : elements) {
+            group.getActivities().add(element);
+        }
+        return group;
+    }
+
+    private ExternalIDs duplicateExternalIDs() {
+        ExternalID e1 = new ExternalID();
+        e1.setRelationship(Relationship.SELF);
+        e1.setType("erm");
+        e1.setUrl(new Url("https://orcid.org"));
+        e1.setValue("err");
+
+        ExternalID e2 = new ExternalID();
+        e2.setRelationship(Relationship.SELF);
+        e2.setType("err");
+        e2.setUrl(new Url("http://bbc.co.uk"));
+        e2.setValue("erm");
+
+        ExternalIDs externalIDs = new ExternalIDs();
+        externalIDs.getExternalIdentifier().add(e1);
+        externalIDs.getExternalIdentifier().add(e2);
+        return externalIDs;
     }
 
     @Test(expected = OrcidUnauthorizedException.class)
     public void testViewServicesWrongToken() {
-        SecurityContextTestUtils.setUpSecurityContext("some-other-user", ScopePathType.READ_LIMITED);
+        when(affiliationsManagerReadOnly.getServiceSummaryList(ORCID))
+                .thenReturn(Arrays.asList(summary(47L, Visibility.PUBLIC, "PUBLIC Department", clientSource(CLIENT_1))));
+        doThrow(new OrcidUnauthorizedException("Access token is for a different record"))
+                .when(orcidSecurityManager).checkAndFilter(eq(ORCID), anyList(), eq(SCOPE));
+
         serviceDelegator.viewServices(ORCID);
     }
 
     @Test(expected = OrcidUnauthorizedException.class)
     public void testViewServiceWrongToken() {
-        SecurityContextTestUtils.setUpSecurityContext("some-other-user", ScopePathType.READ_LIMITED);
+        when(affiliationsManagerReadOnly.getServiceAffiliation(ORCID, 47L))
+                .thenReturn(service(47L, Visibility.PUBLIC, "PUBLIC Department", clientSource(CLIENT_1)));
+        doThrow(new OrcidUnauthorizedException("Access token is for a different record"))
+                .when(orcidSecurityManager).checkAndFilter(eq(ORCID), any(Service.class), eq(SCOPE));
+
         serviceDelegator.viewService(ORCID, 47L);
     }
 
     @Test
     public void testViewServiceReadPublic() {
-        SecurityContextTestUtils.setUpSecurityContextForClientOnly("APP-5555555555555555", ScopePathType.READ_PUBLIC);
+        Service stored = service(47L, Visibility.PUBLIC, "PUBLIC Department", clientSource(CLIENT_1));
+        when(affiliationsManagerReadOnly.getServiceAffiliation(ORCID, 47L)).thenReturn(stored);
+
         Response r = serviceDelegator.viewService(ORCID, 47L);
         Service element = (Service) r.getEntity();
         assertNotNull(element);
         assertEquals("/0000-0000-0000-0003/service/47", element.getPath());
-        Utils.assertIsPublicOrSource(element, "APP-5555555555555555");
+        assertEquals(CLIENT_1_NAME, element.getSource().getSourceName().getContent());
+        verify(orcidSecurityManager).checkAndFilter(ORCID, element, SCOPE);
     }
 
     @Test(expected = OrcidUnauthorizedException.class)
     public void testViewServiceSummaryWrongToken() {
-        SecurityContextTestUtils.setUpSecurityContext("some-other-user", ScopePathType.READ_LIMITED);
+        when(affiliationsManagerReadOnly.getServiceSummary(ORCID, 47L))
+                .thenReturn(summary(47L, Visibility.PUBLIC, "PUBLIC Department", clientSource(CLIENT_1)));
+        doThrow(new OrcidUnauthorizedException("Access token is for a different record"))
+                .when(orcidSecurityManager).checkAndFilter(eq(ORCID), any(ServiceSummary.class), eq(SCOPE));
+
         serviceDelegator.viewServiceSummary(ORCID, 47L);
     }
 
     @Test
     public void testViewServicesReadPublic() {
-        SecurityContextTestUtils.setUpSecurityContextForClientOnly("APP-5555555555555555", ScopePathType.READ_PUBLIC);
+        ServiceSummary publicSummary = summary(47L, Visibility.PUBLIC, "PUBLIC Department", clientSource(CLIENT_1));
+        List<ServiceSummary> summaries = Arrays.asList(publicSummary);
+        when(affiliationsManagerReadOnly.getServiceSummaryList(ORCID)).thenReturn(summaries);
+        when(affiliationsManagerReadOnly.groupAffiliations(summaries, false)).thenReturn(Arrays.asList(group(publicSummary)));
+
         Response r = serviceDelegator.viewServices(ORCID);
         Services element = (Services) r.getEntity();
         assertNotNull(element);
         assertEquals("/0000-0000-0000-0003/services", element.getPath());
-        
-        for (AffiliationGroup<ServiceSummary> group : element.getServiceGroups()) {
-            for (ServiceSummary summary : group.getActivities()) {
-                Utils.assertIsPublicOrSource(summary, "APP-5555555555555555");
+        for (AffiliationGroup<ServiceSummary> group : element.retrieveGroups()) {
+            for (ServiceSummary activity : group.getActivities()) {
+                assertEquals("/0000-0000-0000-0003/service/47", activity.getPath());
             }
         }
+        verify(orcidSecurityManager).checkAndFilter(eq(ORCID), anyList(), eq(SCOPE));
     }
 
     @Test
     public void testViewServiceSummaryReadPublic() {
-        SecurityContextTestUtils.setUpSecurityContextForClientOnly("APP-5555555555555555", ScopePathType.READ_PUBLIC);
+        ServiceSummary stored = summary(47L, Visibility.PUBLIC, "PUBLIC Department", clientSource(CLIENT_1));
+        when(affiliationsManagerReadOnly.getServiceSummary(ORCID, 47L)).thenReturn(stored);
+
         Response r = serviceDelegator.viewServiceSummary(ORCID, 47L);
         ServiceSummary element = (ServiceSummary) r.getEntity();
         assertNotNull(element);
         assertEquals("/0000-0000-0000-0003/service/47", element.getPath());
-        Utils.assertIsPublicOrSource(element, "APP-5555555555555555");
+        assertEquals(CLIENT_1_NAME, element.getSource().getSourceName().getContent());
+        verify(orcidSecurityManager).checkAndFilter(ORCID, element, SCOPE);
     }
 
     @Test
     public void testViewPublicService() {
-        SecurityContextTestUtils.setUpSecurityContext(ORCID, ScopePathType.READ_LIMITED);
+        when(affiliationsManagerReadOnly.getServiceAffiliation(ORCID, 47L))
+                .thenReturn(service(47L, Visibility.PUBLIC, "PUBLIC Department", clientSource(CLIENT_1)));
+
         Response response = serviceDelegator.viewService(ORCID, 47L);
         assertNotNull(response);
-        Service service = (Service) response.getEntity();
-        assertNotNull(service);
-        Utils.verifyLastModified(service.getLastModifiedDate());
-        assertEquals(Long.valueOf(47L), service.getPutCode());
-        assertEquals("/0000-0000-0000-0003/service/47", service.getPath());
-        assertEquals("PUBLIC Department", service.getDepartmentName());
-        assertEquals(Visibility.PUBLIC.value(), service.getVisibility().value());
+        Service element = (Service) response.getEntity();
+        assertNotNull(element);
+        Utils.verifyLastModified(element.getLastModifiedDate());
+        assertEquals(Long.valueOf(47L), element.getPutCode());
+        assertEquals("/0000-0000-0000-0003/service/47", element.getPath());
+        assertEquals("PUBLIC Department", element.getDepartmentName());
+        assertEquals(Visibility.PUBLIC.value(), element.getVisibility().value());
+        verify(orcidSecurityManager).checkAndFilter(ORCID, element, SCOPE);
     }
 
     @Test
     public void testViewLimitedService() {
-        SecurityContextTestUtils.setUpSecurityContext(ORCID, ScopePathType.READ_LIMITED);
+        when(affiliationsManagerReadOnly.getServiceAffiliation(ORCID, 50L))
+                .thenReturn(service(50L, Visibility.LIMITED, "SELF LIMITED Department", userSource(ORCID)));
+
         Response response = serviceDelegator.viewService(ORCID, 50L);
         assertNotNull(response);
-        Service service = (Service) response.getEntity();
-        assertNotNull(service);
-        Utils.verifyLastModified(service.getLastModifiedDate());
-        assertEquals(Long.valueOf(50L), service.getPutCode());
-        assertEquals("/0000-0000-0000-0003/service/50", service.getPath());
-        assertEquals("SELF LIMITED Department", service.getDepartmentName());
-        assertEquals(Visibility.LIMITED.value(), service.getVisibility().value());
+        Service element = (Service) response.getEntity();
+        assertNotNull(element);
+        Utils.verifyLastModified(element.getLastModifiedDate());
+        assertEquals(Long.valueOf(50L), element.getPutCode());
+        assertEquals("/0000-0000-0000-0003/service/50", element.getPath());
+        assertEquals("SELF LIMITED Department", element.getDepartmentName());
+        assertEquals(Visibility.LIMITED.value(), element.getVisibility().value());
+        verify(orcidSecurityManager).checkAndFilter(ORCID, element, SCOPE);
     }
 
     @Test
     public void testViewPrivateService() {
-        SecurityContextTestUtils.setUpSecurityContext(ORCID, ScopePathType.READ_LIMITED);
+        when(affiliationsManagerReadOnly.getServiceAffiliation(ORCID, 49L))
+                .thenReturn(service(49L, Visibility.PRIVATE, "PRIVATE Department", clientSource(CLIENT_1)));
+
         Response response = serviceDelegator.viewService(ORCID, 49L);
         assertNotNull(response);
-        Service service = (Service) response.getEntity();
-        assertNotNull(service);
-        Utils.verifyLastModified(service.getLastModifiedDate());
-        assertEquals(Long.valueOf(49L), service.getPutCode());
-        assertEquals("/0000-0000-0000-0003/service/49", service.getPath());
-        assertEquals("PRIVATE Department", service.getDepartmentName());
-        assertEquals(Visibility.PRIVATE.value(), service.getVisibility().value());
+        Service element = (Service) response.getEntity();
+        assertNotNull(element);
+        Utils.verifyLastModified(element.getLastModifiedDate());
+        assertEquals(Long.valueOf(49L), element.getPutCode());
+        assertEquals("/0000-0000-0000-0003/service/49", element.getPath());
+        assertEquals("PRIVATE Department", element.getDepartmentName());
+        assertEquals(Visibility.PRIVATE.value(), element.getVisibility().value());
+        verify(orcidSecurityManager).checkAndFilter(ORCID, element, SCOPE);
     }
 
     @Test(expected = OrcidVisibilityException.class)
     public void testViewPrivateServiceWhereYouAreNotTheSource() {
-        SecurityContextTestUtils.setUpSecurityContext(ORCID, ScopePathType.READ_LIMITED);
+        Service stored = service(51L, Visibility.PRIVATE, "PRIVATE Department", clientSource(CLIENT_2));
+        when(affiliationsManagerReadOnly.getServiceAffiliation(ORCID, 51L)).thenReturn(stored);
+        doThrow(new OrcidVisibilityException()).when(orcidSecurityManager).checkAndFilter(ORCID, stored, SCOPE);
+
         serviceDelegator.viewService(ORCID, 51L);
         fail();
     }
 
+    /**
+     * The rule this proves -- that service 47 cannot be read through another
+     * record -- lives in a SQL WHERE clause
+     * ({@code OrgAffiliationRelationDaoImpl.getOrgAffiliationRelation}), so with a
+     * mocked manager all that is left here is that the delegator does not swallow
+     * the exception. The predicate itself is proved by
+     * MemberV3ApiServiceDelegatorDatabaseRulesTest, which carries the DBUnit
+     * fixture and runs in the db-tests stage.
+     */
     @Test(expected = NoResultException.class)
     public void testViewServiceThatDontBelongToTheUser() {
-        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4446", ScopePathType.READ_LIMITED);
-        // Service 47 belongs to 0000-0000-0000-0003
+        when(affiliationsManagerReadOnly.getServiceAffiliation("4444-4444-4444-4446", 47L)).thenThrow(new NoResultException());
+
         serviceDelegator.viewService("4444-4444-4444-4446", 47L);
         fail();
     }
 
     @Test
     public void testViewServices() {
-        SecurityContextTestUtils.setUpSecurityContext(ORCID, ScopePathType.READ_LIMITED);
+        ServiceSummary limited = summary(48L, Visibility.LIMITED, "LIMITED Department", clientSource(CLIENT_1));
+        ServiceSummary priv = summary(49L, Visibility.PRIVATE, "PRIVATE Department", clientSource(CLIENT_1));
+        ServiceSummary selfLimited = summary(50L, Visibility.LIMITED, "SELF LIMITED Department", userSource(ORCID));
+        ServiceSummary pub = summary(47L, Visibility.PUBLIC, "PUBLIC Department", clientSource(CLIENT_1));
+        List<ServiceSummary> summaries = Arrays.asList(limited, priv, selfLimited, pub);
+        when(affiliationsManagerReadOnly.getServiceSummaryList(ORCID)).thenReturn(summaries);
+        when(affiliationsManagerReadOnly.groupAffiliations(summaries, false))
+                .thenReturn(Arrays.asList(group(limited), group(priv), group(selfLimited, pub)));
+
         Response r = serviceDelegator.viewServices(ORCID);
         assertNotNull(r);
-        Services services = (Services) r.getEntity();
-        assertNotNull(services);
-        assertEquals("/0000-0000-0000-0003/services", services.getPath());
-        Utils.verifyLastModified(services.getLastModifiedDate());
-        assertNotNull(services.retrieveGroups());
-        assertEquals(3, services.retrieveGroups().size());
+        Services elements = (Services) r.getEntity();
+        assertNotNull(elements);
+        assertEquals("/0000-0000-0000-0003/services", elements.getPath());
+        Utils.verifyLastModified(elements.getLastModifiedDate());
+        assertNotNull(elements.retrieveGroups());
+        assertEquals(3, elements.retrieveGroups().size());
         boolean found1 = false, found2 = false, found3 = false;
-        
-        for (AffiliationGroup<ServiceSummary> group : services.retrieveGroups()) {
+
+        for (AffiliationGroup<ServiceSummary> group : elements.retrieveGroups()) {
             ServiceSummary element0 = group.getActivities().get(0);
             Utils.verifyLastModified(element0.getLastModifiedDate());
             if (Long.valueOf(48).equals(element0.getPutCode())) {
@@ -227,16 +305,30 @@ public class MemberV3ApiServiceDelegator_ServicesTest extends DBUnitTest {
                 found3 = true;
             } else {
                 fail("Invalid service found: " + element0.getPutCode());
-            }            
+            }
         }
         assertTrue(found1);
         assertTrue(found2);
-        assertTrue(found3);        
+        assertTrue(found3);
+        verify(orcidSecurityManager).checkAndFilter(eq(ORCID), anyList(), eq(SCOPE));
     }
 
     @Test
     public void testReadPublicScope_Services() {
-        SecurityContextTestUtils.setUpSecurityContext(ORCID, ScopePathType.READ_PUBLIC);
+        when(affiliationsManagerReadOnly.getServiceAffiliation(ORCID, 47L)).thenReturn(service(47L, Visibility.PUBLIC, "PUBLIC Department", clientSource(CLIENT_1)));
+        when(affiliationsManagerReadOnly.getServiceSummary(ORCID, 47L)).thenReturn(summary(47L, Visibility.PUBLIC, "PUBLIC Department", clientSource(CLIENT_1)));
+        when(affiliationsManagerReadOnly.getServiceAffiliation(ORCID, 48L)).thenReturn(service(48L, Visibility.LIMITED, "LIMITED Department", clientSource(CLIENT_1)));
+        when(affiliationsManagerReadOnly.getServiceSummary(ORCID, 48L)).thenReturn(summary(48L, Visibility.LIMITED, "LIMITED Department", clientSource(CLIENT_1)));
+        when(affiliationsManagerReadOnly.getServiceAffiliation(ORCID, 49L)).thenReturn(service(49L, Visibility.PRIVATE, "PRIVATE Department", clientSource(CLIENT_1)));
+        when(affiliationsManagerReadOnly.getServiceSummary(ORCID, 49L)).thenReturn(summary(49L, Visibility.PRIVATE, "PRIVATE Department", clientSource(CLIENT_1)));
+
+        Service failing1 = service(50L, Visibility.LIMITED, "SELF LIMITED Department", userSource(ORCID));
+        ServiceSummary failingSummary1 = summary(50L, Visibility.LIMITED, "SELF LIMITED Department", userSource(ORCID));
+        when(affiliationsManagerReadOnly.getServiceAffiliation(ORCID, 50L)).thenReturn(failing1);
+        when(affiliationsManagerReadOnly.getServiceSummary(ORCID, 50L)).thenReturn(failingSummary1);
+        doThrow(new OrcidAccessControlException()).when(orcidSecurityManager).checkAndFilter(ORCID, failing1, SCOPE);
+        doThrow(new OrcidAccessControlException()).when(orcidSecurityManager).checkAndFilter(ORCID, failingSummary1, SCOPE);
+
         Response r = serviceDelegator.viewService(ORCID, 47L);
         assertNotNull(r);
         assertEquals(Service.class.getName(), r.getEntity().getClass().getName());
@@ -248,13 +340,12 @@ public class MemberV3ApiServiceDelegator_ServicesTest extends DBUnitTest {
         // Limited that am the source of should work
         serviceDelegator.viewService(ORCID, 48L);
         serviceDelegator.viewServiceSummary(ORCID, 48L);
-        
         // Private that am the source of should work
         serviceDelegator.viewService(ORCID, 49L);
         serviceDelegator.viewServiceSummary(ORCID, 49L);
-        
-        
-        // Limited that am not the source of should fail
+
+        // Elements the security manager refuses must come back out of the
+        // delegator unwrapped, not swallowed or remapped.
         try {
             serviceDelegator.viewService(ORCID, 50L);
             fail();
@@ -273,7 +364,6 @@ public class MemberV3ApiServiceDelegator_ServicesTest extends DBUnitTest {
             fail();
         }
 
-        // Private that am not the source of should fails
         try {
             serviceDelegator.viewService(ORCID, 50L);
             fail();
@@ -295,266 +385,189 @@ public class MemberV3ApiServiceDelegator_ServicesTest extends DBUnitTest {
 
     @Test
     public void testAddService() {
-        SecurityContextTestUtils.setUpSecurityContext(ORCID, ScopePathType.READ_LIMITED, ScopePathType.ACTIVITIES_UPDATE);
-        Response response = serviceDelegator.viewActivities(ORCID);
-        assertNotNull(response);
-        ActivitiesSummary originalSummary = (ActivitiesSummary) response.getEntity();
-        assertNotNull(originalSummary);
-        Utils.verifyLastModified(originalSummary.getLastModifiedDate());
-        assertNotNull(originalSummary.getServices());
-        Utils.verifyLastModified(originalSummary.getServices().getLastModifiedDate());
-        assertNotNull(originalSummary.getServices().retrieveGroups());
-        assertEquals(3, originalSummary.getServices().retrieveGroups().size());
+        Service toCreate = (Service) Utils.getAffiliation(AffiliationType.SERVICE);
+        toCreate.setSource(clientSource(CLIENT_2));
+        Service created = service(9999L, Visibility.PUBLIC, "My department name", clientSource(CLIENT_1));
+        when(affiliationsManager.createServiceAffiliation(eq(ORCID), any(Service.class), eq(true))).thenReturn(created);
 
-        ServiceSummary serviceSummary = originalSummary.getServices().retrieveGroups().iterator().next().getActivities().get(0);
-        assertNotNull(serviceSummary);
-        Utils.verifyLastModified(serviceSummary.getLastModifiedDate());
-
-        response = serviceDelegator.createService(ORCID, (Service) Utils.getAffiliation(AffiliationType.SERVICE));
+        Response response = serviceDelegator.createService(ORCID, toCreate);
         assertNotNull(response);
         assertEquals(Response.Status.CREATED.getStatusCode(), response.getStatus());
-        Long putCode = Utils.getPutCode(response);
+        assertEquals(Long.valueOf(9999L), Utils.getPutCode(response));
 
-        response = serviceDelegator.viewActivities(ORCID);
-        assertNotNull(response);
-        ActivitiesSummary summaryWithNewElement = (ActivitiesSummary) response.getEntity();
-        assertNotNull(summaryWithNewElement);
-        Utils.verifyLastModified(summaryWithNewElement.getLastModifiedDate());
-        assertNotNull(summaryWithNewElement.getServices());
-        Utils.verifyLastModified(summaryWithNewElement.getServices().getLastModifiedDate());
-        assertNotNull(summaryWithNewElement.getServices().retrieveGroups());
-        assertEquals(4, summaryWithNewElement.getServices().retrieveGroups().size());
-        
-        boolean haveNew = false;
+        verify(orcidSecurityManager).checkProfile(ORCID);
+        verify(orcidSecurityManager).checkClientAccessAndScopes(ORCID, ScopePathType.AFFILIATIONS_CREATE, ScopePathType.AFFILIATIONS_UPDATE);
 
-        for (AffiliationGroup<ServiceSummary> group : summaryWithNewElement.getServices().retrieveGroups()) {
-            for (ServiceSummary ss : group.getActivities()) {
-                assertNotNull(ss.getPutCode());
-                Utils.verifyLastModified(ss.getLastModifiedDate());
-                if (ss.getPutCode().equals(putCode)) {
-                    assertEquals("My department name", ss.getDepartmentName());
-                    haveNew = true;
-                } else {
-                    boolean found = false;
-                    for (AffiliationGroup<ServiceSummary> g : summaryWithNewElement.getServices().retrieveGroups()) {
-                        if (g.getActivities().contains(ss)) {
-                            found = true;
-                        }
-                    }
-                    assertTrue(found);
-                }
-            }
-        }
-        
-        assertTrue(haveNew);
-        
-        //Remove new element
-        serviceDelegator.deleteAffiliation(ORCID, putCode);
+        // A client supplied source must never reach the manager.
+        ArgumentCaptor<Service> captor = ArgumentCaptor.forClass(Service.class);
+        verify(affiliationsManager).createServiceAffiliation(eq(ORCID), captor.capture(), eq(true));
+        assertNull(captor.getValue().getSource());
+
+        // Remove new element
+        serviceDelegator.deleteAffiliation(ORCID, 9999L);
+        verify(affiliationsManager).checkSourceAndDelete(ORCID, 9999L);
     }
-    
+
     @Test(expected = OrcidDuplicatedActivityException.class)
     public void testAddServicesDuplicateExternalIDs() {
-        SecurityContextTestUtils.setUpSecurityContext(ORCID, ScopePathType.READ_LIMITED, ScopePathType.ACTIVITIES_UPDATE);
+        Service element = (Service) Utils.getAffiliation(AffiliationType.SERVICE);
+        element.setExternalIDs(duplicateExternalIDs());
+        doThrow(new OrcidDuplicatedActivityException(new HashMap<String, String>()))
+                .when(affiliationsManager).createServiceAffiliation(eq(ORCID), any(Service.class), eq(true));
 
-        ExternalID e1 = new ExternalID();
-        e1.setRelationship(Relationship.SELF);
-        e1.setType("erm");
-        e1.setUrl(new Url("https://orcid.org"));
-        e1.setValue("err");
-
-        ExternalID e2 = new ExternalID();
-        e2.setRelationship(Relationship.SELF);
-        e2.setType("err");
-        e2.setUrl(new Url("http://bbc.co.uk"));
-        e2.setValue("erm");
-
-        ExternalIDs externalIDs = new ExternalIDs();
-        externalIDs.getExternalIdentifier().add(e1);
-        externalIDs.getExternalIdentifier().add(e2);
-
-        Service service = (Service) Utils.getAffiliation(AffiliationType.SERVICE);
-        service.setExternalIDs(externalIDs);
-
-        Response response = serviceDelegator.createService(ORCID, service);
-        assertNotNull(response);
-        assertEquals(HttpStatus.SC_CREATED, response.getStatus());
-
-        Long putCode = Utils.getPutCode(response);
-
-        try {
-            Service duplicate = (Service) Utils.getAffiliation(AffiliationType.SERVICE);
-            duplicate.setExternalIDs(externalIDs);
-            serviceDelegator.createService(ORCID, duplicate);
-        } finally {
-            serviceDelegator.deleteAffiliation(ORCID, putCode);
-        }
+        serviceDelegator.createService(ORCID, element);
     }
-
 
     @Test
     public void testUpdateService() {
-        SecurityContextTestUtils.setUpSecurityContext(ORCID, ScopePathType.READ_LIMITED, ScopePathType.ACTIVITIES_UPDATE);
+        Service stored = service(47L, Visibility.PUBLIC, "PUBLIC Department", clientSource(CLIENT_1));
+        when(affiliationsManagerReadOnly.getServiceAffiliation(ORCID, 47L)).thenReturn(stored);
+
         Response response = serviceDelegator.viewService(ORCID, 47L);
         assertNotNull(response);
-        Service service = (Service) response.getEntity();
-        assertNotNull(service);
-        assertEquals("PUBLIC Department", service.getDepartmentName());
-        assertEquals("PUBLIC", service.getRoleTitle());
-        Utils.verifyLastModified(service.getLastModifiedDate());
+        Service element = (Service) response.getEntity();
+        assertNotNull(element);
+        assertEquals("PUBLIC Department", element.getDepartmentName());
+        assertEquals("PUBLIC", element.getRoleTitle());
+        Utils.verifyLastModified(element.getLastModifiedDate());
 
-        LastModifiedDate before = service.getLastModifiedDate();
+        element.setDepartmentName("Updated department name");
+        element.setRoleTitle("The updated role title");
 
-        service.setDepartmentName("Updated department name");
-        service.setRoleTitle("The updated role title");
-        
         // disambiguated org is required in API v3
         DisambiguatedOrganization disambiguatedOrg = new DisambiguatedOrganization();
         disambiguatedOrg.setDisambiguatedOrganizationIdentifier("abc456");
         disambiguatedOrg.setDisambiguationSource("WDB");
-        service.getOrganization().setDisambiguatedOrganization(disambiguatedOrg);
+        element.getOrganization().setDisambiguatedOrganization(disambiguatedOrg);
 
-        response = serviceDelegator.updateService(ORCID, 47L, service);
+        when(affiliationsManager.updateServiceAffiliation(eq(ORCID), any(Service.class), eq(true))).thenReturn(element);
+
+        response = serviceDelegator.updateService(ORCID, 47L, element);
         assertNotNull(response);
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
+        Service updated = (Service) response.getEntity();
+        assertEquals("Updated department name", updated.getDepartmentName());
+        assertEquals("The updated role title", updated.getRoleTitle());
 
-        response = serviceDelegator.viewService(ORCID, 47L);
-        assertNotNull(response);
-        service = (Service) response.getEntity();
-        assertNotNull(service);
-        Utils.verifyLastModified(service.getLastModifiedDate());
-        assertTrue(service.getLastModifiedDate().after(before));
-        assertEquals("Updated department name", service.getDepartmentName());
-        assertEquals("The updated role title", service.getRoleTitle());
-
-        // Rollback changes
-        service.setDepartmentName("PUBLIC Department");
-        service.setRoleTitle("PUBLIC");
-
-        response = serviceDelegator.updateService(ORCID, 47L, service);
-        assertNotNull(response);
-        assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
+        verify(orcidSecurityManager).checkClientAccessAndScopes(ORCID, ScopePathType.AFFILIATIONS_UPDATE);
+        ArgumentCaptor<Service> captor = ArgumentCaptor.forClass(Service.class);
+        verify(affiliationsManager).updateServiceAffiliation(eq(ORCID), captor.capture(), eq(true));
+        assertNull(captor.getValue().getSource());
     }
 
     @Test(expected = WrongSourceException.class)
     public void testUpdateServiceYouAreNotTheSourceOf() {
-        SecurityContextTestUtils.setUpSecurityContext(ORCID, ScopePathType.READ_LIMITED, ScopePathType.ACTIVITIES_UPDATE);
+        Service stored = service(50L, Visibility.LIMITED, "SELF LIMITED Department", userSource(ORCID));
+        when(affiliationsManagerReadOnly.getServiceAffiliation(ORCID, 50L)).thenReturn(stored);
+        doThrow(new WrongSourceException(new HashMap<String, String>()))
+                .when(affiliationsManager).updateServiceAffiliation(eq(ORCID), any(Service.class), eq(true));
+
         Response response = serviceDelegator.viewService(ORCID, 50L);
         assertNotNull(response);
-        Service service = (Service) response.getEntity();
-        assertNotNull(service);
-        service.setDepartmentName("Updated department name");
-        service.setRoleTitle("The updated role title");
-        serviceDelegator.updateService(ORCID, 50L, service);
+        Service element = (Service) response.getEntity();
+        assertNotNull(element);
+        element.setDepartmentName("Updated department name");
+        element.setRoleTitle("The updated role title");
+        serviceDelegator.updateService(ORCID, 50L, element);
         fail();
     }
 
     @Test(expected = VisibilityMismatchException.class)
     public void testUpdateServiceChangingVisibilityTest() {
-        SecurityContextTestUtils.setUpSecurityContext(ORCID, ScopePathType.READ_LIMITED, ScopePathType.ACTIVITIES_UPDATE);
+        Service stored = service(47L, Visibility.PUBLIC, "PUBLIC Department", clientSource(CLIENT_1));
+        when(affiliationsManagerReadOnly.getServiceAffiliation(ORCID, 47L)).thenReturn(stored);
+        doThrow(new VisibilityMismatchException())
+                .when(affiliationsManager).updateServiceAffiliation(eq(ORCID), any(Service.class), eq(true));
+
         Response response = serviceDelegator.viewService(ORCID, 47L);
         assertNotNull(response);
-        Service service = (Service) response.getEntity();
-        assertNotNull(service);
-        assertEquals(Visibility.PUBLIC, service.getVisibility());
+        Service element = (Service) response.getEntity();
+        assertNotNull(element);
+        assertEquals(Visibility.PUBLIC, element.getVisibility());
 
-        service.setVisibility(Visibility.PRIVATE);
+        element.setVisibility(Visibility.PRIVATE);
 
-        response = serviceDelegator.updateService(ORCID, 47L, service);
+        serviceDelegator.updateService(ORCID, 47L, element);
         fail();
     }
 
     @Test
     public void testUpdateServiceLeavingVisibilityNullTest() {
-        SecurityContextTestUtils.setUpSecurityContext(ORCID, ScopePathType.READ_LIMITED, ScopePathType.ACTIVITIES_UPDATE);
+        Service stored = service(47L, Visibility.PUBLIC, "PUBLIC Department", clientSource(CLIENT_1));
+        when(affiliationsManagerReadOnly.getServiceAffiliation(ORCID, 47L)).thenReturn(stored);
+        // The manager restores the stored visibility when the request leaves it
+        // null; that rule is proved in orcid-core, here we only check the
+        // delegator returns what the manager produced.
+        when(affiliationsManager.updateServiceAffiliation(eq(ORCID), any(Service.class), eq(true)))
+                .thenReturn(service(47L, Visibility.PUBLIC, "PUBLIC Department", clientSource(CLIENT_1)));
+
         Response response = serviceDelegator.viewService(ORCID, 47L);
         assertNotNull(response);
-        Service service = (Service) response.getEntity();
-        assertNotNull(service);
-        assertEquals(Visibility.PUBLIC, service.getVisibility());
-        
-        service.setVisibility(null);
+        Service element = (Service) response.getEntity();
+        assertNotNull(element);
+        assertEquals(Visibility.PUBLIC, element.getVisibility());
 
-        response = serviceDelegator.updateService(ORCID, 47L, service);
+        element.setVisibility(null);
+
+        response = serviceDelegator.updateService(ORCID, 47L, element);
         assertNotNull(response);
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
-        service = (Service) response.getEntity();
-        assertNotNull(service);
-        assertEquals(Visibility.PUBLIC, service.getVisibility());
+        element = (Service) response.getEntity();
+        assertNotNull(element);
+        assertEquals(Visibility.PUBLIC, element.getVisibility());
+        // Catches a delegator that sets a visibility on the element before handing it to
+        // the manager: what is submitted must still carry the null the request arrived with.
+        ArgumentCaptor<Service> submitted = ArgumentCaptor.forClass(Service.class);
+        verify(affiliationsManager).updateServiceAffiliation(eq(ORCID), submitted.capture(), eq(true));
+        assertNull("keeping the stored visibility is the manager's job, not the delegator's", submitted.getValue().getVisibility());
     }
-    
+
     @Test(expected = OrcidDuplicatedActivityException.class)
     public void testUpdateServiceDuplicateExternalIDs() {
-        SecurityContextTestUtils.setUpSecurityContext(ORCID, ScopePathType.READ_LIMITED, ScopePathType.ACTIVITIES_UPDATE);
+        Service stored = service(47L, Visibility.PUBLIC, "PUBLIC Department", clientSource(CLIENT_1));
+        when(affiliationsManagerReadOnly.getServiceAffiliation(ORCID, 47L)).thenReturn(stored);
+        doThrow(new OrcidDuplicatedActivityException(new HashMap<String, String>()))
+                .when(affiliationsManager).updateServiceAffiliation(eq(ORCID), any(Service.class), eq(true));
 
-        ExternalID e1 = new ExternalID();
-        e1.setRelationship(Relationship.SELF);
-        e1.setType("erm");
-        e1.setUrl(new Url("https://orcid.org"));
-        e1.setValue("err");
+        Response response = serviceDelegator.viewService(ORCID, 47L);
+        Service element = (Service) response.getEntity();
+        element.setExternalIDs(duplicateExternalIDs());
+        assertEquals(HttpStatus.SC_OK, response.getStatus());
 
-        ExternalID e2 = new ExternalID();
-        e2.setRelationship(Relationship.SELF);
-        e2.setType("err");
-        e2.setUrl(new Url("http://bbc.co.uk"));
-        e2.setValue("erm");
-
-        ExternalIDs externalIDs = new ExternalIDs();
-        externalIDs.getExternalIdentifier().add(e1);
-        externalIDs.getExternalIdentifier().add(e2);
-
-        Service service = (Service) Utils.getAffiliation(AffiliationType.SERVICE);
-        service.setExternalIDs(externalIDs);
-
-        Response response = serviceDelegator.createService(ORCID, service);
-        assertNotNull(response);
-        assertEquals(HttpStatus.SC_CREATED, response.getStatus());
-        
-        Long putCode1 = Utils.getPutCode(response);
-
-        Service another = (Service) Utils.getAffiliation(AffiliationType.SERVICE);
-        response = serviceDelegator.createService(ORCID, another);
-        
-        Long putCode2 = Utils.getPutCode(response);
-        
-        response = serviceDelegator.viewService(ORCID, putCode2);
-        another = (Service) response.getEntity();
-        another.setExternalIDs(externalIDs);
-        
-        try {
-            serviceDelegator.updateService(ORCID, putCode2, another);
-        } finally {
-            serviceDelegator.deleteAffiliation(ORCID, putCode1);
-            serviceDelegator.deleteAffiliation(ORCID, putCode2);
-        }
+        serviceDelegator.updateService(ORCID, 47L, element);
+        fail();
     }
 
     @Test
     public void testDeleteService() {
-        SecurityContextTestUtils.setUpSecurityContext("0000-0000-0000-0002", ScopePathType.READ_LIMITED, ScopePathType.ACTIVITIES_UPDATE);
+        Service stored = service(1006L, Visibility.PUBLIC, "PUBLIC Department", clientSource(CLIENT_1));
+        when(affiliationsManagerReadOnly.getServiceAffiliation("0000-0000-0000-0002", 1006L)).thenReturn(stored).thenThrow(new NoResultException());
+
         Response response = serviceDelegator.viewService("0000-0000-0000-0002", 1006L);
         assertNotNull(response);
-        Service service = (Service) response.getEntity();
-        assertNotNull(service);
+        assertNotNull(response.getEntity());
 
         response = serviceDelegator.deleteAffiliation("0000-0000-0000-0002", 1006L);
         assertNotNull(response);
         assertEquals(Response.Status.NO_CONTENT.getStatusCode(), response.getStatus());
-        
+        verify(affiliationsManager).checkSourceAndDelete("0000-0000-0000-0002", 1006L);
+
         try {
             serviceDelegator.viewService("0000-0000-0000-0002", 1006L);
-            fail(); 
-        } catch(NoResultException nre) {
-            
-        } catch(Exception e) {
+            fail();
+        } catch (NoResultException nre) {
+
+        } catch (Exception e) {
             fail();
         }
     }
 
     @Test(expected = WrongSourceException.class)
     public void testDeleteServiceYouAreNotTheSourceOf() {
-        SecurityContextTestUtils.setUpSecurityContext(ORCID, ScopePathType.READ_LIMITED, ScopePathType.ACTIVITIES_UPDATE);
+        doThrow(new WrongSourceException(new HashMap<String, String>()))
+                .when(affiliationsManager).checkSourceAndDelete(ORCID, 50L);
+
         serviceDelegator.deleteAffiliation(ORCID, 50L);
         fail();
     }
-
 }

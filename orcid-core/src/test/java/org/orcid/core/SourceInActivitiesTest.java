@@ -55,12 +55,15 @@ import org.orcid.pojo.ajaxForm.Registration;
 import org.orcid.pojo.ajaxForm.Text;
 import org.orcid.test.TargetProxyHelper;
 import org.springframework.transaction.annotation.Transactional;
+import org.junit.experimental.categories.Category;
+import org.orcid.test.DatabaseTest;
 
 /**
  * 
  * @author Angel Montenegro
  * 
  */
+@Category(DatabaseTest.class)
 public class SourceInActivitiesTest extends BaseTest {
 
     private static final String CLIENT_1_ID = "APP-5555555555555555";

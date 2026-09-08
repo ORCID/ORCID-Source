@@ -1,21 +1,18 @@
 package org.orcid.core.utils.v3.identifiers.finders;
 
 import static org.junit.Assert.assertEquals;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 
 import java.io.IOException;
 import java.io.InputStream;
 
-import jakarta.annotation.Resource;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
 import org.mockito.invocation.InvocationOnMock;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.mockito.stubbing.Answer;
 import org.orcid.core.utils.v3.identifiers.PIDResolverCache;
 import org.orcid.core.utils.v3.identifiers.normalizers.DOINormalizer;
@@ -23,39 +20,59 @@ import org.orcid.jaxb.model.v3.release.common.TransientNonEmptyString;
 import org.orcid.jaxb.model.v3.release.record.ExternalID;
 import org.orcid.jaxb.model.v3.release.record.ExternalIDs;
 import org.orcid.pojo.FindMyStuffResult;
-import org.orcid.test.OrcidJUnit4ClassRunner;
-import org.orcid.test.TargetProxyHelper;
-import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.util.ReflectionTestUtils;
 
-@RunWith(OrcidJUnit4ClassRunner.class)
-@ContextConfiguration(locations = { "classpath:test-orcid-core-context.xml" })
+/**
+ * The network was already faked here: {@link PIDResolverCache} is the only
+ * thing in {@link DataciteFinder} that opens a connection, and the old test
+ * mocked it and fed it a canned response. The Spring context was booted purely
+ * to obtain the bean, so this now builds the finder directly.
+ *
+ * <p>
+ * What is under test is the parse-and-deduplicate step: read the DataCite
+ * search JSON, drop the DOIs the record already holds, report the total. The
+ * fixture ({@code /examples/works/finder/datacite.json}, in orcid-test) is a
+ * real captured DataCite response and is what makes the assertions mean
+ * something, so it is still parsed by a real Jackson {@code ObjectMapper}
+ * inside the production class.
+ *
+ * <p>
+ * Two stubs from the old setup are gone because they were dead.
+ * {@code cache.isHttp200} is never called by {@code find}. And the
+ * {@code DOINormalizer} stub was never consulted either: DataciteFinder builds
+ * its comparison ExternalID from the raw {@code doi} attribute
+ * ({@code DataciteSimpleWorkAttributes.getExternalID()} takes no normalizer),
+ * unlike CrossrefFinder which does normalise. A real DOINormalizer is set on
+ * the field anyway, so the test does not start passing for the wrong reason if
+ * the production class ever begins to use it.
+ *
+ * <p>
+ * The three {@code @Value} settings are the ones in
+ * {@code orcid-test/.../test-core.properties}, which is where the Spring run
+ * read them from; {@code find} returns an empty result unless all three are
+ * present, so they are not decoration.
+ */
+@RunWith(MockitoJUnitRunner.class)
 public class DataciteFinderTest {
 
-    @Mock
-    DOINormalizer norm;
+    private static final String ENDPOINT = "https://api.datacite.org/works?query=";
+
+    private static final String ORCID = "0000-0003-1419-2405";
 
     @Mock
-    PIDResolverCache cache;
-    
-    @Resource
-    DataciteFinder finder;
-    
+    private PIDResolverCache cache;
+
+    @InjectMocks
+    private DataciteFinder finder = new DataciteFinder();
+
     @Before
     public void setUp() throws IOException {
-        MockitoAnnotations.initMocks(this);
-        TargetProxyHelper.injectIntoProxy(finder, "norm", norm);
-        TargetProxyHelper.injectIntoProxy(finder, "cache", cache);
+        ReflectionTestUtils.setField(finder, "norm", new DOINormalizer());
+        ReflectionTestUtils.setField(finder, "isEnabled", Boolean.TRUE);
+        ReflectionTestUtils.setField(finder, "clientId", "APP-9999999999999901");
+        ReflectionTestUtils.setField(finder, "metadataEndpoint", ENDPOINT);
 
-        when(norm.normalise(eq("doi"), anyString())).thenAnswer(new Answer<String>() {
-            @Override
-            public String answer(InvocationOnMock invocation) throws Throwable {
-                return invocation.getArgument(1).toString();
-            }
-        });
-
-        when(cache.isHttp200(anyString())).thenReturn(true);
-
-        when(cache.get("https://api.datacite.org/works?query=0000-0003-1419-2405", "application/json")).thenAnswer(new Answer<InputStream>() {
+        when(cache.get(ENDPOINT + ORCID, "application/json")).thenAnswer(new Answer<InputStream>() {
 
             @Override
             public InputStream answer(InvocationOnMock invocation) throws Throwable {

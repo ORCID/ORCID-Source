@@ -20,6 +20,8 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.transaction.annotation.Transactional;
 
 import static org.junit.Assert.*;
+import org.junit.experimental.categories.Category;
+import org.orcid.test.DatabaseTest;
 
 /**
  * @author Declan Newman (declan) Date: 24/04/2012
@@ -28,6 +30,7 @@ import static org.junit.Assert.*;
 @RunWith(OrcidJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:test-orcid-persistence-context.xml" })
 @Transactional
+@Category(DatabaseTest.class)
 public class OrcidOauth2AuthoriziationCodeDetailDaoTest extends DBUnitTest {
 
     @Resource(name = "orcidOauth2AuthoriziationCodeDetailDao")

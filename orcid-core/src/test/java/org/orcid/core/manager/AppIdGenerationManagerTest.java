@@ -11,12 +11,15 @@ import org.junit.Test;
 import org.orcid.core.BaseTest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.junit.experimental.categories.Category;
+import org.orcid.test.DatabaseTest;
 
 /**
  * 
  * @author Will Simpson
  * 
  */
+@Category(DatabaseTest.class)
 public class AppIdGenerationManagerTest extends BaseTest {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AppIdGenerationManager.class);

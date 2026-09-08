@@ -2,215 +2,293 @@ package org.orcid.api.memberV3.server.delegator;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyList;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import java.util.Arrays;
-import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
-import jakarta.annotation.Resource;
 import jakarta.persistence.NoResultException;
 import jakarta.ws.rs.core.Response;
 
 import org.apache.hc.core5.http.HttpStatus;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
 import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.mockito.ArgumentCaptor;
 import org.orcid.core.exception.OrcidAccessControlException;
 import org.orcid.core.exception.OrcidDuplicatedActivityException;
 import org.orcid.core.exception.OrcidUnauthorizedException;
 import org.orcid.core.exception.OrcidVisibilityException;
 import org.orcid.core.exception.VisibilityMismatchException;
 import org.orcid.core.exception.WrongSourceException;
-import org.orcid.core.utils.SecurityContextTestUtils;
 import org.orcid.jaxb.model.common.Relationship;
-import org.orcid.jaxb.model.groupid_v2.GroupIdRecord;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.v3.release.common.DisambiguatedOrganization;
-import org.orcid.jaxb.model.v3.release.common.LastModifiedDate;
+import org.orcid.jaxb.model.v3.release.common.Source;
 import org.orcid.jaxb.model.v3.release.common.Url;
 import org.orcid.jaxb.model.v3.release.common.Visibility;
-import org.orcid.jaxb.model.v3.release.record.Address;
 import org.orcid.jaxb.model.v3.release.record.AffiliationType;
-import org.orcid.jaxb.model.v3.release.record.Distinction;
-import org.orcid.jaxb.model.v3.release.record.Education;
-import org.orcid.jaxb.model.v3.release.record.Employment;
 import org.orcid.jaxb.model.v3.release.record.ExternalID;
 import org.orcid.jaxb.model.v3.release.record.ExternalIDs;
-import org.orcid.jaxb.model.v3.release.record.Funding;
 import org.orcid.jaxb.model.v3.release.record.InvitedPosition;
-import org.orcid.jaxb.model.v3.release.record.Keyword;
-import org.orcid.jaxb.model.v3.release.record.Membership;
-import org.orcid.jaxb.model.v3.release.record.OtherName;
-import org.orcid.jaxb.model.v3.release.record.PeerReview;
-import org.orcid.jaxb.model.v3.release.record.PersonExternalIdentifier;
-import org.orcid.jaxb.model.v3.release.record.Qualification;
-import org.orcid.jaxb.model.v3.release.record.ResearchResource;
-import org.orcid.jaxb.model.v3.release.record.ResearcherUrl;
-import org.orcid.jaxb.model.v3.release.record.Service;
-import org.orcid.jaxb.model.v3.release.record.Work;
-import org.orcid.jaxb.model.v3.release.record.WorkBulk;
-import org.orcid.jaxb.model.v3.release.record.summary.ActivitiesSummary;
 import org.orcid.jaxb.model.v3.release.record.summary.AffiliationGroup;
 import org.orcid.jaxb.model.v3.release.record.summary.InvitedPositionSummary;
 import org.orcid.jaxb.model.v3.release.record.summary.InvitedPositions;
-import org.orcid.test.DBUnitTest;
-import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.orcid.test.helper.v3.Utils;
-import org.springframework.test.context.ContextConfiguration;
 
-@RunWith(OrcidJUnit4ClassRunner.class)
-@ContextConfiguration(locations = { "classpath:test-orcid-api-web-context.xml" })
-public class MemberV3ApiServiceDelegator_InvitedPositionsTest extends DBUnitTest {
-    protected static final List<String> DATA_FILES = Arrays.asList("/data/EmptyEntityData.xml",
-            "/data/SourceClientDetailsEntityData.xml", "/data/ProfileEntityData.xml", "/data/WorksEntityData.xml", "/data/ClientDetailsEntityData.xml",
-            "/data/Oauth2TokenDetailsData.xml", "/data/OrgsEntityData.xml", "/data/ProfileFundingEntityData.xml", "/data/OrgAffiliationEntityData.xml",
-            "/data/PeerReviewEntityData.xml", "/data/GroupIdRecordEntityData.xml", "/data/RecordNameEntityData.xml", "/data/BiographyEntityData.xml");
+/**
+ * Mocked boundary tests for the invited-position endpoints of the member V3 API.
+ *
+ * <p>
+ * These used to run the real {@code OrcidSecurityManager} against a DBUnit
+ * fixture, so a "view" test proved both the delegator's own work (look the
+ * element up, set its path, resolve the source name, return 200) and the
+ * security manager's visibility table. Only the first half can be proved here:
+ * {@code checkAndFilter} is void and filters in place, so a mocked security
+ * manager filters nothing and any assertion of the form "only public elements
+ * came back" would pass without proving anything. What each test asserts now is
+ * the delegator's contract, plus a {@code verify} that the element really was
+ * handed to the security manager with the right scope. The visibility and scope
+ * tables themselves are proved in orcid-core, by
+ * {@code OrcidSecurityManager_generalTest} and its siblings.
+ */
+public class MemberV3ApiServiceDelegator_InvitedPositionsTest extends MemberV3ApiServiceDelegatorMockTestBase {
 
-    // Now on, for any new test, PLAESE USE THIS ORCID ID
-    protected final String ORCID = "0000-0000-0000-0003";
+    private static final ScopePathType SCOPE = ScopePathType.AFFILIATIONS_READ_LIMITED;
 
-    @Resource(name = "memberV3ApiServiceDelegator")
-    protected MemberV3ApiServiceDelegator<Distinction, Education, Employment, PersonExternalIdentifier, InvitedPosition, Funding, GroupIdRecord, Membership, OtherName, PeerReview, Qualification, ResearcherUrl, Service, Work, WorkBulk, Address, Keyword, ResearchResource> serviceDelegator;
-
-    @BeforeClass
-    public static void initDBUnitData() throws Exception {
-        initDBUnitData(DATA_FILES);
+    private InvitedPosition invitedPosition(long putCode, Visibility visibility, String department, Source source) {
+        InvitedPosition element = new InvitedPosition();
+        element.setPutCode(putCode);
+        element.setVisibility(visibility);
+        element.setDepartmentName(department);
+        element.setRoleTitle(visibility.value().toUpperCase());
+        element.setOrganization(Utils.getOrganization());
+        element.setLastModifiedDate(lastModified());
+        element.setSource(source);
+        return element;
     }
 
-    @AfterClass
-    public static void removeDBUnitData() throws Exception {
-        Collections.reverse(DATA_FILES);
-        removeDBUnitData(DATA_FILES);
+    private InvitedPositionSummary summary(long putCode, Visibility visibility, String department, Source source) {
+        InvitedPositionSummary element = new InvitedPositionSummary();
+        element.setPutCode(putCode);
+        element.setVisibility(visibility);
+        element.setDepartmentName(department);
+        element.setRoleTitle(visibility.value().toUpperCase());
+        element.setOrganization(Utils.getOrganization());
+        element.setLastModifiedDate(lastModified());
+        element.setSource(source);
+        return element;
+    }
+
+    private AffiliationGroup<InvitedPositionSummary> group(InvitedPositionSummary... elements) {
+        AffiliationGroup<InvitedPositionSummary> group = new AffiliationGroup<>();
+        for (InvitedPositionSummary element : elements) {
+            group.getActivities().add(element);
+        }
+        return group;
+    }
+
+    private ExternalIDs duplicateExternalIDs() {
+        ExternalID e1 = new ExternalID();
+        e1.setRelationship(Relationship.SELF);
+        e1.setType("erm");
+        e1.setUrl(new Url("https://orcid.org"));
+        e1.setValue("err");
+
+        ExternalID e2 = new ExternalID();
+        e2.setRelationship(Relationship.SELF);
+        e2.setType("err");
+        e2.setUrl(new Url("http://bbc.co.uk"));
+        e2.setValue("erm");
+
+        ExternalIDs externalIDs = new ExternalIDs();
+        externalIDs.getExternalIdentifier().add(e1);
+        externalIDs.getExternalIdentifier().add(e2);
+        return externalIDs;
     }
 
     @Test(expected = OrcidUnauthorizedException.class)
     public void testViewInvitedPositionsWrongToken() {
-        SecurityContextTestUtils.setUpSecurityContext("some-other-user", ScopePathType.READ_LIMITED);
+        when(affiliationsManagerReadOnly.getInvitedPositionSummaryList(ORCID))
+                .thenReturn(Arrays.asList(summary(32L, Visibility.PUBLIC, "PUBLIC Department", clientSource(CLIENT_1))));
+        doThrow(new OrcidUnauthorizedException("Access token is for a different record"))
+                .when(orcidSecurityManager).checkAndFilter(eq(ORCID), anyList(), eq(SCOPE));
+
         serviceDelegator.viewInvitedPositions(ORCID);
     }
 
     @Test(expected = OrcidUnauthorizedException.class)
     public void testViewInvitedPositionWrongToken() {
-        SecurityContextTestUtils.setUpSecurityContext("some-other-user", ScopePathType.READ_LIMITED);
+        when(affiliationsManagerReadOnly.getInvitedPositionAffiliation(ORCID, 32L))
+                .thenReturn(invitedPosition(32L, Visibility.PUBLIC, "PUBLIC Department", clientSource(CLIENT_1)));
+        doThrow(new OrcidUnauthorizedException("Access token is for a different record"))
+                .when(orcidSecurityManager).checkAndFilter(eq(ORCID), any(InvitedPosition.class), eq(SCOPE));
+
         serviceDelegator.viewInvitedPosition(ORCID, 32L);
     }
 
     @Test
     public void testViewInvitedPositionReadPublic() {
-        SecurityContextTestUtils.setUpSecurityContextForClientOnly("APP-5555555555555555", ScopePathType.READ_PUBLIC);
+        InvitedPosition stored = invitedPosition(32L, Visibility.PUBLIC, "PUBLIC Department", clientSource(CLIENT_1));
+        when(affiliationsManagerReadOnly.getInvitedPositionAffiliation(ORCID, 32L)).thenReturn(stored);
+
         Response r = serviceDelegator.viewInvitedPosition(ORCID, 32L);
         InvitedPosition element = (InvitedPosition) r.getEntity();
         assertNotNull(element);
         assertEquals("/0000-0000-0000-0003/invited-position/32", element.getPath());
-        Utils.assertIsPublicOrSource(element, "APP-5555555555555555");
+        assertEquals(CLIENT_1_NAME, element.getSource().getSourceName().getContent());
+        verify(orcidSecurityManager).checkAndFilter(ORCID, element, SCOPE);
     }
 
     @Test(expected = OrcidUnauthorizedException.class)
     public void testViewInvitedPositionSummaryWrongToken() {
-        SecurityContextTestUtils.setUpSecurityContext("some-other-user", ScopePathType.READ_LIMITED);
+        when(affiliationsManagerReadOnly.getInvitedPositionSummary(ORCID, 32L))
+                .thenReturn(summary(32L, Visibility.PUBLIC, "PUBLIC Department", clientSource(CLIENT_1)));
+        doThrow(new OrcidUnauthorizedException("Access token is for a different record"))
+                .when(orcidSecurityManager).checkAndFilter(eq(ORCID), any(InvitedPositionSummary.class), eq(SCOPE));
+
         serviceDelegator.viewInvitedPositionSummary(ORCID, 32L);
     }
 
     @Test
     public void testViewInvitedPositionsReadPublic() {
-        SecurityContextTestUtils.setUpSecurityContextForClientOnly("APP-5555555555555555", ScopePathType.READ_PUBLIC);
+        InvitedPositionSummary publicSummary = summary(32L, Visibility.PUBLIC, "PUBLIC Department", clientSource(CLIENT_1));
+        List<InvitedPositionSummary> summaries = Arrays.asList(publicSummary);
+        when(affiliationsManagerReadOnly.getInvitedPositionSummaryList(ORCID)).thenReturn(summaries);
+        when(affiliationsManagerReadOnly.groupAffiliations(summaries, false)).thenReturn(Arrays.asList(group(publicSummary)));
+
         Response r = serviceDelegator.viewInvitedPositions(ORCID);
         InvitedPositions element = (InvitedPositions) r.getEntity();
         assertNotNull(element);
         assertEquals("/0000-0000-0000-0003/invited-positions", element.getPath());
-
-        for (AffiliationGroup<InvitedPositionSummary> group : element.getInvitedPositionGroups()) {
-            for (InvitedPositionSummary summary : group.getActivities()) {
-                Utils.assertIsPublicOrSource(summary, "APP-5555555555555555");
+        for (AffiliationGroup<InvitedPositionSummary> group : element.retrieveGroups()) {
+            for (InvitedPositionSummary activity : group.getActivities()) {
+                assertEquals("/0000-0000-0000-0003/invited-position/32", activity.getPath());
             }
         }
+        verify(orcidSecurityManager).checkAndFilter(eq(ORCID), anyList(), eq(SCOPE));
     }
 
     @Test
     public void testViewInvitedPositionSummaryReadPublic() {
-        SecurityContextTestUtils.setUpSecurityContextForClientOnly("APP-5555555555555555", ScopePathType.READ_PUBLIC);
+        InvitedPositionSummary stored = summary(32L, Visibility.PUBLIC, "PUBLIC Department", clientSource(CLIENT_1));
+        when(affiliationsManagerReadOnly.getInvitedPositionSummary(ORCID, 32L)).thenReturn(stored);
+
         Response r = serviceDelegator.viewInvitedPositionSummary(ORCID, 32L);
         InvitedPositionSummary element = (InvitedPositionSummary) r.getEntity();
         assertNotNull(element);
         assertEquals("/0000-0000-0000-0003/invited-position/32", element.getPath());
-        Utils.assertIsPublicOrSource(element, "APP-5555555555555555");
+        assertEquals(CLIENT_1_NAME, element.getSource().getSourceName().getContent());
+        verify(orcidSecurityManager).checkAndFilter(ORCID, element, SCOPE);
     }
 
     @Test
     public void testViewPublicInvitedPosition() {
-        SecurityContextTestUtils.setUpSecurityContext(ORCID, ScopePathType.READ_LIMITED);
+        when(affiliationsManagerReadOnly.getInvitedPositionAffiliation(ORCID, 32L))
+                .thenReturn(invitedPosition(32L, Visibility.PUBLIC, "PUBLIC Department", clientSource(CLIENT_1)));
+
         Response response = serviceDelegator.viewInvitedPosition(ORCID, 32L);
         assertNotNull(response);
-        InvitedPosition invitedPosition = (InvitedPosition) response.getEntity();
-        assertNotNull(invitedPosition);
-        Utils.verifyLastModified(invitedPosition.getLastModifiedDate());
-        assertEquals(Long.valueOf(32L), invitedPosition.getPutCode());
-        assertEquals("/0000-0000-0000-0003/invited-position/32", invitedPosition.getPath());
-        assertEquals("PUBLIC Department", invitedPosition.getDepartmentName());
-        assertEquals(Visibility.PUBLIC.value(), invitedPosition.getVisibility().value());
+        InvitedPosition element = (InvitedPosition) response.getEntity();
+        assertNotNull(element);
+        Utils.verifyLastModified(element.getLastModifiedDate());
+        assertEquals(Long.valueOf(32L), element.getPutCode());
+        assertEquals("/0000-0000-0000-0003/invited-position/32", element.getPath());
+        assertEquals("PUBLIC Department", element.getDepartmentName());
+        assertEquals(Visibility.PUBLIC.value(), element.getVisibility().value());
+        verify(orcidSecurityManager).checkAndFilter(ORCID, element, SCOPE);
     }
 
     @Test
     public void testViewLimitedInvitedPosition() {
-        SecurityContextTestUtils.setUpSecurityContext(ORCID, ScopePathType.READ_LIMITED);
+        when(affiliationsManagerReadOnly.getInvitedPositionAffiliation(ORCID, 35L))
+                .thenReturn(invitedPosition(35L, Visibility.LIMITED, "SELF LIMITED Department", userSource(ORCID)));
+
         Response response = serviceDelegator.viewInvitedPosition(ORCID, 35L);
         assertNotNull(response);
-        InvitedPosition invitedPosition = (InvitedPosition) response.getEntity();
-        assertNotNull(invitedPosition);
-        Utils.verifyLastModified(invitedPosition.getLastModifiedDate());
-        assertEquals(Long.valueOf(35L), invitedPosition.getPutCode());
-        assertEquals("/0000-0000-0000-0003/invited-position/35", invitedPosition.getPath());
-        assertEquals("SELF LIMITED Department", invitedPosition.getDepartmentName());
-        assertEquals(Visibility.LIMITED.value(), invitedPosition.getVisibility().value());
+        InvitedPosition element = (InvitedPosition) response.getEntity();
+        assertNotNull(element);
+        Utils.verifyLastModified(element.getLastModifiedDate());
+        assertEquals(Long.valueOf(35L), element.getPutCode());
+        assertEquals("/0000-0000-0000-0003/invited-position/35", element.getPath());
+        assertEquals("SELF LIMITED Department", element.getDepartmentName());
+        assertEquals(Visibility.LIMITED.value(), element.getVisibility().value());
+        verify(orcidSecurityManager).checkAndFilter(ORCID, element, SCOPE);
     }
 
     @Test
     public void testViewPrivateInvitedPosition() {
-        SecurityContextTestUtils.setUpSecurityContext(ORCID, ScopePathType.READ_LIMITED);
+        when(affiliationsManagerReadOnly.getInvitedPositionAffiliation(ORCID, 34L))
+                .thenReturn(invitedPosition(34L, Visibility.PRIVATE, "PRIVATE Department", clientSource(CLIENT_1)));
+
         Response response = serviceDelegator.viewInvitedPosition(ORCID, 34L);
         assertNotNull(response);
-        InvitedPosition invitedPosition = (InvitedPosition) response.getEntity();
-        assertNotNull(invitedPosition);
-        Utils.verifyLastModified(invitedPosition.getLastModifiedDate());
-        assertEquals(Long.valueOf(34L), invitedPosition.getPutCode());
-        assertEquals("/0000-0000-0000-0003/invited-position/34", invitedPosition.getPath());
-        assertEquals("PRIVATE Department", invitedPosition.getDepartmentName());
-        assertEquals(Visibility.PRIVATE.value(), invitedPosition.getVisibility().value());
+        InvitedPosition element = (InvitedPosition) response.getEntity();
+        assertNotNull(element);
+        Utils.verifyLastModified(element.getLastModifiedDate());
+        assertEquals(Long.valueOf(34L), element.getPutCode());
+        assertEquals("/0000-0000-0000-0003/invited-position/34", element.getPath());
+        assertEquals("PRIVATE Department", element.getDepartmentName());
+        assertEquals(Visibility.PRIVATE.value(), element.getVisibility().value());
+        verify(orcidSecurityManager).checkAndFilter(ORCID, element, SCOPE);
     }
 
     @Test(expected = OrcidVisibilityException.class)
     public void testViewPrivateInvitedPositionWhereYouAreNotTheSource() {
-        SecurityContextTestUtils.setUpSecurityContext(ORCID, ScopePathType.READ_LIMITED);
+        InvitedPosition stored = invitedPosition(36L, Visibility.PRIVATE, "PRIVATE Department", clientSource(CLIENT_2));
+        when(affiliationsManagerReadOnly.getInvitedPositionAffiliation(ORCID, 36L)).thenReturn(stored);
+        doThrow(new OrcidVisibilityException()).when(orcidSecurityManager).checkAndFilter(ORCID, stored, SCOPE);
+
         serviceDelegator.viewInvitedPosition(ORCID, 36L);
         fail();
     }
 
+    /**
+     * The rule this proves -- that invited-position 32 cannot be read through another
+     * record -- lives in a SQL WHERE clause
+     * ({@code OrgAffiliationRelationDaoImpl.getOrgAffiliationRelation}), so with a
+     * mocked manager all that is left here is that the delegator does not swallow
+     * the exception. The predicate itself is proved by
+     * MemberV3ApiServiceDelegatorDatabaseRulesTest, which carries the DBUnit
+     * fixture and runs in the db-tests stage.
+     */
     @Test(expected = NoResultException.class)
     public void testViewInvitedPositionThatDontBelongToTheUser() {
-        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4446", ScopePathType.READ_LIMITED);
-        // InvitedPosition 32 belongs to 0000-0000-0000-0003
+        when(affiliationsManagerReadOnly.getInvitedPositionAffiliation("4444-4444-4444-4446", 32L)).thenThrow(new NoResultException());
+
         serviceDelegator.viewInvitedPosition("4444-4444-4444-4446", 32L);
         fail();
     }
 
     @Test
     public void testViewInvitedPositions() {
-        SecurityContextTestUtils.setUpSecurityContext(ORCID, ScopePathType.READ_LIMITED);
+        InvitedPositionSummary limited = summary(33L, Visibility.LIMITED, "LIMITED Department", clientSource(CLIENT_1));
+        InvitedPositionSummary priv = summary(34L, Visibility.PRIVATE, "PRIVATE Department", clientSource(CLIENT_1));
+        InvitedPositionSummary selfLimited = summary(35L, Visibility.LIMITED, "SELF LIMITED Department", userSource(ORCID));
+        InvitedPositionSummary pub = summary(32L, Visibility.PUBLIC, "PUBLIC Department", clientSource(CLIENT_1));
+        List<InvitedPositionSummary> summaries = Arrays.asList(limited, priv, selfLimited, pub);
+        when(affiliationsManagerReadOnly.getInvitedPositionSummaryList(ORCID)).thenReturn(summaries);
+        when(affiliationsManagerReadOnly.groupAffiliations(summaries, false))
+                .thenReturn(Arrays.asList(group(limited), group(priv), group(selfLimited, pub)));
+
         Response r = serviceDelegator.viewInvitedPositions(ORCID);
         assertNotNull(r);
-        InvitedPositions invitedPositions = (InvitedPositions) r.getEntity();
-        assertNotNull(invitedPositions);
-        assertEquals("/0000-0000-0000-0003/invited-positions", invitedPositions.getPath());
-        Utils.verifyLastModified(invitedPositions.getLastModifiedDate());
-        assertNotNull(invitedPositions.retrieveGroups());
-        assertEquals(3, invitedPositions.retrieveGroups().size());
+        InvitedPositions elements = (InvitedPositions) r.getEntity();
+        assertNotNull(elements);
+        assertEquals("/0000-0000-0000-0003/invited-positions", elements.getPath());
+        Utils.verifyLastModified(elements.getLastModifiedDate());
+        assertNotNull(elements.retrieveGroups());
+        assertEquals(3, elements.retrieveGroups().size());
         boolean found1 = false, found2 = false, found3 = false;
-        
-        for (AffiliationGroup<InvitedPositionSummary> group : invitedPositions.retrieveGroups()) {
+
+        for (AffiliationGroup<InvitedPositionSummary> group : elements.retrieveGroups()) {
             InvitedPositionSummary element0 = group.getActivities().get(0);
             Utils.verifyLastModified(element0.getLastModifiedDate());
             if (Long.valueOf(33).equals(element0.getPutCode())) {
@@ -223,19 +301,34 @@ public class MemberV3ApiServiceDelegator_InvitedPositionsTest extends DBUnitTest
                 assertEquals("SELF LIMITED Department", element0.getDepartmentName());
                 assertEquals(2, group.getActivities().size());
                 assertEquals(Long.valueOf(32), group.getActivities().get(1).getPutCode());
+                assertEquals("PUBLIC Department", group.getActivities().get(1).getDepartmentName());
                 found3 = true;
             } else {
                 fail("Invalid invitedPosition found: " + element0.getPutCode());
-            }            
+            }
         }
         assertTrue(found1);
         assertTrue(found2);
-        assertTrue(found3);        
+        assertTrue(found3);
+        verify(orcidSecurityManager).checkAndFilter(eq(ORCID), anyList(), eq(SCOPE));
     }
 
     @Test
     public void testReadPublicScope_InvitedPositions() {
-        SecurityContextTestUtils.setUpSecurityContext(ORCID, ScopePathType.READ_PUBLIC);
+        when(affiliationsManagerReadOnly.getInvitedPositionAffiliation(ORCID, 32L)).thenReturn(invitedPosition(32L, Visibility.PUBLIC, "PUBLIC Department", clientSource(CLIENT_1)));
+        when(affiliationsManagerReadOnly.getInvitedPositionSummary(ORCID, 32L)).thenReturn(summary(32L, Visibility.PUBLIC, "PUBLIC Department", clientSource(CLIENT_1)));
+        when(affiliationsManagerReadOnly.getInvitedPositionAffiliation(ORCID, 33L)).thenReturn(invitedPosition(33L, Visibility.LIMITED, "LIMITED Department", clientSource(CLIENT_1)));
+        when(affiliationsManagerReadOnly.getInvitedPositionSummary(ORCID, 33L)).thenReturn(summary(33L, Visibility.LIMITED, "LIMITED Department", clientSource(CLIENT_1)));
+        when(affiliationsManagerReadOnly.getInvitedPositionAffiliation(ORCID, 34L)).thenReturn(invitedPosition(34L, Visibility.PRIVATE, "PRIVATE Department", clientSource(CLIENT_1)));
+        when(affiliationsManagerReadOnly.getInvitedPositionSummary(ORCID, 34L)).thenReturn(summary(34L, Visibility.PRIVATE, "PRIVATE Department", clientSource(CLIENT_1)));
+
+        InvitedPosition failing1 = invitedPosition(35L, Visibility.LIMITED, "SELF LIMITED Department", userSource(ORCID));
+        InvitedPositionSummary failingSummary1 = summary(35L, Visibility.LIMITED, "SELF LIMITED Department", userSource(ORCID));
+        when(affiliationsManagerReadOnly.getInvitedPositionAffiliation(ORCID, 35L)).thenReturn(failing1);
+        when(affiliationsManagerReadOnly.getInvitedPositionSummary(ORCID, 35L)).thenReturn(failingSummary1);
+        doThrow(new OrcidAccessControlException()).when(orcidSecurityManager).checkAndFilter(ORCID, failing1, SCOPE);
+        doThrow(new OrcidAccessControlException()).when(orcidSecurityManager).checkAndFilter(ORCID, failingSummary1, SCOPE);
+
         Response r = serviceDelegator.viewInvitedPosition(ORCID, 32L);
         assertNotNull(r);
         assertEquals(InvitedPosition.class.getName(), r.getEntity().getClass().getName());
@@ -247,12 +340,12 @@ public class MemberV3ApiServiceDelegator_InvitedPositionsTest extends DBUnitTest
         // Limited that am the source of should work
         serviceDelegator.viewInvitedPosition(ORCID, 33L);
         serviceDelegator.viewInvitedPositionSummary(ORCID, 33L);
-
         // Private that am the source of should work
         serviceDelegator.viewInvitedPosition(ORCID, 34L);
         serviceDelegator.viewInvitedPositionSummary(ORCID, 34L);
 
-        // Limited that am not the source of should fail
+        // Elements the security manager refuses must come back out of the
+        // delegator unwrapped, not swallowed or remapped.
         try {
             serviceDelegator.viewInvitedPosition(ORCID, 35L);
             fail();
@@ -271,7 +364,6 @@ public class MemberV3ApiServiceDelegator_InvitedPositionsTest extends DBUnitTest
             fail();
         }
 
-        // Private that am not the source of should fails
         try {
             serviceDelegator.viewInvitedPosition(ORCID, 35L);
             fail();
@@ -293,249 +385,173 @@ public class MemberV3ApiServiceDelegator_InvitedPositionsTest extends DBUnitTest
 
     @Test
     public void testAddInvitedPosition() {
-        SecurityContextTestUtils.setUpSecurityContext(ORCID, ScopePathType.READ_LIMITED, ScopePathType.ACTIVITIES_UPDATE);
-        Response response = serviceDelegator.viewActivities(ORCID);
-        assertNotNull(response);
-        ActivitiesSummary originalSummary = (ActivitiesSummary) response.getEntity();
-        assertNotNull(originalSummary);
-        Utils.verifyLastModified(originalSummary.getLastModifiedDate());
-        assertNotNull(originalSummary.getInvitedPositions());
-        Utils.verifyLastModified(originalSummary.getInvitedPositions().getLastModifiedDate());
-        assertNotNull(originalSummary.getInvitedPositions().retrieveGroups());
-        assertEquals(3, originalSummary.getInvitedPositions().retrieveGroups().size());
-        
-        InvitedPositionSummary invitedPositionSummary = originalSummary.getInvitedPositions().retrieveGroups().iterator().next().getActivities().get(0);
-        assertNotNull(invitedPositionSummary);
-        Utils.verifyLastModified(invitedPositionSummary.getLastModifiedDate());
+        InvitedPosition toCreate = (InvitedPosition) Utils.getAffiliation(AffiliationType.INVITED_POSITION);
+        toCreate.setSource(clientSource(CLIENT_2));
+        InvitedPosition created = invitedPosition(9999L, Visibility.PUBLIC, "My department name", clientSource(CLIENT_1));
+        when(affiliationsManager.createInvitedPositionAffiliation(eq(ORCID), any(InvitedPosition.class), eq(true))).thenReturn(created);
 
-        response = serviceDelegator.createInvitedPosition(ORCID, (InvitedPosition) Utils.getAffiliation(AffiliationType.INVITED_POSITION));
+        Response response = serviceDelegator.createInvitedPosition(ORCID, toCreate);
         assertNotNull(response);
         assertEquals(Response.Status.CREATED.getStatusCode(), response.getStatus());
-        Long putCode = Utils.getPutCode(response);
+        assertEquals(Long.valueOf(9999L), Utils.getPutCode(response));
 
-        response = serviceDelegator.viewActivities(ORCID);
-        assertNotNull(response);
-        ActivitiesSummary summaryWithNewElement = (ActivitiesSummary) response.getEntity();
-        assertNotNull(summaryWithNewElement);
-        Utils.verifyLastModified(summaryWithNewElement.getLastModifiedDate());
-        assertNotNull(summaryWithNewElement.getInvitedPositions());
-        Utils.verifyLastModified(summaryWithNewElement.getInvitedPositions().getLastModifiedDate());
-        assertNotNull(summaryWithNewElement.getInvitedPositions().retrieveGroups());
-        assertEquals(4, summaryWithNewElement.getInvitedPositions().retrieveGroups().size());
+        verify(orcidSecurityManager).checkProfile(ORCID);
+        verify(orcidSecurityManager).checkClientAccessAndScopes(ORCID, ScopePathType.AFFILIATIONS_CREATE, ScopePathType.AFFILIATIONS_UPDATE);
 
-        boolean haveNew = false;
-
-        for (AffiliationGroup<InvitedPositionSummary> group : summaryWithNewElement.getInvitedPositions().retrieveGroups()) {
-            for (InvitedPositionSummary ips : group.getActivities()) {
-                assertNotNull(ips.getPutCode());
-                Utils.verifyLastModified(ips.getLastModifiedDate());
-                if (ips.getPutCode().equals(putCode)) {
-                    assertEquals("My department name", ips.getDepartmentName());
-                    haveNew = true;
-                } else {
-                    boolean found = false;
-                    for (AffiliationGroup<InvitedPositionSummary> g : originalSummary.getInvitedPositions().retrieveGroups()) {
-                        if (g.getActivities().contains(ips)) {
-                            found = true;
-                        }
-                    }
-                    assertTrue(found);
-                }
-            }
-        }
-
-        assertTrue(haveNew);
+        // A client supplied source must never reach the manager.
+        ArgumentCaptor<InvitedPosition> captor = ArgumentCaptor.forClass(InvitedPosition.class);
+        verify(affiliationsManager).createInvitedPositionAffiliation(eq(ORCID), captor.capture(), eq(true));
+        assertNull(captor.getValue().getSource());
 
         // Remove new element
-        serviceDelegator.deleteAffiliation(ORCID, putCode);
+        serviceDelegator.deleteAffiliation(ORCID, 9999L);
+        verify(affiliationsManager).checkSourceAndDelete(ORCID, 9999L);
     }
 
     @Test(expected = OrcidDuplicatedActivityException.class)
     public void testAddInvitedPositionsDuplicateExternalIDs() {
-        SecurityContextTestUtils.setUpSecurityContext(ORCID, ScopePathType.READ_LIMITED, ScopePathType.ACTIVITIES_UPDATE);
+        InvitedPosition element = (InvitedPosition) Utils.getAffiliation(AffiliationType.INVITED_POSITION);
+        element.setExternalIDs(duplicateExternalIDs());
+        doThrow(new OrcidDuplicatedActivityException(new HashMap<String, String>()))
+                .when(affiliationsManager).createInvitedPositionAffiliation(eq(ORCID), any(InvitedPosition.class), eq(true));
 
-        ExternalID e1 = new ExternalID();
-        e1.setRelationship(Relationship.SELF);
-        e1.setType("erm");
-        e1.setUrl(new Url("https://orcid.org"));
-        e1.setValue("err");
-
-        ExternalID e2 = new ExternalID();
-        e2.setRelationship(Relationship.SELF);
-        e2.setType("err");
-        e2.setUrl(new Url("http://bbc.co.uk"));
-        e2.setValue("erm");
-
-        ExternalIDs externalIDs = new ExternalIDs();
-        externalIDs.getExternalIdentifier().add(e1);
-        externalIDs.getExternalIdentifier().add(e2);
-
-        InvitedPosition invitedPosition = (InvitedPosition) Utils.getAffiliation(AffiliationType.INVITED_POSITION);
-        invitedPosition.setExternalIDs(externalIDs);
-
-        Response response = serviceDelegator.createInvitedPosition(ORCID, invitedPosition);
-        assertNotNull(response);
-        assertEquals(HttpStatus.SC_CREATED, response.getStatus());
-
-        Long putCode = Utils.getPutCode(response);
-
-        try {
-            InvitedPosition duplicate = (InvitedPosition) Utils.getAffiliation(AffiliationType.INVITED_POSITION);
-            duplicate.setExternalIDs(externalIDs);
-            serviceDelegator.createInvitedPosition(ORCID, duplicate);
-        } finally {
-            serviceDelegator.deleteAffiliation(ORCID, putCode);
-        }
+        serviceDelegator.createInvitedPosition(ORCID, element);
     }
 
     @Test
     public void testUpdateInvitedPosition() {
-        SecurityContextTestUtils.setUpSecurityContext(ORCID, ScopePathType.READ_LIMITED, ScopePathType.ACTIVITIES_UPDATE);
+        InvitedPosition stored = invitedPosition(32L, Visibility.PUBLIC, "PUBLIC Department", clientSource(CLIENT_1));
+        when(affiliationsManagerReadOnly.getInvitedPositionAffiliation(ORCID, 32L)).thenReturn(stored);
+
         Response response = serviceDelegator.viewInvitedPosition(ORCID, 32L);
         assertNotNull(response);
-        InvitedPosition invitedPosition = (InvitedPosition) response.getEntity();
-        assertNotNull(invitedPosition);
-        assertEquals("PUBLIC Department", invitedPosition.getDepartmentName());
-        assertEquals("PUBLIC", invitedPosition.getRoleTitle());
-        Utils.verifyLastModified(invitedPosition.getLastModifiedDate());
+        InvitedPosition element = (InvitedPosition) response.getEntity();
+        assertNotNull(element);
+        assertEquals("PUBLIC Department", element.getDepartmentName());
+        assertEquals("PUBLIC", element.getRoleTitle());
+        Utils.verifyLastModified(element.getLastModifiedDate());
 
-        LastModifiedDate before = invitedPosition.getLastModifiedDate();
-
-        invitedPosition.setDepartmentName("Updated department name");
-        invitedPosition.setRoleTitle("The updated role title");
+        element.setDepartmentName("Updated department name");
+        element.setRoleTitle("The updated role title");
 
         // disambiguated org is required in API v3
         DisambiguatedOrganization disambiguatedOrg = new DisambiguatedOrganization();
         disambiguatedOrg.setDisambiguatedOrganizationIdentifier("abc456");
         disambiguatedOrg.setDisambiguationSource("WDB");
-        invitedPosition.getOrganization().setDisambiguatedOrganization(disambiguatedOrg);
+        element.getOrganization().setDisambiguatedOrganization(disambiguatedOrg);
 
-        response = serviceDelegator.updateInvitedPosition(ORCID, 32L, invitedPosition);
+        when(affiliationsManager.updateInvitedPositionAffiliation(eq(ORCID), any(InvitedPosition.class), eq(true))).thenReturn(element);
+
+        response = serviceDelegator.updateInvitedPosition(ORCID, 32L, element);
         assertNotNull(response);
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
+        InvitedPosition updated = (InvitedPosition) response.getEntity();
+        assertEquals("Updated department name", updated.getDepartmentName());
+        assertEquals("The updated role title", updated.getRoleTitle());
 
-        response = serviceDelegator.viewInvitedPosition(ORCID, 32L);
-        assertNotNull(response);
-        invitedPosition = (InvitedPosition) response.getEntity();
-        assertNotNull(invitedPosition);
-        Utils.verifyLastModified(invitedPosition.getLastModifiedDate());
-        assertTrue(invitedPosition.getLastModifiedDate().after(before));
-        assertEquals("Updated department name", invitedPosition.getDepartmentName());
-        assertEquals("The updated role title", invitedPosition.getRoleTitle());
-
-        // Rollback changes
-        invitedPosition.setDepartmentName("PUBLIC Department");
-        invitedPosition.setRoleTitle("PUBLIC");
-
-        response = serviceDelegator.updateInvitedPosition(ORCID, 32L, invitedPosition);
-        assertNotNull(response);
-        assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
+        verify(orcidSecurityManager).checkClientAccessAndScopes(ORCID, ScopePathType.AFFILIATIONS_UPDATE);
+        ArgumentCaptor<InvitedPosition> captor = ArgumentCaptor.forClass(InvitedPosition.class);
+        verify(affiliationsManager).updateInvitedPositionAffiliation(eq(ORCID), captor.capture(), eq(true));
+        assertNull(captor.getValue().getSource());
     }
 
     @Test(expected = WrongSourceException.class)
     public void testUpdateInvitedPositionYouAreNotTheSourceOf() {
-        SecurityContextTestUtils.setUpSecurityContext(ORCID, ScopePathType.READ_LIMITED, ScopePathType.ACTIVITIES_UPDATE);
+        InvitedPosition stored = invitedPosition(35L, Visibility.LIMITED, "SELF LIMITED Department", userSource(ORCID));
+        when(affiliationsManagerReadOnly.getInvitedPositionAffiliation(ORCID, 35L)).thenReturn(stored);
+        doThrow(new WrongSourceException(new HashMap<String, String>()))
+                .when(affiliationsManager).updateInvitedPositionAffiliation(eq(ORCID), any(InvitedPosition.class), eq(true));
+
         Response response = serviceDelegator.viewInvitedPosition(ORCID, 35L);
         assertNotNull(response);
-        InvitedPosition invitedPosition = (InvitedPosition) response.getEntity();
-        assertNotNull(invitedPosition);
-        invitedPosition.setDepartmentName("Updated department name");
-        invitedPosition.setRoleTitle("The updated role title");
-        serviceDelegator.updateInvitedPosition(ORCID, 35L, invitedPosition);
+        InvitedPosition element = (InvitedPosition) response.getEntity();
+        assertNotNull(element);
+        element.setDepartmentName("Updated department name");
+        element.setRoleTitle("The updated role title");
+        serviceDelegator.updateInvitedPosition(ORCID, 35L, element);
         fail();
     }
 
     @Test(expected = VisibilityMismatchException.class)
     public void testUpdateInvitedPositionChangingVisibilityTest() {
-        SecurityContextTestUtils.setUpSecurityContext(ORCID, ScopePathType.READ_LIMITED, ScopePathType.ACTIVITIES_UPDATE);
+        InvitedPosition stored = invitedPosition(32L, Visibility.PUBLIC, "PUBLIC Department", clientSource(CLIENT_1));
+        when(affiliationsManagerReadOnly.getInvitedPositionAffiliation(ORCID, 32L)).thenReturn(stored);
+        doThrow(new VisibilityMismatchException())
+                .when(affiliationsManager).updateInvitedPositionAffiliation(eq(ORCID), any(InvitedPosition.class), eq(true));
+
         Response response = serviceDelegator.viewInvitedPosition(ORCID, 32L);
         assertNotNull(response);
-        InvitedPosition invitedPosition = (InvitedPosition) response.getEntity();
-        assertNotNull(invitedPosition);
-        assertEquals(Visibility.PUBLIC, invitedPosition.getVisibility());
+        InvitedPosition element = (InvitedPosition) response.getEntity();
+        assertNotNull(element);
+        assertEquals(Visibility.PUBLIC, element.getVisibility());
 
-        invitedPosition.setVisibility(Visibility.PRIVATE);
+        element.setVisibility(Visibility.PRIVATE);
 
-        response = serviceDelegator.updateInvitedPosition(ORCID, 32L, invitedPosition);
+        serviceDelegator.updateInvitedPosition(ORCID, 32L, element);
         fail();
     }
 
     @Test
     public void testUpdateInvitedPositionLeavingVisibilityNullTest() {
-        SecurityContextTestUtils.setUpSecurityContext(ORCID, ScopePathType.READ_LIMITED, ScopePathType.ACTIVITIES_UPDATE);
+        InvitedPosition stored = invitedPosition(32L, Visibility.PUBLIC, "PUBLIC Department", clientSource(CLIENT_1));
+        when(affiliationsManagerReadOnly.getInvitedPositionAffiliation(ORCID, 32L)).thenReturn(stored);
+        // The manager restores the stored visibility when the request leaves it
+        // null; that rule is proved in orcid-core, here we only check the
+        // delegator returns what the manager produced.
+        when(affiliationsManager.updateInvitedPositionAffiliation(eq(ORCID), any(InvitedPosition.class), eq(true)))
+                .thenReturn(invitedPosition(32L, Visibility.PUBLIC, "PUBLIC Department", clientSource(CLIENT_1)));
+
         Response response = serviceDelegator.viewInvitedPosition(ORCID, 32L);
         assertNotNull(response);
-        InvitedPosition invitedPosition = (InvitedPosition) response.getEntity();
-        assertNotNull(invitedPosition);
-        assertEquals(Visibility.PUBLIC, invitedPosition.getVisibility());
+        InvitedPosition element = (InvitedPosition) response.getEntity();
+        assertNotNull(element);
+        assertEquals(Visibility.PUBLIC, element.getVisibility());
 
-        invitedPosition.setVisibility(null);
+        element.setVisibility(null);
 
-        response = serviceDelegator.updateInvitedPosition(ORCID, 32L, invitedPosition);
+        response = serviceDelegator.updateInvitedPosition(ORCID, 32L, element);
         assertNotNull(response);
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
-        invitedPosition = (InvitedPosition) response.getEntity();
-        assertNotNull(invitedPosition);
-        assertEquals(Visibility.PUBLIC, invitedPosition.getVisibility());
+        element = (InvitedPosition) response.getEntity();
+        assertNotNull(element);
+        assertEquals(Visibility.PUBLIC, element.getVisibility());
+        // Catches a delegator that sets a visibility on the element before handing it to
+        // the manager: what is submitted must still carry the null the request arrived with.
+        ArgumentCaptor<InvitedPosition> submitted = ArgumentCaptor.forClass(InvitedPosition.class);
+        verify(affiliationsManager).updateInvitedPositionAffiliation(eq(ORCID), submitted.capture(), eq(true));
+        assertNull("keeping the stored visibility is the manager's job, not the delegator's", submitted.getValue().getVisibility());
     }
 
     @Test(expected = OrcidDuplicatedActivityException.class)
     public void testUpdateInvitedPositionDuplicateExternalIDs() {
-        SecurityContextTestUtils.setUpSecurityContext(ORCID, ScopePathType.READ_LIMITED, ScopePathType.ACTIVITIES_UPDATE);
+        InvitedPosition stored = invitedPosition(32L, Visibility.PUBLIC, "PUBLIC Department", clientSource(CLIENT_1));
+        when(affiliationsManagerReadOnly.getInvitedPositionAffiliation(ORCID, 32L)).thenReturn(stored);
+        doThrow(new OrcidDuplicatedActivityException(new HashMap<String, String>()))
+                .when(affiliationsManager).updateInvitedPositionAffiliation(eq(ORCID), any(InvitedPosition.class), eq(true));
 
-        ExternalID e1 = new ExternalID();
-        e1.setRelationship(Relationship.SELF);
-        e1.setType("erm");
-        e1.setUrl(new Url("https://orcid.org"));
-        e1.setValue("err");
+        Response response = serviceDelegator.viewInvitedPosition(ORCID, 32L);
+        InvitedPosition element = (InvitedPosition) response.getEntity();
+        element.setExternalIDs(duplicateExternalIDs());
+        assertEquals(HttpStatus.SC_OK, response.getStatus());
 
-        ExternalID e2 = new ExternalID();
-        e2.setRelationship(Relationship.SELF);
-        e2.setType("err");
-        e2.setUrl(new Url("http://bbc.co.uk"));
-        e2.setValue("erm");
-
-        ExternalIDs externalIDs = new ExternalIDs();
-        externalIDs.getExternalIdentifier().add(e1);
-        externalIDs.getExternalIdentifier().add(e2);
-
-        InvitedPosition invitedPosition = (InvitedPosition) Utils.getAffiliation(AffiliationType.INVITED_POSITION);
-        invitedPosition.setExternalIDs(externalIDs);
-
-        Response response = serviceDelegator.createInvitedPosition(ORCID, invitedPosition);
-        assertNotNull(response);
-        assertEquals(HttpStatus.SC_CREATED, response.getStatus());
-
-        Long putCode1 = Utils.getPutCode(response);
-        
-        InvitedPosition another = (InvitedPosition) Utils.getAffiliation(AffiliationType.INVITED_POSITION);
-        response = serviceDelegator.createInvitedPosition(ORCID, another);
-
-        Long putCode2 = Utils.getPutCode(response);
-
-        response = serviceDelegator.viewInvitedPosition(ORCID, putCode2);
-        another = (InvitedPosition) response.getEntity();
-        another.setExternalIDs(externalIDs);
-
-        try {
-            serviceDelegator.updateInvitedPosition(ORCID, putCode2, another);
-        } finally {
-            serviceDelegator.deleteAffiliation(ORCID, putCode1);
-            serviceDelegator.deleteAffiliation(ORCID, putCode2);
-        }
+        serviceDelegator.updateInvitedPosition(ORCID, 32L, element);
+        fail();
     }
 
     @Test
     public void testDeleteInvitedPosition() {
-        SecurityContextTestUtils.setUpSecurityContext("0000-0000-0000-0002", ScopePathType.READ_LIMITED, ScopePathType.ACTIVITIES_UPDATE);
+        InvitedPosition stored = invitedPosition(1003L, Visibility.PUBLIC, "PUBLIC Department", clientSource(CLIENT_1));
+        when(affiliationsManagerReadOnly.getInvitedPositionAffiliation("0000-0000-0000-0002", 1003L)).thenReturn(stored).thenThrow(new NoResultException());
+
         Response response = serviceDelegator.viewInvitedPosition("0000-0000-0000-0002", 1003L);
         assertNotNull(response);
-        InvitedPosition invitedPosition = (InvitedPosition) response.getEntity();
-        assertNotNull(invitedPosition);
+        assertNotNull(response.getEntity());
 
         response = serviceDelegator.deleteAffiliation("0000-0000-0000-0002", 1003L);
         assertNotNull(response);
         assertEquals(Response.Status.NO_CONTENT.getStatusCode(), response.getStatus());
+        verify(affiliationsManager).checkSourceAndDelete("0000-0000-0000-0002", 1003L);
+
         try {
             serviceDelegator.viewInvitedPosition("0000-0000-0000-0002", 1003L);
             fail();
@@ -544,14 +560,14 @@ public class MemberV3ApiServiceDelegator_InvitedPositionsTest extends DBUnitTest
         } catch (Exception e) {
             fail();
         }
-
     }
 
     @Test(expected = WrongSourceException.class)
     public void testDeleteInvitedPositionYouAreNotTheSourceOf() {
-        SecurityContextTestUtils.setUpSecurityContext(ORCID, ScopePathType.READ_LIMITED, ScopePathType.ACTIVITIES_UPDATE);
+        doThrow(new WrongSourceException(new HashMap<String, String>()))
+                .when(affiliationsManager).checkSourceAndDelete(ORCID, 35L);
+
         serviceDelegator.deleteAffiliation(ORCID, 35L);
         fail();
     }
-
 }

@@ -6,12 +6,15 @@ import jakarta.annotation.Resource;
 
 import org.apache.activemq.xbean.BrokerFactoryBean;
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
+import org.orcid.test.DatabaseTest;
 import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.springframework.test.context.ContextConfiguration;
 
 @RunWith(OrcidJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:test-orcid-activemq-web-context.xml" })
+@Category(DatabaseTest.class)
 public class AppContextActiveMQTest {
 
     @Resource

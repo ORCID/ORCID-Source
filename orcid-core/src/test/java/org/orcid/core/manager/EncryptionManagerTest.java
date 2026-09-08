@@ -10,7 +10,10 @@ import org.orcid.core.BaseTest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.junit.experimental.categories.Category;
+import org.orcid.test.DatabaseTest;
 
+@Category(DatabaseTest.class)
 public class EncryptionManagerTest extends BaseTest {
 
     private static final Logger LOG = LoggerFactory.getLogger(EncryptionManagerTest.class);

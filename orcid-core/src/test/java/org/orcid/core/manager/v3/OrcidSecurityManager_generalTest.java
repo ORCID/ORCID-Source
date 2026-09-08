@@ -4,8 +4,13 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -26,6 +31,7 @@ import org.orcid.jaxb.model.v3.release.record.PersonalDetails;
 import org.orcid.jaxb.model.v3.release.record.Record;
 import org.orcid.jaxb.model.v3.release.record.Work;
 import org.orcid.jaxb.model.v3.release.record.summary.ActivitiesSummary;
+import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.core.exception.OrcidUnauthorizedException;
 
 /**
@@ -1162,5 +1168,89 @@ public class OrcidSecurityManager_generalTest extends OrcidSecurityManagerTestBa
         PersonalDetails p = new PersonalDetails();
         orcidSecurityManager.checkAndFilter(ORCID_1, p);
         assertNotNull(p);
+    }
+
+    /**
+     * =================== client credentials token tests ===================
+     *
+     * A client credentials token has no user behind it, so
+     * OrcidBearerTokenAuthentication.getUserOrcid() is null and isMyToken takes
+     * the branch that no other actor reaches.
+     * SecurityContextTestUtils.setUpSecurityContextForClientOnly is the only
+     * helper that produces that shape; setUpSecurityContext always stubs a user
+     * orcid and would exercise the "same record" branch instead.
+     *
+     * The rule under test: such a token is allowed through, unless it carries
+     * the profile create scope and the record it names has already been
+     * claimed by its owner.
+     */
+    @Test
+    public void testClientCredentialsToken_WithProfileCreateScope_CantAccess_ClaimedRecord() {
+        // Catches: deleting the throw guarded by
+        // Boolean.TRUE.equals(profile.getClaimed()) in
+        // OrcidSecurityManagerImpl.isMyToken -- a client credentials token
+        // would then be able to write to a record its owner has claimed.
+        SecurityContextTestUtils.setUpSecurityContextForClientOnly(CLIENT_1, ScopePathType.ORCID_PROFILE_CREATE);
+        when(profileEntityCacheManager.retrieve(ORCID_1)).thenReturn(profileWithClaimed(true));
+
+        IllegalStateException e = assertThrows(IllegalStateException.class,
+                () -> orcidSecurityManager.checkClientAccessAndScopes(ORCID_1, ScopePathType.ORCID_BIO_UPDATE));
+        assertEquals("Non client credential scope found in client request", e.getMessage());
+    }
+
+    @Test
+    public void testClientCredentialsToken_WithProfileCreateScope_CantRead_ClaimedRecord() {
+        // Catches: moving the claimed record refusal out of isMyToken and into
+        // checkClientAccessAndScopes. The read entry point
+        // checkAndFilter(orcid, collection, scope) calls isMyToken directly, so
+        // it has to refuse the same token; a refusal implemented one level up
+        // would leave this path open while the write test above stayed green.
+        SecurityContextTestUtils.setUpSecurityContextForClientOnly(CLIENT_1, ScopePathType.ORCID_PROFILE_CREATE);
+        when(profileEntityCacheManager.retrieve(ORCID_1)).thenReturn(profileWithClaimed(true));
+
+        IllegalStateException e = assertThrows(IllegalStateException.class,
+                () -> orcidSecurityManager.checkAndFilter(ORCID_1, new ArrayList<Work>(), ScopePathType.ORCID_WORKS_READ_LIMITED));
+        assertEquals("Non client credential scope found in client request", e.getMessage());
+    }
+
+    @Test
+    public void testClientCredentialsToken_WithProfileCreateScope_CanAccess_UnclaimedRecord() {
+        // Catches: inverting the predicate to
+        // Boolean.FALSE.equals(profile.getClaimed()), or dropping the claimed
+        // test so every client credentials request is refused. Creating on an
+        // unclaimed record is what this token exists for, and both mutations
+        // leave the two refusal tests above green.
+        //
+        // Same actor, same required scope and same call as the write test
+        // above -- the claimed flag is the only thing that differs.
+        // ORCID_PROFILE_CREATE inherits ORCID_BIO_UPDATE, so checkScopes is
+        // satisfied and cannot be what makes this call return.
+        SecurityContextTestUtils.setUpSecurityContextForClientOnly(CLIENT_1, ScopePathType.ORCID_PROFILE_CREATE);
+        when(profileEntityCacheManager.retrieve(ORCID_1)).thenReturn(profileWithClaimed(false));
+
+        orcidSecurityManager.checkClientAccessAndScopes(ORCID_1, ScopePathType.ORCID_BIO_UPDATE);
+    }
+
+    @Test
+    public void testClientCredentialsToken_WithoutProfileCreateScope_DoesNotReadTheRecord() {
+        // Catches: deleting the scope test
+        // scopes.contains(ScopePathType.ORCID_PROFILE_CREATE.value()) in
+        // isMyToken. The record is stubbed claimed on purpose: without the
+        // scope test the profile would be loaded and this call would throw, so
+        // the verify pins the scope test rather than letting it be incidentally
+        // true.
+        SecurityContextTestUtils.setUpSecurityContextForClientOnly(CLIENT_1, ScopePathType.ORCID_BIO_UPDATE);
+        when(profileEntityCacheManager.retrieve(ORCID_1)).thenReturn(profileWithClaimed(true));
+
+        orcidSecurityManager.checkClientAccessAndScopes(ORCID_1, ScopePathType.ORCID_BIO_UPDATE);
+
+        verify(profileEntityCacheManager, never()).retrieve(anyString());
+    }
+
+    private ProfileEntity profileWithClaimed(boolean claimed) {
+        ProfileEntity profile = new ProfileEntity();
+        profile.setId(ORCID_1);
+        profile.setClaimed(claimed);
+        return profile;
     }
 }

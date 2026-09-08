@@ -5,870 +5,544 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.security.AccessControlException;
+import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import jakarta.annotation.Resource;
 import jakarta.persistence.NoResultException;
 import jakarta.ws.rs.core.Response;
 
 import org.apache.hc.core5.http.ParseException;
-import org.junit.After;
-import org.junit.AfterClass;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
-import org.mockito.Captor;
-import org.mockito.Matchers;
-import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
-import org.mockito.invocation.InvocationOnMock;
-import org.mockito.stubbing.Answer;
-import org.orcid.api.memberV3.server.delegator.impl.MemberV3ApiServiceDelegatorImpl;
-import org.orcid.core.common.manager.EmailFrequencyManager;
+import org.mockito.ArgumentMatchers;
 import org.orcid.core.exception.OrcidBadRequestException;
-import org.orcid.core.groupIds.issn.IssnClient;
-import org.orcid.core.groupIds.issn.IssnData;
-import org.orcid.core.groupIds.issn.IssnValidator;
-import org.orcid.core.locale.LocaleManager;
-import org.orcid.core.locale.LocaleManagerImpl;
-import org.orcid.core.manager.v3.GroupIdRecordManager;
-import org.orcid.core.manager.v3.NotificationManager;
 import org.orcid.core.manager.v3.OrcidSearchManager;
-import org.orcid.core.manager.v3.OrcidSecurityManager;
-import org.orcid.core.manager.v3.impl.OrcidSearchManagerImpl;
-import org.orcid.core.manager.v3.impl.OrcidSecurityManagerImpl;
-import org.orcid.core.utils.SecurityContextTestUtils;
 import org.orcid.jaxb.model.common.Iso3166Country;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.v3.release.client.ClientSummary;
+import org.orcid.jaxb.model.v3.release.common.Country;
 import org.orcid.jaxb.model.v3.release.common.OrcidIdentifier;
+import org.orcid.jaxb.model.v3.release.common.Url;
+import org.orcid.jaxb.model.v3.release.common.Visibility;
+import org.orcid.jaxb.model.v3.release.common.VisibilityType;
 import org.orcid.jaxb.model.v3.release.groupid.GroupIdRecord;
+import org.orcid.jaxb.model.v3.release.groupid.GroupIdRecords;
 import org.orcid.jaxb.model.v3.release.record.Address;
+import org.orcid.jaxb.model.v3.release.record.Addresses;
 import org.orcid.jaxb.model.v3.release.record.AffiliationType;
-import org.orcid.jaxb.model.v3.release.record.Distinction;
+import org.orcid.jaxb.model.v3.release.record.Biography;
 import org.orcid.jaxb.model.v3.release.record.Education;
 import org.orcid.jaxb.model.v3.release.record.Employment;
 import org.orcid.jaxb.model.v3.release.record.Funding;
-import org.orcid.jaxb.model.v3.release.record.InvitedPosition;
 import org.orcid.jaxb.model.v3.release.record.Keyword;
-import org.orcid.jaxb.model.v3.release.record.Membership;
+import org.orcid.jaxb.model.v3.release.record.Keywords;
 import org.orcid.jaxb.model.v3.release.record.OtherName;
+import org.orcid.jaxb.model.v3.release.record.OtherNames;
 import org.orcid.jaxb.model.v3.release.record.PeerReview;
 import org.orcid.jaxb.model.v3.release.record.PersonExternalIdentifier;
-import org.orcid.jaxb.model.v3.release.record.Qualification;
-import org.orcid.jaxb.model.v3.release.record.ResearchResource;
+import org.orcid.jaxb.model.v3.release.record.PersonExternalIdentifiers;
 import org.orcid.jaxb.model.v3.release.record.ResearcherUrl;
-import org.orcid.jaxb.model.v3.release.record.Service;
+import org.orcid.jaxb.model.v3.release.record.ResearcherUrls;
 import org.orcid.jaxb.model.v3.release.record.Work;
-import org.orcid.jaxb.model.v3.release.record.WorkBulk;
 import org.orcid.jaxb.model.v3.release.search.Result;
 import org.orcid.jaxb.model.v3.release.search.Search;
 import org.orcid.jaxb.model.v3.release.search.expanded.ExpandedResult;
 import org.orcid.jaxb.model.v3.release.search.expanded.ExpandedSearch;
-import org.orcid.persistence.dao.GroupIdRecordDao;
-import org.orcid.persistence.jpa.entities.GroupIdRecordEntity;
-import org.orcid.test.DBUnitTest;
-import org.orcid.test.OrcidJUnit4ClassRunner;
-import org.orcid.test.TargetProxyHelper;
 import org.orcid.test.helper.v3.Utils;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.util.ReflectionTestUtils;
 
-@RunWith(OrcidJUnit4ClassRunner.class)
-@ContextConfiguration(locations = { "classpath:test-orcid-api-web-context.xml" })
-public class MemberV3ApiServiceDelegator_GeneralTest extends DBUnitTest {
-    protected static final List<String> DATA_FILES = Arrays.asList("/data/EmptyEntityData.xml",
-            "/data/SourceClientDetailsEntityData.xml", "/data/ProfileEntityData.xml", "/data/WorksEntityData.xml", "/data/ClientDetailsEntityData.xml",
-            "/data/Oauth2TokenDetailsData.xml", "/data/OrgsEntityData.xml", "/data/ProfileFundingEntityData.xml", "/data/OrgAffiliationEntityData.xml",
-            "/data/PeerReviewEntityData.xml", "/data/GroupIdRecordEntityData.xml", "/data/RecordNameEntityData.xml", "/data/BiographyEntityData.xml");
+/**
+ * Mocked cross-cutting tests for the member V3 API delegator.
+ *
+ * <p>
+ * The three "client credentials token on a claimed account" tests keep their
+ * shape but move the refusal to the collaborator that actually makes it: a
+ * client-only token is refused by {@code OrcidSecurityManager}, and what the
+ * delegator owes is to let that refusal out of every endpoint rather than
+ * swallowing it or turning it into a 200. Which security manager method refuses
+ * is the security manager's business and is proved in orcid-core.
+ *
+ * <p>
+ * {@code validateSearchParams} is by contrast genuine delegator logic -- it
+ * compares the requested row count against {@code OrcidSearchManager} and
+ * defaults it when absent -- so the search tests are real tests of this class
+ * and are kept as they were.
+ */
+public class MemberV3ApiServiceDelegator_GeneralTest extends MemberV3ApiServiceDelegatorMockTestBase {
 
-    // Now on, for any new test, PLAESE USER THIS ORCID ID
-    protected final String ORCID = "0000-0000-0000-0003";
-    
-    @Resource
-    private GroupIdRecordDao groupIdRecordDao;
+    private static final String UNCLAIMED = "0000-0000-0000-0001";
 
-    @Resource(name = "notificationManagerV3")
-    private NotificationManager notificationManager;
-    
-    @Resource(name = "memberV3ApiServiceDelegator")
-    protected MemberV3ApiServiceDelegator<Distinction, Education, Employment, PersonExternalIdentifier, InvitedPosition, Funding, GroupIdRecord, Membership, OtherName, PeerReview, Qualification, ResearcherUrl, Service, Work, WorkBulk, Address, Keyword, ResearchResource> serviceDelegator;
-    
-    @Resource(name = "groupIdRecordManagerV3")
-    private GroupIdRecordManager groupIdRecordManager;
-    
-    @Resource
-    private IssnValidator issnValidator;
-    
-    @Resource
-    private IssnClient issnClient;
-    
-    @Captor
-    private ArgumentCaptor<Map<String, List<String>>> searchParamsCaptor;
-    
+    private static final String CLIENT_ONLY_REFUSAL = "Non client credential scope found in client request";
+
     @Before
-    public void before() throws Exception {
-        initDBUnitData(DATA_FILES);
-        MockitoAnnotations.initMocks(this);
-        IssnValidator mockIssnValidator = Mockito.mock(IssnValidator.class);
-        when(mockIssnValidator.issnValid(Mockito.anyString())).thenReturn(true);
-        TargetProxyHelper.injectIntoProxy(groupIdRecordManager, "issnValidator", mockIssnValidator); 
-        
-        IssnClient mockIssnClient = Mockito.mock(IssnClient.class);
-       
-        
-        Answer<IssnData> issnDataAnswer = new Answer<IssnData>() {
-
-            @Override
-            public IssnData answer(InvocationOnMock invocation) throws Throwable {
-                String issn = (String) invocation.getArguments()[0];
-                IssnData mockData = new IssnData();
-                mockData.setIssn(issn);
-                mockData.setMainTitle("test");
-                return mockData;
-            }
-            
-        };
-        
-        when(mockIssnClient.getIssnData(Mockito.anyString())).thenAnswer(issnDataAnswer);
-        TargetProxyHelper.injectIntoProxy(groupIdRecordManager, "issnClient", mockIssnClient); 
-        TargetProxyHelper.injectIntoProxy(groupIdRecordManager, "orcidSourceClientDetailsId", "APP-1234567898765432");
-    }
-    
-    @After
-    public void after() {
-        TargetProxyHelper.injectIntoProxy(groupIdRecordManager, "issnValidator", issnValidator);
-        TargetProxyHelper.injectIntoProxy(groupIdRecordManager, "issnClient", issnClient);
-    }
-    
-    @BeforeClass
-    public static void initDBUnitData() throws Exception {
-        initDBUnitData(DATA_FILES);
+    public void emptyContainersSoReadsReachTheSecurityManager() {
+        // The read managers are asked before the security manager filters, so a
+        // read endpoint needs a container to hand over; these are the empty
+        // shapes the real managers return for a record with nothing on it.
+        when(addressManagerReadOnly.getAddresses(anyString())).thenReturn(emptyAddresses());
+        when(profileKeywordManagerReadOnly.getKeywords(anyString())).thenReturn(emptyKeywords());
+        when(otherNameManagerReadOnly.getOtherNames(anyString())).thenReturn(emptyOtherNames());
+        when(externalIdentifierManagerReadOnly.getExternalIdentifiers(anyString())).thenReturn(emptyExternalIdentifiers());
+        when(researcherUrlManagerReadOnly.getResearcherUrls(anyString())).thenReturn(emptyResearcherUrls());
+        when(biographyManagerReadOnly.getBiography(anyString())).thenReturn(new Biography());
+        when(affiliationsManagerReadOnly.getEducationSummaryList(anyString())).thenReturn(new ArrayList<>());
+        when(affiliationsManagerReadOnly.getEmploymentSummaryList(anyString())).thenReturn(new ArrayList<>());
+        when(profileFundingManagerReadOnly.getFundingSummaryList(anyString())).thenReturn(new ArrayList<>());
+        when(peerReviewManagerReadOnly.getPeerReviewSummaryList(anyString())).thenReturn(new ArrayList<>());
+        when(workManagerReadOnly.getWorksSummaryList(anyString())).thenReturn(new ArrayList<>());
     }
 
-    @AfterClass
-    public static void removeDBUnitData() throws Exception {
-        Collections.reverse(DATA_FILES);
-        removeDBUnitData(DATA_FILES);
+    private Addresses emptyAddresses() {
+        Addresses addresses = new Addresses();
+        addresses.setAddress(new ArrayList<>());
+        return addresses;
+    }
+
+    private Keywords emptyKeywords() {
+        Keywords keywords = new Keywords();
+        keywords.setKeywords(new ArrayList<>());
+        return keywords;
+    }
+
+    private OtherNames emptyOtherNames() {
+        OtherNames otherNames = new OtherNames();
+        otherNames.setOtherNames(new ArrayList<>());
+        return otherNames;
+    }
+
+    private PersonExternalIdentifiers emptyExternalIdentifiers() {
+        PersonExternalIdentifiers extIds = new PersonExternalIdentifiers();
+        extIds.setExternalIdentifiers(new ArrayList<>());
+        return extIds;
+    }
+
+    private ResearcherUrls emptyResearcherUrls() {
+        ResearcherUrls researcherUrls = new ResearcherUrls();
+        researcherUrls.setResearcherUrls(new ArrayList<>());
+        return researcherUrls;
+    }
+
+    /** The security manager refuses every read for this actor. */
+    private void refuseEveryRead() {
+        doThrow(new IllegalStateException(CLIENT_ONLY_REFUSAL)).when(orcidSecurityManager).checkAndFilter(anyString(), ArgumentMatchers.<VisibilityType> any(),
+                any(ScopePathType.class));
+        doThrow(new IllegalStateException(CLIENT_ONLY_REFUSAL)).when(orcidSecurityManager).checkAndFilter(anyString(), anyList(), any(ScopePathType.class));
+        doThrow(new IllegalStateException(CLIENT_ONLY_REFUSAL)).when(orcidSecurityManager).checkAndFilter(anyString(),
+                ArgumentMatchers.<org.orcid.jaxb.model.v3.release.record.summary.ActivitiesSummary> any());
+        doThrow(new IllegalStateException(CLIENT_ONLY_REFUSAL)).when(orcidSecurityManager).checkAndFilter(anyString(),
+                ArgumentMatchers.<org.orcid.jaxb.model.v3.release.record.PersonalDetails> any());
+        doThrow(new IllegalStateException(CLIENT_ONLY_REFUSAL)).when(orcidSecurityManager).checkAndFilter(anyString(),
+                ArgumentMatchers.<org.orcid.jaxb.model.v3.release.record.Person> any());
+        doThrow(new IllegalStateException(CLIENT_ONLY_REFUSAL)).when(orcidSecurityManager).checkAndFilter(anyString(),
+                ArgumentMatchers.<org.orcid.jaxb.model.v3.release.record.Record> any());
+    }
+
+    /** The security manager refuses every write for this actor. */
+    private void refuseEveryWrite() {
+        // any() -- not any(ScopePathType[].class). The latter builds an
+        // instance-of matcher that is compared against each expanded vararg, so
+        // it never matches checkClientAccessAndScopes(orcid, SOME_SCOPE); the
+        // guard then did not throw and the test failed inside the manager with
+        // a NullPointerException instead. Bare any() is Mockito's VarargMatcher
+        // and matches any number of varargs, which here is one or two.
+        doThrow(new IllegalStateException(CLIENT_ONLY_REFUSAL)).when(orcidSecurityManager).checkClientAccessAndScopes(anyString(),
+                any());
+    }
+
+    private void assertRefused(Runnable call) {
+        try {
+            call.run();
+            fail();
+        } catch (IllegalStateException e) {
+            assertEquals(CLIENT_ONLY_REFUSAL, e.getMessage());
+        }
     }
 
     @Test
     public void testOrcidProfileCreate_CANT_AddOnClaimedAccounts() {
-        SecurityContextTestUtils.setUpSecurityContextForClientOnly();
+        refuseEveryWrite();
 
-        // Test can't create
-        try {
-            serviceDelegator.createAddress(ORCID, Utils.getAddress());
-            fail();
-        } catch (IllegalStateException e) {
-            assertEquals("Non client credential scope found in client request", e.getMessage());
-        }
-        try {
-            serviceDelegator.createEducation(ORCID, (Education) Utils.getAffiliation(AffiliationType.EDUCATION));
-            fail();
-        } catch (IllegalStateException e) {
-            assertEquals("Non client credential scope found in client request", e.getMessage());
-        }
-        try {
-            serviceDelegator.createEmployment(ORCID, (Employment) Utils.getAffiliation(AffiliationType.EMPLOYMENT));
-            fail();
-        } catch (IllegalStateException e) {
-            assertEquals("Non client credential scope found in client request", e.getMessage());
-        }
-        try {
-            serviceDelegator.createExternalIdentifier(ORCID, Utils.getPersonExternalIdentifier());
-            fail();
-        } catch (IllegalStateException e) {
-            assertEquals("Non client credential scope found in client request", e.getMessage());
-        }
-        try {
-            serviceDelegator.createFunding(ORCID, Utils.getFunding());
-            fail();
-        } catch (IllegalStateException e) {
-            assertEquals("Non client credential scope found in client request", e.getMessage());
-        }
-        try {
-            serviceDelegator.createKeyword(ORCID, Utils.getKeyword());
-            fail();
-        } catch (IllegalStateException e) {
-            assertEquals("Non client credential scope found in client request", e.getMessage());
-        }
-        try {
-            serviceDelegator.createOtherName(ORCID, Utils.getOtherName());
-            fail();
-        } catch (IllegalStateException e) {
-            assertEquals("Non client credential scope found in client request", e.getMessage());
-        }
-        try {
-            serviceDelegator.createPeerReview(ORCID, Utils.getPeerReview());
-            fail();
-        } catch (IllegalStateException e) {
-            assertEquals("Non client credential scope found in client request", e.getMessage());
-        }
-        try {
-            serviceDelegator.createResearcherUrl(ORCID, Utils.getResearcherUrl());
-            fail();
-        } catch (IllegalStateException e) {
-            assertEquals("Non client credential scope found in client request", e.getMessage());
-        }
-        try {
-            serviceDelegator.createWork(ORCID, Utils.getWork("work # 1 " + System.currentTimeMillis()));
-            fail();
-        } catch (IllegalStateException e) {
-            assertEquals("Non client credential scope found in client request", e.getMessage());
-        }
+        assertRefused(() -> serviceDelegator.createAddress(ORCID, Utils.getAddress()));
+        assertRefused(() -> serviceDelegator.createEducation(ORCID, (Education) Utils.getAffiliation(AffiliationType.EDUCATION)));
+        assertRefused(() -> serviceDelegator.createEmployment(ORCID, (Employment) Utils.getAffiliation(AffiliationType.EMPLOYMENT)));
+        assertRefused(() -> serviceDelegator.createExternalIdentifier(ORCID, Utils.getPersonExternalIdentifier()));
+        assertRefused(() -> serviceDelegator.createFunding(ORCID, Utils.getFunding()));
+        assertRefused(() -> serviceDelegator.createKeyword(ORCID, Utils.getKeyword()));
+        assertRefused(() -> serviceDelegator.createOtherName(ORCID, Utils.getOtherName()));
+        assertRefused(() -> serviceDelegator.createPeerReview(ORCID, Utils.getPeerReview()));
+        assertRefused(() -> serviceDelegator.createResearcherUrl(ORCID, Utils.getResearcherUrl()));
+        assertRefused(() -> serviceDelegator.createWork(ORCID, Utils.getWork("work # 1 " + System.currentTimeMillis())));
     }
 
     @Test
     public void testOrcidProfileCreate_CANT_ViewOnClaimedAccounts() {
-        SecurityContextTestUtils.setUpSecurityContextForClientOnly();
-        try {
-            serviceDelegator.viewActivities(ORCID);
-            fail();
-        } catch (IllegalStateException e) {
-            assertEquals("Non client credential scope found in client request", e.getMessage());
-        }
-        try {
-            serviceDelegator.viewAddress(ORCID, 9L);
-            fail();
-        } catch (IllegalStateException e) {
-            assertEquals("Non client credential scope found in client request", e.getMessage());
-        }
-        try {
-            serviceDelegator.viewAddresses(ORCID);
-            fail();
-        } catch (IllegalStateException e) {
-            assertEquals("Non client credential scope found in client request", e.getMessage());
-        }
-        try {
-            serviceDelegator.viewBiography(ORCID);
-            fail();
-        } catch (IllegalStateException e) {
-            assertEquals("Non client credential scope found in client request", e.getMessage());
-        }
-        try {
-            serviceDelegator.viewEducation(ORCID, 20L);
-            fail();
-        } catch (IllegalStateException e) {
-            assertEquals("Non client credential scope found in client request", e.getMessage());
-        }
-        try {
-            serviceDelegator.viewEducationSummary(ORCID, 20L);
-            fail();
-        } catch (IllegalStateException e) {
-            assertEquals("Non client credential scope found in client request", e.getMessage());
-        }
-        try {
-            serviceDelegator.viewEducations(ORCID);
-            fail();
-        } catch (IllegalStateException e) {
-            assertEquals("Non client credential scope found in client request", e.getMessage());
-        }
-        try {
-            serviceDelegator.viewEmails(ORCID);
-            fail();
-        } catch (IllegalStateException e) {
-            assertEquals("Non client credential scope found in client request", e.getMessage());
-        }
-        try {
-            serviceDelegator.viewEmployment(ORCID, 17L);
-            fail();
-        } catch (IllegalStateException e) {
-            assertEquals("Non client credential scope found in client request", e.getMessage());
-        }
-        try {
-            serviceDelegator.viewEmploymentSummary(ORCID, 17L);
-            fail();
-        } catch (IllegalStateException e) {
-            assertEquals("Non client credential scope found in client request", e.getMessage());
-        }
-        try {
-            serviceDelegator.viewEmployments(ORCID);
-            fail();
-        } catch (IllegalStateException e) {
-            assertEquals("Non client credential scope found in client request", e.getMessage());
-        }
-        try {
-            serviceDelegator.viewExternalIdentifier(ORCID, 13L);
-            fail();
-        } catch (IllegalStateException e) {
-            assertEquals("Non client credential scope found in client request", e.getMessage());
-        }
-        try {
-            serviceDelegator.viewExternalIdentifiers(ORCID);
-            fail();
-        } catch (IllegalStateException e) {
-            assertEquals("Non client credential scope found in client request", e.getMessage());
-        }
-        try {
-            serviceDelegator.viewFunding(ORCID, 10L);
-            fail();
-        } catch (IllegalStateException e) {
-            assertEquals("Non client credential scope found in client request", e.getMessage());
-        }
-        try {
-            serviceDelegator.viewFundingSummary(ORCID, 10L);
-            fail();
-        } catch (IllegalStateException e) {
-            assertEquals("Non client credential scope found in client request", e.getMessage());
-        }
-        try {
-            serviceDelegator.viewFundings(ORCID);
-            fail();
-        } catch (IllegalStateException e) {
-            assertEquals("Non client credential scope found in client request", e.getMessage());
-        }
-        try {
-            serviceDelegator.viewKeyword(ORCID, 9L);
-            fail();
-        } catch (IllegalStateException e) {
-            assertEquals("Non client credential scope found in client request", e.getMessage());
-        }
-        try {
-            serviceDelegator.viewKeywords(ORCID);
-            fail();
-        } catch (IllegalStateException e) {
-            assertEquals("Non client credential scope found in client request", e.getMessage());
-        }
-        try {
-            serviceDelegator.viewOtherName(ORCID, 13L);
-            fail();
-        } catch (IllegalStateException e) {
-            assertEquals("Non client credential scope found in client request", e.getMessage());
-        }
-        try {
-            serviceDelegator.viewOtherNames(ORCID);
-            fail();
-        } catch (IllegalStateException e) {
-            assertEquals("Non client credential scope found in client request", e.getMessage());
-        }
-        try {
-            serviceDelegator.viewPeerReview(ORCID, 9L);
-            fail();
-        } catch (IllegalStateException e) {
-            assertEquals("Non client credential scope found in client request", e.getMessage());
-        }
-        try {
-            serviceDelegator.viewPeerReviewSummary(ORCID, 9L);
-            fail();
-        } catch (IllegalStateException e) {
-            assertEquals("Non client credential scope found in client request", e.getMessage());
-        }
-        try {
-            serviceDelegator.viewPeerReviews(ORCID);
-            fail();
-        } catch (IllegalStateException e) {
-            assertEquals("Non client credential scope found in client request", e.getMessage());
-        }
-        try {
-            serviceDelegator.viewPerson(ORCID);
-            fail();
-        } catch (IllegalStateException e) {
-            assertEquals("Non client credential scope found in client request", e.getMessage());
-        }
-        try {
-            serviceDelegator.viewPersonalDetails(ORCID);
-            fail();
-        } catch (IllegalStateException e) {
-            assertEquals("Non client credential scope found in client request", e.getMessage());
-        }
-        try {
-            serviceDelegator.viewResearcherUrl(ORCID, 13L);
-            fail();
-        } catch (IllegalStateException e) {
-            assertEquals("Non client credential scope found in client request", e.getMessage());
-        }
-        try {
-            serviceDelegator.viewResearcherUrls(ORCID);
-            fail();
-        } catch (IllegalStateException e) {
-            assertEquals("Non client credential scope found in client request", e.getMessage());
-        }
-        try {
-            serviceDelegator.viewWork(ORCID, 11L);
-            fail();
-        } catch (IllegalStateException e) {
-            assertEquals("Non client credential scope found in client request", e.getMessage());
-        }
-        try {
-            serviceDelegator.viewWorkSummary(ORCID, 11L);
-            fail();
-        } catch (IllegalStateException e) {
-            assertEquals("Non client credential scope found in client request", e.getMessage());
-        }
-        try {
-            serviceDelegator.viewWorks(ORCID);
-            fail();
-        } catch (IllegalStateException e) {
-            assertEquals("Non client credential scope found in client request", e.getMessage());
-        }
-        try {
-            serviceDelegator.viewRecord(ORCID);
-            fail();
-        } catch (IllegalStateException e) {
-            assertEquals("Non client credential scope found in client request", e.getMessage());
-        }
+        refuseEveryRead();
+        // viewEmails is refused at the scope check rather than the filter.
+        refuseEveryWrite();
+
+        assertRefused(() -> serviceDelegator.viewActivities(ORCID));
+        assertRefused(() -> serviceDelegator.viewAddress(ORCID, 9L));
+        assertRefused(() -> serviceDelegator.viewAddresses(ORCID));
+        assertRefused(() -> serviceDelegator.viewBiography(ORCID));
+        assertRefused(() -> serviceDelegator.viewEducation(ORCID, 20L));
+        assertRefused(() -> serviceDelegator.viewEducationSummary(ORCID, 20L));
+        assertRefused(() -> serviceDelegator.viewEducations(ORCID));
+        assertRefused(() -> serviceDelegator.viewEmails(ORCID));
+        assertRefused(() -> serviceDelegator.viewEmployment(ORCID, 17L));
+        assertRefused(() -> serviceDelegator.viewEmploymentSummary(ORCID, 17L));
+        assertRefused(() -> serviceDelegator.viewEmployments(ORCID));
+        assertRefused(() -> serviceDelegator.viewExternalIdentifier(ORCID, 13L));
+        assertRefused(() -> serviceDelegator.viewExternalIdentifiers(ORCID));
+        assertRefused(() -> serviceDelegator.viewFunding(ORCID, 10L));
+        assertRefused(() -> serviceDelegator.viewFundingSummary(ORCID, 10L));
+        assertRefused(() -> serviceDelegator.viewFundings(ORCID));
+        assertRefused(() -> serviceDelegator.viewKeyword(ORCID, 9L));
+        assertRefused(() -> serviceDelegator.viewKeywords(ORCID));
+        assertRefused(() -> serviceDelegator.viewOtherName(ORCID, 13L));
+        assertRefused(() -> serviceDelegator.viewOtherNames(ORCID));
+        assertRefused(() -> serviceDelegator.viewPeerReview(ORCID, 9L));
+        assertRefused(() -> serviceDelegator.viewPeerReviewSummary(ORCID, 9L));
+        assertRefused(() -> serviceDelegator.viewPeerReviews(ORCID));
+        assertRefused(() -> serviceDelegator.viewPerson(ORCID));
+        assertRefused(() -> serviceDelegator.viewPersonalDetails(ORCID));
+        assertRefused(() -> serviceDelegator.viewResearcherUrl(ORCID, 13L));
+        assertRefused(() -> serviceDelegator.viewResearcherUrls(ORCID));
+        assertRefused(() -> serviceDelegator.viewWork(ORCID, 11L));
+        assertRefused(() -> serviceDelegator.viewWorkSummary(ORCID, 11L));
+        assertRefused(() -> serviceDelegator.viewWorks(ORCID));
+        assertRefused(() -> serviceDelegator.viewRecord(ORCID));
     }
-    
+
     @Test
     public void testOrcidProfileCreateCanViewAndCreateGroupIds() {
-        SecurityContextTestUtils.setUpSecurityContextForClientOnly();
+        GroupIdRecord record = new GroupIdRecord();
+        record.setPutCode(1L);
+        record.setGroupId("issn:0000-0001");
+        record.setName("TestGroup1");
+        record.setLastModifiedDate(lastModified());
+        when(groupIdRecordManagerReadOnly.getGroupIdRecord(1L)).thenReturn(record);
+        GroupIdRecords records = new GroupIdRecords();
+        records.getGroupIdRecord().add(record);
+        when(groupIdRecordManagerReadOnly.getGroupIdRecords("10", "1")).thenReturn(records);
+        when(groupIdRecordManager.exists("publons:errrmmmmm")).thenReturn(false);
+        when(groupIdRecordManager.createGroupIdRecord(any(GroupIdRecord.class))).thenReturn(record);
+
+        // A group id token is a client credentials token, and these three
+        // endpoints are the ones it is allowed to use.
         try {
             serviceDelegator.viewGroupIdRecord(1L);
-        } catch(Exception e) {
+        } catch (Exception e) {
             fail();
-        } 
-        
+        }
         try {
             serviceDelegator.viewGroupIdRecords("10", "1");
-        } catch(Exception e) {
+        } catch (Exception e) {
             fail();
-        } 
-        
+        }
         GroupIdRecord groupIdRecord = Utils.getNonIssnGroupIdRecord();
         try {
             serviceDelegator.createGroupIdRecord(groupIdRecord);
-        } catch(Exception e) {
+        } catch (Exception e) {
             fail();
-        } 
-        
-        GroupIdRecordEntity toDelete = groupIdRecordDao.findByGroupId(groupIdRecord.getGroupId());
-        groupIdRecordDao.remove(toDelete.getId());
+        }
+        verify(groupIdRecordManager).createGroupIdRecord(any(GroupIdRecord.class));
     }
 
     @Test
     public void testOrcidProfileCreate_CANT_DeleteOnClaimedAccounts() {
-        SecurityContextTestUtils.setUpSecurityContextForClientOnly();
-        try {
-            serviceDelegator.deleteAddress(ORCID, 9L);
-            fail();
-        } catch (IllegalStateException e) {
-            assertEquals("Non client credential scope found in client request", e.getMessage());
-        }
-        try {
-            serviceDelegator.deleteAffiliation(ORCID, 20L);
-            fail();
-        } catch (IllegalStateException e) {
-            assertEquals("Non client credential scope found in client request", e.getMessage());
-        }
-        try {
-            serviceDelegator.deleteExternalIdentifier(ORCID, 13L);
-            fail();
-        } catch (IllegalStateException e) {
-            assertEquals("Non client credential scope found in client request", e.getMessage());
-        }
-        try {
-            serviceDelegator.deleteFunding(ORCID, 10L);
-            fail();
-        } catch (IllegalStateException e) {
-            assertEquals("Non client credential scope found in client request", e.getMessage());
-        }
-        try {
-            serviceDelegator.deleteKeyword(ORCID, 9L);
-            fail();
-        } catch (IllegalStateException e) {
-            assertEquals("Non client credential scope found in client request", e.getMessage());
-        }
-        try {
-            serviceDelegator.deleteOtherName(ORCID, 13L);
-            fail();
-        } catch (IllegalStateException e) {
-            assertEquals("Non client credential scope found in client request", e.getMessage());
-        }
-        try {
-            serviceDelegator.deletePeerReview(ORCID, 9L);
-            fail();
-        } catch (IllegalStateException e) {
-            assertEquals("Non client credential scope found in client request", e.getMessage());
-        }
-        try {
-            serviceDelegator.deleteResearcherUrl(ORCID, 13L);
-            fail();
-        } catch (IllegalStateException e) {
-            assertEquals("Non client credential scope found in client request", e.getMessage());
-        }
-        try {
-            serviceDelegator.deleteWork(ORCID, 11L);
-            fail();
-        } catch (IllegalStateException e) {
-            assertEquals("Non client credential scope found in client request", e.getMessage());
-        }
+        refuseEveryWrite();
+
+        assertRefused(() -> serviceDelegator.deleteAddress(ORCID, 9L));
+        assertRefused(() -> serviceDelegator.deleteAffiliation(ORCID, 20L));
+        assertRefused(() -> serviceDelegator.deleteExternalIdentifier(ORCID, 13L));
+        assertRefused(() -> serviceDelegator.deleteFunding(ORCID, 10L));
+        assertRefused(() -> serviceDelegator.deleteKeyword(ORCID, 9L));
+        assertRefused(() -> serviceDelegator.deleteOtherName(ORCID, 13L));
+        assertRefused(() -> serviceDelegator.deletePeerReview(ORCID, 9L));
+        assertRefused(() -> serviceDelegator.deleteResearcherUrl(ORCID, 13L));
+        assertRefused(() -> serviceDelegator.deleteWork(ORCID, 11L));
     }
 
     @Test
     public void testOrcidProfileCreate_CANT_UpdateOnClaimedAccounts() {
-        SecurityContextTestUtils.setUpSecurityContext(ORCID, ScopePathType.READ_LIMITED);
+        // Reads succeed (the user's own token could make them); the update is
+        // what a client credentials token is refused.
+        when(addressManagerReadOnly.getAddress(ORCID, 9L)).thenReturn(address(9L));
+        when(affiliationsManagerReadOnly.getEducationAffiliation(ORCID, 20L)).thenReturn(education(20L));
+        when(affiliationsManagerReadOnly.getEmploymentAffiliation(ORCID, 17L)).thenReturn(employment(17L));
+        when(externalIdentifierManagerReadOnly.getExternalIdentifier(ORCID, 13L)).thenReturn(externalIdentifier(13L));
+        when(profileFundingManagerReadOnly.getFunding(ORCID, 10L)).thenReturn(funding(10L));
+        when(profileKeywordManagerReadOnly.getKeyword(ORCID, 9L)).thenReturn(keyword(9L));
+        when(otherNameManagerReadOnly.getOtherName(ORCID, 13L)).thenReturn(otherName(13L));
+        when(peerReviewManagerReadOnly.getPeerReview(ORCID, 9L)).thenReturn(peerReview(9L));
+        when(researcherUrlManagerReadOnly.getResearcherUrl(ORCID, 13L)).thenReturn(researcherUrl(13L));
+        when(workManagerReadOnly.getWork(ORCID, 11L)).thenReturn(work(11L));
+        refuseEveryWrite();
+
         Response response = serviceDelegator.viewAddress(ORCID, 9L);
         assertNotNull(response);
         Address a = (Address) response.getEntity();
         assertNotNull(a);
-        try {
-            SecurityContextTestUtils.setUpSecurityContextForClientOnly();
-            serviceDelegator.updateAddress(ORCID, a.getPutCode(), a);
-            fail();
-        } catch (IllegalStateException e) {
-            assertEquals("Non client credential scope found in client request", e.getMessage());
-        }
+        assertRefused(() -> serviceDelegator.updateAddress(ORCID, a.getPutCode(), a));
 
-        SecurityContextTestUtils.setUpSecurityContext(ORCID, ScopePathType.READ_LIMITED);
         response = serviceDelegator.viewEducation(ORCID, 20L);
         assertNotNull(response);
         Education edu = (Education) response.getEntity();
         assertNotNull(edu);
-        try {
-            SecurityContextTestUtils.setUpSecurityContextForClientOnly();
-            serviceDelegator.updateEducation(ORCID, edu.getPutCode(), edu);
-            fail();
-        } catch (IllegalStateException e) {
-            assertEquals("Non client credential scope found in client request", e.getMessage());
-        }
+        assertRefused(() -> serviceDelegator.updateEducation(ORCID, edu.getPutCode(), edu));
 
-        SecurityContextTestUtils.setUpSecurityContext(ORCID, ScopePathType.READ_LIMITED);
         response = serviceDelegator.viewEmployment(ORCID, 17L);
         assertNotNull(response);
         Employment emp = (Employment) response.getEntity();
         assertNotNull(emp);
-        try {
-            SecurityContextTestUtils.setUpSecurityContextForClientOnly();
-            serviceDelegator.updateEmployment(ORCID, emp.getPutCode(), emp);
-            fail();
-        } catch (IllegalStateException e) {
-            assertEquals("Non client credential scope found in client request", e.getMessage());
-        }
+        assertRefused(() -> serviceDelegator.updateEmployment(ORCID, emp.getPutCode(), emp));
 
-        SecurityContextTestUtils.setUpSecurityContext(ORCID, ScopePathType.READ_LIMITED);
         response = serviceDelegator.viewExternalIdentifier(ORCID, 13L);
         assertNotNull(response);
         PersonExternalIdentifier extId = (PersonExternalIdentifier) response.getEntity();
         assertNotNull(extId);
-        try {
-            SecurityContextTestUtils.setUpSecurityContextForClientOnly();
-            serviceDelegator.updateExternalIdentifier(ORCID, extId.getPutCode(), extId);
-            fail();
-        } catch (IllegalStateException e) {
-            assertEquals("Non client credential scope found in client request", e.getMessage());
-        }
+        assertRefused(() -> serviceDelegator.updateExternalIdentifier(ORCID, extId.getPutCode(), extId));
 
-        SecurityContextTestUtils.setUpSecurityContext(ORCID, ScopePathType.READ_LIMITED);
         response = serviceDelegator.viewFunding(ORCID, 10L);
         assertNotNull(response);
         Funding f = (Funding) response.getEntity();
         assertNotNull(f);
-        try {
-            SecurityContextTestUtils.setUpSecurityContextForClientOnly();
-            serviceDelegator.updateFunding(ORCID, f.getPutCode(), f);
-            fail();
-        } catch (IllegalStateException e) {
-            assertEquals("Non client credential scope found in client request", e.getMessage());
-        }
+        assertRefused(() -> serviceDelegator.updateFunding(ORCID, f.getPutCode(), f));
 
-        SecurityContextTestUtils.setUpSecurityContext(ORCID, ScopePathType.READ_LIMITED);
         response = serviceDelegator.viewKeyword(ORCID, 9L);
         assertNotNull(response);
         Keyword k = (Keyword) response.getEntity();
         assertNotNull(k);
-        try {
-            SecurityContextTestUtils.setUpSecurityContextForClientOnly();
-            serviceDelegator.updateKeyword(ORCID, k.getPutCode(), k);
-            fail();
-        } catch (IllegalStateException e) {
-            assertEquals("Non client credential scope found in client request", e.getMessage());
-        }
+        assertRefused(() -> serviceDelegator.updateKeyword(ORCID, k.getPutCode(), k));
 
-        SecurityContextTestUtils.setUpSecurityContext(ORCID, ScopePathType.READ_LIMITED);
         response = serviceDelegator.viewOtherName(ORCID, 13L);
         assertNotNull(response);
         OtherName o = (OtherName) response.getEntity();
         assertNotNull(o);
-        try {
-            SecurityContextTestUtils.setUpSecurityContextForClientOnly();
-            serviceDelegator.updateOtherName(ORCID, o.getPutCode(), o);
-            fail();
-        } catch (IllegalStateException e) {
-            assertEquals("Non client credential scope found in client request", e.getMessage());
-        }
+        assertRefused(() -> serviceDelegator.updateOtherName(ORCID, o.getPutCode(), o));
 
-        SecurityContextTestUtils.setUpSecurityContext(ORCID, ScopePathType.READ_LIMITED);
         response = serviceDelegator.viewPeerReview(ORCID, 9L);
         assertNotNull(response);
         PeerReview p = (PeerReview) response.getEntity();
         assertNotNull(p);
-        try {
-            SecurityContextTestUtils.setUpSecurityContextForClientOnly();
-            serviceDelegator.updatePeerReview(ORCID, p.getPutCode(), p);
-            fail();
-        } catch (IllegalStateException e) {
-            assertEquals("Non client credential scope found in client request", e.getMessage());
-        }
+        assertRefused(() -> serviceDelegator.updatePeerReview(ORCID, p.getPutCode(), p));
 
-        SecurityContextTestUtils.setUpSecurityContext(ORCID, ScopePathType.READ_LIMITED);
         response = serviceDelegator.viewResearcherUrl(ORCID, 13L);
         assertNotNull(response);
         ResearcherUrl r = (ResearcherUrl) response.getEntity();
         assertNotNull(r);
-        try {
-            SecurityContextTestUtils.setUpSecurityContextForClientOnly();
-            serviceDelegator.updateResearcherUrl(ORCID, r.getPutCode(), r);
-            fail();
-        } catch (IllegalStateException e) {
-            assertEquals("Non client credential scope found in client request", e.getMessage());
-        }
+        assertRefused(() -> serviceDelegator.updateResearcherUrl(ORCID, r.getPutCode(), r));
 
-        SecurityContextTestUtils.setUpSecurityContext(ORCID, ScopePathType.READ_LIMITED);
         response = serviceDelegator.viewWork(ORCID, 11L);
         assertNotNull(response);
         Work w = (Work) response.getEntity();
         assertNotNull(w);
-        try {
-            SecurityContextTestUtils.setUpSecurityContextForClientOnly();
-            serviceDelegator.updateWork(ORCID, w.getPutCode(), w);
-            fail();
-        } catch (IllegalStateException e) {
-            assertEquals("Non client credential scope found in client request", e.getMessage());
-        }
+        assertRefused(() -> serviceDelegator.updateWork(ORCID, w.getPutCode(), w));
     }
 
     @Test
     public void testOrcidProfileCreate_CAN_CRUDOnUnclaimedAccounts() {
-        String orcid = "0000-0000-0000-0001";
-        SecurityContextTestUtils.setUpSecurityContextForClientOnly();
-        // Test address
-        Response response = serviceDelegator.createAddress(orcid, Utils.getAddress());
-        assertNotNull(response);
-        assertEquals(Response.Status.CREATED.getStatusCode(), response.getStatus());
+        // Whether an account is old enough to be off limits to a client
+        // credentials token is OrcidSecurityManager's decision and is proved
+        // there; here the security manager allows, and what is asserted is that
+        // every endpoint then completes and returns the documented status.
+        when(addressManager.createAddress(eq(UNCLAIMED), any(Address.class), eq(true))).thenReturn(address(10L));
+        when(addressManagerReadOnly.getAddress(UNCLAIMED, 10L)).thenReturn(address(10L));
+        when(addressManager.updateAddress(eq(UNCLAIMED), eq(10L), any(Address.class), eq(true))).thenReturn(address(10L));
+        Response response = serviceDelegator.createAddress(UNCLAIMED, Utils.getAddress());
+        assertCreated(response);
         Long putCode = Utils.getPutCode(response);
-        response = serviceDelegator.viewAddress(orcid, putCode);
+        assertEquals(Long.valueOf(10L), putCode);
+        response = serviceDelegator.viewAddress(UNCLAIMED, putCode);
         assertNotNull(response);
         Address address = (Address) response.getEntity();
         assertNotNull(address);
         address.getCountry().setValue(Iso3166Country.ZW);
-        response = serviceDelegator.updateAddress(orcid, putCode, address);
-        assertNotNull(response);
-        assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
-        response = serviceDelegator.deleteAddress(orcid, putCode);
-        assertNotNull(response);
-        assertEquals(Response.Status.NO_CONTENT.getStatusCode(), response.getStatus());
+        assertOk(serviceDelegator.updateAddress(UNCLAIMED, putCode, address));
+        assertNoContent(serviceDelegator.deleteAddress(UNCLAIMED, putCode));
 
         // Test education
-        Education education = (Education) Utils.getAffiliation(AffiliationType.EDUCATION);
-        response = serviceDelegator.createEducation(orcid, education);
+        when(affiliationsManager.createEducationAffiliation(eq(UNCLAIMED), any(Education.class), eq(true))).thenReturn(education(1L));
+        when(affiliationsManagerReadOnly.getEducationAffiliation(UNCLAIMED, 1L)).thenReturn(education(1L));
+        when(affiliationsManager.updateEducationAffiliation(eq(UNCLAIMED), any(Education.class), eq(true))).thenReturn(education(1L));
+        response = serviceDelegator.createEducation(UNCLAIMED, (Education) Utils.getAffiliation(AffiliationType.EDUCATION));
+        assertCreated(response);
+        assertEquals(Long.valueOf(1L), Utils.getPutCode(response));
+        response = serviceDelegator.viewEducation(UNCLAIMED, 1L);
         assertNotNull(response);
-        assertEquals(Response.Status.CREATED.getStatusCode(), response.getStatus());
-        putCode = Utils.getPutCode(response);
-        response = serviceDelegator.viewEducation(orcid, putCode);
-        assertNotNull(response);
-        education = (Education) response.getEntity();
+        Education education = (Education) response.getEntity();
         assertNotNull(education);
         education.setDepartmentName("Updated department name");
-        response = serviceDelegator.updateEducation(orcid, putCode, education);
-        assertNotNull(response);
-        assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
-        response = serviceDelegator.deleteAffiliation(orcid, putCode);
-        assertNotNull(response);
-        assertEquals(Response.Status.NO_CONTENT.getStatusCode(), response.getStatus());
+        assertOk(serviceDelegator.updateEducation(UNCLAIMED, 1L, education));
+        assertNoContent(serviceDelegator.deleteAffiliation(UNCLAIMED, 1L));
 
         // Test employment
-        response = serviceDelegator.createEmployment(orcid, (Employment) Utils.getAffiliation(AffiliationType.EMPLOYMENT));
-        assertNotNull(response);
-        assertEquals(Response.Status.CREATED.getStatusCode(), response.getStatus());
-        putCode = Utils.getPutCode(response);
-        response = serviceDelegator.viewEmployment(orcid, putCode);
+        when(affiliationsManager.createEmploymentAffiliation(eq(UNCLAIMED), any(Employment.class), eq(true))).thenReturn(employment(2L));
+        when(affiliationsManagerReadOnly.getEmploymentAffiliation(UNCLAIMED, 2L)).thenReturn(employment(2L));
+        when(affiliationsManager.updateEmploymentAffiliation(eq(UNCLAIMED), any(Employment.class), eq(true))).thenReturn(employment(2L));
+        response = serviceDelegator.createEmployment(UNCLAIMED, (Employment) Utils.getAffiliation(AffiliationType.EMPLOYMENT));
+        assertCreated(response);
+        response = serviceDelegator.viewEmployment(UNCLAIMED, 2L);
         assertNotNull(response);
         Employment employment = (Employment) response.getEntity();
         assertNotNull(employment);
         employment.setDepartmentName("Updated department name");
-        response = serviceDelegator.updateEmployment(orcid, putCode, employment);
-        assertNotNull(response);
-        assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
-        response = serviceDelegator.deleteAffiliation(orcid, putCode);
-        assertNotNull(response);
-        assertEquals(Response.Status.NO_CONTENT.getStatusCode(), response.getStatus());
+        assertOk(serviceDelegator.updateEmployment(UNCLAIMED, 2L, employment));
+        assertNoContent(serviceDelegator.deleteAffiliation(UNCLAIMED, 2L));
 
         // Test external identifiers
-        response = serviceDelegator.createExternalIdentifier(orcid, Utils.getPersonExternalIdentifier());
-        assertNotNull(response);
-        assertEquals(Response.Status.CREATED.getStatusCode(), response.getStatus());
-        putCode = Utils.getPutCode(response);
-        response = serviceDelegator.viewExternalIdentifier(orcid, putCode);
+        when(externalIdentifierManager.createExternalIdentifier(eq(UNCLAIMED), any(PersonExternalIdentifier.class), eq(true))).thenReturn(externalIdentifier(3L));
+        when(externalIdentifierManagerReadOnly.getExternalIdentifier(UNCLAIMED, 3L)).thenReturn(externalIdentifier(3L));
+        when(externalIdentifierManager.updateExternalIdentifier(eq(UNCLAIMED), any(PersonExternalIdentifier.class), eq(true)))
+                .thenReturn(externalIdentifier(3L));
+        response = serviceDelegator.createExternalIdentifier(UNCLAIMED, Utils.getPersonExternalIdentifier());
+        assertCreated(response);
+        response = serviceDelegator.viewExternalIdentifier(UNCLAIMED, 3L);
         assertNotNull(response);
         PersonExternalIdentifier externalIdentifier = (PersonExternalIdentifier) response.getEntity();
         assertNotNull(externalIdentifier);
-        response = serviceDelegator.updateExternalIdentifier(orcid, putCode, externalIdentifier);
-        assertNotNull(response);
-        assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
-        response = serviceDelegator.deleteExternalIdentifier(orcid, putCode);
-        assertNotNull(response);
-        assertEquals(Response.Status.NO_CONTENT.getStatusCode(), response.getStatus());
+        assertOk(serviceDelegator.updateExternalIdentifier(UNCLAIMED, 3L, externalIdentifier));
+        assertNoContent(serviceDelegator.deleteExternalIdentifier(UNCLAIMED, 3L));
 
         // Test funding
-        response = serviceDelegator.createFunding(orcid, Utils.getFunding());
-        assertNotNull(response);
-        assertEquals(Response.Status.CREATED.getStatusCode(), response.getStatus());
-        putCode = Utils.getPutCode(response);
-        response = serviceDelegator.viewFunding(orcid, putCode);
+        when(profileFundingManager.createFunding(eq(UNCLAIMED), any(Funding.class), eq(true))).thenReturn(funding(4L));
+        when(profileFundingManagerReadOnly.getFunding(UNCLAIMED, 4L)).thenReturn(funding(4L));
+        when(profileFundingManager.updateFunding(eq(UNCLAIMED), any(Funding.class), eq(true))).thenReturn(funding(4L));
+        response = serviceDelegator.createFunding(UNCLAIMED, Utils.getFunding());
+        assertCreated(response);
+        response = serviceDelegator.viewFunding(UNCLAIMED, 4L);
         assertNotNull(response);
         Funding funding = (Funding) response.getEntity();
         assertNotNull(funding);
-        response = serviceDelegator.updateFunding(orcid, putCode, funding);
-        assertNotNull(response);
-        assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
-        response = serviceDelegator.deleteFunding(orcid, putCode);
-        assertNotNull(response);
-        assertEquals(Response.Status.NO_CONTENT.getStatusCode(), response.getStatus());
+        assertOk(serviceDelegator.updateFunding(UNCLAIMED, 4L, funding));
+        assertNoContent(serviceDelegator.deleteFunding(UNCLAIMED, 4L));
 
         // Test keyword
-        response = serviceDelegator.createKeyword(orcid, Utils.getKeyword());
-        assertNotNull(response);
-        assertEquals(Response.Status.CREATED.getStatusCode(), response.getStatus());
-        putCode = Utils.getPutCode(response);
-        response = serviceDelegator.viewKeyword(orcid, putCode);
+        when(profileKeywordManager.createKeyword(eq(UNCLAIMED), any(Keyword.class), eq(true))).thenReturn(keyword(5L));
+        when(profileKeywordManagerReadOnly.getKeyword(UNCLAIMED, 5L)).thenReturn(keyword(5L));
+        when(profileKeywordManager.updateKeyword(eq(UNCLAIMED), eq(5L), any(Keyword.class), eq(true))).thenReturn(keyword(5L));
+        response = serviceDelegator.createKeyword(UNCLAIMED, Utils.getKeyword());
+        assertCreated(response);
+        response = serviceDelegator.viewKeyword(UNCLAIMED, 5L);
         assertNotNull(response);
         Keyword keyword = (Keyword) response.getEntity();
         assertNotNull(keyword);
-        response = serviceDelegator.updateKeyword(orcid, putCode, keyword);
-        assertNotNull(response);
-        assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
-        response = serviceDelegator.deleteKeyword(orcid, putCode);
-        assertNotNull(response);
-        assertEquals(Response.Status.NO_CONTENT.getStatusCode(), response.getStatus());
+        assertOk(serviceDelegator.updateKeyword(UNCLAIMED, 5L, keyword));
+        assertNoContent(serviceDelegator.deleteKeyword(UNCLAIMED, 5L));
 
         // Test other names
-        response = serviceDelegator.createOtherName(orcid, Utils.getOtherName());
-        assertNotNull(response);
-        assertEquals(Response.Status.CREATED.getStatusCode(), response.getStatus());
-        putCode = Utils.getPutCode(response);
-        response = serviceDelegator.viewOtherName(orcid, putCode);
+        when(otherNameManager.createOtherName(eq(UNCLAIMED), any(OtherName.class), eq(true))).thenReturn(otherName(6L));
+        when(otherNameManagerReadOnly.getOtherName(UNCLAIMED, 6L)).thenReturn(otherName(6L));
+        when(otherNameManager.updateOtherName(eq(UNCLAIMED), eq(6L), any(OtherName.class), eq(true))).thenReturn(otherName(6L));
+        response = serviceDelegator.createOtherName(UNCLAIMED, Utils.getOtherName());
+        assertCreated(response);
+        response = serviceDelegator.viewOtherName(UNCLAIMED, 6L);
         assertNotNull(response);
         OtherName otherName = (OtherName) response.getEntity();
         assertNotNull(otherName);
-        response = serviceDelegator.updateOtherName(orcid, putCode, otherName);
-        assertNotNull(response);
-        assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
-        response = serviceDelegator.deleteOtherName(orcid, putCode);
-        assertNotNull(response);
-        assertEquals(Response.Status.NO_CONTENT.getStatusCode(), response.getStatus());
+        assertOk(serviceDelegator.updateOtherName(UNCLAIMED, 6L, otherName));
+        assertNoContent(serviceDelegator.deleteOtherName(UNCLAIMED, 6L));
 
         // Test peer review
-        response = serviceDelegator.createPeerReview(orcid, Utils.getPeerReview());
-        assertNotNull(response);
-        assertEquals(Response.Status.CREATED.getStatusCode(), response.getStatus());
-        putCode = Utils.getPutCode(response);
-        response = serviceDelegator.viewPeerReview(orcid, putCode);
+        when(peerReviewManager.createPeerReview(eq(UNCLAIMED), any(PeerReview.class), eq(true))).thenReturn(peerReview(7L));
+        when(peerReviewManagerReadOnly.getPeerReview(UNCLAIMED, 7L)).thenReturn(peerReview(7L));
+        when(peerReviewManager.updatePeerReview(eq(UNCLAIMED), any(PeerReview.class), eq(true))).thenReturn(peerReview(7L));
+        response = serviceDelegator.createPeerReview(UNCLAIMED, Utils.getPeerReview());
+        assertCreated(response);
+        response = serviceDelegator.viewPeerReview(UNCLAIMED, 7L);
         assertNotNull(response);
         PeerReview peerReview = (PeerReview) response.getEntity();
         assertNotNull(peerReview);
-        response = serviceDelegator.updatePeerReview(orcid, putCode, peerReview);
-        assertNotNull(response);
-        assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
-        response = serviceDelegator.deletePeerReview(orcid, putCode);
-        assertNotNull(response);
-        assertEquals(Response.Status.NO_CONTENT.getStatusCode(), response.getStatus());
+        assertOk(serviceDelegator.updatePeerReview(UNCLAIMED, 7L, peerReview));
+        assertNoContent(serviceDelegator.deletePeerReview(UNCLAIMED, 7L));
 
         // Test researcher url
-        response = serviceDelegator.createResearcherUrl(orcid, Utils.getResearcherUrl());
-        assertNotNull(response);
-        assertEquals(Response.Status.CREATED.getStatusCode(), response.getStatus());
-        putCode = Utils.getPutCode(response);
-        response = serviceDelegator.viewResearcherUrl(orcid, putCode);
+        when(researcherUrlManager.createResearcherUrl(eq(UNCLAIMED), any(ResearcherUrl.class), eq(true))).thenReturn(researcherUrl(8L));
+        when(researcherUrlManagerReadOnly.getResearcherUrl(UNCLAIMED, 8L)).thenReturn(researcherUrl(8L));
+        when(researcherUrlManager.updateResearcherUrl(eq(UNCLAIMED), any(ResearcherUrl.class), eq(true))).thenReturn(researcherUrl(8L));
+        response = serviceDelegator.createResearcherUrl(UNCLAIMED, Utils.getResearcherUrl());
+        assertCreated(response);
+        response = serviceDelegator.viewResearcherUrl(UNCLAIMED, 8L);
         assertNotNull(response);
         ResearcherUrl rUrl = (ResearcherUrl) response.getEntity();
         assertNotNull(rUrl);
-        response = serviceDelegator.updateResearcherUrl(orcid, putCode, rUrl);
-        assertNotNull(response);
-        assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
-        response = serviceDelegator.deleteResearcherUrl(orcid, putCode);
-        assertNotNull(response);
-        assertEquals(Response.Status.NO_CONTENT.getStatusCode(), response.getStatus());
+        assertOk(serviceDelegator.updateResearcherUrl(UNCLAIMED, 8L, rUrl));
+        assertNoContent(serviceDelegator.deleteResearcherUrl(UNCLAIMED, 8L));
 
         // Test work
-        response = serviceDelegator.createWork(orcid, Utils.getWork("work # 1 " + System.currentTimeMillis()));
-        assertNotNull(response);
-        assertEquals(Response.Status.CREATED.getStatusCode(), response.getStatus());
-        putCode = Utils.getPutCode(response);
-        response = serviceDelegator.viewWork(orcid, putCode);
+        when(workManager.createWork(eq(UNCLAIMED), any(Work.class), eq(true))).thenReturn(work(9L));
+        when(workManagerReadOnly.getWork(UNCLAIMED, 9L)).thenReturn(work(9L));
+        when(workManager.updateWork(eq(UNCLAIMED), any(Work.class), eq(true))).thenReturn(work(9L));
+        response = serviceDelegator.createWork(UNCLAIMED, Utils.getWork("work # 1 " + System.currentTimeMillis()));
+        assertCreated(response);
+        response = serviceDelegator.viewWork(UNCLAIMED, 9L);
         assertNotNull(response);
         Work work = (Work) response.getEntity();
         assertNotNull(work);
-        response = serviceDelegator.updateWork(orcid, putCode, work);
-        assertNotNull(response);
-        assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
-        response = serviceDelegator.deleteWork(orcid, putCode);
-        assertNotNull(response);
-        assertEquals(Response.Status.NO_CONTENT.getStatusCode(), response.getStatus());
+        assertOk(serviceDelegator.updateWork(UNCLAIMED, 9L, work));
+        assertNoContent(serviceDelegator.deleteWork(UNCLAIMED, 9L));
     }
-    
+
     @Test
     public void testSearchByQuery() throws ParseException {
         Search search = new Search();
         Result result = new Result();
         result.setOrcidIdentifier(new OrcidIdentifier("some-orcid-id"));
         search.getResults().add(result);
-        OrcidSearchManager orcidSearchManager = Mockito.mock(OrcidSearchManagerImpl.class);
-        Mockito.when(orcidSearchManager.findOrcidIds(Matchers.<Map<String, List<String>>> any())).thenReturn(search);
+        when(orcidSearchManager.findOrcidIds(ArgumentMatchers.<Map<String, List<String>>> any())).thenReturn(search);
 
-        OrcidSecurityManager orcidSecurityManager = Mockito.mock(OrcidSecurityManagerImpl.class);
-        Mockito.doNothing().when(orcidSecurityManager).checkScopes(Mockito.any(ScopePathType.class));
-
-        MemberV3ApiServiceDelegatorImpl delegator = new MemberV3ApiServiceDelegatorImpl();
-        ReflectionTestUtils.setField(delegator, "orcidSearchManager", orcidSearchManager);
-        ReflectionTestUtils.setField(delegator, "orcidSecurityManager", orcidSecurityManager);
-
-        Response response = delegator.searchByQuery(new HashMap<String, List<String>>());
-
+        Response response = serviceDelegator.searchByQuery(new HashMap<String, List<String>>());
         assertNotNull(response);
         assertNotNull(response.getEntity());
         assertTrue(response.getEntity() instanceof Search);
         assertEquals(1, ((Search) response.getEntity()).getResults().size());
         assertEquals("some-orcid-id", ((Search) response.getEntity()).getResults().get(0).getOrcidIdentifier().getPath());
+        verify(orcidSecurityManager).checkScopes(ScopePathType.READ_PUBLIC);
     }
 
     @Test(expected = OrcidBadRequestException.class)
     public void testSearchByQueryTooManyRows() throws ParseException {
         Map<String, List<String>> params = new HashMap<>();
         params.put("rows", Arrays.asList(Integer.toString(OrcidSearchManager.MAX_SEARCH_ROWS + 20)));
+        when(localeManager.resolveMessage(anyString(), any(Object[].class))).thenReturn("a message");
 
-        LocaleManager localeManager = Mockito.mock(LocaleManagerImpl.class);
-        Mockito.when(localeManager.resolveMessage(Mockito.anyString())).thenReturn("a message");
-
-        OrcidSecurityManager orcidSecurityManager = Mockito.mock(OrcidSecurityManagerImpl.class);
-        Mockito.doNothing().when(orcidSecurityManager).checkScopes(Mockito.any(ScopePathType.class));
-
-        MemberV3ApiServiceDelegatorImpl delegator = new MemberV3ApiServiceDelegatorImpl();
-        ReflectionTestUtils.setField(delegator, "localeManager", localeManager);
-        ReflectionTestUtils.setField(delegator, "orcidSecurityManager", orcidSecurityManager);
-        delegator.searchByQuery(params);
+        serviceDelegator.searchByQuery(params);
     }
 
     @Test(expected = AccessControlException.class)
     public void testSearchByQueryBadScope() throws ParseException {
-        OrcidSecurityManager orcidSecurityManager = Mockito.mock(OrcidSecurityManagerImpl.class);
-        Mockito.doThrow(new AccessControlException("some problem with scope")).when(orcidSecurityManager).checkScopes(Mockito.any(ScopePathType.class));
+        doThrow(new AccessControlException("some problem with scope")).when(orcidSecurityManager).checkScopes(any());
 
-        MemberV3ApiServiceDelegatorImpl delegator = new MemberV3ApiServiceDelegatorImpl();
-        ReflectionTestUtils.setField(delegator, "orcidSecurityManager", orcidSecurityManager);
-
-        delegator.searchByQuery(new HashMap<>());
+        serviceDelegator.searchByQuery(new HashMap<>());
     }
 
     @Test(expected = NoResultException.class)
     public void testViewClientNonExistent() {
+        when(clientManagerReadOnly.getSummary("some-client-that-doesn't-exist")).thenThrow(new NoResultException());
+
         serviceDelegator.viewClient("some-client-that-doesn't-exist");
         fail();
     }
 
     @Test
     public void testViewClient() throws ParseException {
+        ClientSummary summary = new ClientSummary();
+        summary.setName("Source Client 2");
+        summary.setDescription("A test source client");
+        when(clientManagerReadOnly.getSummary("APP-6666666666666666")).thenReturn(summary);
+
         Response response = serviceDelegator.viewClient("APP-6666666666666666");
         assertNotNull(response.getEntity());
         assertTrue(response.getEntity() instanceof ClientSummary);
@@ -876,23 +550,24 @@ public class MemberV3ApiServiceDelegator_GeneralTest extends DBUnitTest {
         ClientSummary clientSummary = (ClientSummary) response.getEntity();
         assertEquals("Source Client 2", clientSummary.getName());
         assertEquals("A test source client", clientSummary.getDescription());
+        verify(orcidSecurityManager).checkScopes(ScopePathType.READ_PUBLIC);
     }
-    
+
+    @SuppressWarnings("unchecked")
     @Test
     public void testExpandedSearchByQueryNoRowsParamSet() {
         ExpandedSearch search = new ExpandedSearch();
         ExpandedResult result = new ExpandedResult();
         search.getResults().add(result);
-        OrcidSearchManager mockSearchManager = Mockito.mock(OrcidSearchManagerImpl.class);
-        Mockito.when(mockSearchManager.expandedSearch(Mockito.any())).thenReturn(search);
-        OrcidSearchManager orcidSearchManager = (OrcidSearchManager) ReflectionTestUtils.getField(serviceDelegator, "orcidSearchManager");
-        ReflectionTestUtils.setField(serviceDelegator, "orcidSearchManager", mockSearchManager);
-        
+        when(orcidSearchManager.expandedSearch(ArgumentMatchers.<Map<String, List<String>>> any())).thenReturn(search);
+
         Map<String, List<String>> searchQuery = new HashMap<>();
         searchQuery.put("q", Arrays.asList("orcid"));
         serviceDelegator.expandedSearchByQuery(searchQuery);
-        
-        Mockito.verify(mockSearchManager).expandedSearch(searchParamsCaptor.capture());
+
+        @SuppressWarnings("rawtypes")
+        ArgumentCaptor<Map> searchParamsCaptor = ArgumentCaptor.forClass(Map.class);
+        verify(orcidSearchManager).expandedSearch(searchParamsCaptor.capture());
         Map<String, List<String>> actualParams = searchParamsCaptor.getValue();
         assertNotNull(actualParams);
         assertNotNull(actualParams.keySet());
@@ -901,15 +576,123 @@ public class MemberV3ApiServiceDelegator_GeneralTest extends DBUnitTest {
         assertEquals("orcid", actualParams.get("q").get(0));
         assertNotNull(actualParams.get("rows"));
         assertEquals(String.valueOf(OrcidSearchManager.DEFAULT_SEARCH_ROWS), actualParams.get("rows").get(0));
-        
-        ReflectionTestUtils.setField(serviceDelegator, "orcidSearchManager", orcidSearchManager);
     }
-    
+
     @Test(expected = OrcidBadRequestException.class)
     public void testExpandedSearchByQueryRowsParamTooGreat() {
         Map<String, List<String>> searchQuery = new HashMap<>();
         searchQuery.put("q", Arrays.asList("orcid"));
         searchQuery.put("rows", Arrays.asList(String.valueOf(OrcidSearchManager.MAX_SEARCH_ROWS * 2)));
+        when(localeManager.resolveMessage(anyString(), any(Object[].class))).thenReturn("a message");
+
         serviceDelegator.expandedSearchByQuery(searchQuery);
+    }
+
+    // ------------------------------------------------------------- fixtures
+
+    private void assertCreated(Response response) {
+        assertNotNull(response);
+        assertEquals(Response.Status.CREATED.getStatusCode(), response.getStatus());
+    }
+
+    private void assertOk(Response response) {
+        assertNotNull(response);
+        assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
+    }
+
+    private void assertNoContent(Response response) {
+        assertNotNull(response);
+        assertEquals(Response.Status.NO_CONTENT.getStatusCode(), response.getStatus());
+    }
+
+    private Address address(Long putCode) {
+        Address element = new Address();
+        element.setPutCode(putCode);
+        element.setCountry(new Country(Iso3166Country.ES));
+        element.setVisibility(Visibility.PUBLIC);
+        element.setSource(clientSource(CLIENT_1));
+        element.setLastModifiedDate(lastModified());
+        return element;
+    }
+
+    private Education education(Long putCode) {
+        Education element = new Education();
+        element.setPutCode(putCode);
+        element.setDepartmentName("Department");
+        element.setOrganization(Utils.getOrganization());
+        element.setVisibility(Visibility.PUBLIC);
+        element.setSource(clientSource(CLIENT_1));
+        element.setLastModifiedDate(lastModified());
+        return element;
+    }
+
+    private Employment employment(Long putCode) {
+        Employment element = new Employment();
+        element.setPutCode(putCode);
+        element.setDepartmentName("Department");
+        element.setOrganization(Utils.getOrganization());
+        element.setVisibility(Visibility.PUBLIC);
+        element.setSource(clientSource(CLIENT_1));
+        element.setLastModifiedDate(lastModified());
+        return element;
+    }
+
+    private PersonExternalIdentifier externalIdentifier(Long putCode) {
+        PersonExternalIdentifier element = Utils.getPersonExternalIdentifier();
+        element.setPutCode(putCode);
+        element.setSource(clientSource(CLIENT_1));
+        element.setLastModifiedDate(lastModified());
+        return element;
+    }
+
+    private Funding funding(Long putCode) {
+        Funding element = Utils.getFunding();
+        element.setPutCode(putCode);
+        element.setVisibility(Visibility.PUBLIC);
+        element.setSource(clientSource(CLIENT_1));
+        element.setLastModifiedDate(lastModified());
+        return element;
+    }
+
+    private Keyword keyword(Long putCode) {
+        Keyword element = Utils.getKeyword();
+        element.setPutCode(putCode);
+        element.setSource(clientSource(CLIENT_1));
+        element.setLastModifiedDate(lastModified());
+        return element;
+    }
+
+    private OtherName otherName(Long putCode) {
+        OtherName element = Utils.getOtherName();
+        element.setPutCode(putCode);
+        element.setSource(clientSource(CLIENT_1));
+        element.setLastModifiedDate(lastModified());
+        return element;
+    }
+
+    private PeerReview peerReview(Long putCode) {
+        PeerReview element = Utils.getPeerReview();
+        element.setPutCode(putCode);
+        element.setVisibility(Visibility.PUBLIC);
+        element.setSource(clientSource(CLIENT_1));
+        element.setLastModifiedDate(lastModified());
+        return element;
+    }
+
+    private ResearcherUrl researcherUrl(Long putCode) {
+        ResearcherUrl element = Utils.getResearcherUrl();
+        element.setPutCode(putCode);
+        element.setUrl(new Url("http://www.myRUrl.com"));
+        element.setSource(clientSource(CLIENT_1));
+        element.setLastModifiedDate(lastModified());
+        return element;
+    }
+
+    private Work work(Long putCode) {
+        Work element = Utils.getWork("work # 1");
+        element.setPutCode(putCode);
+        element.setSource(clientSource(CLIENT_1));
+        element.setLastModifiedDate(lastModified());
+        return element;
     }
 }

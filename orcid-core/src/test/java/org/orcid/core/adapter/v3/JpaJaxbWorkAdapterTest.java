@@ -10,23 +10,14 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
-import jakarta.annotation.Resource;
 import jakarta.xml.bind.JAXBContext;
 import jakarta.xml.bind.JAXBException;
 import jakarta.xml.bind.Unmarshaller;
 
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.orcid.core.adapter.MockSourceNameCache;
-import org.orcid.core.manager.ClientDetailsEntityCacheManager;
-import org.orcid.core.manager.ClientDetailsManager;
-import org.orcid.core.manager.SourceNameCacheManager;
-import org.orcid.core.manager.impl.OrcidUrlManager;
-import org.orcid.core.manager.v3.read_only.RecordNameManagerReadOnly;
 import org.orcid.jaxb.model.common.CitationType;
 import org.orcid.jaxb.model.common.Iso3166Country;
 import org.orcid.jaxb.model.common.Relationship;
@@ -35,83 +26,37 @@ import org.orcid.jaxb.model.v3.release.common.Visibility;
 import org.orcid.jaxb.model.v3.release.record.ExternalID;
 import org.orcid.jaxb.model.v3.release.record.Work;
 import org.orcid.jaxb.model.v3.release.record.summary.WorkSummary;
-import org.orcid.persistence.dao.RecordNameDao;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.MinimizedWorkEntity;
 import org.orcid.persistence.jpa.entities.PublicationDateEntity;
 import org.orcid.persistence.jpa.entities.WorkEntity;
 import org.orcid.pojo.ajaxForm.PojoUtil;
-import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.orcid.core.utils.DateFieldsOnBaseEntityUtils;
 import org.orcid.utils.DateUtils;
-import org.springframework.test.context.ContextConfiguration;
+import org.mockito.junit.MockitoJUnitRunner;
+import org.orcid.core.adapter.MockedMapStructAdapters;
+import org.orcid.core.adapter.mapstruct.v3.impl.JpaJaxbWorkAdapterImpl;
 import org.springframework.test.util.ReflectionTestUtils;
 
 /**
- * 
+ *
  * @author Will Simpson
- * 
+ *
  */
-@RunWith(OrcidJUnit4ClassRunner.class)
-@ContextConfiguration(locations = { "classpath:orcid-core-context.xml" })
-public class JpaJaxbWorkAdapterTest extends MockSourceNameCache {
+@RunWith(MockitoJUnitRunner.Silent.class)
+public class JpaJaxbWorkAdapterTest {
 
-    @Resource(name = "jpaJaxbWorkAdapterV3")
+    private static final String CLIENT_SOURCE_ID = MockedMapStructAdapters.CLIENT_SOURCE_ID;
+
+    private final MockedMapStructAdapters adapters = new MockedMapStructAdapters();
+
     private JpaJaxbWorkAdapter jpaJaxbWorkAdapter;
-    
-    @Resource
-    private OrcidUrlManager orcidUrlManager;
-    
-    @Resource
-    private ClientDetailsEntityCacheManager clientDetailsEntityCacheManager;
-    
-    @Resource
-    private ClientDetailsManager clientDetailsManager;
-    
-    @Resource
-    private RecordNameDao recordNameDao;
-    
-    @Resource(name = "recordNameManagerReadOnlyV3")
-    private RecordNameManagerReadOnly recordNameManager;
-    
-    @Resource
-    private SourceNameCacheManager sourceNameCacheManager;
-    
-    @Mock
-    private ClientDetailsManager mockClientDetailsManager;
-    
-    @Mock
-    private RecordNameDao mockRecordNameDao;
-    
-    @Mock
-    private RecordNameManagerReadOnly mockRecordNameManager;
-    
-    private String originalBaseUrl;
-    
+
     @Before
-    public void before(){
-        originalBaseUrl = orcidUrlManager.getBaseUrl();
-        
-        // by default return client details entity with user obo disabled
-        Mockito.when(mockClientDetailsManager.findByClientId(Mockito.eq(CLIENT_SOURCE_ID))).thenReturn(new ClientDetailsEntity());
-        ReflectionTestUtils.setField(clientDetailsEntityCacheManager, "clientDetailsManager", mockClientDetailsManager);
-        
-        Mockito.when(mockRecordNameDao.exists(Mockito.eq("0000-0000-0000-0001"))).thenReturn(true);
-        Mockito.when(mockRecordNameManager.fetchDisplayablePublicName(Mockito.eq("0000-0000-0000-0001"))).thenReturn("test");
-        ReflectionTestUtils.setField(sourceNameCacheManager, "recordNameDao", mockRecordNameDao);
-        ReflectionTestUtils.setField(sourceNameCacheManager, "recordNameManagerReadOnlyV3", mockRecordNameManager);
-    }
-    
-    @After
-    public void tearDown() {
-        ReflectionTestUtils.setField(clientDetailsEntityCacheManager, "clientDetailsManager", clientDetailsManager);        
-        ReflectionTestUtils.setField(sourceNameCacheManager, "recordNameDao", recordNameDao);        
-        ReflectionTestUtils.setField(sourceNameCacheManager, "recordNameManagerReadOnlyV3", recordNameManager);   
-    }
-    
-    @After
-    public void after(){
-        orcidUrlManager.setBaseUrl(originalBaseUrl);
+    public void setUpAdapter() throws Exception {
+        // REAL MapStruct mapper: the whole behaviour under test is the mapping configuration,
+        // so a mocked mapper would make every assertion below an assertion about a mock.
+        jpaJaxbWorkAdapter = adapters.get(JpaJaxbWorkAdapterImpl.class);
     }
 
     @Test
@@ -145,17 +90,17 @@ public class JpaJaxbWorkAdapterTest extends MockSourceNameCache {
                 workEntity.getContributorsJson());
         assertEquals("en", workEntity.getLanguageCode());
         assertEquals(org.orcid.jaxb.model.common_v2.Iso3166Country.AF.name(), workEntity.getIso2Country());
-        
+
         // Source
-        assertNull(workEntity.getSourceId());        
-        assertNull(workEntity.getClientSourceId());        
+        assertNull(workEntity.getSourceId());
+        assertNull(workEntity.getClientSourceId());
         assertNull(workEntity.getElementSourceId());
     }
 
     @Test
     public void fromWorkEntityToWorkTest() throws IllegalAccessException {
         // Set base url to https to ensure source URI is converted to http
-        orcidUrlManager.setBaseUrl("https://testserver.orcid.org");
+        adapters.orcidUrlManager.setBaseUrl("https://testserver.orcid.org");
         WorkEntity work = getWorkEntity();
         assertNotNull(work);
         Work w = jpaJaxbWorkAdapter.toWork(work);
@@ -179,25 +124,25 @@ public class JpaJaxbWorkAdapterTest extends MockSourceNameCache {
         assertNotNull(w.getWorkExternalIdentifiers());
         assertNotNull(w.getWorkExternalIdentifiers().getExternalIdentifier());
         assertEquals(2, w.getWorkExternalIdentifiers().getExternalIdentifier().size());
-        
+
         ExternalID workExtId1 = w.getWorkExternalIdentifiers().getExternalIdentifier().get(0);
         assertNotNull(workExtId1.getValue());
         assertEquals("123", workExtId1.getValue());
         assertNotNull(workExtId1.getType());
         assertEquals(org.orcid.jaxb.model.message.WorkExternalIdentifierType.AGR.value(), workExtId1.getType());
         assertEquals(Relationship.VERSION_OF, workExtId1.getRelationship());
-        
+
         ExternalID workExtId2 = w.getWorkExternalIdentifiers().getExternalIdentifier().get(1);
         assertNotNull(workExtId2.getValue());
         assertEquals("abc", workExtId2.getValue());
         assertNotNull(workExtId2.getType());
         assertEquals(org.orcid.jaxb.model.message.WorkExternalIdentifierType.AGR.value(), workExtId2.getType());
         assertEquals(Relationship.SELF, workExtId2.getRelationship());
-        
+
         String sourcePath = w.getSource().retrieveSourcePath();
         assertNotNull(sourcePath);
         assertEquals(CLIENT_SOURCE_ID, sourcePath);
-        
+
         // Identifier URIs should always be http, event if base url is https
         assertEquals("https://testserver.orcid.org/client/" + CLIENT_SOURCE_ID, w.getSource().retriveSourceUri());
     }
@@ -239,10 +184,10 @@ public class JpaJaxbWorkAdapterTest extends MockSourceNameCache {
         // set client source to user obo enabled client
         ClientDetailsEntity userOBOClient = new ClientDetailsEntity();
         userOBOClient.setUserOBOEnabled(true);
-        Mockito.when(mockClientDetailsManager.findByClientId(Mockito.eq(CLIENT_SOURCE_ID))).thenReturn(userOBOClient);
-        
+        Mockito.when(adapters.clientDetailsEntityCacheManager.retrieve(CLIENT_SOURCE_ID)).thenReturn(userOBOClient);
+
         // Set base url to https to ensure source URI is converted to http
-        orcidUrlManager.setBaseUrl("https://testserver.orcid.org");
+        adapters.orcidUrlManager.setBaseUrl("https://testserver.orcid.org");
         WorkEntity work = getWorkEntity();
         assertNotNull(work);
         Work w = jpaJaxbWorkAdapter.toWork(work);
@@ -266,28 +211,28 @@ public class JpaJaxbWorkAdapterTest extends MockSourceNameCache {
         assertNotNull(w.getWorkExternalIdentifiers());
         assertNotNull(w.getWorkExternalIdentifiers().getExternalIdentifier());
         assertEquals(2, w.getWorkExternalIdentifiers().getExternalIdentifier().size());
-        
+
         ExternalID workExtId1 = w.getWorkExternalIdentifiers().getExternalIdentifier().get(0);
         assertNotNull(workExtId1.getValue());
         assertEquals("123", workExtId1.getValue());
         assertNotNull(workExtId1.getType());
         assertEquals(org.orcid.jaxb.model.message.WorkExternalIdentifierType.AGR.value(), workExtId1.getType());
         assertEquals(Relationship.VERSION_OF, workExtId1.getRelationship());
-        
+
         ExternalID workExtId2 = w.getWorkExternalIdentifiers().getExternalIdentifier().get(1);
         assertNotNull(workExtId2.getValue());
         assertEquals("abc", workExtId2.getValue());
         assertNotNull(workExtId2.getType());
         assertEquals(org.orcid.jaxb.model.message.WorkExternalIdentifierType.AGR.value(), workExtId2.getType());
         assertEquals(Relationship.SELF, workExtId2.getRelationship());
-        
+
         String sourcePath = w.getSource().retrieveSourcePath();
         assertNotNull(sourcePath);
         assertEquals(CLIENT_SOURCE_ID, sourcePath);
-        
+
         // Identifier URIs should always be http, event if base url is https
         assertEquals("https://testserver.orcid.org/client/" + CLIENT_SOURCE_ID, w.getSource().retriveSourceUri());
-        
+
         // user obo work
         assertNotNull(w.getSource().getAssertionOriginOrcid());
     }
@@ -314,29 +259,28 @@ public class JpaJaxbWorkAdapterTest extends MockSourceNameCache {
         assertNotNull(workExtId1.getType());
         assertEquals(org.orcid.jaxb.model.message.WorkExternalIdentifierType.AGR.value(), workExtId1.getType());
         assertEquals(Relationship.VERSION_OF, workExtId1.getRelationship());
-        
+
         ExternalID workExtId2 = ws.getExternalIdentifiers().getExternalIdentifier().get(1);
         assertNotNull(workExtId2.getValue());
         assertEquals("abc", workExtId2.getValue());
         assertNotNull(workExtId2.getType());
         assertEquals(org.orcid.jaxb.model.message.WorkExternalIdentifierType.AGR.value(), workExtId2.getType());
         assertEquals(Relationship.SELF, workExtId2.getRelationship());
-        
-        
+
         assertEquals("work:journalTitle", ws.getJournalTitle().getContent());
         assertEquals("work:url",ws.getUrl().getValue());
-        
+
         // not a user obo work
         assertNull(ws.getSource().getAssertionOriginOrcid());
     }
-    
+
     @Test
     public void fromWorkEntityToUserOBOWorkSummaryTest() throws IllegalAccessException {
         // set client source to user obo enabled client
         ClientDetailsEntity userOBOClient = new ClientDetailsEntity();
         userOBOClient.setUserOBOEnabled(true);
-        Mockito.when(mockClientDetailsManager.findByClientId(Mockito.eq(CLIENT_SOURCE_ID))).thenReturn(userOBOClient);
-        
+        Mockito.when(adapters.clientDetailsEntityCacheManager.retrieve(CLIENT_SOURCE_ID)).thenReturn(userOBOClient);
+
         WorkEntity work = getWorkEntity();
         assertNotNull(work);
         WorkSummary ws = jpaJaxbWorkAdapter.toWorkSummary(work);
@@ -357,18 +301,17 @@ public class JpaJaxbWorkAdapterTest extends MockSourceNameCache {
         assertNotNull(workExtId1.getType());
         assertEquals(org.orcid.jaxb.model.message.WorkExternalIdentifierType.AGR.value(), workExtId1.getType());
         assertEquals(Relationship.VERSION_OF, workExtId1.getRelationship());
-        
+
         ExternalID workExtId2 = ws.getExternalIdentifiers().getExternalIdentifier().get(1);
         assertNotNull(workExtId2.getValue());
         assertEquals("abc", workExtId2.getValue());
         assertNotNull(workExtId2.getType());
         assertEquals(org.orcid.jaxb.model.message.WorkExternalIdentifierType.AGR.value(), workExtId2.getType());
         assertEquals(Relationship.SELF, workExtId2.getRelationship());
-        
-        
+
         assertEquals("work:journalTitle", ws.getJournalTitle().getContent());
         assertEquals("work:url",ws.getUrl().getValue());
-        
+
         // user obo work
         assertNotNull(ws.getSource().getAssertionOriginOrcid());
     }
@@ -377,32 +320,32 @@ public class JpaJaxbWorkAdapterTest extends MockSourceNameCache {
     public void dissertationThesisToDissertationThesisTest() throws IllegalAccessException {
         WorkEntity work = getWorkEntity();
         work.setWorkType(WorkType.DISSERTATION_THESIS.name());
-        
+
         WorkSummary ws = jpaJaxbWorkAdapter.toWorkSummary(work);
         assertNotNull(ws);
         assertEquals(WorkType.DISSERTATION_THESIS, ws.getType());
-        
+
         Work w = jpaJaxbWorkAdapter.toWork(work);
         assertNotNull(w);
-        assertEquals(WorkType.DISSERTATION_THESIS, w.getWorkType());        
-    
+        assertEquals(WorkType.DISSERTATION_THESIS, w.getWorkType());
+
         MinimizedWorkEntity mWork = new MinimizedWorkEntity();
         mWork.setWorkType(org.orcid.jaxb.model.common.WorkType.DISSERTATION_THESIS.name());
         List<WorkSummary> summaries = jpaJaxbWorkAdapter.toWorkSummaryFromMinimized(Arrays.asList(mWork));
         assertEquals(WorkType.DISSERTATION_THESIS, summaries.get(0).getType());
     }
-    
+
     @Test
     public void dissertationThesisModelToEntityTest() throws JAXBException {
         Work w = getWork(true);
         w.setWorkType(WorkType.DISSERTATION_THESIS);
-        
+
         WorkEntity we = jpaJaxbWorkAdapter.toWorkEntity(w);
         assertNotNull(we);
 
         assertEquals(org.orcid.jaxb.model.common.WorkType.DISSERTATION_THESIS.name(), we.getWorkType());
-    }        
-    
+    }
+
     @Test
     public void clearFieldsFromWorkToWorkEntityTest() throws IllegalAccessException {
         WorkEntity workEntity = getWorkEntity();
@@ -414,7 +357,7 @@ public class JpaJaxbWorkAdapterTest extends MockSourceNameCache {
         assertNotNull(workEntity.getTranslatedTitle());
         assertNotNull(workEntity.getTranslatedTitleLanguageCode());
         assertNotNull(workEntity.getSubtitle());
-        
+
         Work work = jpaJaxbWorkAdapter.toWork(workEntity);
         // Verify values are not null
         assertNotNull(work.getCreatedDate());
@@ -423,7 +366,7 @@ public class JpaJaxbWorkAdapterTest extends MockSourceNameCache {
         assertEquals(DateUtils.convertToDate("2015-06-05T10:15:20"), DateUtils.convertToDate(work.getLastModifiedDate().getValue()));
         assertNotNull(work.getWorkCitation());
         assertNotNull(work.getWorkCitation().getCitation());
-        assertNotNull(work.getWorkCitation().getWorkCitationType());        
+        assertNotNull(work.getWorkCitation().getWorkCitationType());
         assertNotNull(work.getCountry());
         assertNotNull(work.getCountry().getValue());
         assertNotNull(work.getJournalTitle());
@@ -434,8 +377,8 @@ public class JpaJaxbWorkAdapterTest extends MockSourceNameCache {
         assertNotNull(work.getWorkTitle().getTranslatedTitle().getContent());
         assertNotNull(work.getWorkTitle().getTranslatedTitle().getLanguageCode());
         assertNotNull(work.getWorkTitle().getSubtitle());
-        assertNotNull(work.getWorkTitle().getSubtitle().getContent()); 
-        
+        assertNotNull(work.getWorkTitle().getSubtitle().getContent());
+
         // Now clear values on work
         work.setWorkCitation(null);
         work.setCountry(null);
@@ -443,15 +386,15 @@ public class JpaJaxbWorkAdapterTest extends MockSourceNameCache {
         work.setUrl(null);
         work.getWorkTitle().setTranslatedTitle(null);
         work.getWorkTitle().setSubtitle(null);
-        
+
         // Update work entity
         jpaJaxbWorkAdapter.toWorkEntity(work, workEntity);
-        
+
         // Verify date created and last modified wasn't changed
         Date date = DateUtils.convertToDate("2015-06-05T10:15:20");
         assertEquals(date, workEntity.getDateCreated());
         assertEquals(date, workEntity.getLastModified());
-        
+
         // Verify citation, country, journal title, url, translated title and subtitle get nullified
         assertNull(workEntity.getCitation());
         assertNull(workEntity.getCitationType());
@@ -460,10 +403,10 @@ public class JpaJaxbWorkAdapterTest extends MockSourceNameCache {
         assertNull(workEntity.getTranslatedTitle());
         assertNull(workEntity.getTranslatedTitleLanguageCode());
         assertNull(workEntity.getSubtitle());
-        
+
         // Verify the rest of the fields haven't changed
         WorkEntity workEntity2 = getWorkEntity();
-        
+
         assertEquals(workEntity2.getAddedToProfileDate(), workEntity.getAddedToProfileDate());
         assertEquals(workEntity2.getAssertionOriginClientSourceId(), workEntity.getAssertionOriginClientSourceId());
         assertEquals(workEntity2.getClientSourceId(), workEntity.getClientSourceId());
@@ -484,9 +427,9 @@ public class JpaJaxbWorkAdapterTest extends MockSourceNameCache {
         assertEquals(workEntity2.getSourceId(), workEntity.getSourceId());
         assertEquals(workEntity2.getTitle(), workEntity.getTitle());
         assertEquals(workEntity2.getVisibility(), workEntity.getVisibility());
-        assertEquals(workEntity2.getWorkType(), workEntity.getWorkType());        
+        assertEquals(workEntity2.getWorkType(), workEntity.getWorkType());
     }
-    
+
     private Work getWork(boolean full) throws JAXBException {
         JAXBContext context = JAXBContext.newInstance(new Class[] { Work.class });
         Unmarshaller unmarshaller = context.createUnmarshaller();
@@ -505,7 +448,7 @@ public class JpaJaxbWorkAdapterTest extends MockSourceNameCache {
         work.setOrcid("0000-0000-0000-0001");
         work.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.LIMITED.name());
         work.setDisplayIndex(1234567890L);
-        work.setClientSourceId(CLIENT_SOURCE_ID);        
+        work.setClientSourceId(CLIENT_SOURCE_ID);
         work.setCitation("work:citation");
         work.setCitationType(org.orcid.jaxb.model.record_v2.CitationType.BIBTEX.name());
         work.setDescription("work:description");
@@ -525,7 +468,7 @@ public class JpaJaxbWorkAdapterTest extends MockSourceNameCache {
                 + "{\"relationship\":\"SELF\",\"url\":null,\"workExternalIdentifierType\":\"AGR\",\"workExternalIdentifierId\":{\"content\":\"abc\"}}]}");
         return work;
     }
-    
+
     @Test
     public void clearPublicationDateFieldsForWorkTest() throws IllegalAccessException {
         WorkEntity work = getWorkEntity();
@@ -538,6 +481,6 @@ public class JpaJaxbWorkAdapterTest extends MockSourceNameCache {
         work.setPublicationDate(new PublicationDateEntity(null, null, null));
         jpaJaxbWorkAdapter.toWork(work);
         assertNull(work.getPublicationYear());
-        
+
     }
 }

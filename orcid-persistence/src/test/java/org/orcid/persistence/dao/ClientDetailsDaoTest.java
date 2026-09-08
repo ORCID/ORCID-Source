@@ -15,9 +15,12 @@ import org.junit.runner.RunWith;
 import org.orcid.test.DBUnitTest;
 import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.springframework.test.context.ContextConfiguration;
+import org.junit.experimental.categories.Category;
+import org.orcid.test.DatabaseTest;
 
 @RunWith(OrcidJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:test-orcid-persistence-context.xml" })
+@Category(DatabaseTest.class)
 public class ClientDetailsDaoTest extends DBUnitTest {
 
     private static String CLIENT_ID = "APP-5555555555555557";

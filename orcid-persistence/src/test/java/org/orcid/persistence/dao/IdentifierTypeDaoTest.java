@@ -23,11 +23,14 @@ import org.orcid.test.DBUnitTest;
 import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
+import org.junit.experimental.categories.Category;
+import org.orcid.test.DatabaseTest;
 
 @RunWith(OrcidJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:test-orcid-persistence-context.xml" })
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 @DirtiesContext
+@Category(DatabaseTest.class)
 public class IdentifierTypeDaoTest extends DBUnitTest{
 
     @Resource

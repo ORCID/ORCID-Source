@@ -26,6 +26,16 @@ the software.
 
     <properties>
         <java.version>21</java.version>
+        <jacoco.version>0.8.12</jacoco.version>
+        <surefire.version>3.0.0-M5</surefire.version>
+        <!-- Test stage selection. The default run is unit tests only: anything
+             marked @Category(org.orcid.test.DatabaseTest.class) needs a real
+             database and is excluded here, and run by the `db-tests` profile.
+             `all-tests` runs both. -->
+        <test.excludedGroups>org.orcid.test.DatabaseTest</test.excludedGroups>
+        <!-- Empty default so surefire's late-expanded @{argLine} resolves even when the
+             JaCoCo agent is not active (e.g. -Djacoco.skip=true, or an IDE run). -->
+        <argLine></argLine>
         <spring.version>6.2.19</spring.version>
         <security.version>6.5.11</security.version>
         <liquibase.version>4.9.1</liquibase.version>
@@ -140,10 +150,22 @@ the software.
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
+                <dependencies>
+                    <!-- @Category filtering is only understood by the JUnit 4.7+
+                         provider. Declared explicitly: auto-selection is silent
+                         when it picks the plain junit4 provider, and the symptom
+                         is that every category filter is ignored. -->
+                    <dependency>
+                        <groupId>org.apache.maven.surefire</groupId>
+                        <artifactId>surefire-junit47</artifactId>
+                        <version>${surefire.version}</version>
+                    </dependency>
+                </dependencies>
                 <configuration>
                     <!-- argLine>-Duser.timezone=America/Los_Angeles</argLine -->
-                    <argLine>-Duser.timezone=GMT --add-opens java.base/java.lang=ALL-UNNAMED --add-opens java.base/java.nio=ALL-UNNAMED --add-opens java.base/java.util=ALL-UNNAMED</argLine>
+                    <argLine>@{argLine} -Duser.timezone=GMT --add-opens java.base/java.lang=ALL-UNNAMED --add-opens java.base/java.nio=ALL-UNNAMED --add-opens java.base/java.util=ALL-UNNAMED</argLine>
                     <runOrder>alphabetical</runOrder>
+                    <excludedGroups>${test.excludedGroups}</excludedGroups>
                     <!-- we need to rewrite our unit test
                     to be runOrder random and take avantage 
                     of the speedup below
@@ -162,6 +184,35 @@ the software.
                         <exclude>**/SchemaOrgDocumentTest.java</exclude>
                     </excludes>
                 </configuration>
+            </plugin>
+            <!-- Unit test coverage. Report is bound to the `test` phase because CI runs
+                 `mvn test`, not `mvn verify`. No `check` goal on purpose: this measures,
+                 it does not gate. -->
+            <plugin>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
+                <version>${jacoco.version}</version>
+                <executions>
+                    <execution>
+                        <id>jacoco-prepare-agent</id>
+                        <goals>
+                            <goal>prepare-agent</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>jacoco-report</id>
+                        <phase>test</phase>
+                        <goals>
+                            <goal>report</goal>
+                        </goals>
+                        <configuration>
+                            <formats>
+                                <format>XML</format>
+                                <format>HTML</format>
+                            </formats>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
@@ -245,7 +296,12 @@ the software.
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-surefire-plugin</artifactId>
-                    <version>3.0.0-M5</version>
+                    <version>${surefire.version}</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.jacoco</groupId>
+                    <artifactId>jacoco-maven-plugin</artifactId>
+                    <version>${jacoco.version}</version>
                 </plugin>
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>
@@ -332,6 +388,13 @@ the software.
                     <version>3.2.0</version>
                 </plugin>
                 <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-jar-plugin</artifactId>
+                    <!-- The version Maven 3.9 binds by default, pinned so a runner
+                         with a different Maven does not silently pick another. -->
+                    <version>3.4.1</version>
+                </plugin>
+                <plugin>
                     <groupId>org.zeroturnaround</groupId>
                     <artifactId>jrebel-maven-plugin</artifactId>
                     <version>1.1.5</version>
@@ -403,7 +466,7 @@ the software.
         <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-core</artifactId>
-            <scope>compile</scope>
+            <scope>test</scope>
         </dependency>
         
         <!-- Test -->
@@ -1085,6 +1148,32 @@ the software.
     </repositories>
 
     <profiles>
+        <!-- Only the tests that need a real database. -->
+        <profile>
+            <id>db-tests</id>
+            <properties>
+                <test.excludedGroups></test.excludedGroups>
+            </properties>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-surefire-plugin</artifactId>
+                        <configuration>
+                            <groups>org.orcid.test.DatabaseTest</groups>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <!-- Unit tests and database tests together. -->
+        <profile>
+            <id>all-tests</id>
+            <properties>
+                <test.excludedGroups></test.excludedGroups>
+            </properties>
+        </profile>
+
         <!--  Localhost deployments -->
         <profile>
             <id>env-localhost</id>

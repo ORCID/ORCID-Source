@@ -4,117 +4,135 @@ import static org.hamcrest.core.AnyOf.anyOf;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyList;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
+import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.HashMap;
 
-import jakarta.annotation.Resource;
 import jakarta.persistence.NoResultException;
 import jakarta.ws.rs.core.Response;
 
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
 import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.mockito.ArgumentCaptor;
 import org.orcid.core.exception.OrcidAccessControlException;
 import org.orcid.core.exception.OrcidUnauthorizedException;
 import org.orcid.core.exception.OrcidVisibilityException;
 import org.orcid.core.exception.VisibilityMismatchException;
 import org.orcid.core.exception.WrongSourceException;
-import org.orcid.core.utils.SecurityContextTestUtils;
 import org.orcid.jaxb.model.common.Iso3166Country;
-import org.orcid.jaxb.model.groupid_v2.GroupIdRecord;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.v3.release.common.Country;
-import org.orcid.jaxb.model.v3.release.common.LastModifiedDate;
+import org.orcid.jaxb.model.v3.release.common.Source;
 import org.orcid.jaxb.model.v3.release.common.Visibility;
 import org.orcid.jaxb.model.v3.release.record.Address;
 import org.orcid.jaxb.model.v3.release.record.Addresses;
-import org.orcid.jaxb.model.v3.release.record.Distinction;
-import org.orcid.jaxb.model.v3.release.record.Education;
-import org.orcid.jaxb.model.v3.release.record.Employment;
-import org.orcid.jaxb.model.v3.release.record.Funding;
-import org.orcid.jaxb.model.v3.release.record.InvitedPosition;
-import org.orcid.jaxb.model.v3.release.record.Keyword;
-import org.orcid.jaxb.model.v3.release.record.Membership;
-import org.orcid.jaxb.model.v3.release.record.OtherName;
-import org.orcid.jaxb.model.v3.release.record.PeerReview;
-import org.orcid.jaxb.model.v3.release.record.PersonExternalIdentifier;
-import org.orcid.jaxb.model.v3.release.record.Qualification;
-import org.orcid.jaxb.model.v3.release.record.ResearchResource;
-import org.orcid.jaxb.model.v3.release.record.ResearcherUrl;
-import org.orcid.jaxb.model.v3.release.record.Service;
-import org.orcid.jaxb.model.v3.release.record.Work;
-import org.orcid.jaxb.model.v3.release.record.WorkBulk;
-import org.orcid.test.DBUnitTest;
-import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.orcid.test.helper.v3.Utils;
-import org.springframework.test.context.ContextConfiguration;
 
-@RunWith(OrcidJUnit4ClassRunner.class)
-@ContextConfiguration(locations = { "classpath:test-orcid-api-web-context.xml" })
-public class MemberV3ApiServiceDelegator_AddressesTest extends DBUnitTest {
-    protected static final List<String> DATA_FILES = Arrays.asList("/data/EmptyEntityData.xml",
-            "/data/SourceClientDetailsEntityData.xml", "/data/ProfileEntityData.xml", "/data/RecordNameEntityData.xml", "/data/BiographyEntityData.xml");
+/**
+ * Mocked boundary tests for the address endpoints of the member V3 API.
+ *
+ * <p>
+ * {@code checkAndFilter} is void and filters in place, so a mocked security
+ * manager filters nothing; the visibility tables these tests used to exercise
+ * are proved in orcid-core by {@code OrcidSecurityManager_generalTest}. What is
+ * asserted here is the delegator's own contract, plus a {@code verify} that the
+ * element was handed to the security manager with the right scope.
+ */
+public class MemberV3ApiServiceDelegator_AddressesTest extends MemberV3ApiServiceDelegatorMockTestBase {
 
-    // Now on, for any new test, PLAESE USER THIS ORCID ID
-    protected final String ORCID = "0000-0000-0000-0003";
+    private static final ScopePathType SCOPE = ScopePathType.ORCID_BIO_READ_LIMITED;
 
-    @Resource(name = "memberV3ApiServiceDelegator")
-    protected MemberV3ApiServiceDelegator<Distinction, Education, Employment, PersonExternalIdentifier, InvitedPosition, Funding, GroupIdRecord, Membership, OtherName, PeerReview, Qualification, ResearcherUrl, Service, Work, WorkBulk, Address, Keyword, ResearchResource> serviceDelegator;
+    private static final String USER_4442 = "4444-4444-4444-4442";
+    private static final String USER_4447 = "4444-4444-4444-4447";
+    private static final String USER_4499 = "4444-4444-4444-4499";
 
-    @BeforeClass
-    public static void initDBUnitData() throws Exception {
-        initDBUnitData(DATA_FILES);
+    private Address address(long putCode, Iso3166Country country, Visibility visibility, Source source) {
+        Address element = new Address();
+        element.setPutCode(putCode);
+        element.setCountry(new Country(country));
+        element.setVisibility(visibility);
+        element.setSource(source);
+        element.setLastModifiedDate(lastModified());
+        element.setCreatedDate(created());
+        return element;
     }
 
-    @AfterClass
-    public static void removeDBUnitData() throws Exception {
-        Collections.reverse(DATA_FILES);
-        removeDBUnitData(DATA_FILES);
+    private Addresses addresses(Address... elements) {
+        Addresses container = new Addresses();
+        container.setAddress(new ArrayList<>(Arrays.asList(elements)));
+        return container;
     }
 
     @Test(expected = OrcidUnauthorizedException.class)
     public void testViewAddressesWrongToken() {
-        SecurityContextTestUtils.setUpSecurityContext("some-other-user", ScopePathType.READ_LIMITED);
+        when(addressManagerReadOnly.getAddresses(ORCID)).thenReturn(addresses(address(9L, Iso3166Country.US, Visibility.PUBLIC, clientSource(CLIENT_1))));
+        doThrow(new OrcidUnauthorizedException("Access token is for a different record"))
+                .when(orcidSecurityManager).checkAndFilter(eq(ORCID), anyList(), eq(SCOPE));
+
         serviceDelegator.viewAddresses(ORCID);
     }
 
     @Test(expected = OrcidUnauthorizedException.class)
     public void testViewAddressWrongToken() {
-        SecurityContextTestUtils.setUpSecurityContext("some-other-user", ScopePathType.READ_LIMITED);
+        when(addressManagerReadOnly.getAddress(ORCID, 10L)).thenReturn(address(10L, Iso3166Country.US, Visibility.LIMITED, clientSource(CLIENT_1)));
+        doThrow(new OrcidUnauthorizedException("Access token is for a different record"))
+                .when(orcidSecurityManager).checkAndFilter(eq(ORCID), any(Address.class), eq(SCOPE));
+
         serviceDelegator.viewAddress(ORCID, 10L);
     }
 
     @Test
     public void testViewAddressesReadPublic() {
-        SecurityContextTestUtils.setUpSecurityContextForClientOnly("APP-5555555555555555", ScopePathType.READ_PUBLIC);
+        when(addressManagerReadOnly.getAddresses(ORCID)).thenReturn(addresses(address(9L, Iso3166Country.US, Visibility.PUBLIC, clientSource(CLIENT_1))));
+
         Response r = serviceDelegator.viewAddresses(ORCID);
         Addresses element = (Addresses) r.getEntity();
         assertNotNull(element);
         assertEquals("/0000-0000-0000-0003/address", element.getPath());
-        Utils.assertIsPublicOrSource(element, "APP-5555555555555555");
+        assertEquals("/0000-0000-0000-0003/address/9", element.getAddress().get(0).getPath());
+        verify(orcidSecurityManager).checkAndFilter(eq(ORCID), anyList(), eq(SCOPE));
     }
 
     @Test
     public void testViewAddressReadPublic() {
-        SecurityContextTestUtils.setUpSecurityContextForClientOnly("APP-5555555555555555", ScopePathType.READ_PUBLIC);
+        Address stored = address(9L, Iso3166Country.US, Visibility.PUBLIC, clientSource(CLIENT_1));
+        when(addressManagerReadOnly.getAddress(ORCID, 9L)).thenReturn(stored);
+
         Response r = serviceDelegator.viewAddress(ORCID, 9L);
         Address element = (Address) r.getEntity();
         assertNotNull(element);
         assertEquals("/0000-0000-0000-0003/address/9", element.getPath());
-        Utils.assertIsPublicOrSource(element, "APP-5555555555555555");
+        assertEquals(CLIENT_1_NAME, element.getSource().getSourceName().getContent());
+        verify(orcidSecurityManager).checkAndFilter(ORCID, element, SCOPE);
     }
 
     @Test
     public void testReadPublicScope_Address() {
-        SecurityContextTestUtils.setUpSecurityContext(ORCID, ScopePathType.READ_PUBLIC);
-        // Public works
+        when(addressManagerReadOnly.getAddresses(ORCID)).thenReturn(addresses(
+                address(9L, Iso3166Country.US, Visibility.PUBLIC, clientSource(CLIENT_1)),
+                address(10L, Iso3166Country.CR, Visibility.LIMITED, clientSource(CLIENT_1)),
+                address(11L, Iso3166Country.CR, Visibility.PRIVATE, clientSource(CLIENT_1))));
+        when(addressManagerReadOnly.getAddress(ORCID, 9L)).thenReturn(address(9L, Iso3166Country.US, Visibility.PUBLIC, clientSource(CLIENT_1)));
+        when(addressManagerReadOnly.getAddress(ORCID, 10L)).thenReturn(address(10L, Iso3166Country.CR, Visibility.LIMITED, clientSource(CLIENT_1)));
+        when(addressManagerReadOnly.getAddress(ORCID, 11L)).thenReturn(address(11L, Iso3166Country.CR, Visibility.PRIVATE, clientSource(CLIENT_1)));
+
+        Address limitedOtherSource = address(12L, Iso3166Country.CR, Visibility.LIMITED, userSource(ORCID));
+        Address privateOtherSource = address(13L, Iso3166Country.CR, Visibility.PRIVATE, userSource(ORCID));
+        when(addressManagerReadOnly.getAddress(ORCID, 12L)).thenReturn(limitedOtherSource);
+        when(addressManagerReadOnly.getAddress(ORCID, 13L)).thenReturn(privateOtherSource);
+        doThrow(new OrcidAccessControlException()).when(orcidSecurityManager).checkAndFilter(ORCID, limitedOtherSource, SCOPE);
+        doThrow(new OrcidAccessControlException()).when(orcidSecurityManager).checkAndFilter(ORCID, privateOtherSource, SCOPE);
+
         Response r = serviceDelegator.viewAddresses(ORCID);
         assertNotNull(r);
         assertEquals(Addresses.class.getName(), r.getEntity().getClass().getName());
@@ -146,25 +164,21 @@ public class MemberV3ApiServiceDelegator_AddressesTest extends DBUnitTest {
 
         // Limited where am the source should work
         serviceDelegator.viewAddress(ORCID, 10L);
-
+        // Limited where am not the source of should fail
         try {
-            // Limited am not the source should fail
             serviceDelegator.viewAddress(ORCID, 12L);
             fail();
         } catch (OrcidAccessControlException e) {
-
         } catch (Exception e) {
             fail();
         }
-
         // Private where am the source should work
         serviceDelegator.viewAddress(ORCID, 11L);
+        // Private where am not the source of should fail
         try {
-            // Private am not the source should fail
             serviceDelegator.viewAddress(ORCID, 13L);
             fail();
         } catch (OrcidAccessControlException e) {
-
         } catch (Exception e) {
             fail();
         }
@@ -172,8 +186,12 @@ public class MemberV3ApiServiceDelegator_AddressesTest extends DBUnitTest {
 
     @Test
     public void testViewAddresses() {
-        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4447", ScopePathType.PERSON_READ_LIMITED);
-        Response response = serviceDelegator.viewAddresses("4444-4444-4444-4447");
+        when(addressManagerReadOnly.getAddresses(USER_4447)).thenReturn(addresses(
+                address(2L, Iso3166Country.US, Visibility.PUBLIC, userSource(USER_4447)),
+                address(3L, Iso3166Country.CR, Visibility.LIMITED, clientSource(CLIENT_1)),
+                address(4L, Iso3166Country.CR, Visibility.PRIVATE, clientSource(CLIENT_1))));
+
+        Response response = serviceDelegator.viewAddresses(USER_4447);
         assertNotNull(response);
         Addresses addresses = (Addresses) response.getEntity();
         assertNotNull(addresses);
@@ -188,82 +206,115 @@ public class MemberV3ApiServiceDelegator_AddressesTest extends DBUnitTest {
             assertThat(address.getCountry().getValue(), anyOf(is(Iso3166Country.CR), is(Iso3166Country.US)));
             if (address.getPutCode() == 2L) {
                 assertEquals(Visibility.PUBLIC, address.getVisibility());
-                assertEquals("4444-4444-4444-4447", address.getSource().retrieveSourcePath());
+                assertEquals(USER_4447, address.getSource().retrieveSourcePath());
             } else if (address.getPutCode() == 3L) {
                 assertEquals(Visibility.LIMITED, address.getVisibility());
-                assertEquals("APP-5555555555555555", address.getSource().retrieveSourcePath());
+                assertEquals(CLIENT_1, address.getSource().retrieveSourcePath());
             } else if (address.getPutCode() == 4L) {
                 assertEquals(Visibility.PRIVATE, address.getVisibility());
-                assertEquals("APP-5555555555555555", address.getSource().retrieveSourcePath());
+                assertEquals(CLIENT_1, address.getSource().retrieveSourcePath());
             }
         }
+        verify(orcidSecurityManager).checkAndFilter(eq(USER_4447), anyList(), eq(SCOPE));
     }
 
     @Test
     public void testViewPublicAddress() {
-        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4447", ScopePathType.PERSON_READ_LIMITED);
-        Response response = serviceDelegator.viewAddress("4444-4444-4444-4447", 2L);
+        when(addressManagerReadOnly.getAddress(USER_4447, 2L)).thenReturn(address(2L, Iso3166Country.US, Visibility.PUBLIC, userSource(USER_4447)));
+
+        Response response = serviceDelegator.viewAddress(USER_4447, 2L);
         assertNotNull(response);
         Address address = (Address) response.getEntity();
         assertNotNull(address);
         assertEquals("/4444-4444-4444-4447/address/2", address.getPath());
         Utils.verifyLastModified(address.getLastModifiedDate());
         assertEquals(Visibility.PUBLIC, address.getVisibility());
-        assertEquals("4444-4444-4444-4447", address.getSource().retrieveSourcePath());
+        assertEquals(USER_4447, address.getSource().retrieveSourcePath());
         assertEquals(Iso3166Country.US, address.getCountry().getValue());
+        verify(orcidSecurityManager).checkAndFilter(USER_4447, address, SCOPE);
     }
 
     @Test
     public void testViewLimitedAddress() {
-        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4447", ScopePathType.PERSON_READ_LIMITED);
-        Response response = serviceDelegator.viewAddress("4444-4444-4444-4447", 3L);
+        when(addressManagerReadOnly.getAddress(USER_4447, 3L)).thenReturn(address(3L, Iso3166Country.CR, Visibility.LIMITED, clientSource(CLIENT_1)));
+
+        Response response = serviceDelegator.viewAddress(USER_4447, 3L);
         assertNotNull(response);
         Address address = (Address) response.getEntity();
         assertNotNull(address);
         assertEquals("/4444-4444-4444-4447/address/3", address.getPath());
         Utils.verifyLastModified(address.getLastModifiedDate());
         assertEquals(Visibility.LIMITED, address.getVisibility());
-        assertEquals("APP-5555555555555555", address.getSource().retrieveSourcePath());
+        assertEquals(CLIENT_1, address.getSource().retrieveSourcePath());
         assertEquals(Iso3166Country.CR, address.getCountry().getValue());
+        verify(orcidSecurityManager).checkAndFilter(USER_4447, address, SCOPE);
     }
 
     @Test
     public void testViewPrivateAddress() {
-        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4447", ScopePathType.PERSON_READ_LIMITED);
-        Response response = serviceDelegator.viewAddress("4444-4444-4444-4447", 4L);
+        when(addressManagerReadOnly.getAddress(USER_4447, 4L)).thenReturn(address(4L, Iso3166Country.CR, Visibility.PRIVATE, clientSource(CLIENT_1)));
+
+        Response response = serviceDelegator.viewAddress(USER_4447, 4L);
         assertNotNull(response);
         Address address = (Address) response.getEntity();
         assertNotNull(address);
         assertEquals("/4444-4444-4444-4447/address/4", address.getPath());
         Utils.verifyLastModified(address.getLastModifiedDate());
         assertEquals(Visibility.PRIVATE, address.getVisibility());
-        assertEquals("APP-5555555555555555", address.getSource().retrieveSourcePath());
+        assertEquals(CLIENT_1, address.getSource().retrieveSourcePath());
         assertEquals(Iso3166Country.CR, address.getCountry().getValue());
+        verify(orcidSecurityManager).checkAndFilter(USER_4447, address, SCOPE);
     }
 
     @Test(expected = OrcidVisibilityException.class)
     public void testViewPrivateAddressWhereYouAreNotTheSource() {
-        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4447", ScopePathType.PERSON_READ_LIMITED);
-        serviceDelegator.viewAddress("4444-4444-4444-4447", 5L);
+        Address stored = address(5L, Iso3166Country.CR, Visibility.PRIVATE, clientSource(CLIENT_2));
+        when(addressManagerReadOnly.getAddress(USER_4447, 5L)).thenReturn(stored);
+        doThrow(new OrcidVisibilityException()).when(orcidSecurityManager).checkAndFilter(USER_4447, stored, SCOPE);
+
+        serviceDelegator.viewAddress(USER_4447, 5L);
         fail();
     }
 
+    /**
+     * The rule this proves -- that address 1 cannot be read through record 4447 --
+     * lives in a SQL WHERE clause ({@code AddressDaoImpl.getAddress}), so with a
+     * mocked manager only the pass-through survives here. The predicate itself is
+     * proved by MemberV3ApiServiceDelegatorDatabaseRulesTest in the db-tests
+     * stage.
+     */
     @Test(expected = NoResultException.class)
     public void testViewAddressThatDontBelongToTheUser() {
-        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4447", ScopePathType.PERSON_READ_LIMITED);
-        serviceDelegator.viewAddress("4444-4444-4444-4447", 1L);
+        when(addressManagerReadOnly.getAddress(USER_4447, 1L)).thenThrow(new NoResultException());
+
+        serviceDelegator.viewAddress(USER_4447, 1L);
         fail();
     }
 
     @Test
     public void testAddAddress() {
-        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4442", ScopePathType.PERSON_READ_LIMITED, ScopePathType.PERSON_UPDATE);
-        Response response = serviceDelegator.createAddress("4444-4444-4444-4442", Utils.getAddress());
+        Address created = address(1000L, Iso3166Country.ES, Visibility.LIMITED, clientSource(CLIENT_1));
+        when(addressManager.createAddress(eq(USER_4442), any(Address.class), eq(true))).thenReturn(created);
+        when(addressManagerReadOnly.getAddress(USER_4442, 1000L)).thenReturn(created);
+
+        Address toCreate = Utils.getAddress();
+        // Planted so that assertNull below proves clearSource ran, rather than
+        // only proving the fixture never had a source to begin with.
+        toCreate.setSource(clientSource(CLIENT_2));
+
+        Response response = serviceDelegator.createAddress(USER_4442, toCreate);
         assertNotNull(response);
         assertEquals(Response.Status.CREATED.getStatusCode(), response.getStatus());
         Long putCode = Utils.getPutCode(response);
+        assertEquals(Long.valueOf(1000L), putCode);
 
-        response = serviceDelegator.viewAddress("4444-4444-4444-4442", putCode);
+        verify(orcidSecurityManager).checkClientAccessAndScopes(USER_4442, ScopePathType.ORCID_BIO_UPDATE);
+        // A client supplied source must never reach the manager.
+        ArgumentCaptor<Address> captor = ArgumentCaptor.forClass(Address.class);
+        verify(addressManager).createAddress(eq(USER_4442), captor.capture(), eq(true));
+        assertNull(captor.getValue().getSource());
+
+        response = serviceDelegator.viewAddress(USER_4442, putCode);
         assertNotNull(response);
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
         Address newAddress = (Address) response.getEntity();
@@ -272,80 +323,77 @@ public class MemberV3ApiServiceDelegator_AddressesTest extends DBUnitTest {
         assertEquals(Iso3166Country.ES, newAddress.getCountry().getValue());
         assertEquals(Visibility.LIMITED, newAddress.getVisibility());
         assertNotNull(newAddress.getSource());
-        assertEquals("APP-5555555555555555", newAddress.getSource().retrieveSourcePath());
+        assertEquals(CLIENT_1, newAddress.getSource().retrieveSourcePath());
         assertNotNull(newAddress.getCreatedDate());
-        Utils.verifyLastModified(newAddress.getLastModifiedDate());
 
         // Remove it
-        response = serviceDelegator.deleteAddress("4444-4444-4444-4442", putCode);
+        response = serviceDelegator.deleteAddress(USER_4442, putCode);
         assertNotNull(response);
         assertEquals(Response.Status.NO_CONTENT.getStatusCode(), response.getStatus());
+        verify(addressManager).deleteAddress(USER_4442, 1000L);
     }
 
     @Test
     public void testUpdateAddress() {
-        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4442", ScopePathType.PERSON_READ_LIMITED, ScopePathType.PERSON_UPDATE);
-        Response response = serviceDelegator.viewAddress("4444-4444-4444-4442", 1L);
+        when(addressManagerReadOnly.getAddress(USER_4442, 1L)).thenReturn(address(1L, Iso3166Country.US, Visibility.PUBLIC, clientSource(CLIENT_1)));
+        when(addressManager.updateAddress(eq(USER_4442), eq(1L), any(Address.class), eq(true)))
+                .thenReturn(address(1L, Iso3166Country.PA, Visibility.PUBLIC, clientSource(CLIENT_1)))
+                .thenReturn(address(1L, Iso3166Country.US, Visibility.PUBLIC, clientSource(CLIENT_1)));
+
+        Response response = serviceDelegator.viewAddress(USER_4442, 1L);
         assertNotNull(response);
         Address address = (Address) response.getEntity();
         assertNotNull(address);
         Utils.verifyLastModified(address.getLastModifiedDate());
-        LastModifiedDate before = address.getLastModifiedDate();
         assertEquals(Iso3166Country.US, address.getCountry().getValue());
         assertEquals(Visibility.PUBLIC, address.getVisibility());
 
-        address.getCountry().setValue(Iso3166Country.PA);
+        address.setCountry(new Country(Iso3166Country.PA));
 
-        response = serviceDelegator.updateAddress("4444-4444-4444-4442", 1L, address);
+        response = serviceDelegator.updateAddress(USER_4442, 1L, address);
         assertNotNull(response);
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
-
-        response = serviceDelegator.viewAddress("4444-4444-4444-4442", 1L);
-        assertNotNull(response);
         address = (Address) response.getEntity();
-        assertNotNull(address);
-        Utils.verifyLastModified(address.getLastModifiedDate());
-        LastModifiedDate after = address.getLastModifiedDate();
-        assertTrue(after.after(before));
         assertEquals(Iso3166Country.PA, address.getCountry().getValue());
+        assertEquals("/4444-4444-4444-4442/address/1", address.getPath());
+        verify(orcidSecurityManager).checkClientAccessAndScopes(USER_4442, ScopePathType.ORCID_BIO_UPDATE);
 
-        // Set it back to US again
-        address.getCountry().setValue(Iso3166Country.US);
-        response = serviceDelegator.updateAddress("4444-4444-4444-4442", 1L, address);
+        // Rollback
+        address.setCountry(new Country(Iso3166Country.US));
+        response = serviceDelegator.updateAddress(USER_4442, 1L, address);
         assertNotNull(response);
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
-        response = serviceDelegator.viewAddress("4444-4444-4444-4442", 1L);
         address = (Address) response.getEntity();
-        assertNotNull(address);
-        Utils.verifyLastModified(address.getLastModifiedDate());
-        assertNotNull(address.getLastModifiedDate());
-        assertTrue(address.getLastModifiedDate().after(after));
         assertEquals(Iso3166Country.US, address.getCountry().getValue());
         assertEquals(Visibility.PUBLIC, address.getVisibility());
     }
 
     @Test(expected = WrongSourceException.class)
     public void testUpdateAddressYouAreNotTheSourceOf() {
-        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4447", ScopePathType.PERSON_READ_LIMITED, ScopePathType.PERSON_UPDATE);
-        Response response = serviceDelegator.viewAddress("4444-4444-4444-4447", 2L);
+        when(addressManagerReadOnly.getAddress(USER_4447, 2L)).thenReturn(address(2L, Iso3166Country.US, Visibility.PUBLIC, userSource(USER_4447)));
+        doThrow(new WrongSourceException(new HashMap<String, String>()))
+                .when(addressManager).updateAddress(eq(USER_4447), eq(2L), any(Address.class), eq(true));
+
+        Response response = serviceDelegator.viewAddress(USER_4447, 2L);
         assertNotNull(response);
         Address address = (Address) response.getEntity();
         assertNotNull(address);
         assertEquals(Iso3166Country.US, address.getCountry().getValue());
         assertEquals(Visibility.PUBLIC, address.getVisibility());
-        assertNotNull(address.getSource());
-        assertEquals("4444-4444-4444-4447", address.getSource().retrieveSourcePath());
+        assertEquals(USER_4447, address.getSource().retrieveSourcePath());
 
-        address.getCountry().setValue(Iso3166Country.BR);
+        address.setCountry(new Country(Iso3166Country.PA));
 
-        serviceDelegator.updateAddress("4444-4444-4444-4447", 2L, address);
+        serviceDelegator.updateAddress(USER_4447, 2L, address);
         fail();
     }
 
     @Test(expected = VisibilityMismatchException.class)
     public void testUpdateAddressChangingVisibilityTest() {
-        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4442", ScopePathType.PERSON_READ_LIMITED, ScopePathType.PERSON_UPDATE);
-        Response response = serviceDelegator.viewAddress("4444-4444-4444-4442", 1L);
+        when(addressManagerReadOnly.getAddress(USER_4442, 1L)).thenReturn(address(1L, Iso3166Country.US, Visibility.PUBLIC, clientSource(CLIENT_1)));
+        doThrow(new VisibilityMismatchException()).when(addressManager).updateAddress(eq(USER_4442), eq(1L), any(Address.class), eq(true));
+
+        Response response = serviceDelegator.viewAddress(USER_4442, 1L);
         assertNotNull(response);
         Address address = (Address) response.getEntity();
         assertNotNull(address);
@@ -353,14 +401,19 @@ public class MemberV3ApiServiceDelegator_AddressesTest extends DBUnitTest {
 
         address.setVisibility(Visibility.PRIVATE);
 
-        response = serviceDelegator.updateAddress("4444-4444-4444-4442", 1L, address);
+        serviceDelegator.updateAddress(USER_4442, 1L, address);
         fail();
     }
 
     @Test
     public void testUpdateAddressLeavingVisibilityNullTest() {
-        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4442", ScopePathType.PERSON_READ_LIMITED, ScopePathType.PERSON_UPDATE);
-        Response response = serviceDelegator.viewAddress("4444-4444-4444-4442", 1L);
+        when(addressManagerReadOnly.getAddress(USER_4442, 1L)).thenReturn(address(1L, Iso3166Country.US, Visibility.PUBLIC, clientSource(CLIENT_1)));
+        // Restoring the stored visibility is the manager's job and is proved
+        // there; here the delegator must simply return what it produced.
+        when(addressManager.updateAddress(eq(USER_4442), eq(1L), any(Address.class), eq(true)))
+                .thenReturn(address(1L, Iso3166Country.US, Visibility.PUBLIC, clientSource(CLIENT_1)));
+
+        Response response = serviceDelegator.viewAddress(USER_4442, 1L);
         assertNotNull(response);
         Address address = (Address) response.getEntity();
         assertNotNull(address);
@@ -368,27 +421,38 @@ public class MemberV3ApiServiceDelegator_AddressesTest extends DBUnitTest {
 
         address.setVisibility(null);
 
-        response = serviceDelegator.updateAddress("4444-4444-4444-4442", 1L, address);
+        response = serviceDelegator.updateAddress(USER_4442, 1L, address);
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
         address = (Address) response.getEntity();
         assertNotNull(address);
         assertEquals(Visibility.PUBLIC, address.getVisibility());
+        // Catches a delegator that sets a visibility on the element before handing it to
+        // the manager: what is submitted must still carry the null the request arrived with.
+        ArgumentCaptor<Address> submitted = ArgumentCaptor.forClass(Address.class);
+        verify(addressManager).updateAddress(eq(USER_4442), eq(1L), submitted.capture(), eq(true));
+        assertNull("keeping the stored visibility is the manager's job, not the delegator's", submitted.getValue().getVisibility());
     }
 
     @Test
     public void testDeleteAddress() {
-        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4499", ScopePathType.PERSON_READ_LIMITED, ScopePathType.PERSON_UPDATE);
-        Response response = serviceDelegator.viewAddresses("4444-4444-4444-4499");
+        when(addressManagerReadOnly.getAddresses(USER_4499))
+                .thenReturn(addresses(address(30L, Iso3166Country.US, Visibility.PUBLIC, clientSource(CLIENT_1)))).thenReturn(addresses());
+
+        Response response = serviceDelegator.viewAddresses(USER_4499);
         assertNotNull(response);
         Addresses addresses = (Addresses) response.getEntity();
         assertNotNull(addresses);
         assertNotNull(addresses.getAddress());
         assertEquals(1, addresses.getAddress().size());
         Long putCode = addresses.getAddress().get(0).getPutCode();
-        response = serviceDelegator.deleteAddress("4444-4444-4444-4499", putCode);
+
+        response = serviceDelegator.deleteAddress(USER_4499, putCode);
         assertNotNull(response);
         assertEquals(Response.Status.NO_CONTENT.getStatusCode(), response.getStatus());
-        response = serviceDelegator.viewAddresses("4444-4444-4444-4499");
+        verify(orcidSecurityManager).checkClientAccessAndScopes(USER_4499, ScopePathType.ORCID_BIO_UPDATE);
+        verify(addressManager).deleteAddress(USER_4499, 30L);
+
+        response = serviceDelegator.viewAddresses(USER_4499);
         assertNotNull(response);
         addresses = (Addresses) response.getEntity();
         assertNotNull(addresses);
@@ -398,22 +462,31 @@ public class MemberV3ApiServiceDelegator_AddressesTest extends DBUnitTest {
 
     @Test(expected = WrongSourceException.class)
     public void testDeleteAddressYouAreNotTheSourceOf() {
-        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4447", ScopePathType.PERSON_UPDATE);
-        serviceDelegator.deleteAddress("4444-4444-4444-4447", 5L);
+        doThrow(new WrongSourceException(new HashMap<String, String>())).when(addressManager).deleteAddress(USER_4447, 5L);
+
+        serviceDelegator.deleteAddress(USER_4447, 5L);
         fail();
     }
 
     @Test
     public void testAddKosovoAddress() {
-        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4442", ScopePathType.PERSON_READ_LIMITED, ScopePathType.PERSON_UPDATE);
+        Address created = address(1001L, Iso3166Country.XK, Visibility.LIMITED, clientSource(CLIENT_1));
+        when(addressManager.createAddress(eq(USER_4442), any(Address.class), eq(true))).thenReturn(created);
+        when(addressManagerReadOnly.getAddress(USER_4442, 1001L)).thenReturn(created);
+
         Address kosovo = Utils.getAddress();
         kosovo.setCountry(new Country(Iso3166Country.XK));
-        Response response = serviceDelegator.createAddress("4444-4444-4444-4442", kosovo);
+        Response response = serviceDelegator.createAddress(USER_4442, kosovo);
         assertNotNull(response);
         assertEquals(Response.Status.CREATED.getStatusCode(), response.getStatus());
         Long putCode = Utils.getPutCode(response);
 
-        response = serviceDelegator.viewAddress("4444-4444-4444-4442", putCode);
+        // XK must survive the round trip to the manager unchanged.
+        ArgumentCaptor<Address> captor = ArgumentCaptor.forClass(Address.class);
+        verify(addressManager).createAddress(eq(USER_4442), captor.capture(), eq(true));
+        assertEquals(Iso3166Country.XK, captor.getValue().getCountry().getValue());
+
+        response = serviceDelegator.viewAddress(USER_4442, putCode);
         assertNotNull(response);
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
         Address newAddress = (Address) response.getEntity();
@@ -422,12 +495,11 @@ public class MemberV3ApiServiceDelegator_AddressesTest extends DBUnitTest {
         assertEquals(Iso3166Country.XK, newAddress.getCountry().getValue());
         assertEquals(Visibility.LIMITED, newAddress.getVisibility());
         assertNotNull(newAddress.getSource());
-        assertEquals("APP-5555555555555555", newAddress.getSource().retrieveSourcePath());
+        assertEquals(CLIENT_1, newAddress.getSource().retrieveSourcePath());
         assertNotNull(newAddress.getCreatedDate());
-        Utils.verifyLastModified(newAddress.getLastModifiedDate());
 
         // Remove it
-        response = serviceDelegator.deleteAddress("4444-4444-4444-4442", putCode);
+        response = serviceDelegator.deleteAddress(USER_4442, putCode);
         assertNotNull(response);
         assertEquals(Response.Status.NO_CONTENT.getStatusCode(), response.getStatus());
     }

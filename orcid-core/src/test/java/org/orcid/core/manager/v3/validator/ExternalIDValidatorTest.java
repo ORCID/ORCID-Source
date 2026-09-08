@@ -1,28 +1,58 @@
 package org.orcid.core.manager.v3.validator;
 
 import static org.junit.Assert.fail;
+import static org.mockito.Mockito.when;
 
-import jakarta.annotation.Resource;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.orcid.core.exception.ActivityIdentifierValidationException;
+import org.orcid.core.manager.IdentifierTypeManager;
 import org.orcid.jaxb.model.common.Relationship;
 import org.orcid.jaxb.model.v3.release.common.Url;
 import org.orcid.jaxb.model.v3.release.notification.permission.Item;
 import org.orcid.jaxb.model.v3.release.notification.permission.Items;
 import org.orcid.jaxb.model.v3.release.record.ExternalID;
 import org.orcid.jaxb.model.v3.release.record.ExternalIDs;
-import org.orcid.test.OrcidJUnit4ClassRunner;
-import org.springframework.test.context.ContextConfiguration;
+import org.orcid.pojo.IdentifierType;
 
-@RunWith(OrcidJUnit4ClassRunner.class)
-@ContextConfiguration(locations = { "classpath:test-orcid-core-context.xml" })
-public class ExternalIDValidatorTest{
+@RunWith(MockitoJUnitRunner.Silent.class)
+public class ExternalIDValidatorTest {
 
-    @Resource(name = "externalIDValidatorV3")
+    /**
+     * The identifier types that really exist in the shipped identifier_type reference data.
+     * That those rows exist is asserted by the database backed
+     * org.orcid.core.manager.IdentifierTypeManagerTest; here they are supplied explicitly.
+     */
+    private static final List<String> KNOWN_TYPES = Arrays.asList("doi", "source-work-id", "grant_number");
+
+    @Mock
+    private IdentifierTypeManager identifierTypeManager;
+
+    @InjectMocks
     private ExternalIDValidator validator;
-    
+
+    @Before
+    public void before() {
+        Map<String, IdentifierType> types = new HashMap<String, IdentifierType>();
+        for (String name : KNOWN_TYPES) {
+            IdentifierType type = new IdentifierType();
+            type.setName(name);
+            types.put(name, type);
+        }
+        // production always passes a literal null Locale
+        when(identifierTypeManager.fetchIdentifierTypesByAPITypeName((Locale) null)).thenReturn(types);
+    }
+
     @Test
     public void testValidateWorkOrPeerReview(){
         //call for ExternalID and ExternalIDs
@@ -346,4 +376,95 @@ public class ExternalIDValidatorTest{
         validator.validateNotificationItems(items);
         fail("no exception thrown for invalid type");
     }        
+
+    /**
+     * The "external id with an empty value is rejected" rule. It used to be proven only
+     * indirectly through ActivityValidator; it is proven here, at the class that enforces it.
+     */
+    @Test(expected = ActivityIdentifierValidationException.class)
+    public void testEmptyValueOnSingleExternalId() {
+        ExternalID id1 = new ExternalID();
+        id1.setRelationship(Relationship.SELF);
+        id1.setType("doi");
+        id1.setValue("");
+        id1.setUrl(new Url("http://value1.com"));
+        validator.validateWorkOrPeerReview(id1);
+        fail("no exception thrown for empty value");
+    }
+
+    @Test(expected = ActivityIdentifierValidationException.class)
+    public void testEmptyValueOnWorkExternalIds() {
+        ExternalID id1 = new ExternalID();
+        id1.setRelationship(Relationship.SELF);
+        id1.setType("doi");
+        id1.setValue("");
+        id1.setUrl(new Url("http://value1.com"));
+
+        ExternalIDs externalIds = new ExternalIDs();
+        externalIds.getExternalIdentifier().add(id1);
+        validator.validateWork(externalIds, false);
+        fail("no exception thrown for empty value");
+    }
+
+    @Test(expected = ActivityIdentifierValidationException.class)
+    public void testEmptyValueOnPeerReviewExternalIds() {
+        ExternalID id1 = new ExternalID();
+        id1.setRelationship(Relationship.SELF);
+        id1.setType("doi");
+        id1.setValue(null);
+        id1.setUrl(new Url("http://value1.com"));
+
+        ExternalIDs externalIds = new ExternalIDs();
+        externalIds.getExternalIdentifier().add(id1);
+        validator.validatePeerReview(externalIds);
+        fail("no exception thrown for empty value");
+    }
+
+    @Test(expected = ActivityIdentifierValidationException.class)
+    public void testEmptyValueOnFundingExternalIds() {
+        ExternalID id1 = new ExternalID();
+        id1.setRelationship(Relationship.SELF);
+        id1.setType("grant_number");
+        id1.setValue("");
+        id1.setUrl(new Url("http://value1.com"));
+
+        ExternalIDs externalIds = new ExternalIDs();
+        externalIds.getExternalIdentifier().add(id1);
+        validator.validateFunding(externalIds);
+        fail("no exception thrown for empty value");
+    }
+
+    @Test(expected = ActivityIdentifierValidationException.class)
+    public void testVersionOfWithoutSelfOnPeerReviewExternalIds() {
+        ExternalID id1 = new ExternalID();
+        id1.setRelationship(Relationship.VERSION_OF);
+        id1.setType("doi");
+        id1.setValue("value1");
+        id1.setUrl(new Url("http://value1.com"));
+
+        ExternalIDs externalIds = new ExternalIDs();
+        externalIds.getExternalIdentifier().add(id1);
+        validator.validatePeerReview(externalIds);
+        fail("no exception thrown for version-of without self");
+    }
+
+    @Test
+    public void testVersionOfWithSelfOnPeerReviewExternalIds() {
+        ExternalID id1 = new ExternalID();
+        id1.setRelationship(Relationship.VERSION_OF);
+        id1.setType("doi");
+        id1.setValue("value1");
+        id1.setUrl(new Url("http://value1.com"));
+
+        ExternalID id2 = new ExternalID();
+        id2.setRelationship(Relationship.SELF);
+        id2.setType("doi");
+        id2.setValue("value2");
+        id2.setUrl(new Url("http://value2.com"));
+
+        ExternalIDs externalIds = new ExternalIDs();
+        externalIds.getExternalIdentifier().add(id1);
+        externalIds.getExternalIdentifier().add(id2);
+        validator.validatePeerReview(externalIds);
+    }
 }

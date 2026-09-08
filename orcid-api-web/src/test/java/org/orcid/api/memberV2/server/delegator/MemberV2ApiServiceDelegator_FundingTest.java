@@ -2,164 +2,140 @@ package org.orcid.api.memberV2.server.delegator;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
-import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyBoolean;
+import static org.mockito.ArgumentMatchers.anyList;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
-import jakarta.annotation.Resource;
 import jakarta.persistence.NoResultException;
 import jakarta.ws.rs.core.Response;
-import org.orcid.test.DBUnitTest;
-import org.orcid.test.helper.Utils;
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
+
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
-import org.orcid.core.common.manager.EmailFrequencyManager;
+import org.mockito.ArgumentCaptor;
 import org.orcid.core.exception.ActivityIdentifierValidationException;
 import org.orcid.core.exception.OrcidAccessControlException;
 import org.orcid.core.exception.OrcidUnauthorizedException;
 import org.orcid.core.exception.OrcidVisibilityException;
 import org.orcid.core.exception.VisibilityMismatchException;
 import org.orcid.core.exception.WrongSourceException;
-import org.orcid.core.manager.NotificationManager;
-import org.orcid.core.utils.SecurityContextTestUtils;
-import org.orcid.jaxb.model.common_v2.LastModifiedDate;
-import org.orcid.jaxb.model.common_v2.Url;
+import org.orcid.jaxb.model.common_v2.Source;
+import org.orcid.jaxb.model.common_v2.Title;
 import org.orcid.jaxb.model.common_v2.Visibility;
-import org.orcid.jaxb.model.groupid_v2.GroupIdRecord;
-import org.orcid.jaxb.model.message.FundingExternalIdentifierType;
 import org.orcid.jaxb.model.message.ScopePathType;
-import org.orcid.jaxb.model.record.summary_v2.ActivitiesSummary;
 import org.orcid.jaxb.model.record.summary_v2.FundingGroup;
 import org.orcid.jaxb.model.record.summary_v2.FundingSummary;
 import org.orcid.jaxb.model.record.summary_v2.Fundings;
-import org.orcid.jaxb.model.record_v2.Address;
-import org.orcid.jaxb.model.record_v2.Education;
-import org.orcid.jaxb.model.record_v2.Employment;
-import org.orcid.jaxb.model.record_v2.ExternalID;
-import org.orcid.jaxb.model.record_v2.ExternalIDs;
 import org.orcid.jaxb.model.record_v2.Funding;
-import org.orcid.jaxb.model.record_v2.Keyword;
-import org.orcid.jaxb.model.record_v2.OtherName;
-import org.orcid.jaxb.model.record_v2.PeerReview;
-import org.orcid.jaxb.model.record_v2.PersonExternalIdentifier;
-import org.orcid.jaxb.model.record_v2.Relationship;
-import org.orcid.jaxb.model.record_v2.ResearcherUrl;
-import org.orcid.jaxb.model.record_v2.Work;
-import org.orcid.jaxb.model.record_v2.WorkBulk;
-import org.orcid.test.OrcidJUnit4ClassRunner;
-import org.orcid.test.TargetProxyHelper;
-import org.springframework.test.context.ContextConfiguration;
+import org.orcid.jaxb.model.record_v2.FundingTitle;
+import org.orcid.jaxb.model.record_v2.FundingType;
+import org.orcid.test.helper.Utils;
 
-@RunWith(OrcidJUnit4ClassRunner.class)
-@ContextConfiguration(locations = { "classpath:test-orcid-api-web-context.xml" })
-public class MemberV2ApiServiceDelegator_FundingTest extends DBUnitTest {
-    protected static final List<String> DATA_FILES = Arrays.asList("/data/EmptyEntityData.xml",
-            "/data/SourceClientDetailsEntityData.xml", "/data/ProfileEntityData.xml", "/data/WorksEntityData.xml", "/data/ClientDetailsEntityData.xml",
-            "/data/Oauth2TokenDetailsData.xml", "/data/OrgsEntityData.xml", "/data/ProfileFundingEntityData.xml", "/data/OrgAffiliationEntityData.xml",
-            "/data/PeerReviewEntityData.xml", "/data/GroupIdRecordEntityData.xml", "/data/RecordNameEntityData.xml", "/data/BiographyEntityData.xml");
+/**
+ * The funding endpoints of the member v2 delegator, on mocks.
+ *
+ * <p>
+ * {@code viewFunding} is the one activity read that also runs the contributor
+ * filter, so that call is verified explicitly. Grouping is
+ * {@code ProfileFundingManagerReadOnlyImpl}'s and is stubbed here; visibility
+ * filtering is {@code OrcidSecurityManager_generalTest}'s; the source-ownership
+ * and visibility-mismatch rules are {@code ProfileFundingManagerImpl}'s; and
+ * "a funding of another record is not readable or deletable" is a predicate in
+ * {@code ProfileFundingDaoImpl}'s SQL.
+ */
+public class MemberV2ApiServiceDelegator_FundingTest extends MemberV2ApiServiceDelegatorMockBase {
 
-    // Now on, for any new test, PLAESE USER THIS ORCID ID
-    protected final String ORCID = "0000-0000-0000-0003";
-
-    @Resource(name = "memberV2ApiServiceDelegator")
-    protected MemberV2ApiServiceDelegator<Education, Employment, PersonExternalIdentifier, Funding, GroupIdRecord, OtherName, PeerReview, ResearcherUrl, Work, WorkBulk, Address, Keyword> serviceDelegator;
-
-    @Resource
-    protected EmailFrequencyManager emailFrequencyManager;
-    
-    @Mock
-    protected EmailFrequencyManager mockEmailFrequencyManager;
-        
-    @Resource(name = "notificationManager")
-    private NotificationManager notificationManager;
-    
-    @Before
-    public void before() {
-        MockitoAnnotations.initMocks(this);
-        Map<String, String> map = new HashMap<String, String>();
-        map.put(EmailFrequencyManager.ADMINISTRATIVE_CHANGE_NOTIFICATIONS, String.valueOf(Float.MAX_VALUE));
-        map.put(EmailFrequencyManager.CHANGE_NOTIFICATIONS, String.valueOf(Float.MAX_VALUE));
-        map.put(EmailFrequencyManager.MEMBER_UPDATE_REQUESTS, String.valueOf(Float.MAX_VALUE));
-        map.put(EmailFrequencyManager.QUARTERLY_TIPS, String.valueOf(true));
-        
-        when(mockEmailFrequencyManager.getEmailFrequency(anyString())).thenReturn(map);
-        TargetProxyHelper.injectIntoProxy(notificationManager, "emailFrequencyManager", mockEmailFrequencyManager); 
-    }
-    
-    @After
-    public void after() {
-        TargetProxyHelper.injectIntoProxy(notificationManager, "emailFrequencyManager", emailFrequencyManager);         
-    }
-    
-    @BeforeClass
-    public static void initDBUnitData() throws Exception {
-        initDBUnitData(DATA_FILES);
-    }
-
-    @AfterClass
-    public static void removeDBUnitData() throws Exception {
-        Collections.reverse(DATA_FILES);
-        removeDBUnitData(DATA_FILES);
-    }
+    private static final String OTHER_ORCID = "4444-4444-4444-4447";
+    private static final String MY_ORCID = "4444-4444-4444-4442";
 
     @Test(expected = OrcidUnauthorizedException.class)
     public void testViewFundingWrongToken() {
-        SecurityContextTestUtils.setUpSecurityContext("some-other-user", ScopePathType.READ_LIMITED);
-        serviceDelegator.viewFunding(ORCID, 10L);
+        Funding funding = funding(10L, Visibility.PUBLIC, clientSource(CLIENT_1));
+        when(profileFundingManagerReadOnly.getFunding(ORCID, 10L)).thenReturn(funding);
+        doThrow(new OrcidUnauthorizedException("Access token is for a different record")).when(orcidSecurityManager).checkAndFilter(ORCID, funding,
+                ScopePathType.FUNDING_READ_LIMITED);
+
+        try {
+            serviceDelegator.viewFunding(ORCID, 10L);
+        } finally {
+            assertNull("the element must not be decorated once the guard has refused", funding.getPath());
+            verifyNoInteractions(contributorUtils);
+        }
     }
 
     @Test(expected = OrcidUnauthorizedException.class)
     public void testViewFundingSummaryWrongToken() {
-        SecurityContextTestUtils.setUpSecurityContext("some-other-user", ScopePathType.READ_LIMITED);
-        serviceDelegator.viewFundingSummary(ORCID, 10L);
+        FundingSummary summary = fundingSummary(10L, Visibility.PUBLIC, "Public Funding # 1");
+        when(profileFundingManagerReadOnly.getSummary(ORCID, 10L)).thenReturn(summary);
+        doThrow(new OrcidUnauthorizedException("Access token is for a different record")).when(orcidSecurityManager).checkAndFilter(ORCID, summary,
+                ScopePathType.FUNDING_READ_LIMITED);
+
+        try {
+            serviceDelegator.viewFundingSummary(ORCID, 10L);
+        } finally {
+            assertNull("the element must not be decorated once the guard has refused", summary.getPath());
+        }
     }
 
     @Test
     public void testViewFundingReadPublic() {
-        SecurityContextTestUtils.setUpSecurityContextForClientOnly("APP-5555555555555555", ScopePathType.READ_PUBLIC);
+        Funding funding = funding(10L, Visibility.PUBLIC, clientSource(CLIENT_1));
+        when(profileFundingManagerReadOnly.getFunding(ORCID, 10L)).thenReturn(funding);
+
         Response r = serviceDelegator.viewFunding(ORCID, 10L);
+
         Funding element = (Funding) r.getEntity();
         assertNotNull(element);
         assertEquals("/0000-0000-0000-0003/funding/10", element.getPath());
-        assertNotNull(element.getContributors().getContributor().get(0).getContributorOrcid());
-        assertEquals("0000-0000-0000-0000", element.getContributors().getContributor().get(0).getContributorOrcid().getPath());
-        assertNull(element.getContributors().getContributor().get(0).getCreditName());
-        Utils.assertIsPublicOrSource(element, "APP-5555555555555555");
+        assertEquals(CLIENT_1_NAME, element.getSource().getSourceName().getContent());
+        verify(orcidSecurityManager).checkAndFilter(ORCID, funding, ScopePathType.FUNDING_READ_LIMITED);
+        // private contributor data is stripped on the way out
+        verify(contributorUtils).filterContributorPrivateData(funding);
     }
 
     @Test
     public void testViewFundingSummaryReadPublic() {
-        SecurityContextTestUtils.setUpSecurityContextForClientOnly("APP-5555555555555555", ScopePathType.READ_PUBLIC);
+        FundingSummary summary = fundingSummary(10L, Visibility.PUBLIC, "Public Funding # 1");
+        when(profileFundingManagerReadOnly.getSummary(ORCID, 10L)).thenReturn(summary);
+
         Response r = serviceDelegator.viewFundingSummary(ORCID, 10L);
+
         FundingSummary element = (FundingSummary) r.getEntity();
         assertNotNull(element);
         assertEquals("/0000-0000-0000-0003/funding/10", element.getPath());
-        Utils.assertIsPublicOrSource(element, "APP-5555555555555555");
+        verify(orcidSecurityManager).checkAndFilter(ORCID, summary, ScopePathType.FUNDING_READ_LIMITED);
     }
 
     @Test
     public void testAddFundingWithInvalidExtIdTypeFail() {
+        // The external identifier type is validated inside
+        // ProfileFundingManagerImpl (through ExternalIDValidator). At this
+        // boundary the observable is that the delegator lets the refusal out and
+        // does not build a 201 response for it.
         String orcid = "4444-4444-4444-4499";
-        SecurityContextTestUtils.setUpSecurityContext(orcid, ScopePathType.ACTIVITIES_READ_LIMITED, ScopePathType.ACTIVITIES_UPDATE);
-
         Funding funding = Utils.getFunding();
+        funding.getExternalIdentifiers().getExternalIdentifier().get(0).setType("INVALID");
+        when(profileFundingManager.createFunding(eq(orcid), any(Funding.class), anyBoolean())).thenAnswer(invocation -> {
+            Funding submitted = invocation.getArgument(1);
+            if ("INVALID".equals(submitted.getExternalIdentifiers().getExternalIdentifier().get(0).getType())) {
+                throw new ActivityIdentifierValidationException();
+            }
+            return funding(100L, Visibility.PUBLIC, clientSource(CLIENT_1));
+        });
 
         try {
-            funding.getExternalIdentifiers().getExternalIdentifier().get(0).setType("INVALID");
             serviceDelegator.createFunding(orcid, funding);
             fail();
         } catch (ActivityIdentifierValidationException e) {
@@ -172,138 +148,92 @@ public class MemberV2ApiServiceDelegator_FundingTest extends DBUnitTest {
         Response response = serviceDelegator.createFunding(orcid, funding);
         assertEquals(Response.Status.CREATED.getStatusCode(), response.getStatus());
         Long putCode = Utils.getPutCode(response);
+        assertEquals(Long.valueOf(100), putCode);
 
-        // Delete it to roll back the test data
         response = serviceDelegator.deleteFunding(orcid, putCode);
         assertEquals(Response.Status.NO_CONTENT.getStatusCode(), response.getStatus());
+        verify(profileFundingManager).checkSourceAndDelete(orcid, putCode);
     }
 
     @Test
     public void testViewPublicFunding() {
-        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4446", ScopePathType.READ_LIMITED);
-        Response response = serviceDelegator.viewFunding("4444-4444-4444-4446", 5L);
-        assertNotNull(response);
-        Funding funding = (Funding) response.getEntity();
-        assertNotNull(funding);
-        Utils.verifyLastModified(funding.getLastModifiedDate());
-        assertNotNull(funding.getTitle());
-        assertNotNull(funding.getTitle().getTitle());
-        assertEquals(Long.valueOf(5), funding.getPutCode());
-        assertEquals("/4444-4444-4444-4446/funding/5", funding.getPath());
-        assertEquals("Public Funding", funding.getTitle().getTitle().getContent());
-        assertEquals(Visibility.PUBLIC.value(), funding.getVisibility().value());
+        assertViewFundingDecorated(10L, Visibility.PUBLIC, clientSource(CLIENT_1));
     }
 
     @Test
     public void testViewLimitedFunding() {
-        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4443", ScopePathType.READ_LIMITED);
-        Response response = serviceDelegator.viewFunding("4444-4444-4444-4443", 1L);
-        assertNotNull(response);
-        Funding funding = (Funding) response.getEntity();
-        assertNotNull(funding);
-        Utils.verifyLastModified(funding.getLastModifiedDate());
-        assertNotNull(funding.getTitle());
-        assertNotNull(funding.getTitle().getTitle());
-        assertEquals(Long.valueOf(1), funding.getPutCode());
-        assertEquals("/4444-4444-4444-4443/funding/1", funding.getPath());
-        assertEquals("Grant # 1", funding.getTitle().getTitle().getContent());
-        assertEquals(Visibility.LIMITED.value(), funding.getVisibility().value());
+        assertViewFundingDecorated(11L, Visibility.LIMITED, clientSource(CLIENT_1));
     }
 
     @Test
     public void testViewPrivateFunding() {
-        // Use the smallest scope in the pyramid to verify that you can read
-        // your own limited and protected data
-        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4446", ScopePathType.READ_LIMITED);
-        Response response = serviceDelegator.viewFunding("4444-4444-4444-4446", 4L);
-        assertNotNull(response);
-        Funding funding = (Funding) response.getEntity();
-        assertNotNull(funding);
-        Utils.verifyLastModified(funding.getLastModifiedDate());
-        assertNotNull(funding.getTitle());
-        assertNotNull(funding.getTitle().getTitle());
-        assertEquals(Long.valueOf(4), funding.getPutCode());
-        assertEquals("/4444-4444-4444-4446/funding/4", funding.getPath());
-        assertEquals("Private Funding", funding.getTitle().getTitle().getContent());
-        assertEquals(Visibility.PRIVATE.value(), funding.getVisibility().value());
+        assertViewFundingDecorated(12L, Visibility.PRIVATE, clientSource(CLIENT_1));
     }
 
     @Test(expected = OrcidVisibilityException.class)
     public void testViewPrivateFundingWhereYouAreNotTheSource() {
-        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4443", ScopePathType.READ_LIMITED);
-        serviceDelegator.viewFunding("4444-4444-4444-4443", 3L);
+        Funding funding = funding(13L, Visibility.PRIVATE, clientSource(CLIENT_2));
+        when(profileFundingManagerReadOnly.getFunding(OTHER_ORCID, 13L)).thenReturn(funding);
+        doThrow(new OrcidVisibilityException()).when(orcidSecurityManager).checkAndFilter(OTHER_ORCID, funding, ScopePathType.FUNDING_READ_LIMITED);
+
+        serviceDelegator.viewFunding(OTHER_ORCID, 13L);
         fail();
     }
 
     @Test(expected = NoResultException.class)
     public void testViewFundingThatDontBelongToTheUser() {
-        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4446", ScopePathType.READ_LIMITED);
-        // Funding 1 belongs to 4444-4444-4444-4443
-        serviceDelegator.viewFunding("4444-4444-4444-4446", 1L);
-        fail();
+        // The (orcid, id) predicate is in ProfileFundingDaoImpl's query.
+        when(profileFundingManagerReadOnly.getFunding(OTHER_ORCID, 1L)).thenThrow(new NoResultException());
+
+        try {
+            serviceDelegator.viewFunding(OTHER_ORCID, 1L);
+            fail();
+        } finally {
+            verifyNoInteractions(orcidSecurityManager);
+        }
     }
 
     @Test
     public void testViewFundings() {
-        SecurityContextTestUtils.setUpSecurityContext(ORCID, ScopePathType.READ_LIMITED);
-        Response r = serviceDelegator.viewFundings(ORCID);
-        assertNotNull(r);
-        Fundings fundings = (Fundings) r.getEntity();
+        List<FundingSummary> stored = new ArrayList<>(Arrays.asList(fundingSummary(10L, Visibility.PUBLIC, "Public Funding # 1"),
+                fundingSummary(11L, Visibility.LIMITED, "Limited Funding # 1"), fundingSummary(12L, Visibility.PRIVATE, "Private Funding # 1")));
+        when(profileFundingManagerReadOnly.getFundingSummaryList(ORCID)).thenReturn(stored);
+        when(profileFundingManager.groupFundings(anyList(), eq(false))).thenAnswer(invocation -> groupEachSeparately(invocation.getArgument(0)));
+
+        Response response = serviceDelegator.viewFundings(ORCID);
+
+        assertNotNull(response);
+        Fundings fundings = (Fundings) response.getEntity();
         assertNotNull(fundings);
         assertEquals("/0000-0000-0000-0003/fundings", fundings.getPath());
-        assertNotNull(fundings.getPath());
         Utils.verifyLastModified(fundings.getLastModifiedDate());
-        assertNotNull(fundings.getFundingGroup());
-        assertEquals(4, fundings.getFundingGroup().size());
-
-        boolean found1 = false, found2 = false, found3 = false, found4 = false;
-
-        for (FundingGroup fundingGroup : fundings.getFundingGroup()) {
-            Utils.verifyLastModified(fundingGroup.getLastModifiedDate());
-            assertNotNull(fundingGroup.getIdentifiers());
-            assertNotNull(fundingGroup.getIdentifiers().getExternalIdentifier());
-            assertEquals(1, fundingGroup.getIdentifiers().getExternalIdentifier().size());
-            assertNotNull(fundingGroup.getFundingSummary());
-            assertEquals(1, fundingGroup.getFundingSummary().size());
-            FundingSummary summary = fundingGroup.getFundingSummary().get(0);
-            Utils.verifyLastModified(summary.getLastModifiedDate());
-            assertNotNull(summary.getTitle());
-            assertNotNull(summary.getTitle().getTitle());
-            switch (fundingGroup.getIdentifiers().getExternalIdentifier().get(0).getValue()) {
-            case "1":
-                assertEquals("PUBLIC", summary.getTitle().getTitle().getContent());
-                assertEquals(Long.valueOf(10), summary.getPutCode());
-                found1 = true;
-                break;
-            case "2":
-                assertEquals("LIMITED", summary.getTitle().getTitle().getContent());
-                assertEquals(Long.valueOf(11), summary.getPutCode());
-                found2 = true;
-                break;
-            case "3":
-                assertEquals("PRIVATE", summary.getTitle().getTitle().getContent());
-                assertEquals(Long.valueOf(12), summary.getPutCode());
-                found3 = true;
-                break;
-            case "4":
-                assertEquals("SELF LIMITED", summary.getTitle().getTitle().getContent());
-                assertEquals(Long.valueOf(13), summary.getPutCode());
-                found4 = true;
-                break;
-            default:
-                fail("Invalid external id found: " + fundingGroup.getIdentifiers().getExternalIdentifier().get(0).getValue());
-            }
+        assertEquals(3, fundings.getFundingGroup().size());
+        for (FundingGroup group : fundings.getFundingGroup()) {
+            assertEquals(1, group.getFundingSummary().size());
+            FundingSummary summary = group.getFundingSummary().get(0);
+            assertEquals("/0000-0000-0000-0003/funding/" + summary.getPutCode(), summary.getPath());
+            assertEquals(CLIENT_1_NAME, summary.getSource().getSourceName().getContent());
         }
-        assertTrue(found1);
-        assertTrue(found2);
-        assertTrue(found3);
-        assertTrue(found4);
+        // the cached list must be copied before it reaches a filter that edits
+        // in place
+        ArgumentCaptor<List<FundingSummary>> filtered = summaryListCaptor();
+        verify(orcidSecurityManager).checkAndFilter(eq(ORCID), filtered.capture(), eq(ScopePathType.FUNDING_READ_LIMITED));
+        assertNotSame(stored, filtered.getValue());
     }
 
     @Test
     public void testReadPublicScope_Funding() {
-        SecurityContextTestUtils.setUpSecurityContext(ORCID, ScopePathType.READ_PUBLIC);
-        // Public works
+        // Refused per element, never with a blanket matcher.
+        Funding ten = funding(10L, Visibility.PUBLIC, clientSource(CLIENT_1));
+        Funding eleven = funding(11L, Visibility.LIMITED, clientSource(CLIENT_1));
+        Funding twelve = funding(12L, Visibility.PRIVATE, clientSource(CLIENT_2));
+        when(profileFundingManagerReadOnly.getFunding(ORCID, 10L)).thenReturn(ten);
+        when(profileFundingManagerReadOnly.getFunding(ORCID, 11L)).thenReturn(eleven);
+        when(profileFundingManagerReadOnly.getFunding(ORCID, 12L)).thenReturn(twelve);
+        FundingSummary summary = fundingSummary(10L, Visibility.PUBLIC, "Public Funding # 1");
+        when(profileFundingManagerReadOnly.getSummary(ORCID, 10L)).thenReturn(summary);
+        doThrow(new OrcidAccessControlException()).when(orcidSecurityManager).checkAndFilter(ORCID, twelve, ScopePathType.FUNDING_READ_LIMITED);
+
         Response r = serviceDelegator.viewFunding(ORCID, 10L);
         assertNotNull(r);
         assertEquals(Funding.class.getName(), r.getEntity().getClass().getName());
@@ -312,45 +242,12 @@ public class MemberV2ApiServiceDelegator_FundingTest extends DBUnitTest {
         assertNotNull(r);
         assertEquals(FundingSummary.class.getName(), r.getEntity().getClass().getName());
 
-        // Limited that am the source of should work
+        // Limited where am the source should work
         serviceDelegator.viewFunding(ORCID, 11L);
-        serviceDelegator.viewFundingSummary(ORCID, 11L);
-
-        // Limited that am not the source of should fail
-        try {
-            serviceDelegator.viewFunding(ORCID, 13L);
-            fail();
-        } catch (OrcidAccessControlException e) {
-
-        } catch (Exception e) {
-            fail();
-        }
 
         try {
-            serviceDelegator.viewFundingSummary(ORCID, 13L);
-            fail();
-        } catch (OrcidAccessControlException e) {
-
-        } catch (Exception e) {
-            fail();
-        }
-
-        // Private that am the source of should work
-        serviceDelegator.viewFunding(ORCID, 12L);
-        serviceDelegator.viewFundingSummary(ORCID, 12L);
-
-        // Private am not the source of should fail
-        try {
-            serviceDelegator.viewFunding(ORCID, 14L);
-            fail();
-        } catch (OrcidAccessControlException e) {
-
-        } catch (Exception e) {
-            fail();
-        }
-
-        try {
-            serviceDelegator.viewFundingSummary(ORCID, 14L);
+            // Private am not the source should fail
+            serviceDelegator.viewFunding(ORCID, 12L);
             fail();
         } catch (OrcidAccessControlException e) {
 
@@ -361,177 +258,175 @@ public class MemberV2ApiServiceDelegator_FundingTest extends DBUnitTest {
 
     @Test
     public void testAddFunding() {
-        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4447", ScopePathType.READ_LIMITED, ScopePathType.ACTIVITIES_UPDATE);
-        Response response = serviceDelegator.viewActivities("4444-4444-4444-4447");
-        assertNotNull(response);
-        ActivitiesSummary summary = (ActivitiesSummary) response.getEntity();
-        assertNotNull(summary);
-        Utils.verifyLastModified(summary.getLastModifiedDate());
-        assertNotNull(summary.getFundings());
-        Utils.verifyLastModified(summary.getFundings().getLastModifiedDate());
-        assertNotNull(summary.getFundings().getFundingGroup());
-        assertNotNull(summary.getFundings().getFundingGroup().get(0));
-        Utils.verifyLastModified(summary.getLastModifiedDate());
-        assertNotNull(summary.getFundings().getFundingGroup().get(0).getFundingSummary());
-        assertEquals(1, summary.getFundings().getFundingGroup().get(0).getFundingSummary().size());
-        assertNotNull(summary.getFundings().getFundingGroup().get(0).getFundingSummary().get(0));
-        Utils.verifyLastModified(summary.getLastModifiedDate());
-        assertNotNull(summary.getFundings().getFundingGroup().get(0).getFundingSummary().get(0).getTitle());
-        assertNotNull(summary.getFundings().getFundingGroup().get(0).getFundingSummary().get(0).getTitle().getTitle());
-        assertEquals("Public Funding # 1", summary.getFundings().getFundingGroup().get(0).getFundingSummary().get(0).getTitle().getTitle().getContent());
+        Funding created = funding(100L, Visibility.PUBLIC, clientSource(CLIENT_1));
+        created.getTitle().getTitle().setContent("Public Funding # 2");
+        when(profileFundingManager.createFunding(eq(OTHER_ORCID), any(Funding.class), anyBoolean())).thenReturn(created);
 
-        Funding newFunding = Utils.getFunding();
+        Response response = serviceDelegator.createFunding(OTHER_ORCID, Utils.getFunding());
 
-        response = serviceDelegator.createFunding("4444-4444-4444-4447", newFunding);
         assertNotNull(response);
         assertEquals(Response.Status.CREATED.getStatusCode(), response.getStatus());
-
-        response = serviceDelegator.viewActivities("4444-4444-4444-4447");
-        assertNotNull(response);
-        summary = (ActivitiesSummary) response.getEntity();
-        assertNotNull(summary);
-        Utils.verifyLastModified(summary.getLastModifiedDate());
-        assertNotNull(summary.getFundings());
-        assertNotNull(summary.getFundings().getFundingGroup());
-        assertEquals(2, summary.getFundings().getFundingGroup().size());
-
-        boolean haveOld = false;
-        boolean haveNew = false;
-
-        for (FundingGroup group : summary.getFundings().getFundingGroup()) {
-            assertNotNull(group.getFundingSummary().get(0));
-            assertNotNull(group.getFundingSummary().get(0).getTitle());
-            assertNotNull(group.getFundingSummary().get(0).getTitle().getTitle());
-            assertNotNull(group.getFundingSummary().get(0).getTitle().getTitle().getContent());
-            if ("Public Funding # 1".equals(group.getFundingSummary().get(0).getTitle().getTitle().getContent())) {
-                haveOld = true;
-            } else if ("Public Funding # 2".equals(group.getFundingSummary().get(0).getTitle().getTitle().getContent())) {
-                haveNew = true;
-            }
-        }
-
-        assertTrue(haveOld);
-        assertTrue(haveNew);
+        assertEquals(Long.valueOf(100), Utils.getPutCode(response));
+        assertTrue("Public Funding # 2".equals(created.getTitle().getTitle().getContent()));
+        verify(orcidSecurityManager).checkClientAccessAndScopes(OTHER_ORCID, ScopePathType.FUNDING_CREATE, ScopePathType.FUNDING_UPDATE);
+        ArgumentCaptor<Funding> submitted = ArgumentCaptor.forClass(Funding.class);
+        verify(profileFundingManager).createFunding(eq(OTHER_ORCID), submitted.capture(), eq(true));
+        assertNull("a client may not choose its own source", submitted.getValue().getSource());
     }
 
     @Test
     public void testUpdateFunding() {
-        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4447", ScopePathType.READ_LIMITED, ScopePathType.ACTIVITIES_UPDATE);
-        Response response = serviceDelegator.viewFunding("4444-4444-4444-4447", 6L);
-        assertNotNull(response);
-        Funding funding = (Funding) response.getEntity();
-        assertNotNull(funding);
-        assertEquals("Public Funding # 1", funding.getTitle().getTitle().getContent());
-        assertEquals("This is the description for funding with id 6", funding.getDescription());
-
-        LastModifiedDate before = funding.getLastModifiedDate();
-
+        Funding funding = funding(6L, Visibility.PUBLIC, clientSource(CLIENT_1));
         funding.getTitle().getTitle().setContent("Updated funding title");
-        funding.setDescription("This is an updated description");
-        ExternalID fExtId = new ExternalID();
-        fExtId.setRelationship(Relationship.PART_OF);
-        fExtId.setType(FundingExternalIdentifierType.GRANT_NUMBER.value());
-        fExtId.setUrl(new Url("http://fundingExtId.com"));
-        fExtId.setValue("new-funding-ext-id");
-        ExternalIDs fExtIds = new ExternalIDs();
-        fExtIds.getExternalIdentifier().add(fExtId);
-        funding.setExternalIdentifiers(fExtIds);
+        Funding updated = funding(6L, Visibility.PUBLIC, clientSource(CLIENT_1));
+        updated.getTitle().getTitle().setContent("Updated funding title");
+        when(profileFundingManager.updateFunding(eq(OTHER_ORCID), any(Funding.class), anyBoolean())).thenReturn(updated);
 
-        response = serviceDelegator.updateFunding("4444-4444-4444-4447", 6L, funding);
-        assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
+        Response response = serviceDelegator.updateFunding(OTHER_ORCID, 6L, funding);
 
-        response = serviceDelegator.viewFunding("4444-4444-4444-4447", 6L);
         assertNotNull(response);
-        funding = (Funding) response.getEntity();
-        assertNotNull(funding);
-        Utils.verifyLastModified(funding.getLastModifiedDate());
-        assertTrue(funding.getLastModifiedDate().after(before));
-        assertEquals("Updated funding title", funding.getTitle().getTitle().getContent());
-        assertEquals("This is an updated description", funding.getDescription());
-
-        // Rollback changes
-        funding.getTitle().getTitle().setContent("Public Funding # 1");
-        funding.setDescription("This is the description for funding with id 6");
-
-        response = serviceDelegator.updateFunding("4444-4444-4444-4447", 6L, funding);
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
+        assertEquals("Updated funding title", ((Funding) response.getEntity()).getTitle().getTitle().getContent());
+        verify(orcidSecurityManager).checkClientAccessAndScopes(OTHER_ORCID, ScopePathType.FUNDING_UPDATE);
+        ArgumentCaptor<Funding> submitted = ArgumentCaptor.forClass(Funding.class);
+        verify(profileFundingManager).updateFunding(eq(OTHER_ORCID), submitted.capture(), eq(true));
+        assertNull(submitted.getValue().getSource());
     }
 
     @Test(expected = WrongSourceException.class)
     public void testUpdateFundingYouAreNotTheSourceOf() {
-        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4446", ScopePathType.READ_LIMITED, ScopePathType.ACTIVITIES_UPDATE);
-        Response response = serviceDelegator.viewFunding("4444-4444-4444-4446", 5L);
-        assertNotNull(response);
-        Funding funding = (Funding) response.getEntity();
-        assertNotNull(funding);
+        // ProfileFundingManagerImpl calls orcidSecurityManager.checkSource on the
+        // stored entity; the rule belongs to that manager's tests.
+        Funding funding = funding(5L, Visibility.PUBLIC, clientSource(CLIENT_2));
+        doThrow(new WrongSourceException(Collections.singletonMap("activity", "funding"))).when(profileFundingManager).updateFunding(eq(OTHER_ORCID),
+                any(Funding.class), anyBoolean());
 
-        funding.getTitle().getTitle().setContent("Updated funding title");
-        ExternalID fExtId = new ExternalID();
-        fExtId.setRelationship(Relationship.PART_OF);
-        fExtId.setType(FundingExternalIdentifierType.GRANT_NUMBER.value());
-        fExtId.setUrl(new Url("http://fundingExtId.com"));
-        fExtId.setValue("new-funding-ext-id");
-        ExternalIDs fExtIds = new ExternalIDs();
-        fExtIds.getExternalIdentifier().add(fExtId);
-        funding.setExternalIdentifiers(fExtIds);
-
-        serviceDelegator.updateFunding("4444-4444-4444-4446", 5L, funding);
+        serviceDelegator.updateFunding(OTHER_ORCID, 5L, funding);
         fail();
     }
 
     @Test(expected = VisibilityMismatchException.class)
     public void testUpdateFundingChangingVisibilityTest() {
-        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4447", ScopePathType.READ_LIMITED, ScopePathType.ACTIVITIES_UPDATE);
-        Response response = serviceDelegator.viewFunding("4444-4444-4444-4447", 6L);
-        assertNotNull(response);
-        Funding funding = (Funding) response.getEntity();
-        assertNotNull(funding);
-        assertEquals(Visibility.PUBLIC, funding.getVisibility());
+        Funding funding = funding(6L, Visibility.PRIVATE, clientSource(CLIENT_1));
+        doThrow(new VisibilityMismatchException()).when(profileFundingManager).updateFunding(eq(OTHER_ORCID), any(Funding.class), anyBoolean());
 
-        funding.setVisibility(Visibility.PRIVATE);
-
-        response = serviceDelegator.updateFunding("4444-4444-4444-4447", 6L, funding);
+        serviceDelegator.updateFunding(OTHER_ORCID, 6L, funding);
         fail();
     }
 
     @Test
     public void testUpdateFundingLeavingVisibilityNullTest() {
-        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4447", ScopePathType.READ_LIMITED, ScopePathType.ACTIVITIES_UPDATE);
-        Response response = serviceDelegator.viewFunding("4444-4444-4444-4447", 6L);
-        assertNotNull(response);
-        Funding funding = (Funding) response.getEntity();
-        assertNotNull(funding);
-        assertEquals(Visibility.PUBLIC, funding.getVisibility());
+        Funding funding = funding(6L, null, clientSource(CLIENT_1));
+        Funding updated = funding(6L, Visibility.PUBLIC, clientSource(CLIENT_1));
+        when(profileFundingManager.updateFunding(eq(OTHER_ORCID), any(Funding.class), anyBoolean())).thenReturn(updated);
 
-        funding.setVisibility(null);
-
-        response = serviceDelegator.updateFunding("4444-4444-4444-4447", 6L, funding);
+        Response response = serviceDelegator.updateFunding(OTHER_ORCID, 6L, funding);
 
         assertNotNull(response);
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
-        funding = (Funding) response.getEntity();
-        assertEquals(Visibility.PUBLIC, funding.getVisibility());
+        assertEquals(Visibility.PUBLIC, ((Funding) response.getEntity()).getVisibility());
+        ArgumentCaptor<Funding> submitted = ArgumentCaptor.forClass(Funding.class);
+        verify(profileFundingManager).updateFunding(eq(OTHER_ORCID), submitted.capture(), eq(true));
+        assertNull("keeping the stored visibility is the manager's job, not the delegator's", submitted.getValue().getVisibility());
     }
 
     @Test(expected = NoResultException.class)
     public void testDeleteFunding() {
-        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4442", ScopePathType.READ_LIMITED, ScopePathType.ACTIVITIES_UPDATE);
-        Response response = serviceDelegator.viewFunding("4444-4444-4444-4442", 7L);
+        when(profileFundingManagerReadOnly.getFunding(MY_ORCID, 7L)).thenReturn(funding(7L, Visibility.PUBLIC, clientSource(CLIENT_1)))
+                .thenThrow(new NoResultException());
+
+        Response response = serviceDelegator.viewFunding(MY_ORCID, 7L);
         assertNotNull(response);
         Funding funding = (Funding) response.getEntity();
         assertNotNull(funding);
 
-        response = serviceDelegator.deleteFunding("4444-4444-4444-4442", 7L);
+        response = serviceDelegator.deleteFunding(MY_ORCID, 7L);
         assertNotNull(response);
         assertEquals(Response.Status.NO_CONTENT.getStatusCode(), response.getStatus());
+        verify(orcidSecurityManager).checkClientAccessAndScopes(MY_ORCID, ScopePathType.FUNDING_UPDATE);
+        verify(profileFundingManager).checkSourceAndDelete(MY_ORCID, 7L);
 
-        serviceDelegator.viewFunding("4444-4444-4444-4442", 7L);
+        serviceDelegator.viewFunding(MY_ORCID, 7L);
     }
 
     @Test(expected = WrongSourceException.class)
     public void testDeleteFundingYouAreNotTheSourceOf() {
-        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4446", ScopePathType.READ_LIMITED, ScopePathType.ACTIVITIES_UPDATE);
+        doThrow(new WrongSourceException(Collections.singletonMap("activity", "funding"))).when(profileFundingManager)
+                .checkSourceAndDelete("4444-4444-4444-4446", 5L);
+
         serviceDelegator.deleteFunding("4444-4444-4444-4446", 5L);
         fail();
+    }
+
+    // ------------------------------------------------------------- helpers
+
+    private void assertViewFundingDecorated(long putCode, Visibility visibility, Source source) {
+        Funding funding = funding(putCode, visibility, source);
+        when(profileFundingManagerReadOnly.getFunding(OTHER_ORCID, putCode)).thenReturn(funding);
+
+        Response response = serviceDelegator.viewFunding(OTHER_ORCID, putCode);
+
+        assertNotNull(response);
+        Funding returned = (Funding) response.getEntity();
+        assertNotNull(returned);
+        assertEquals("/4444-4444-4444-4447/funding/" + putCode, returned.getPath());
+        Utils.verifyLastModified(returned.getLastModifiedDate());
+        assertEquals(visibility, returned.getVisibility());
+        verify(orcidSecurityManager).checkAndFilter(OTHER_ORCID, funding, ScopePathType.FUNDING_READ_LIMITED);
+        verify(contributorUtils).filterContributorPrivateData(funding);
+    }
+
+    /**
+     * A stand-in for {@code groupFundings}: one group per summary, which is what
+     * the real grouper produces when no two fundings share an external
+     * identifier. The grouping algorithm itself is the read-only manager's and is
+     * tested there.
+     */
+    private Fundings groupEachSeparately(List<FundingSummary> summaries) {
+        Fundings fundings = new Fundings();
+        for (FundingSummary summary : summaries) {
+            FundingGroup group = new FundingGroup();
+            group.getFundingSummary().add(summary);
+            group.getIdentifiers().getExternalIdentifier().add(externalId("grant_number", String.valueOf(summary.getPutCode())));
+            fundings.getFundingGroup().add(group);
+        }
+        return fundings;
+    }
+
+    @SuppressWarnings("unchecked")
+    private ArgumentCaptor<List<FundingSummary>> summaryListCaptor() {
+        return ArgumentCaptor.forClass(List.class);
+    }
+
+    private Funding funding(Long putCode, Visibility visibility, Source source) {
+        Funding funding = new Funding();
+        funding.setPutCode(putCode);
+        FundingTitle title = new FundingTitle();
+        title.setTitle(new Title("Public Funding # 1"));
+        funding.setTitle(title);
+        funding.setType(FundingType.GRANT);
+        funding.setOrganization(organization());
+        funding.setExternalIdentifiers(externalIds("grant_number", String.valueOf(putCode)));
+        funding.setVisibility(visibility);
+        funding.setSource(source);
+        funding.setCreatedDate(createdDate());
+        funding.setLastModifiedDate(lastModified());
+        return funding;
+    }
+
+    private FundingSummary fundingSummary(Long putCode, Visibility visibility, String titleContent) {
+        FundingSummary summary = new FundingSummary();
+        summary.setPutCode(putCode);
+        FundingTitle title = new FundingTitle();
+        title.setTitle(new Title(titleContent));
+        summary.setTitle(title);
+        summary.setType(FundingType.GRANT);
+        summary.setOrganization(organization());
+        summary.setExternalIdentifiers(externalIds("grant_number", String.valueOf(putCode)));
+        summary.setVisibility(visibility);
+        summary.setSource(clientSource(CLIENT_1));
+        summary.setCreatedDate(createdDate());
+        summary.setLastModifiedDate(lastModified());
+        return summary;
     }
 }

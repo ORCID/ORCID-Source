@@ -20,7 +20,10 @@ import org.orcid.jaxb.model.common_v2.Visibility;
 import org.orcid.jaxb.model.record_v2.FamilyName;
 import org.orcid.jaxb.model.record_v2.GivenNames;
 import org.orcid.jaxb.model.record_v2.Name;
+import org.junit.experimental.categories.Category;
+import org.orcid.test.DatabaseTest;
 
+@Category(DatabaseTest.class)
 public class RecordNameManagerTest extends BaseTest {
     @Resource
     private RecordNameManager recordNameManager;

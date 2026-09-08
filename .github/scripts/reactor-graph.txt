@@ -1,0 +1,16 @@
+# Transitive reactor dependencies, generated from Maven's own dependency:tree.
+# Regenerate:  python3 .github/scripts/reactor_graph.py --graph > .github/scripts/reactor-graph.txt
+# db_stage_drift fails if the parser stops agreeing with this, which is the prompt to
+# re-check against Maven:  mvn -pl <module> dependency:tree -Dincludes=org.orcid
+orcid-test: 
+orcid-utils: 
+orcid-core: orcid-persistence orcid-test orcid-utils
+orcid-web: orcid-api-common orcid-core orcid-persistence orcid-test orcid-utils
+orcid-persistence: orcid-test orcid-utils
+orcid-api-common: orcid-core orcid-persistence orcid-test orcid-utils
+orcid-pub-web: orcid-api-common orcid-core orcid-persistence orcid-test orcid-utils
+orcid-api-web: orcid-api-common orcid-core orcid-persistence orcid-test orcid-utils
+orcid-scheduler-web: orcid-core orcid-persistence orcid-test orcid-utils
+orcid-internal-api: orcid-api-common orcid-core orcid-persistence orcid-test orcid-utils
+orcid-activemq: orcid-test
+orcid-message-listener: orcid-test orcid-utils

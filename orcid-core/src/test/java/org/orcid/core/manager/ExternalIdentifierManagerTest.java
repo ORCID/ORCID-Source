@@ -32,7 +32,10 @@ import org.orcid.persistence.dao.ProfileLastModifiedDao;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.SourceEntity;
 import org.orcid.test.TargetProxyHelper;
+import org.junit.experimental.categories.Category;
+import org.orcid.test.DatabaseTest;
 
+@Category(DatabaseTest.class)
 public class ExternalIdentifierManagerTest extends BaseTest {
     private static final List<String> DATA_FILES = Arrays.asList("/data/SourceClientDetailsEntityData.xml",
             "/data/ProfileEntityData.xml", "/data/RecordNameEntityData.xml");

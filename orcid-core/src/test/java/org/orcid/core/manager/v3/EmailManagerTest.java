@@ -48,7 +48,10 @@ import org.orcid.test.TargetProxyHelper;
 import org.orcid.utils.OrcidStringUtils;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.test.util.ReflectionTestUtils;
+import org.junit.experimental.categories.Category;
+import org.orcid.test.DatabaseTest;
 
+@Category(DatabaseTest.class)
 public class EmailManagerTest extends BaseTest {
     private static final String ORCID = "0000-0000-0000-0003";
     

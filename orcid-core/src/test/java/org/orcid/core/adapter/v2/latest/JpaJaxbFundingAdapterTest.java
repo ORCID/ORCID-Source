@@ -8,7 +8,6 @@ import java.io.InputStream;
 import java.math.BigDecimal;
 import java.util.Date;
 
-import jakarta.annotation.Resource;
 import jakarta.xml.bind.JAXBContext;
 import jakarta.xml.bind.JAXBException;
 import jakarta.xml.bind.Unmarshaller;
@@ -25,22 +24,31 @@ import org.orcid.jaxb.model.record_v2.FundingType;
 import org.orcid.persistence.jpa.entities.EndDateEntity;
 import org.orcid.persistence.jpa.entities.ProfileFundingEntity;
 import org.orcid.persistence.jpa.entities.StartDateEntity;
-import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.orcid.core.utils.DateFieldsOnBaseEntityUtils;
 import org.orcid.utils.DateUtils;
-import org.springframework.test.context.ContextConfiguration;
+import org.junit.Before;
+import org.mockito.junit.MockitoJUnitRunner;
+import org.orcid.core.adapter.mapstruct.impl.JpaJaxbFundingAdapterImpl;
+import org.orcid.core.adapter.MockedMapStructAdapters;
 
 /**
- * 
+ *
  * @author Angel Montenegro
- * 
+ *
  */
-@RunWith(OrcidJUnit4ClassRunner.class)
-@ContextConfiguration(locations = { "classpath:test-orcid-core-context.xml" })
+@RunWith(MockitoJUnitRunner.Silent.class)
 public class JpaJaxbFundingAdapterTest {
 
-    @Resource
+    private final MockedMapStructAdapters adapters = new MockedMapStructAdapters();
+
     private JpaJaxbFundingAdapter jpaJaxbFundingAdapter;
+
+    @Before
+    public void setUpAdapter() throws Exception {
+        // REAL MapStruct mapper: the whole behaviour under test is the mapping configuration,
+        // so a mocked mapper would make every assertion below an assertion about a mock.
+        jpaJaxbFundingAdapter = adapters.get(JpaJaxbFundingAdapterImpl.class);
+    }
 
     @Test
     public void toFundingEntityTest() throws JAXBException {
@@ -86,11 +94,11 @@ public class JpaJaxbFundingAdapterTest {
                 pfe.getExternalIdentifiersJson());
 
         // Check org is null
-        assertNull(pfe.getOrg()); 
-        
+        assertNull(pfe.getOrg());
+
         // Source
-        assertNull(pfe.getSourceId());        
-        assertNull(pfe.getClientSourceId());        
+        assertNull(pfe.getSourceId());
+        assertNull(pfe.getClientSourceId());
         assertNull(pfe.getElementSourceId());
     }
 
@@ -159,12 +167,12 @@ public class JpaJaxbFundingAdapterTest {
         assertEquals(FundingType.SALARY_AWARD, summary.getType());
         assertEquals(Visibility.PRIVATE, summary.getVisibility());
     }
-    
+
     @Test
     public void clearFundingEntityFieldsTest() throws JAXBException {
         Funding f = getFunding(true);
         assertNotNull(f);
-        
+
         ProfileFundingEntity pfe = jpaJaxbFundingAdapter.toProfileFundingEntity(f);
         assertNotNull(pfe);
         assertEquals("common:translated-title", pfe.getTranslatedTitle());
@@ -178,9 +186,9 @@ public class JpaJaxbFundingAdapterTest {
         f.setOrganizationDefinedType(null);
         f.setAmount(null);
         f.setUrl(null);
-        
+
         jpaJaxbFundingAdapter.toProfileFundingEntity(f, pfe);
-        
+
         // Verify values where removed
         assertNotNull(pfe);
         assertNull(pfe.getCurrencyCode());
@@ -189,8 +197,7 @@ public class JpaJaxbFundingAdapterTest {
         assertNull(pfe.getTranslatedTitle());
         assertNull(pfe.getTranslatedTitleLanguageCode());
         assertNull(pfe.getUrl());
-       
-        
+
         // Enums
         assertEquals(Visibility.PRIVATE.name(), pfe.getVisibility());
         assertEquals(FundingType.GRANT.name(), pfe.getType());
@@ -199,7 +206,7 @@ public class JpaJaxbFundingAdapterTest {
         assertEquals(Long.valueOf(0), pfe.getId());
         assertEquals("common:title", pfe.getTitle());
         assertEquals("funding:short-description", pfe.getDescription());
-        
+
         // Dates
         assertEquals(Integer.valueOf(2), pfe.getStartDate().getDay());
         assertEquals(Integer.valueOf(2), pfe.getStartDate().getMonth());
@@ -219,23 +226,21 @@ public class JpaJaxbFundingAdapterTest {
                 pfe.getExternalIdentifiersJson());
 
         // Check org is null
-        assertNull(pfe.getOrg()); 
-        
+        assertNull(pfe.getOrg());
+
         // Source
-        assertNull(pfe.getSourceId());        
-        assertNull(pfe.getClientSourceId());        
-        assertNull(pfe.getElementSourceId()); 
-        
-        
-        
+        assertNull(pfe.getSourceId());
+        assertNull(pfe.getClientSourceId());
+        assertNull(pfe.getElementSourceId());
+
     }
-    
+
     @Test
     public void clearMonthFieldsForFundingDateTest() throws JAXBException {
         Funding f = getFunding(true);
         assertNotNull(f);
         ProfileFundingEntity pfe = jpaJaxbFundingAdapter.toProfileFundingEntity(f);
-        
+
         FuzzyDate startDate = FuzzyDate.valueOf(2021, null, null);
         FuzzyDate endDate = FuzzyDate.valueOf(2022, null, null);
         f.setStartDate(startDate);
@@ -246,9 +251,7 @@ public class JpaJaxbFundingAdapterTest {
         assertNull(pfe.getEndDate().getMonth());
         assertEquals(Integer.valueOf(2022),pfe.getEndDate().getYear());
     }
-    
-    
-    
+
     private Funding getFunding(boolean full) throws JAXBException {
         JAXBContext context = JAXBContext.newInstance(new Class[] { Funding.class });
         Unmarshaller unmarshaller = context.createUnmarshaller();

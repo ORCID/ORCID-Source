@@ -14,9 +14,12 @@ import org.junit.runner.RunWith;
 import org.orcid.persistence.jpa.entities.OrgImportLogEntity;
 import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.springframework.test.context.ContextConfiguration;
+import org.junit.experimental.categories.Category;
+import org.orcid.test.DatabaseTest;
 
 @RunWith(OrcidJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:test-orcid-persistence-context.xml" })
+@Category(DatabaseTest.class)
 public class OrgImportLogDaoTest {
 
     @Resource

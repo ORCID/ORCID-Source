@@ -8,95 +8,52 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Date;
 
-import jakarta.annotation.Resource;
 import jakarta.xml.bind.JAXBContext;
 import jakarta.xml.bind.JAXBException;
 import jakarta.xml.bind.Unmarshaller;
 
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.orcid.core.adapter.MockSourceNameCache;
-import org.orcid.core.manager.ClientDetailsEntityCacheManager;
-import org.orcid.core.manager.ClientDetailsManager;
-import org.orcid.core.manager.SourceNameCacheManager;
-import org.orcid.core.manager.v3.read_only.RecordNameManagerReadOnly;
 import org.orcid.core.utils.DateFieldsOnBaseEntityUtils;
 import org.orcid.utils.DateUtils;
 import org.orcid.jaxb.model.v3.release.common.Visibility;
 import org.orcid.jaxb.model.v3.release.record.ResearchResource;
 import org.orcid.jaxb.model.v3.release.record.summary.ResearchResourceSummary;
-import org.orcid.persistence.dao.RecordNameDao;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.EndDateEntity;
 import org.orcid.persistence.jpa.entities.OrgEntity;
 import org.orcid.persistence.jpa.entities.ResearchResourceEntity;
 import org.orcid.persistence.jpa.entities.ResearchResourceItemEntity;
 import org.orcid.persistence.jpa.entities.StartDateEntity;
-import org.orcid.test.OrcidJUnit4ClassRunner;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.util.ReflectionTestUtils;
+import org.mockito.junit.MockitoJUnitRunner;
+import org.orcid.core.adapter.MockedMapStructAdapters;
+import org.orcid.core.adapter.mapstruct.v3.impl.JpaJaxbResearchResourceAdapterImpl;
 
 /**
- * 
+ *
  * @author Angel Montenegro
- * 
+ *
  */
-@RunWith(OrcidJUnit4ClassRunner.class)
-@ContextConfiguration(locations = { "classpath:test-orcid-core-context.xml" })
-public class JpaJaxbResearchResourceAdapterTest extends MockSourceNameCache {
+@RunWith(MockitoJUnitRunner.Silent.class)
+public class JpaJaxbResearchResourceAdapterTest {
 
-    @Resource(name = "jpaJaxbResearchResourceAdapterV3")
+    private static final String CLIENT_SOURCE_ID = MockedMapStructAdapters.CLIENT_SOURCE_ID;
+
+    private final MockedMapStructAdapters adapters = new MockedMapStructAdapters();
+
     private JpaJaxbResearchResourceAdapter jpaJaxbResearchResourceAdapter;
 
-    @Resource
-    private ClientDetailsEntityCacheManager clientDetailsEntityCacheManager;
-
-    @Resource
-    private SourceNameCacheManager sourceNameCacheManager;
-    
-    @Resource
-    private ClientDetailsManager clientDetailsManager;
-    
-    @Resource
-    private RecordNameDao recordNameDao;
-    
-    @Resource(name = "recordNameManagerReadOnlyV3")
-    private RecordNameManagerReadOnly recordNameManager;
-
-    @Mock
-    private ClientDetailsManager mockClientDetailsManager;
-
-    @Mock
-    private RecordNameDao mockRecordNameDao;
-
-    @Mock
-    private RecordNameManagerReadOnly mockRecordNameManager;
+    @Before
+    public void setUpAdapter() throws Exception {
+        // REAL MapStruct mapper: the whole behaviour under test is the mapping configuration,
+        // so a mocked mapper would make every assertion below an assertion about a mock.
+        jpaJaxbResearchResourceAdapter = adapters.get(JpaJaxbResearchResourceAdapterImpl.class);
+    }
 
     private Date createdDate = DateUtils.convertToDate("2015-06-05T10:15:20");
 
-    @Before
-    public void setUp() {
-        // by default return client details entity with user obo disabled
-        Mockito.when(mockClientDetailsManager.findByClientId(Mockito.anyString())).thenReturn(new ClientDetailsEntity());
-        ReflectionTestUtils.setField(clientDetailsEntityCacheManager, "clientDetailsManager", mockClientDetailsManager);
-
-        Mockito.when(mockRecordNameDao.exists(Mockito.anyString())).thenReturn(true);
-        Mockito.when(mockRecordNameManager.fetchDisplayablePublicName(Mockito.anyString())).thenReturn("test");
-        ReflectionTestUtils.setField(sourceNameCacheManager, "recordNameDao", mockRecordNameDao);
-        ReflectionTestUtils.setField(sourceNameCacheManager, "recordNameManagerReadOnlyV3", mockRecordNameManager);
-    }
-
-    @After
-    public void tearDown() {
-        ReflectionTestUtils.setField(clientDetailsEntityCacheManager, "clientDetailsManager", clientDetailsManager);        
-        ReflectionTestUtils.setField(sourceNameCacheManager, "recordNameDao", recordNameDao);        
-        ReflectionTestUtils.setField(sourceNameCacheManager, "recordNameManagerReadOnlyV3", recordNameManager);   
-    }
-    
     @Test
     public void testEntityToModel() throws JAXBException, IllegalAccessException {
         ResearchResourceEntity e = getResearchResourceEntity();
@@ -131,7 +88,7 @@ public class JpaJaxbResearchResourceAdapterTest extends MockSourceNameCache {
 
         // no user obo
         assertNull(m.getSource().getAssertionOriginOrcid());
-        
+
         assertEquals(1, m.getProposal().getHosts().getOrganization().size());
         assertNotNull(m.getProposal().getHosts().getOrganization().get(0));
         assertNotNull(m.getProposal().getHosts().getOrganization().get(0).getAddress());
@@ -143,7 +100,7 @@ public class JpaJaxbResearchResourceAdapterTest extends MockSourceNameCache {
         // set client source to user obo enabled client
         ClientDetailsEntity userOBOClient = new ClientDetailsEntity();
         userOBOClient.setUserOBOEnabled(true);
-        Mockito.when(mockClientDetailsManager.findByClientId(Mockito.anyString())).thenReturn(userOBOClient);
+        Mockito.when(adapters.clientDetailsEntityCacheManager.retrieve(Mockito.anyString())).thenReturn(userOBOClient);
 
         ResearchResourceEntity e = getResearchResourceEntity();
         ResearchResource m = jpaJaxbResearchResourceAdapter.toModel(e);
@@ -215,7 +172,7 @@ public class JpaJaxbResearchResourceAdapterTest extends MockSourceNameCache {
         assertEquals(
                 "{\"workExternalIdentifier\":[{\"relationship\":\"SELF\",\"url\":null,\"workExternalIdentifierType\":\"RRID\",\"workExternalIdentifierId\":{\"content\":\"rrid:giantLASER\"}},{\"relationship\":\"SELF\",\"url\":null,\"workExternalIdentifierType\":\"DOI\",\"workExternalIdentifierId\":{\"content\":\"https://doi.org/10.123/giantlaser\"}}]}",
                 e.getResourceItems().get(0).getExternalIdentifiersJson());
-      
+
         // item2
         // assertEquals("",e.getResourceItems().get(1).getId());
         assertEquals("Moon Targets", e.getResourceItems().get(1).getResourceName());
@@ -257,7 +214,7 @@ public class JpaJaxbResearchResourceAdapterTest extends MockSourceNameCache {
         // set client source to user obo enabled client
         ClientDetailsEntity userOBOClient = new ClientDetailsEntity();
         userOBOClient.setUserOBOEnabled(true);
-        Mockito.when(mockClientDetailsManager.findByClientId(Mockito.anyString())).thenReturn(userOBOClient);
+        Mockito.when(adapters.clientDetailsEntityCacheManager.retrieve(Mockito.anyString())).thenReturn(userOBOClient);
 
         ResearchResourceSummary m = jpaJaxbResearchResourceAdapter.toSummary(getResearchResourceEntity());
         assertNotNull(m.getCreatedDate());
