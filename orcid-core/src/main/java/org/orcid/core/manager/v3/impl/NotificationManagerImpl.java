@@ -559,13 +559,11 @@ public class NotificationManagerImpl extends ManagerReadOnlyBaseImpl implements 
     }
 
     @Override
-    @Transactional
     public Notification flagAsArchived(String orcid, Long id) throws OrcidNotificationAlreadyReadException {
         return flagAsArchived(orcid, id, true);
     }
 
     @Override
-    @Transactional
     public Notification flagAsArchived(String orcid, Long id, boolean validateForApi) throws OrcidNotificationAlreadyReadException {
         NotificationEntity notificationEntity = notificationDao.findByOricdAndId(orcid, id);
         if (notificationEntity == null) {
@@ -590,7 +588,6 @@ public class NotificationManagerImpl extends ManagerReadOnlyBaseImpl implements 
     }
 
     @Override
-    @Transactional
     public Notification setActionedAndReadDate(String orcid, Long id) {
         NotificationEntity notificationEntity = notificationDao.findByOricdAndId(orcid, id);
         if (notificationEntity == null) {

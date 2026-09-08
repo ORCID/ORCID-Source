@@ -321,7 +321,6 @@ public class EmailManagerImpl extends EmailManagerReadOnlyImpl implements EmailM
     }
 
     @Override
-    @Transactional
     public List<Email> removeEmails(String orcid, List<String> emailsToRemove) {
         if (!orcidSecurityManager.isAdmin()) {
             throw new AccessDeniedException("Admin privileges required to remove emails");
@@ -333,15 +332,19 @@ public class EmailManagerImpl extends EmailManagerReadOnlyImpl implements EmailM
             throw new IllegalArgumentException("Can't mark all user's as deleted");
         }
 
-        emailsToRemove.forEach(email -> emailDao.removeEmail(orcid, email));
+        List<EmailEntity> remainingEmails = transactionTemplate.execute(status -> {
+            emailsToRemove.forEach(email -> emailDao.removeEmail(orcid, email));
+            List<EmailEntity> remaining = emailDao.findByOrcid(orcid, System.currentTimeMillis());
+            ensurePrimaryEmail(orcid, remaining);
+            return remaining;
+        });
 
-        List<EmailEntity> remainingEmails = emailDao.findByOrcid(orcid, System.currentTimeMillis());
-        ensurePrimaryEmail(orcid, remainingEmails);
+        List<Email> result = toEmailList(remainingEmails);
         org.orcid.jaxb.model.v3.release.record.Emails emails = new org.orcid.jaxb.model.v3.release.record.Emails();
-        emails.setEmails(toEmailList(remainingEmails));
+        emails.setEmails(result);
         profileEmailDomainManager.updateEmailDomains(orcid, null, emails);
 
-        return toEmailList(remainingEmails);
+        return result;
     }
 
     private void ensurePrimaryEmail(String orcid, List<EmailEntity> emails) {

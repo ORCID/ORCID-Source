@@ -80,19 +80,16 @@ public class ClientManagerImpl implements ClientManager {
     private ProfileLastModifiedDao profileLastModifiedDao;
 
     @Override
-    @Transactional
     public Client create(Client newClient) throws IllegalArgumentException {
         return create(newClient, false, false);
     }
 
     @Override
-    @Transactional
     public Client createPublicClient(Client newClient) {
         return create(newClient, true, false);
     }
 
     @Override
-    @Transactional
     public Client createWithConfigValues(Client newClient) {
         return create(newClient, false, true);
     }
@@ -198,7 +195,6 @@ public class ClientManagerImpl implements ClientManager {
     }
 
     @Override
-    @Transactional
     public Client edit(Client existingClient, boolean updateConfigValues) {
         if (!clientDetailsDao.exists(existingClient.getId())) {
             throw new IllegalArgumentException("Invalid client id provided: " + existingClient.getId());
