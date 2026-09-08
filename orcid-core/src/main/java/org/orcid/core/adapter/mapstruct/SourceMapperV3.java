@@ -2,6 +2,7 @@ package org.orcid.core.adapter.mapstruct;
 
 import java.util.Map;
 
+import org.mapstruct.Context;
 import org.orcid.core.utils.SourceEntityUtils;
 import org.orcid.jaxb.model.v3.release.common.Source;
 import org.orcid.persistence.jpa.entities.SourceAwareEntity;
@@ -15,20 +16,18 @@ public class SourceMapperV3 {
     }
 
     /**
-     * Single-entity conversion used by MapStruct's implicit "source = ." mapping.
+     * Conversion used by MapStruct's implicit "source = ." mapping.
      */
-    public Source toSource(SourceAwareEntity<?> entity) {
+    public Source toSource(SourceAwareEntity<?> entity, @Context Map<String, Source> sourceMap) {
         if (entity == null) {
             return null;
         }
-        return sourceEntityUtils.mergeAndPopulateSource(null, entity);
-    }
-
-    public Source toSource(SourceAwareEntity<?> entity, Map<String, Source> sourceMap, SourceEntityUtils sourceEntityUtils) {
-        Source source = null;
         if (sourceMap != null) {
-            source = sourceMap.get(SourceEntityUtils.getSourceKey(entity));
+            Source source = sourceMap.get(SourceEntityUtils.getSourceKey(entity));
+            if (source != null) {
+                return source;
+            }
         }
-        return sourceEntityUtils.mergeAndPopulateSource(source, entity);
+        return sourceEntityUtils.mergeAndPopulateSource(null, entity);
     }
 }

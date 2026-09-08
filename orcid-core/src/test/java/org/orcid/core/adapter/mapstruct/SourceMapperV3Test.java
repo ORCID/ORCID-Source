@@ -28,9 +28,9 @@ public class SourceMapperV3Test {
         SourceEntityUtils sourceEntityUtils = mock(SourceEntityUtils.class);
         when(sourceEntityUtils.mergeAndPopulateSource(contextSource, entity)).thenReturn(merged);
 
-        Source result = new SourceMapperV3(sourceEntityUtils).toSource(entity, sourceMap, sourceEntityUtils);
+        Source result = new SourceMapperV3(sourceEntityUtils).toSource(entity, sourceMap);
 
-        assertSame(merged, result);
+        assertSame(contextSource, result);
     }
 
     @Test
@@ -42,7 +42,7 @@ public class SourceMapperV3Test {
         SourceEntityUtils sourceEntityUtils = mock(SourceEntityUtils.class);
         when(sourceEntityUtils.mergeAndPopulateSource(null, entity)).thenReturn(merged);
 
-        Source result = new SourceMapperV3(sourceEntityUtils).toSource(entity, null, sourceEntityUtils);
+        Source result = new SourceMapperV3(sourceEntityUtils).toSource(entity, null);
 
         assertEquals(merged, result);
     }
