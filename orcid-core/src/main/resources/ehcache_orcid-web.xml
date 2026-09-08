@@ -261,7 +261,7 @@
     </ehcache:cache>
     
     <ehcache:cache-template name="defaultTemplate">
-        <ehcache:value-type copier="org.ehcache.impl.copy.SerializingCopier"/>
+        <ehcache:value-type copier="org.ehcache.impl.copy.IdentityCopier"/>
         <ehcache:expiry>
             <ehcache:tti unit="minutes">5</ehcache:tti>
         </ehcache:expiry>

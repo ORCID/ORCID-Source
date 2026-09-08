@@ -70,6 +70,7 @@
 		<property name="timeToIdleSeconds" value="${org.orcid.core.cache.source_name.timeToIdleSeconds:1800}" />
         <property name="maxMegaBytesInMemory" value="${org.orcid.core.cache.source_name.maxMegaBytesInMemory:16}" />
         <property name="maxMegaBytesOnDisk" value="${org.orcid.core.cache.source_name.maxMegaBytesOnDisk:128}" />
+        <property name="copyValues" value="false" />
 	</bean>	
 	
 	<bean id="clientDetailsEntityCache" class="org.orcid.core.utils.OrcidEhCacheFactoryBean">
@@ -78,6 +79,7 @@
 		<property name="timeToIdleSeconds" value="${org.orcid.core.cache.client_details.timeToIdleSeconds:36000}" />
         <property name="maxMegaBytesInMemory" value="${org.orcid.core.cache.client_details.maxMegaBytesInMemory:16}" />
         <property name="maxMegaBytesOnDisk" value="${org.orcid.core.cache.client_details.maxMegaBytesOnDisk:128}" />
+        <property name="copyValues" value="false" />
 	</bean>
 
 	<bean id="clientDetailsEntityIdPCache" class="org.orcid.core.utils.OrcidEhCacheFactoryBean">
@@ -86,6 +88,7 @@
 		<property name="timeToIdleSeconds" value="${org.orcid.core.cache.client_details.timeToIdleSeconds:36000}" />
         <property name="maxMegaBytesInMemory" value="${org.orcid.core.cache.client_details.maxMegaBytesInMemory:16}" />
         <property name="maxMegaBytesOnDisk" value="${org.orcid.core.cache.client_details.maxMegaBytesOnDisk:128}" />
+        <property name="copyValues" value="false" />
 	</bean>		       
 
 	<!-- Short-lived cache for the client-details freshness (last-modified) check, to collapse
@@ -96,6 +99,7 @@
 		<property name="timeToIdleSeconds" value="${org.orcid.core.cache.client_details_last_modified.timeToIdleSeconds:3}" />
         <property name="maxMegaBytesInMemory" value="${org.orcid.core.cache.client_details_last_modified.maxMegaBytesInMemory:4}" />
         <property name="maxMegaBytesOnDisk" value="${org.orcid.core.cache.client_details_last_modified.maxMegaBytesOnDisk:0}" />
+        <property name="copyValues" value="false" />
 	</bean>
     
     <bean id="identityProviderNameCache" class="org.orcid.core.utils.OrcidEhCacheFactoryBean">
