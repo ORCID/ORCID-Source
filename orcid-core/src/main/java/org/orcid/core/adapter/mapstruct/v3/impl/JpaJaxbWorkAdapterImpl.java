@@ -1,5 +1,6 @@
 package org.orcid.core.adapter.mapstruct.v3.impl;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -20,6 +21,7 @@ import org.orcid.core.adapter.mapstruct.UrlMapperV3;
 import org.orcid.core.adapter.mapstruct.VisibilityMapperV3;
 import org.orcid.core.adapter.mapstruct.WorkContributorsMapperV3;
 import org.orcid.core.adapter.v3.JpaJaxbWorkAdapter;
+import org.orcid.core.utils.SourceEntityUtils;
 import org.orcid.jaxb.model.common.WorkType;
 import org.orcid.jaxb.model.v3.release.common.Day;
 import org.orcid.jaxb.model.v3.release.common.Month;
@@ -345,7 +347,23 @@ public abstract class JpaJaxbWorkAdapterImpl implements JpaJaxbWorkAdapter {
     public abstract List<WorkSummary> toWorkSummaryFromMinimized(Collection<MinimizedWorkEntity> workEntities);
 
     @Override
-    public abstract List<WorkSummary> toWorkSummaryFromMinimized(Collection<MinimizedWorkEntity> workEntities, @Context Map<String, Source> sourceMap);
+    public List<WorkSummary> toWorkSummaryFromMinimized(Collection<MinimizedWorkEntity> workEntities, Map<String, Source> sourceMap) {
+        if (workEntities == null) {
+            return null;
+        }
+        List<WorkSummary> list = new ArrayList<>(workEntities.size());
+        for (MinimizedWorkEntity minimizedWorkEntity : workEntities) {
+            WorkSummary summary = toWorkSummary(minimizedWorkEntity);
+            if (sourceMap != null) {
+                Source source = sourceMap.get(SourceEntityUtils.getSourceKey(minimizedWorkEntity));
+                if (source != null) {
+                    summary.setSource(source);
+                }
+            }
+            list.add(summary);
+        }
+        return list;
+    }
 
     @Override
     public abstract List<WorkSummaryExtended> toWorkSummaryExtendedFromMinimized(Collection<MinimizedExtendedWorkEntity> workEntities);
