@@ -133,6 +133,7 @@ public class IdentifierTypeManagerTest extends BaseTest {
         assertTrue(last.getTime() < id.getLastModified().getTime()); 
     }
     
+    @Test
     public void testPrefixSearch(){
         List<IdentifierType> types = idTypeMan.queryByPrefix("do", null);
         boolean foundDOI = false;
@@ -149,6 +150,22 @@ public class IdentifierTypeManagerTest extends BaseTest {
         assertTrue(foundDOI);
         assertTrue(foundASIN);
         assertFalse(foundScopus);
+    }
+
+    @Test
+    public void testFetchDefaultIdentifierTypes() {
+        List<IdentifierType> defaults = idTypeMan.fetchDefaultIdentifierTypes(null);
+        assertNotNull(defaults);
+        assertFalse(defaults.isEmpty());
+    }
+
+    @Test
+    public void testLocaleCacheKeyConsistency() {
+        Map<String, IdentifierType> mapNull = idTypeMan.fetchIdentifierTypesByAPITypeName(null);
+        Map<String, IdentifierType> mapEnglish = idTypeMan.fetchIdentifierTypesByAPITypeName(Locale.ENGLISH);
+        Map<String, IdentifierType> mapEn = idTypeMan.fetchIdentifierTypesByAPITypeName(new Locale("en"));
+        assertEquals(mapNull.size(), mapEnglish.size());
+        assertEquals(mapEnglish.size(), mapEn.size());
     }
     
     private IdentifierType createIdentifierType(int seed){

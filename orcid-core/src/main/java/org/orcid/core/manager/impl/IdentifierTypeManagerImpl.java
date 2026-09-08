@@ -25,8 +25,10 @@ import org.orcid.persistence.dao.IdentifierTypeDao;
 import org.orcid.persistence.jpa.entities.IdentifierTypeEntity;
 import org.orcid.persistence.jpa.entities.SourceEntity;
 import org.orcid.pojo.IdentifierType;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.context.annotation.Lazy;
 
 import com.google.common.collect.ImmutableList.Builder;
 
@@ -65,13 +67,21 @@ public class IdentifierTypeManagerImpl implements IdentifierTypeManager {
     @Resource
     private LocaleManager localeManager;
 
+    @Autowired
+    @Lazy
+    private IdentifierTypeManager self;
+
     private ExternalIdentifierTypeMapper externalIdentifierTypeConverter = ExternalIdentifierTypeMapper.INSTANCE;    
     
+    public void setSelf(IdentifierTypeManager self) {
+        this.self = self;
+    }
+
     /**
      * Null locale will result in Locale.ENGLISH
      */
     @Override
-    @Cacheable("identifier-types")
+    @Cacheable(value = "identifier-types", key = "(#name == null ? 'none' : #name).concat('-').concat(#loc != null ? #loc.language : 'en')")
     public IdentifierType fetchIdentifierTypeByDatabaseName(String name, Locale loc) {
         loc = (loc == null )? Locale.ENGLISH : loc;
         IdentifierTypeEntity entity = idTypeDao.getEntityByName(name);
@@ -86,7 +96,7 @@ public class IdentifierTypeManagerImpl implements IdentifierTypeManager {
      * 
      */
     @Override
-    @Cacheable("identifier-types-map")
+    @Cacheable(value = "identifier-types-map", key = "#loc != null ? #loc.language : 'en'")
     public Map<String, IdentifierType> fetchIdentifierTypesByAPITypeName(Locale loc) {
         loc = (loc == null )? Locale.ENGLISH : loc;
         List<IdentifierTypeEntity> entities = idTypeDao.getEntities();
@@ -100,7 +110,7 @@ public class IdentifierTypeManagerImpl implements IdentifierTypeManager {
     }
 
     @Override
-    @CacheEvict(value = { "identifier-types", "identifier-types-map" }, allEntries = true)
+    @CacheEvict(value = { "identifier-types", "identifier-types-map", "identifier-types-map-top", "identifier-types-map-prefix" }, allEntries = true)
     public IdentifierType createIdentifierType(IdentifierType id) {
         IdentifierTypeEntity entity = identifierTypeMapper.fromPojo(id);
         SourceEntity source = sourceManager.retrieveSourceEntity();
@@ -111,7 +121,7 @@ public class IdentifierTypeManagerImpl implements IdentifierTypeManager {
     }
 
     @Override
-    @CacheEvict(value = { "identifier-types", "identifier-types-map" }, allEntries = true)
+    @CacheEvict(value = { "identifier-types", "identifier-types-map", "identifier-types-map-top", "identifier-types-map-prefix" }, allEntries = true)
     public IdentifierType updateIdentifierType(IdentifierType id) {
         IdentifierTypeEntity entity = idTypeDao.getEntityByName(externalIdentifierTypeConverter.convertTo(id.getName()));
         SourceEntity sourceEntity = new SourceEntity();
@@ -136,9 +146,9 @@ public class IdentifierTypeManagerImpl implements IdentifierTypeManager {
     }
 
     @Override
-    @Cacheable("identifier-types-map-top")
+    @Cacheable(value = "identifier-types-map-top", key = "#loc != null ? #loc.language : 'en'")
     public List<IdentifierType> fetchDefaultIdentifierTypes(Locale loc) {
-        Map<String, IdentifierType> all = this.fetchIdentifierTypesByAPITypeName(loc);
+        Map<String, IdentifierType> all = (self != null ? self : this).fetchIdentifierTypesByAPITypeName(loc);
         SortedMap<String,IdentifierType> sorted = new TreeMap<String,IdentifierType>();
         for (String s: all.keySet())
             sorted.put(all.get(s).getDescription().toLowerCase(), all.get(s));
@@ -146,10 +156,10 @@ public class IdentifierTypeManagerImpl implements IdentifierTypeManager {
     }
 
     @Override
-    @Cacheable("identifier-types-map-prefix")
+    @Cacheable(value = "identifier-types-map-prefix", key = "(#query == null ? 'none' : #query).concat('-').concat(#loc != null ? #loc.language : 'en')")
     public List<IdentifierType> queryByPrefix(String query, Locale loc) {
         Map<String,IdentifierType> results = new HashMap<String,IdentifierType>();
-        Map<String, IdentifierType>types = fetchIdentifierTypesByAPITypeName(loc);
+        Map<String, IdentifierType>types = (self != null ? self : this).fetchIdentifierTypesByAPITypeName(loc);
         
         //stick them in a trie so we can do a deep prefix search
         PatriciaTrie<Set<IdentifierType>> trie = new PatriciaTrie<Set<IdentifierType>>();
