@@ -5,6 +5,9 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.security.GeneralSecurityException;
+import java.security.SecureRandom;
+import java.security.cert.X509Certificate;
 import java.time.Duration;
 import java.util.Locale;
 import java.util.Set;
@@ -14,6 +17,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLParameters;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.X509TrustManager;
 
 /**
  * Fetches and caches the Angular shell (index.html) from the orcid-web-frontend
@@ -32,13 +40,14 @@ public class StaticShellService {
 
     private static final String DEFAULT_LOCALE_DIR = "en";
 
-    @Value("${org.orcid.frontend.web.frontendShellBaseUri:http://localhost:8080/orcid-web-frontend}")
+    @Value("${org.orcid.frontend.web.frontendShellBaseUri:http://localhost:4200}")
     private String frontendShellBaseUri;
 
     @Value("${org.orcid.frontend.web.frontendShellCacheTtlMinutes:5}")
     private int frontendShellCacheTtlMinutes;
 
-    private final HttpClient httpClient = HttpClient.newBuilder().connectTimeout(Duration.ofSeconds(5)).followRedirects(HttpClient.Redirect.NEVER).build();
+    private final HttpClient httpClient = HttpClient.newBuilder().connectTimeout(Duration.ofSeconds(5)).followRedirects(HttpClient.Redirect.NEVER).sslContext(createInsecureSslContext())
+            .sslParameters(createInsecureSslParameters()).build();
 
     private final ConcurrentHashMap<String, CachedShell> cache = new ConcurrentHashMap<>();
 
@@ -81,7 +90,7 @@ public class StaticShellService {
     }
 
     private String fetchShell(String localeDir) throws IOException, InterruptedException {
-        URI uri = URI.create(frontendShellBaseUri + "/" + localeDir + "/index.html");
+        URI uri = URI.create(frontendShellBaseUri + "/index.html");
         HttpRequest request = HttpRequest.newBuilder(uri).timeout(Duration.ofSeconds(10)).GET().build();
         HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
         if (response.statusCode() != 200) {
@@ -103,4 +112,42 @@ public class StaticShellService {
             return System.currentTimeMillis() - fetchedAt >= Duration.ofMinutes(ttlMinutes).toMillis();
         }
     }
+
+    /*
+    *
+    *
+    * DO WE REALLY NEED THIS CLASS?
+    *
+    *
+    * */
+    private SSLContext createInsecureSslContext() {
+        TrustManager[] trustAllCerts = new TrustManager[] { new X509TrustManager() {
+            @Override
+            public void checkClientTrusted(X509Certificate[] chain, String authType) {
+            }
+
+            @Override
+            public void checkServerTrusted(X509Certificate[] chain, String authType) {
+            }
+
+            @Override
+            public X509Certificate[] getAcceptedIssuers() {
+                return new X509Certificate[0];
+            }
+        } };
+        try {
+            SSLContext sslContext = SSLContext.getInstance("TLS");
+            sslContext.init(null, trustAllCerts, new SecureRandom());
+            return sslContext;
+        } catch (GeneralSecurityException e) {
+            throw new IllegalStateException("Unable to initialize insecure SSL context for HTTP POST requests", e);
+        }
+    }
+
+    private SSLParameters createInsecureSslParameters() {
+        SSLParameters sslParameters = new SSLParameters();
+        sslParameters.setEndpointIdentificationAlgorithm(null);
+        return sslParameters;
+    }
+
 }

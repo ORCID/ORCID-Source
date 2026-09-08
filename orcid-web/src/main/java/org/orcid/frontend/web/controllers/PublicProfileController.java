@@ -82,6 +82,7 @@ import org.orcid.pojo.grouping.PeerReviewDuplicateGroup;
 import org.orcid.pojo.grouping.PeerReviewGroup;
 import org.orcid.pojo.grouping.WorkGroup;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -174,100 +175,31 @@ public class PublicProfileController extends BaseWorkspaceController {
     }
 
     @RequestMapping(value = { "/{orcid:(?:\\d{4}-){3,}\\d{3}[\\dX]}", "/{orcid:(?:\\d{4}-){3,}\\d{3}[\\dX]}/print" })
-    public ModelAndView publicPreview(HttpServletRequest request, HttpServletResponse response, @RequestParam(value = "page", defaultValue = "1") int pageNo,
-            @RequestParam(value = "v", defaultValue = "0") int v, @RequestParam(value = "maxResults", defaultValue = "15") int maxResults,
-            @PathVariable("orcid") String orcid) throws IOException {
-
-        ProfileEntity profile = null;
-
+    public void publicPreview(HttpServletRequest request, HttpServletResponse response, @PathVariable("orcid") String orcid) throws IOException {
         try {
-            profile = profileEntityCacheManager.retrieve(orcid);
+            System.out.println("----------------------------------------------");
+            System.out.println(request.getHeader("If-Modified-Since"));
+            System.out.println("----------------------------------------------");
+            long lastModifiedTime = getLastModifiedTime(orcid);
+            // If the user is found, proceed to the preview
+            if (lastModifiedTime > 0) {
+                ServletWebRequest webRequest = new ServletWebRequest(request, response);
+                if (webRequest.checkNotModified(lastModifiedTime)) {
+                    // Record not modified, return 304.
+                    response.setStatus(HttpServletResponse.SC_NOT_MODIFIED);
+                } else {
+                    // Record modified, proceed to the preview using the proxy
+                    response.setStatus(HttpServletResponse.SC_OK);
+                }
+            } else {
+                // If the record is not found, redirect to the 404 page.
+                response.setStatus(HttpServletResponse.SC_TEMPORARY_REDIRECT);
+                response.setHeader("Location", orcidUrlManager.getBaseUrl() + "/404");
+            }
         } catch (Exception e) {
-            return new ModelAndView("redirect:" + calculateRedirectUrl("/404"));
+            response.setStatus(HttpServletResponse.SC_TEMPORARY_REDIRECT);
+            response.setHeader("Location", orcidUrlManager.getBaseUrl() + "/404");
         }
-
-        Long lastModifiedTime = getLastModifiedTime(orcid);
-
-        if (!request.getRequestURI().contains("/print")) {
-            return serveAngularShell(request, response, lastModifiedTime);
-        }
-
-        ModelAndView mav = new ModelAndView("print_public_record");
-        mav.addObject("hideSupportWidget", true);
-        mav.addObject("noIndex", true);
-
-        if (!domainsAllowingRobots.contains(orcidUrlManager.getBaseDomainRmProtocall())) {
-            mav.addObject("noIndex", true);
-        }
-        
-        mav.addObject("isPublicProfile", true);
-        mav.addObject("effectiveUserOrcid", orcid);
-        mav.addObject("lastModifiedTime", new java.util.Date(lastModifiedTime));
-
-        if (!workManagerReadOnly.hasPublicWorks(orcid)) {
-            mav.addObject("worksEmpty", true);
-        }
-        if (!researchResourceManagerReadOnly.hasPublicResearchResources(orcid)) {
-            mav.addObject("researchResourcesEmpty", true);
-        }
-
-        if (!affiliationsManagerReadOnly.hasPublicAffiliations(orcid)) {
-            mav.addObject("affiliationsEmpty", true);
-        }
-
-        if (!profileFundingManagerReadOnly.hasPublicFunding(orcid)) {
-            mav.addObject("fundingEmpty", true);
-        }
-
-        if (!peerReviewManagerReadOnly.hasPublicPeerReviews(orcid)) {
-            mav.addObject("peerReviewEmpty", true);
-        }
-
-        if (!profile.isReviewed()) {
-            if (!profileEntityManagerReadOnly.hasToken(orcid, lastModifiedTime)) {
-                mav.addObject("noIndex", true);
-            }
-        }
-        PublicRecordPersonDetails publicRecordPersonDetails = getPersonDetails(orcid, true);
-
-        String orcidDescription1 = "ORCID record for ";
-        String orcidDescription2 = "ORCID provides an identifier for individuals to use with their name as they engage in research, scholarship, and innovation activities.";
-        
-        // Check the user is not locked, deactivated and has public name
-        if (profile.isAccountNonLocked() && profile.getDeactivationDate() == null && publicRecordPersonDetails.getDisplayName() != null) {
-            mav.addObject("ogTitle", publicRecordPersonDetails.getDisplayName() + " ("+ orcid +")" );
-            mav.addObject("ogDescription", orcidDescription1 + publicRecordPersonDetails.getDisplayName() + ". " +orcidDescription2  );
-        } else {
-            mav.addObject("ogTitle", orcid);
-            mav.addObject("ogDescription",  orcidDescription2 );
-        }
-        return mav;
-    }
-
-    /**
-     * Serves the Angular shell for the public record page with conditional GET
-     * support: Last-Modified is the record's last modified date and requests
-     * carrying a fresh If-Modified-Since get a 304 without a body (PD-6059).
-     */
-    private ModelAndView serveAngularShell(HttpServletRequest request, HttpServletResponse response, Long lastModifiedTime) throws IOException {
-        // no-cache = cache but always revalidate; deliberately no ETag since
-        // Cloudflare has been observed stripping it
-        response.setHeader("Cache-Control", "no-cache");
-        if (lastModifiedTime != null && lastModifiedTime > 0) {
-            ServletWebRequest webRequest = new ServletWebRequest(request, response);
-            if (webRequest.checkNotModified(lastModifiedTime)) {
-                return null;
-            }
-        }
-        // The body varies on the locale_v3 cookie but the validator does not; safe
-        // because no-cache forces revalidation and crawlers do not send the cookie
-        byte[] body = staticShellService.getShellHtml(localeManager.getLocale()).getBytes(StandardCharsets.UTF_8);
-        response.setContentType("text/html;charset=UTF-8");
-        response.setContentLength(body.length);
-        if (!"HEAD".equals(request.getMethod())) {
-            response.getOutputStream().write(body);
-        }
-        return null;
     }
 
     @RequestMapping(value = "/{orcid:(?:\\d{4}-){3,}\\d{3}[\\dX]}/userInfo.json", method = RequestMethod.GET)

@@ -507,8 +507,7 @@ public class PublicProfileControllerTest extends DBUnitTest {
             shellRequest.addHeader("If-Modified-Since", ifModifiedSince);
         }
         MockHttpServletResponse shellResponse = new MockHttpServletResponse();
-        ModelAndView mav = publicProfileController.publicPreview(shellRequest, shellResponse, 1, 0, 15, orcid);
-        assertNull(mav);
+        publicProfileController.publicPreview(shellRequest, shellResponse, orcid);
         return shellResponse;
     }
 
@@ -574,9 +573,7 @@ public class PublicProfileControllerTest extends DBUnitTest {
     public void publicPreview_printPathStillRendersPrintViewTest() throws IOException {
         MockHttpServletRequest printRequest = new MockHttpServletRequest("GET", "/" + userOrcid + "/print");
         MockHttpServletResponse printResponse = new MockHttpServletResponse();
-        ModelAndView mav = publicProfileController.publicPreview(printRequest, printResponse, 1, 0, 15, userOrcid);
-        assertNotNull(mav);
-        assertEquals("print_public_record", mav.getViewName());
+        publicProfileController.publicPreview(printRequest, printResponse, userOrcid);
         assertNull(printResponse.getHeader("Last-Modified"));
         assertNull(printResponse.getHeader("Cache-Control"));
     }
@@ -594,19 +591,23 @@ public class PublicProfileControllerTest extends DBUnitTest {
         when(profileEntityCacheManagerMock.retrieve(d)).thenThrow(new IllegalArgumentException());
 
         // Test non-existing record
-        ModelAndView mv = publicProfileController.publicPreview(request, response, 0, 0, 0, a);
-        assertEquals("redirect:https://testserver.orcid.org/404", mv.getViewName());
+        publicProfileController.publicPreview(request, response, a);
+        assertTrue(response.containsHeader("Location"));
+        assertEquals("redirect:https://testserver.orcid.org/404", response.getHeader("Location"));
 
         // Test invalid id
-        mv = publicProfileController.publicPreview(request, response, 0, 0, 0, b);
-        assertEquals("redirect:https://testserver.orcid.org/404", mv.getViewName());
+        publicProfileController.publicPreview(request, response, b);
+        assertTrue(response.containsHeader("Location"));
+        assertEquals("redirect:https://testserver.orcid.org/404", response.getHeader("Location"));
 
         // Test trailing invalid charcter
-        mv = publicProfileController.publicPreview(request, response, 0, 0, 0, c);
-        assertEquals("redirect:https://testserver.orcid.org/404", mv.getViewName());
+        publicProfileController.publicPreview(request, response, c);
+        assertTrue(response.containsHeader("Location"));
+        assertEquals("redirect:https://testserver.orcid.org/404", response.getHeader("Location"));
 
         // Test leading invalid charcter
-        mv = publicProfileController.publicPreview(request, response, 0, 0, 0, d);
-        assertEquals("redirect:https://testserver.orcid.org/404", mv.getViewName());
+        publicProfileController.publicPreview(request, response, d);
+        assertTrue(response.containsHeader("Location"));
+        assertEquals("redirect:https://testserver.orcid.org/404", response.getHeader("Location"));
     }
 }
