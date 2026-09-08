@@ -116,11 +116,10 @@ public class AddressManagerImpl extends AddressManagerReadOnlyImpl implements Ad
         orcidSecurityManager.checkSourceAndThrow(entity);
 
         try {
-            addressDao.remove(entity);
+            return addressDao.deleteAddress(orcid, putCode);
         } catch (Exception e) {
             return false;
         }
-        return true;
     }
 
     private boolean isDuplicated(AddressEntity existing, Address address, Source activeSource) {
