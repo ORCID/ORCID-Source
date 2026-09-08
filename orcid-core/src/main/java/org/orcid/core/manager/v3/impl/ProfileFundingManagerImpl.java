@@ -230,7 +230,6 @@ public class ProfileFundingManagerImpl extends ProfileFundingManagerReadOnlyImpl
      * @return true if the funding was deleted, false otherwise
      */
     @Override
-    @Transactional
     public boolean checkSourceAndDelete(String orcid, Long fundingId) {
         ProfileFundingEntity pfe = profileFundingDao.getProfileFunding(orcid, fundingId);
         orcidSecurityManager.checkSourceAndThrow(pfe);

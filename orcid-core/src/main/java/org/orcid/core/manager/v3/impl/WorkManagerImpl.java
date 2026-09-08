@@ -60,7 +60,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
 import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
 import org.orcid.core.adapter.mapstruct.ContributorsRolesAndSequencesMapperV3;
@@ -141,7 +140,6 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
      *            The new visibility value for the profile work relationship
      * @return true if the relationship was updated
      */
-    @Transactional
     public boolean updateVisibilities(String orcid, List<Long> workIds, Visibility visibility) {
         boolean result = workDao.updateVisibilities(orcid, workIds, visibility.name());
 
@@ -166,13 +164,11 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
      *            The client orcid
      * @return true if the work was deleted
      */
-    @Transactional
     public boolean removeWorks(String clientOrcid, List<Long> workIds) {
         return workDao.removeWorks(clientOrcid, workIds);
     }
 
     @Override
-    @Transactional
     public void removeAllWorks(String orcid) {
         workDao.removeWorks(orcid);
     }
@@ -186,7 +182,6 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
      *            The work id
      * @return true if the work index was correctly set
      */
-    @Transactional
     public boolean updateToMaxDisplay(String orcid, Long workId) {
         return workDao.updateToMaxDisplay(orcid, workId);
     }
@@ -509,7 +504,6 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
     }
 
     @Override
-    @Transactional
     public void createNewWorkGroup(List<Long> workIds, String orcid) throws MissingGroupableExternalIDException {
         List<MinimizedWorkEntity> works = workEntityCacheManager.retrieveMinimizedWorks(orcid, workIds, getLastModified(orcid));
         ExternalIDs allExternalIDs = new ExternalIDs();
@@ -548,16 +542,26 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
 
         String externalIDsJson = jsonWorkExternalIdentifiersMapperV3.convertTo(allExternalIDs);
         if (!userVersions.isEmpty()) {
-            for (MinimizedWorkEntity userVersion : userVersions) {
-                WorkEntity userVersionFullEntity = workDao.getWork(orcid, userVersion.getId());
-                userVersionFullEntity.setExternalIdentifiersJson(externalIDsJson);
-                workDao.merge(userVersionFullEntity);
-            }
+            transactionTemplate.execute(new TransactionCallbackWithoutResult() {
+                @Override
+                protected void doInTransactionWithoutResult(TransactionStatus status) {
+                    for (MinimizedWorkEntity userVersion : userVersions) {
+                        WorkEntity userVersionFullEntity = workDao.getWork(orcid, userVersion.getId());
+                        userVersionFullEntity.setExternalIdentifiersJson(externalIDsJson);
+                        workDao.merge(userVersionFullEntity);
+                    }
+                }
+            });
         } else {
             WorkEntity allPreferredMetadata = createCopyOfUserPreferredWork(userPreferred);
             allPreferredMetadata.setExternalIdentifiersJson(externalIDsJson);
             allPreferredMetadata.setFeaturedDisplayIndex(0);
-            workDao.persist(allPreferredMetadata);
+            transactionTemplate.execute(new TransactionCallbackWithoutResult() {
+                @Override
+                protected void doInTransactionWithoutResult(TransactionStatus status) {
+                    workDao.persist(allPreferredMetadata);
+                }
+            });
         }
     }
 
@@ -655,7 +659,6 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
     }
 
     @Override
-    @Transactional
     public boolean updateFeaturedWorks(String orcid, Map<Long, Integer> featuredDisplayIndexMap) {
         boolean isPublic = workDao.isPublic(orcid, new ArrayList<>(featuredDisplayIndexMap.keySet()));
         boolean result = true;

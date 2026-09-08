@@ -31,7 +31,6 @@ import org.orcid.pojo.RemoteUser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.transaction.annotation.Transactional;
 
 public class InstitutionalSignInManagerImpl implements InstitutionalSignInManager {
 
@@ -72,7 +71,6 @@ public class InstitutionalSignInManagerImpl implements InstitutionalSignInManage
     }
 
     @Override
-    @Transactional
     public void createUserConnectionAndNotify(String idType, String remoteUserId, String displayName, String providerId, String userOrcid, Map<String, String> headers)
             throws UnsupportedEncodingException {
         UserconnectionEntity userConnectionEntity = userConnectionDao.findByProviderIdAndProviderUserIdAndIdType(remoteUserId, providerId, idType);

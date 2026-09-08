@@ -219,7 +219,6 @@ public class NotificationManagerImpl extends ManagerReadOnlyBaseImpl implements 
     }
 
     @Override
-    @Transactional
     public void sendNotificationToAddedDelegate(String userGrantingPermission, String userReceivingPermission) {
         ProfileEntity delegateProfileEntity = profileEntityCacheManager.retrieve(userReceivingPermission);
 
