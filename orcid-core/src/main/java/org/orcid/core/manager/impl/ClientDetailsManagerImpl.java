@@ -104,14 +104,12 @@ public class ClientDetailsManagerImpl extends ClientDetailsManagerReadOnlyImpl i
     }   
 
     @Override
-    @Transactional
     public void addClientRedirectUri(String clientId, String uri) {
         clientRedirectDao.addClientRedirectUri(clientId, uri);
         clientDetailsDao.updateLastModified(clientId);
     }
     
     @Override
-    @Transactional
     public void addClientRedirectUri(String clientId, String uri, RedirectUriType uriType, ScopePathType activitiesUpdate) {
         clientRedirectDao.addClientRedirectUri(clientId, uri,uriType.value(),activitiesUpdate.value());
         clientDetailsDao.updateLastModified(clientId);
@@ -210,7 +208,6 @@ public class ClientDetailsManagerImpl extends ClientDetailsManagerReadOnlyImpl i
     }    
 
     @Override
-    @Transactional
     public ClientDetailsEntity merge(ClientDetailsEntity clientDetails) {
         ClientDetailsEntity result = clientDetailsDao.merge(clientDetails);
         clientDetailsDao.updateLastModified(result.getId());
@@ -332,7 +329,6 @@ public class ClientDetailsManagerImpl extends ClientDetailsManagerReadOnlyImpl i
     }
 
     @Override
-    @Transactional
     public void addScopesToClient(Set<String> scopes, ClientDetailsEntity clientDetails) {
         for (String scope : scopes) {
             if (!clientDetails.getScope().contains(scope)) {
@@ -342,7 +338,6 @@ public class ClientDetailsManagerImpl extends ClientDetailsManagerReadOnlyImpl i
     }
     
     @Override
-    @Transactional
     public void addAuthorizedGrantTypeToClient(Set<String> types, ClientDetailsEntity clientDetails) {
         for (String type : types) {
             if (!clientDetails.getAuthorizedGrantTypes().contains(type)) {

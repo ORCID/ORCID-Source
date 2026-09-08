@@ -6,7 +6,6 @@ import org.orcid.core.manager.v3.read_only.WorkManagerReadOnly;
 import org.orcid.pojo.WorksExtended;
 
 import jakarta.annotation.Resource;
-import jakarta.transaction.Transactional;
 
 public class GroupedWorksExtendedRetriever implements Retriever<OrcidString, WorksExtended> {
 
@@ -14,7 +13,6 @@ public class GroupedWorksExtendedRetriever implements Retriever<OrcidString, Wor
     private WorkManagerReadOnly workManagerReadOnly;
 
     @Override
-    @Transactional
     public WorksExtended retrieve(OrcidString key) {
         return workManagerReadOnly.getWorksExtendedAsGroups(key.getOrcid());
     }
