@@ -258,25 +258,29 @@ public class ClientManagerImpl implements ClientManager {
     }
 
     @Override
-    @Transactional
     public String resetAndGetClientSecret(String clientId) {
-        try {
-            String newSecret = encryptionManager.encryptForInternalUse(UUID.randomUUID().toString());
-            clientSecretDao.revokeAllKeys(clientId);
-            boolean created  = clientSecretDao.createClientSecret(clientId, newSecret);
-            if (created) {
-                clientDetailsDao.updateLastModified(clientId);
-                String sourceId = sourceManager.retrieveActiveSourceId();
-                profileLastModifiedDao.updateLastModifiedDateWithoutResult(sourceId);
-            } else {
-                LOGGER.warn("Client secret creation failed for client {}", clientId);
-            }
+        return transactionTemplate.execute(new TransactionCallback<String>() {
+            @Override
+            public String doInTransaction(TransactionStatus status) {
+                try {
+                    String newSecret = encryptionManager.encryptForInternalUse(UUID.randomUUID().toString());
+                    clientSecretDao.revokeAllKeys(clientId);
+                    boolean created = clientSecretDao.createClientSecret(clientId, newSecret);
+                    if (created) {
+                        clientDetailsDao.updateLastModified(clientId);
+                        String sourceId = sourceManager.retrieveActiveSourceId();
+                        profileLastModifiedDao.updateLastModifiedDateWithoutResult(sourceId);
+                    } else {
+                        LOGGER.warn("Client secret creation failed for client {}", clientId);
+                    }
 
-            return encryptionManager.decryptForInternalUse(newSecret);
-        } catch (Exception e) {
-            LOGGER.error("Unable to reset client secret for client {}", clientId, e);
-            throw e;
-        }
+                    return encryptionManager.decryptForInternalUse(newSecret);
+                } catch (Exception e) {
+                    LOGGER.error("Unable to reset client secret for client {}", clientId, e);
+                    throw e;
+                }
+            }
+        });
     }
 
     private void refreshGrantTypesForObo(ClientDetailsEntity clientDetails, boolean enableObo) {
