@@ -1,3 +1,9 @@
+## v3.0.63 - 2026-09-08
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.0.62...v3.0.63)
+
+- [#7685](https://github.com/ORCID/ORCID-Source/pull/7685): PD-6145 per element source
+
 ## v3.0.62 - 2026-09-08
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.0.61...v3.0.62)
