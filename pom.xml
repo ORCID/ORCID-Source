@@ -46,6 +46,11 @@ the software.
         <libphonenumber.version>9.0.30</libphonenumber.version>
         <twilio.version>12.1.1</twilio.version>
         <solr.version>8.0.0</solr.version>
+        <!-- Apache HttpClient 4.x. ORCID code is on httpclient5; the 4.x line is only here
+             because AWS SDK v1 (aws-java-sdk-s3) needs it and solr-solrj pulls in 4.5.6.
+             Anything below 4.5.8 lacks RequestConfig.Builder#setNormalizeUri. -->
+        <httpclient4.version>4.5.14</httpclient4.version>
+        <httpcore4.version>4.4.16</httpcore4.version>
         <junit.version>4.13.2</junit.version>
         <main.basedir>${project.basedir}</main.basedir>
         <branchVersion>1.1.5-SNAPSHOT</branchVersion>
@@ -717,6 +722,21 @@ the software.
                 <artifactId>httpcore5</artifactId>
                 <version>5.3.6</version>
                 <scope>compile</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.httpcomponents</groupId>
+                <artifactId>httpclient</artifactId>
+                <version>${httpclient4.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.httpcomponents</groupId>
+                <artifactId>httpmime</artifactId>
+                <version>${httpclient4.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.httpcomponents</groupId>
+                <artifactId>httpcore</artifactId>
+                <version>${httpcore4.version}</version>
             </dependency>
             <dependency>
                 <groupId>commons-codec</groupId>
