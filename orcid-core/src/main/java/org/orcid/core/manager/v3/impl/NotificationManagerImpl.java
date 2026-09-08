@@ -219,7 +219,6 @@ public class NotificationManagerImpl extends ManagerReadOnlyBaseImpl implements 
     }
 
     @Override
-    @Transactional
     public void sendNotificationToAddedDelegate(String userGrantingPermission, String userReceivingPermission) {
         ProfileEntity delegateProfileEntity = profileEntityCacheManager.retrieve(userReceivingPermission);
 
@@ -513,13 +512,11 @@ public class NotificationManagerImpl extends ManagerReadOnlyBaseImpl implements 
     }
 
     @Override
-    @Transactional(readOnly = true)
     public List<Notification> findByOrcid(String orcid, boolean includeArchived, int firstResult, int maxResults) {
         return notificationAdapter.toNotification(notificationDao.findByOrcid(orcid, includeArchived, firstResult, maxResults));
     }
 
     @Override
-    @Transactional(readOnly = true)
     public NotificationPermissions findPermissionsByOrcidAndClient(String orcid, String client, int firstResult, int maxResults) {
         NotificationPermissions notifications = new NotificationPermissions();
         List<Notification> notificationsForOrcidAndClient = notificationAdapter
@@ -531,7 +528,6 @@ public class NotificationManagerImpl extends ManagerReadOnlyBaseImpl implements 
     }
 
     @Override
-    @Transactional(readOnly = true)
     public List<Notification> findNotificationAlertsByOrcid(String orcid) {
         return notificationAdapter.toNotification(notificationDao.findNotificationAlertsByOrcid(orcid));
     }
@@ -552,25 +548,21 @@ public class NotificationManagerImpl extends ManagerReadOnlyBaseImpl implements 
     }
 
     @Override
-    @Transactional(readOnly = true)
     public Notification findById(Long id) {
         return notificationAdapter.toNotification(notificationDao.find(id));
     }
 
     @Override
-    @Transactional(readOnly = true)
     public Notification findByOrcidAndId(String orcid, Long id) {
         return notificationAdapter.toNotification(notificationDao.findByOricdAndId(orcid, id));
     }
 
     @Override
-    @Transactional
     public Notification flagAsArchived(String orcid, Long id) throws OrcidNotificationAlreadyReadException {
         return flagAsArchived(orcid, id, true);
     }
 
     @Override
-    @Transactional
     public Notification flagAsArchived(String orcid, Long id, boolean validateForApi) throws OrcidNotificationAlreadyReadException {
         NotificationEntity notificationEntity = notificationDao.findByOricdAndId(orcid, id);
         if (notificationEntity == null) {
@@ -595,7 +587,6 @@ public class NotificationManagerImpl extends ManagerReadOnlyBaseImpl implements 
     }
 
     @Override
-    @Transactional
     public Notification setActionedAndReadDate(String orcid, Long id) {
         NotificationEntity notificationEntity = notificationDao.findByOricdAndId(orcid, id);
         if (notificationEntity == null) {

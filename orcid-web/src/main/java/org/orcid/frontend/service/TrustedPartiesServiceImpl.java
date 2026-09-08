@@ -5,7 +5,6 @@ import org.orcid.persistence.dao.OrcidOauth2TokenDetailDao;
 import org.orcid.persistence.jpa.entities.OrcidOauth2TokenDetail;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.transaction.annotation.Transactional;
 
 import jakarta.annotation.Resource;
 import jakarta.persistence.NoResultException;
@@ -42,7 +41,6 @@ public class TrustedPartiesServiceImpl implements TrustedPartiesService {
         }
     }
 
-    @Transactional
     public void disableClientAccess(String clientDetailsId, String userOrcid) {
         // As a security measure, remove any user tokens from the cache
         List<OrcidOauth2TokenDetail> userTokens = findByClientIdAndUserName(clientDetailsId, userOrcid);

@@ -51,8 +51,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
-import org.springframework.transaction.annotation.Transactional;
-
 import org.apache.commons.lang3.StringUtils;
 
 public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkManager {
@@ -155,7 +153,6 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
     }
 
     @Override
-    @Transactional
     public Work createWork(String orcid, Work work, boolean isApiRequest) {
         SourceEntity sourceEntity = sourceManager.retrieveSourceEntity();
 
@@ -200,7 +197,6 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
             filterContributors(work, workEntity);
         }
         workDao.persist(workEntity);
-        workDao.flush();
         notificationManager.sendAmendEmail(orcid, AmendedSection.WORK, createItemList(workEntity, work.getExternalIdentifiers(), ActionType.CREATE));
         Work updatedWork = jpaJaxbWorkAdapter.toWork(workEntity);
         return updatedWork;
@@ -218,7 +214,6 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
      *         that indicates why a work can't be added
      */
     @Override
-    @Transactional
     public WorkBulk createWorks(String orcid, WorkBulk workBulk) {
         SourceEntity sourceEntity = sourceManager.retrieveSourceEntity();
         List<Work> existingWorks = this.findWorks(orcid);
@@ -296,8 +291,6 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
                 }
             }
 
-            workDao.flush();
-
             if (!items.isEmpty()) {
                 notificationManager.sendAmendEmail(orcid, AmendedSection.WORK, items);
             }
@@ -353,7 +346,6 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
     }
 
     @Override
-    @Transactional
     public Work updateWork(String orcid, Work work, boolean isApiRequest) {
         WorkEntity workEntity = workDao.getWork(orcid, work.getPutCode());
 
@@ -413,13 +405,11 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
         workEntity.setClientSourceId(existingClientSourceId);
 
         workDao.merge(workEntity);
-        workDao.flush();
         notificationManager.sendAmendEmail(orcid, AmendedSection.WORK, createItemList(workEntity, work.getExternalIdentifiers(), ActionType.UPDATE));
         return jpaJaxbWorkAdapter.toWork(workEntity);
     }
 
     @Override
-    @Transactional
     public boolean checkSourceAndRemoveWork(String orcid, Long workId) {
         boolean result = true;
         WorkEntity workEntity = workDao.getWork(orcid, workId);
@@ -427,7 +417,6 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
         Work work = jpaJaxbWorkAdapter.toWork(workEntity);
         try {
             workDao.removeWork(orcid, workId);
-            workDao.flush();
             notificationManager.sendAmendEmail(orcid, AmendedSection.WORK, createItemList(workEntity, work.getExternalIdentifiers(), ActionType.DELETE));
         } catch (Exception e) {
             LOGGER.error("Unable to delete work with ID: " + workId);

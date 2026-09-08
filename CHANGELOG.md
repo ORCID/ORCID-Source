@@ -1,3 +1,9 @@
+## v3.0.60 - 2026-09-08
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.0.59...v3.0.60)
+
+- [#7681](https://github.com/ORCID/ORCID-Source/pull/7681): PD-6145 Optimize to keep transaction only for DB operation when creating works
+
 ## v3.0.59 - 2026-09-07
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.0.58...v3.0.59)

@@ -81,7 +81,6 @@ public class AffiliationsManagerImpl extends AffiliationsManagerReadOnlyImpl imp
         setIncomingWorkPrivacy(educationEntity, profile);
         educationEntity.setAffiliationType(AffiliationType.EDUCATION.name());
         orgAffiliationRelationDao.persist(educationEntity);
-        orgAffiliationRelationDao.flush();
         notificationManager.sendAmendEmail(orcid, AmendedSection.EDUCATION, createItemList(educationEntity, ActionType.CREATE));
         return jpaJaxbEducationAdapter.toEducation(educationEntity);
     }
@@ -122,7 +121,6 @@ public class AffiliationsManagerImpl extends AffiliationsManagerReadOnlyImpl imp
 
         educationEntity.setAffiliationType(AffiliationType.EDUCATION.name());
         educationEntity = orgAffiliationRelationDao.merge(educationEntity);
-        orgAffiliationRelationDao.flush();
         notificationManager.sendAmendEmail(orcid, AmendedSection.EDUCATION, createItemList(educationEntity, ActionType.UPDATE));
         return jpaJaxbEducationAdapter.toEducation(educationEntity);
     }
@@ -161,7 +159,6 @@ public class AffiliationsManagerImpl extends AffiliationsManagerReadOnlyImpl imp
         setIncomingWorkPrivacy(employmentEntity, profile);
         employmentEntity.setAffiliationType(AffiliationType.EMPLOYMENT.name());
         orgAffiliationRelationDao.persist(employmentEntity);
-        orgAffiliationRelationDao.flush();
         notificationManager.sendAmendEmail(orcid, AmendedSection.EMPLOYMENT, createItemList(employmentEntity, ActionType.CREATE));
         return jpaJaxbEmploymentAdapter.toEmployment(employmentEntity);
     }
@@ -203,7 +200,6 @@ public class AffiliationsManagerImpl extends AffiliationsManagerReadOnlyImpl imp
 
         employmentEntity.setAffiliationType(AffiliationType.EMPLOYMENT.name());
         employmentEntity = orgAffiliationRelationDao.merge(employmentEntity);
-        orgAffiliationRelationDao.flush();
         notificationManager.sendAmendEmail(orcid, AmendedSection.EMPLOYMENT, createItemList(employmentEntity, ActionType.UPDATE));
         return jpaJaxbEmploymentAdapter.toEmployment(employmentEntity);
     }

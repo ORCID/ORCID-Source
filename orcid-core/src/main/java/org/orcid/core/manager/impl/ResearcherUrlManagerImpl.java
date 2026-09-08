@@ -25,7 +25,6 @@ import org.orcid.persistence.jpa.entities.SourceEntity;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.transaction.annotation.Transactional;
 
 public class ResearcherUrlManagerImpl extends ResearcherUrlManagerReadOnlyImpl implements ResearcherUrlManager {
 
@@ -64,7 +63,6 @@ public class ResearcherUrlManagerImpl extends ResearcherUrlManagerReadOnlyImpl i
      * @param researcherUrls
      */
     @Override
-    @Transactional
     public ResearcherUrls updateResearcherUrls(String orcid, ResearcherUrls researcherUrls) {
         List<ResearcherUrlEntity> existingEntities = researcherUrlDao.getResearcherUrls(orcid, getLastModified(orcid));
         // Delete the deleted ones
@@ -126,7 +124,6 @@ public class ResearcherUrlManagerImpl extends ResearcherUrlManagerReadOnlyImpl i
     }
 
     @Override
-    @Transactional
     public ResearcherUrl updateResearcherUrl(String orcid, ResearcherUrl researcherUrl, boolean isApiRequest) {
         ResearcherUrlEntity updatedResearcherUrlEntity = researcherUrlDao.getResearcherUrl(orcid, researcherUrl.getPutCode());
         Visibility originalVisibility = Visibility.fromValue(updatedResearcherUrlEntity.getVisibility());
@@ -162,7 +159,6 @@ public class ResearcherUrlManagerImpl extends ResearcherUrlManagerReadOnlyImpl i
     }
 
     @Override
-    @Transactional
     public ResearcherUrl createResearcherUrl(String orcid, ResearcherUrl researcherUrl, boolean isApiRequest) {
         SourceEntity sourceEntity = sourceManager.retrieveSourceEntity();
         // Validate the researcher url
