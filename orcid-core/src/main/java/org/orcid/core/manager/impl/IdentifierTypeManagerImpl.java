@@ -127,6 +127,7 @@ public class IdentifierTypeManagerImpl implements IdentifierTypeManager {
     }
 
     private String getMessage(String type, Locale locale) {
+        locale = (locale == null) ? Locale.ENGLISH : locale;
         try {
             String key = new StringBuffer("org.orcid.jaxb.model.record.WorkExternalIdentifierType.").append(type).toString();
             return localeManager.resolveMessage(key, locale, type);
@@ -138,6 +139,7 @@ public class IdentifierTypeManagerImpl implements IdentifierTypeManager {
     @Override
     @Cacheable("identifier-types-map-top")
     public List<IdentifierType> fetchDefaultIdentifierTypes(Locale loc) {
+        loc = (loc == null) ? Locale.ENGLISH : loc;
         Map<String, IdentifierType> all = this.fetchIdentifierTypesByAPITypeName(loc);
         SortedMap<String,IdentifierType> sorted = new TreeMap<String,IdentifierType>();
         for (String s: all.keySet())
@@ -148,6 +150,7 @@ public class IdentifierTypeManagerImpl implements IdentifierTypeManager {
     @Override
     @Cacheable("identifier-types-map-prefix")
     public List<IdentifierType> queryByPrefix(String query, Locale loc) {
+        loc = (loc == null) ? Locale.ENGLISH : loc;
         Map<String,IdentifierType> results = new HashMap<String,IdentifierType>();
         Map<String, IdentifierType>types = fetchIdentifierTypesByAPITypeName(loc);
 

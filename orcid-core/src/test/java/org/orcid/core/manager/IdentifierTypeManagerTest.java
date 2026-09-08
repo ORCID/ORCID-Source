@@ -133,6 +133,7 @@ public class IdentifierTypeManagerTest extends BaseTest {
         assertTrue(last.getTime() < id.getLastModified().getTime());
     }
 
+    @Test
     public void testPrefixSearch(){
         List<IdentifierType> types = idTypeMan.queryByPrefix("do", null);
         boolean foundDOI = false;
@@ -149,6 +150,31 @@ public class IdentifierTypeManagerTest extends BaseTest {
         assertTrue(foundDOI);
         assertTrue(foundASIN);
         assertFalse(foundScopus);
+
+        List<IdentifierType> typesDefault = idTypeMan.queryByPrefix("do");
+        assertEquals(types.size(), typesDefault.size());
+    }
+
+    @Test
+    public void testFetchDefaultIdentifierTypes(){
+        List<IdentifierType> listNull = idTypeMan.fetchDefaultIdentifierTypes(null);
+        assertNotNull(listNull);
+        assertFalse(listNull.isEmpty());
+
+        List<IdentifierType> listDefault = idTypeMan.fetchDefaultIdentifierTypes();
+        assertEquals(listNull.size(), listDefault.size());
+    }
+
+    @Test
+    public void testDefaultInterfaceMethods(){
+        Map<String, IdentifierType> mapNoArg = idTypeMan.fetchIdentifierTypesByAPITypeName();
+        Map<String, IdentifierType> mapNull = idTypeMan.fetchIdentifierTypesByAPITypeName(null);
+        assertEquals(mapNull.size(), mapNoArg.size());
+
+        IdentifierType idNoArg = idTypeMan.fetchIdentifierTypeByDatabaseName("DOI");
+        IdentifierType idNull = idTypeMan.fetchIdentifierTypeByDatabaseName("DOI", null);
+        assertEquals(idNull.getName(), idNoArg.getName());
+        assertEquals(idNull.getDescription(), idNoArg.getDescription());
     }
 
     private IdentifierType createIdentifierType(int seed){
