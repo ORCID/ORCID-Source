@@ -1,3 +1,9 @@
+## v3.0.62 - 2026-09-08
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.0.61...v3.0.62)
+
+- [#7684](https://github.com/ORCID/ORCID-Source/pull/7684): Pd-6145 More serialization fixes
+
 ## v3.0.61 - 2026-09-08
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.0.60...v3.0.61)
