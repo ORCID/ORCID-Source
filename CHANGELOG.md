@@ -1,3 +1,9 @@
+## v3.0.59 - 2026-09-07
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.0.58...v3.0.59)
+
+- [#7679](https://github.com/ORCID/ORCID-Source/pull/7679): Camelia orcid/mapstruct fixes9
+
 ## v3.0.58 - 2026-09-07
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.0.57...v3.0.58)
