@@ -3,7 +3,6 @@ package org.orcid.core.manager.v3.impl;
 import java.util.*;
 
 import jakarta.annotation.Resource;
-import jakarta.transaction.Transactional;
 
 import org.orcid.core.adapter.v3.JpaJaxbResearchResourceAdapter;
 import org.orcid.core.manager.ClientDetailsEntityCacheManager;
@@ -63,7 +62,6 @@ public class ResearchResourceManagerImpl extends ResearchResourceManagerReadOnly
     private SourceEntityUtils sourceEntityUtils;
 
     @Override
-    @Transactional
     public ResearchResource createResearchResource(String orcid, ResearchResource rr, boolean isApiRequest) {
         Source activeSource = sourceManager.retrieveActiveSource();
         activityValidator.validateResearchResource(rr, activeSource, true, isApiRequest, null);
@@ -149,7 +147,6 @@ public class ResearchResourceManagerImpl extends ResearchResourceManagerReadOnly
     }
 
     @Override
-    @Transactional
     public boolean checkSourceAndRemoveResearchResource(String orcid, Long researchResourceId) {
         ResearchResourceEntity rr = rrDao.getResearchResource(orcid, researchResourceId);
         orcidSecurityManager.checkSourceAndThrow(rr);
@@ -160,7 +157,6 @@ public class ResearchResourceManagerImpl extends ResearchResourceManagerReadOnly
     }
 
     @Override
-    @Transactional
     public boolean updateToMaxDisplay(String orcid, Long researchResourceId) {
         return rrDao.updateToMaxDisplay(orcid, researchResourceId);
     }
@@ -197,13 +193,11 @@ public class ResearchResourceManagerImpl extends ResearchResourceManagerReadOnly
     }
 
     @Override
-    @Transactional
     public boolean updateVisibilities(String orcid, ArrayList<Long> researchResourceIds, Visibility visibility) {
         return rrDao.updateVisibilities(orcid, researchResourceIds, visibility.name());
     }
 
     @Override
-    @Transactional
     public void removeResearchResources(String effectiveUserOrcid, ArrayList<Long> rrIds) {
         for (long id : rrIds)
             rrDao.removeResearchResource(effectiveUserOrcid, id);

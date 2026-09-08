@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.Map;
 
 import jakarta.annotation.Resource;
-import jakarta.transaction.Transactional;
 
 import org.orcid.core.exception.ApplicationException;
 import org.orcid.core.exception.OrcidDuplicatedElementException;
@@ -44,7 +43,6 @@ public class AddressManagerImpl extends AddressManagerReadOnlyImpl implements Ad
     private SourceEntityUtils sourceEntityUtils;
 
     @Override
-    @Transactional
     public Address updateAddress(String orcid, Long putCode, Address address, boolean isApiRequest) {
         Source activeSource = sourceManager.retrieveActiveSource();
         AddressEntity updatedEntity = addressDao.getAddress(orcid, putCode);
@@ -85,7 +83,6 @@ public class AddressManagerImpl extends AddressManagerReadOnlyImpl implements Ad
     }
 
     @Override
-    @Transactional
     public Address createAddress(String orcid, Address address, boolean isApiRequest) {
         Source activeSource = sourceManager.retrieveActiveSource();
         // Validate the address
@@ -114,7 +111,6 @@ public class AddressManagerImpl extends AddressManagerReadOnlyImpl implements Ad
     }
 
     @Override
-    @Transactional
     public boolean deleteAddress(String orcid, Long putCode) {
         AddressEntity entity = addressDao.getAddress(orcid, putCode);
         orcidSecurityManager.checkSourceAndThrow(entity);

@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.Map;
 
 import jakarta.annotation.Resource;
-import jakarta.transaction.Transactional;
 
 import org.apache.commons.lang3.StringUtils;
 import org.orcid.core.manager.ClientDetailsEntityCacheManager;
@@ -529,7 +528,6 @@ public class AffiliationsManagerImpl extends AffiliationsManagerReadOnlyImpl imp
     }
 
     @Override
-    @Transactional
     public boolean updateVisibilities(String orcid, ArrayList<Long> affiliationIds, Visibility visibility) {
         return orgAffiliationRelationDao.updateVisibilitiesOnOrgAffiliationRelation(orcid, affiliationIds, visibility.name());
     }
@@ -580,7 +578,6 @@ public class AffiliationsManagerImpl extends AffiliationsManagerReadOnlyImpl imp
     }
     
     @Override
-    @Transactional
     public boolean setOnlyFeatured(String orcid, Long affiliationId) {
         // Ensure the target affiliation exists and belongs to the user
         OrgAffiliationRelationEntity entity = orgAffiliationRelationDao.getOrgAffiliationRelation(orcid, affiliationId);
@@ -593,7 +590,6 @@ public class AffiliationsManagerImpl extends AffiliationsManagerReadOnlyImpl imp
     }
 
     @Override
-    @Transactional
     public boolean clearFeatured(String orcid) {
         orgAffiliationRelationDao.clearFeatured(orcid);
         return true;

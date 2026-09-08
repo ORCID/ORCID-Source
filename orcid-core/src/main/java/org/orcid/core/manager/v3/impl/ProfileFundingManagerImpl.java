@@ -28,7 +28,6 @@ import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.ProfileFundingEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.transaction.annotation.Transactional;
 
 public class ProfileFundingManagerImpl extends ProfileFundingManagerReadOnlyImpl implements ProfileFundingManager {
 
@@ -123,7 +122,6 @@ public class ProfileFundingManagerImpl extends ProfileFundingManagerReadOnlyImpl
      * @return the added funding
      */
     @Override
-    @Transactional
     public Funding createFunding(String orcid, Funding funding, boolean isApiRequest) {
         Source activeSource = sourceManager.retrieveActiveSource();
         activityValidator.validateFunding(funding, activeSource, true, isApiRequest, null);
