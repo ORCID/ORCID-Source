@@ -177,6 +177,7 @@
     </ehcache:cache>
     
     <ehcache:cache alias="identifier-types" uses-template="defaultTemplate">
+        <ehcache:value-type copier="org.ehcache.impl.copy.IdentityCopier"/>
         <ehcache:expiry>
             <ehcache:tti unit="minutes">15</ehcache:tti>
         </ehcache:expiry>
@@ -187,6 +188,7 @@
     </ehcache:cache>
     
     <ehcache:cache alias="identifier-types-map" uses-template="defaultTemplate">
+        <ehcache:value-type copier="org.ehcache.impl.copy.IdentityCopier"/>
         <ehcache:expiry>
             <ehcache:tti unit="minutes">15</ehcache:tti>
         </ehcache:expiry>
@@ -197,6 +199,7 @@
     </ehcache:cache>
     
     <ehcache:cache alias="identifier-types-map-top" uses-template="defaultTemplate">
+        <ehcache:value-type copier="org.ehcache.impl.copy.IdentityCopier"/>
         <ehcache:resources>
             <ehcache:heap unit="entries">50</ehcache:heap>
             <ehcache:disk unit="MB" persistent="false">8</ehcache:disk>
@@ -204,6 +207,7 @@
     </ehcache:cache>
     
     <ehcache:cache alias="identifier-types-map-prefix" uses-template="defaultTemplate">
+        <ehcache:value-type copier="org.ehcache.impl.copy.IdentityCopier"/>
         <ehcache:expiry>
             <ehcache:tti unit="minutes">15</ehcache:tti>
         </ehcache:expiry>
@@ -261,7 +265,7 @@
     </ehcache:cache>
     
     <ehcache:cache-template name="defaultTemplate">
-        <ehcache:value-type copier="org.ehcache.impl.copy.IdentityCopier"/>
+        <ehcache:value-type copier="org.ehcache.impl.copy.SerializingCopier"/>
         <ehcache:expiry>
             <ehcache:tti unit="minutes">5</ehcache:tti>
         </ehcache:expiry>

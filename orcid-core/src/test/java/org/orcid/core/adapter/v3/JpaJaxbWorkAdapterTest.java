@@ -9,6 +9,8 @@ import java.io.InputStream;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
+import java.util.HashMap;
 
 import jakarta.annotation.Resource;
 import jakarta.xml.bind.JAXBContext;
@@ -35,6 +37,9 @@ import org.orcid.jaxb.model.v3.release.common.Visibility;
 import org.orcid.jaxb.model.v3.release.record.ExternalID;
 import org.orcid.jaxb.model.v3.release.record.Work;
 import org.orcid.jaxb.model.v3.release.record.summary.WorkSummary;
+import org.orcid.jaxb.model.v3.release.common.SourceClientId;
+import org.orcid.jaxb.model.v3.release.common.Source;
+import org.orcid.core.utils.SourceEntityUtils;
 import org.orcid.persistence.dao.RecordNameDao;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.MinimizedWorkEntity;
@@ -540,4 +545,62 @@ public class JpaJaxbWorkAdapterTest extends MockSourceNameCache {
         assertNull(work.getPublicationYear());
         
     }
+
+    // --- PD-6145: the pre-resolved source map must be used instead of per-element resolution ---
+
+    private MinimizedWorkEntity minimizedWorkWithClientSource() {
+        MinimizedWorkEntity mWork = new MinimizedWorkEntity();
+        mWork.setId(12345L);
+        mWork.setWorkType(org.orcid.jaxb.model.common.WorkType.JOURNAL_ARTICLE.name());
+        mWork.setClientSourceId(CLIENT_SOURCE_ID);
+        mWork.setOrcid("0000-0000-0000-0001");
+        return mWork;
+    }
+
+    @Test
+    public void toWorkSummaryFromMinimizedUsesPreResolvedSource() {
+        MinimizedWorkEntity mWork = minimizedWorkWithClientSource();
+
+        Source preResolved = new Source();
+        preResolved.setSourceClientId(new SourceClientId("APP-PRE-RESOLVED"));
+        Map<String, Source> sourceMap = new HashMap<>();
+        sourceMap.put(SourceEntityUtils.getSourceKey(mWork), preResolved);
+
+        List<WorkSummary> summaries = jpaJaxbWorkAdapter.toWorkSummaryFromMinimized(Arrays.asList(mWork), sourceMap);
+
+        assertEquals(1, summaries.size());
+        // the map's Source is used verbatim, not re-derived from the entity
+        assertNotNull(summaries.get(0).getSource());
+        assertEquals("APP-PRE-RESOLVED", summaries.get(0).getSource().getSourceClientId().getPath());
+        // everything else still maps
+        assertEquals(Long.valueOf(12345), summaries.get(0).getPutCode());
+        assertEquals(WorkType.JOURNAL_ARTICLE, summaries.get(0).getType());
+    }
+
+    @Test
+    public void toWorkSummaryFromMinimizedFallsBackWhenSourceMapMisses() {
+        MinimizedWorkEntity mWork = minimizedWorkWithClientSource();
+
+        // a map that has no entry for this key, and a null map, must both still populate a source
+        List<WorkSummary> onMiss = jpaJaxbWorkAdapter.toWorkSummaryFromMinimized(Arrays.asList(mWork), new HashMap<String, Source>());
+        List<WorkSummary> onNullMap = jpaJaxbWorkAdapter.toWorkSummaryFromMinimized(Arrays.asList(mWork), null);
+
+        assertNotNull(onMiss.get(0).getSource());
+        assertEquals(CLIENT_SOURCE_ID, onMiss.get(0).getSource().getSourceClientId().getPath());
+        assertNotNull(onNullMap.get(0).getSource());
+        assertEquals(CLIENT_SOURCE_ID, onNullMap.get(0).getSource().getSourceClientId().getPath());
+    }
+
+    @Test
+    public void toWorkSummaryFromMinimizedWithoutMapStillResolvesSource() {
+        // guards the @Named isolation: the source-free method must never be selected
+        // implicitly for the no-map collection overload
+        MinimizedWorkEntity mWork = minimizedWorkWithClientSource();
+
+        List<WorkSummary> summaries = jpaJaxbWorkAdapter.toWorkSummaryFromMinimized(Arrays.asList(mWork));
+
+        assertNotNull(summaries.get(0).getSource());
+        assertEquals(CLIENT_SOURCE_ID, summaries.get(0).getSource().getSourceClientId().getPath());
+    }
+
 }
