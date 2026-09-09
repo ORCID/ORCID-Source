@@ -308,6 +308,20 @@ public class JpaJaxbPeerReviewAdapterTest extends MockSourceNameCache {
     }
 
     @Test
+    public void fromPeerReviewEntityToPeerReviewDoesNotCreateEmptyOptionalSubjectFields() throws IllegalAccessException {
+        PeerReviewEntity entity = getPeerReviewEntity();
+        entity.setSubjectContainerName(null);
+        entity.setSubjectName(null);
+        entity.setSubjectTranslatedName(null);
+        entity.setSubjectTranslatedNameLanguageCode(null);
+
+        PeerReview peerReview = jpaJaxbPeerReviewAdapter.toPeerReview(entity);
+
+        assertNull(peerReview.getSubjectContainerName());
+        assertNull(peerReview.getSubjectName());
+    }
+
+    @Test
     public void fromPeerReviewEntityToPeerReviewSummary() throws IllegalAccessException {
         PeerReviewEntity entity = getPeerReviewEntity();
         assertNotNull(entity);
