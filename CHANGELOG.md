@@ -1,3 +1,9 @@
+## v3.0.65 - 2026-09-09
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.0.64...v3.0.65)
+
+- [#7689](https://github.com/ORCID/ORCID-Source/pull/7689): PD-13448  fixed null subject mapping for PeerReview
+
 ## v3.0.64 - 2026-09-09
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.0.63...v3.0.64)
