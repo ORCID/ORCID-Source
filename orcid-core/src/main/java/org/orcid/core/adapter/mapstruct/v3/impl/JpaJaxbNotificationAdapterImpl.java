@@ -111,6 +111,7 @@ public abstract class JpaJaxbNotificationAdapterImpl implements JpaJaxbNotificat
 
     @Mapping(source = "id", target = "putCode")
     @Mapping(source = "dateCreated", target = "createdDate")
+    @Mapping(source = ".", target = "source")
     protected abstract NotificationCustom map(NotificationCustomEntity e);
 
     // 2. Notification Service Announcement
@@ -120,6 +121,7 @@ public abstract class JpaJaxbNotificationAdapterImpl implements JpaJaxbNotificat
 
     @Mapping(source = "id", target = "putCode")
     @Mapping(source = "dateCreated", target = "createdDate")
+    @Mapping(source = ".", target = "source")
     protected abstract NotificationServiceAnnouncement map(NotificationServiceAnnouncementEntity e);
 
     // 3. Notification Tip
@@ -129,6 +131,7 @@ public abstract class JpaJaxbNotificationAdapterImpl implements JpaJaxbNotificat
 
     @Mapping(source = "id", target = "putCode")
     @Mapping(source = "dateCreated", target = "createdDate")
+    @Mapping(source = ".", target = "source")
     protected abstract NotificationTip map(NotificationTipEntity e);
 
     // 4. Notification Administrative
@@ -138,6 +141,7 @@ public abstract class JpaJaxbNotificationAdapterImpl implements JpaJaxbNotificat
 
     @Mapping(source = "id", target = "putCode")
     @Mapping(source = "dateCreated", target = "createdDate")
+    @Mapping(source = ".", target = "source")
     protected abstract NotificationAdministrative map(NotificationAdministrativeEntity e);
 
     // 5. Notification Permission
@@ -151,6 +155,7 @@ public abstract class JpaJaxbNotificationAdapterImpl implements JpaJaxbNotificat
     @Mapping(source = "dateCreated", target = "createdDate")
     @Mapping(source = "authorizationUrl", target = "authorizationUrl.uri")
     @Mapping(source = "notificationItems", target = "items.items")
+    @Mapping(source = ".", target = "source")
     protected abstract NotificationPermission map(NotificationAddItemsEntity e);
 
     @AfterMapping
@@ -180,6 +185,7 @@ public abstract class JpaJaxbNotificationAdapterImpl implements JpaJaxbNotificat
     @Mapping(source = "id", target = "putCode")
     @Mapping(source = "dateCreated", target = "createdDate")
     @Mapping(source = "authorizationUrl", target = "authorizationUrl.uri")
+    @Mapping(source = ".", target = "source")
     protected abstract NotificationInstitutionalConnection map(NotificationInstitutionalConnectionEntity e);
 
     @AfterMapping
@@ -219,6 +225,7 @@ public abstract class JpaJaxbNotificationAdapterImpl implements JpaJaxbNotificat
     @Mapping(source = "dateCreated", target = "createdDate")
     @Mapping(source = "notificationItems", target = "items.items")
     @Mapping(source = "amendedSection", target = "amendedSection")
+    @Mapping(source = ".", target = "source")
     protected abstract NotificationAmended map(NotificationAmendedEntity e);
 
     // 8. Notification Find My Stuff (V3 specific)
@@ -230,6 +237,7 @@ public abstract class JpaJaxbNotificationAdapterImpl implements JpaJaxbNotificat
     @Mapping(source = "id", target = "putCode")
     @Mapping(source = "dateCreated", target = "createdDate")
     @Mapping(source = "authorizationUrl", target = "authorizationUrl.uri")
+    @Mapping(source = ".", target = "source")
     protected abstract NotificationFindMyStuff map(NotificationFindMyStuffEntity e);
 
     @AfterMapping
