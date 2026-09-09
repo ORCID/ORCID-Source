@@ -168,6 +168,13 @@ public class SourceEntityUtilsTest {
         clientDetails.setUserOBOEnabled(false);
         source = sourceEntityUtils.extractSourceFromEntity(entity);
         assertNull(source.getAssertionOriginOrcid());
+
+        // Test with pre-fetched clientDetailsById map
+        clientDetails.setUserOBOEnabled(true);
+        java.util.Map<String, ClientDetailsEntity> map = new java.util.HashMap<>();
+        map.put("client-id", clientDetails);
+        source = sourceEntityUtils.extractSourceFromEntity(entity, map);
+        assertEquals("user-orcid", source.getAssertionOriginOrcid().getPath());
     }
 
     @Test

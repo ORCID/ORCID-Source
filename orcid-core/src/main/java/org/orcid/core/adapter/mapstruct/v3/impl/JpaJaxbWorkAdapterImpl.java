@@ -1,5 +1,6 @@
 package org.orcid.core.adapter.mapstruct.v3.impl;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -9,6 +10,7 @@ import org.mapstruct.AfterMapping;
 import org.mapstruct.Context;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+import org.mapstruct.Named;
 import org.mapstruct.MappingTarget;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -20,6 +22,7 @@ import org.orcid.core.adapter.mapstruct.UrlMapperV3;
 import org.orcid.core.adapter.mapstruct.VisibilityMapperV3;
 import org.orcid.core.adapter.mapstruct.WorkContributorsMapperV3;
 import org.orcid.core.adapter.v3.JpaJaxbWorkAdapter;
+import org.orcid.core.utils.SourceEntityUtils;
 import org.orcid.jaxb.model.common.WorkType;
 import org.orcid.jaxb.model.v3.release.common.Day;
 import org.orcid.jaxb.model.v3.release.common.Month;
@@ -295,6 +298,33 @@ public abstract class JpaJaxbWorkAdapterImpl implements JpaJaxbWorkAdapter {
     @Mapping(source = ".", target = "source")
     public abstract WorkSummary toWorkSummary(MinimizedWorkEntity minimizedWorkEntity);
 
+    /**
+     * As {@link #toWorkSummary(MinimizedWorkEntity)} but without resolving the source.
+     *
+     * The caller that has a pre-resolved source map ({@link #toWorkSummaryFromMinimized(Collection, Map)})
+     * used to map the source per element and then overwrite it, so every summary paid a client-details
+     * lookup and a source-name population whose result was discarded.
+     *
+     * {@code @Named} is required: a second unqualified MinimizedWorkEntity -> WorkSummary method would
+     * make MapStruct's implicit selection for the collection overloads ambiguous.
+     */
+    @Named("workSummaryWithoutSource")
+    @Mapping(source = "id", target = "putCode")
+    @Mapping(source = "title", target = "title.title.content")
+    @Mapping(source = "subtitle", target = "title.subtitle")
+    @Mapping(source = "translatedTitle", target = "title.translatedTitle.content")
+    @Mapping(source = "translatedTitleLanguageCode", target = "title.translatedTitle.languageCode")
+    @Mapping(target = "journalTitle", expression = "java( mapStringToTitle(minimizedWorkEntity.getJournalTitle()) )")
+    @Mapping(target = "type", expression = "java( mapStringToWorkType(minimizedWorkEntity.getWorkType()) )")
+    @Mapping(target = "publicationDate", expression = "java( mapPublicationDate(minimizedWorkEntity.getPublicationDate()) )")
+    @Mapping(target = "externalIdentifiers", expression = "java( extIdMapper.convertFrom(minimizedWorkEntity.getExternalIdentifiersJson()) )")
+    @Mapping(source = "workUrl", target = "url")
+    @Mapping(source = "visibility", target = "visibility")
+    @Mapping(source = "dateCreated", target = "createdDate.value")
+    @Mapping(source = "lastModified", target = "lastModifiedDate.value")
+    @Mapping(target = "source", ignore = true)
+    public abstract WorkSummary toWorkSummaryWithoutSource(MinimizedWorkEntity minimizedWorkEntity);
+
     @Mapping(source = "id", target = "putCode")
     @Mapping(source = "title", target = "workTitle.title.content")
     @Mapping(source = "subtitle", target = "workTitle.subtitle")
@@ -345,7 +375,27 @@ public abstract class JpaJaxbWorkAdapterImpl implements JpaJaxbWorkAdapter {
     public abstract List<WorkSummary> toWorkSummaryFromMinimized(Collection<MinimizedWorkEntity> workEntities);
 
     @Override
-    public abstract List<WorkSummary> toWorkSummaryFromMinimized(Collection<MinimizedWorkEntity> workEntities, @Context Map<String, Source> sourceMap);
+    public List<WorkSummary> toWorkSummaryFromMinimized(Collection<MinimizedWorkEntity> workEntities, Map<String, Source> sourceMap) {
+        if (workEntities == null) {
+            return null;
+        }
+        List<WorkSummary> list = new ArrayList<>(workEntities.size());
+        for (MinimizedWorkEntity minimizedWorkEntity : workEntities) {
+            Source source = sourceMap == null ? null : sourceMap.get(SourceEntityUtils.getSourceKey(minimizedWorkEntity));
+            WorkSummary summary;
+            if (source != null) {
+                // The caller already resolved this source once for the whole list; skip the
+                // per-element client-details lookup and source-name population entirely.
+                summary = toWorkSummaryWithoutSource(minimizedWorkEntity);
+                summary.setSource(source);
+            } else {
+                // No pre-resolved source for this key: map it the usual way.
+                summary = toWorkSummary(minimizedWorkEntity);
+            }
+            list.add(summary);
+        }
+        return list;
+    }
 
     @Override
     public abstract List<WorkSummaryExtended> toWorkSummaryExtendedFromMinimized(Collection<MinimizedExtendedWorkEntity> workEntities);

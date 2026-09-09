@@ -197,7 +197,7 @@ public class WorkManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements 
         works.stream().forEach(workEntity -> {
             String sourceKey = SourceEntityUtils.getSourceKey(workEntity);
             if(!sources.containsKey(sourceKey)) {
-                Source source = sourceEntityUtils.extractSourceFromEntityComplete(workEntity);
+                Source source = sourceEntityUtils.extractSourceFromEntityComplete(workEntity, clientDetailsById);
                 sources.put(sourceKey, source);
             }
         });

@@ -184,6 +184,11 @@ public class JSONInputValidator {
             Throwable rootCause = ExceptionUtils.getRootCause(e);
             LOGGER.error("Error validating class " + clazz.getName() + ": " + e.getClass().getName() + " - "
                     + (rootCause != null ? rootCause.getMessage() : e.getMessage()), e);
+            // Known Xerces bug (XSIErrorReporter.mergeContext underflow) crashes while reporting an otherwise
+            // normal schema violation; give the client an actionable message instead of the raw Java exception.
+            if (e instanceof ArrayIndexOutOfBoundsException) {
+                throw new InvalidJSONException("The request body does not conform to the expected schema for " + clazz.getSimpleName(), e);
+            }
             Map<String, String> params = new HashMap<>();
             if(rootCause != null) {
                 throw new InvalidJSONException(rootCause.getMessage(), e);
