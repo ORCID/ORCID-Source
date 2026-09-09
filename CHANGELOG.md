@@ -1,3 +1,9 @@
+## v3.0.64 - 2026-09-09
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.0.63...v3.0.64)
+
+- [#7688](https://github.com/ORCID/ORCID-Source/pull/7688): PD-13438  added the mapping for source in notifications
+
 ## v3.0.63 - 2026-09-08
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.0.62...v3.0.63)
