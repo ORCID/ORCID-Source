@@ -1,3 +1,9 @@
+## v3.0.66 - 2026-09-09
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.0.65...v3.0.66)
+
+- [#7690](https://github.com/ORCID/ORCID-Source/pull/7690): PD-13450 Fixed administrative type for notifications
+
 ## v3.0.65 - 2026-09-09
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.0.64...v3.0.65)
