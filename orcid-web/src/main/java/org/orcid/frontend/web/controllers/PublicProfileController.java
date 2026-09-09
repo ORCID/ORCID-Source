@@ -3,7 +3,6 @@ package org.orcid.frontend.web.controllers;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
-import java.nio.charset.StandardCharsets;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -44,7 +43,6 @@ import org.orcid.frontend.web.pagination.Page;
 import org.orcid.frontend.web.pagination.ResearchResourcePaginator;
 import org.orcid.frontend.web.pagination.WorksPaginator;
 import org.orcid.frontend.web.util.LanguagesMap;
-import org.orcid.frontend.web.util.StaticShellService;
 import org.orcid.jaxb.model.message.OrcidType;
 import org.orcid.jaxb.model.v3.release.common.Visibility;
 import org.orcid.jaxb.model.v3.release.groupid.GroupIdRecord;
@@ -81,8 +79,9 @@ import org.orcid.pojo.grouping.FundingGroup;
 import org.orcid.pojo.grouping.PeerReviewDuplicateGroup;
 import org.orcid.pojo.grouping.PeerReviewGroup;
 import org.orcid.pojo.grouping.WorkGroup;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -97,6 +96,8 @@ import org.springframework.web.servlet.view.RedirectView;
 
 @Controller
 public class PublicProfileController extends BaseWorkspaceController {
+
+    private static final Logger logger = LoggerFactory.getLogger(PublicProfileController.class);
 
     @Resource(name = "membersManagerV3")
     MembersManager membersManager;
@@ -149,9 +150,6 @@ public class PublicProfileController extends BaseWorkspaceController {
     @Resource(name = "contributorUtilsV3")
     private ContributorUtils contributorUtils;
 
-    @Resource
-    private StaticShellService staticShellService;
-
     @Value("${org.orcid.core.work.contributors.ui.max:50}")
     private int maxContributorsForUI;
     
@@ -175,11 +173,16 @@ public class PublicProfileController extends BaseWorkspaceController {
     }
 
     @RequestMapping(value = { "/{orcid:(?:\\d{4}-){3,}\\d{3}[\\dX]}", "/{orcid:(?:\\d{4}-){3,}\\d{3}[\\dX]}/print" })
-    public void publicPreview(HttpServletRequest request, HttpServletResponse response, @PathVariable("orcid") String orcid) throws IOException {
+    public void ifModifiedSinceCheckEndpoint(HttpServletRequest request, HttpServletResponse response, @PathVariable("orcid") String orcid) throws IOException {
         try {
-            System.out.println("----------------------------------------------");
-            System.out.println(request.getHeader("If-Modified-Since"));
-            System.out.println("----------------------------------------------");
+            if(logger.isTraceEnabled()) {
+                logger.trace("If-Modified-Since: {}", request.getHeader("If-Modified-Since"));
+            }
+            if(request.getHeader("If-Modified-Since") == null || request.getHeader("If-Modified-Since").length() == 0) {
+                // If the header is not present, return a 200 so the record is fetched
+                response.setStatus(HttpServletResponse.SC_OK);
+                return;
+            }
             long lastModifiedTime = getLastModifiedTime(orcid);
             // If the user is found, proceed to the preview
             if (lastModifiedTime > 0) {
@@ -192,12 +195,13 @@ public class PublicProfileController extends BaseWorkspaceController {
                     response.setStatus(HttpServletResponse.SC_OK);
                 }
             } else {
-                // If the record is not found, redirect to the 404 page.
+                // TODO: If the record is not found, return the 404 and make nginx render the angular 404 page.
                 response.setStatus(HttpServletResponse.SC_TEMPORARY_REDIRECT);
                 response.setHeader("Location", orcidUrlManager.getBaseUrl() + "/404");
             }
         } catch (Exception e) {
-            response.setStatus(HttpServletResponse.SC_TEMPORARY_REDIRECT);
+            logger.warn("Error checking if-modified-since header for orcid " + orcid, e);
+            response.setStatus(HttpServletResponse.SC_SERVICE_UNAVAILABLE);
             response.setHeader("Location", orcidUrlManager.getBaseUrl() + "/404");
         }
     }
