@@ -71,10 +71,10 @@ public abstract class JpaJaxbNotificationAdapterImpl implements JpaJaxbNotificat
         if (notification == null) return null;
 
         if (notification instanceof NotificationPermission) return map((NotificationPermission) notification);
+        if (notification instanceof NotificationAdministrative) return map((NotificationAdministrative) notification);
         if (notification instanceof NotificationCustom) return map((NotificationCustom) notification);
         if (notification instanceof NotificationAmended) return map((NotificationAmended) notification);
         if (notification instanceof NotificationInstitutionalConnection) return map((NotificationInstitutionalConnection) notification);
-        if (notification instanceof NotificationAdministrative) return map((NotificationAdministrative) notification);
         if (notification instanceof NotificationServiceAnnouncement) return map((NotificationServiceAnnouncement) notification);
         if (notification instanceof NotificationTip) return map((NotificationTip) notification);
         if (notification instanceof NotificationFindMyStuff) return map((NotificationFindMyStuff) notification);
@@ -87,10 +87,10 @@ public abstract class JpaJaxbNotificationAdapterImpl implements JpaJaxbNotificat
         if (entity == null) return null;
 
         if (entity instanceof NotificationAddItemsEntity) return map((NotificationAddItemsEntity) entity);
+        if (entity instanceof NotificationAdministrativeEntity) return map((NotificationAdministrativeEntity) entity);
         if (entity instanceof NotificationCustomEntity) return map((NotificationCustomEntity) entity);
         if (entity instanceof NotificationAmendedEntity) return map((NotificationAmendedEntity) entity);
         if (entity instanceof NotificationInstitutionalConnectionEntity) return map((NotificationInstitutionalConnectionEntity) entity);
-        if (entity instanceof NotificationAdministrativeEntity) return map((NotificationAdministrativeEntity) entity);
         if (entity instanceof NotificationServiceAnnouncementEntity) return map((NotificationServiceAnnouncementEntity) entity);
         if (entity instanceof NotificationTipEntity) return map((NotificationTipEntity) entity);
         if (entity instanceof NotificationFindMyStuffEntity) return map((NotificationFindMyStuffEntity) entity);

@@ -16,6 +16,7 @@ import org.orcid.core.adapter.JpaJaxbNotificationAdapter;
 import org.orcid.jaxb.model.common_v2.Source;
 import org.orcid.jaxb.model.common_v2.SourceClientId;
 import org.orcid.jaxb.model.notification.amended_v2.NotificationAmended;
+import org.orcid.jaxb.model.notification.custom_v2.NotificationAdministrative;
 import org.orcid.jaxb.model.notification.custom_v2.NotificationCustom;
 import org.orcid.jaxb.model.notification.permission_v2.AuthorizationUrl;
 import org.orcid.jaxb.model.notification.permission_v2.Item;
@@ -26,6 +27,7 @@ import org.orcid.jaxb.model.notification_v2.Notification;
 import org.orcid.jaxb.model.notification_v2.NotificationType;
 import org.orcid.jaxb.model.record_v2.ExternalID;
 import org.orcid.persistence.jpa.entities.NotificationAddItemsEntity;
+import org.orcid.persistence.jpa.entities.NotificationAdministrativeEntity;
 import org.orcid.persistence.jpa.entities.NotificationAmendedEntity;
 import org.orcid.persistence.jpa.entities.NotificationCustomEntity;
 import org.orcid.persistence.jpa.entities.NotificationEntity;
@@ -82,6 +84,18 @@ public class JpaJaxbNotificationAdapterTest extends MockSourceNameCache {
         assertEquals("Test subject", notificationCustom.getSubject());
         assertTrue(notification.getCreatedDate().toXMLFormat().startsWith("2014-01-01T09:17:56"));
         assertTrue(notification.getReadDate().toXMLFormat().startsWith("2014-03-04T17:43:06"));
+    }
+
+    @Test
+    public void testAdministrativeSubtypeIsPreserved() {
+        NotificationAdministrative notification = new NotificationAdministrative();
+        notification.setNotificationType(NotificationType.ADMINISTRATIVE);
+
+        NotificationEntity notificationEntity = jpaJaxbNotificationAdapter.toNotificationEntity(notification);
+
+        assertTrue(notificationEntity instanceof NotificationAdministrativeEntity);
+        assertEquals(NotificationType.ADMINISTRATIVE.name(), notificationEntity.getNotificationType());
+        assertTrue(jpaJaxbNotificationAdapter.toNotification(notificationEntity) instanceof NotificationAdministrative);
     }
 
     @Test
