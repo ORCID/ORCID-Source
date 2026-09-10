@@ -5,6 +5,7 @@ import java.util.function.Function;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.InitializingBean;
 
@@ -12,7 +13,7 @@ import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.CacheLoader;
 import com.github.benmanes.caffeine.cache.Caffeine;
 
-public class OrcidCaffeineCacheFactoryBean implements FactoryBean<Cache<?, ?>>, InitializingBean {
+public class OrcidCaffeineCacheFactoryBean implements FactoryBean<Cache<?, ?>>, InitializingBean, DisposableBean {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(OrcidCaffeineCacheFactoryBean.class);
 
@@ -162,6 +163,13 @@ public class OrcidCaffeineCacheFactoryBean implements FactoryBean<Cache<?, ?>>, 
 
         if (cacheManager != null && cacheName != null) {
             cacheManager.registerCache(cacheName, this.cache);
+        }
+    }
+
+    @Override
+    public void destroy() {
+        if (cacheManager != null && cacheName != null && cache != null) {
+            cacheManager.unregisterCache(cacheName, cache);
         }
     }
 }

@@ -2,6 +2,7 @@ package org.orcid.core.manager.impl;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
@@ -75,6 +76,13 @@ public class ClientDetailsEntityCacheManagerImplTest {
         assertSame(fresh, result.get("A"));
         verify(clientDetailsManager).findByClientIds(Arrays.asList("A"));
         verify(clientDetailsCache).put(any(), any(ClientDetailsEntity.class));
+    }
+
+    @Test
+    public void cachedClientWithoutLastModifiedIsStale() {
+        ClientDetailsEntity cached = client("A", null);
+
+        assertTrue(ClientDetailsEntityCacheManagerImpl.needsFresh(new Date(), cached));
     }
 
     private ClientDetailsEntity client(String clientId, Date lastModified) {

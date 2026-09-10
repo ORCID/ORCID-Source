@@ -67,8 +67,12 @@
 
     <bean id="webCacheManager" class="org.orcid.core.utils.OrcidCaffeineCacheManagerFactoryBean" />
 
+    <bean id="springWebCaffeineSpec" class="com.github.benmanes.caffeine.cache.CaffeineSpec" factory-method="parse">
+        <constructor-arg value="maximumSize=10000,expireAfterAccess=15m" />
+    </bean>
+
     <bean id="springWebCacheManager" class="org.springframework.cache.caffeine.CaffeineCacheManager">
-        <property name="caffeineSpec" value="maximumSize=10000,expireAfterAccess=15m" />
+        <property name="caffeineSpec" ref="springWebCaffeineSpec" />
     </bean>
 
 	<bean id="localeChangeInterceptor"

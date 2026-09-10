@@ -13,9 +13,13 @@
         class="org.orcid.core.utils.OrcidCaffeineCacheManagerFactoryBean" >
 	</bean>
 	
-	<bean id="springCoreCacheManager" class="org.springframework.cache.caffeine.CaffeineCacheManager">
-		<property name="caffeineSpec" value="maximumSize=10000,expireAfterAccess=15m" />
-	</bean>
+    <bean id="springCoreCaffeineSpec" class="com.github.benmanes.caffeine.cache.CaffeineSpec" factory-method="parse">
+        <constructor-arg value="maximumSize=10000,expireAfterAccess=15m" />
+    </bean>
+
+    <bean id="springCoreCacheManager" class="org.springframework.cache.caffeine.CaffeineCacheManager">
+        <property name="caffeineSpec" ref="springCoreCaffeineSpec" />
+    </bean>
 	
     <bean id="recentOrcidCache" class="org.orcid.core.utils.OrcidCaffeineCacheFactoryBean">
 		<property name="cacheName" value="recent-orcid" />
