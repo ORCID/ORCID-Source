@@ -1,3 +1,9 @@
+## v3.0.72 - 2026-09-10
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.0.71...v3.0.72)
+
+- [#7696](https://github.com/ORCID/ORCID-Source/pull/7696): Check the source on unclaimed records
+
 ## v3.0.71 - 2026-09-10
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.0.70...v3.0.71)
