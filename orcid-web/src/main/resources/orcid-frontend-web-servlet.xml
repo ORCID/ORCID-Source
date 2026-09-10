@@ -65,7 +65,7 @@
 
     <cache:annotation-driven cache-manager="springWebCacheManager"/>
 
-	<bean id="webCacheManager" class="org.orcid.core.utils.OrcidEhCacheManagerFactoryBean" />
+    <bean id="webCacheManager" class="org.orcid.core.utils.OrcidCaffeineCacheManagerFactoryBean" />
 
     <bean id="springWebCacheManager" class="org.springframework.cache.caffeine.CaffeineCacheManager">
         <property name="caffeineSpec" value="maximumSize=10000,expireAfterAccess=15m" />

@@ -18,7 +18,6 @@ import org.dbunit.dataset.IDataSet;
 import org.dbunit.operation.DatabaseOperation;
 import org.dbunit.util.fileloader.FlatXmlDataFileLoader;
 import org.junit.Ignore;
-import org.orcid.core.utils.OrcidCaffeineCacheManager;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.GenericXmlApplicationContext;
@@ -105,12 +104,14 @@ public class DBUnitTest {
             // do nothing
         }
         try {
-            OrcidCaffeineCacheManager coreCacheManager = (OrcidCaffeineCacheManager) context.getBean("coreCacheManager");
+            Object coreCacheManager = context.getBean("coreCacheManager");
             if (coreCacheManager != null) {
-                coreCacheManager.clearAll();
+                coreCacheManager.getClass().getMethod("clearAll").invoke(coreCacheManager);
             }
         } catch (NoSuchBeanDefinitionException e) {
             // do nothing
+        } catch (ReflectiveOperationException e) {
+            throw new IllegalStateException("Unable to clear the core cache manager", e);
         }
     }
 

@@ -2,15 +2,12 @@ package org.orcid.core.utils;
 
 import org.springframework.beans.factory.FactoryBean;
 
-/**
- * Backwards-compatible FactoryBean that produces an OrcidCaffeineCacheManager.
- */
-public class OrcidEhCacheManagerFactoryBean implements FactoryBean<OrcidCaffeineCacheManager> {
+public class OrcidCaffeineCacheManagerFactoryBean implements FactoryBean<OrcidCaffeineCacheManager> {
 
     private static OrcidCaffeineCacheManager cacheManager;
 
     @Override
-    public OrcidCaffeineCacheManager getObject() throws Exception {
+    public OrcidCaffeineCacheManager getObject() {
         if (cacheManager == null) {
             cacheManager = new OrcidCaffeineCacheManager();
         }

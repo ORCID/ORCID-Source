@@ -12,6 +12,7 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
+import com.github.benmanes.caffeine.cache.Cache;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
@@ -70,7 +71,7 @@ public class ContributorUtilsTest {
         contributorUtils.setProfileEntityManager(profileEntityManager);
         contributorUtils.setProfileLastModifiedAspect(profileLastModifiedAspect);
         when(profileLastModifiedAspect.retrieveLastModifiedDate(anyString())).thenReturn(new Date());
-        when(contributorsNameCache.containsKey(anyString())).thenReturn(false);
+        when(contributorsNameCache.getIfPresent(anyString())).thenReturn(null);
     }
     
     @Test
