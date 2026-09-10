@@ -1,3 +1,9 @@
+## v3.0.68 - 2026-09-10
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.0.67...v3.0.68)
+
+- [#7692](https://github.com/ORCID/ORCID-Source/pull/7692): PD-13463 fixed so readonly transactions read from readonlydb
+
 ## v3.0.67 - 2026-09-10
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.0.66...v3.0.67)
