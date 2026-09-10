@@ -1,3 +1,9 @@
+## v3.0.71 - 2026-09-10
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.0.70...v3.0.71)
+
+- [#7695](https://github.com/ORCID/ORCID-Source/pull/7695): PD-13467  Revert the Ehcache to SerializerCopier
+
 ## v3.0.70 - 2026-09-10
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.0.69...v3.0.70)
