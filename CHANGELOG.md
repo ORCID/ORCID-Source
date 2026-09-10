@@ -1,3 +1,9 @@
+## v3.0.67 - 2026-09-10
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.0.66...v3.0.67)
+
+- [#7691](https://github.com/ORCID/ORCID-Source/pull/7691): Remove logs
+
 ## v3.0.66 - 2026-09-09
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.0.65...v3.0.66)
