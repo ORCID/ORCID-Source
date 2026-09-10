@@ -23,7 +23,7 @@ public class InvalidRecordDataChangeDaoImpl implements InvalidRecordDataChangeDa
     
     @SuppressWarnings("unchecked")
     @Override
-    @Transactional(readOnly = true)
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     public List<InvalidRecordDataChangeEntity> getByDateCreated(Long lastId, Long pageSize, boolean descendantOrder) {
         String queryStr = "SELECT * FROM invalid_record_data_changes WHERE id {GTorLT} {LAST_SEQUENCE} ORDER BY id {ORDER} LIMIT :pageSize";
         
@@ -43,7 +43,7 @@ public class InvalidRecordDataChangeDaoImpl implements InvalidRecordDataChangeDa
     }
 
     @Override
-    @Transactional(readOnly = true)
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     public boolean haveNext(Long sequence, boolean descendantOrder) {
         String queryStr = "SELECT COUNT(*) FROM InvalidRecordDataChangeEntity WHERE id {GTorLT} :sequence";        
         TypedQuery<Long> query = entityManager.createQuery(queryStr.replace("{GTorLT}", descendantOrder ? "<" : ">"), Long.class);
@@ -52,7 +52,7 @@ public class InvalidRecordDataChangeDaoImpl implements InvalidRecordDataChangeDa
     }
 
     @Override
-    @Transactional(readOnly = true)
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     public boolean havePrevious(Long sequence, boolean descendantOrder) {
         String queryStr = "SELECT COUNT(*) FROM InvalidRecordDataChangeEntity WHERE id {GTorLT} :sequence";        
         TypedQuery<Long> query = entityManager.createQuery(queryStr.replace("{GTorLT}", descendantOrder ? ">" : "<"), Long.class);

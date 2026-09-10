@@ -29,7 +29,7 @@ public interface ExternalIdentifierDao extends GenericDao<ExternalIdentifierEnti
      * @return a list of all external identifiers associated with the given
      *         profile
      */
-    @Transactional(readOnly = true)
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     List<ExternalIdentifierEntity> getExternalIdentifiers(String orcid, long lastModified);
 
     /**
@@ -41,7 +41,7 @@ public interface ExternalIdentifierDao extends GenericDao<ExternalIdentifierEnti
      * @return a list of all external identifiers associated with the given
      *         profile and that have the given visibility
      */
-    @Transactional(readOnly = true)
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     List<ExternalIdentifierEntity> getExternalIdentifiers(String orcid, String visibility);
 
     /**
@@ -51,7 +51,7 @@ public interface ExternalIdentifierDao extends GenericDao<ExternalIdentifierEnti
      * @param id
      * @return an external identifier that matches the given id and profile id
      */
-    @Transactional(readOnly = true)
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     ExternalIdentifierEntity getExternalIdentifierEntity(String orcid, Long id);
     
     /**
@@ -76,7 +76,7 @@ public interface ExternalIdentifierDao extends GenericDao<ExternalIdentifierEnti
     @Transactional(propagation = Propagation.REQUIRED)
     void removeAllExternalIdentifiers(String orcid);
 
-    @Transactional(readOnly = true)
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     List<ExternalIdentifierEntity> getPublicExternalIdentifiers(String orcid, long lastModified);
 
     @Transactional(propagation = Propagation.REQUIRED)

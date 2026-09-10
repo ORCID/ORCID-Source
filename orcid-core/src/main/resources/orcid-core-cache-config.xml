@@ -7,7 +7,7 @@
         http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
         http://www.springframework.org/schema/cache http://www.springframework.org/schema/cache/spring-cache.xsd">	
 	
-	<cache:annotation-driven cache-manager="springCoreCacheManager"/>
+	<cache:annotation-driven cache-manager="springCoreCacheManager" order="1"/>
 	
 	<bean id="coreCacheManager"
 		class="org.orcid.core.utils.OrcidEhCacheManagerFactoryBean" >

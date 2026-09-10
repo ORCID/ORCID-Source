@@ -19,7 +19,7 @@ public interface ProfileFundingDao extends GenericDao<ProfileFundingEntity, Long
      *            The id of the element
      * @return a profile funding entity that have the give id and belongs to the given user 
      * */
-    @Transactional(readOnly = true)
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     public ProfileFundingEntity getProfileFunding(String userOrcid, Long profileFundingId);
     
     /**
@@ -92,7 +92,7 @@ public interface ProfileFundingDao extends GenericDao<ProfileFundingEntity, Long
      * 
      * @return the ProfileFundingEntity object
      * */
-    @Transactional(readOnly = true)
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     ProfileFundingEntity getProfileFundingEntity(String orgId, String clientOrcid);
 
     /**
@@ -103,14 +103,14 @@ public interface ProfileFundingDao extends GenericDao<ProfileFundingEntity, Long
      * 
      * @return the ProfileFundingEntity object
      * */
-    @Transactional(readOnly = true)
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     ProfileFundingEntity getProfileFundingEntity(Long profileFundingId);
     
     /**
      * Get all the profile fundings where the amount is not null
      * @return a list of all profile fundings where the amount is not null 
      * */
-    @Transactional(readOnly = true)
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     List<ProfileFundingEntity> getProfileFundingWithAmount();
     
     /**
@@ -126,7 +126,7 @@ public interface ProfileFundingDao extends GenericDao<ProfileFundingEntity, Long
     @Transactional(propagation = Propagation.REQUIRED)
     boolean updateToMaxDisplay(String orcid, Long id);
     
-    @Transactional(readOnly = true)
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     List<BigInteger> findFundingNeedingExternalIdentifiersMigration(int chunkSize);
     
     @Transactional(propagation = Propagation.REQUIRED)
@@ -135,7 +135,7 @@ public interface ProfileFundingDao extends GenericDao<ProfileFundingEntity, Long
     @Transactional(propagation = Propagation.REQUIRED)
     void removeFundingByClientSourceId(String clientSourceId);
     
-    @Transactional(readOnly = true)
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     List<ProfileFundingEntity> getByUser(String userOrcid, long lastModified);
     
     /**
@@ -144,7 +144,7 @@ public interface ProfileFundingDao extends GenericDao<ProfileFundingEntity, Long
      *          The batch number to fetch
      * @return a list of funding ids with old ext ids          
      * */
-    @Transactional(readOnly = true)
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     List<BigInteger> getFundingWithOldExtIds(long limit);
     
     @Transactional(propagation = Propagation.REQUIRED)
@@ -167,39 +167,39 @@ public interface ProfileFundingDao extends GenericDao<ProfileFundingEntity, Long
      *          the Id of the user
      * @return true if there is at least one public funding for a specific user
      * */
-    @Transactional(readOnly = true)
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     Boolean hasPublicFunding(String orcid);
 
-    @Transactional(readOnly = true)
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     List<BigInteger> getIdsForClientSourceCorrection(int limit, List<String> nonPublicClients);
 
     @Transactional(propagation = Propagation.REQUIRED)
     void correctClientSource(List<BigInteger> ids);
 
-    @Transactional(readOnly = true)
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     List<BigInteger> getIdsForUserSourceCorrection(int limit, List<String> publicClients);
 
     @Transactional(propagation = Propagation.REQUIRED)
     void correctUserSource(List<BigInteger> ids);
 
-    @Transactional(readOnly = true)
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     List<BigInteger> getIdsForUserOBOUpdate(String clientDetailsId, int max);
 
     @Transactional(propagation = Propagation.REQUIRED)
     void updateUserOBODetails(List<BigInteger> ids);
 
-    @Transactional(readOnly = true)
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     List<ProfileFundingEntity> getFundingsReferencingOrgs(List<Long> orgIds);
 
-    @Transactional(readOnly = true)
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     List<BigInteger> getIdsForUserOBORecords(String clientDetailsId, int max);
 
     @Transactional(propagation = Propagation.REQUIRED)
     void revertUserOBODetails(List<BigInteger> ids);
 
-    @Transactional(readOnly = true)
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     public List<BigInteger> getIdsForUserOBORecords(int max);
 
-    @Transactional(readOnly = true)
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     public List<BigInteger> getIdsOfFundingsReferencingClientProfiles(int max, List<String> clientProfileOrcidIds);
 }
