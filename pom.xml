@@ -30,7 +30,7 @@ the software.
         <security.version>6.5.11</security.version>
         <liquibase.version>4.9.1</liquibase.version>
         <jersey.version>3.1.10</jersey.version>
-        <jackson.version>2.15.4</jackson.version>
+        <jackson.version>2.18.8</jackson.version>
         <activemq.version>6.2.4</activemq.version>
         <swagger.version>2.1.1</swagger.version>
         <aspectj.version>1.9.6</aspectj.version>
