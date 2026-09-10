@@ -251,6 +251,20 @@ public class JpaJaxbPeerReviewAdapterTest extends MockSourceNameCache {
     }
 
     @Test
+    public void fromPeerReviewEntityToPeerReviewDoesNotCreateEmptyOptionalSubjectFields() throws IllegalAccessException {
+        PeerReviewEntity entity = getPeerReviewEntity();
+        entity.setSubjectContainerName(null);
+        entity.setSubjectName(null);
+        entity.setSubjectTranslatedName(null);
+        entity.setSubjectTranslatedNameLanguageCode(null);
+
+        PeerReview peerReview = jpaJaxbPeerReviewAdapter.toPeerReview(entity);
+
+        assertNull(peerReview.getSubjectContainerName());
+        assertNull(peerReview.getSubjectName());
+    }
+
+    @Test
     public void fromPeerReviewEntityWithDissertationThesisSubjectTypeMapsToDissertation() throws IllegalAccessException {
         PeerReviewEntity entity = getPeerReviewEntity();
         entity.setSubjectType(org.orcid.jaxb.model.common.WorkType.DISSERTATION_THESIS.name());

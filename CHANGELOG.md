@@ -1,3 +1,21 @@
+## v3.0.66 - 2026-09-09
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.0.65...v3.0.66)
+
+- [#7690](https://github.com/ORCID/ORCID-Source/pull/7690): PD-13450 Fixed administrative type for notifications
+
+## v3.0.65 - 2026-09-09
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.0.64...v3.0.65)
+
+- [#7689](https://github.com/ORCID/ORCID-Source/pull/7689): PD-13448  fixed null subject mapping for PeerReview
+
+## v3.0.64 - 2026-09-09
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.0.63...v3.0.64)
+
+- [#7688](https://github.com/ORCID/ORCID-Source/pull/7688): PD-13438  added the mapping for source in notifications
+
 ## v3.0.63 - 2026-09-08
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.0.62...v3.0.63)

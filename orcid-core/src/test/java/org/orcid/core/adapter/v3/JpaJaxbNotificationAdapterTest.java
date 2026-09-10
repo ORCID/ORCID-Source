@@ -26,6 +26,7 @@ import org.orcid.jaxb.model.v3.release.common.Url;
 import org.orcid.jaxb.model.v3.release.notification.Notification;
 import org.orcid.jaxb.model.v3.release.notification.NotificationType;
 import org.orcid.jaxb.model.v3.release.notification.amended.NotificationAmended;
+import org.orcid.jaxb.model.v3.release.notification.custom.NotificationAdministrative;
 import org.orcid.jaxb.model.v3.release.notification.custom.NotificationCustom;
 import org.orcid.jaxb.model.v3.release.notification.permission.AuthorizationUrl;
 import org.orcid.jaxb.model.v3.release.notification.permission.Item;
@@ -35,6 +36,7 @@ import org.orcid.jaxb.model.v3.release.notification.permission.NotificationPermi
 import org.orcid.jaxb.model.v3.release.record.ExternalID;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.NotificationAddItemsEntity;
+import org.orcid.persistence.jpa.entities.NotificationAdministrativeEntity;
 import org.orcid.persistence.jpa.entities.NotificationAmendedEntity;
 import org.orcid.persistence.jpa.entities.NotificationCustomEntity;
 import org.orcid.persistence.jpa.entities.NotificationEntity;
@@ -113,6 +115,18 @@ public class JpaJaxbNotificationAdapterTest extends MockSourceNameCache {
         assertEquals("Test subject", notificationCustom.getSubject());
         assertTrue(notification.getCreatedDate().toXMLFormat().startsWith("2015-06-05T10:15:20.000"));
         assertTrue(notification.getReadDate().toXMLFormat().startsWith("2014-03-04T17:43:06.000"));
+    }
+
+    @Test
+    public void testAdministrativeSubtypeIsPreserved() {
+        NotificationAdministrative notification = new NotificationAdministrative();
+        notification.setNotificationType(NotificationType.ADMINISTRATIVE);
+
+        NotificationEntity notificationEntity = jpaJaxbNotificationAdapter.toNotificationEntity(notification);
+
+        assertTrue(notificationEntity instanceof NotificationAdministrativeEntity);
+        assertEquals(org.orcid.jaxb.model.notification_v2.NotificationType.ADMINISTRATIVE.name(), notificationEntity.getNotificationType());
+        assertTrue(jpaJaxbNotificationAdapter.toNotification(notificationEntity) instanceof NotificationAdministrative);
     }
 
     @Test
