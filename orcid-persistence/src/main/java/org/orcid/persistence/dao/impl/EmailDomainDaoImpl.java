@@ -65,7 +65,7 @@ public class EmailDomainDaoImpl extends GenericDaoImpl<EmailDomainEntity, Long> 
     }
     
     @Override
-    @Transactional(readOnly = true)
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     public List<EmailDomainEntity>  findByEmailDomain(String emailDomain) {
         TypedQuery<EmailDomainEntity> query = entityManager.createQuery("from EmailDomainEntity where lower(trim(emailDomain)) = lower(trim(:emailDomain))", EmailDomainEntity.class);
         query.setParameter("emailDomain", emailDomain);
@@ -81,7 +81,7 @@ public class EmailDomainDaoImpl extends GenericDaoImpl<EmailDomainEntity, Long> 
     }
 
     @Override
-    @Transactional(readOnly = true)
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     public List<EmailDomainEntity> findByCategory(DomainCategory category) {
         TypedQuery<EmailDomainEntity> query = entityManager.createQuery("from EmailDomainEntity where category = :category", EmailDomainEntity.class);
         query.setParameter("category", category);

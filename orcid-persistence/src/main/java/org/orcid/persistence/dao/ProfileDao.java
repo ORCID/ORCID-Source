@@ -22,10 +22,10 @@ public interface ProfileDao extends GenericDao<ProfileEntity, String> {
     @Transactional(propagation = Propagation.REQUIRED)
     ProfileEntity merge(ProfileEntity entity);
 
-    @Transactional(readOnly = true)
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     List<String> findByMissingEventTypes(int maxResults, List<ProfileEventType> pet, Collection<String> orcidsToExclude, boolean not);
 
-    @Transactional(readOnly = true)
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     List<String> findByMissingEventTypes(int maxResults, List<ProfileEventType> pet, Collection<String> orcidsToExclude, boolean not, boolean checkQuarterlyTipsEnabled);
 
     /**
@@ -42,7 +42,7 @@ public interface ProfileDao extends GenericDao<ProfileEntity, String> {
      * @return a list of object arrays where the object[0] contains the orcid id
      *         and object[1] contains the indexing status
      */
-    @Transactional(readOnly = true)
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     Map<String, Date> findOrcidsByIndexingStatus(IndexingStatus indexingStatus, int maxResults, Integer delay);
 
     /**
@@ -59,55 +59,55 @@ public interface ProfileDao extends GenericDao<ProfileEntity, String> {
      * @return a list of object arrays where the object[0] contains the orcid id
      *         and object[1] contains the indexing status
      */
-    @Transactional(readOnly = true)
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     Map<String, Date> findOrcidsByIndexingStatus(IndexingStatus indexingStatus, int maxResults, Collection<String> orcidsToExclude, Integer delay);
 
-    @Transactional(readOnly = true)
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     List<String> findUnclaimedNotIndexedAfterWaitPeriod(int waitPeriodDays, int maxDaysBack, int maxResults, Collection<String> orcidsToExclude);
 
-    @Transactional(readOnly = true)
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     List<String> findUnclaimedNeedingReminder(int reminderAfterDays, int maxResults, Collection<String> orcidsToExclude);
 
-    @Transactional(readOnly = true)
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     List<String> findOrcidsNeedingEmailMigration(int maxResults);
 
-    @Transactional(readOnly = true)
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     List<ProfileEntity> findProfilesThatMissedIndexing(int maxResults);
 
-    @Transactional(readOnly = true)
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     boolean orcidExists(String orcid);
 
-    @Transactional(readOnly = true)
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     boolean hasBeenGivenPermissionTo(String giverOrcid, String receiverOrcid);
 
-    @Transactional(readOnly = true)
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     boolean existsAndNotClaimedAndBelongsTo(String messageOrcid, String clientId);
 
     @Transactional(propagation = Propagation.REQUIRED)
     void updateIndexingStatus(String orcid, IndexingStatus indexingStatus);
 
-    @Transactional(readOnly = true)
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     IndexingStatus retrieveIndexingStatus(String orcid);
 
-    @Transactional(readOnly = true)
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     Long getConfirmedProfileCount();
 
-    @Transactional(readOnly = true)
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     List<ProfileEntity> findByOrcidType(String orcidType);
 
     @Transactional(propagation = Propagation.REQUIRED)
     void updateLastModifiedDateAndIndexingStatusWithoutResult(String orcid, Date lastModified, IndexingStatus indexingStatus);
 
-    @Transactional(readOnly = true)
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     public List<Triple<String, String, Boolean>> findEmailsUnverfiedDays(int daysUnverified, EmailEventType eventSent);
 
-    @Transactional(readOnly = true)
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     String retrieveOrcidType(String orcid);
 
-    @Transactional(readOnly = true)
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     List<Object[]> findInfoForDecryptionAnalysis();
 
-    @Transactional(readOnly = true)
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     String retrieveLocale(String orcid);
 
     @Transactional(propagation = Propagation.REQUIRED)
@@ -116,10 +116,10 @@ public interface ProfileDao extends GenericDao<ProfileEntity, String> {
     @Transactional(propagation = Propagation.REQUIRED)
     boolean deprecateProfile(String toDeprecate, String primaryOrcid, String deprecatedMethod, String adminUser);
 
-    @Transactional(readOnly = true)
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     String retrievePrimaryAccountOrcid(String deprecatedOrcid);
 
-    @Transactional(readOnly = true)
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     boolean isProfileDeprecated(String orcid);
 
     @Transactional(propagation = Propagation.REQUIRED)
@@ -128,16 +128,16 @@ public interface ProfileDao extends GenericDao<ProfileEntity, String> {
     @Transactional(propagation = Propagation.REQUIRED)
     boolean updateDeveloperTools(String orcid, boolean enabled);
 
-    @Transactional(readOnly = true)
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     public boolean getClaimedStatus(String orcid);
 
-    @Transactional(readOnly = true)
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     public boolean getClaimedStatusByEmailHash(String email);
 
-    @Transactional(readOnly = true)
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     String getClientType(String orcid);
 
-    @Transactional(readOnly = true)
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     String getGroupType(String orcid);
 
     @Transactional(propagation = Propagation.REQUIRED)
@@ -149,10 +149,10 @@ public interface ProfileDao extends GenericDao<ProfileEntity, String> {
     @Transactional(propagation = Propagation.REQUIRED)
     public boolean unlockProfile(String orcid);
 
-    @Transactional(readOnly = true)
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     public boolean isLocked(String orcid);
 
-    @Transactional(readOnly = true)
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     public boolean isDeactivated(String orcid);
 
     @Transactional(propagation = Propagation.REQUIRED)
@@ -167,13 +167,13 @@ public interface ProfileDao extends GenericDao<ProfileEntity, String> {
     @Transactional(propagation = Propagation.REQUIRED)
     boolean updateDefaultVisibility(String orcid, String visibility);
 
-    @Transactional(readOnly = true)
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     List<String> getProfilesWithNoHashedOrcid(int limit);
 
     @Transactional(propagation = Propagation.REQUIRED)
     void hashOrcidIds(String orcid, String hashedOrcid);
 
-    @Transactional(readOnly = true)
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     public Date getLastLogin(String orcid);
 
     @Transactional(propagation = Propagation.REQUIRED)
@@ -188,32 +188,32 @@ public interface ProfileDao extends GenericDao<ProfileEntity, String> {
     @Transactional(propagation = Propagation.REQUIRED)
     boolean deactivate(String orcid);
 
-    @Transactional(readOnly = true)
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     List<OrcidGrantedAuthority> getGrantedAuthoritiesForProfile(String orcid);
 
-    @Transactional(readOnly = true)
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     List<ProfileEventEntity> getProfileEvents(String orcid, List<ProfileEventType> eventTypeNames);
 
-    @Transactional(readOnly = true)
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     ProfileEntity getLockedReason(String orcid);
 
     @Transactional(propagation = Propagation.REQUIRED)
     int deleteProfilesOfType(String orcidType);
 
-    @Transactional(readOnly = true)
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     List<String> getAllOrcidIdsForInvalidRecords();
 
     @Transactional(propagation = Propagation.REQUIRED)
     void updateIndexingStatus(List<String> ids, IndexingStatus reindex);
 
-    @Transactional(readOnly = true)
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     public List<String> registeredBetween(Date startDate, Date endDate);
 
-    @Transactional(readOnly = true)
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     boolean isOrcidValidAsDelegate(String orcid);
 
     // ********* Signin Lock Methods *********
-    @Transactional(readOnly = true)
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     public List<Object[]> getSigninLock(String orcid);
 
     @Transactional(propagation = Propagation.REQUIRED)
@@ -225,16 +225,16 @@ public interface ProfileDao extends GenericDao<ProfileEntity, String> {
     @Transactional(propagation = Propagation.REQUIRED)
     public void updateSigninLock(String orcid, Integer count);
 
-    @Transactional(readOnly = true)
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     boolean haveMemberPushedWorksOrAffiliationsToRecord(String orcid, String clientId);
 
-    @Transactional(readOnly = true)
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     public List<Pair<String, String>> findEmailsToSendAddWorksEmail(int profileCreatedNumberOfDaysAgo);
 
     @Transactional(propagation = Propagation.REQUIRED)
     boolean updateDeprecation(String deprecated, String primaryOrcid);
 
-    @Transactional(readOnly = true)
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     public boolean isReviewed(String orcid);
 
 }

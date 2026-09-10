@@ -22,7 +22,7 @@ public class PeerReviewDaoImpl extends GenericDaoImpl<PeerReviewEntity, Long> im
     }
 
     @Override
-    @Transactional(readOnly = true)
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     public PeerReviewEntity getPeerReview(String userOrcid, Long peerReviewId) {
         Query query = entityManager.createQuery("from PeerReviewEntity where orcid=:userOrcid and id=:peerReviewId");
         query.setParameter("userOrcid", userOrcid);
@@ -41,7 +41,7 @@ public class PeerReviewDaoImpl extends GenericDaoImpl<PeerReviewEntity, Long> im
     }    
     
     @Override
-    @Transactional(readOnly = true)
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     @Cacheable(value = "peer-reviews", key = "#userOrcid.concat('-').concat(#lastModified)")
     public List<PeerReviewEntity> getByUser(String userOrcid, long lastModified) {
         TypedQuery<PeerReviewEntity> query = entityManager.createQuery("from PeerReviewEntity where orcid=:userOrcid order by completionDate.year desc, completionDate.month desc, completionDate.day desc", PeerReviewEntity.class);
@@ -50,7 +50,7 @@ public class PeerReviewDaoImpl extends GenericDaoImpl<PeerReviewEntity, Long> im
     }
 
     @Override
-    @Transactional(readOnly = true)
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     public List<Object[]> getPeerReviewsByOrcid(String orcid, boolean justPublic) {
         String sqlString = null;
         if (justPublic) {
@@ -65,7 +65,7 @@ public class PeerReviewDaoImpl extends GenericDaoImpl<PeerReviewEntity, Long> im
     }
 
     @Override
-    @Transactional(readOnly = true)
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     public List<PeerReviewEntity> getPeerReviewsByOrcidAndGroupId(String orcid, String groupId, boolean justPublic) {
         String sqlString = null;
         if(justPublic) {
@@ -122,7 +122,7 @@ public class PeerReviewDaoImpl extends GenericDaoImpl<PeerReviewEntity, Long> im
      * @return a list of peer review ids with old ext ids          
      * */
     @Override
-    @Transactional(readOnly = true)
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     @SuppressWarnings("unchecked") 
     public List<BigInteger> getPeerReviewWithOldExtIds(long limit) {
         Query query = entityManager.createNativeQuery("SELECT distinct(id) FROM (SELECT id, json_array_elements(json_extract_path(external_identifiers_json, 'workExternalIdentifier')) AS j FROM peer_review WHERE external_identifiers_json is not null limit :limit) AS a WHERE (j->'relationship') is null");
@@ -148,7 +148,7 @@ public class PeerReviewDaoImpl extends GenericDaoImpl<PeerReviewEntity, Long> im
     }
 
     @Override
-    @Transactional(readOnly = true)
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     public Boolean hasPublicPeerReviews(String orcid) {
         Query query = entityManager.createNativeQuery("select count(*) from peer_review where orcid=:orcid and visibility='PUBLIC'");
         query.setParameter("orcid", orcid);
@@ -158,7 +158,7 @@ public class PeerReviewDaoImpl extends GenericDaoImpl<PeerReviewEntity, Long> im
 
     @SuppressWarnings("unchecked")
     @Override
-    @Transactional(readOnly = true)
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     public List<PeerReviewEntity> getPeerReviewsReferencingOrgs(List<Long> orgIds) {
         Query query = entityManager.createQuery("from PeerReviewEntity where org.id in (:orgIds)");
         query.setParameter("orgIds", orgIds);

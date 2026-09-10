@@ -21,7 +21,7 @@ public class ClientRedirectDaoImpl extends GenericDaoImpl<ClientRedirectUriEntit
     }
 
     @Override
-    @Transactional(readOnly = true)
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     public List<ClientRedirectUriEntity> findClientDetailsWithRedirectScope(String redirectUriType) {
         Query query = entityManager.createQuery("from ClientRedirectUriEntity as crue where crue.predefinedClientScope is not null and crue.redirectUriType = :rut");
         query.setParameter("rut", redirectUriType);

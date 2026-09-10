@@ -46,7 +46,7 @@ public class OrcidOauth2AuthoriziationCodeDetailDaoImpl extends GenericDaoImpl<O
     }
 
     @Override
-    @Transactional(readOnly = true)
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     public boolean isPersistentToken(String code) {
         TypedQuery<OrcidOauth2AuthoriziationCodeDetail> query = entityManager.createQuery("from OrcidOauth2AuthoriziationCodeDetail where id=:code",
                 OrcidOauth2AuthoriziationCodeDetail.class);

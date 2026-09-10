@@ -21,7 +21,7 @@ public class GroupIdRecordDaoImpl extends GenericDaoImpl<GroupIdRecordEntity, Lo
     }
 
     @Override
-    @Transactional(readOnly = true)
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     public List<GroupIdRecordEntity> getGroupIdRecords(int pageSize, int page) {
         TypedQuery<GroupIdRecordEntity> query = entityManager.createQuery("from GroupIdRecordEntity order by dateCreated", GroupIdRecordEntity.class);
         query.setFirstResult(pageSize * (page - 1));
@@ -30,7 +30,7 @@ public class GroupIdRecordDaoImpl extends GenericDaoImpl<GroupIdRecordEntity, Lo
     }
 
     @Override
-    @Transactional(readOnly = true)
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     public boolean exists(String groupId) {
         TypedQuery<Long> query = entityManager.createQuery("select count(g) from GroupIdRecordEntity g where trim(lower(g.groupId)) = trim(lower(:groupId))", Long.class);
         query.setParameter("groupId", groupId);
@@ -39,7 +39,7 @@ public class GroupIdRecordDaoImpl extends GenericDaoImpl<GroupIdRecordEntity, Lo
     }
 
     @Override
-    @Transactional(readOnly = true)
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     public GroupIdRecordEntity findByGroupId(String groupId) {
         TypedQuery<GroupIdRecordEntity> query = entityManager.createQuery("from GroupIdRecordEntity where trim(lower(groupId)) = trim(lower(:groupId))",
                 GroupIdRecordEntity.class);
@@ -49,7 +49,7 @@ public class GroupIdRecordDaoImpl extends GenericDaoImpl<GroupIdRecordEntity, Lo
     }
 
     @Override
-    @Transactional(readOnly = true)
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     public GroupIdRecordEntity findByName(String name) {
         TypedQuery<GroupIdRecordEntity> query = entityManager.createQuery("from GroupIdRecordEntity where trim(lower(groupName)) = trim(lower(:groupName))",
                 GroupIdRecordEntity.class);
@@ -59,7 +59,7 @@ public class GroupIdRecordDaoImpl extends GenericDaoImpl<GroupIdRecordEntity, Lo
     }
 
     @Override
-    @Transactional(readOnly = true)
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     public boolean haveAnyPeerReview(String groupId) {
         TypedQuery<Long> query = entityManager.createQuery("select count(p) from PeerReviewEntity p where trim(lower(p.groupId)) = trim(lower(:groupId))", Long.class);
         query.setParameter("groupId", groupId);
@@ -68,7 +68,7 @@ public class GroupIdRecordDaoImpl extends GenericDaoImpl<GroupIdRecordEntity, Lo
     }
 
     @Override
-    @Transactional(readOnly = true)
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     public boolean duplicateExists(Long putCode, String groupId) {
         StringBuilder queryString = new StringBuilder("select count(g) from GroupIdRecordEntity g where trim(lower(g.groupId)) = trim(lower(:groupId))");
         if (putCode != null) {
@@ -85,7 +85,7 @@ public class GroupIdRecordDaoImpl extends GenericDaoImpl<GroupIdRecordEntity, Lo
     }   
     
     @Override
-    @Transactional(readOnly = true)
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     public List<GroupIdRecordEntity> getIssnRecordsSortedBySyncDate(int batchSize, Date syncTime) {
         Query query = entityManager.createNativeQuery("SELECT * FROM group_id_record g WHERE (g.issn_loader_fail_count is null OR g.issn_loader_fail_count < :max) AND g.group_id LIKE 'issn:%' AND (g.sync_date is null OR g.sync_date < :syncTime) ORDER BY g.sync_date NULLS FIRST", GroupIdRecordEntity.class);
         query.setParameter("max", maxRetries);

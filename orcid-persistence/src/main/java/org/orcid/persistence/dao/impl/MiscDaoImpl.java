@@ -24,7 +24,7 @@ public class MiscDaoImpl implements MiscDao {
     }
 
     @Override
-    @Transactional(readOnly = true)
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     public Date retrieveDatabaseDatetime() {
         Query query = entityManager.createNativeQuery("SELECT now()");
         Object result = query.getSingleResult();

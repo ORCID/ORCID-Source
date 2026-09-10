@@ -8,16 +8,16 @@ import org.springframework.transaction.annotation.Transactional;
 
 public interface PublicApiDailyRateLimitDao extends GenericDao<PublicApiDailyRateLimitEntity, Long> {
     
-    @Transactional(readOnly = true)
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     PublicApiDailyRateLimitEntity findByClientIdAndRequestDate(String clientId, LocalDate requestDate);
     
-    @Transactional(readOnly = true)
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     PublicApiDailyRateLimitEntity findByIpAddressAndRequestDate(String ipAddress, LocalDate requestDate);
     
-    @Transactional(readOnly = true)
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     int countClientRequestsWithLimitExceeded(LocalDate requestDate, int limit);
     
-    @Transactional(readOnly = true)
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     int countAnonymousRequestsWithLimitExceeded(LocalDate requestDate, int limit);
     
     @Transactional(propagation = Propagation.REQUIRED)

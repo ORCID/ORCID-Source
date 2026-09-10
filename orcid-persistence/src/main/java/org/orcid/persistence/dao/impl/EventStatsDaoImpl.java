@@ -38,7 +38,7 @@ public class EventStatsDaoImpl implements EventStatsDao {
     }
 
     @Override
-    @Transactional(readOnly = true)
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     public List<EventStatsEntity> findAll() {
         TypedQuery<EventStatsEntity> query = entityManager.createQuery("from EventStatsEntity", EventStatsEntity.class);
         return query.getResultList();

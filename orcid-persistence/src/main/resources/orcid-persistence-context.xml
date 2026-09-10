@@ -16,7 +16,7 @@
                
     <context:property-placeholder location="\${org.orcid.config.file}" ignore-resource-not-found="true" ignore-unresolvable="true" />
             
-    <tx:annotation-driven proxy-target-class="true" />
+    <tx:annotation-driven order="2" proxy-target-class="true" />
     
     <context:component-scan
 		base-package="org.orcid.persistence.aop" />
