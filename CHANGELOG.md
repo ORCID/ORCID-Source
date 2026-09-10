@@ -1,3 +1,9 @@
+## v3.0.70 - 2026-09-10
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.0.69...v3.0.70)
+
+- [#7694](https://github.com/ORCID/ORCID-Source/pull/7694): PD-13466 - fixed log4j logging for pub api
+
 ## v3.0.69 - 2026-09-10
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.0.68...v3.0.69)
