@@ -10,7 +10,7 @@ import static org.mockito.Mockito.when;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.ehcache.Cache;
+import com.github.benmanes.caffeine.cache.Cache;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -39,7 +39,7 @@ public class OrcidGenerationManagerTest {
     @Before
     public void setUp() {
         when(profileEntityManager.orcidExists(anyString())).thenReturn(false);
-        when(recentOrcidCache.containsKey(anyString())).thenAnswer(invocation -> cachedOrcids.contains(invocation.getArgument(0)));
+        when(recentOrcidCache.getIfPresent(anyString())).thenAnswer(invocation -> cachedOrcids.contains(invocation.getArgument(0)) ? invocation.getArgument(0) : null);
         doAnswer(invocation -> {
             cachedOrcids.add(invocation.getArgument(0));
             return null;

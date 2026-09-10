@@ -18,7 +18,7 @@ import static org.junit.Assert.fail;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.ehcache.Cache;
+import com.github.benmanes.caffeine.cache.Cache;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
@@ -65,7 +65,7 @@ public class EmailDomainManagerTest {
         when(emailDomainDaoMock.createEmailDomain(eq("new.domain.com"), eq(DomainCategory.PROFESSIONAL), eq("https://ror.org/0"))).thenReturn(new EmailDomainEntity("new.domain.com", DomainCategory.PROFESSIONAL, "https://ror.org/0"));
         when(emailDomainDaoMock.updateRorId(1000L, "https://ror.org/0")).thenReturn(true);
 
-        when(emailDomainCacheMock.containsKey(anyString())).thenReturn(false);
+        when(emailDomainCacheMock.getIfPresent(anyString())).thenReturn(null);
     }
 
     @Test(expected = IllegalArgumentException.class)

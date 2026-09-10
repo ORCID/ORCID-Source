@@ -5,7 +5,7 @@ import java.net.http.HttpResponse;
 
 import jakarta.annotation.Resource;
 
-import org.ehcache.spi.loaderwriter.CacheLoaderWriter;
+import com.github.benmanes.caffeine.cache.CacheLoader;
 import org.orcid.core.utils.http.HttpRequestUtils;
 
 /**
@@ -13,7 +13,7 @@ import org.orcid.core.utils.http.HttpRequestUtils;
  * @author Tom Demeranville
  *
  */
-public class DoiBibtexCacheEntryFactory implements CacheLoaderWriter<Object, Object> {
+public class DoiBibtexCacheEntryFactory implements CacheLoader<Object, Object> {
     
     @Resource
     private HttpRequestUtils httpRequestUtils;
@@ -29,17 +29,5 @@ public class DoiBibtexCacheEntryFactory implements CacheLoaderWriter<Object, Obj
             return response.body();
         }
         return null;
-    }
-
-    @Override
-    public void write(Object key, Object value) throws Exception {
-        // Not needed, populating only
-
-    }
-
-    @Override
-    public void delete(Object key) throws Exception {
-        // Not needed, populating only
-
     }
 }

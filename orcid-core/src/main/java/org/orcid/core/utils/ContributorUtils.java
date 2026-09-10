@@ -1,7 +1,6 @@
 package org.orcid.core.utils;
 
 import org.apache.commons.lang3.StringUtils;
-import org.ehcache.Cache;
 import org.orcid.core.aop.ProfileLastModifiedAspect;
 import org.orcid.core.manager.ActivityManager;
 import org.orcid.core.manager.ProfileEntityManager;

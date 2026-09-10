@@ -3,7 +3,7 @@ package org.orcid.core.manager.impl;
 import jakarta.annotation.Resource;
 
 import org.apache.commons.lang.StringUtils;
-import org.ehcache.Cache;
+import com.github.benmanes.caffeine.cache.Cache;
 import org.orcid.core.manager.SourceNameCacheManager;
 import org.orcid.core.manager.v3.read_only.RecordNameManagerReadOnly;
 import org.orcid.core.utils.ReleaseNameUtils;
@@ -45,11 +45,10 @@ public class SourceNameCacheManagerImpl implements SourceNameCacheManager {
         this.clientDetailsDao = clientDetailsDao;
     }
 
-
     @Override
     public String retrieve(String sourceId) throws IllegalArgumentException {
         String key = getCacheKey(sourceId);
-        String sourceName = sourceNameCache.get(key);
+        String sourceName = sourceNameCache.getIfPresent(key);
         if (sourceName == null) {
             LOGGER.debug("Fetching source name for: " + sourceId);
             sourceName = getProfileSourceNameFromRequest(sourceId);
@@ -72,12 +71,12 @@ public class SourceNameCacheManagerImpl implements SourceNameCacheManager {
 
     @Override
     public void removeAll() {
-        sourceNameCache.clear();
+        sourceNameCache.invalidateAll();
     }
 
     @Override
     public void remove(String sourceId) {
-        sourceNameCache.remove(getCacheKey(sourceId));
+        sourceNameCache.invalidate(getCacheKey(sourceId));
     }
 
     private String getCacheKey(String sourceId) {

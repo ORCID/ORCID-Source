@@ -2,6 +2,7 @@ package org.orcid.core.manager.impl;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
@@ -12,7 +13,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-import org.ehcache.Cache;
+import com.github.benmanes.caffeine.cache.Cache;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
@@ -48,7 +49,7 @@ public class ClientDetailsEntityCacheManagerImplTest {
         Date lastModified = new Date();
         ClientDetailsEntity cached = client("A", lastModified);
         when(clientDetailsManager.getLastModifiedByClientIds(Arrays.asList("A"))).thenReturn(java.util.Collections.singletonMap("A", lastModified));
-        when(clientDetailsCache.get(any())).thenReturn(cached);
+        when(clientDetailsCache.getIfPresent(any())).thenReturn(cached);
 
         Map<String, ClientDetailsEntity> result = cacheManager.retrieveAll(Arrays.asList("A"));
 
@@ -66,7 +67,7 @@ public class ClientDetailsEntityCacheManagerImplTest {
         ClientDetailsEntity cached = client("A", oldLastModified);
         ClientDetailsEntity fresh = client("A", newLastModified);
         when(clientDetailsManager.getLastModifiedByClientIds(Arrays.asList("A"))).thenReturn(java.util.Collections.singletonMap("A", newLastModified));
-        when(clientDetailsCache.get(any())).thenReturn(cached);
+        when(clientDetailsCache.getIfPresent(any())).thenReturn(cached);
         when(clientDetailsManager.findByClientIds(Arrays.asList("A"))).thenReturn(Arrays.asList(fresh));
 
         Map<String, ClientDetailsEntity> result = cacheManager.retrieveAll(Arrays.asList("A"));
@@ -75,6 +76,13 @@ public class ClientDetailsEntityCacheManagerImplTest {
         assertSame(fresh, result.get("A"));
         verify(clientDetailsManager).findByClientIds(Arrays.asList("A"));
         verify(clientDetailsCache).put(any(), any(ClientDetailsEntity.class));
+    }
+
+    @Test
+    public void cachedClientWithoutLastModifiedIsStale() {
+        ClientDetailsEntity cached = client("A", null);
+
+        assertTrue(ClientDetailsEntityCacheManagerImpl.needsFresh(new Date(), cached));
     }
 
     private ClientDetailsEntity client(String clientId, Date lastModified) {

@@ -9,7 +9,7 @@ import java.util.stream.Collectors;
 import jakarta.annotation.Resource;
 import jakarta.transaction.Transactional;
 
-import org.ehcache.Cache;
+import com.github.benmanes.caffeine.cache.LoadingCache;
 import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.IdentityProviderManager;
 import org.orcid.persistence.dao.IdentityProviderDao;
@@ -35,7 +35,7 @@ public class IdentityProviderManagerImpl implements IdentityProviderManager {
     private LocaleManager localeManager;
 
     @Resource(name = "identityProviderNameCache")
-    private Cache<IdentityProviderNameCacheKey, String> identityProviderNameCache;
+    private LoadingCache<IdentityProviderNameCacheKey, String> identityProviderNameCache;
 
     private String releaseName = ReleaseNameUtils.getReleaseName();
 
