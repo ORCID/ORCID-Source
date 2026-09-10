@@ -38,7 +38,7 @@ public class OrcidEhCacheFactoryBean implements FactoryBean<Cache<?, ?>>, Initia
 
     private long maxMegaBytesOnDisk = 0;
 
-    private boolean copyValues = false;
+    private boolean copyValues = true;
 
     private CacheLoaderWriter<Serializable, Serializable> cacheLoaderWriter;
 
