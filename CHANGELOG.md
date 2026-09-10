@@ -1,3 +1,9 @@
+## v3.0.74 - 2026-09-10
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.0.73...v3.0.74)
+
+- [#7698](https://github.com/ORCID/ORCID-Source/pull/7698): J21-007 return the reviewer role and the locale in the published vocabulary
+
 ## v3.0.73 - 2026-09-10
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.0.72...v3.0.73)
