@@ -1,3 +1,9 @@
+## v3.0.69 - 2026-09-10
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.0.68...v3.0.69)
+
+- [#7693](https://github.com/ORCID/ORCID-Source/pull/7693): Remove empty fields from funding after mapping
+
 ## v3.0.68 - 2026-09-10
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.0.67...v3.0.68)
