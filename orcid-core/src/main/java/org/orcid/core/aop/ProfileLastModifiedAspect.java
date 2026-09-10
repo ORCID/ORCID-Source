@@ -86,11 +86,7 @@ public class ProfileLastModifiedAspect implements PriorityOrdered {
                 LOGGER.debug("Invalid ORCID for last modified date update: orcid={}, join point={}", orcid, joinPoint);
             }
         }
-        Date before = safeRetrieveLastModifiedDate(orcid);
         this.updateLastModifiedDate(orcid);
-        Date after = safeRetrieveLastModifiedDate(orcid);
-        LOGGER.info("ProfileLastModifiedAspect updateLastModifiedDate source={} orcid={} before={} after={}",
-                joinPoint.getSignature().toShortString(), orcid, before, after);
     }
     
     @AfterReturning(UPDATE_PROFILE_LAST_MODIFIED_AND_INDEXING_STATUS)
@@ -108,11 +104,7 @@ public class ProfileLastModifiedAspect implements PriorityOrdered {
                 LOGGER.debug("Invalid ORCID for last modified date update: orcid={}, join point={}", orcid, joinPoint);
             }
         }
-        Date before = safeRetrieveLastModifiedDate(orcid);
         this.updateLastModifiedDateAndIndexingStatus(orcid);
-        Date after = safeRetrieveLastModifiedDate(orcid);
-        LOGGER.info("ProfileLastModifiedAspect updateLastModifiedDateAndIndexingStatus source={} orcid={} before={} after={}",
-                joinPoint.getSignature().toShortString(), orcid, before, after);
     }
     
     @Override
