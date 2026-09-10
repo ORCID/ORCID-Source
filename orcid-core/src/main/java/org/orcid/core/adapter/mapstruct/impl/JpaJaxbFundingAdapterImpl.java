@@ -110,8 +110,6 @@ public abstract class JpaJaxbFundingAdapterImpl implements JpaJaxbFundingAdapter
     @Mapping(source = ".", target = "source")
     public abstract FundingSummary toFundingSummary(ProfileFundingEntity profileFundingEntity);
 
-
-
     @Override
     public abstract List<Funding> toFunding(Collection<ProfileFundingEntity> fundingEntities);
 

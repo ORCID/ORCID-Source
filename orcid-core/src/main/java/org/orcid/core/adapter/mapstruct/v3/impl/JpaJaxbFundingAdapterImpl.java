@@ -5,10 +5,7 @@ import java.util.List;
 
 import java.math.BigDecimal;
 
-import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
-import org.mapstruct.MappingTarget;
-import org.mapstruct.Named;
+import org.mapstruct.*;
 
 import org.orcid.core.adapter.mapstruct.FundingContributorsMapperV3;
 import org.orcid.core.adapter.mapstruct.FuzzyDateMapperV3;
@@ -18,9 +15,11 @@ import org.orcid.core.adapter.mapstruct.SourceMapperV3;
 import org.orcid.core.adapter.mapstruct.UrlMapperV3;
 import org.orcid.core.adapter.mapstruct.VisibilityMapperV3;
 import org.orcid.core.adapter.v3.JpaJaxbFundingAdapter;
+import org.orcid.jaxb.model.record_v2.Work;
 import org.orcid.jaxb.model.v3.release.record.Funding;
 import org.orcid.jaxb.model.v3.release.record.summary.FundingSummary;
 import org.orcid.persistence.jpa.entities.ProfileFundingEntity;
+import org.orcid.persistence.jpa.entities.WorkEntity;
 
 @Mapper(
     componentModel = "spring",
@@ -78,7 +77,6 @@ public abstract class JpaJaxbFundingAdapterImpl implements JpaJaxbFundingAdapter
     @Mapping(target = "lastModified", ignore = true)
     public abstract ProfileFundingEntity toProfileFundingEntity(Funding funding, @MappingTarget ProfileFundingEntity existing);
 
-
     @Override
     @Mapping(source = "id", target = "putCode")
     @Mapping(source = "organizationDefinedType", target = "organizationDefinedType.content")
@@ -98,6 +96,13 @@ public abstract class JpaJaxbFundingAdapterImpl implements JpaJaxbFundingAdapter
     @Mapping(source = ".", target = "source")
     public abstract Funding toFunding(ProfileFundingEntity profileFundingEntity);
 
+    @AfterMapping
+    protected void afterToFunding(ProfileFundingEntity entity, @MappingTarget Funding funding) {
+        if (funding.getTitle() != null && funding.getTitle().getTranslatedTitle() != null && funding.getTitle().getTranslatedTitle().getContent() == null) {
+            funding.getTitle().setTranslatedTitle(null);
+        }
+    }
+
     @Override
     @Mapping(source = "id", target = "putCode")
     @Mapping(source = "title", target = "title.title.content")
@@ -112,6 +117,13 @@ public abstract class JpaJaxbFundingAdapterImpl implements JpaJaxbFundingAdapter
     @Mapping(source = "lastModified", target = "lastModifiedDate.value")
     @Mapping(source = ".", target = "source")
     public abstract FundingSummary toFundingSummary(ProfileFundingEntity profileFundingEntity);
+
+    @AfterMapping
+    protected void afterToFundingSummary(ProfileFundingEntity entity, @MappingTarget FundingSummary fundingSummary) {
+        if (fundingSummary.getTitle() != null && fundingSummary.getTitle().getTranslatedTitle() != null && fundingSummary.getTitle().getTranslatedTitle().getContent() == null) {
+            fundingSummary.getTitle().setTranslatedTitle(null);
+        }
+    }
 
     @Override
     public abstract List<Funding> toFunding(Collection<ProfileFundingEntity> fundingEntities);
