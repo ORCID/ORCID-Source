@@ -2,6 +2,7 @@ package org.orcid.core.adapter.mapstruct;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import org.junit.Before;
@@ -82,6 +83,87 @@ public class WorkContributorsMapperV3Test {
         assertEquals("some-value", workContributors.getContributor().get(1).getContributorAttributes().getContributorRole());
         
         Mockito.verify(mockContributorRoleConverter, Mockito.times(2)).toRoleValue(Mockito.anyString());
+    }
+
+    @Test
+    public void testConvertFromWithMissingHostAndNulls() throws Exception {
+        Mockito.when(mockContributorRoleConverter.toRoleValue(Mockito.anyString())).thenReturn("http://credit.niso.org/contributor-roles/data-curation/");
+        String json = "{\n" +
+                "\t\"contributor\": [{\n" +
+                "\t\t\"contributorOrcid\": {\n" +
+                "\t\t\t\"uri\": \"https://qa.orcid.org/0009-0000-7948-587X\",\n" +
+                "\t\t\t\"path\": \"0009-0000-7948-587X\",\n" +
+                "\t\t\t\"host\": null\n" +
+                "\t\t},\n" +
+                "\t\t\"creditName\": {\n" +
+                "\t\t\t\"content\": \"Test Author\"\n" +
+                "\t\t},\n" +
+                "\t\t\"contributorEmail\": null,\n" +
+                "\t\t\"contributorAttributes\": {\n" +
+                "\t\t\t\"contributorSequence\": null,\n" +
+                "\t\t\t\"contributorRole\": \"http://credit.niso.org/contributor-roles/data-curation/\"\n" +
+                "\t\t}\n" +
+                "\t}]\n" +
+                "}";
+
+        WorkContributors workContributors = workContributorsMapper.convertFrom(json);
+        assertNotNull(workContributors);
+        assertEquals(1, workContributors.getContributor().size());
+        Contributor c = workContributors.getContributor().get(0);
+        assertNotNull(c.getContributorOrcid());
+        assertEquals("qa.orcid.org", c.getContributorOrcid().getHost());
+        assertEquals("0009-0000-7948-587X", c.getContributorOrcid().getPath());
+        assertEquals("https://qa.orcid.org/0009-0000-7948-587X", c.getContributorOrcid().getUri());
+        assertNotNull(c.getCreditName());
+        assertEquals("Test Author", c.getCreditName().getContent());
+        assertNull(c.getContributorEmail());
+        assertNotNull(c.getContributorAttributes());
+        assertEquals("http://credit.niso.org/contributor-roles/data-curation/", c.getContributorAttributes().getContributorRole());
+        assertNull(c.getContributorAttributes().getContributorSequence());
+
+        // Verify XML marshalling succeeds
+        jakarta.xml.bind.JAXBContext context = jakarta.xml.bind.JAXBContext.newInstance(WorkContributors.class);
+        java.io.StringWriter writer = new java.io.StringWriter();
+        context.createMarshaller().marshal(workContributors, writer);
+        assertTrue(writer.toString().contains("qa.orcid.org"));
+    }
+
+    @Test
+    public void testConvertFromCleansEmptyXmlValueFields() throws Exception {
+        String json = "{\n" +
+                "\t\"contributor\": [{\n" +
+                "\t\t\"contributorOrcid\": {\n" +
+                "\t\t\t\"uri\": null,\n" +
+                "\t\t\t\"path\": null,\n" +
+                "\t\t\t\"host\": null\n" +
+                "\t\t},\n" +
+                "\t\t\"creditName\": {\n" +
+                "\t\t\t\"content\": \"   \"\n" +
+                "\t\t},\n" +
+                "\t\t\"contributorEmail\": {\n" +
+                "\t\t\t\"value\": null\n" +
+                "\t\t},\n" +
+                "\t\t\"contributorAttributes\": {\n" +
+                "\t\t\t\"contributorSequence\": null,\n" +
+                "\t\t\t\"contributorRole\": null\n" +
+                "\t\t}\n" +
+                "\t}]\n" +
+                "}";
+
+        WorkContributors workContributors = workContributorsMapper.convertFrom(json);
+        assertNotNull(workContributors);
+        assertEquals(1, workContributors.getContributor().size());
+        Contributor c = workContributors.getContributor().get(0);
+        assertNull(c.getContributorOrcid());
+        assertNull(c.getCreditName());
+        assertNull(c.getContributorEmail());
+        assertNull(c.getContributorAttributes());
+
+        // Verify XML marshalling succeeds without AccessorException
+        jakarta.xml.bind.JAXBContext context = jakarta.xml.bind.JAXBContext.newInstance(WorkContributors.class);
+        java.io.StringWriter writer = new java.io.StringWriter();
+        context.createMarshaller().marshal(workContributors, writer);
+        assertNotNull(writer.toString());
     }
     
     private WorkContributors getWorkContributors() {

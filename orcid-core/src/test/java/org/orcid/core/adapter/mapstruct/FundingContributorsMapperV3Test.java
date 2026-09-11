@@ -2,6 +2,7 @@ package org.orcid.core.adapter.mapstruct;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import org.junit.Before;
@@ -74,6 +75,84 @@ public class FundingContributorsMapperV3Test {
         assertEquals("some-value", fundingContributors.getContributor().get(0).getContributorAttributes().getContributorRole());
         
         Mockito.verify(mockContributorRoleConverter, Mockito.times(1)).toRoleValue(Mockito.anyString());
+    }
+
+    @Test
+    public void testConvertFromWithMissingHostAndNulls() throws Exception {
+        Mockito.when(mockContributorRoleConverter.toRoleValue(Mockito.anyString())).thenReturn("SUPERVISION");
+        String json = "{\n" +
+                "\t\"contributor\": [{\n" +
+                "\t\t\"contributorOrcid\": {\n" +
+                "\t\t\t\"uri\": \"https://qa.orcid.org/0009-0000-7948-587X\",\n" +
+                "\t\t\t\"path\": \"0009-0000-7948-587X\",\n" +
+                "\t\t\t\"host\": null\n" +
+                "\t\t},\n" +
+                "\t\t\"creditName\": {\n" +
+                "\t\t\t\"content\": \"Test Author\"\n" +
+                "\t\t},\n" +
+                "\t\t\"contributorEmail\": null,\n" +
+                "\t\t\"contributorAttributes\": {\n" +
+                "\t\t\t\"contributorRole\": \"SUPERVISION\"\n" +
+                "\t\t}\n" +
+                "\t}]\n" +
+                "}";
+
+        FundingContributors fundingContributors = fundingContributorsConverter.convertFrom(json);
+        assertNotNull(fundingContributors);
+        assertEquals(1, fundingContributors.getContributor().size());
+        FundingContributor c = fundingContributors.getContributor().get(0);
+        assertNotNull(c.getContributorOrcid());
+        assertEquals("qa.orcid.org", c.getContributorOrcid().getHost());
+        assertEquals("0009-0000-7948-587X", c.getContributorOrcid().getPath());
+        assertEquals("https://qa.orcid.org/0009-0000-7948-587X", c.getContributorOrcid().getUri());
+        assertNotNull(c.getCreditName());
+        assertEquals("Test Author", c.getCreditName().getContent());
+        assertNull(c.getContributorEmail());
+        assertNotNull(c.getContributorAttributes());
+        assertEquals("SUPERVISION", c.getContributorAttributes().getContributorRole());
+
+        // Verify XML marshalling succeeds
+        jakarta.xml.bind.JAXBContext context = jakarta.xml.bind.JAXBContext.newInstance(FundingContributors.class);
+        java.io.StringWriter writer = new java.io.StringWriter();
+        context.createMarshaller().marshal(fundingContributors, writer);
+        assertTrue(writer.toString().contains("qa.orcid.org"));
+    }
+
+    @Test
+    public void testConvertFromCleansEmptyXmlValueFields() throws Exception {
+        String json = "{\n" +
+                "\t\"contributor\": [{\n" +
+                "\t\t\"contributorOrcid\": {\n" +
+                "\t\t\t\"uri\": null,\n" +
+                "\t\t\t\"path\": null,\n" +
+                "\t\t\t\"host\": null\n" +
+                "\t\t},\n" +
+                "\t\t\"creditName\": {\n" +
+                "\t\t\t\"content\": \"   \"\n" +
+                "\t\t},\n" +
+                "\t\t\"contributorEmail\": {\n" +
+                "\t\t\t\"value\": null\n" +
+                "\t\t},\n" +
+                "\t\t\"contributorAttributes\": {\n" +
+                "\t\t\t\"contributorRole\": null\n" +
+                "\t\t}\n" +
+                "\t}]\n" +
+                "}";
+
+        FundingContributors fundingContributors = fundingContributorsConverter.convertFrom(json);
+        assertNotNull(fundingContributors);
+        assertEquals(1, fundingContributors.getContributor().size());
+        FundingContributor c = fundingContributors.getContributor().get(0);
+        assertNull(c.getContributorOrcid());
+        assertNull(c.getCreditName());
+        assertNull(c.getContributorEmail());
+        assertNull(c.getContributorAttributes());
+
+        // Verify XML marshalling succeeds without AccessorException
+        jakarta.xml.bind.JAXBContext context = jakarta.xml.bind.JAXBContext.newInstance(FundingContributors.class);
+        java.io.StringWriter writer = new java.io.StringWriter();
+        context.createMarshaller().marshal(fundingContributors, writer);
+        assertNotNull(writer.toString());
     }
     
     private FundingContributors getFundingContributors() {
