@@ -1,3 +1,9 @@
+## v3.0.79 - 2026-09-11
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.0.78...v3.0.79)
+
+- [#7701](https://github.com/ORCID/ORCID-Source/pull/7701): J21-010 enforce the premium notification scope again
+
 ## v3.0.78 - 2026-09-11
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.0.77...v3.0.78)
