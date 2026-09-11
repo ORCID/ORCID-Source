@@ -1,3 +1,9 @@
+## v3.0.81 - 2026-09-11
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.0.80...v3.0.81)
+
+- [#7699](https://github.com/ORCID/ORCID-Source/pull/7699): J21-011 make a bulk works POST atomic again
+
 ## v3.0.80 - 2026-09-11
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.0.79...v3.0.80)
