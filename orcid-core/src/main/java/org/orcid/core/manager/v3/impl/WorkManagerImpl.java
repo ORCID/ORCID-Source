@@ -260,57 +260,69 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
 
             List<Item> items = new ArrayList<Item>();
 
-            for (int i = 0; i < bulk.size(); i++) {
-                if (Work.class.isAssignableFrom(bulk.get(i).getClass())) {
-                    Work work = (Work) bulk.get(i);
-                    try {
-                        activityValidator.validateWork(work, activeSource, true, true, null);
+            // One transaction around the whole batch, and one flush after the loop and outside
+            // every element's catch. The per-element catch is for validation and duplicate
+            // errors, which happen before the insert; a failure at the database surfaces at the
+            // flush below, escapes this method and rolls the whole batch back. Without the
+            // boundary each persist commits on its own, so a later element failing leaves the
+            // earlier ones written and the caller cannot resubmit what they sent.
+            transactionTemplate.execute(new TransactionCallbackWithoutResult() {
+                @Override
+                protected void doInTransactionWithoutResult(TransactionStatus status) {
+                    for (int i = 0; i < bulk.size(); i++) {
+                        if (Work.class.isAssignableFrom(bulk.get(i).getClass())) {
+                            Work work = (Work) bulk.get(i);
+                            try {
+                                activityValidator.validateWork(work, activeSource, true, true, null);
 
-                        // Validate it is not duplicated
-                        if (work.getExternalIdentifiers() != null) {
-                            for (ExternalID extId : work.getExternalIdentifiers().getExternalIdentifier()) {
-                                // normalise the provided ID
-                                extId.setNormalized(new TransientNonEmptyString(norm.normalise(extId.getType(), extId.getValue())));
-                                // If the external id exists and is a SELF
-                                // identifier, then mark it as duplicated
-                                if (existingExternalIdentifiers.contains(extId) && Relationship.SELF.equals(extId.getRelationship())) {
-                                    Map<String, String> params = new HashMap<String, String>();
-                                    params.put("clientName", sourceEntityUtils.getSourceName(activeSource));
-                                    if (extIDPutCodeMap.containsKey(extId)) {
-                                        params.put("putCode", String.valueOf(extIDPutCodeMap.get(extId)));
+                                // Validate it is not duplicated
+                                if (work.getExternalIdentifiers() != null) {
+                                    for (ExternalID extId : work.getExternalIdentifiers().getExternalIdentifier()) {
+                                        // normalise the provided ID
+                                        extId.setNormalized(new TransientNonEmptyString(norm.normalise(extId.getType(), extId.getValue())));
+                                        // If the external id exists and is a SELF
+                                        // identifier, then mark it as duplicated
+                                        if (existingExternalIdentifiers.contains(extId) && Relationship.SELF.equals(extId.getRelationship())) {
+                                            Map<String, String> params = new HashMap<String, String>();
+                                            params.put("clientName", sourceEntityUtils.getSourceName(activeSource));
+                                            if (extIDPutCodeMap.containsKey(extId)) {
+                                                params.put("putCode", String.valueOf(extIDPutCodeMap.get(extId)));
+                                            }
+                                            throw new OrcidDuplicatedActivityException(params);
+                                        }
                                     }
-                                    throw new OrcidDuplicatedActivityException(params);
                                 }
+                                // Save the work
+                                WorkEntity workEntity = jpaJaxbWorkAdapter.toWorkEntity(work);
+                                workEntity.setOrcid(orcid);
+                                workEntity.setAddedToProfileDate(new Date());
+                                workEntity.setFeaturedDisplayIndex(0);
+
+                                sourceEntityUtils.populateSourceAwareEntityFromSource(activeSource, workEntity);
+
+                                setIncomingWorkPrivacy(workEntity, profile);
+                                DisplayIndexCalculatorHelper.setDisplayIndexOnNewEntity(workEntity, true);
+                                filterContributors(work, workEntity);
+                                workDao.persist(workEntity);
+
+                                // Update the element in the bulk
+                                Work updatedWork = jpaJaxbWorkAdapter.toWork(workEntity);
+                                bulk.set(i, updatedWork);
+
+                                // Add the work extIds to the list of existing external
+                                // identifiers
+                                addExternalIdsToExistingSet(extIDPutCodeMap, updatedWork, existingExternalIdentifiers);
+                                items.add(createItem(workEntity, work.getExternalIdentifiers(), ActionType.CREATE));
+                            } catch (Exception e) {
+                                // Get the exception
+                                OrcidError orcidError = orcidCoreExceptionMapper.getV3OrcidError(e);
+                                bulk.set(i, orcidError);
                             }
                         }
-                        // Save the work
-                        WorkEntity workEntity = jpaJaxbWorkAdapter.toWorkEntity(work);
-                        workEntity.setOrcid(orcid);
-                        workEntity.setAddedToProfileDate(new Date());
-                        workEntity.setFeaturedDisplayIndex(0);
-
-                        sourceEntityUtils.populateSourceAwareEntityFromSource(activeSource, workEntity);
-
-                        setIncomingWorkPrivacy(workEntity, profile);
-                        DisplayIndexCalculatorHelper.setDisplayIndexOnNewEntity(workEntity, true);
-                        filterContributors(work, workEntity);
-                        workDao.persist(workEntity);
-
-                        // Update the element in the bulk
-                        Work updatedWork = jpaJaxbWorkAdapter.toWork(workEntity);
-                        bulk.set(i, updatedWork);
-
-                        // Add the work extIds to the list of existing external
-                        // identifiers
-                        addExternalIdsToExistingSet(extIDPutCodeMap, updatedWork, existingExternalIdentifiers);
-                        items.add(createItem(workEntity, work.getExternalIdentifiers(), ActionType.CREATE));
-                    } catch (Exception e) {
-                        // Get the exception
-                        OrcidError orcidError = orcidCoreExceptionMapper.getV3OrcidError(e);
-                        bulk.set(i, orcidError);
                     }
+                    workDao.flush();
                 }
-            }
+            });
 
             if (!items.isEmpty()) {
                 notificationManager.sendAmendEmail(orcid, AmendedSection.WORK, items);
