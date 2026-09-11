@@ -1,7 +1,9 @@
 package org.orcid.frontend.web.controllers;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doThrow;
@@ -27,6 +29,7 @@ import org.orcid.core.manager.v3.read_only.RecordManagerReadOnly;
 import org.orcid.core.utils.SourceEntityUtils;
 import org.orcid.jaxb.model.common.FundingType;
 import org.orcid.jaxb.model.common.PeerReviewType;
+import org.orcid.jaxb.model.common.Role;
 import org.orcid.jaxb.model.common.Relationship;
 import org.orcid.jaxb.model.common.WorkType;
 import org.orcid.jaxb.model.common.AvailableLocales;
@@ -40,6 +43,7 @@ import org.orcid.jaxb.model.v3.release.common.CreditName;
 import org.orcid.jaxb.model.v3.release.common.Country;
 import org.orcid.jaxb.model.v3.release.common.Visibility;
 import org.orcid.jaxb.model.v3.release.record.Deprecated;
+import org.orcid.jaxb.model.v3.release.record.Preferences;
 import org.orcid.jaxb.model.v3.release.record.Record;
 import org.orcid.jaxb.model.v3.release.record.summary.AffiliationSummary;
 import org.orcid.jaxb.model.v3.release.record.summary.AffiliationGroup;
@@ -174,6 +178,43 @@ public class PublicRecordApiControllerTest {
         mapper.addMixIn(Country.class, CountryMixin.class);
         String expectedJson = mapper.writeValueAsString(record);
         assertEquals(expectedJson, result);
+    }
+
+    /**
+     * The published ORCID vocabulary is lower-case: a peer review role is `reviewer` and a
+     * locale is `zh_CN`. Both fields reach this document through a JAXB @XmlJavaTypeAdapter that
+     * the javax annotation module can no longer read, so each one needs a mixin here. Without
+     * them Jackson falls back to the Java constant names, `REVIEWER` and `ZH_CN`.
+     */
+    @Test
+    public void testViewRecordWritesTheEnumVocabularyNotTheConstantNames() throws Exception {
+        Record record = new Record();
+
+        Preferences preferences = new Preferences();
+        preferences.setLocale(AvailableLocales.ZH_CN);
+        record.setPreferences(preferences);
+
+        PeerReviewSummary summary = new PeerReviewSummary();
+        summary.setRole(Role.REVIEWER);
+        PeerReviewDuplicateGroup duplicateGroup = new PeerReviewDuplicateGroup();
+        duplicateGroup.getPeerReviewSummary().add(summary);
+        PeerReviewGroup group = new PeerReviewGroup();
+        group.getPeerReviewGroup().add(duplicateGroup);
+        PeerReviews peerReviews = new PeerReviews();
+        peerReviews.getPeerReviewGroup().add(group);
+        ActivitiesSummary activities = new ActivitiesSummary();
+        activities.setPeerReviews(peerReviews);
+        record.setActivitiesSummary(activities);
+
+        when(recordManagerReadOnly.getPublicRecord(eq(ORCID), anyBoolean())).thenReturn(record);
+
+        String result = controller.viewRecord(request, ORCID);
+
+        assertNotNull(result);
+        assertTrue(result, result.contains("\"locale\":\"zh_CN\""));
+        assertTrue(result, result.contains("\"reviewer-role\":\"reviewer\""));
+        assertFalse(result, result.contains("ZH_CN"));
+        assertFalse(result, result.contains("REVIEWER"));
     }
 
     @Test
