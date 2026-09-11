@@ -35,6 +35,18 @@ public class WorkContributorsMapperV2Test {
         MockitoAnnotations.initMocks(this);
     }
     
+    @Test
+    public void testConvertToWithNullSource() {
+        assertNull(workContributorsMapper.convertTo(null));
+    }
+
+    @Test
+    public void testConvertFromWithNullOrEmptySource() {
+        assertNull(workContributorsMapper.convertFrom(null));
+        assertNull(workContributorsMapper.convertFrom(""));
+        assertNull(workContributorsMapper.convertFrom("   "));
+    }
+
     /**
      * Test conversion to json string that will be stored in the DB.
      * 
