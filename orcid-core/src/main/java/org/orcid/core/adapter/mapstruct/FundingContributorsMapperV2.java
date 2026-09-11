@@ -43,12 +43,6 @@ public class FundingContributorsMapperV2 {
     }
 
     public String convertTo(FundingContributors source) {
-        if (source == null) {
-            return null;
-        }
-        if (source.getContributor() != null) {
-            source.getContributor().forEach(this::cleanAndPopulateContributor);
-        }
         return JsonUtils.convertToJsonString(source);
     }
 

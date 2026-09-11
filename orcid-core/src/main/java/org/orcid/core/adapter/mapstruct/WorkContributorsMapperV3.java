@@ -73,7 +73,6 @@ public class WorkContributorsMapperV3 {
         if (source.getContributor() != null) {
             // convert role to db format
             source.getContributor().forEach(c -> {
-                cleanAndPopulateContributor(c);
                 if (c.getContributorAttributes() != null && c.getContributorAttributes().getContributorRole() != null) {
                     String providedRoleValue = c.getContributorAttributes().getContributorRole();
                     String resolvedRoleValue = roleConverter.toDBRole(providedRoleValue);

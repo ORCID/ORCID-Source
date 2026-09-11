@@ -42,12 +42,6 @@ public class WorkContributorsMapperV2 {
     }
 
     public String convertTo(WorkContributors source) {
-        if (source == null) {
-            return null;
-        }
-        if (source.getContributor() != null) {
-            source.getContributor().forEach(this::cleanAndPopulateContributor);
-        }
         return JsonUtils.convertToJsonString(source);
     }
 
