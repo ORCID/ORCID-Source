@@ -560,6 +560,7 @@ public class ProfileFundingManagerTest extends BaseTest {
         dup.setValue("2");
 
         Funding existingFunding = getFunding("1000");
+        existingFunding.setPutCode(10000L);
         existingFunding.setSource(Source.forClient(clientId));
         existingFunding.getExternalIdentifiers().getExternalIdentifier().add(dup);
 
