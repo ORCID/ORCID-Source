@@ -11,6 +11,7 @@ import java.util.Locale;
 
 import jakarta.annotation.Resource;
 
+import org.apache.commons.collections4.iterators.LazyIteratorChain;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -280,7 +281,7 @@ public class SourceInActivitiesTest extends BaseTest {
         ExternalIDs extIdentifiers = new ExternalIDs();
         extIdentifiers.getExternalIdentifier().add(extId);
         funding.setExternalIdentifiers(extIdentifiers);
-        funding = profileFundingManager.createFunding(userOrcid, funding, true);
+        funding = profileFundingManager.createFunding(userOrcid, funding, true, List.of());
         return profileFundingManager.getProfileFundingEntity(funding.getPutCode());
     }
     
@@ -291,7 +292,7 @@ public class SourceInActivitiesTest extends BaseTest {
         title.setTitle(new Title("Title " + System.currentTimeMillis()));
         funding.setTitle(title);
         funding.setType(org.orcid.jaxb.model.record_v2.FundingType.AWARD);
-        funding = profileFundingManager.createFunding(userOrcid, funding, true);
+        funding = profileFundingManager.createFunding(userOrcid, funding, true, List.of());
         return profileFundingManager.getProfileFundingEntity(funding.getPutCode());
     }
     
@@ -310,7 +311,7 @@ public class SourceInActivitiesTest extends BaseTest {
         extIdentifiers.getExternalIdentifier().add(extId);
         funding.setExternalIdentifiers(extIdentifiers);
         funding.setPutCode(Long.valueOf(111));
-        funding = profileFundingManager.createFunding(userOrcid, funding, true);
+        funding = profileFundingManager.createFunding(userOrcid, funding, true, List.of());
         return profileFundingManager.getProfileFundingEntity(funding.getPutCode());
     }
 
@@ -498,7 +499,7 @@ public class SourceInActivitiesTest extends BaseTest {
         ExternalIDs extIdentifiers = new ExternalIDs();
         extIdentifiers.getExternalIdentifier().add(extId);
         funding.setExternalIdentifiers(extIdentifiers);
-        funding = profileFundingManager.createFunding(userOrcid, funding, true);
+        funding = profileFundingManager.createFunding(userOrcid, funding, true, List.of());
         return profileFundingManager.getFunding(userOrcid, funding.getPutCode());
     }
 

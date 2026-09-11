@@ -409,7 +409,7 @@ public class MemberV2ApiServiceDelegatorImpl implements
     public Response createFunding(String orcid, Funding funding) {
         orcidSecurityManager.checkClientAccessAndScopes(orcid, ScopePathType.FUNDING_CREATE, ScopePathType.FUNDING_UPDATE);
         clearSource(funding);
-        Funding f = profileFundingManager.createFunding(orcid, funding, true);
+        Funding f = profileFundingManager.createFunding(orcid, funding, true, profileFundingManagerReadOnly.getFundingList(orcid));
         sourceUtils.setSourceName(f);
         return apiUtils.buildApiResponse(orcid, "funding", String.valueOf(f.getPutCode()), "apiError.createfunding_response.exception");
     }
@@ -424,7 +424,7 @@ public class MemberV2ApiServiceDelegatorImpl implements
             throw new MismatchedPutCodeException(params);
         }
         clearSource(funding);
-        Funding f = profileFundingManager.updateFunding(orcid, funding, true);
+        Funding f = profileFundingManager.updateFunding(orcid, funding, true, profileFundingManagerReadOnly.getFundingList(orcid));
         sourceUtils.setSourceName(f);
         return Response.ok(f).build();
     }
