@@ -48,6 +48,15 @@ public abstract class ContributorRoleConverterImpl implements ContributorRoleCon
         } catch (IllegalArgumentException e) {
             // ignore
         }
+
+        try {
+            CreditRole creditRole = CreditRole.valueOf(roleValue);
+            if (creditRole != null) {
+                return creditRole.name();
+            }
+        } catch (IllegalArgumentException e) {
+            // ignore
+        }
         return null;
     }
 
@@ -68,6 +77,16 @@ public abstract class ContributorRoleConverterImpl implements ContributorRoleCon
 
         try {
             CreditRole creditRole = CreditRole.valueOf(dbRoleString);
+            if (creditRole != null) {
+                LegacyContributorRole legacyRole = conversionMappings.get(creditRole);
+                return legacyRole != null ? legacyRole.value() : null;
+            }
+        } catch (IllegalArgumentException e) {
+            // ignore
+        }
+
+        try {
+            CreditRole creditRole = CreditRole.fromValue(dbRoleString);
             if (creditRole != null) {
                 LegacyContributorRole legacyRole = conversionMappings.get(creditRole);
                 return legacyRole != null ? legacyRole.value() : null;
@@ -99,6 +118,15 @@ public abstract class ContributorRoleConverterImpl implements ContributorRoleCon
             // ignore
         }
 
+        try {
+            CreditRole creditRole = CreditRole.fromValue(dbRoleString);
+            if (creditRole != null) {
+                return creditRole.value();
+            }
+        } catch (IllegalArgumentException e) {
+            // ignore
+        }
+
         return null;
     }
 
@@ -120,6 +148,18 @@ public abstract class ContributorRoleConverterImpl implements ContributorRoleCon
         try {
             if (dbRoleString != null) {
                 CreditRole creditRole = CreditRole.valueOf(dbRoleString);
+                if (creditRole != null) {
+                    LegacyContributorRole legacyRole = conversionMappings.get(creditRole);
+                    return legacyRole != null ? legacyRole.name() : null;
+                }
+            }
+        } catch (IllegalArgumentException e) {
+            // ignore
+        }
+
+        try {
+            if (dbRoleString != null) {
+                CreditRole creditRole = CreditRole.fromValue(dbRoleString);
                 if (creditRole != null) {
                     LegacyContributorRole legacyRole = conversionMappings.get(creditRole);
                     return legacyRole != null ? legacyRole.name() : null;

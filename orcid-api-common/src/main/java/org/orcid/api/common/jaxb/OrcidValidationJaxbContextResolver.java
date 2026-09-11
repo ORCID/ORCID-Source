@@ -2,7 +2,9 @@ package org.orcid.api.common.jaxb;
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 import jakarta.annotation.Resource;
@@ -17,7 +19,6 @@ import jakarta.ws.rs.ext.Provider;
 import javax.xml.XMLConstants;
 import jakarta.xml.bind.JAXBContext;
 import jakarta.xml.bind.JAXBException;
-import jakarta.xml.bind.MarshalException;
 import jakarta.xml.bind.Unmarshaller;
 import jakarta.xml.bind.ValidationEvent;
 import jakarta.xml.bind.ValidationEventHandler;
@@ -38,10 +39,6 @@ import org.orcid.jaxb.model.common.adapters.IllegalEnumValueException;
 import org.orcid.jaxb.model.message.ErrorDesc;
 import org.orcid.jaxb.model.message.OrcidMessage;
 import org.xml.sax.SAXException;
-import org.xml.sax.SAXParseException;
-
-import com.sun.istack.SAXException2;
-import com.sun.xml.bind.api.AccessorException;
 
 /**
  * orcid-api - Nov 10, 2011 - OrcidValidationJaxbContextResolver
@@ -209,30 +206,14 @@ public class OrcidValidationJaxbContextResolver implements ContextResolver<Unmar
             Validator validator = schema.newValidator();
             validator.validate(source);
         } catch (SAXException | JAXBException | IOException e) {
-            // Check if it is an IllegalEnumValueException
-            if(SAXParseException.class.isAssignableFrom(e.getClass())) {
-                Throwable t = e.getCause();
-                if(t != null && MarshalException.class.isAssignableFrom(t.getClass())) {
-                    MarshalException me = (MarshalException) t;
-                    Throwable linkedException = me.getLinkedException();
-                    if(linkedException != null && SAXException2.class.isAssignableFrom(linkedException.getClass())) {
-                        SAXException2 sa2 = (SAXException2) linkedException;
-                        Exception sa2e = sa2.getException();
-                        if(sa2e != null && AccessorException.class.isAssignableFrom(sa2e.getClass())) {
-                            Throwable cause = sa2e.getCause();
-                            if (cause != null && IllegalEnumValueException.class.isAssignableFrom(cause.getClass())) {
-                                // Validation exceptions should return
-                                // BAD_REQUEST status
-                                // Lets throw the IllegalEnumValueException so
-                                // the end user gets a detailed error message
-                                // and not the default one from spring
-                                throw new WebApplicationException(cause, Status.BAD_REQUEST.getStatusCode());
-                            }
-                        }
-                    }
-                }
-            } 
-            
+            // Check if it is an IllegalEnumValueException. Throwing it on gets the caller a
+            // detailed error message naming the bad value, instead of the default one from spring.
+            IllegalEnumValueException illegalEnumValue = findIllegalEnumValue(e);
+            if (illegalEnumValue != null) {
+                //Validation exceptions should return BAD_REQUEST status
+                throw new WebApplicationException(illegalEnumValue, Status.BAD_REQUEST.getStatusCode());
+            }
+
             //Validation exceptions should return BAD_REQUEST status
             throw new WebApplicationException(e, Status.BAD_REQUEST.getStatusCode());                       
         }       
@@ -312,6 +293,42 @@ public class OrcidValidationJaxbContextResolver implements ContextResolver<Unmar
         return schemaFactory;
     }
 
+    /**
+     * The first IllegalEnumValueException reachable from t, or null if there is none.
+     *
+     * A bad enum value arrives wrapped several layers deep - SAXParseException, MarshalException,
+     * SAXException2, AccessorException - and this class used to test for each of those
+     * implementation classes by name. AccessorException changed package when JAXB moved to
+     * jakarta, from com.sun.xml.bind.api to org.glassfish.jaxb.runtime.api, so the test silently
+     * became one that can never be true: the old class still resolves at load time, because the
+     * root pom still manages the 2.x runtime, and nothing failed loudly. Every invalid enum has
+     * since come back as the generic 9012 with no mention of the value the caller got wrong,
+     * instead of 9051 which names it.
+     *
+     * Walking the chain names no provider class at all, so the next relocation cannot break it
+     * the same way. Both the linked-exception and embedded-exception conventions are followed,
+     * because neither JAXBException nor SAXException is guaranteed to expose those as getCause().
+     */
+    private IllegalEnumValueException findIllegalEnumValue(Throwable t) {
+        // Linked exceptions are free to point back at something already seen; a set keeps a
+        // malformed chain from spinning here forever.
+        Set<Throwable> seen = new HashSet<>();
+        while (t != null && seen.add(t)) {
+            if (t instanceof IllegalEnumValueException) {
+                return (IllegalEnumValueException) t;
+            }
+            Throwable next = t.getCause();
+            if (next == null && t instanceof JAXBException) {
+                next = ((JAXBException) t).getLinkedException();
+            }
+            if (next == null && t instanceof SAXException) {
+                next = ((SAXException) t).getException();
+            }
+            t = next;
+        }
+        return null;
+    }
+
     private Response getResponse(Throwable e) {
         OrcidMessage entity = new OrcidMessage();
         entity.setErrorDesc(new ErrorDesc(e.getMessage()));
@@ -321,8 +338,9 @@ public class OrcidValidationJaxbContextResolver implements ContextResolver<Unmar
     public class OrcidValidationHandler implements ValidationEventHandler {
         @Override
         public boolean handleEvent(ValidationEvent event) {
-            if(event.getLinkedException() != null && AccessorException.class.isAssignableFrom(event.getLinkedException().getClass()) && event.getLinkedException().getCause() != null && IllegalEnumValueException.class.isAssignableFrom(event.getLinkedException().getCause().getClass()))  {
-                throw (IllegalEnumValueException) event.getLinkedException().getCause();
+            IllegalEnumValueException illegalEnumValue = findIllegalEnumValue(event.getLinkedException());
+            if (illegalEnumValue != null)  {
+                throw illegalEnumValue;
             } else if (event.getSeverity() == ValidationEvent.FATAL_ERROR || event.getSeverity() == ValidationEvent.ERROR) {                
                 throw new OrcidBadRequestException(event.getMessage());
             } else if (event.getSeverity() == ValidationEvent.WARNING) {
