@@ -101,6 +101,12 @@ public abstract class JpaJaxbFundingAdapterImpl implements JpaJaxbFundingAdapter
         if (funding.getTitle() != null && funding.getTitle().getTranslatedTitle() != null && funding.getTitle().getTranslatedTitle().getContent() == null) {
             funding.getTitle().setTranslatedTitle(null);
         }
+        if (funding.getOrganizationDefinedType() != null && (funding.getOrganizationDefinedType().getContent() == null || funding.getOrganizationDefinedType().getContent().trim().isEmpty())) {
+            funding.setOrganizationDefinedType(null);
+        }
+        if (funding.getAmount() != null && funding.getAmount().getContent() == null && funding.getAmount().getCurrencyCode() == null) {
+            funding.setAmount(null);
+        }
     }
 
     @Override
