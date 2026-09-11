@@ -1,5 +1,7 @@
 package org.orcid.core.manager.v3.read_only.impl;
 
+import org.springframework.transaction.annotation.Transactional;
+
 import java.util.List;
 
 import jakarta.annotation.Resource;
@@ -10,6 +12,7 @@ import org.orcid.pojo.grouping.WorkGroupingSuggestion;
 import org.orcid.pojo.grouping.WorkGroupingSuggestions;
 import org.orcid.pojo.grouping.WorkGroupingSuggestionsCount;
 
+@Transactional(value = "transactionManagerReadOnly", readOnly = true)
 public class GroupingSuggestionManagerReadOnlyImpl implements GroupingSuggestionManagerReadOnly {
 
     @Resource

@@ -1,5 +1,7 @@
 package org.orcid.core.manager.v3.impl;
 
+import org.springframework.transaction.annotation.Transactional;
+
 import org.orcid.core.manager.v3.ProfileInterstitialFlagManager;
 import org.orcid.core.manager.v3.read_only.impl.ProfileInterstitialFlagManagerReadOnlyImpl;
 import org.orcid.persistence.dao.ProfileInterstitialFlagDao;
@@ -12,6 +14,7 @@ import jakarta.annotation.Resource;
  * @author Andrej Romanov
  * 
  */
+@Transactional(value = "transactionManager")
 public class ProfileInterstitialFlagManagerImpl extends ProfileInterstitialFlagManagerReadOnlyImpl implements ProfileInterstitialFlagManager {
     @Resource
     protected ProfileInterstitialFlagDao profileInterstitialFlagDao;

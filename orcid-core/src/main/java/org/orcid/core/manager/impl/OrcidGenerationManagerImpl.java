@@ -1,5 +1,7 @@
 package org.orcid.core.manager.impl;
 
+import org.springframework.transaction.annotation.Transactional;
+
 import java.util.Random;
 
 import jakarta.annotation.Resource;
@@ -15,6 +17,7 @@ import org.slf4j.LoggerFactory;
 /**
  * @author Will Simpson (will) Date: 15/02/2012
  */
+@Transactional(value = "transactionManager")
 public class OrcidGenerationManagerImpl implements OrcidGenerationManager {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(OrcidGenerationManager.class);

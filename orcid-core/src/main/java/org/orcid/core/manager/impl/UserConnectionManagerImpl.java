@@ -1,5 +1,7 @@
 package org.orcid.core.manager.impl;
 
+import org.springframework.transaction.annotation.Transactional;
+
 import java.util.*;
 
 import jakarta.annotation.Resource;
@@ -19,6 +21,7 @@ import org.orcid.persistence.jpa.entities.UserconnectionPK;
  * @author Will Simpson
  *
  */
+@Transactional(value = "transactionManager")
 public class UserConnectionManagerImpl implements UserConnectionManager {
 
     @Resource

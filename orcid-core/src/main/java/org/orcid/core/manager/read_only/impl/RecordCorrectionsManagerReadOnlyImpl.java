@@ -1,5 +1,7 @@
 package org.orcid.core.manager.read_only.impl;
 
+import org.springframework.transaction.annotation.Transactional;
+
 import java.util.List;
 
 import jakarta.annotation.Resource;
@@ -13,6 +15,7 @@ import org.orcid.persistence.jpa.entities.InvalidRecordDataChangeEntity;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 
+@Transactional(value = "transactionManagerReadOnly", readOnly = true)
 public class RecordCorrectionsManagerReadOnlyImpl implements RecordCorrectionsManagerReadOnly {
 
     @Resource

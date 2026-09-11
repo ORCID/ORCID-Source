@@ -1,5 +1,7 @@
 package org.orcid.core.manager.read_only.impl;
 
+import org.springframework.transaction.annotation.Transactional;
+
 import java.util.List;
 
 import jakarta.annotation.Resource;
@@ -12,6 +14,7 @@ import org.orcid.jaxb.model.record_v2.ResearcherUrls;
 import org.orcid.persistence.dao.ResearcherUrlDao;
 import org.orcid.persistence.jpa.entities.ResearcherUrlEntity;
 
+@Transactional(value = "transactionManagerReadOnly", readOnly = true)
 public class ResearcherUrlManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements ResearcherUrlManagerReadOnly {
 
     @Resource

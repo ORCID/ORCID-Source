@@ -1,5 +1,7 @@
 package org.orcid.core.manager.v3.impl;
 
+import org.springframework.transaction.annotation.Transactional;
+
 import org.apache.commons.lang3.StringUtils;
 import org.orcid.core.common.util.AuthenticationUtils;
 import org.orcid.core.manager.ClientDetailsManager;
@@ -25,6 +27,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
  * @author Will Simpson
  * 
  */
+@Transactional(value = "transactionManager")
 public class SourceManagerImpl implements SourceManager {
 
     @Autowired

@@ -1,5 +1,7 @@
 package org.orcid.core.manager.v3.impl;
 
+import org.springframework.transaction.annotation.Transactional;
+
 import java.util.Date;
 
 import jakarta.annotation.Resource;
@@ -15,6 +17,7 @@ import org.orcid.persistence.jpa.entities.SpamEntity;
  * @author Daniel Palafox
  *
  */
+@Transactional(value = "transactionManager")
 public class SpamManagerImpl extends SpamManagerReadOnlyImpl implements SpamManager {
             
     @Resource(name = "profileEntityManagerV3")

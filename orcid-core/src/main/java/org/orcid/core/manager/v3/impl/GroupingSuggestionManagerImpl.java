@@ -1,5 +1,7 @@
 package org.orcid.core.manager.v3.impl;
 
+import org.springframework.transaction.annotation.Transactional;
+
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -13,6 +15,7 @@ import org.orcid.persistence.dao.RejectedGroupingSuggestionDao;
 import org.orcid.persistence.jpa.entities.RejectedGroupingSuggestionEntity;
 import org.orcid.pojo.grouping.WorkGroupingSuggestion;
 
+@Transactional(value = "transactionManager")
 public class GroupingSuggestionManagerImpl extends GroupingSuggestionManagerReadOnlyImpl implements GroupingSuggestionManager {
 
     @Resource

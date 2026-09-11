@@ -25,7 +25,7 @@ public class GivenPermissionToDaoImpl extends GenericDaoImpl<GivenPermissionToEn
     }
 
     @Override
-    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
+    @Transactional(readOnly = true)
     public GivenPermissionToEntity findByGiverAndReceiverOrcid(String giverOrcid, String receiverOrcid) {
         TypedQuery<GivenPermissionToEntity> query = entityManager.createQuery("from GivenPermissionToEntity where giver = :giverOrcid and receiver = :receiverOrcid",
                 GivenPermissionToEntity.class);
@@ -46,7 +46,7 @@ public class GivenPermissionToDaoImpl extends GenericDaoImpl<GivenPermissionToEn
     }
 
     @Override
-    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
+    @Transactional(readOnly = true)
     public List<GivenPermissionToEntity> findByGiver(String giverOrcid) {
         TypedQuery<GivenPermissionToEntity> query = entityManager.createQuery("from GivenPermissionToEntity where giver = :giverOrcid",
                 GivenPermissionToEntity.class);
@@ -55,7 +55,7 @@ public class GivenPermissionToDaoImpl extends GenericDaoImpl<GivenPermissionToEn
     }
 
     @Override
-    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
+    @Transactional(readOnly = true)
     public List<GivenPermissionByEntity> findByReceiver(String receiverOrcid) {
         TypedQuery<GivenPermissionByEntity> query = entityManager.createQuery("from GivenPermissionByEntity where receiver = :receiverOrcid",
                 GivenPermissionByEntity.class);

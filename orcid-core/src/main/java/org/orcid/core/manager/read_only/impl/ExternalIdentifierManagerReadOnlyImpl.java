@@ -1,5 +1,7 @@
 package org.orcid.core.manager.read_only.impl;
 
+import org.springframework.transaction.annotation.Transactional;
+
 import java.util.List;
 
 import jakarta.annotation.Resource;
@@ -11,6 +13,7 @@ import org.orcid.jaxb.model.record_v2.PersonExternalIdentifiers;
 import org.orcid.persistence.dao.ExternalIdentifierDao;
 import org.orcid.persistence.jpa.entities.ExternalIdentifierEntity;
 
+@Transactional(value = "transactionManagerReadOnly", readOnly = true)
 public class ExternalIdentifierManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements ExternalIdentifierManagerReadOnly {
     
     @Resource

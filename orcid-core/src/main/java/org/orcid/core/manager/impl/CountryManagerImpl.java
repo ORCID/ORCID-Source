@@ -1,5 +1,7 @@
 package org.orcid.core.manager.impl;
 
+import org.springframework.transaction.annotation.Transactional;
+
 import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 import java.util.Comparator;
@@ -20,6 +22,7 @@ import org.springframework.cache.annotation.Cacheable;
  * @author Will Simpson
  * 
  */
+@Transactional(value = "transactionManager")
 public class CountryManagerImpl implements CountryManager {
 
     @Resource(name = "isoCountryReferenceDataDao")

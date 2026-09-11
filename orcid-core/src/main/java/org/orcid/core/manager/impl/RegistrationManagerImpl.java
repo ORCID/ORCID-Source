@@ -1,5 +1,7 @@
 package org.orcid.core.manager.impl;
 
+import org.springframework.transaction.annotation.Transactional;
+
 import java.security.NoSuchAlgorithmException;
 import java.util.Date;
 import java.util.HashSet;
@@ -55,6 +57,7 @@ import org.springframework.transaction.support.TransactionTemplate;
  * @author Will Simpson
  * 
  */
+@Transactional(value = "transactionManager")
 public class RegistrationManagerImpl implements RegistrationManager {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(RegistrationManagerImpl.class);

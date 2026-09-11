@@ -24,6 +24,7 @@ import java.util.*;
  * @author Andrej Romanov
  * 
  */
+@Transactional(value = "transactionManager")
 public class ProfileEmailDomainManagerImpl extends ProfileEmailDomainManagerReadOnlyImpl implements ProfileEmailDomainManager {
     private static final Logger LOGGER = LoggerFactory.getLogger(ProfileEmailDomainManagerImpl.class);
 

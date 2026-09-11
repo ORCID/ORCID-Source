@@ -1,5 +1,7 @@
 package org.orcid.core.manager.impl;
 
+import org.springframework.transaction.annotation.Transactional;
+
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.orcid.core.manager.PasswordGenerationManager;
@@ -10,6 +12,7 @@ import org.orcid.password.constants.OrcidPasswordConstants;
  * @author jamesb
  * 
  */
+@Transactional(value = "transactionManager")
 public class PasswordGenerationManagerImpl implements PasswordGenerationManager {
 
     private int passwordLength;

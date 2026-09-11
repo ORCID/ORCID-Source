@@ -1,5 +1,7 @@
 package org.orcid.core.manager.v3.impl;
 
+import org.springframework.transaction.annotation.Transactional;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -73,6 +75,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
  * @author Will Simpson
  *
  */
+@Transactional(value = "transactionManager")
 public class OrcidSecurityManagerImpl implements OrcidSecurityManager {
 
     private static final ScopePathType READ_AFFILIATIONS_REQUIRED_SCOPE = ScopePathType.AFFILIATIONS_READ_LIMITED;

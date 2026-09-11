@@ -1,5 +1,7 @@
 package org.orcid.core.manager.v3.impl;
 
+import org.springframework.transaction.annotation.Transactional;
+
 import java.util.Date;
 import java.util.List;
 
@@ -16,6 +18,7 @@ import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
 
+@Transactional(value = "transactionManager")
 public class GivenPermissionToManagerImpl implements GivenPermissionToManager {
 
     @Resource

@@ -1,5 +1,7 @@
 package org.orcid.core.manager.impl;
 
+import org.springframework.transaction.annotation.Transactional;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -29,6 +31,7 @@ import com.fasterxml.jackson.dataformat.csv.CsvParser;
 import com.google.common.base.Joiner;
 import com.google.common.collect.ImmutableMap;
 
+@Transactional(value = "transactionManager")
 public class BibtexManagerImpl extends ManagerReadOnlyBaseImpl implements BibtexManager {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(BibtexManagerImpl.class);

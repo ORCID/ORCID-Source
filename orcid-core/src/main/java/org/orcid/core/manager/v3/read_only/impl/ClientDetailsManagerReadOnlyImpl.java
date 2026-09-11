@@ -1,4 +1,6 @@
 package org.orcid.core.manager.v3.read_only.impl;
+
+import org.springframework.transaction.annotation.Transactional;
 import java.util.*;
 
 
@@ -20,6 +22,7 @@ import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+@Transactional(value = "transactionManagerReadOnly", readOnly = true)
 public class ClientDetailsManagerReadOnlyImpl implements ClientDetailsManagerReadOnly {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ClientDetailsManagerReadOnlyImpl.class);

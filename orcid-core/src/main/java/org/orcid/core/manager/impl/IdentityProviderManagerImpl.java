@@ -1,5 +1,7 @@
 package org.orcid.core.manager.impl;
 
+import org.springframework.transaction.annotation.Transactional;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -7,7 +9,6 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import jakarta.annotation.Resource;
-import jakarta.transaction.Transactional;
 
 import org.ehcache.Cache;
 import org.orcid.core.locale.LocaleManager;
@@ -23,6 +24,7 @@ import org.springframework.beans.factory.annotation.Value;
  * @author Will Simpson
  *
  */
+@Transactional(value = "transactionManager")
 public class IdentityProviderManagerImpl implements IdentityProviderManager {
 
     @Value("${org.orcid.core.idpMetadataUrlsSpaceSeparated:http://www.testshib.org/metadata/testshib-providers.xml https://engine.surfconext.nl/authentication/idp/metadata}")

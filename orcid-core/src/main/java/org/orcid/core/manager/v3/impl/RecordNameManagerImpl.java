@@ -1,5 +1,7 @@
 package org.orcid.core.manager.v3.impl;
 
+import org.springframework.transaction.annotation.Transactional;
+
 import java.util.Date;
 
 import jakarta.annotation.Resource;
@@ -16,6 +18,7 @@ import org.orcid.pojo.ajaxForm.PojoUtil;
  * @author Angel Montenegro
  * 
  */
+@Transactional(value = "transactionManager")
 public class RecordNameManagerImpl extends RecordNameManagerReadOnlyImpl implements RecordNameManager {
 
     @Resource

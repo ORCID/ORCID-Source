@@ -1,5 +1,7 @@
 package org.orcid.core.common.manager.impl;
 
+import org.springframework.transaction.annotation.Transactional;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -17,6 +19,7 @@ import org.orcid.persistence.jpa.entities.EmailFrequencyEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+@Transactional(value = "transactionManager")
 public class EmailFrequencyManagerImpl implements EmailFrequencyManager {
 
     private static final Logger LOG = LoggerFactory.getLogger(EmailFrequencyManagerImpl.class);

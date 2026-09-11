@@ -1,5 +1,7 @@
 package org.orcid.core.manager.v3.read_only.impl;
 
+import org.springframework.transaction.annotation.Transactional;
+
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
@@ -13,6 +15,7 @@ import org.orcid.jaxb.model.v3.release.client.ClientSummary;
 import org.orcid.persistence.dao.ClientDetailsDao;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 
+@Transactional(value = "transactionManagerReadOnly", readOnly = true)
 public class ClientManagerReadOnlyImpl implements ClientManagerReadOnly {
 
     @Resource(name = "jpaJaxbClientAdapterV3")

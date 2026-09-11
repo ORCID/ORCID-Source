@@ -1,5 +1,7 @@
 package org.orcid.core.manager.read_only.impl;
 
+import org.springframework.transaction.annotation.Transactional;
+
 import java.util.List;
 
 import org.orcid.core.manager.read_only.ActivitiesSummaryManagerReadOnly;
@@ -20,6 +22,7 @@ import org.orcid.jaxb.model.record.summary_v2.PeerReviews;
 import org.orcid.jaxb.model.record.summary_v2.WorkSummary;
 import org.orcid.jaxb.model.record.summary_v2.Works;
 
+@Transactional(value = "transactionManagerReadOnly", readOnly = true)
 public class ActivitiesSummaryManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements ActivitiesSummaryManagerReadOnly {    
     private AffiliationsManagerReadOnly affiliationsManager;
     

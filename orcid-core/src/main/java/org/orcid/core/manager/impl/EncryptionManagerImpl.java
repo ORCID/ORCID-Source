@@ -1,5 +1,7 @@
 package org.orcid.core.manager.impl;
 
+import org.springframework.transaction.annotation.Transactional;
+
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
@@ -17,6 +19,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+@Transactional(value = "transactionManager")
 public class EncryptionManagerImpl implements EncryptionManager,PasswordEncoder, InitializingBean  {
 
     private String passPhraseForInternalEncryption;

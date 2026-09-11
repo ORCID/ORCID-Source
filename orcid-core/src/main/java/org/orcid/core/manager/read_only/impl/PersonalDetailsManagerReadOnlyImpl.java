@@ -1,5 +1,7 @@
 package org.orcid.core.manager.read_only.impl;
 
+import org.springframework.transaction.annotation.Transactional;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -22,6 +24,7 @@ import org.orcid.utils.DateUtils;
  * @author Angel Montenegro
  * 
  */
+@Transactional(value = "transactionManagerReadOnly", readOnly = true)
 public class PersonalDetailsManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements PersonalDetailsManagerReadOnly {
 
     protected OtherNameManagerReadOnly otherNameManager;

@@ -20,12 +20,14 @@ import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionTemplate;
 
 /**
  * @author Declan Newman (declan) Date: 10/02/2012
  */
+@Transactional(value = "transactionManager")
 public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl implements ProfileEntityManager {
     private static final Logger LOGGER = LoggerFactory.getLogger(ProfileEntityManagerImpl.class);
 

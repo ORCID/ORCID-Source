@@ -1,5 +1,7 @@
 package org.orcid.core.manager.v3.read_only.impl;
 
+import org.springframework.transaction.annotation.Transactional;
+
 import java.util.List;
 import java.util.Set;
 
@@ -21,6 +23,7 @@ import org.orcid.persistence.dao.ResearchResourceDao;
 import org.orcid.persistence.jpa.entities.ResearchResourceEntity;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 
+@Transactional(value = "transactionManagerReadOnly", readOnly = true)
 public class ResearchResourceManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements ResearchResourceManagerReadOnly{
 
     @Resource 

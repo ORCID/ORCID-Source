@@ -1,5 +1,7 @@
 package org.orcid.core.manager.v3.impl;
 
+import org.springframework.transaction.annotation.Transactional;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -25,6 +27,7 @@ import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.ProfileKeywordEntity;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 
+@Transactional(value = "transactionManager")
 public class ProfileKeywordManagerImpl extends ProfileKeywordManagerReadOnlyImpl implements ProfileKeywordManager {
 
     @Resource(name = "sourceManagerV3")

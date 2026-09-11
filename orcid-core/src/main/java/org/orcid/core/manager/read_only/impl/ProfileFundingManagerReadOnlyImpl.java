@@ -1,5 +1,7 @@
 package org.orcid.core.manager.read_only.impl;
 
+import org.springframework.transaction.annotation.Transactional;
+
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
@@ -21,6 +23,7 @@ import org.orcid.jaxb.model.record_v2.GroupableActivity;
 import org.orcid.persistence.dao.ProfileFundingDao;
 import org.orcid.persistence.jpa.entities.ProfileFundingEntity;
 
+@Transactional(value = "transactionManagerReadOnly", readOnly = true)
 public class ProfileFundingManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements ProfileFundingManagerReadOnly {
     
     @Resource

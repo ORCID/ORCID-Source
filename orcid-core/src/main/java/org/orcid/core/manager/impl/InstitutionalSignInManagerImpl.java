@@ -1,5 +1,7 @@
 package org.orcid.core.manager.impl;
 
+import org.springframework.transaction.annotation.Transactional;
+
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
@@ -32,6 +34,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 
+@Transactional(value = "transactionManager")
 public class InstitutionalSignInManagerImpl implements InstitutionalSignInManager {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(InstitutionalSignInManagerImpl.class);

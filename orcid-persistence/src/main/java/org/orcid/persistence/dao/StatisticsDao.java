@@ -6,13 +6,13 @@ import org.springframework.transaction.annotation.Transactional;
 
 public interface StatisticsDao {
 
-    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
+    @Transactional(readOnly = true)
     long calculateLiveIds();
     
     @Transactional(propagation = Propagation.REQUIRED)
     Long createKey();
 
-    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
+    @Transactional(readOnly = true)
     long getLatestLiveIds();
     
     @Transactional(propagation = Propagation.REQUIRED)

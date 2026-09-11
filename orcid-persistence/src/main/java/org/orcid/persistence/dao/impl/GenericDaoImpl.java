@@ -34,14 +34,14 @@ public class GenericDaoImpl<E extends OrcidEntity<I>, I extends Serializable> im
     }
 
     @Override
-    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
+    @Transactional(propagation = Propagation.REQUIRED)
     public E find(I id) {
         return entityManager.find(clazz, id);
     }
 
     @SuppressWarnings("unchecked")
     @Override
-    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
+    @Transactional(propagation = Propagation.REQUIRED)
     public List<E> findLastModifiedBefore(Date latestDate, int maxResults) {
         Query query = entityManager.createQuery("from " + clazz.getSimpleName() + " where lastModified <= :latestDate");
         query.setParameter("latestDate", latestDate);
@@ -51,7 +51,7 @@ public class GenericDaoImpl<E extends OrcidEntity<I>, I extends Serializable> im
 
     @SuppressWarnings("unchecked")
     @Override
-    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
+    @Transactional(propagation = Propagation.REQUIRED)
     public List<E> getAll() {
         return entityManager.createQuery("from " + clazz.getSimpleName()).getResultList();
     }
@@ -113,7 +113,7 @@ public class GenericDaoImpl<E extends OrcidEntity<I>, I extends Serializable> im
     }
 
     @Override
-    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
+    @Transactional(propagation = Propagation.REQUIRED)
     public Long countAll() {
         return (Long) entityManager.createQuery("select count(e) from " + clazz.getSimpleName() + " e").getSingleResult();
     }

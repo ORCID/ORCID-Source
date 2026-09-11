@@ -4,7 +4,9 @@ import java.util.Date;
 
 import org.orcid.core.aop.ProfileLastModifiedAspect;
 import org.orcid.core.manager.v3.read_only.ManagerReadOnlyBase;
+import org.springframework.transaction.annotation.Transactional;
 
+@Transactional(value = "transactionManagerReadOnly", readOnly = true)
 public class ManagerReadOnlyBaseImpl implements ManagerReadOnlyBase {
     protected ProfileLastModifiedAspect profileLastModifiedAspect;
     

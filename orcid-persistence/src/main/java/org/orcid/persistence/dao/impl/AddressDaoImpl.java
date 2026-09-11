@@ -27,7 +27,7 @@ public class AddressDaoImpl extends GenericDaoImpl<AddressEntity, Long> implemen
     }
 
     @Override
-    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
+    @Transactional(readOnly = true)
     public AddressEntity getAddress(String orcid, Long putCode) {
         Query query = entityManager.createQuery("FROM AddressEntity WHERE orcid = :orcid and id = :id");
         query.setParameter("orcid", orcid);
@@ -37,7 +37,7 @@ public class AddressDaoImpl extends GenericDaoImpl<AddressEntity, Long> implemen
 
     @SuppressWarnings("unchecked")
     @Override
-    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
+    @Transactional(readOnly = true)
     public List<Object[]> findAddressesToMigrate() {
         String queryString = "SELECT p.orcid, p.iso2_country, p.profile_address_visibility FROM profile p WHERE p.iso2_country IS NOT NULL AND NOT EXISTS (SELECT a.orcid FROM address a WHERE a.orcid = p.orcid) LIMIT 10000;";                
         Query query = entityManager.createNativeQuery(queryString);                         
@@ -46,7 +46,7 @@ public class AddressDaoImpl extends GenericDaoImpl<AddressEntity, Long> implemen
 
     @SuppressWarnings("unchecked")
     @Override
-    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
+    @Transactional(readOnly = true)
     @Cacheable(value = "dao-address", key = "#orcid.concat('-').concat(#lastModified)")
     public List<AddressEntity> getAddresses(String orcid, long lastModified) {
         Query query = entityManager.createQuery("FROM AddressEntity WHERE orcid = :orcid order by displayIndex desc, dateCreated asc");
@@ -55,7 +55,7 @@ public class AddressDaoImpl extends GenericDaoImpl<AddressEntity, Long> implemen
     }
     
     @Override
-    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
+    @Transactional(readOnly = true)
     @Cacheable(value = "public-address", key = "#orcid.concat('-').concat(#lastModified)")
     public List<AddressEntity> getPublicAddresses(String orcid, long lastModified) {
         return getAddresses(orcid, PUBLIC_VISIBILITY);
@@ -63,7 +63,7 @@ public class AddressDaoImpl extends GenericDaoImpl<AddressEntity, Long> implemen
    
     @SuppressWarnings("unchecked")
     @Override
-    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
+    @Transactional(readOnly = true)
     public List<AddressEntity> getAddresses(String orcid, String visibility) {
         Query query = entityManager.createQuery("FROM AddressEntity WHERE orcid = :orcid and visibility = :visibility order by displayIndex desc, dateCreated asc");
         query.setParameter("orcid", orcid);
@@ -92,7 +92,7 @@ public class AddressDaoImpl extends GenericDaoImpl<AddressEntity, Long> implemen
 
     @SuppressWarnings("unchecked")
     @Override
-    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
+    @Transactional(readOnly = true)
     public List<BigInteger> getIdsForClientSourceCorrection(int limit, List<String> nonPublicClients) {
         Query query = entityManager.createNativeQuery("SELECT id FROM address WHERE client_source_id = source_id AND client_source_id IN :nonPublicClients");
         query.setParameter("nonPublicClients", nonPublicClients);
@@ -110,7 +110,7 @@ public class AddressDaoImpl extends GenericDaoImpl<AddressEntity, Long> implemen
 
     @SuppressWarnings("unchecked")
     @Override
-    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
+    @Transactional(readOnly = true)
     public List<BigInteger> getIdsForUserSourceCorrection(int limit, List<String> publicClients) {
         Query query = entityManager.createNativeQuery("SELECT id FROM address WHERE client_source_id = source_id AND client_source_id IN :publicClients");
         query.setParameter("publicClients", publicClients);
@@ -128,7 +128,7 @@ public class AddressDaoImpl extends GenericDaoImpl<AddressEntity, Long> implemen
 
     @SuppressWarnings("unchecked")
     @Override
-    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
+    @Transactional(readOnly = true)
     public List<BigInteger> getIdsForUserOBOUpdate(String clientDetailsId, int max) {
         Query query = entityManager.createNativeQuery("SELECT id FROM address WHERE client_source_id = :clientDetailsId AND assertion_origin_source_id IS NULL");
         query.setParameter("clientDetailsId", clientDetailsId);
@@ -146,7 +146,7 @@ public class AddressDaoImpl extends GenericDaoImpl<AddressEntity, Long> implemen
 
     @SuppressWarnings("unchecked")
     @Override
-    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
+    @Transactional(readOnly = true)
     public List<BigInteger> getIdsForUserOBORecords(String clientDetailsId, int max) {
         Query query = entityManager.createNativeQuery("SELECT id FROM address WHERE client_source_id = :clientDetailsId AND assertion_origin_source_id IS NOT NULL");
         query.setParameter("clientDetailsId", clientDetailsId);
@@ -164,7 +164,7 @@ public class AddressDaoImpl extends GenericDaoImpl<AddressEntity, Long> implemen
 
     @SuppressWarnings("unchecked")
     @Override
-    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
+    @Transactional(readOnly = true)
     public List<BigInteger> getIdsForUserOBORecords(int max) {
         Query query = entityManager.createNativeQuery("SELECT id FROM address WHERE assertion_origin_source_id IS NOT NULL");
         query.setMaxResults(max);
@@ -173,7 +173,7 @@ public class AddressDaoImpl extends GenericDaoImpl<AddressEntity, Long> implemen
 
     @SuppressWarnings("unchecked")
     @Override
-    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
+    @Transactional(readOnly = true)
     public List<BigInteger> getIdsOfAddressesReferencingClientProfiles(int max, List<String> ids) {
         Query query = entityManager.createNativeQuery("SELECT id FROM address WHERE source_id IN :ids");
         query.setParameter("ids", ids);

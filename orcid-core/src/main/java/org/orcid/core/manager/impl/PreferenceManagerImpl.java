@@ -1,5 +1,7 @@
 package org.orcid.core.manager.impl;
 
+import org.springframework.transaction.annotation.Transactional;
+
 import jakarta.annotation.Resource;
 
 import org.orcid.core.manager.PreferenceManager;
@@ -11,6 +13,7 @@ import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionTemplate;
 
+@Transactional(value = "transactionManager")
 public class PreferenceManagerImpl implements PreferenceManager {
 
     @Resource

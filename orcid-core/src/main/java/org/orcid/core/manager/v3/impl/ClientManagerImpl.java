@@ -1,5 +1,7 @@
 package org.orcid.core.manager.v3.impl;
 
+import org.springframework.transaction.annotation.Transactional;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -10,7 +12,6 @@ import java.util.Set;
 import java.util.UUID;
 
 import jakarta.annotation.Resource;
-import jakarta.transaction.Transactional;
 
 import org.orcid.core.adapter.v3.JpaJaxbClientAdapter;
 import org.orcid.core.constants.OrcidOauth2Constants;
@@ -39,6 +40,7 @@ import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionTemplate;
 
+@Transactional(value = "transactionManager")
 public class ClientManagerImpl implements ClientManager {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ClientManagerImpl.class);

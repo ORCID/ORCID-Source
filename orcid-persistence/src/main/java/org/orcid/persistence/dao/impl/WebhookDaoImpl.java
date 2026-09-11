@@ -27,7 +27,7 @@ public class WebhookDaoImpl extends GenericDaoImpl<WebhookEntity, WebhookEntityP
     }
 
     @Override
-    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
+    @Transactional(readOnly = true)
     public List<WebhookEntity> findWebhooksReadyToProcess(Date profileModifiedBefore, int retryDelayMinutes, int maxResults, Set<String> clientsToExclude) {
         TypedQuery<WebhookEntity> query = entityManager.createNamedQuery(WebhookEntity.FIND_WEBHOOKS_READY_TO_PROCESS, WebhookEntity.class);
         query.setParameter("retryDelayMinutes", retryDelayMinutes);
@@ -39,7 +39,7 @@ public class WebhookDaoImpl extends GenericDaoImpl<WebhookEntity, WebhookEntityP
     }
 
     @Override
-    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
+    @Transactional(readOnly = true)
     public long countWebhooksReadyToProcess(Date profileModifiedBefore, int retryDelayMinutes) {
         TypedQuery<BigInteger> query = entityManager.createNamedQuery(WebhookEntity.COUNT_WEBHOOKS_READY_TO_PROCESS, BigInteger.class);
         query.setParameter("retryDelayMinutes", retryDelayMinutes);

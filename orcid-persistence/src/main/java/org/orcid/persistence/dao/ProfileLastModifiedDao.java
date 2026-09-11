@@ -20,7 +20,7 @@ public interface ProfileLastModifiedDao {
     
     boolean updateIndexingStatus(List<String> orcidIds, IndexingStatus indexingStatus);
     
-    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
+    @Transactional(readOnly = true)
     Date retrieveLastModifiedDate(String orcid);
     
     

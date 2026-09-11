@@ -26,16 +26,18 @@ public class RecordNameDaoImpl extends GenericDaoImpl<RecordNameEntity, Long> im
     }
 
     @Override
-    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
+    @Transactional(readOnly = true)
     @Cacheable(value = "record-name", key = "#orcid.concat('-').concat(#lastModified)")
     public RecordNameEntity getRecordName(String orcid, long lastModified) {
         Query query = entityManager.createQuery("FROM RecordNameEntity WHERE orcid = :orcid");
         query.setParameter("orcid", orcid);
-        return (RecordNameEntity) query.getSingleResult();
+        @SuppressWarnings("unchecked")
+        List<RecordNameEntity> results = (List<RecordNameEntity>) query.getResultList();
+        return (results != null && !results.isEmpty()) ? results.get(0) : null;
     }
 
     @Override
-    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
+    @Transactional(readOnly = true)
     public RecordNameEntity findByCreditName(String creditName) {
         Query query = entityManager.createQuery("FROM RecordNameEntity WHERE creditName = :creditName");
         query.setParameter("creditName", creditName);
@@ -63,7 +65,7 @@ public class RecordNameDaoImpl extends GenericDaoImpl<RecordNameEntity, Long> im
     }
     
     @Override
-    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
+    @Transactional(readOnly = true)
     public boolean exists(String orcid) {
         Query query = entityManager.createNativeQuery("select count(*) from record_name where orcid=:orcid");
         query.setParameter("orcid", orcid);
@@ -72,15 +74,16 @@ public class RecordNameDaoImpl extends GenericDaoImpl<RecordNameEntity, Long> im
     }   
     
     @Override
-    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
+    @Transactional(readOnly = true)
     public Date getLastModified(String orcid) {
         TypedQuery<Date> query = entityManager.createQuery("SELECT r.lastModified FROM RecordNameEntity r WHERE r.orcid = :orcid", Date.class);
         query.setParameter("orcid", orcid);
-        return query.getSingleResult();
+        List<Date> results = query.getResultList();
+        return (results != null && !results.isEmpty()) ? results.get(0) : null;
     }
 
     @Override
-    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
+    @Transactional(readOnly = true)
     public List<RecordNameEntity> getRecordNames(List<String> orcids) {
         TypedQuery<RecordNameEntity> query = entityManager.createQuery("FROM RecordNameEntity WHERE orcid in :ids", RecordNameEntity.class);
         query.setParameter("ids", orcids);

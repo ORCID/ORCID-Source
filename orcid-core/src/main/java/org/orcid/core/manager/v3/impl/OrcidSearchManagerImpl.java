@@ -1,5 +1,7 @@
 package org.orcid.core.manager.v3.impl;
 
+import org.springframework.transaction.annotation.Transactional;
+
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.List;
@@ -28,6 +30,7 @@ import org.slf4j.LoggerFactory;
 import org.apache.hc.core5.http.ParseException;
 
 
+@Transactional(value = "transactionManager")
 public class OrcidSearchManagerImpl implements OrcidSearchManager {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(OrcidSearchManagerImpl.class);

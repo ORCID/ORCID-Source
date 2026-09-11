@@ -1,5 +1,7 @@
 package org.orcid.core.manager.v3.read_only.impl;
 
+import org.springframework.transaction.annotation.Transactional;
+
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
@@ -22,6 +24,7 @@ import org.orcid.persistence.dao.ProfileFundingDao;
 import org.orcid.persistence.jpa.entities.ProfileFundingEntity;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 
+@Transactional(value = "transactionManagerReadOnly", readOnly = true)
 public class ProfileFundingManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements ProfileFundingManagerReadOnly {
     
     @Resource(name = "jpaJaxbFundingAdapterV3")

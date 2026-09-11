@@ -1,5 +1,7 @@
 package org.orcid.core.manager.read_only.impl;
 
+import org.springframework.transaction.annotation.Transactional;
+
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
@@ -22,6 +24,7 @@ import org.orcid.jaxb.model.record_v2.PeerReview;
 import org.orcid.persistence.dao.PeerReviewDao;
 import org.orcid.persistence.jpa.entities.PeerReviewEntity;
 
+@Transactional(value = "transactionManagerReadOnly", readOnly = true)
 public class PeerReviewManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements PeerReviewManagerReadOnly {
     @Resource
     protected JpaJaxbPeerReviewAdapter jpaJaxbPeerReviewAdapter;

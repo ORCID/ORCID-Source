@@ -1,5 +1,7 @@
 package org.orcid.core.manager.v3.impl;
 
+import org.springframework.transaction.annotation.Transactional;
+
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Date;
@@ -53,6 +55,7 @@ import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
 
+@Transactional(value = "transactionManager")
 public class MembersManagerImpl implements MembersManager {
 
     @Resource

@@ -1,5 +1,7 @@
 package org.orcid.core.manager.impl;
 
+import org.springframework.transaction.annotation.Transactional;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
@@ -17,6 +19,7 @@ import org.orcid.core.utils.ReleaseNameUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+@Transactional(value = "transactionManager")
 public class ClientDetailsEntityCacheManagerImpl implements ClientDetailsEntityCacheManager {
 
     private static final Logger LOG = LoggerFactory.getLogger(ClientDetailsEntityCacheManagerImpl.class);

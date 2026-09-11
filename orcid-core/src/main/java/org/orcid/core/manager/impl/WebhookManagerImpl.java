@@ -1,5 +1,7 @@
 package org.orcid.core.manager.impl;
 
+import org.springframework.transaction.annotation.Transactional;
+
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.http.HttpResponse;
@@ -30,6 +32,7 @@ import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
 
+@Transactional(value = "transactionManager")
 public class WebhookManagerImpl implements WebhookManager {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(WebhookManagerImpl.class);

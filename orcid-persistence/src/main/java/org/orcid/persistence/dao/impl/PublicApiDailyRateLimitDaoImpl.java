@@ -22,7 +22,7 @@ public class PublicApiDailyRateLimitDaoImpl extends GenericDaoImpl<PublicApiDail
     }
 
     @Override
-    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
+    @Transactional(readOnly = true)
     public PublicApiDailyRateLimitEntity findByClientIdAndRequestDate(String clientId, LocalDate requestDate) {
         Query nativeQuery = entityManager.createNativeQuery("SELECT * FROM public_api_daily_rate_limit p where p.client_id=:clientId and p.request_date=:requestDate",
                 PublicApiDailyRateLimitEntity.class);
@@ -39,7 +39,7 @@ public class PublicApiDailyRateLimitDaoImpl extends GenericDaoImpl<PublicApiDail
     }
 
     @Override
-    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
+    @Transactional(readOnly = true)
     public PublicApiDailyRateLimitEntity findByIpAddressAndRequestDate(String ipAddress, LocalDate requestDate) {
         String baseQuery = "SELECT * FROM public_api_daily_rate_limit p where p.ip_address=:ipAddress and p.request_date=:requestDate";
 
@@ -59,7 +59,7 @@ public class PublicApiDailyRateLimitDaoImpl extends GenericDaoImpl<PublicApiDail
     }
 
     @Override
-    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
+    @Transactional(readOnly = true)
     public int countClientRequestsWithLimitExceeded(LocalDate requestDate, int limit) {
         Query nativeQuery = entityManager.createNativeQuery(
                 "SELECT count(*) FROM public_api_daily_rate_limit p WHERE NOT ((p.client_id = '' OR p.client_id IS NULL)) and p.request_date=:requestDate and p.request_count >=:requestCount");
@@ -74,7 +74,7 @@ public class PublicApiDailyRateLimitDaoImpl extends GenericDaoImpl<PublicApiDail
     }
 
     @Override
-    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
+    @Transactional(readOnly = true)
     public int countAnonymousRequestsWithLimitExceeded(LocalDate requestDate, int limit) {
         Query nativeQuery = entityManager.createNativeQuery(
                 "SELECT count(*) FROM public_api_daily_rate_limit p WHERE ((p.client_id = '' OR p.client_id IS NULL)) and p.request_date=:requestDate and p.request_count >=:requestCount");

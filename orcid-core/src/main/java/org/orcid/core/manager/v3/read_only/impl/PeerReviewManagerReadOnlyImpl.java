@@ -1,5 +1,7 @@
 package org.orcid.core.manager.v3.read_only.impl;
 
+import org.springframework.transaction.annotation.Transactional;
+
 import java.math.BigInteger;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -32,6 +34,7 @@ import org.orcid.pojo.PeerReviewMinimizedSummary;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+@Transactional(value = "transactionManagerReadOnly", readOnly = true)
 public class PeerReviewManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements PeerReviewManagerReadOnly {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(PeerReviewManagerReadOnlyImpl.class);

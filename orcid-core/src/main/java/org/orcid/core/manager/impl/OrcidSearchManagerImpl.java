@@ -1,5 +1,7 @@
 package org.orcid.core.manager.impl;
 
+import org.springframework.transaction.annotation.Transactional;
+
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -16,6 +18,7 @@ import org.orcid.jaxb.model.search_v2.Result;
 import org.orcid.jaxb.model.search_v2.Search;
 import org.apache.hc.core5.http.ParseException;
 
+@Transactional(value = "transactionManager")
 public class OrcidSearchManagerImpl implements OrcidSearchManager {
 
     @Resource

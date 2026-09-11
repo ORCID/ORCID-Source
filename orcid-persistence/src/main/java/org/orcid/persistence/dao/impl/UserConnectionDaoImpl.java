@@ -30,7 +30,7 @@ public class UserConnectionDaoImpl extends GenericDaoImpl<UserconnectionEntity, 
     }
 
     @Override
-    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
+    @Transactional(readOnly = true)
     public UserconnectionEntity findByProviderIdAndProviderUserId(String providerUserId, String providerId) {
         TypedQuery<UserconnectionEntity> query = entityManager
             .createQuery("from UserconnectionEntity where id.provideruserid = :providerUserId and id.providerid = :providerId", UserconnectionEntity.class);
@@ -41,7 +41,7 @@ public class UserConnectionDaoImpl extends GenericDaoImpl<UserconnectionEntity, 
     }
 
     @Override
-    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
+    @Transactional(readOnly = true)
     public UserconnectionEntity findByProviderIdAndProviderUserIdAndIdType(String providerUserId, String providerId, String idType) {
         TypedQuery<UserconnectionEntity> query = entityManager.createQuery(
             "from UserconnectionEntity where id.provideruserid = :providerUserId and id.providerid = :providerId and idType = :idType", UserconnectionEntity.class);
@@ -53,7 +53,7 @@ public class UserConnectionDaoImpl extends GenericDaoImpl<UserconnectionEntity, 
     }
 
     @Override
-    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
+    @Transactional(readOnly = true)
     public List<UserconnectionEntity> findByOrcid(String orcid) {
         TypedQuery<UserconnectionEntity> query = entityManager.createQuery("from UserconnectionEntity where orcid = :orcid", UserconnectionEntity.class);
         query.setParameter("orcid", orcid);
@@ -69,7 +69,7 @@ public class UserConnectionDaoImpl extends GenericDaoImpl<UserconnectionEntity, 
     }
 
     @Override
-    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
+    @Transactional(readOnly = true)
     public UserconnectionEntity findByUserConnectionId(String userConnectionId) {
         TypedQuery<UserconnectionEntity> query = entityManager.createQuery(
                 "from UserconnectionEntity where id.userid = :userConnectionId", UserconnectionEntity.class);

@@ -51,8 +51,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
+import org.springframework.transaction.annotation.Transactional;
 import org.apache.commons.lang3.StringUtils;
 
+@Transactional(value = "transactionManager")
 public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkManager {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(WorkManagerImpl.class);

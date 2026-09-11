@@ -8,9 +8,11 @@ import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.transaction.annotation.Transactional;
 
 import jakarta.annotation.Resource;
 
+@Transactional(value = "transactionManagerReadOnly", readOnly = true)
 public class ProfileEntityManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements ProfileEntityManagerReadOnly {
 
     @Resource(name="orcidOauth2TokenDetailDaoReadOnly")

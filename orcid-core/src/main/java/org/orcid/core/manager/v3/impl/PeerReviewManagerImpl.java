@@ -1,5 +1,7 @@
 package org.orcid.core.manager.v3.impl;
 
+import org.springframework.transaction.annotation.Transactional;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -43,6 +45,7 @@ import org.orcid.persistence.jpa.entities.PeerReviewEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 
+@Transactional(value = "transactionManager")
 public class PeerReviewManagerImpl extends PeerReviewManagerReadOnlyImpl implements PeerReviewManager {
 
     @Resource

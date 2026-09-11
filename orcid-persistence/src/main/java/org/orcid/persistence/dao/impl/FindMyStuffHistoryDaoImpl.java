@@ -18,7 +18,7 @@ public class FindMyStuffHistoryDaoImpl extends GenericDaoImpl<FindMyStuffHistory
     } 
 
     @Override
-    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
+    @Transactional(readOnly = true)
     public List<FindMyStuffHistoryEntity> findAll(String orcid) {
         TypedQuery<FindMyStuffHistoryEntity> query = entityManager.createQuery("from FindMyStuffHistoryEntity where orcid = :orcid", FindMyStuffHistoryEntity.class);
         query.setParameter("orcid", orcid);

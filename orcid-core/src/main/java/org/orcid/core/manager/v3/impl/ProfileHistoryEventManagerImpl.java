@@ -1,5 +1,7 @@
 package org.orcid.core.manager.v3.impl;
 
+import org.springframework.transaction.annotation.Transactional;
+
 import java.util.List;
 
 import jakarta.annotation.Resource;
@@ -9,6 +11,7 @@ import org.orcid.core.profile.history.ProfileHistoryEventType;
 import org.orcid.persistence.dao.ProfileHistoryEventDao;
 import org.orcid.persistence.jpa.entities.ProfileHistoryEventEntity;
 
+@Transactional(value = "transactionManager")
 public class ProfileHistoryEventManagerImpl implements ProfileHistoryEventManager {
     
     @Resource

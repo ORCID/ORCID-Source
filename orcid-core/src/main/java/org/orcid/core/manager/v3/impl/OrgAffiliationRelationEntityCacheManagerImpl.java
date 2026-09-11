@@ -1,5 +1,7 @@
 package org.orcid.core.manager.v3.impl;
 
+import org.springframework.transaction.annotation.Transactional;
+
 import java.util.List;
 
 import jakarta.annotation.Resource;
@@ -9,6 +11,7 @@ import org.orcid.core.cache.OrcidString;
 import org.orcid.core.manager.v3.OrgAffiliationRelationEntityCacheManager;
 import org.orcid.persistence.jpa.entities.OrgAffiliationRelationEntity;
 
+@Transactional(value = "transactionManager")
 public class OrgAffiliationRelationEntityCacheManagerImpl implements OrgAffiliationRelationEntityCacheManager {
 
     @Resource(name = "affiliationEntitiesGenericCacheManager")

@@ -9,7 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 public interface ClientRedirectDao extends GenericDao<ClientRedirectUriEntity, ClientRedirectUriPk> {
 
-    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
+    @Transactional(readOnly = true)
     public List<ClientRedirectUriEntity> findClientDetailsWithRedirectScope(String redirectUriType);
 
     @Transactional(propagation = Propagation.REQUIRED)

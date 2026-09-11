@@ -1,5 +1,7 @@
 package org.orcid.core.manager.v3.impl;
 
+import org.springframework.transaction.annotation.Transactional;
+
 import java.util.LinkedHashMap;
 import java.util.List;
 
@@ -16,6 +18,7 @@ import org.orcid.jaxb.model.v3.release.record.Affiliation;
 import org.orcid.jaxb.model.v3.release.record.Funding;
 import org.orcid.jaxb.model.v3.release.record.PeerReview;
 
+@Transactional(value = "transactionManager")
 public class ActivityManagerImpl extends ManagerReadOnlyBaseImpl implements ActivityManager {
     
     @Resource(name = "peerReviewManagerV3")

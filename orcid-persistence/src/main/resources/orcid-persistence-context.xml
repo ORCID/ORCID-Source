@@ -295,6 +295,9 @@
             <entry key="hibernate.jdbc.fetch_size" value="${org.orcid.persistence.db.fetchSize:100}" />
             <!-- JDBC Batch Size: Batches INSERT/UPDATE statements -->
             <entry key="hibernate.jdbc.batch_size" value="${org.orcid.persistence.db.batchSize:50}" />
+            <entry key="hibernate.order_inserts" value="true" />
+            <entry key="hibernate.order_updates" value="true" />
+            <entry key="hibernate.jdbc.batch_versioned_data" value="true" />
             <!-- Default Batch Fetch Size: Automatically batches lazy-loaded entities/collections (fixes N+1 queries) -->
             <entry key="hibernate.default_batch_fetch_size" value="${org.orcid.persistence.db.defaultBatchFetchSize:32}" />
             <!-- Query Plan Cache Max Size: Maximum number of parsed query plans to cache in memory -->
@@ -385,6 +388,7 @@
         <property name="maxLifetime" value="\${org.orcid.persistence.db.hikari.maxLifetime:1800000}" />
         <property name="keepaliveTime" value="\${org.orcid.persistence.db.hikari.keepaliveTime:120000}" />
         <property name="leakDetectionThreshold" value="\${org.orcid.persistence.db.hikari.leakDetectionThreshold:0}" />
+        <property name="autoCommit" value="\${org.orcid.persistence.db.autocommit:false}" />
         <!-- PostgreSQL JDBC Driver Properties -->
         <property name="dataSourceProperties">
             <props>
@@ -406,6 +410,7 @@
         <property name="maxLifetime" value="\${org.orcid.persistence.db.readonly.hikari.maxLifetime:1800000}" />
         <property name="keepaliveTime" value="\${org.orcid.persistence.db.readonly.hikari.keepaliveTime:120000}" />
         <property name="leakDetectionThreshold" value="\${org.orcid.persistence.db.readonly.hikari.leakDetectionThreshold:0}" />
+        <property name="autoCommit" value="\${org.orcid.persistence.db.readonly.autocommit:false}" />
         <property name="readOnly" value="true" />
         <!-- PostgreSQL JDBC Driver Properties -->
         <property name="dataSourceProperties">

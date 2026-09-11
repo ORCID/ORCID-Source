@@ -27,7 +27,7 @@ public class OrcidOauth2TokenDetailDaoImpl extends GenericDaoImpl<OrcidOauth2Tok
     }
 
     @Override
-    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
+    @Transactional(readOnly = true)
     public OrcidOauth2TokenDetail findByTokenValue(String tokenValue) {
         Assert.hasText(tokenValue, "Attempt to retrieve a OrcidOauth2TokenDetail with a null or empty token value");
         TypedQuery<OrcidOauth2TokenDetail> query = entityManager.createQuery("from OrcidOauth2TokenDetail where tokenValue = :token", OrcidOauth2TokenDetail.class);
@@ -36,7 +36,7 @@ public class OrcidOauth2TokenDetailDaoImpl extends GenericDaoImpl<OrcidOauth2Tok
     }
 
     @Override
-    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
+    @Transactional(readOnly = true)
     public OrcidOauth2TokenDetail findNonDisabledByTokenValue(String tokenValue) {
         Assert.hasText(tokenValue, "Attempt to retrieve a OrcidOauth2TokenDetail with a null or empty token value");
         TypedQuery<OrcidOauth2TokenDetail> query = entityManager.createQuery("from "
@@ -58,7 +58,7 @@ public class OrcidOauth2TokenDetailDaoImpl extends GenericDaoImpl<OrcidOauth2Tok
     }
 
     @Override
-    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
+    @Transactional(readOnly = true)
     public OrcidOauth2TokenDetail findByRefreshTokenValue(String refreshTokenValue) {
         TypedQuery<OrcidOauth2TokenDetail> query = entityManager.createQuery("from " + "OrcidOauth2TokenDetail where refreshTokenValue = :refreshTokenValue",
                 OrcidOauth2TokenDetail.class);
@@ -67,7 +67,7 @@ public class OrcidOauth2TokenDetailDaoImpl extends GenericDaoImpl<OrcidOauth2Tok
     }
 
     @Override
-    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
+    @Transactional(readOnly = true)
     public List<OrcidOauth2TokenDetail> findByAuthenticationKey(String authenticationKey) {
         TypedQuery<OrcidOauth2TokenDetail> query = entityManager.createQuery("from " + "OrcidOauth2TokenDetail where authenticationKey = :authenticationKey",
                 OrcidOauth2TokenDetail.class);
@@ -76,7 +76,7 @@ public class OrcidOauth2TokenDetailDaoImpl extends GenericDaoImpl<OrcidOauth2Tok
     }
 
     @Override
-    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
+    @Transactional(readOnly = true)
     public List<OrcidOauth2TokenDetail> findByUserName(String userName) {
         TypedQuery<OrcidOauth2TokenDetail> query = entityManager.createQuery("from OrcidOauth2TokenDetail where orcid = :userName and tokenExpiration > :now and (tokenDisabled IS NULL OR tokenDisabled = FALSE)",
                 OrcidOauth2TokenDetail.class);
@@ -86,7 +86,7 @@ public class OrcidOauth2TokenDetailDaoImpl extends GenericDaoImpl<OrcidOauth2Tok
     }
 
     @Override
-    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
+    @Transactional(readOnly = true)
     public List<OrcidOauth2TokenDetail> findByClientId(String clientId) {
         TypedQuery<OrcidOauth2TokenDetail> query = entityManager.createQuery("from " + "OrcidOauth2TokenDetail where clientDetailsId = :clientId",
                 OrcidOauth2TokenDetail.class);
@@ -95,7 +95,7 @@ public class OrcidOauth2TokenDetailDaoImpl extends GenericDaoImpl<OrcidOauth2Tok
     }
     
     @Override
-    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
+    @Transactional(readOnly = true)
     public List<OrcidOauth2TokenDetail> findByClientIdAndUserName(String clientId, String userName) {
         TypedQuery<OrcidOauth2TokenDetail> query = entityManager.createQuery("from OrcidOauth2TokenDetail where clientDetailsId = :clientId and orcid = :userName",
                 OrcidOauth2TokenDetail.class);
@@ -149,7 +149,7 @@ public class OrcidOauth2TokenDetailDaoImpl extends GenericDaoImpl<OrcidOauth2Tok
      * @return the list of available scopes over a profile
      * */
     @SuppressWarnings("unchecked")
-    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
+    @Transactional(readOnly = true)
     public List<String> findAvailableScopesByUserAndClientId(String clientId, String userName) {
         Query query = entityManager
                 .createNativeQuery("select distinct(scope_type) from oauth2_token_detail where user_orcid=:userName and client_details_id=:clientId and (token_disabled = FALSE or token_disabled is null)");
@@ -159,7 +159,7 @@ public class OrcidOauth2TokenDetailDaoImpl extends GenericDaoImpl<OrcidOauth2Tok
     }
     
     @Override
-    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
+    @Transactional(readOnly = true)
     public boolean hasToken(String userName) {
     	Query query = entityManager
                 .createNativeQuery("select true from oauth2_token_detail where user_orcid=:userName limit 1");
@@ -173,7 +173,7 @@ public class OrcidOauth2TokenDetailDaoImpl extends GenericDaoImpl<OrcidOauth2Tok
     }
     
     @Override
-    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
+    @Transactional(readOnly = true)
     public boolean hasTokenForClient(String userName, String clientId) {
         Query query = entityManager
                 .createNativeQuery("select true from oauth2_token_detail where user_orcid=:userName and client_details_id=:clientId limit 1");
@@ -205,7 +205,7 @@ public class OrcidOauth2TokenDetailDaoImpl extends GenericDaoImpl<OrcidOauth2Tok
     }
     
     @Override
-    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
+    @Transactional(readOnly = true)
     public List<String> findAccessTokenByCodeAndClient(String authorizationCode, String clientId) {
         Query query = entityManager.createQuery("select tokenValue from OrcidOauth2TokenDetail where clientDetailsId = :clientId and authorizationCode = :authorizationCode");
         query.setParameter("authorizationCode", authorizationCode);

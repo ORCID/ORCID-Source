@@ -10,10 +10,10 @@ import org.springframework.transaction.annotation.Transactional;
  * 
  */
 public interface BiographyDao extends GenericDao<BiographyEntity, Long> {
-    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
+    @Transactional(readOnly = true)
     boolean exists(String orcid);
     
-    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
+    @Transactional(readOnly = true)
     BiographyEntity getBiography(String orcid, long lastModified);
 
     @Transactional(propagation = Propagation.REQUIRED)

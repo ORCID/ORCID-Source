@@ -1,5 +1,7 @@
 package org.orcid.core.manager.impl;
 
+import org.springframework.transaction.annotation.Transactional;
+
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -25,6 +27,7 @@ import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.pojo.AdminDelegatesRequest;
 import org.orcid.pojo.ProfileDeprecationRequest;
 
+@Transactional(value = "transactionManager")
 public class AdminManagerImpl implements AdminManager {
     public static final String AUTHORIZE_DELEGATION_ACTION = "/account/authorize-delegates";
     

@@ -1,5 +1,7 @@
 package org.orcid.core.manager.impl;
 
+import org.springframework.transaction.annotation.Transactional;
+
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -14,6 +16,7 @@ import org.orcid.persistence.jpa.entities.SubjectEntity;
  * @author Will Simpson
  * 
  */
+@Transactional(value = "transactionManager")
 public class SubjectManagerImpl implements SubjectManager {
 
     @Resource(name = "subjectDao")

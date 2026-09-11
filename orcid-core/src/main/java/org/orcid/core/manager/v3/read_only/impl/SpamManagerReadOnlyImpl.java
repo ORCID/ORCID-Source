@@ -1,5 +1,7 @@
 package org.orcid.core.manager.v3.read_only.impl;
 
+import org.springframework.transaction.annotation.Transactional;
+
 import jakarta.annotation.Resource;
 
 import org.orcid.core.adapter.v3.JpaJaxbSpamAdapter;
@@ -10,6 +12,7 @@ import org.orcid.persistence.dao.SpamDao;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+@Transactional(value = "transactionManagerReadOnly", readOnly = true)
 public class SpamManagerReadOnlyImpl implements SpamManagerReadOnly {
     
     private static final Logger LOGGER = LoggerFactory.getLogger(SpamManagerReadOnlyImpl.class);

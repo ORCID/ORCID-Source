@@ -1,5 +1,7 @@
 package org.orcid.core.manager.v3.impl;
 
+import org.springframework.transaction.annotation.Transactional;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -27,6 +29,7 @@ import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+@Transactional(value = "transactionManager")
 public class ResearcherUrlManagerImpl extends ResearcherUrlManagerReadOnlyImpl implements ResearcherUrlManager {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ResearcherUrlManagerImpl.class);

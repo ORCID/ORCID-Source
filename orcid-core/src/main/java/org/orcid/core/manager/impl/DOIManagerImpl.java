@@ -1,5 +1,7 @@
 package org.orcid.core.manager.impl;
 
+import org.springframework.transaction.annotation.Transactional;
+
 import java.net.MalformedURLException;
 import java.net.URL;
 
@@ -8,6 +10,7 @@ import jakarta.annotation.Resource;
 import org.ehcache.Cache;
 import org.orcid.core.manager.DOIManager;
 
+@Transactional(value = "transactionManager")
 public class DOIManagerImpl implements DOIManager{
     
     @Resource(name = "doiBibtexCache")

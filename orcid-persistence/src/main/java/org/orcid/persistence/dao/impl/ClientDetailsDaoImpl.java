@@ -34,7 +34,7 @@ public class ClientDetailsDaoImpl extends GenericDaoImpl<ClientDetailsEntity, St
     }
 
     @Override
-    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
+    @Transactional(readOnly = true)
     @Cacheable(value = "client-details", key = "#clientId.concat('-').concat(#lastModified)")
     public ClientDetailsEntity findByClientId(String clientId, long lastModified) {
         TypedQuery<ClientDetailsEntity> query = entityManager.createQuery("from ClientDetailsEntity where id = :clientId", ClientDetailsEntity.class);
@@ -48,7 +48,7 @@ public class ClientDetailsDaoImpl extends GenericDaoImpl<ClientDetailsEntity, St
     }
 
     @Override
-    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
+    @Transactional(readOnly = true)
     public Date getLastModified(String clientId) {
         TypedQuery<Date> query = entityManager.createQuery("select lastModified from ClientDetailsEntity where id = :clientId", Date.class);
         query.setParameter("clientId", clientId);
@@ -56,7 +56,7 @@ public class ClientDetailsDaoImpl extends GenericDaoImpl<ClientDetailsEntity, St
     }
 
     @Override
-    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
+    @Transactional(readOnly = true)
     public Map<String, Date> getLastModifiedByClientIds(List<String> clientIds) {
         if (clientIds == null || clientIds.isEmpty()) {
             return new HashMap<>();
@@ -71,7 +71,7 @@ public class ClientDetailsDaoImpl extends GenericDaoImpl<ClientDetailsEntity, St
     }
 
     @Override
-    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
+    @Transactional(readOnly = true)
     public List<ClientDetailsEntity> findByClientIds(List<String> clientIds) {
         if (clientIds == null || clientIds.isEmpty()) {
             return java.util.Collections.emptyList();
@@ -82,7 +82,7 @@ public class ClientDetailsDaoImpl extends GenericDaoImpl<ClientDetailsEntity, St
     }
 
     @Override
-    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
+    @Transactional(readOnly = true)
     public Date getLastModifiedByIdP(String idp) {
         TypedQuery<Date> query = entityManager.createQuery("select lastModified from ClientDetailsEntity where authenticationProviderId = :idp", Date.class);
         query.setParameter("idp", idp);
@@ -135,7 +135,7 @@ public class ClientDetailsDaoImpl extends GenericDaoImpl<ClientDetailsEntity, St
     }
 
     @Override
-    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
+    @Transactional(readOnly = true)
     public List<ClientSecretEntity> getClientSecretsByClientId(String clientId) {
         TypedQuery<ClientSecretEntity> query = entityManager.createQuery("From ClientSecretEntity WHERE clientId=:clientId", ClientSecretEntity.class);
         query.setParameter("clientId", clientId);
@@ -143,7 +143,7 @@ public class ClientDetailsDaoImpl extends GenericDaoImpl<ClientDetailsEntity, St
     }
 
     @Override
-    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
+    @Transactional(readOnly = true)
     public boolean exists(String clientId) {
         TypedQuery<Long> query = entityManager.createQuery("select count(*) from ClientDetailsEntity where id=:clientId", Long.class);
         query.setParameter("clientId", clientId);
@@ -152,7 +152,7 @@ public class ClientDetailsDaoImpl extends GenericDaoImpl<ClientDetailsEntity, St
     }
 
     @Override
-    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
+    @Transactional(readOnly = true)
     public boolean belongsTo(String clientId, String groupId) {
         TypedQuery<ClientDetailsEntity> query = entityManager.createQuery("from ClientDetailsEntity where id = :clientId and groupProfileId = :groupId",
                 ClientDetailsEntity.class);
@@ -177,7 +177,7 @@ public class ClientDetailsDaoImpl extends GenericDaoImpl<ClientDetailsEntity, St
     }
 
     @Override
-    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
+    @Transactional(readOnly = true)
     @SuppressWarnings("unchecked")
     public List<ClientDetailsEntity> findByGroupId(String groupId) {
         Query query = entityManager.createQuery("from ClientDetailsEntity where groupProfileId = :groupId");
@@ -200,7 +200,7 @@ public class ClientDetailsDaoImpl extends GenericDaoImpl<ClientDetailsEntity, St
      * @return the public client that belongs to the given user
      */
     @Override
-    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
+    @Transactional(readOnly = true)
     public ClientDetailsEntity getPublicClient(String ownerId) {
         TypedQuery<ClientDetailsEntity> query = entityManager.createQuery("from ClientDetailsEntity where groupProfileId = :ownerId and clientType = :clientType",
                 ClientDetailsEntity.class);
@@ -222,7 +222,7 @@ public class ClientDetailsDaoImpl extends GenericDaoImpl<ClientDetailsEntity, St
      * @return the name of the member owner of the given client
      */
     @Override
-    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
+    @Transactional(readOnly = true)
     public String getMemberName(String clientId) {
         TypedQuery<String> query = entityManager
                 .createQuery("select r.creditName from RecordNameEntity r where r.orcid = (select c.groupProfileId from ClientDetailsEntity c where c.id=:clientId)", String.class);
@@ -231,7 +231,7 @@ public class ClientDetailsDaoImpl extends GenericDaoImpl<ClientDetailsEntity, St
     }
 
     @Override
-    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
+    @Transactional(readOnly = true)
     public boolean existsAndIsNotPublicClient(String clientId) {
         TypedQuery<Long> query = entityManager
                 .createQuery("select count(c) from ClientDetailsEntity c where c.id=:clientId and c.clientType != 'PUBLIC_CLIENT'", Long.class);
@@ -241,7 +241,7 @@ public class ClientDetailsDaoImpl extends GenericDaoImpl<ClientDetailsEntity, St
     }
 
     @Override
-    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
+    @Transactional(readOnly = true)
     public Date getLastModifiedIfNotPublicClient(String clientId) {
         Query query = entityManager.createQuery("SELECT c.lastModified FROM ClientDetailsEntity c WHERE c.id = :id AND c.clientType != :type");
         query.setParameter("id", clientId);
@@ -251,7 +251,7 @@ public class ClientDetailsDaoImpl extends GenericDaoImpl<ClientDetailsEntity, St
     }
 
     @Override
-    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
+    @Transactional(readOnly = true)
     public ClientDetailsEntity findByIdP(String idp) {
         TypedQuery<ClientDetailsEntity> query = entityManager.createQuery("from ClientDetailsEntity where authenticationProviderId = :idp", ClientDetailsEntity.class);
         query.setParameter("idp", idp);
@@ -259,7 +259,7 @@ public class ClientDetailsDaoImpl extends GenericDaoImpl<ClientDetailsEntity, St
     }
 
     @Override
-    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
+    @Transactional(readOnly = true)
     public List<String> findLegacyClientIds() {
         TypedQuery<String> query = entityManager.createQuery("select c.id from ClientDetailsEntity c where c.id not like 'APP-%'", String.class);
         return query.getResultList();
@@ -333,7 +333,7 @@ public class ClientDetailsDaoImpl extends GenericDaoImpl<ClientDetailsEntity, St
     }
 
     @Override
-    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
+    @Transactional(readOnly = true)
     @SuppressWarnings("unchecked")
     public List<ClientDetailsEntity> findMVPEnabled() {
         Query query = entityManager.createQuery("from ClientDetailsEntity where userNotificationEnabled = :userNotificationEnabled and client_type = :premiumUpdater" );

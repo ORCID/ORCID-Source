@@ -60,11 +60,13 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
 import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
 import org.orcid.core.adapter.mapstruct.ContributorsRolesAndSequencesMapperV3;
 import org.orcid.core.adapter.mapstruct.JSONWorkExternalIdentifiersMapperV3;
 
+@Transactional(value = "transactionManager")
 public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkManager {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(WorkManagerImpl.class);
