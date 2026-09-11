@@ -1,3 +1,9 @@
+## v3.0.83 - 2026-09-11
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.0.82...v3.0.83)
+
+- [#7710](https://github.com/ORCID/ORCID-Source/pull/7710): Fix empty journal title error
+
 ## v3.0.82 - 2026-09-11
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.0.81...v3.0.82)
