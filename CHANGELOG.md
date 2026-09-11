@@ -1,3 +1,9 @@
+## v3.0.80 - 2026-09-11
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.0.79...v3.0.80)
+
+- [#7700](https://github.com/ORCID/ORCID-Source/pull/7700): J21-008 stop a create request setting the client OBO flag
+
 ## v3.0.79 - 2026-09-11
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.0.78...v3.0.79)
