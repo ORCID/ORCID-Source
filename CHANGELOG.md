@@ -1,3 +1,9 @@
+## v3.0.82 - 2026-09-11
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.0.81...v3.0.82)
+
+- [#7709](https://github.com/ORCID/ORCID-Source/pull/7709): Provide the exising list of fundings as a parameter
+
 ## v3.0.81 - 2026-09-11
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.0.80...v3.0.81)
