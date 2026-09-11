@@ -1,3 +1,9 @@
+## v3.0.77 - 2026-09-11
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.0.76...v3.0.77)
+
+- [#7707](https://github.com/ORCID/ORCID-Source/pull/7707): Added the tests for source null
+
 ## v3.0.76 - 2026-09-11
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.0.75...v3.0.76)
