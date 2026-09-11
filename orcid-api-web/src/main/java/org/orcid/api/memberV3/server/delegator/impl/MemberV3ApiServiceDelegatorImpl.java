@@ -398,7 +398,8 @@ public class MemberV3ApiServiceDelegatorImpl implements
         checkProfileStatus(orcid, false);
         orcidSecurityManager.checkClientAccessAndScopes(orcid, ScopePathType.FUNDING_CREATE, ScopePathType.FUNDING_UPDATE);
         clearSource(funding);
-        Funding f = profileFundingManager.createFunding(orcid, funding, true);
+
+        Funding f = profileFundingManager.createFunding(orcid, funding, true, profileFundingManagerReadOnly.getFundingList(orcid));
         sourceUtils.setSourceName(f);
         return apiUtils.buildApiResponse(orcid, "funding", String.valueOf(f.getPutCode()), "apiError.createfunding_response.exception");
     }
@@ -411,7 +412,7 @@ public class MemberV3ApiServiceDelegatorImpl implements
             throw new MismatchedPutCodeException(addParmsMismatchedPutCode(putCode, funding.getPutCode()));                            
         }
         clearSource(funding);
-        Funding f = profileFundingManager.updateFunding(orcid, funding, true);
+        Funding f = profileFundingManager.updateFunding(orcid, funding, true, profileFundingManagerReadOnly.getFundingList(orcid));
         sourceUtils.setSourceName(f);
         return Response.ok(f).build();
     }

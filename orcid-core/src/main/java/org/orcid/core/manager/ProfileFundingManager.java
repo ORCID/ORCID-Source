@@ -5,6 +5,8 @@ import org.orcid.jaxb.model.common_v2.Visibility;
 import org.orcid.jaxb.model.record_v2.Funding;
 import org.orcid.persistence.jpa.entities.ProfileFundingEntity;
 
+import java.util.List;
+
 public interface ProfileFundingManager extends ProfileFundingManagerReadOnly {
     /**
      * Removes the relationship that exists between a funding and a profile.
@@ -55,7 +57,7 @@ public interface ProfileFundingManager extends ProfileFundingManagerReadOnly {
      *          The funding to add
      * @return the added funding                  
      * */
-    Funding createFunding(String orcid, Funding funding, boolean isApiRequest);
+    Funding createFunding(String orcid, Funding funding, boolean isApiRequest, List<Funding> existingFundings);
     
     /**
      * Updates a funding that belongs to the given user
@@ -65,7 +67,7 @@ public interface ProfileFundingManager extends ProfileFundingManagerReadOnly {
      *          The funding to update
      * @return the updated funding                  
      * */
-    Funding updateFunding(String orcid, Funding funding, boolean isApiRequest);
+    Funding updateFunding(String orcid, Funding funding, boolean isApiRequest, List<Funding> existingFundings);
     
     /**
      * Deletes a given funding, if and only if, the client that requested the delete is the source of the funding
