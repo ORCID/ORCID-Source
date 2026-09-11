@@ -303,7 +303,8 @@ public class MemberV3ApiServiceDelegatorImpl implements
         checkProfileStatus(orcid, false);
         orcidSecurityManager.checkClientAccessAndScopes(orcid, ScopePathType.ORCID_WORKS_CREATE, ScopePathType.ORCID_WORKS_UPDATE);
         clearSource(work);
-        Work w = workManager.createWork(orcid, work, true);
+        List<Work> existingWorks = workManagerReadOnly.findWorks(orcid);
+        Work w = workManager.createWork(orcid, work, true, existingWorks);
         sourceUtils.setSourceName(w);
         return apiUtils.buildApiResponse(orcid, "work", String.valueOf(w.getPutCode()), "apiError.creatework_response.exception");
     }
@@ -316,7 +317,8 @@ public class MemberV3ApiServiceDelegatorImpl implements
             throw new MismatchedPutCodeException(addParmsMismatchedPutCode(putCode, work.getPutCode()));                                     
         }
         clearSource(work);
-        Work w = workManager.updateWork(orcid, work, true);
+        List<Work> existingWorks = workManagerReadOnly.findWorks(orcid);
+        Work w = workManager.updateWork(orcid, work, true, existingWorks);
         sourceUtils.setSourceName(w);
         return Response.ok(w).build();
     }
@@ -333,7 +335,8 @@ public class MemberV3ApiServiceDelegatorImpl implements
                 }
             }
         }
-        works = workManager.createWorks(orcid, works);
+        List<Work> existingWorks = workManagerReadOnly.findWorks(orcid);
+        works = workManager.createWorks(orcid, works, existingWorks);
         sourceUtils.setSourceName(works);
         return Response.ok(works).build();
     }
