@@ -187,7 +187,7 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
     }
 
     @Override
-    public Work createWork(String orcid, Work work, boolean isApiRequest) {
+    public Work createWork(String orcid, Work work, boolean isApiRequest, List<Work> existingWorks) {
         Source activeSource = sourceManager.retrieveActiveSource();
 
         if (isApiRequest) {
@@ -195,7 +195,6 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
             // If it is the user adding the peer review, allow him to add
             // duplicates
             if (!(activeSource.getSourceOrcid() != null && activeSource.getSourceOrcid().getPath().equals(orcid))) {
-                List<Work> existingWorks = this.findWorks(orcid);
                 if ((existingWorks.size() + 1) > this.maxNumOfActivities) {
                     throw new ExceedMaxNumberOfElementsException();
                 }
@@ -240,9 +239,8 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
      *         that indicates why a work can't be added
      */
     @Override
-    public WorkBulk createWorks(String orcid, WorkBulk workBulk) {
+    public WorkBulk createWorks(String orcid, WorkBulk workBulk, List<Work> existingWorks) {
         Source activeSource = sourceManager.retrieveActiveSource();
-        List<Work> existingWorks = this.findWorks(orcid);
 
         if (workBulk.getBulk() != null && !workBulk.getBulk().isEmpty()) {
             List<BulkElement> bulk = workBulk.getBulk();
@@ -381,7 +379,7 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
     }
 
     @Override
-    public Work updateWork(String orcid, Work work, boolean isApiRequest) {
+    public Work updateWork(String orcid, Work work, boolean isApiRequest, List<Work> existingWorks) {
         WorkEntity workEntity = workDao.getWork(orcid, work.getPutCode());
         Work workSaved = jpaJaxbWorkAdapter.toWork(workEntity);
         WorkForm workFormSaved = WorkForm.valueOf(workSaved, maxContributorsForUI);
@@ -405,7 +403,6 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
 
         if (isApiRequest) {
             activityValidator.validateWork(work, activeSource, false, isApiRequest, originalVisibility);
-            List<Work> existingWorks = this.findWorks(orcid);
 
             for (Work existing : existingWorks) {
                 // Dont compare the updated peer review with the DB version
