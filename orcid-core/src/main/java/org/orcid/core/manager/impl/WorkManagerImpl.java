@@ -153,7 +153,7 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
     }
 
     @Override
-    public Work createWork(String orcid, Work work, boolean isApiRequest) {
+    public Work createWork(String orcid, Work work, boolean isApiRequest, List<Work> existingWorks) {
         SourceEntity sourceEntity = sourceManager.retrieveSourceEntity();
 
         if (isApiRequest) {
@@ -161,7 +161,6 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
             // If it is the user adding the peer review, allow him to add
             // duplicates
             if (!sourceEntityUtils.getSourceId(sourceEntity).equals(orcid)) {
-                List<Work> existingWorks = this.findWorks(orcid);
                 if (existingWorks != null) {
                     if ((existingWorks.size() + 1) > this.maxNumOfActivities) {
                         throw new ExceedMaxNumberOfElementsException();
@@ -214,9 +213,8 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
      *         that indicates why a work can't be added
      */
     @Override
-    public WorkBulk createWorks(String orcid, WorkBulk workBulk) {
+    public WorkBulk createWorks(String orcid, WorkBulk workBulk, List<Work> existingWorks) {
         SourceEntity sourceEntity = sourceManager.retrieveSourceEntity();
-        List<Work> existingWorks = this.findWorks(orcid);
         if (workBulk.getBulk() != null && !workBulk.getBulk().isEmpty()) {
             List<BulkElement> bulk = workBulk.getBulk();
             Map<ExternalID, Long> extIDPutCodeMap = new HashMap<ExternalID, Long>();
@@ -346,7 +344,7 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
     }
 
     @Override
-    public Work updateWork(String orcid, Work work, boolean isApiRequest) {
+    public Work updateWork(String orcid, Work work, boolean isApiRequest, List<Work> existingWorks) {
         WorkEntity workEntity = workDao.getWork(orcid, work.getPutCode());
 
         Work workSaved = jpaJaxbWorkAdapter.toWork(workEntity);
@@ -381,7 +379,6 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
 
         if (isApiRequest) {
             activityValidator.validateWork(work, sourceEntity, false, isApiRequest, Visibility.valueOf(originalVisibility));
-            List<Work> existingWorks = this.findWorks(orcid);
 
             for (Work existing : existingWorks) {
                 // Dont compare the updated peer review with the DB version

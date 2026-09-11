@@ -93,7 +93,7 @@
 	<bean id="clientDetailsLastModifiedCache" class="org.orcid.core.utils.OrcidEhCacheFactoryBean">
 		<property name="cacheName" value="client-details-last-modified" />
 		<property name="cacheManager" ref="coreCacheManager" />
-		<property name="timeToIdleSeconds" value="${org.orcid.core.cache.client_details_last_modified.timeToIdleSeconds:3}" />
+		<property name="timeToIdleSeconds" value="${org.orcid.core.cache.client_details_last_modified.timeToIdleSeconds:30}" />
         <property name="maxMegaBytesInMemory" value="${org.orcid.core.cache.client_details_last_modified.maxMegaBytesInMemory:4}" />
         <property name="maxMegaBytesOnDisk" value="${org.orcid.core.cache.client_details_last_modified.maxMegaBytesOnDisk:0}" />
 	</bean>

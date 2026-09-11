@@ -1,3 +1,40 @@
+## v3.0.78 - 2026-09-11
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.0.77...v3.0.78)
+
+- [#7708](https://github.com/ORCID/ORCID-Source/pull/7708): Provide the list of existing works as a parameter to the manager
+
+## v3.0.77 - 2026-09-11
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.0.76...v3.0.77)
+
+- [#7707](https://github.com/ORCID/ORCID-Source/pull/7707): Added the tests for source null
+
+## v3.0.76 - 2026-09-11
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.0.75...v3.0.76)
+
+- [#7706](https://github.com/ORCID/ORCID-Source/pull/7706): PD-13495 Fixed null mappings for contributors V2 and V3 both works and fundings
+- [#7705](https://github.com/ORCID/ORCID-Source/pull/7705): Error response from /funding endpoint for GET XML request where source is user
+
+## v3.0.75 - 2026-09-11
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.0.74...v3.0.75)
+
+- [#7703](https://github.com/ORCID/ORCID-Source/pull/7703): J21-009 report the invalid enum value instead of a generic bad request
+
+## v3.0.74 - 2026-09-10
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.0.73...v3.0.74)
+
+- [#7698](https://github.com/ORCID/ORCID-Source/pull/7698): J21-007 return the reviewer role and the locale in the published vocabulary
+
+## v3.0.73 - 2026-09-10
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.0.72...v3.0.73)
+
+- [#7697](https://github.com/ORCID/ORCID-Source/pull/7697): Fix for the NullPointerException in PersonDetailsManagerReadOnlyImpl when retrieving public person details for ORCID records that do not contain a record name.
+
 ## v3.0.72 - 2026-09-10
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.0.71...v3.0.72)
