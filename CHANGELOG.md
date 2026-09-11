@@ -1,3 +1,9 @@
+## v3.0.75 - 2026-09-11
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.0.74...v3.0.75)
+
+- [#7703](https://github.com/ORCID/ORCID-Source/pull/7703): J21-009 report the invalid enum value instead of a generic bad request
+
 ## v3.0.74 - 2026-09-10
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.0.73...v3.0.74)
