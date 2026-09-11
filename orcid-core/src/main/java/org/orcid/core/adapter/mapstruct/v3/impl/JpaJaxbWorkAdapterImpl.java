@@ -207,26 +207,22 @@ public abstract class JpaJaxbWorkAdapterImpl implements JpaJaxbWorkAdapter {
     public abstract Work toWork(WorkEntity workEntity);
 
     @AfterMapping
-    protected void removeEmptyCitation(@MappingTarget Work work) {
-        removeEmptyOptionalTitleFields(work);
-        if (work.getWorkCitation() != null
-                && work.getWorkCitation().getCitation() == null
-                && work.getWorkCitation().getWorkCitationType() == null) {
-            work.setWorkCitation(null);
-        }
+    protected void afterMapping(@MappingTarget Work work) {
+        removeEmptyOptionalFields(work);
+
     }
 
     @AfterMapping
-    protected void removeEmptyCitation(@MappingTarget WorkExtended work) {
-        removeEmptyOptionalTitleFields(work);
+    protected void afterMapping(@MappingTarget WorkExtended work) {
+        removeEmptyOptionalFields(work);
+    }
+
+    private void removeEmptyOptionalFields(Work work) {
         if (work.getWorkCitation() != null
                 && work.getWorkCitation().getCitation() == null
                 && work.getWorkCitation().getWorkCitationType() == null) {
             work.setWorkCitation(null);
         }
-    }
-
-    private void removeEmptyOptionalTitleFields(Work work) {
         if (work.getWorkTitle() == null) {
             return;
         }
