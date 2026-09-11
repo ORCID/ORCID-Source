@@ -34,6 +34,7 @@ import org.orcid.jaxb.model.common.Iso3166Country;
 import org.orcid.jaxb.model.common.Relationship;
 import org.orcid.jaxb.model.common.WorkType;
 import org.orcid.jaxb.model.v3.release.common.Visibility;
+import org.orcid.jaxb.model.v3.release.common.Contributor;
 import org.orcid.jaxb.model.v3.release.record.ExternalID;
 import org.orcid.jaxb.model.v3.release.record.Work;
 import org.orcid.jaxb.model.v3.release.record.summary.WorkSummary;
@@ -225,6 +226,51 @@ public class JpaJaxbWorkAdapterTest extends MockSourceNameCache {
         Work mappedWork = jpaJaxbWorkAdapter.toWork(work);
 
         assertNull(mappedWork.getUrl());
+    }
+
+    @Test
+    public void fromWorkEntityWithContributorsMissingHostTest() throws Exception {
+        orcidUrlManager.setBaseUrl("https://testserver.orcid.org");
+        WorkEntity work = getWorkEntity();
+        work.setContributorsJson("{\n" +
+                "\t\"contributor\": [{\n" +
+                "\t\t\"contributorOrcid\": {\n" +
+                "\t\t\t\"uri\": \"https://qa.orcid.org/0009-0000-7948-587X\",\n" +
+                "\t\t\t\"path\": \"0009-0000-7948-587X\",\n" +
+                "\t\t\t\"host\": null\n" +
+                "\t\t},\n" +
+                "\t\t\"creditName\": {\n" +
+                "\t\t\t\"content\": \"Test Author\"\n" +
+                "\t\t},\n" +
+                "\t\t\"contributorEmail\": null,\n" +
+                "\t\t\"contributorAttributes\": {\n" +
+                "\t\t\t\"contributorSequence\": null,\n" +
+                "\t\t\t\"contributorRole\": \"http://credit.niso.org/contributor-roles/data-curation/\"\n" +
+                "\t\t}\n" +
+                "\t}]\n" +
+                "}");
+
+        Work mappedWork = jpaJaxbWorkAdapter.toWork(work);
+        assertNotNull(mappedWork.getWorkContributors());
+        assertEquals(1, mappedWork.getWorkContributors().getContributor().size());
+        Contributor c = mappedWork.getWorkContributors().getContributor().get(0);
+        assertNotNull(c.getContributorOrcid());
+        assertEquals("qa.orcid.org", c.getContributorOrcid().getHost());
+        assertEquals("0009-0000-7948-587X", c.getContributorOrcid().getPath());
+        assertNotNull(c.getCreditName());
+        assertEquals("Test Author", c.getCreditName().getContent());
+        assertNull(c.getContributorEmail());
+        assertNotNull(c.getContributorAttributes());
+        assertNull(c.getContributorAttributes().getContributorSequence());
+        assertEquals("http://credit.niso.org/contributor-roles/data-curation/", c.getContributorAttributes().getContributorRole());
+
+        // Verify JAXB XML serialization works without AccessorException
+        JAXBContext context = JAXBContext.newInstance(Work.class);
+        java.io.StringWriter writer = new java.io.StringWriter();
+        context.createMarshaller().marshal(mappedWork, writer);
+        String xml = writer.toString();
+        assertTrue(xml.contains("qa.orcid.org"));
+        assertTrue(xml.contains("Test Author"));
     }
 
     @Test
