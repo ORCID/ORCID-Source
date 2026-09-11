@@ -323,7 +323,7 @@ public class FundingsController extends BaseWorkspaceController {
         setTypeToExternalIdentifiers(fundingForm);
         // Add to database
         Funding funding = fundingForm.toFunding();
-        funding = profileFundingManager.createFunding(getEffectiveUserOrcid(), funding, false, profileFundingManagerReadOnly.getFundingList(getEffectiveUserOrcid()));
+        funding = profileFundingManager.createFunding(getEffectiveUserOrcid(), funding);
     }
 
     private void editFunding(FundingForm fundingForm) throws Exception {
@@ -334,7 +334,7 @@ public class FundingsController extends BaseWorkspaceController {
         
         // Add to database
         Funding funding = fundingForm.toFunding();
-        funding = profileFundingManager.updateFunding(getEffectiveUserOrcid(), funding, false, profileFundingManagerReadOnly.getFundingList(getEffectiveUserOrcid()));
+        profileFundingManager.updateFunding(getEffectiveUserOrcid(), funding);
     }
 
     private void removeEmptyExternalIds(FundingForm funding) {

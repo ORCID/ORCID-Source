@@ -507,7 +507,7 @@ public class ProfileFundingManagerTest extends BaseTest {
         try {
             f2 = profileFundingManager.createFunding(claimedOrcid, f2, true, List.of(f1));
             fail();
-        }catch(OrcidDuplicatedActivityException e) {
+        } catch(OrcidDuplicatedActivityException e) {
             
         }
         
@@ -540,7 +540,7 @@ public class ProfileFundingManagerTest extends BaseTest {
         try {
             // Same source should be allowed to update
             when(mockSourceManager.retrieveActiveSource()).thenReturn(Source.forClientWithClientOBO(CLIENT_1_ID, CLIENT_2_ID));  
-            profileFundingManager.updateFunding(claimedOrcid, f1, true, List.of());
+            profileFundingManager.updateFunding(claimedOrcid, f1, true, List.of(f2));
         }catch(Exception e) {           
             fail();
         }

@@ -75,7 +75,12 @@ public interface ProfileFundingManager extends ProfileFundingManagerReadOnly {
      * @return the added funding                  
      * */
     Funding createFunding(String orcid, Funding funding, boolean isApiRequest, List<Funding> existingFundings);
-    
+
+    /**
+     * Function that will be used by the UI so it doesn't need to provide the list of existing fundings
+     * **/
+    Funding createFunding(String orcid, Funding funding);
+
     /**
      * Updates a funding that belongs to the given user
      * @param orcid
@@ -85,7 +90,12 @@ public interface ProfileFundingManager extends ProfileFundingManagerReadOnly {
      * @return the updated funding                  
      * */
     Funding updateFunding(String orcid, Funding funding, boolean isApiRequest, List<Funding> existingFundings);
-    
+
+    /**
+     * Function that will be used by the UI so it doesn't need to provide the list of existing fundings
+     * */
+    Funding updateFunding(String orcid, Funding funding);
+
     /**
      * Deletes a given funding, if and only if, the client that requested the delete is the source of the funding
      * @param orcid

@@ -109,6 +109,11 @@ public class ProfileFundingManagerImpl extends ProfileFundingManagerReadOnlyImpl
         return profileFundingDao.updateToMaxDisplay(orcid, fundingId);
     }
 
+    @Override
+    public Funding createFunding(String orcid, Funding funding) {
+        return createFunding(orcid, funding, false, List.of());
+    }
+
     /**
      * Add a new funding to the given user
      * 
@@ -162,6 +167,11 @@ public class ProfileFundingManagerImpl extends ProfileFundingManagerReadOnlyImpl
         }
     }
 
+    @Override
+    public Funding updateFunding(String orcid, Funding funding) {
+        return updateFunding(orcid, funding, false, List.of());
+    }
+
     /**
      * Updates a funding that belongs to the given user
      * 
@@ -181,7 +191,7 @@ public class ProfileFundingManagerImpl extends ProfileFundingManagerReadOnlyImpl
         Source originalSource = sourceEntityUtils.extractSourceFromEntity(pfe);
 
         activityValidator.validateFunding(funding, activeSOurce, false, isApiRequest, originalVisibility);
-        if (isApiRequest) {
+        if (existingFundings != null && isApiRequest) {
             for (Funding existingFunding : existingFundings) {
                 if (!existingFunding.getPutCode().equals(funding.getPutCode())) {
                     activityValidator.checkExternalIdentifiersForDuplicates(funding, existingFunding, existingFunding.getSource(), activeSOurce);
