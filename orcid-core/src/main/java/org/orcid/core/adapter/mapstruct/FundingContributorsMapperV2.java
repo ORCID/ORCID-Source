@@ -43,6 +43,9 @@ public class FundingContributorsMapperV2 {
     }
 
     public String convertTo(FundingContributors source) {
+        if (source == null) {
+            return null;
+        }
         return JsonUtils.convertToJsonString(source);
     }
 
