@@ -1,3 +1,9 @@
+## v3.0.78 - 2026-09-11
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.0.77...v3.0.78)
+
+- [#7708](https://github.com/ORCID/ORCID-Source/pull/7708): Provide the list of existing works as a parameter to the manager
+
 ## v3.0.77 - 2026-09-11
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.0.76...v3.0.77)
