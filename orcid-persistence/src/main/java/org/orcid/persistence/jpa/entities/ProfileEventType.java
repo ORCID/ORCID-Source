@@ -37,6 +37,9 @@ public enum ProfileEventType {
 
     // 2FA enable/disable events
     PROFILE_2FA_ENABLED, PROFILE_2FA_DISABLED, PROFILE_2FA_DISABLED_BY_ADMIN,
+
+    // 2FA recovery phone number events
+    PROFILE_RECOVERY_PHONE_ADDED, PROFILE_RECOVERY_PHONE_UPDATED, PROFILE_RECOVERY_PHONE_REMOVED,
     
     //Send email to encourage users to add works to their record
     ADD_WORKS_FIRST_REMINDER_SENT,

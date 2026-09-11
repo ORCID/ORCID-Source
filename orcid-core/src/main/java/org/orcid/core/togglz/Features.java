@@ -113,7 +113,10 @@ public enum Features implements Feature {
     SEND_EMAIL_ON_DEPRECATE_RECORD,
     
     @Label("Send email on reset password")
-    SEND_EMAIL_ON_RESET_PASSWORD;
+    SEND_EMAIL_ON_RESET_PASSWORD,
+
+    @Label("2FA recovery phone number (add/manage from account settings)")
+    TWO_FACTOR_RECOVERY_PHONE;
     public boolean isActive() {
         return FeatureContext.getFeatureManager().isActive(this);
     }
