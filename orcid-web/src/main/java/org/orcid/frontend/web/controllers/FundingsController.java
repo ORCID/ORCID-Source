@@ -25,6 +25,8 @@ import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.v3.ActivityManager;
 import org.orcid.core.manager.v3.ProfileEntityManager;
 import org.orcid.core.manager.v3.ProfileFundingManager;
+import org.orcid.core.manager.v3.read_only.ProfileFundingManagerReadOnly;
+import org.orcid.core.manager.v3.read_only.impl.ProfileFundingManagerReadOnlyImpl;
 import org.orcid.core.security.visibility.OrcidVisibilityDefaults;
 import org.orcid.core.utils.v3.ContributorUtils;
 import org.orcid.core.utils.v3.SourceUtils;
@@ -50,6 +52,7 @@ import org.orcid.pojo.ajaxForm.Text;
 import org.orcid.pojo.ajaxForm.TranslatedTitleForm;
 import org.orcid.pojo.ajaxForm.Visibility;
 import org.orcid.pojo.grouping.FundingGroup;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -81,9 +84,6 @@ public class FundingsController extends BaseWorkspaceController {
     @Resource(name = "languagesMap")
     private LanguagesMap lm;
     
-    @Resource(name = "profileEntityManagerV3")
-    private ProfileEntityManager profileEntityManager;
-    
     @Resource
     private ProfileEntityCacheManager profileEntityCacheManager;
     
@@ -92,6 +92,9 @@ public class FundingsController extends BaseWorkspaceController {
 
     @Resource(name = "contributorUtilsV3")
     private ContributorUtils contributorUtils;
+
+    @Resource(name = "profileFundingManagerReadOnlyV3")
+    private ProfileFundingManagerReadOnly profileFundingManagerReadOnly;
 
     public void setLocaleManager(LocaleManager localeManager) {
         this.localeManager = localeManager;
@@ -219,7 +222,7 @@ public class FundingsController extends BaseWorkspaceController {
         if (id == null)
             return null;        
         Map<String, String> languages = lm.buildLanguageMap(getUserLocale(), false);
-        Funding funding = profileFundingManager.getFunding(getEffectiveUserOrcid(), id);
+        Funding funding = profileFundingManagerReadOnly.getFunding(getEffectiveUserOrcid(), id);
         contributorUtils.filterContributorPrivateData(funding);
         FundingForm form = FundingForm.valueOf(funding);
                
@@ -320,7 +323,7 @@ public class FundingsController extends BaseWorkspaceController {
         setTypeToExternalIdentifiers(fundingForm);
         // Add to database
         Funding funding = fundingForm.toFunding();
-        funding = profileFundingManager.createFunding(getEffectiveUserOrcid(), funding, false);        
+        funding = profileFundingManager.createFunding(getEffectiveUserOrcid(), funding, false, profileFundingManagerReadOnly.getFundingList(getEffectiveUserOrcid()));
     }
 
     private void editFunding(FundingForm fundingForm) throws Exception {
@@ -331,7 +334,7 @@ public class FundingsController extends BaseWorkspaceController {
         
         // Add to database
         Funding funding = fundingForm.toFunding();
-        funding = profileFundingManager.updateFunding(getEffectiveUserOrcid(), funding, false);
+        funding = profileFundingManager.updateFunding(getEffectiveUserOrcid(), funding, false, profileFundingManagerReadOnly.getFundingList(getEffectiveUserOrcid()));
     }
 
     private void removeEmptyExternalIds(FundingForm funding) {

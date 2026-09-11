@@ -52,9 +52,6 @@ public class ProfileFundingManagerImpl extends ProfileFundingManagerReadOnlyImpl
     private NotificationManager notificationManager;
 
     @Resource
-    private ClientDetailsEntityCacheManager clientDetailsEntityCacheManager;
-
-    @Resource
     private SourceEntityUtils sourceEntityUtils;
 
     /**
@@ -122,16 +119,14 @@ public class ProfileFundingManagerImpl extends ProfileFundingManagerReadOnlyImpl
      * @return the added funding
      */
     @Override
-    public Funding createFunding(String orcid, Funding funding, boolean isApiRequest) {
+    public Funding createFunding(String orcid, Funding funding, boolean isApiRequest, List<Funding> existingFundings) {
         Source activeSource = sourceManager.retrieveActiveSource();
         activityValidator.validateFunding(funding, activeSource, true, isApiRequest, null);
 
         // Check for duplicates
-        List<ProfileFundingEntity> existingFundings = profileFundingDao.getByUser(orcid, getLastModified(orcid));
-        List<Funding> fundings = jpaJaxbFundingAdapter.toFunding(existingFundings);
-        if (fundings != null && isApiRequest) {
-            for (Funding exstingFunding : fundings) {
-                activityValidator.checkExternalIdentifiersForDuplicates(funding, exstingFunding, exstingFunding.getSource(), activeSource);
+        if (existingFundings != null && isApiRequest) {
+            for (Funding existingFunding : existingFundings) {
+                activityValidator.checkExternalIdentifiersForDuplicates(funding, existingFunding, existingFunding.getSource(), activeSource);
             }
         }
 
@@ -177,7 +172,7 @@ public class ProfileFundingManagerImpl extends ProfileFundingManagerReadOnlyImpl
      * @return the updated funding
      */
     @Override
-    public Funding updateFunding(String orcid, Funding funding, boolean isApiRequest) {
+    public Funding updateFunding(String orcid, Funding funding, boolean isApiRequest, List<Funding> existingFundings) {
         Source activeSOurce = sourceManager.retrieveActiveSource();
         ProfileFundingEntity pfe = profileFundingDao.getProfileFunding(orcid, funding.getPutCode());
         Visibility originalVisibility = Visibility.valueOf(pfe.getVisibility());
@@ -187,11 +182,9 @@ public class ProfileFundingManagerImpl extends ProfileFundingManagerReadOnlyImpl
 
         activityValidator.validateFunding(funding, activeSOurce, false, isApiRequest, originalVisibility);
         if (isApiRequest) {
-            List<ProfileFundingEntity> existingFundings = profileFundingDao.getByUser(orcid, getLastModified(orcid));
-            for (ProfileFundingEntity existingFunding : existingFundings) {
-                Funding existing = jpaJaxbFundingAdapter.toFunding(existingFunding);
-                if (!existing.getPutCode().equals(funding.getPutCode())) {
-                    activityValidator.checkExternalIdentifiersForDuplicates(funding, existing, existing.getSource(), activeSOurce);
+            for (Funding existingFunding : existingFundings) {
+                if (!existingFunding.getPutCode().equals(funding.getPutCode())) {
+                    activityValidator.checkExternalIdentifiersForDuplicates(funding, existingFunding, existingFunding.getSource(), activeSOurce);
                 }
             }
         }

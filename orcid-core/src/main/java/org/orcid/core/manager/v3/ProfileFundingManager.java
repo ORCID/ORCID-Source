@@ -1,6 +1,7 @@
 package org.orcid.core.manager.v3;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import org.orcid.core.manager.v3.read_only.ProfileFundingManagerReadOnly;
 import org.orcid.jaxb.model.v3.release.common.Visibility;
@@ -73,7 +74,7 @@ public interface ProfileFundingManager extends ProfileFundingManagerReadOnly {
      *          The funding to add
      * @return the added funding                  
      * */
-    Funding createFunding(String orcid, Funding funding, boolean isApiRequest);
+    Funding createFunding(String orcid, Funding funding, boolean isApiRequest, List<Funding> existingFundings);
     
     /**
      * Updates a funding that belongs to the given user
@@ -83,7 +84,7 @@ public interface ProfileFundingManager extends ProfileFundingManagerReadOnly {
      *          The funding to update
      * @return the updated funding                  
      * */
-    Funding updateFunding(String orcid, Funding funding, boolean isApiRequest);
+    Funding updateFunding(String orcid, Funding funding, boolean isApiRequest, List<Funding> existingFundings);
     
     /**
      * Deletes a given funding, if and only if, the client that requested the delete is the source of the funding
