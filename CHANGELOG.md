@@ -1,3 +1,10 @@
+## v3.0.76 - 2026-09-11
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.0.75...v3.0.76)
+
+- [#7706](https://github.com/ORCID/ORCID-Source/pull/7706): PD-13495 Fixed null mappings for contributors V2 and V3 both works and fundings
+- [#7705](https://github.com/ORCID/ORCID-Source/pull/7705): Error response from /funding endpoint for GET XML request where source is user
+
 ## v3.0.75 - 2026-09-11
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.0.74...v3.0.75)
