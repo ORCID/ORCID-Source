@@ -6,6 +6,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.mockito.Mockito.when;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.Locale;
 
 import jakarta.annotation.Resource;
@@ -438,7 +439,7 @@ public class SourceInActivitiesTest extends BaseTest {
         ExternalIDs extIdentifiers = new ExternalIDs();
         extIdentifiers.getExternalIdentifier().add(extId);
         work.setWorkExternalIdentifiers(extIdentifiers);
-        work = workManager.createWork(userOrcid, work, false);
+        work = workManager.createWork(userOrcid, work, false, List.of());
         return workManager.getWork(userOrcid, work.getPutCode());
     }
     
@@ -451,7 +452,7 @@ public class SourceInActivitiesTest extends BaseTest {
         ExternalIDs extIdentifiers = new ExternalIDs();
         extIdentifiers.getExternalIdentifier().add(extId);
         work.setWorkExternalIdentifiers(extIdentifiers);
-        work = workManager.createWork(userOrcid, work, validate);
+        work = workManager.createWork(userOrcid, work, validate, List.of());
         return workManager.getWork(userOrcid, work.getPutCode());
 	}
     
@@ -461,7 +462,7 @@ public class SourceInActivitiesTest extends BaseTest {
         title.setTitle(new Title("Work " + System.currentTimeMillis()));
         work.setWorkTitle(title);
         work.setWorkType(org.orcid.jaxb.model.record_v2.WorkType.BOOK);
-        work = workManager.createWork(userOrcid, work, validate);
+        work = workManager.createWork(userOrcid, work, validate, List.of());
         return workManager.getWork(userOrcid, work.getPutCode());
     }
     private Work getWorkWithPutCode(String userOrcid, boolean validate) {
@@ -478,7 +479,7 @@ public class SourceInActivitiesTest extends BaseTest {
         work.setWorkExternalIdentifiers(extIdentifiers);
         work.setWorkType(org.orcid.jaxb.model.record_v2.WorkType.BOOK);
         work.setPutCode(Long.valueOf(111));
-        work = workManager.createWork(userOrcid, work, validate);
+        work = workManager.createWork(userOrcid, work, validate, List.of());
         return workManager.getWork(userOrcid, work.getPutCode());
     }
 
