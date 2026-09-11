@@ -576,6 +576,7 @@ public class JpaJaxbWorkAdapterTest extends MockSourceNameCache {
         work.getWorkCitation().setWorkCitationType(null);
         work.getJournalTitle().setContent(null);
         work.getUrl().setValue(null);
+        work.setCountry(null);
         work.getWorkTitle().getTranslatedTitle().setContent(null);
         work.getWorkTitle().getTranslatedTitle().setLanguageCode(null);
         work.getWorkTitle().getSubtitle().setContent(null);
