@@ -27,6 +27,10 @@ public class ContributorsRolesAndSequencesMapperV3 {
     @Resource(name = "workContributorRoleConverter")
     private ContributorRoleConverter workContributorRoleConverter;
 
+    public void setWorkContributorRoleConverter(ContributorRoleConverter workContributorRoleConverter) {
+        this.workContributorRoleConverter = workContributorRoleConverter;
+    }
+
     public String convertTo(List<ContributorsRolesAndSequences> source) {
         return JsonUtils.convertToJsonString(source);
     }

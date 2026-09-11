@@ -5,6 +5,7 @@ import java.util.List;
 
 import java.math.BigDecimal;
 
+import org.mapstruct.AfterMapping;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
@@ -91,6 +92,19 @@ public abstract class JpaJaxbFundingAdapterImpl implements JpaJaxbFundingAdapter
     @Mapping(source = ".", target = "source")
     public abstract Funding toFunding(ProfileFundingEntity profileFundingEntity);
 
+    @AfterMapping
+    protected void afterToFunding(ProfileFundingEntity entity, @MappingTarget Funding funding) {
+        if (funding.getTitle() != null && funding.getTitle().getTranslatedTitle() != null && funding.getTitle().getTranslatedTitle().getContent() == null) {
+            funding.getTitle().setTranslatedTitle(null);
+        }
+        if (funding.getOrganizationDefinedType() != null && (funding.getOrganizationDefinedType().getContent() == null || funding.getOrganizationDefinedType().getContent().trim().isEmpty())) {
+            funding.setOrganizationDefinedType(null);
+        }
+        if (funding.getAmount() != null && funding.getAmount().getContent() == null && funding.getAmount().getCurrencyCode() == null) {
+            funding.setAmount(null);
+        }
+    }
+
     @Override
     @Mapping(source = "id", target = "putCode")
     @Mapping(source = "dateCreated", target = "createdDate.value")
@@ -109,6 +123,13 @@ public abstract class JpaJaxbFundingAdapterImpl implements JpaJaxbFundingAdapter
     @Mapping(source = "org.orgDisambiguated.id", target = "organization.disambiguatedOrganization.id")
     @Mapping(source = ".", target = "source")
     public abstract FundingSummary toFundingSummary(ProfileFundingEntity profileFundingEntity);
+
+    @AfterMapping
+    protected void afterToFundingSummary(ProfileFundingEntity entity, @MappingTarget FundingSummary fundingSummary) {
+        if (fundingSummary.getTitle() != null && fundingSummary.getTitle().getTranslatedTitle() != null && fundingSummary.getTitle().getTranslatedTitle().getContent() == null) {
+            fundingSummary.getTitle().setTranslatedTitle(null);
+        }
+    }
 
     @Override
     public abstract List<Funding> toFunding(Collection<ProfileFundingEntity> fundingEntities);

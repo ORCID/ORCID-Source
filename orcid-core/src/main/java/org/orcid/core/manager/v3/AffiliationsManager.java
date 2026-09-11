@@ -1,16 +1,11 @@
 package org.orcid.core.manager.v3;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import org.orcid.core.manager.v3.read_only.AffiliationsManagerReadOnly;
 import org.orcid.jaxb.model.v3.release.common.Visibility;
-import org.orcid.jaxb.model.v3.release.record.Distinction;
-import org.orcid.jaxb.model.v3.release.record.Education;
-import org.orcid.jaxb.model.v3.release.record.Employment;
-import org.orcid.jaxb.model.v3.release.record.InvitedPosition;
-import org.orcid.jaxb.model.v3.release.record.Membership;
-import org.orcid.jaxb.model.v3.release.record.Qualification;
-import org.orcid.jaxb.model.v3.release.record.Service;
+import org.orcid.jaxb.model.v3.release.record.*;
 
 public interface AffiliationsManager extends AffiliationsManagerReadOnly {
     /**
@@ -22,7 +17,7 @@ public interface AffiliationsManager extends AffiliationsManagerReadOnly {
      *            The education to add
      * @return the added education
      */
-    Education createEducationAffiliation(String orcid, Education education, boolean isApiRequest);
+    Education createEducationAffiliation(String orcid, Education education, boolean isApiRequest, List<Affiliation> existingAffiliations);
 
     /**
      * Updates a education that belongs to the given user
@@ -33,7 +28,7 @@ public interface AffiliationsManager extends AffiliationsManagerReadOnly {
      *            The education to update
      * @return the updated education
      */
-    Education updateEducationAffiliation(String orcid, Education education, boolean isApiRequest);
+    Education updateEducationAffiliation(String orcid, Education education, boolean isApiRequest, List<Affiliation> existingAffiliations);
 
     /**
      * Add a new employment to the given user
@@ -44,7 +39,7 @@ public interface AffiliationsManager extends AffiliationsManagerReadOnly {
      *            The employment to add
      * @return the added employment
      */
-    Employment createEmploymentAffiliation(String orcid, Employment employment, boolean isApiRequest);
+    Employment createEmploymentAffiliation(String orcid, Employment employment, boolean isApiRequest, List<Affiliation> existingAffiliations);
 
     /**
      * Updates a employment that belongs to the given user
@@ -55,7 +50,7 @@ public interface AffiliationsManager extends AffiliationsManagerReadOnly {
      *            The employment to update
      * @return the updated employment
      */
-    Employment updateEmploymentAffiliation(String orcid, Employment employment, boolean isApiRequest);
+    Employment updateEmploymentAffiliation(String orcid, Employment employment, boolean isApiRequest, List<Affiliation> existingAffiliations);
 
     /**
      * Add a new distinction to the given user
@@ -66,7 +61,7 @@ public interface AffiliationsManager extends AffiliationsManagerReadOnly {
      *            The distinction to add
      * @return the added distinction
      */
-    Distinction createDistinctionAffiliation(String orcid, Distinction distinction, boolean isApiRequest);
+    Distinction createDistinctionAffiliation(String orcid, Distinction distinction, boolean isApiRequest, List<Affiliation> existingAffiliations);
 
     /**
      * Updates a distinction that belongs to the given user
@@ -77,7 +72,7 @@ public interface AffiliationsManager extends AffiliationsManagerReadOnly {
      *            The distinction to update
      * @return the updated distinction
      */
-    Distinction updateDistinctionAffiliation(String orcid, Distinction distinction, boolean isApiRequest);
+    Distinction updateDistinctionAffiliation(String orcid, Distinction distinction, boolean isApiRequest, List<Affiliation> existingAffiliations);
 
     /**
      * Add a new invitedPosition to the given user
@@ -88,7 +83,7 @@ public interface AffiliationsManager extends AffiliationsManagerReadOnly {
      *            The invitedPosition to add
      * @return the added invitedPosition
      */
-    InvitedPosition createInvitedPositionAffiliation(String orcid, InvitedPosition invitedPosition, boolean isApiRequest);
+    InvitedPosition createInvitedPositionAffiliation(String orcid, InvitedPosition invitedPosition, boolean isApiRequest, List<Affiliation> existingAffiliations);
 
     /**
      * Updates a invitedPosition that belongs to the given user
@@ -99,7 +94,7 @@ public interface AffiliationsManager extends AffiliationsManagerReadOnly {
      *            The invitedPosition to update
      * @return the updated invitedPosition
      */
-    InvitedPosition updateInvitedPositionAffiliation(String orcid, InvitedPosition invitedPosition, boolean isApiRequest);
+    InvitedPosition updateInvitedPositionAffiliation(String orcid, InvitedPosition invitedPosition, boolean isApiRequest, List<Affiliation> existingAffiliations);
 
     /**
      * Add a new membership to the given user
@@ -110,7 +105,7 @@ public interface AffiliationsManager extends AffiliationsManagerReadOnly {
      *            The membership to add
      * @return the added membership
      */
-    Membership createMembershipAffiliation(String orcid, Membership membership, boolean isApiRequest);
+    Membership createMembershipAffiliation(String orcid, Membership membership, boolean isApiRequest, List<Affiliation> existingAffiliations);
 
     /**
      * Updates a membership that belongs to the given user
@@ -121,7 +116,7 @@ public interface AffiliationsManager extends AffiliationsManagerReadOnly {
      *            The membership to update
      * @return the updated membership
      */
-    Membership updateMembershipAffiliation(String orcid, Membership membership, boolean isApiRequest);
+    Membership updateMembershipAffiliation(String orcid, Membership membership, boolean isApiRequest, List<Affiliation> existingAffiliations);
 
     /**
      * Add a new qualification to the given user
@@ -132,7 +127,7 @@ public interface AffiliationsManager extends AffiliationsManagerReadOnly {
      *            The qualification to add
      * @return the added membership
      */
-    Qualification createQualificationAffiliation(String orcid, Qualification qualification, boolean isApiRequest);
+    Qualification createQualificationAffiliation(String orcid, Qualification qualification, boolean isApiRequest, List<Affiliation> existingAffiliations);
 
     /**
      * Updates a qualification that belongs to the given user
@@ -143,7 +138,7 @@ public interface AffiliationsManager extends AffiliationsManagerReadOnly {
      *            The qualification to update
      * @return the updated qualification
      */
-    Qualification updateQualificationAffiliation(String orcid, Qualification qualification, boolean isApiRequest);
+    Qualification updateQualificationAffiliation(String orcid, Qualification qualification, boolean isApiRequest, List<Affiliation> existingAffiliations);
 
     /**
      * Add a new service to the given user
@@ -154,7 +149,7 @@ public interface AffiliationsManager extends AffiliationsManagerReadOnly {
      *            The service to add
      * @return the added service
      */
-    Service createServiceAffiliation(String orcid, Service service, boolean isApiRequest);
+    Service createServiceAffiliation(String orcid, Service service, boolean isApiRequest, List<Affiliation> existingAffiliations);
 
     /**
      * Updates a service that belongs to the given user
@@ -165,7 +160,7 @@ public interface AffiliationsManager extends AffiliationsManagerReadOnly {
      *            The service to update
      * @return the updated service
      */
-    Service updateServiceAffiliation(String orcid, Service service, boolean isApiRequest);
+    Service updateServiceAffiliation(String orcid, Service service, boolean isApiRequest, List<Affiliation> existingAffiliations);
 
     /**
      * Deletes a given affiliation, if and only if, the client that requested

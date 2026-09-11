@@ -112,6 +112,16 @@ public abstract class JpaJaxbResearchResourceAdapterImpl implements JpaJaxbResea
     @Mapping(source = ".", target = "source")
     public abstract ResearchResource toModel(ResearchResourceEntity entity);
 
+    @AfterMapping
+    protected void removeEmptyOptionalTitleFields(ResearchResourceEntity entity, @MappingTarget ResearchResource researchResource) {
+        if (researchResource.getProposal() != null && researchResource.getProposal().getTitle() != null) {
+            org.orcid.jaxb.model.v3.release.record.ResearchResourceTitle title = researchResource.getProposal().getTitle();
+            if (title.getTranslatedTitle() != null && title.getTranslatedTitle().getContent() == null && title.getTranslatedTitle().getLanguageCode() == null) {
+                title.setTranslatedTitle(null);
+            }
+        }
+    }
+
     @Override
     @Mapping(source = "id", target = "putCode")
     @Mapping(source = "title", target = "proposal.title.title.content")
@@ -126,6 +136,16 @@ public abstract class JpaJaxbResearchResourceAdapterImpl implements JpaJaxbResea
     @Mapping(source = "lastModified", target = "lastModifiedDate.value")
     @Mapping(source = ".", target = "source")
     public abstract ResearchResourceSummary toSummary(ResearchResourceEntity entity);
+
+    @AfterMapping
+    protected void removeEmptyOptionalTitleFields(ResearchResourceEntity entity, @MappingTarget ResearchResourceSummary researchResourceSummary) {
+        if (researchResourceSummary.getProposal() != null && researchResourceSummary.getProposal().getTitle() != null) {
+            org.orcid.jaxb.model.v3.release.record.ResearchResourceTitle title = researchResourceSummary.getProposal().getTitle();
+            if (title.getTranslatedTitle() != null && title.getTranslatedTitle().getContent() == null && title.getTranslatedTitle().getLanguageCode() == null) {
+                title.setTranslatedTitle(null);
+            }
+        }
+    }
 
     // ========================================================================
     // Custom Helper Mappings: Hosts (ResearchResourceHosts <-> List<OrgEntity>)
