@@ -1,5 +1,7 @@
 package org.orcid.core.manager.impl;
 
+import org.springframework.transaction.annotation.Transactional;
+
 import java.io.IOException;
 import java.io.StringWriter;
 import java.util.Locale;
@@ -16,6 +18,7 @@ import freemarker.template.Configuration;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
 
+@Transactional(value = "transactionManager")
 public class TemplateManagerImpl implements TemplateManager, InitializingBean {
 
     private Configuration freeMarkerConfiguration;

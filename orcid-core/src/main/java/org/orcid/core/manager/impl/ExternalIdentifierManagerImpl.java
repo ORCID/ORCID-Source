@@ -1,5 +1,7 @@
 package org.orcid.core.manager.impl;
 
+import org.springframework.transaction.annotation.Transactional;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -25,6 +27,7 @@ import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.SourceEntity;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 
+@Transactional(value = "transactionManager")
 public class ExternalIdentifierManagerImpl extends ExternalIdentifierManagerReadOnlyImpl implements ExternalIdentifierManager {
 
     @Resource

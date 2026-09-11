@@ -1,5 +1,7 @@
 package org.orcid.core.manager.impl;
 
+import org.springframework.transaction.annotation.Transactional;
+
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -41,6 +43,7 @@ import com.google.common.collect.ImmutableList.Builder;
  * @author tom
  *
  */
+@Transactional(value = "transactionManager")
 public class IdentifierTypeManagerImpl implements IdentifierTypeManager {
 
     // Declared first so it is injected before the other @Resource fields below: this bean has

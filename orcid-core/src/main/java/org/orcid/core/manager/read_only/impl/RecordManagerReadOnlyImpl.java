@@ -1,5 +1,7 @@
 package org.orcid.core.manager.read_only.impl;
 
+import org.springframework.transaction.annotation.Transactional;
+
 import jakarta.annotation.Resource;
 
 import org.orcid.core.manager.ProfileEntityCacheManager;
@@ -37,6 +39,7 @@ import org.slf4j.LoggerFactory;
  * @author Angel Montenegro
  * 
  */
+@Transactional(value = "transactionManagerReadOnly", readOnly = true)
 public class RecordManagerReadOnlyImpl implements RecordManagerReadOnly {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(RecordManagerReadOnlyImpl.class);

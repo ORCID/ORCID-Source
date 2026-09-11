@@ -1,5 +1,7 @@
 package org.orcid.core.manager.v3.read_only.impl;
 
+import org.springframework.transaction.annotation.Transactional;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,6 +18,7 @@ import org.orcid.pojo.ajaxForm.Text;
 import org.orcid.utils.DateUtils;
 import org.springframework.cache.annotation.Cacheable;
 
+@Transactional(value = "transactionManagerReadOnly", readOnly = true)
 public class GivenPermissionToManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements GivenPermissionToManagerReadOnly {
 
     @Resource

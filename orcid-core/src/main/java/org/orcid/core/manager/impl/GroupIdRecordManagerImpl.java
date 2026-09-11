@@ -1,5 +1,7 @@
 package org.orcid.core.manager.impl;
 
+import org.springframework.transaction.annotation.Transactional;
+
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.GregorianCalendar;
@@ -27,6 +29,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 
+@Transactional(value = "transactionManager")
 public class GroupIdRecordManagerImpl extends GroupIdRecordManagerReadOnlyImpl implements GroupIdRecordManager {
 
     private static final Logger LOG = LoggerFactory.getLogger(GroupIdRecordManagerImpl.class);

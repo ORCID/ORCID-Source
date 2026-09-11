@@ -1,5 +1,7 @@
 package org.orcid.core.manager.read_only.impl;
 
+import org.springframework.transaction.annotation.Transactional;
+
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -25,6 +27,7 @@ import org.orcid.pojo.ajaxForm.PojoUtil;
  * @author Will Simpson
  * 
  */
+@Transactional(value = "transactionManagerReadOnly", readOnly = true)
 public class EmailManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements EmailManagerReadOnly {
     @Resource
     protected JpaJaxbEmailAdapter jpaJaxbEmailAdapter;

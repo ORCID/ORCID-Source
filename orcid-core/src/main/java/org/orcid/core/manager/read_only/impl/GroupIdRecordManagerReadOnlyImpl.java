@@ -1,5 +1,7 @@
 package org.orcid.core.manager.read_only.impl;
 
+import org.springframework.transaction.annotation.Transactional;
+
 import java.util.List;
 import java.util.Optional;
 
@@ -15,6 +17,7 @@ import org.orcid.jaxb.model.groupid_v2.GroupIdRecords;
 import org.orcid.persistence.dao.GroupIdRecordDao;
 import org.orcid.persistence.jpa.entities.GroupIdRecordEntity;
 
+@Transactional(value = "transactionManagerReadOnly", readOnly = true)
 public class GroupIdRecordManagerReadOnlyImpl implements GroupIdRecordManagerReadOnly {
 
     @Resource

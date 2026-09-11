@@ -14,7 +14,7 @@ public interface OrcidOauth2AuthoriziationCodeDetailDao extends GenericDao<Orcid
     @Transactional(propagation = Propagation.REQUIRED)
     OrcidOauth2AuthoriziationCodeDetail removeAndReturn(String code);
 
-    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
+    @Transactional(readOnly = true)
     boolean isPersistentToken(String code);
 
     boolean removeArchivedAuthorizationCodes(Date maxArchiveDate);

@@ -3,8 +3,10 @@ package org.orcid.core.manager.read_only.impl;
 import org.orcid.core.manager.read_only.ProfileEntityManagerReadOnly;
 import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
+import org.springframework.transaction.annotation.Transactional;
 
-public class ProfileEntityManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements ProfileEntityManagerReadOnly { 
+@Transactional(value = "transactionManagerReadOnly", readOnly = true)
+public class ProfileEntityManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements ProfileEntityManagerReadOnly {
 
     protected ProfileDao profileDao;       
     

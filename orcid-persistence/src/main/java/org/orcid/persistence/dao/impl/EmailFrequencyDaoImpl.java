@@ -17,7 +17,7 @@ public class EmailFrequencyDaoImpl extends GenericDaoImpl<EmailFrequencyEntity, 
     }
     
     @Override
-    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
+    @Transactional(readOnly = true)
     public EmailFrequencyEntity find(String id) {
         Query query = entityManager.createQuery("FROM EmailFrequencyEntity WHERE id = :id");
         query.setParameter("id", id);
@@ -25,7 +25,7 @@ public class EmailFrequencyDaoImpl extends GenericDaoImpl<EmailFrequencyEntity, 
     }
 
     @Override
-    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
+    @Transactional(readOnly = true)
     public EmailFrequencyEntity findByOrcid(String orcid) {
         Query query = entityManager.createQuery("FROM EmailFrequencyEntity WHERE orcid = :orcid");
         query.setParameter("orcid", orcid);

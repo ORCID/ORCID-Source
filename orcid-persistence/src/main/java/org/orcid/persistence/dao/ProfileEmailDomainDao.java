@@ -19,18 +19,18 @@ public interface ProfileEmailDomainDao extends GenericDao<ProfileEmailDomainEnti
     @Transactional(propagation = Propagation.REQUIRED)
     boolean updateVisibility(String orcid, String emailDomain, String visibility);
 
-    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
+    @Transactional(readOnly = true)
     List<ProfileEmailDomainEntity> findByOrcid(String orcid);
 
-    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
+    @Transactional(readOnly = true)
     List<ProfileEmailDomainEntity> findPublicEmailDomains(String orcid);
 
-    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
+    @Transactional(readOnly = true)
     ProfileEmailDomainEntity findByEmailDomain(String orcid, String emailDomain);
 
     @Transactional(propagation = Propagation.REQUIRED)
     void moveEmailDomainToAnotherAccount(String emailDomain, String deprecatedOrcid, String primaryOrcid);
     
-    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
+    @Transactional(readOnly = true)
     List<ProfileEmailDomainEntity> findByEmailDomain(String emailDomain);
 }

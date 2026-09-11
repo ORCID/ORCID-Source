@@ -1,5 +1,7 @@
 package org.orcid.core.manager.impl;
 
+import org.springframework.transaction.annotation.Transactional;
+
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Enumeration;
@@ -22,6 +24,7 @@ import org.springframework.security.web.savedrequest.HttpSessionRequestCache;
 import org.springframework.security.web.savedrequest.SavedRequest;
 import org.springframework.web.bind.annotation.ModelAttribute;
 
+@Transactional(value = "transactionManager")
 public class OrcidUrlManager {
 
     private static final String DEFAULT_APP_NAME = "default";

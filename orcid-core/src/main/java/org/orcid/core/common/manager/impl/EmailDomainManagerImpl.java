@@ -1,5 +1,7 @@
 package org.orcid.core.common.manager.impl;
 
+import org.springframework.transaction.annotation.Transactional;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,6 +21,7 @@ import org.orcid.pojo.EmailDomain;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+@Transactional(value = "transactionManager")
 public class EmailDomainManagerImpl implements EmailDomainManager {
     private static final Logger LOGGER = LoggerFactory.getLogger(ProfileEmailDomainManagerImpl.class);
 

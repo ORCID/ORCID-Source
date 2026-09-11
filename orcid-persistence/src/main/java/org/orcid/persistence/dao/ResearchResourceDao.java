@@ -13,10 +13,10 @@ public interface ResearchResourceDao extends GenericDao<ResearchResourceEntity, 
     @Transactional(propagation = Propagation.REQUIRED)
     boolean removeResearchResource(String userOrcid, Long researchResourceId);
 
-    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
+    @Transactional(readOnly = true)
     List<ResearchResourceEntity> getByUser(String userOrcid, long lastModified);
     
-    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
+    @Transactional(readOnly = true)
     public ResearchResourceEntity getResearchResource(String userOrcid, Long researchResourceId);
 
     @Transactional(propagation = Propagation.REQUIRED)
@@ -28,10 +28,10 @@ public interface ResearchResourceDao extends GenericDao<ResearchResourceEntity, 
     @Transactional(propagation = Propagation.REQUIRED)
     boolean updateToMaxDisplay(String orcid, Long researchResourceId);
 
-    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
+    @Transactional(readOnly = true)
     Boolean hasPublicResearchResources(String orcid);
 
-    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
+    @Transactional(readOnly = true)
     List<BigInteger> getResearchResourcesReferencingOrgs(List<Long> orgIds);
 
 }

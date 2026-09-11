@@ -1,5 +1,7 @@
 package org.orcid.core.manager.v3.impl;
 
+import org.springframework.transaction.annotation.Transactional;
+
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.text.MessageFormat;
@@ -34,6 +36,7 @@ import org.orcid.pojo.FindMyStuffResult;
 
 import com.google.common.collect.Maps;
 
+@Transactional(value = "transactionManager")
 public class FindMyStuffManagerImpl implements FindMyStuffManager {
 
     private static final String AUTHORIZATION_END_POINT = "{0}/oauth/authorize?response_type=code&client_id={1}&scope={2}&redirect_uri={3}";

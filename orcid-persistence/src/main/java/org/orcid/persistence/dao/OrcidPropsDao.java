@@ -16,9 +16,9 @@ public interface OrcidPropsDao {
     @Transactional(propagation = Propagation.REQUIRED)
     boolean update(String key, String value);
     
-    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
+    @Transactional(readOnly = true)
     boolean exists(String key);
     
-    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
+    @Transactional(readOnly = true)
     String getValue(String key);    
 }

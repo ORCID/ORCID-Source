@@ -1,5 +1,7 @@
 package org.orcid.core.manager.impl;
 
+import org.springframework.transaction.annotation.Transactional;
+
 import jakarta.annotation.Resource;
 
 import org.orcid.core.cache.GenericCacheManager;
@@ -7,6 +9,7 @@ import org.orcid.core.cache.OrcidString;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 
+@Transactional(value = "transactionManager")
 public class ProfileEntityCacheManagerImpl implements ProfileEntityCacheManager {
 
     @Resource(name = "profileEntityGenericCacheManager")

@@ -41,7 +41,7 @@ public class ExternalIdentifierDaoImpl extends GenericDaoImpl<ExternalIdentifier
 
     @SuppressWarnings("unchecked")
     @Override
-    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
+    @Transactional(readOnly = true)
     @Cacheable(value = "dao-external-identifiers", key = "#orcid.concat('-').concat(#lastModified)")
     public List<ExternalIdentifierEntity> getExternalIdentifiers(String orcid, long lastModified) {
         Query query = entityManager.createQuery("FROM ExternalIdentifierEntity WHERE orcid = :orcid order by displayIndex desc, dateCreated asc");
@@ -50,7 +50,7 @@ public class ExternalIdentifierDaoImpl extends GenericDaoImpl<ExternalIdentifier
     }
     
     @Override
-    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
+    @Transactional(readOnly = true)
     @Cacheable(value = "public-external-identifiers", key = "#orcid.concat('-').concat(#lastModified)")
     public List<ExternalIdentifierEntity> getPublicExternalIdentifiers(String orcid, long lastModified) {
         return getExternalIdentifiers(orcid, PUBLIC_VISIBILITY);
@@ -67,7 +67,7 @@ public class ExternalIdentifierDaoImpl extends GenericDaoImpl<ExternalIdentifier
 
     @SuppressWarnings("unchecked")
     @Override
-    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
+    @Transactional(readOnly = true)
     public List<ExternalIdentifierEntity> getExternalIdentifiers(String orcid, String visibility) {
         Query query = entityManager.createQuery("FROM ExternalIdentifierEntity WHERE orcid = :orcid and visibility = :visibility order by displayIndex desc, dateCreated asc");
         query.setParameter("orcid", orcid);
@@ -76,7 +76,7 @@ public class ExternalIdentifierDaoImpl extends GenericDaoImpl<ExternalIdentifier
     }
 
     @Override
-    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
+    @Transactional(readOnly = true)
     public ExternalIdentifierEntity getExternalIdentifierEntity(String orcid, Long id) {
         Query query = entityManager.createQuery("FROM ExternalIdentifierEntity WHERE orcid = :orcid and id = :id");
         query.setParameter("orcid", orcid);

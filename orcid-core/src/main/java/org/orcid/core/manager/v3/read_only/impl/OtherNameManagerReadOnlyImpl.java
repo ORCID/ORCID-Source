@@ -1,5 +1,7 @@
 package org.orcid.core.manager.v3.read_only.impl;
 
+import org.springframework.transaction.annotation.Transactional;
+
 import java.util.List;
 
 import jakarta.annotation.Resource;
@@ -11,6 +13,7 @@ import org.orcid.jaxb.model.v3.release.record.OtherNames;
 import org.orcid.persistence.dao.OtherNameDao;
 import org.orcid.persistence.jpa.entities.OtherNameEntity;
 
+@Transactional(value = "transactionManagerReadOnly", readOnly = true)
 public class OtherNameManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements OtherNameManagerReadOnly {
        
     @Resource(name = "jpaJaxbOtherNameAdapterV3")

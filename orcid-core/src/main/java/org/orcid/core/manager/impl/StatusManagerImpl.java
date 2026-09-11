@@ -1,5 +1,7 @@
 package org.orcid.core.manager.impl;
 
+import org.springframework.transaction.annotation.Transactional;
+
 import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -17,6 +19,7 @@ import org.slf4j.LoggerFactory;
  * @author Will Simpson
  *
  */
+@Transactional(value = "transactionManager")
 public class StatusManagerImpl implements StatusManager {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(StatusManagerImpl.class);

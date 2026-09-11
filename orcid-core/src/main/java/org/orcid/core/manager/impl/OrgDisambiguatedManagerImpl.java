@@ -1,5 +1,7 @@
 package org.orcid.core.manager.impl;
 
+import org.springframework.transaction.annotation.Transactional;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -9,7 +11,6 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import jakarta.annotation.Resource;
-import jakarta.transaction.Transactional;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
@@ -44,6 +45,7 @@ import org.springframework.transaction.support.TransactionTemplate;
  * @author Will Simpson
  * 
  */
+@Transactional(value = "transactionManager")
 public class OrgDisambiguatedManagerImpl implements OrgDisambiguatedManager {
 
     private static final int INCORRECT_POPULARITY_CHUNK_SIZE = 1000;

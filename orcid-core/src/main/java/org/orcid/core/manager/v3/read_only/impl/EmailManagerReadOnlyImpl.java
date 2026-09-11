@@ -1,5 +1,7 @@
 package org.orcid.core.manager.v3.read_only.impl;
 
+import org.springframework.transaction.annotation.Transactional;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -34,6 +36,7 @@ import org.springframework.cache.annotation.Cacheable;
  * @author Will Simpson
  * 
  */
+@Transactional(value = "transactionManagerReadOnly", readOnly = true)
 public class EmailManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements EmailManagerReadOnly {
     private static final Logger LOGGER = LoggerFactory.getLogger(EmailManagerReadOnlyImpl.class);
     

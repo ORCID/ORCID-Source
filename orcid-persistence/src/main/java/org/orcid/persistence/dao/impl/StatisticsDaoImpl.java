@@ -21,7 +21,7 @@ public class StatisticsDaoImpl implements StatisticsDao {
     }
 
     @Override
-    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
+    @Transactional(readOnly = true)
     public long calculateLiveIds() {
         Query query = entityManager.createNativeQuery("select count(*) from profile where profile_deactivation_date is null and record_locked = false");
         Object result = query.getSingleResult();
@@ -43,7 +43,7 @@ public class StatisticsDaoImpl implements StatisticsDao {
     }
     
     @Override
-    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
+    @Transactional(readOnly = true)
     public long getLatestLiveIds() {
         Query query = entityManager.createNativeQuery("select statistic_value from statistic_values where key_id = (SELECT max(key_id) FROM statistic_values) and statistic_name = 'liveIds'");
         Object result = query.getSingleResult();

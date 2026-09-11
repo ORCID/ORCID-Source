@@ -17,7 +17,7 @@ public class MemberChosenOrgDisambiguatedDaoImpl implements MemberChosenOrgDisam
 
     @SuppressWarnings("unchecked")
     @Override
-    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
+    @Transactional(readOnly = true)
     public List<MemberChosenOrgDisambiguatedEntity> getAll() {
         return entityManager.createQuery("from MemberChosenOrgDisambiguatedEntity").getResultList();
     }

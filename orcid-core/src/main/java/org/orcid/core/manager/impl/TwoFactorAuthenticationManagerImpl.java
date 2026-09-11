@@ -1,5 +1,7 @@
 package org.orcid.core.manager.impl;
 
+import org.springframework.transaction.annotation.Transactional;
+
 import java.util.List;
 
 import jakarta.annotation.Resource;
@@ -25,6 +27,7 @@ import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionTemplate;
 
+@Transactional(value = "transactionManager")
 public class TwoFactorAuthenticationManagerImpl implements TwoFactorAuthenticationManager {
 
     private static final Logger LOG = LoggerFactory.getLogger(TwoFactorAuthenticationManagerImpl.class);

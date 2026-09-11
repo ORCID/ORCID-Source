@@ -1,5 +1,7 @@
 package org.orcid.core.manager.read_only.impl;
 
+import org.springframework.transaction.annotation.Transactional;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -38,6 +40,7 @@ import liquibase.repackaged.org.apache.commons.lang3.StringUtils;
 
 import jakarta.annotation.Resource;
 
+@Transactional(value = "transactionManagerReadOnly", readOnly = true)
 public class PersonDetailsManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements PersonDetailsManagerReadOnly {
 
     protected AddressManagerReadOnly addressManager;

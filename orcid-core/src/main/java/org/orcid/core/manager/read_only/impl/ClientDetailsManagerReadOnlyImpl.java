@@ -1,5 +1,7 @@
 package org.orcid.core.manager.read_only.impl;
 
+import org.springframework.transaction.annotation.Transactional;
+
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -19,6 +21,7 @@ import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+@Transactional(value = "transactionManagerReadOnly", readOnly = true)
 public class ClientDetailsManagerReadOnlyImpl implements ClientDetailsManagerReadOnly {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ClientDetailsManagerReadOnlyImpl.class);    

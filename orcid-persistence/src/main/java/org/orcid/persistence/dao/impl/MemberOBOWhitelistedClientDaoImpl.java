@@ -16,7 +16,7 @@ public class MemberOBOWhitelistedClientDaoImpl extends GenericDaoImpl<MemberOBOW
     }
 
     @Override
-    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
+    @Transactional(readOnly = true)
     public List<MemberOBOWhitelistedClientEntity> getWhitelistForClient(String clientDetailsId) {
         TypedQuery<MemberOBOWhitelistedClientEntity> query = entityManager.createQuery("from MemberOBOWhitelistedClientEntity where clientDetailsEntity.id = :clientDetailsId", MemberOBOWhitelistedClientEntity.class);
         query.setParameter("clientDetailsId", clientDetailsId);

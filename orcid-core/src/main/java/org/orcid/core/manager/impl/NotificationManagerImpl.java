@@ -65,6 +65,7 @@ import org.springframework.transaction.annotation.Transactional;
  * @author Will Simpson
  */
 @Deprecated
+@Transactional(value = "transactionManager")
 public class NotificationManagerImpl extends ManagerReadOnlyBaseImpl implements NotificationManager {    
 
     private static final String AUTHORIZATION_END_POINT = "{0}/oauth/authorize?response_type=code&client_id={1}&scope={2}&redirect_uri={3}";

@@ -1,5 +1,7 @@
 package org.orcid.core.common.manager.impl;
 
+import org.springframework.transaction.annotation.Transactional;
+
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
@@ -26,6 +28,7 @@ import org.orcid.pojo.ajaxForm.PojoUtil;
  * @author Daniel Palafox
  *
  */
+@Transactional(value = "transactionManager")
 public class EventManagerImpl implements EventManager {
 
     @Resource

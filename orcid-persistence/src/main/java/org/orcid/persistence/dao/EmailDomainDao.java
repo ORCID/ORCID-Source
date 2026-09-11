@@ -19,9 +19,9 @@ public interface EmailDomainDao extends GenericDao<EmailDomainEntity, Long> {
     @Transactional(propagation = Propagation.REQUIRED)
     boolean updateRorId(long id, String rorId);
 
-    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
+    @Transactional(readOnly = true)
     List<EmailDomainEntity>  findByEmailDomain(String emailDomain);
 
-    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
+    @Transactional(readOnly = true)
     List<EmailDomainEntity> findByCategory(EmailDomainEntity.DomainCategory category);
 }

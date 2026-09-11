@@ -1,5 +1,7 @@
 package org.orcid.core.manager.v3.read_only.impl;
 
+import org.springframework.transaction.annotation.Transactional;
+
 import java.math.BigInteger;
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -56,6 +58,7 @@ import org.springframework.beans.factory.annotation.Value;
 
 import static org.orcid.pojo.ajaxForm.PojoUtil.getWorkForm;
 
+@Transactional(value = "transactionManagerReadOnly", readOnly = true)
 public class WorkManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements WorkManagerReadOnly {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(WorkManagerReadOnlyImpl.class);

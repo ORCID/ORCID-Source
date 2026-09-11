@@ -16,43 +16,43 @@ import org.springframework.transaction.annotation.Transactional;
  */
 public interface OrgDao extends GenericDao<OrgEntity, Long> {
 
-    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
+    @Transactional(readOnly = true)
     List<AmbiguousOrgEntity> getAmbiguousOrgs(int firstResult, int maxResults);
 
-    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
+    @Transactional(readOnly = true)
     List<OrgEntity> getOrgs(String searchTerm, int firstResult, int maxResults);
     
-    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
+    @Transactional(readOnly = true)
     List<OrgEntity> getOrgsByName(String searchTerm);
 
-    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
+    @Transactional(readOnly = true)
     OrgEntity findByNameCityRegionAndCountry(String name, String city, String region, String country);
     
-    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
+    @Transactional(readOnly = true)
     OrgEntity findByNameCityRegionCountryAndType(String name, String city, String region, String country, String sourceType);
     
     @Transactional(propagation = Propagation.REQUIRED)
     void removeOrgsByClientSourceId(String clientSourceId);
 
-    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
+    @Transactional(readOnly = true)
     OrgEntity findByAddressAndDisambiguatedOrg(String name, String city, String region, String country, OrgDisambiguatedEntity orgDisambiguated);
 
-    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
+    @Transactional(readOnly = true)
     List<BigInteger> getIdsForClientSourceCorrection(int limit, List<String> nonPublicClients);
 
     @Transactional(propagation = Propagation.REQUIRED)
     void correctClientSource(List<BigInteger> ids);
 
-    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
+    @Transactional(readOnly = true)
     List<BigInteger> getIdsForUserSourceCorrection(int limit, List<String> publicClients);
 
     @Transactional(propagation = Propagation.REQUIRED)
     void correctUserSource(List<BigInteger> ids);
 
-    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
+    @Transactional(readOnly = true)
     List<Object[]> findConstraintViolatingDuplicateOrgDetails();
 
-    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
+    @Transactional(readOnly = true)
     List<BigInteger> getOrgIdsForDuplicateOrgDetails(String name, String city, String region, String country, Long orgDisambiguatedId);
 
     @Transactional(propagation = Propagation.REQUIRED)
@@ -64,10 +64,10 @@ public interface OrgDao extends GenericDao<OrgEntity, Long> {
     @Transactional(propagation = Propagation.REQUIRED)
     int convertNullRegionsToEmptyStrings(int batchSize);
 
-    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
+    @Transactional(readOnly = true)
     List<BigInteger> getIdsOfOrgsReferencingClientProfiles(int max, List<String> clientProfileOrcidIds);
 
-    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
+    @Transactional(readOnly = true)
     List<OrgEntity> findByOrgDisambiguatedId(Long deprecated);
 
     @Transactional(propagation = Propagation.REQUIRED)

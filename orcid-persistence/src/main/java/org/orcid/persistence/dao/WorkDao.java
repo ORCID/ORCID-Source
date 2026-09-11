@@ -18,7 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
  */
 public interface WorkDao extends GenericDao<WorkEntity, Long> {    
     
-    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
+    @Transactional(readOnly = true)
     MinimizedWorkEntity getMinimizedWorkEntity(Long id);
 
     /**
@@ -81,7 +81,7 @@ public interface WorkDao extends GenericDao<WorkEntity, Long> {
      * Returns a list of work ids where the ext id relationship is null         
      * @return a list of work ids    
      * */
-    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
+    @Transactional(readOnly = true)
     List<BigInteger> getWorksWithNullRelationship();
     
     /**
@@ -93,7 +93,7 @@ public interface WorkDao extends GenericDao<WorkEntity, Long> {
      *         
      * @return a list of work ids    
      * */
-    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
+    @Transactional(readOnly = true)
     List<BigInteger> getWorksByWorkTypeAndExtIdType(String workType, String extIdType);
     
     /**
@@ -103,16 +103,16 @@ public interface WorkDao extends GenericDao<WorkEntity, Long> {
      * 
      * @return the WorkEntity associated with the parameter id
      * */
-    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
+    @Transactional(readOnly = true)
     WorkEntity getWork(String orcid, Long id);
 
-    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
+    @Transactional(readOnly = true)
     List<WorkLastModifiedEntity> getWorkLastModifiedList(String orcid);
 
-    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
+    @Transactional(readOnly = true)
     List<WorkLastModifiedEntity> getPublicWorkLastModifiedList(String orcid);
     
-    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
+    @Transactional(readOnly = true)
     List<WorkLastModifiedEntity> getWorkLastModifiedList(String orcid, List<Long> ids);
 
     void detach(WorkBaseEntity workBaseEntity);
@@ -120,53 +120,53 @@ public interface WorkDao extends GenericDao<WorkEntity, Long> {
     @Transactional(propagation = Propagation.REQUIRED)
     boolean increaseDisplayIndexOnAllElements(String orcid);
 
-    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
+    @Transactional(readOnly = true)
     List<MinimizedWorkEntity> getMinimizedWorkEntities(List<Long> ids);
 
-    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
+    @Transactional(readOnly = true)
     List<MinimizedExtendedWorkEntity> getMinimizedExtendedWorkEntities(List<Long> ids);
     
-    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
+    @Transactional(readOnly = true)
     List<WorkEntity> getWorkEntities(String orcid, List<Long> ids);        
 
     @Deprecated
-    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
+    @Transactional(readOnly = true)
     List<WorkEntity> getWorksByOrcidId(String orcid);
     
-    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
+    @Transactional(readOnly = true)
     boolean hasPublicWorks(String orcid);
 
-    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
+    @Transactional(readOnly = true)
     boolean isPublic(String orcid, List<Long> workIds);
 
-    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
+    @Transactional(readOnly = true)
     List<BigInteger> getIdsForClientSourceCorrection(int limit, List<String> nonPublicClientIds);
 
     @Transactional(propagation = Propagation.REQUIRED)
     void correctClientSource(List<BigInteger> ids);
 
-    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
+    @Transactional(readOnly = true)
     List<BigInteger> getIdsForUserSourceCorrection(int limit, List<String> publicClientIds);
 
     @Transactional(propagation = Propagation.REQUIRED)
     void correctUserSource(List<BigInteger> ids);
 
-    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
+    @Transactional(readOnly = true)
     List<BigInteger> getIdsForUserOBOUpdate(String clientDetailsId, int max);
 
     @Transactional(propagation = Propagation.REQUIRED)
     void updateUserOBODetails(List<BigInteger> ids);
 
-    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
+    @Transactional(readOnly = true)
     List<BigInteger> getIdsForUserOBORecords(String clientDetailsId, int max);
 
     @Transactional(propagation = Propagation.REQUIRED)
     void revertUserOBODetails(List<BigInteger> ids);
 
-    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
+    @Transactional(readOnly = true)
     List<BigInteger> getIdsForUserOBORecords(int max);
 
-    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
+    @Transactional(readOnly = true)
     List<BigInteger> getIdsOfWorksReferencingClientProfiles(int i, List<String> clientProfileOrcidIds);
 
     /**
@@ -176,10 +176,10 @@ public interface WorkDao extends GenericDao<WorkEntity, Long> {
      *
      * @return a list of works associated with the provided orcid
      * */
-    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
+    @Transactional(readOnly = true)
     List<Object[]> getWorksByOrcid(String orcid, boolean featuredOnly);
 
-    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
+    @Transactional(readOnly = true)
     List<Object[]> getWorksStartingFromWorkId(Long WorkId, int numberOfWorks);
 
     @Transactional(propagation = Propagation.REQUIRED)

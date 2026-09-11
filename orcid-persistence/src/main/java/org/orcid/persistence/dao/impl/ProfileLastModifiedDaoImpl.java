@@ -66,7 +66,7 @@ public class ProfileLastModifiedDaoImpl implements ProfileLastModifiedDao {
 
     @SuppressWarnings("unchecked")
     @Override
-    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
+    @Transactional(readOnly = true)
     /**
      * Fetches the last modified from the database Do not call unless it also
      * manages the request level cache

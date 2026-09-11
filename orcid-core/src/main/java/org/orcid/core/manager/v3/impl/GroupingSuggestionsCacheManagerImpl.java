@@ -1,5 +1,7 @@
 package org.orcid.core.manager.v3.impl;
 
+import org.springframework.transaction.annotation.Transactional;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -10,6 +12,7 @@ import org.ehcache.Cache;
 import org.orcid.core.manager.v3.GroupingSuggestionsCacheManager;
 import org.orcid.pojo.grouping.WorkGroupingSuggestion;
 
+@Transactional(value = "transactionManager")
 public class GroupingSuggestionsCacheManagerImpl implements GroupingSuggestionsCacheManager {
 
     @Resource(name = "groupingSuggestionsCache")

@@ -18,7 +18,7 @@ public class ProfileEventDaoImpl extends GenericDaoImpl<ProfileEventEntity, Long
     public ProfileEventDaoImpl() { super(ProfileEventEntity.class); }
 
     @Override
-    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
+    @Transactional(readOnly = true)
     public boolean isAttemptSend(String orcid, ProfileEventType eventType) {
         Query query = entityManager.createNativeQuery("select count(*) from profile_event where orcid=:orcid and profile_event_type=:eventType");
         query.setParameter("orcid", orcid);

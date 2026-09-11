@@ -19,7 +19,7 @@ public interface PeerReviewDao extends GenericDao<PeerReviewEntity, Long> {
      *            The id of the element
      * @return a peer review entity that have the give id and belongs to the given user 
      * */
-    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
+    @Transactional(readOnly = true)
     PeerReviewEntity getPeerReview(String userOrcid, Long peerReviewId);
     
     /**
@@ -43,13 +43,13 @@ public interface PeerReviewDao extends GenericDao<PeerReviewEntity, Long> {
      *            The owner of the peerReview
      * @return a list will all peer reviews associated with the given user 
      * */
-    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
+    @Transactional(readOnly = true)
     List<PeerReviewEntity> getByUser(String userOrcid, long lastModified);
 
-    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
+    @Transactional(readOnly = true)
     List<Object[]> getPeerReviewsByOrcid(String orcid, boolean justPublic);
 
-    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
+    @Transactional(readOnly = true)
     List<PeerReviewEntity> getPeerReviewsByOrcidAndGroupId(String orcid, String groupId, boolean justPublic);
 
     @Transactional(propagation = Propagation.REQUIRED)
@@ -67,7 +67,7 @@ public interface PeerReviewDao extends GenericDao<PeerReviewEntity, Long> {
      *          The batch number to fetch
      * @return a list of peer review ids with old ext ids          
      * */
-    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
+    @Transactional(readOnly = true)
     List<BigInteger> getPeerReviewWithOldExtIds(long limit);
     
     @Transactional(propagation = Propagation.REQUIRED)
@@ -88,9 +88,9 @@ public interface PeerReviewDao extends GenericDao<PeerReviewEntity, Long> {
      * 
      * @param orcid
      * */
-    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
+    @Transactional(readOnly = true)
     Boolean hasPublicPeerReviews(String orcid);
 
-    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
+    @Transactional(readOnly = true)
     List<PeerReviewEntity> getPeerReviewsReferencingOrgs(List<Long> orgIds);
 }

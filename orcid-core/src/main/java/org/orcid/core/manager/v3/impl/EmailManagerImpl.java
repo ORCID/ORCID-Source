@@ -35,6 +35,7 @@ import org.springframework.transaction.support.TransactionTemplate;
  * @author Will Simpson
  * 
  */
+@Transactional(value = "transactionManager")
 public class EmailManagerImpl extends EmailManagerReadOnlyImpl implements EmailManager {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(EmailManagerImpl.class);

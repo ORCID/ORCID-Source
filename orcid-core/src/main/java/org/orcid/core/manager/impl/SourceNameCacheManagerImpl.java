@@ -1,5 +1,7 @@
 package org.orcid.core.manager.impl;
 
+import org.springframework.transaction.annotation.Transactional;
+
 import jakarta.annotation.Resource;
 
 import org.apache.commons.lang.StringUtils;
@@ -20,6 +22,7 @@ import org.springframework.web.context.request.ServletRequestAttributes;
  * @author Angel Montenegro
  * 
  */
+@Transactional(value = "transactionManager")
 public class SourceNameCacheManagerImpl implements SourceNameCacheManager {
     private static final Logger LOGGER = LoggerFactory.getLogger(SourceNameCacheManagerImpl.class);
 

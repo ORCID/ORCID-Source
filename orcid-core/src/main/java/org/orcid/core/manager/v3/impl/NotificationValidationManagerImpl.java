@@ -1,5 +1,7 @@
 package org.orcid.core.manager.v3.impl;
 
+import org.springframework.transaction.annotation.Transactional;
+
 import java.net.URI;
 import java.net.URISyntaxException;
 
@@ -12,6 +14,7 @@ import org.orcid.core.manager.v3.validator.ExternalIDValidator;
 import org.orcid.jaxb.model.v3.release.notification.permission.AuthorizationUrl;
 import org.orcid.jaxb.model.v3.release.notification.permission.NotificationPermission;
 
+@Transactional(value = "transactionManager")
 public class NotificationValidationManagerImpl implements NotificationValidationManager {
 
     @Resource(name = "externalIDValidatorV3")

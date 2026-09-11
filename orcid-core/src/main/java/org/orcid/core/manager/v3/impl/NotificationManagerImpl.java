@@ -60,6 +60,7 @@ import java.util.stream.Collectors;
 /**
  * @author Will Simpson
  */
+@Transactional(value = "transactionManager")
 public class NotificationManagerImpl extends ManagerReadOnlyBaseImpl implements NotificationManager {
     private static final Logger LOGGER = LoggerFactory.getLogger(NotificationManagerImpl.class);
 

@@ -21,7 +21,7 @@ public class ResearchResourceDaoImpl extends GenericDaoImpl<ResearchResourceEnti
     }
     
     @Override
-    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
+    @Transactional(readOnly = true)
     public ResearchResourceEntity getResearchResource(String userOrcid, Long researchResourceId) {
         Query query = entityManager.createQuery("from ResearchResourceEntity where orcid=:userOrcid and id=:researchResourceId");
         query.setParameter("userOrcid", userOrcid);
@@ -44,7 +44,7 @@ public class ResearchResourceDaoImpl extends GenericDaoImpl<ResearchResourceEnti
     
     //note these are not cacheable entities as they require a session to work.
     @Override
-    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
+    @Transactional(readOnly = true)
     public List<ResearchResourceEntity> getByUser(String userOrcid, long lastModified) {
         TypedQuery<ResearchResourceEntity> query = entityManager.createQuery("from ResearchResourceEntity where orcid=:userOrcid", ResearchResourceEntity.class);
         query.setParameter("userOrcid", userOrcid);
@@ -96,7 +96,7 @@ public class ResearchResourceDaoImpl extends GenericDaoImpl<ResearchResourceEnti
     }
 
     @Override
-    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
+    @Transactional(readOnly = true)
     public Boolean hasPublicResearchResources(String orcid) {
         Query query = entityManager.createNativeQuery("SELECT count(*) FROM research_resource WHERE orcid=:orcid AND visibility='PUBLIC'");
         query.setParameter("orcid", orcid);
@@ -106,7 +106,7 @@ public class ResearchResourceDaoImpl extends GenericDaoImpl<ResearchResourceEnti
 
     @SuppressWarnings("unchecked")
     @Override
-    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
+    @Transactional(readOnly = true)
     public List<BigInteger> getResearchResourcesReferencingOrgs(List<Long> orgIds) {
         Query query = entityManager.createNativeQuery("SELECT distinct rr.id FROM research_resource rr LEFT JOIN research_resource_org rro ON rr.id = rro.research_resource_id LEFT JOIN research_resource_item rri ON rr.id = rri.research_resource_id LEFT JOIN research_resource_item_org rrio ON rri.id = rrio.research_resource_item_id WHERE rro.org_id IN (:orgIds) OR rrio.org_id IN (:orgIds)");
         query.setParameter("orgIds", orgIds);

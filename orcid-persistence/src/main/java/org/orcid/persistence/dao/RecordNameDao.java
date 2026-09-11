@@ -13,21 +13,21 @@ import org.springframework.transaction.annotation.Transactional;
  * 
  */
 public interface RecordNameDao extends GenericDao<RecordNameEntity, Long> {
-    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
+    @Transactional(readOnly = true)
     boolean exists(String orcid);
     
-    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
+    @Transactional(readOnly = true)
     RecordNameEntity getRecordName(String orcid, long lastModified);
     
-    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
+    @Transactional(readOnly = true)
     RecordNameEntity findByCreditName(String creditName);
 
     @Transactional(propagation = Propagation.REQUIRED)
     boolean updateRecordName(RecordNameEntity recordName);
 
-    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
+    @Transactional(readOnly = true)
     Date getLastModified(String orcid);
 
-    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
+    @Transactional(readOnly = true)
     List<RecordNameEntity> getRecordNames(List<String> orcids);
 }

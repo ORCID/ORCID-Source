@@ -1,5 +1,7 @@
 package org.orcid.core.manager.v3.impl;
 
+import org.springframework.transaction.annotation.Transactional;
+
 import jakarta.annotation.Resource;
 
 import org.orcid.core.cache.GenericCacheManager;
@@ -7,6 +9,7 @@ import org.orcid.core.cache.OrcidString;
 import org.orcid.core.manager.v3.WorksCacheManager;
 import org.orcid.jaxb.model.v3.release.record.summary.Works;
 
+@Transactional(value = "transactionManager")
 public class WorksCacheManagerImpl implements WorksCacheManager {
     
     @Resource(name = "groupedWorksGenericCacheManager")

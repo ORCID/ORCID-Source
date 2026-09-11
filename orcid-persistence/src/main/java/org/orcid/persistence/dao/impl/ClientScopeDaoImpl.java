@@ -41,7 +41,7 @@ public class ClientScopeDaoImpl extends GenericDaoImpl<ClientScopeEntity, Client
     }
 
     @Override
-    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
+    @Transactional(readOnly = true)
     public List<String> getActiveScopes(String clientDetailsId) {
         Query getActiveScopes = entityManager.createNativeQuery("SELECT scope_type FROM client_scope WHERE client_details_id = :clientDetailsId");
         getActiveScopes.setParameter("clientDetailsId", clientDetailsId);

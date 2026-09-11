@@ -1,5 +1,7 @@
 package org.orcid.core.manager.impl;
 
+import org.springframework.transaction.annotation.Transactional;
+
 import java.util.LinkedHashMap;
 import java.util.List;
 
@@ -17,6 +19,7 @@ import org.orcid.jaxb.model.record_v2.Affiliation;
 import org.orcid.jaxb.model.record_v2.Funding;
 import org.orcid.jaxb.model.record_v2.PeerReview;
 
+@Transactional(value = "transactionManager")
 public class ActivityManagerImpl extends ManagerReadOnlyBaseImpl implements ActivityManager {
     
     @Resource

@@ -1,5 +1,7 @@
 package org.orcid.core.manager.v3.impl;
 
+import org.springframework.transaction.annotation.Transactional;
+
 import java.io.Writer;
 import java.math.BigInteger;
 import java.util.ArrayList;
@@ -40,6 +42,7 @@ import au.com.bytecode.opencsv.CSVWriter;
  * @author Will Simpson
  * 
  */
+@Transactional(value = "transactionManager")
 public class OrgManagerImpl implements OrgManager {
 
     private static final String[] AMBIGUOUS_ORGS_HEADER = new String[] { "id", "source_orcid", "name", "city", "region", "country", "used_count" };

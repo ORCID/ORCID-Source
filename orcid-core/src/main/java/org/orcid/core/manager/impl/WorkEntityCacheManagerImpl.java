@@ -1,5 +1,7 @@
 package org.orcid.core.manager.impl;
 
+import org.springframework.transaction.annotation.Transactional;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -31,6 +33,7 @@ import org.springframework.beans.factory.annotation.Value;
  * @author Will Simpson
  *
  */
+@Transactional(value = "transactionManager")
 public class WorkEntityCacheManagerImpl implements WorkEntityCacheManager {
     
     @Resource(name = "workLastModifiedCache")

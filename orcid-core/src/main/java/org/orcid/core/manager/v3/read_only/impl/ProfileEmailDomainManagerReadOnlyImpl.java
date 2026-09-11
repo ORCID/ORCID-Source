@@ -1,5 +1,7 @@
 package org.orcid.core.manager.v3.read_only.impl;
 
+import org.springframework.transaction.annotation.Transactional;
+
 
 import org.orcid.core.manager.read_only.impl.ManagerReadOnlyBaseImpl;
 import org.orcid.core.manager.v3.read_only.ProfileEmailDomainManagerReadOnly;
@@ -14,6 +16,7 @@ import java.util.List;
  * @author Andrej Romanov
  * 
  */
+@Transactional(value = "transactionManagerReadOnly", readOnly = true)
 public class ProfileEmailDomainManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements ProfileEmailDomainManagerReadOnly {
     @Resource
     protected ProfileEmailDomainDao profileEmailDomainDaoReadOnly;

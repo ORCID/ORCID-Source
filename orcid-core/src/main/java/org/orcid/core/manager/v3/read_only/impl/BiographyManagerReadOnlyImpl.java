@@ -1,5 +1,7 @@
 package org.orcid.core.manager.v3.read_only.impl;
 
+import org.springframework.transaction.annotation.Transactional;
+
 import org.orcid.core.manager.v3.read_only.BiographyManagerReadOnly;
 import org.orcid.jaxb.model.v3.release.common.CreatedDate;
 import org.orcid.jaxb.model.v3.release.common.LastModifiedDate;
@@ -16,6 +18,7 @@ import org.slf4j.LoggerFactory;
  * @author Angel Montenegro
  * 
  */
+@Transactional(value = "transactionManagerReadOnly", readOnly = true)
 public class BiographyManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements BiographyManagerReadOnly {
 
     protected static final Logger LOGGER = LoggerFactory.getLogger(BiographyManagerReadOnlyImpl.class);

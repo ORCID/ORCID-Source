@@ -1,5 +1,7 @@
 package org.orcid.core.manager.impl;
 
+import org.springframework.transaction.annotation.Transactional;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -14,6 +16,7 @@ import org.orcid.persistence.jpa.entities.BackupCodeEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+@Transactional(value = "transactionManager")
 public class BackupCodeManagerImpl implements BackupCodeManager {
 
     private static final int BACKUP_CODE_LENGTH = 10;
