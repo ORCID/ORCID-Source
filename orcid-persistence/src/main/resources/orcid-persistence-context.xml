@@ -289,7 +289,8 @@
     <property name="persistenceUnitName" value="orcid" />
     <property name="jpaPropertyMap">
         <map>
-            <entry key="hibernate.connection.autocommit" value="${org.orcid.persistence.db.autocommit:false}" />
+            <entry key="hibernate.connection.autocommit" value="false" />
+            <entry key="hibernate.connection.provider_disables_autocommit" value="true" />
             <entry key="hibernate.generate_statistics" value="${org.orcid.persistence.db.hibernateStatistics:false}" />
             <!-- JDBC Fetch Size: Number of rows retrieved per DB network round-trip -->
             <entry key="hibernate.jdbc.fetch_size" value="${org.orcid.persistence.db.fetchSize:100}" />
@@ -313,7 +314,8 @@
     <property name="persistenceUnitName" value="orcid" />
     <property name="jpaPropertyMap">
         <map>
-            <entry key="hibernate.connection.autocommit" value="${org.orcid.persistence.db.readonly.autocommit:false}" />
+            <entry key="hibernate.connection.autocommit" value="false" />
+            <entry key="hibernate.connection.provider_disables_autocommit" value="true" />
             <entry key="hibernate.generate_statistics" value="${org.orcid.persistence.db.readonly.hibernateStatistics:false}" />
             <!-- Read-Only Fetch Configurations -->
             <entry key="hibernate.jdbc.fetch_size" value="${org.orcid.persistence.db.readonly.fetchSize:100}" />
@@ -374,6 +376,7 @@
 
 	<bean id="pooledDataSource" class="com.zaxxer.hikari.HikariDataSource" destroy-method="close">
         <property name="poolName" value="\${org.orcid.persistence.dataSourceName:orcid}" />
+        <property name="autoCommit" value="false" />
         <property name="driverClassName" value="\${org.orcid.persistence.db.class}" />
         <property name="jdbcUrl" value="\${org.orcid.persistence.db.url}" />
         <property name="username" value="\${org.orcid.persistence.db.username}" />
@@ -395,6 +398,7 @@
     
     <bean id="pooledDataSourceReadOnly" class="com.zaxxer.hikari.HikariDataSource" destroy-method="close">
         <property name="poolName" value="\${org.orcid.persistence.db.readonly.dataSourceName:orcidreadonly}" />
+        <property name="autoCommit" value="false" />
         <property name="driverClassName" value="\${org.orcid.persistence.db.readonly.class}" />
         <property name="jdbcUrl" value="\${org.orcid.persistence.db.readonly.url}" />
         <property name="username" value="\${org.orcid.persistence.db.readonly.username}" />
