@@ -289,7 +289,7 @@
     <property name="persistenceUnitName" value="orcid" />
     <property name="jpaPropertyMap">
         <map>
-            <entry key="hibernate.connection.autocommit" value="${org.orcid.persistence.db.autocommit:false}" />
+            <entry key="hibernate.connection.autocommit" value="false" />
             <entry key="hibernate.connection.provider_disables_autocommit" value="true" />
             <entry key="hibernate.generate_statistics" value="${org.orcid.persistence.db.hibernateStatistics:false}" />
             <!-- JDBC Fetch Size: Number of rows retrieved per DB network round-trip -->
@@ -314,7 +314,7 @@
     <property name="persistenceUnitName" value="orcid" />
     <property name="jpaPropertyMap">
         <map>
-            <entry key="hibernate.connection.autocommit" value="${org.orcid.persistence.db.readonly.autocommit:false}" />
+            <entry key="hibernate.connection.autocommit" value="false" />
             <entry key="hibernate.connection.provider_disables_autocommit" value="true" />
             <entry key="hibernate.generate_statistics" value="${org.orcid.persistence.db.readonly.hibernateStatistics:false}" />
             <!-- Read-Only Fetch Configurations -->
