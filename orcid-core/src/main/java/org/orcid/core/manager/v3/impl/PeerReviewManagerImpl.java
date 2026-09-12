@@ -242,12 +242,14 @@ public class PeerReviewManagerImpl extends PeerReviewManagerReadOnlyImpl impleme
         additionalInfo.put("subject_container_name", peerReviewEntity.getSubjectContainerName());
 
         String itemName = null;
-        Optional<GroupIdRecord> optional = groupIdRecordManager.findByGroupId(peerReviewEntity.getGroupId());
-        if (optional.isPresent()) {
-            GroupIdRecord groupId = optional.get();
-            if (!StringUtils.isBlank(groupId.getName())) {
-                additionalInfo.put("group_name", optional.get().getName());
-                itemName = optional.get().getName();
+        if (!StringUtils.isBlank(peerReviewEntity.getGroupId())) {
+            Optional<GroupIdRecord> optional = groupIdRecordManager.findByGroupId(peerReviewEntity.getGroupId());
+            if (optional.isPresent()) {
+                GroupIdRecord groupId = optional.get();
+                if (!StringUtils.isBlank(groupId.getName())) {
+                    additionalInfo.put("group_name", optional.get().getName());
+                    itemName = optional.get().getName();
+                }
             }
         }
         if(extIds != null) {

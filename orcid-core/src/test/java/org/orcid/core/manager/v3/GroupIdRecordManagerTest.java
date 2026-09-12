@@ -166,7 +166,7 @@ public class GroupIdRecordManagerTest extends BaseTest  {
     }
     
     @Test
-    public void testUpdateDuplicateGroupIdRecords() {
+    public void testUpdateDuplicateGroupIdRecords() throws Exception {
         String groupName = "Group # " + System.currentTimeMillis(); 
         GroupIdRecord g1 = new GroupIdRecord();
         g1.setDescription("Description");
@@ -237,6 +237,7 @@ public class GroupIdRecordManagerTest extends BaseTest  {
         }
         
         //Update #1 with a new group id
+        Thread.sleep(1000);
         GroupIdRecord existingOne = groupIdRecordManager.findByGroupId("orcid-generated:valid-group-id#1").get();
         existingOne.setGroupId("orcid-generated:valid-group-id#1-updated");
         existingOne.setDescription("updated-description");
@@ -262,7 +263,7 @@ public class GroupIdRecordManagerTest extends BaseTest  {
     }
     
     @Test
-    public void testCreateUpdateGetDeleteGroupIdRecord(){
+    public void testCreateUpdateGetDeleteGroupIdRecord() throws Exception {
         GroupIdRecord g1 = new GroupIdRecord();
         g1.setDescription("Description");
         g1.setGroupId("orcid-generated:valid-group-id");
@@ -320,6 +321,7 @@ public class GroupIdRecordManagerTest extends BaseTest  {
         
         //Test update with valid value
         try {
+            Thread.sleep(1000);
             g1.setGroupId("orcid-generated:other-valid-group-id");
             g1 = groupIdRecordManager.updateGroupIdRecord(g1.getPutCode(), g1);
             assertNotNull(g1);

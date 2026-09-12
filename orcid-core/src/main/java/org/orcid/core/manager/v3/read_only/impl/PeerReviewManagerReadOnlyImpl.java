@@ -109,8 +109,10 @@ public class PeerReviewManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl imple
                     // Set group name
                     try {
                         GroupIdRecordEntity groupIdRecord = groupIdRecordDao.findByGroupId(groupIdValue);
-                        s1.setName(groupIdRecord.getGroupName());
-                        s1.setGroupId(BigInteger.valueOf(groupIdRecord.getId()));
+                        if (groupIdRecord != null) {
+                            s1.setName(groupIdRecord.getGroupName());
+                            s1.setGroupId(BigInteger.valueOf(groupIdRecord.getId()));
+                        }
                     } catch(Exception e) {
                         LOGGER.warn("Unable to find groupIdRecord for group id value '{}'", groupIdValue);
                     }

@@ -66,6 +66,7 @@ public class GroupIdRecordManagerImpl extends GroupIdRecordManagerReadOnlyImpl i
             }
         }
         groupIdRecordDao.persist(entity);
+        groupIdRecordDao.flush();
         return jpaJaxbGroupIdRecordAdapter.toGroupIdRecord(entity);
     }
 
@@ -92,6 +93,7 @@ public class GroupIdRecordManagerImpl extends GroupIdRecordManagerReadOnlyImpl i
         updatedEntity.setClientSourceId(existingClientSourceId);
 
         updatedEntity = groupIdRecordDao.merge(updatedEntity);
+        groupIdRecordDao.flush();
         return jpaJaxbGroupIdRecordAdapter.toGroupIdRecord(updatedEntity);
     }
 
