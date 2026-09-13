@@ -121,22 +121,22 @@ public class JpaJaxbWorkAdapterTest extends MockSourceNameCache {
     }
 
     @Test
-    public void testToWorkEntity() throws JAXBException {
+    public void fromWorkToToWorkEntityTest() throws JAXBException {
         Work work = getWork(true);
         assertNotNull(work);
         WorkEntity workEntity = jpaJaxbWorkAdapter.toWorkEntity(work);
         assertNotNull(workEntity);
         assertNull(workEntity.getDateCreated());
         assertNull(workEntity.getLastModified());
-        assertEquals(org.orcid.jaxb.model.common_v2.Visibility.PRIVATE.name(), workEntity.getVisibility());
+        assertEquals(Visibility.PRIVATE.name(), workEntity.getVisibility());
         assertEquals(123, workEntity.getId().longValue());
         assertEquals("common:title", workEntity.getTitle());
         assertEquals("common:subtitle",workEntity.getSubtitle());
         assertEquals("common:translated-title", workEntity.getTranslatedTitle());
         assertEquals("en", workEntity.getTranslatedTitleLanguageCode());
         assertEquals("work:short-description", workEntity.getDescription());
-        assertEquals(org.orcid.jaxb.model.record_v2.CitationType.FORMATTED_UNSPECIFIED.name(), workEntity.getCitationType());
-        assertEquals(org.orcid.jaxb.model.record_v2.WorkType.ARTISTIC_PERFORMANCE.name(), workEntity.getWorkType());
+        assertEquals(CitationType.FORMATTED_UNSPECIFIED.name(), workEntity.getCitationType());
+        assertEquals(WorkType.ARTISTIC_PERFORMANCE.name(), workEntity.getWorkType());
         PublicationDateEntity publicationDateEntity = workEntity.getPublicationDate();
         assertNotNull(publicationDateEntity);
         assertEquals(1948, publicationDateEntity.getYear().intValue());
@@ -150,7 +150,8 @@ public class JpaJaxbWorkAdapterTest extends MockSourceNameCache {
                 "{\"contributor\":[{\"contributorOrcid\":{\"uri\":\"https://orcid.org/8888-8888-8888-8880\",\"path\":\"8888-8888-8888-8880\",\"host\":\"orcid.org\"},\"creditName\":{\"content\":\"work:credit-name\"},\"contributorEmail\":{\"value\":\"work@contributor.email\"},\"contributorAttributes\":{\"contributorSequence\":\"FIRST\",\"contributorRole\":\"AUTHOR\"}}]}",
                 workEntity.getContributorsJson());
         assertEquals("en", workEntity.getLanguageCode());
-        assertEquals(org.orcid.jaxb.model.common_v2.Iso3166Country.AF.name(), workEntity.getIso2Country());
+        assertEquals(Iso3166Country.AF.name(), workEntity.getIso2Country());
+        assertEquals("common:journal-title", workEntity.getJournalTitle());
         
         // Source
         assertNull(workEntity.getSourceId());        

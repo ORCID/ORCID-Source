@@ -43,7 +43,7 @@ public class JpaJaxbFundingAdapterTest {
     private JpaJaxbFundingAdapter jpaJaxbFundingAdapter;
 
     @Test
-    public void toFundingEntityTest() throws JAXBException {
+    public void fromFundingToFundingEntityTest() throws JAXBException {
         Funding f = getFunding(true);
         assertNotNull(f);
         assertNotNull(f.getCreatedDate().getValue());

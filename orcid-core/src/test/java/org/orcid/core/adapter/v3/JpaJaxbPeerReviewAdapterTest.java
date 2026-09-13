@@ -101,7 +101,7 @@ public class JpaJaxbPeerReviewAdapterTest extends MockSourceNameCache {
     }
    
     @Test
-    public void fromPeerReviewToPeerReviewEntity() throws JAXBException {
+    public void fromPeerReviewToPeerReviewEntityTest() throws JAXBException {
         PeerReview e = getPeerReview(true);        
         assertNotNull(e);
         
@@ -146,7 +146,6 @@ public class JpaJaxbPeerReviewAdapterTest extends MockSourceNameCache {
         assertEquals(
                 "{\"workExternalIdentifier\":[{\"relationship\":\"SELF\",\"url\":{\"value\":\"https://localsystem.org/1234\"},\"workExternalIdentifierType\":\"SOURCE_WORK_ID\",\"workExternalIdentifierId\":{\"content\":\"1234\"}}]}",
                 pe.getExternalIdentifiersJson());
-        
     }
     
     @Test

@@ -23,6 +23,7 @@ import org.orcid.core.adapter.JpaJaxbWorkAdapter;
 import org.orcid.core.adapter.MockSourceNameCache;
 import org.orcid.core.manager.impl.OrcidUrlManager;
 import org.orcid.jaxb.model.common_v2.Iso3166Country;
+import org.orcid.jaxb.model.common_v2.Subtitle;
 import org.orcid.jaxb.model.common_v2.Visibility;
 import org.orcid.jaxb.model.record.summary_v2.WorkSummary;
 import org.orcid.jaxb.model.record_v2.CitationType;
@@ -67,18 +68,21 @@ public class JpaJaxbWorkAdapterTest extends MockSourceNameCache {
     }
 
     @Test
-    public void testToWorkEntity() throws JAXBException {
+    public void fromWorkToToWorkEntityTest() throws JAXBException {
         Work work = getWork(true);
         assertNotNull(work);
+        // Set the subtitle as it is null in the example
+        Subtitle subtitle = new Subtitle();
+        subtitle.setContent("work:subtitle");
+        work.getWorkTitle().setSubtitle(subtitle);
         WorkEntity workEntity = jpaJaxbWorkAdapter.toWorkEntity(work);
         assertNotNull(workEntity);
         assertNull(workEntity.getDateCreated());
         assertNull(workEntity.getLastModified());
         assertEquals(Visibility.PRIVATE.name(), workEntity.getVisibility());
-        assertNotNull(workEntity);
         assertEquals(123, workEntity.getId().longValue());
         assertEquals("common:title", workEntity.getTitle());
-        assertTrue(PojoUtil.isEmpty(workEntity.getSubtitle()));
+        assertEquals("work:subtitle",workEntity.getSubtitle());
         assertEquals("common:translated-title", workEntity.getTranslatedTitle());
         assertEquals("en", workEntity.getTranslatedTitleLanguageCode());
         assertEquals("work:short-description", workEntity.getDescription());
@@ -98,6 +102,7 @@ public class JpaJaxbWorkAdapterTest extends MockSourceNameCache {
                 workEntity.getContributorsJson());
         assertEquals("en", workEntity.getLanguageCode());
         assertEquals(Iso3166Country.AF.name(), workEntity.getIso2Country());
+        assertEquals("work:journal-title", workEntity.getJournalTitle());
         
         // Source
         assertNull(workEntity.getSourceId());        
