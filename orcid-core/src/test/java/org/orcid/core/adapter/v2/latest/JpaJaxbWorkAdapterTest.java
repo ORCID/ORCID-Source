@@ -24,6 +24,7 @@ import org.orcid.core.adapter.MockSourceNameCache;
 import org.orcid.core.manager.impl.OrcidUrlManager;
 import org.orcid.jaxb.model.common_v2.Iso3166Country;
 import org.orcid.jaxb.model.common_v2.Subtitle;
+import org.orcid.jaxb.model.common_v2.Title;
 import org.orcid.jaxb.model.common_v2.Visibility;
 import org.orcid.jaxb.model.record.summary_v2.WorkSummary;
 import org.orcid.jaxb.model.record_v2.CitationType;
@@ -70,6 +71,8 @@ public class JpaJaxbWorkAdapterTest extends MockSourceNameCache {
     @Test
     public void fromWorkToToWorkEntityTest() throws JAXBException {
         Work work = getWork(true);
+        // Set the journal title as it is null in the example
+        work.setJournalTitle(new Title("work:journal-title"));
         assertNotNull(work);
         // Set the subtitle as it is null in the example
         Subtitle subtitle = new Subtitle();
