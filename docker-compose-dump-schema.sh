@@ -58,6 +58,33 @@ done
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
+# databasechangelog's rows, with the header that says why they are kept.
+# Without them a fresh database replays the whole changelog against the schema
+# 4-orcid-schema.sql just created, and fails on the first changeset that
+# creates a table without an onFail="MARK_RAN" precondition.
+dump_liquibase(){
+  local mode="$1" container="$2"
+  {
+    echo '\\c orcid'
+    echo
+    echo '--'
+    echo '-- Liquibase read this to decide what to apply. Empty means "nothing has'
+    echo '-- ever run", which makes it replay the changelog over the schema in'
+    echo '-- 4-orcid-schema.sql and fail. Regenerate both together.'
+    echo '--'
+    echo
+  } > "$LIQUIBASE_FILE"
+  if [ "$mode" = docker ]; then
+    docker exec "$container" pg_dump --data-only --table=public.databasechangelog \
+      -U "$user" "$database" >> "$LIQUIBASE_FILE"
+  else
+    pg_dump --data-only --table=public.databasechangelog \
+      -h "$host" -p "$port" -U "$user" "$database" >> "$LIQUIBASE_FILE"
+  fi
+  sed -i.bak -e '/^-- Dumped /d' -e '/^\\connect /d' "$LIQUIBASE_FILE"
+  rm -f "${LIQUIBASE_FILE}.bak"
+}
+
 if [ -n "$process_file" ]; then
   if [ ! -f "$process_file" ]; then
     echo "ERROR: File to process not found: ${process_file}" >&2
@@ -68,6 +95,11 @@ if [ -n "$process_file" ]; then
   echo "  Source: ${OUTPUT_FILE} (no database dump)"
 else
   OUTPUT_FILE="${SCRIPT_DIR}/docker-entrypoint-initdb.d/4-orcid-schema.sql"
+  # Liquibase's history goes in its own file, not appended to the schema: this
+  # one stays exactly what pg_dump --schema-only said, and the rows are legible
+  # as what they are. 9- so it loads after the table exists. Both come from the
+  # same database in the same run, or they disagree about what has been applied.
+  LIQUIBASE_FILE="${SCRIPT_DIR}/docker-entrypoint-initdb.d/9-liquibase.sql"
 
   echo "Generating schema dump..."
 
@@ -79,9 +111,11 @@ else
     fi
     echo "  Source: Docker container ${container:0:12}"
     docker exec "$container" pg_dump --schema-only --schema=public --no-comments -U "$user" "$database" > "$OUTPUT_FILE"
+    dump_liquibase docker "$container"
   else
     echo "  Source: ${host}:${port}/${database} (user: ${user})"
     pg_dump --schema-only --schema=public --no-comments -h "$host" -p "$port" -U "$user" "$database" > "$OUTPUT_FILE"
+    dump_liquibase host
   fi
 fi
 
@@ -104,6 +138,10 @@ rm -f "${OUTPUT_FILE}.bak"
 
 echo "  Output: ${OUTPUT_FILE}"
 echo "  Lines:  $(wc -l < "$OUTPUT_FILE")"
+if [ -n "${LIQUIBASE_FILE:-}" ] && [ -f "${LIQUIBASE_FILE}" ]; then
+  echo "  Output: ${LIQUIBASE_FILE}"
+  echo "  Lines:  $(wc -l < "$LIQUIBASE_FILE")"
+fi
 echo ""
 echo "Done. To apply, run:"
 echo "  ./docker-down.sh && ./docker-compose-cleandb.sh && ./docker-up.sh"
