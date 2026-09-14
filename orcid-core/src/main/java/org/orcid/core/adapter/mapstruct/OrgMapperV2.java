@@ -8,6 +8,7 @@ import org.orcid.jaxb.model.common_v2.Organization;
 import org.orcid.jaxb.model.common_v2.OrganizationAddress;
 import org.orcid.persistence.jpa.entities.OrgDisambiguatedEntity;
 import org.orcid.persistence.jpa.entities.OrgEntity;
+import org.orcid.pojo.ajaxForm.PojoUtil;
 
 /**
  * Replaces inline org field mappings for V2 MapStruct adapters.
@@ -49,7 +50,7 @@ public abstract class OrgMapperV2 {
             org.setAddress(address);
             address.setCity(source.getCity() != null && !source.getCity().isEmpty() ? source.getCity() : null);
             address.setRegion(source.getRegion() != null && !source.getRegion().isEmpty() ? source.getRegion() : null);
-            address.setCountry(source.getCountry() != null && !source.getCountry().isEmpty() ? Iso3166Country.fromValue(source.getCountry()) : null);
+            address.setCountry(!PojoUtil.isEmpty(source.getCountry()) ? Iso3166Country.fromValue(source.getCountry()) : null);
             org.setName(source.getName());
 
             if (source.getOrgDisambiguated() != null) {
