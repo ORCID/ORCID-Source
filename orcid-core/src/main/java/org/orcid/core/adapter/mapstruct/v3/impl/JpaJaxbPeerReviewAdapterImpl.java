@@ -100,8 +100,11 @@ public abstract class JpaJaxbPeerReviewAdapterImpl implements JpaJaxbPeerReviewA
         if (entity.getSubjectName() == null && entity.getSubjectTranslatedName() == null && entity.getSubjectTranslatedNameLanguageCode() == null) {
             peerReview.setSubjectName(null);
         }
+
         if(entity.getSubjectTranslatedName() == null && entity.getSubjectTranslatedNameLanguageCode() == null){
-            peerReview.getSubjectName().setTranslatedTitle(null);
+            if(peerReview.getSubjectName() != null) {
+                peerReview.getSubjectName().setTranslatedTitle(null);
+            }
         }
     }
 
