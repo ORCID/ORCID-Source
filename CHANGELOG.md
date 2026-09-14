@@ -1,3 +1,9 @@
+## v3.0.88 - 2026-09-14
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.0.87...v3.0.88)
+
+- [#7676](https://github.com/ORCID/ORCID-Source/pull/7676): PD-13369 carry Liquibase's history in the database seed
+
 ## v3.0.87 - 2026-09-14
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.0.86...v3.0.87)
