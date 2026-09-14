@@ -7,6 +7,7 @@ import org.orcid.jaxb.model.v3.release.common.DisambiguatedOrganization;
 import org.orcid.jaxb.model.v3.release.common.Organization;
 import org.orcid.jaxb.model.v3.release.common.OrganizationAddress;
 import org.orcid.persistence.jpa.entities.OrgEntity;
+import org.orcid.pojo.ajaxForm.PojoUtil;
 
 /**
  * Replaces the old Orika-only {@code org.orcid.core.adapter.v3.converter.OrgConverter}.
@@ -31,7 +32,7 @@ public abstract class OrgMapperV3 {
             org.setAddress(address);
             address.setCity(source.getCity() != null && !source.getCity().isEmpty() ? source.getCity() : null);
             address.setRegion(source.getRegion() != null && !source.getRegion().isEmpty() ? source.getRegion() : null);
-            address.setCountry(source.getCountry() != null && !source.getCountry().isEmpty() ? Iso3166Country.fromValue(source.getCountry()) : null);
+            address.setCountry(!PojoUtil.isEmpty(source.getCountry()) ? Iso3166Country.fromValue(source.getCountry()) : null);
             org.setName(source.getName());
 
             if (source.getOrgDisambiguated() != null) {

@@ -85,7 +85,7 @@ public class ProfileFundingManagerTest extends BaseTest {
         when(sourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ClientDetailsEntity(CLIENT_1_ID)));
         Funding funding = getFunding(null);
 
-        funding = profileFundingManager.createFunding(unclaimedOrcid, funding, true);
+        funding = profileFundingManager.createFunding(unclaimedOrcid, funding, true, List.of());
         funding = profileFundingManager.getFunding(unclaimedOrcid, funding.getPutCode());
 
         assertNotNull(funding);
@@ -98,7 +98,7 @@ public class ProfileFundingManagerTest extends BaseTest {
         when(sourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ClientDetailsEntity(CLIENT_1_ID)));
         Funding funding = getFunding(null);
 
-        funding = profileFundingManager.createFunding(claimedOrcid, funding, true);
+        funding = profileFundingManager.createFunding(claimedOrcid, funding, true, List.of());
         funding = profileFundingManager.getFunding(claimedOrcid, funding.getPutCode());
 
         assertNotNull(funding);
@@ -110,13 +110,13 @@ public class ProfileFundingManagerTest extends BaseTest {
     public void testAddMultipleModifiesIndexingStatus() {
         when(sourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ClientDetailsEntity(CLIENT_1_ID)));
         Funding f1 = getFunding("F1");
-        f1 = profileFundingManager.createFunding(claimedOrcid, f1, true);
+        f1 = profileFundingManager.createFunding(claimedOrcid, f1, true, List.of());
 
         Funding f2 = getFunding("F2");
-        f2 = profileFundingManager.createFunding(claimedOrcid, f2, true);
+        f2 = profileFundingManager.createFunding(claimedOrcid, f2, true, List.of(f1));
 
         Funding f3 = getFunding("F3");
-        f3 = profileFundingManager.createFunding(claimedOrcid, f3, true);
+        f3 = profileFundingManager.createFunding(claimedOrcid, f3, true, List.of(f1, f2));
 
         ProfileFundingEntity entity1 = profileFundingDao.find(f1.getPutCode());
         ProfileFundingEntity entity2 = profileFundingDao.find(f2.getPutCode());
@@ -138,7 +138,7 @@ public class ProfileFundingManagerTest extends BaseTest {
         when(sourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ClientDetailsEntity(CLIENT_1_ID)));
 
         Funding f1 = getFunding("fromUI-1");
-        f1 = profileFundingManager.createFunding(claimedOrcid, f1, false);
+        f1 = profileFundingManager.createFunding(claimedOrcid, f1, false, List.of());
         ProfileFundingEntity f = profileFundingDao.find(f1.getPutCode());
 
         assertNotNull(f);
@@ -150,7 +150,7 @@ public class ProfileFundingManagerTest extends BaseTest {
         when(sourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ClientDetailsEntity(CLIENT_1_ID)));
 
         Funding f1 = getFunding("fromAPI-1");
-        f1 = profileFundingManager.createFunding(claimedOrcid, f1, true);
+        f1 = profileFundingManager.createFunding(claimedOrcid, f1, true, List.of());
         ProfileFundingEntity f = profileFundingDao.find(f1.getPutCode());
 
         assertNotNull(f);
@@ -421,25 +421,30 @@ public class ProfileFundingManagerTest extends BaseTest {
         String orcid = "0000-0000-0000-0003";
         String clientId = "APP-5555555555555555";
         when(sourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ClientDetailsEntity(clientId)));
-        Funding funding = getFunding("3");
-        funding.setPutCode(12L);
-        funding.setVisibility(null);
-        Source s = new Source();
-        s.setSourceClientId(new SourceClientId(clientId));
-        funding.setSource(s);
-        // Add an extra identifier that matches one that already exists
+        // Add external identifier that matches one that already exists
         ExternalID dup = new ExternalID();
         dup.setRelationship(Relationship.SELF);
         dup.setType("grant_number");
         dup.setUrl(new Url("http://test.orcid.org/2.com"));
-        dup.setValue("2");        
-        
+        dup.setValue("2");
+
+        Funding existingFunding = getFunding("100000");
+        existingFunding.setPutCode(500L);
+        Source s = new Source();
+        s.setSourceClientId(new SourceClientId(clientId));
+        existingFunding.setSource(s);
+        existingFunding.getExternalIdentifiers().getExternalIdentifier().add(dup);
+
+        Funding funding = getFunding("3");
+        funding.setPutCode(12L);
+        funding.setVisibility(null);
+        funding.setSource(s);
         // Add the dup
         funding.getExternalIdentifiers().getExternalIdentifier().add(dup);
         
         // Updating funding from the API should not allow creating duplicates, it should fail with an OrcidDuplicatedActivityException
         try {
-            profileFundingManager.updateFunding(orcid, funding, true);
+            profileFundingManager.updateFunding(orcid, funding, true, List.of(existingFunding));
             fail();
         } catch(OrcidDuplicatedActivityException E) {
             
@@ -447,7 +452,7 @@ public class ProfileFundingManagerTest extends BaseTest {
         
         // Updating funding from the UI should allow creating duplicates
         try {
-            profileFundingManager.updateFunding(orcid, funding, false);            
+            profileFundingManager.updateFunding(orcid, funding, false, List.of(existingFunding));
         } catch(OrcidDuplicatedActivityException E) {
             fail();
         }        

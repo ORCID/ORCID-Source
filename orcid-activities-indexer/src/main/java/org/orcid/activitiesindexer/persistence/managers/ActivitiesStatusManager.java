@@ -24,7 +24,6 @@ import org.orcid.activitiesindexer.persistence.util.ActivityType;
 import org.orcid.activitiesindexer.persistence.util.Constants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
 
 @Component
 public class ActivitiesStatusManager {
@@ -32,7 +31,6 @@ public class ActivitiesStatusManager {
     @Autowired
     private ActivitiesStatusDao dao;
 
-    @Transactional
     public void markAsSent(String orcid, ActivityType type) {
         if (dao.exists(orcid)) {
             dao.success(orcid, type);
@@ -41,7 +39,6 @@ public class ActivitiesStatusManager {
         }
     }
 
-    @Transactional
     public void markAsFailed(String orcid, ActivityType type) {
         if (dao.exists(orcid)) {
             dao.updateFailCount(orcid, type);
@@ -50,12 +47,10 @@ public class ActivitiesStatusManager {
         }
     }
 
-    @Transactional
     public void markAllAsSent(String orcid) {
         dao.successAll(orcid);
     }
 
-    @Transactional
     public void markAllAsFailed(String orcid) {
         dao.failAll(orcid);
     }

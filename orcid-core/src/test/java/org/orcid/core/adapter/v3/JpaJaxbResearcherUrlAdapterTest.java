@@ -91,7 +91,7 @@ public class JpaJaxbResearcherUrlAdapterTest extends MockSourceNameCache {
     }
     
     @Test
-    public void testToResearcherUrlEntity() throws JAXBException {
+    public void researcherUrlToResearcherUrlEntityTest() throws JAXBException {
         ResearcherUrls rUrls = getResearcherUrls();
         assertNotNull(rUrls);
         assertNotNull(rUrls.getResearcherUrls());

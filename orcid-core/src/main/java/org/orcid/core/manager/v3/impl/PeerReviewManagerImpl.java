@@ -42,7 +42,6 @@ import org.orcid.persistence.jpa.entities.OrgEntity;
 import org.orcid.persistence.jpa.entities.PeerReviewEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.pojo.ajaxForm.PojoUtil;
-import org.springframework.transaction.annotation.Transactional;
 
 public class PeerReviewManagerImpl extends PeerReviewManagerReadOnlyImpl implements PeerReviewManager {
 
@@ -127,7 +126,6 @@ public class PeerReviewManagerImpl extends PeerReviewManagerReadOnlyImpl impleme
         DisplayIndexCalculatorHelper.setDisplayIndexOnNewEntity(entity, isApiRequest);
 
         peerReviewDao.persist(entity);
-        peerReviewDao.flush();
 
         notificationManager.sendAmendEmail(orcid, AmendedSection.PEER_REVIEW, createItemList(entity, ActionType.CREATE, peerReview.getExternalIdentifiers(), peerReview.getSubjectExternalIdentifier()));
         return jpaJaxbPeerReviewAdapter.toPeerReview(entity);
@@ -176,7 +174,6 @@ public class PeerReviewManagerImpl extends PeerReviewManagerReadOnlyImpl impleme
         }
         
         existingEntity = peerReviewDao.merge(existingEntity);
-        peerReviewDao.flush();
         notificationManager.sendAmendEmail(orcid, AmendedSection.PEER_REVIEW, createItemList(existingEntity, ActionType.UPDATE, peerReview.getExternalIdentifiers(), peerReview.getSubjectExternalIdentifier()));
         return jpaJaxbPeerReviewAdapter.toPeerReview(existingEntity);
     }
@@ -191,7 +188,6 @@ public class PeerReviewManagerImpl extends PeerReviewManagerReadOnlyImpl impleme
         return result;
     }
 
-    @Transactional
     private boolean deletePeerReview(PeerReviewEntity entity, String orcid) {
         return peerReviewDao.removePeerReview(orcid, entity.getId());
     }

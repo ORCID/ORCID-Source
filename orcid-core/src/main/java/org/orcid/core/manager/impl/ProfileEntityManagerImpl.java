@@ -5,7 +5,6 @@ import java.util.Date;
 import java.util.Map;
 
 import jakarta.annotation.Resource;
-import jakarta.transaction.Transactional;
 
 import org.apache.commons.lang3.StringUtils;
 import org.orcid.core.manager.EncryptionManager;
@@ -77,7 +76,6 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
      * @return true if the developer tools where enabled on the given record
      */
     @Override
-    @Transactional
     public boolean enableDeveloperTools(String orcid) {
         return transactionTemplate.execute(new TransactionCallback<Boolean>() {
             @Override
@@ -95,7 +93,6 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
      * @return true if the developer tools where disabled on the given record
      */
     @Override
-    @Transactional
     public boolean disableDeveloperTools(String orcid) {
         return transactionTemplate.execute(new TransactionCallback<Boolean>() {
             @Override
@@ -138,7 +135,6 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
     }
 
     @Override
-    @Transactional
     public boolean reviewProfile(String orcid) {
         return transactionTemplate.execute(new TransactionCallback<Boolean>() {
             @Override
@@ -149,7 +145,6 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
     }
 
     @Override
-    @Transactional
     public boolean unreviewProfile(String orcid) {
         return transactionTemplate.execute(new TransactionCallback<Boolean>() {
             @Override
@@ -174,7 +169,6 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
     }
 
     @Override
-    @Transactional
     public void updateLocale(String orcid, Locale locale) {
         transactionTemplate.execute(new TransactionCallback<Boolean>() {
             @Override
@@ -192,7 +186,6 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
     }
 
     @Override
-    @Transactional
     public void updatePassword(String orcid, String password) {
         transactionTemplate.execute(new TransactionCallback<Boolean>() {
             @Override
@@ -210,7 +203,6 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
     }
 
     @Override
-    @Transactional
     public void updateLastLoginDetails(String orcid, String ipAddress) {
         transactionTemplate.execute(new TransactionCallback<Boolean>() {
             @Override
@@ -233,7 +225,6 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
     }    
 
     @Override
-    @Transactional
     public void update2FASecret(String orcid, String secret) {
         transactionTemplate.execute(new TransactionCallback<Boolean>() {
             @Override

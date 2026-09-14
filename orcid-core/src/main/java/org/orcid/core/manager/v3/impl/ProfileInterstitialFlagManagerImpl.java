@@ -4,7 +4,6 @@ import org.orcid.core.manager.v3.ProfileInterstitialFlagManager;
 import org.orcid.core.manager.v3.read_only.impl.ProfileInterstitialFlagManagerReadOnlyImpl;
 import org.orcid.persistence.dao.ProfileInterstitialFlagDao;
 import org.orcid.persistence.jpa.entities.ProfileInterstitialFlagEntity;
-import org.springframework.transaction.annotation.Transactional;
 
 import jakarta.annotation.Resource;
 
@@ -17,7 +16,6 @@ public class ProfileInterstitialFlagManagerImpl extends ProfileInterstitialFlagM
     @Resource
     protected ProfileInterstitialFlagDao profileInterstitialFlagDao;
 
-    @Transactional
     public ProfileInterstitialFlagEntity addInterstitialFlag(String orcid, String interstitialName) {
         if (orcid == null || orcid.isBlank()) {
             throw new IllegalArgumentException("ORCID must not be empty");
