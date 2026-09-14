@@ -1,11 +1,14 @@
 package org.orcid.frontend.web.controllers;
 
 import static org.junit.Assert.*;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 
+import java.io.IOException;
+import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
@@ -27,6 +30,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.orcid.core.locale.LocaleManager;
+import org.orcid.frontend.web.util.StaticShellService;
 import org.orcid.core.manager.EncryptionManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.v3.read_only.ProfileEntityManagerReadOnly;
@@ -49,6 +53,8 @@ import org.orcid.pojo.ajaxForm.AffiliationGroupForm;
 import org.orcid.test.DBUnitTest;
 import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.orcid.test.TargetProxyHelper;
+import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.transaction.PlatformTransactionManager;
@@ -108,7 +114,12 @@ public class PublicProfileControllerTest extends DBUnitTest {
     
     @Mock
     private ProfileEntityManagerReadOnly profileEntityManagerReadOnlyMock;
-    
+
+    @Mock
+    private StaticShellService staticShellServiceMock;
+
+    private static final String SHELL_HTML = "<!doctype html><html><body>angular shell</body></html>";
+
     @Before
     public void before() {
         MockitoAnnotations.initMocks(this);        
@@ -227,19 +238,20 @@ public class PublicProfileControllerTest extends DBUnitTest {
     }
     
     @Test
-    public void testViewValidUser() {
-        ModelAndView mav = publicProfileController.publicPreview(request, response, 1, 0, 15, userOrcid);
-        assertEquals("public_profile_v3", mav.getViewName());
-        Map<String, Object> model = mav.getModel();
-        assertNotNull(model);
-        assertTrue(model.containsKey("isPublicProfile"));
-        assertTrue(model.containsKey("effectiveUserOrcid"));
-        assertEquals(userOrcid, model.get("effectiveUserOrcid"));
-        assertFalse(model.containsKey("noIndex"));
-    }       
+    public void testViewValidUser() throws IOException {
+        MockHttpServletResponse shellResponse = servePublicPage(userOrcid, null, "GET");
+        assertEquals(200, shellResponse.getStatus());
+        assertEquals(SHELL_HTML, shellResponse.getContentAsString());
+        assertNotNull(shellResponse.getHeader("Last-Modified"));
+        assertEquals("no-cache", shellResponse.getHeader("Cache-Control"));
+        assertTrue(shellResponse.getContentType().startsWith("text/html"));
+        assertNull(shellResponse.getHeader("ETag"));
+        // Last-Modified must be a valid RFC 1123 GMT date
+        DateTimeFormatter.RFC_1123_DATE_TIME.parse(shellResponse.getHeader("Last-Modified"));
+    }
     
     @Test
-    public void testViewClaimedUserWhenIsLongEnough() {
+    public void testViewClaimedUserWhenIsLongEnough() throws IOException {
         TransactionTemplate transactionTemplate = new TransactionTemplate(transactionManager);
 
         //Update the submission date so it is long enough
@@ -250,16 +262,11 @@ public class PublicProfileControllerTest extends DBUnitTest {
             profileDao.flush();
             return null;
         });
-        ModelAndView mav = publicProfileController.publicPreview(request, response, 1, 0, 15, unclaimedUserOrcid);        
-        assertEquals("public_profile_v3", mav.getViewName());
-        Map<String, Object> model = mav.getModel();
-        assertNotNull(model);
-        assertTrue(model.containsKey("isPublicProfile"));
-        assertTrue(model.containsKey("effectiveUserOrcid"));
-        assertEquals(unclaimedUserOrcid, model.get("effectiveUserOrcid"));
+        MockHttpServletResponse shellResponse = servePublicPage(unclaimedUserOrcid, null, "GET");
+        assertEquals(200, shellResponse.getStatus());
+        assertEquals(SHELL_HTML, shellResponse.getContentAsString());
+        assertNotNull(shellResponse.getHeader("Last-Modified"));
 
-        assertFalse(model.containsKey("noIndex"));
-        
         //Update the submission date so it is not long enough
         transactionTemplate.execute(status -> {
             ProfileEntity profileEntity = profileDao.find(unclaimedUserOrcid);
@@ -488,8 +495,94 @@ public class PublicProfileControllerTest extends DBUnitTest {
         when(profileEntityCacheManagerMock.retrieve(userOrcid)).thenReturn(allOk);        
     }
 
+    /**
+     * Drives publicPreview the way nginx will once /{orcid} HTML is routed back
+     * to orcid-web: real Spring mock request/response, mocked Angular shell.
+     */
+    private MockHttpServletResponse servePublicPage(String orcid, String ifModifiedSince, String method) throws IOException {
+        TargetProxyHelper.injectIntoProxy(publicProfileController, "staticShellService", staticShellServiceMock);
+        when(staticShellServiceMock.getShellHtml(any())).thenReturn(SHELL_HTML);
+        MockHttpServletRequest shellRequest = new MockHttpServletRequest(method, "/" + orcid);
+        if (ifModifiedSince != null) {
+            shellRequest.addHeader("If-Modified-Since", ifModifiedSince);
+        }
+        MockHttpServletResponse shellResponse = new MockHttpServletResponse();
+        ModelAndView mav = publicProfileController.publicPreview(shellRequest, shellResponse, 1, 0, 15, orcid);
+        assertNull(mav);
+        return shellResponse;
+    }
+
     @Test
-    public void publicPreview_getInvalidRecordGenerateRedirectTest() {
+    public void publicPreview_304WhenIfModifiedSinceIsFreshTest() throws IOException {
+        String lastModified = servePublicPage(userOrcid, null, "GET").getHeader("Last-Modified");
+        assertNotNull(lastModified);
+
+        // Replaying Last-Modified as If-Modified-Since must produce a 304 with no
+        // body, even though the DB value keeps millisecond precision
+        MockHttpServletResponse notModified = servePublicPage(userOrcid, lastModified, "GET");
+        assertEquals(304, notModified.getStatus());
+        assertEquals(0, notModified.getContentAsByteArray().length);
+        assertNotNull(notModified.getHeader("Last-Modified"));
+        assertEquals("no-cache", notModified.getHeader("Cache-Control"));
+
+        // A date in the future is also fresh
+        MockHttpServletResponse future = servePublicPage(userOrcid, "Mon, 01 Jan 2085 00:00:00 GMT", "GET");
+        assertEquals(304, future.getStatus());
+    }
+
+    @Test
+    public void publicPreview_200WhenIfModifiedSinceIsStaleTest() throws IOException {
+        MockHttpServletResponse stale = servePublicPage(userOrcid, "Thu, 01 Jan 1970 00:00:01 GMT", "GET");
+        assertEquals(200, stale.getStatus());
+        assertEquals(SHELL_HTML, stale.getContentAsString());
+        assertNotNull(stale.getHeader("Last-Modified"));
+    }
+
+    @Test
+    public void publicPreview_200WhenIfModifiedSinceIsMalformedTest() throws IOException {
+        MockHttpServletResponse malformed = servePublicPage(userOrcid, "not-a-date", "GET");
+        assertEquals(200, malformed.getStatus());
+        assertEquals(SHELL_HTML, malformed.getContentAsString());
+    }
+
+    @Test
+    public void publicPreview_headRequestTest() throws IOException {
+        MockHttpServletResponse head = servePublicPage(userOrcid, null, "HEAD");
+        assertEquals(200, head.getStatus());
+        assertEquals(0, head.getContentAsByteArray().length);
+        assertNotNull(head.getHeader("Last-Modified"));
+        assertEquals(SHELL_HTML.getBytes(java.nio.charset.StandardCharsets.UTF_8).length, head.getContentLength());
+
+        MockHttpServletResponse headNotModified = servePublicPage(userOrcid, head.getHeader("Last-Modified"), "HEAD");
+        assertEquals(304, headNotModified.getStatus());
+        assertEquals(0, headNotModified.getContentAsByteArray().length);
+    }
+
+    @Test
+    public void publicPreview_lockedAndDeprecatedRecordsStillGetValidatorTest() throws IOException {
+        for (String orcid : Arrays.asList(lockedUserOrcid, deprecatedUserOrcid)) {
+            MockHttpServletResponse ok = servePublicPage(orcid, null, "GET");
+            assertEquals(200, ok.getStatus());
+            String lastModified = ok.getHeader("Last-Modified");
+            assertNotNull(lastModified);
+            MockHttpServletResponse notModified = servePublicPage(orcid, lastModified, "GET");
+            assertEquals(304, notModified.getStatus());
+        }
+    }
+
+    @Test
+    public void publicPreview_printPathStillRendersPrintViewTest() throws IOException {
+        MockHttpServletRequest printRequest = new MockHttpServletRequest("GET", "/" + userOrcid + "/print");
+        MockHttpServletResponse printResponse = new MockHttpServletResponse();
+        ModelAndView mav = publicProfileController.publicPreview(printRequest, printResponse, 1, 0, 15, userOrcid);
+        assertNotNull(mav);
+        assertEquals("print_public_record", mav.getViewName());
+        assertNull(printResponse.getHeader("Last-Modified"));
+        assertNull(printResponse.getHeader("Cache-Control"));
+    }
+
+    @Test
+    public void publicPreview_getInvalidRecordGenerateRedirectTest() throws IOException {
         String a = "0000-0000-0000-0000";
         String b = "0000-0000-0000-0000-0000";
         String c = " 0000-0000-0000-0000";
