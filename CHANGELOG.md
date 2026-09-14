@@ -1,3 +1,9 @@
+## v3.0.89 - 2026-09-14
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.0.88...v3.0.89)
+
+- [#7714](https://github.com/ORCID/ORCID-Source/pull/7714): Fix mapping error when translated title code is null
+
 ## v3.0.88 - 2026-09-14
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.0.87...v3.0.88)
