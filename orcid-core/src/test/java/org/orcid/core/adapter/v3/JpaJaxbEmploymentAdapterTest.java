@@ -103,7 +103,7 @@ public class JpaJaxbEmploymentAdapterTest extends MockSourceNameCache {
     }
 
     @Test
-    public void testToOrgAffiliationRelationEntity() throws JAXBException {
+    public void fromEmploymentToOrgAffiliationRelationEntityTest() throws JAXBException {
         Employment e = getEmployment(true);
         assertNotNull(e);
         OrgAffiliationRelationEntity oar = jpaJaxbEmploymentAdapter.toOrgAffiliationRelationEntity(e);
@@ -124,11 +124,13 @@ public class JpaJaxbEmploymentAdapterTest extends MockSourceNameCache {
         assertEquals(Integer.valueOf(2), oar.getEndDate().getMonth());
         assertEquals(Integer.valueOf(1948), oar.getEndDate().getYear());
 
+        assertEquals("http://tempuri.org", oar.getUrl());
+        assertEquals("{\"externalIdentifier\":[{\"type\":\"GRANT_NUMBER\",\"value\":\"external-identifier-value\",\"url\":{\"value\":\"http://tempuri.org\"},\"relationship\":\"SELF\"},{\"type\":\"GRANT_NUMBER\",\"value\":\"external-identifier-value2\",\"url\":{\"value\":\"http://tempuri.org/2\"},\"relationship\":\"SELF\"}]}", oar.getExternalIdentifiersJson());
+
         // Source
         assertNull(oar.getSourceId());
         assertNull(oar.getClientSourceId());
         assertNull(oar.getElementSourceId());
-        assertEquals("http://tempuri.org", oar.getUrl());
     }
 
     @Test
