@@ -30,7 +30,7 @@ public class ProfileFundingDaoImpl extends GenericDaoImpl<ProfileFundingEntity, 
      * @return a profile funding entity that have the give id and belongs to the given user 
      * */
     @Override
-    @Transactional(readOnly = true)
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     public ProfileFundingEntity getProfileFunding(String userOrcid, Long profileFundingId) {
         Query query = entityManager.createQuery("from ProfileFundingEntity where orcid=:userOrcid and id=:profileFundingId");
         query.setParameter("userOrcid", userOrcid);
@@ -137,7 +137,7 @@ public class ProfileFundingDaoImpl extends GenericDaoImpl<ProfileFundingEntity, 
      * @return the ProfileFundingEntity object
      * */
     @Override
-    @Transactional(readOnly = true)
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     public ProfileFundingEntity getProfileFundingEntity(String orgId, String clientOrcid) {
         Query query = entityManager.createQuery("from ProfileFundingEntity where orcid=:clientOrcid and org.id=:orgId");
         query.setParameter("clientOrcid", clientOrcid);
@@ -154,7 +154,7 @@ public class ProfileFundingDaoImpl extends GenericDaoImpl<ProfileFundingEntity, 
      * @return the ProfileFundingEntity object
      * */
     @Override
-    @Transactional(readOnly = true)
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     public ProfileFundingEntity getProfileFundingEntity(Long profileFundingId) {
         Query query = entityManager.createQuery("from ProfileFundingEntity where id=:id");
         query.setParameter("id", profileFundingId);
@@ -166,7 +166,7 @@ public class ProfileFundingDaoImpl extends GenericDaoImpl<ProfileFundingEntity, 
      * 
      * @return a list of all profile fundings where the amount is not null
      * */
-    @Transactional(readOnly = true)
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     public List<ProfileFundingEntity> getProfileFundingWithAmount() {
         TypedQuery<ProfileFundingEntity> query = entityManager.createQuery("from ProfileFundingEntity where amount is not null and numeric_amount is null", ProfileFundingEntity.class);
         return query.getResultList();
@@ -218,7 +218,7 @@ public class ProfileFundingDaoImpl extends GenericDaoImpl<ProfileFundingEntity, 
     }
 
     @Override
-    @Transactional(readOnly = true)
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     @SuppressWarnings("unchecked")    
     public List<BigInteger> findFundingNeedingExternalIdentifiersMigration(int chunkSize) {
         Query query = entityManager.createNativeQuery("SELECT id FROM profile_funding WHERE id IN (SELECT profile_funding_id FROM funding_external_identifier) AND external_identifiers_json IS NULL LIMIT :chunkSize");
@@ -249,7 +249,7 @@ public class ProfileFundingDaoImpl extends GenericDaoImpl<ProfileFundingEntity, 
     }
     
     @Override
-    @Transactional(readOnly = true)
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     @Cacheable(value = "fundings", key = "#userOrcid.concat('-').concat(#lastModified)")
     public List<ProfileFundingEntity> getByUser(String userOrcid, long lastModified) {
         TypedQuery<ProfileFundingEntity> query = entityManager.createQuery("from ProfileFundingEntity where orcid=:userOrcid order by displayIndex desc, dateCreated asc", ProfileFundingEntity.class);
@@ -264,7 +264,7 @@ public class ProfileFundingDaoImpl extends GenericDaoImpl<ProfileFundingEntity, 
      * @return a list of funding ids with old ext ids          
      * */
     @Override
-    @Transactional(readOnly = true)
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     @SuppressWarnings("unchecked")   
     public List<BigInteger> getFundingWithOldExtIds(long limit) {
         Query query = entityManager.createNativeQuery("SELECT distinct(id) FROM (SELECT id, json_array_elements(json_extract_path(external_identifiers_json, 'fundingExternalIdentifier')) AS j FROM profile_funding WHERE external_identifiers_json is not null limit :limit) AS a WHERE (j->'relationship') is null;");
@@ -290,7 +290,7 @@ public class ProfileFundingDaoImpl extends GenericDaoImpl<ProfileFundingEntity, 
     }
     
     @Override
-    @Transactional(readOnly = true)
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     public Boolean hasPublicFunding(String orcid) {
         Query query = entityManager.createNativeQuery("SELECT count(*) FROM profile_funding WHERE orcid=:orcid AND visibility='PUBLIC'");
         query.setParameter("orcid", orcid);
@@ -300,7 +300,7 @@ public class ProfileFundingDaoImpl extends GenericDaoImpl<ProfileFundingEntity, 
 
     @SuppressWarnings("unchecked")
     @Override
-    @Transactional(readOnly = true)
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     public List<BigInteger> getIdsForClientSourceCorrection(int limit, List<String> nonPublicClients) {
         Query query = entityManager.createNativeQuery("SELECT id FROM profile_funding WHERE client_source_id = source_id AND client_source_id IN :nonPublicClients");
         query.setParameter("nonPublicClients", nonPublicClients);
@@ -318,7 +318,7 @@ public class ProfileFundingDaoImpl extends GenericDaoImpl<ProfileFundingEntity, 
 
     @SuppressWarnings("unchecked")
     @Override
-    @Transactional(readOnly = true)
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     public List<BigInteger> getIdsForUserSourceCorrection(int limit, List<String> publicClients) {
         Query query = entityManager.createNativeQuery("SELECT id FROM profile_funding WHERE client_source_id = source_id AND client_source_id IN :publicClients");
         query.setParameter("publicClients", publicClients);
@@ -337,7 +337,7 @@ public class ProfileFundingDaoImpl extends GenericDaoImpl<ProfileFundingEntity, 
 
     @SuppressWarnings("unchecked")
     @Override
-    @Transactional(readOnly = true)
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     public List<BigInteger> getIdsForUserOBOUpdate(String clientDetailsId, int max) {
         Query query = entityManager.createNativeQuery("SELECT id FROM profile_funding WHERE client_source_id = :clientDetailsId AND assertion_origin_source_id IS NULL");
         query.setParameter("clientDetailsId", clientDetailsId);
@@ -355,7 +355,7 @@ public class ProfileFundingDaoImpl extends GenericDaoImpl<ProfileFundingEntity, 
 
     @SuppressWarnings("unchecked")
     @Override
-    @Transactional(readOnly = true)
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     public List<ProfileFundingEntity> getFundingsReferencingOrgs(List<Long> orgIds) {
         Query query = entityManager.createQuery("from ProfileFundingEntity where org.id in (:orgIds)");
         query.setParameter("orgIds", orgIds);
@@ -364,7 +364,7 @@ public class ProfileFundingDaoImpl extends GenericDaoImpl<ProfileFundingEntity, 
 
     @SuppressWarnings("unchecked")
     @Override
-    @Transactional(readOnly = true)
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     public List<BigInteger> getIdsForUserOBORecords(String clientDetailsId, int max) {
         Query query = entityManager.createNativeQuery("SELECT id FROM profile_funding WHERE client_source_id = :clientDetailsId AND assertion_origin_source_id IS NOT NULL");
         query.setParameter("clientDetailsId", clientDetailsId);
@@ -382,7 +382,7 @@ public class ProfileFundingDaoImpl extends GenericDaoImpl<ProfileFundingEntity, 
 
     @SuppressWarnings("unchecked")
     @Override
-    @Transactional(readOnly = true)
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     public List<BigInteger> getIdsForUserOBORecords(int max) {
         Query query = entityManager.createNativeQuery("SELECT id FROM profile_funding WHERE assertion_origin_source_id IS NOT NULL");
         query.setMaxResults(max);
@@ -391,7 +391,7 @@ public class ProfileFundingDaoImpl extends GenericDaoImpl<ProfileFundingEntity, 
 
     @SuppressWarnings("unchecked")
     @Override
-    @Transactional(readOnly = true)
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     public List<BigInteger> getIdsOfFundingsReferencingClientProfiles(int max, List<String> clientProfileOrcidIds) {
         Query query = entityManager.createNativeQuery("SELECT id FROM profile_funding WHERE source_id IN :ids");
         query.setParameter("ids", clientProfileOrcidIds);

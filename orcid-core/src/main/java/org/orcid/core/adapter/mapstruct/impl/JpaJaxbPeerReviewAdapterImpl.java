@@ -3,6 +3,7 @@ package org.orcid.core.adapter.mapstruct.impl;
 import java.util.Collection;
 import java.util.List;
 
+import org.mapstruct.AfterMapping;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
@@ -102,6 +103,16 @@ public abstract class JpaJaxbPeerReviewAdapterImpl implements JpaJaxbPeerReviewA
     @Mapping(source = "org", target = "organization")
     @Mapping(source = ".", target = "source")
     public abstract PeerReview toPeerReview(PeerReviewEntity entity);
+
+    @AfterMapping
+    protected void removeEmptyOptionalSubjectFields(PeerReviewEntity entity, @MappingTarget PeerReview peerReview) {
+        if (entity.getSubjectContainerName() == null) {
+            peerReview.setSubjectContainerName(null);
+        }
+        if (entity.getSubjectName() == null && entity.getSubjectTranslatedName() == null && entity.getSubjectTranslatedNameLanguageCode() == null) {
+            peerReview.setSubjectName(null);
+        }
+    }
 
     @Override
     @Mapping(source = "id", target = "putCode")

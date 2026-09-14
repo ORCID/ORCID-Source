@@ -19,7 +19,7 @@ public class SalesForceConnectionDaoImpl extends GenericDaoImpl<SalesForceConnec
     }
 
     @Override
-    @Transactional(readOnly = true)
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     public SalesForceConnectionEntity findByOrcidAndAccountId(String orcid, String accountId) {
         TypedQuery<SalesForceConnectionEntity> query = entityManager
                 .createQuery("from SalesForceConnectionEntity where orcid = :orcid and salesForceAccountId = :accountId", SalesForceConnectionEntity.class);
@@ -30,7 +30,7 @@ public class SalesForceConnectionDaoImpl extends GenericDaoImpl<SalesForceConnec
     }
 
     @Override
-    @Transactional(readOnly = true)
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     public List<SalesForceConnectionEntity> findByOrcid(String orcid) {
         TypedQuery<SalesForceConnectionEntity> query = entityManager.createQuery("from SalesForceConnectionEntity where orcid = :orcid",
                 SalesForceConnectionEntity.class);
@@ -39,7 +39,7 @@ public class SalesForceConnectionDaoImpl extends GenericDaoImpl<SalesForceConnec
     }
 
     @Override
-    @Transactional(readOnly = true)
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     public List<SalesForceConnectionEntity> findByAccountId(String accountId) {
         TypedQuery<SalesForceConnectionEntity> query = entityManager.createQuery("from SalesForceConnectionEntity where salesForceAccountId = :salesForceAccountId",
                 SalesForceConnectionEntity.class);

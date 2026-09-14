@@ -11,13 +11,13 @@ import org.springframework.transaction.annotation.Transactional;
  */
 public interface SpamDao extends GenericDao<SpamEntity, Long>{
 
-    @Transactional(readOnly = true)
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     boolean exists(String orcid);
     
     @Transactional(propagation = Propagation.REQUIRED)
     boolean removeSpam(String orcid);
     
-    @Transactional(readOnly = true)
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     SpamEntity getSpam(String orcid);       
     
     @Transactional(propagation = Propagation.REQUIRED)

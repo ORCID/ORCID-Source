@@ -5,18 +5,14 @@ import java.util.List;
 
 import java.math.BigDecimal;
 
+import org.mapstruct.AfterMapping;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 import org.mapstruct.Named;
 
 import org.orcid.core.adapter.JpaJaxbFundingAdapter;
-import org.orcid.core.adapter.mapstruct.FuzzyDateMapperV2;
-import org.orcid.core.adapter.mapstruct.SourceMapperV2;
-import org.orcid.core.adapter.mapstruct.UrlMapperV2;
-import org.orcid.core.adapter.mapstruct.VisibilityMapperV2;
-import org.orcid.core.adapter.mapstruct.JSONFundingExternalIdentifiersMapperV2;
-import org.orcid.core.adapter.mapstruct.FundingContributorsMapperV2;
+import org.orcid.core.adapter.mapstruct.*;
 
 import org.orcid.jaxb.model.record.summary_v2.FundingSummary;
 import org.orcid.jaxb.model.record_v2.Funding;
@@ -28,6 +24,7 @@ import org.orcid.persistence.jpa.entities.ProfileFundingEntity;
         SourceMapperV2.class, 
         VisibilityMapperV2.class, 
         FuzzyDateMapperV2.class,
+        OrgMapperV2.class,
         UrlMapperV2.class,
         JSONFundingExternalIdentifiersMapperV2.class, 
         FundingContributorsMapperV2.class
@@ -81,15 +78,22 @@ public abstract class JpaJaxbFundingAdapterImpl implements JpaJaxbFundingAdapter
     @Mapping(source = "externalIdentifiersJson", target = "externalIdentifiers")
     @Mapping(source = "contributorsJson", target = "contributors")
     // Nested org mappings
-    @Mapping(source = "org.name", target = "organization.name")
-    @Mapping(source = "org.city", target = "organization.address.city")
-    @Mapping(source = "org.region", target = "organization.address.region")
-    @Mapping(source = "org.country", target = "organization.address.country")
-    @Mapping(source = "org.orgDisambiguated.sourceId", target = "organization.disambiguatedOrganization.disambiguatedOrganizationIdentifier")
-    @Mapping(source = "org.orgDisambiguated.sourceType", target = "organization.disambiguatedOrganization.disambiguationSource")
-    @Mapping(source = "org.orgDisambiguated.id", target = "organization.disambiguatedOrganization.id")
+    @Mapping(source = "org", target = "organization")
     @Mapping(source = ".", target = "source")
     public abstract Funding toFunding(ProfileFundingEntity profileFundingEntity);
+
+    @AfterMapping
+    protected void afterToFunding(ProfileFundingEntity entity, @MappingTarget Funding funding) {
+        if (funding.getTitle() != null && funding.getTitle().getTranslatedTitle() != null && funding.getTitle().getTranslatedTitle().getContent() == null) {
+            funding.getTitle().setTranslatedTitle(null);
+        }
+        if (funding.getOrganizationDefinedType() != null && (funding.getOrganizationDefinedType().getContent() == null || funding.getOrganizationDefinedType().getContent().trim().isEmpty())) {
+            funding.setOrganizationDefinedType(null);
+        }
+        if (funding.getAmount() != null && funding.getAmount().getContent() == null && funding.getAmount().getCurrencyCode() == null) {
+            funding.setAmount(null);
+        }
+    }
 
     @Override
     @Mapping(source = "id", target = "putCode")
@@ -100,17 +104,16 @@ public abstract class JpaJaxbFundingAdapterImpl implements JpaJaxbFundingAdapter
     @Mapping(source = "translatedTitleLanguageCode", target = "title.translatedTitle.languageCode")
     @Mapping(source = "externalIdentifiersJson", target = "externalIdentifiers")
     // Nested org mappings
-    @Mapping(source = "org.name", target = "organization.name")
-    @Mapping(source = "org.city", target = "organization.address.city")
-    @Mapping(source = "org.region", target = "organization.address.region")
-    @Mapping(source = "org.country", target = "organization.address.country")
-    @Mapping(source = "org.orgDisambiguated.sourceId", target = "organization.disambiguatedOrganization.disambiguatedOrganizationIdentifier")
-    @Mapping(source = "org.orgDisambiguated.sourceType", target = "organization.disambiguatedOrganization.disambiguationSource")
-    @Mapping(source = "org.orgDisambiguated.id", target = "organization.disambiguatedOrganization.id")
+    @Mapping(source = "org", target = "organization")
     @Mapping(source = ".", target = "source")
     public abstract FundingSummary toFundingSummary(ProfileFundingEntity profileFundingEntity);
 
-
+    @AfterMapping
+    protected void afterToFundingSummary(ProfileFundingEntity entity, @MappingTarget FundingSummary fundingSummary) {
+        if (fundingSummary.getTitle() != null && fundingSummary.getTitle().getTranslatedTitle() != null && fundingSummary.getTitle().getTranslatedTitle().getContent() == null) {
+            fundingSummary.getTitle().setTranslatedTitle(null);
+        }
+    }
 
     @Override
     public abstract List<Funding> toFunding(Collection<ProfileFundingEntity> fundingEntities);

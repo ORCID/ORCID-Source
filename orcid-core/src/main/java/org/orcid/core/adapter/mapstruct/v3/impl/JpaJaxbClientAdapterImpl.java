@@ -118,6 +118,11 @@ public abstract class JpaJaxbClientAdapterImpl implements JpaJaxbClientAdapter {
     @Mapping(target = "clientType", ignore = true) // Restored back to ignore!
     @Mapping(target = "groupProfileId", ignore = true) // Restored back to ignore!
     @Mapping(target = "emailAccessReason", ignore = true) 
+    // Config field, owned by ClientManagerImpl.create under its addConfigValues guard, which
+    // only the staff path reaches. Without this ignore MapStruct matches it by name and writes
+    // the request's own value into the new row, so a create can switch on a setting the guard
+    // exists to keep out. The update overload below has carried this ignore all along.
+    @Mapping(target = "userOBOEnabled", ignore = true)
     public abstract ClientDetailsEntity toEntity(Client client);
 
     // ========================================================================

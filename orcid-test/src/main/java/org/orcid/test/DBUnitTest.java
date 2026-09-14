@@ -24,7 +24,7 @@ import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.cache.jcache.JCacheCacheManager;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.GenericXmlApplicationContext;
-import org.springframework.jdbc.datasource.DriverManagerDataSource;
+import javax.sql.DataSource;
 import org.springframework.test.context.ActiveProfiles;
 
 /**
@@ -87,6 +87,9 @@ public class DBUnitTest {
         for (String flatXMLDataFile : flatXMLDataFiles) {
             DatabaseOperation.INSERT.execute(connection, getDataSet(flatXMLDataFile));
         }
+        if (!connection.getConnection().getAutoCommit()) {
+            connection.getConnection().commit();
+        }
         connection.close();
     }
 
@@ -94,6 +97,9 @@ public class DBUnitTest {
         IDatabaseConnection connection = getDBConnection();
         cleanClientSourcedProfiles(connection);
         cleanAll(connection);
+        if (!connection.getConnection().getAutoCommit()) {
+            connection.getConnection().commit();
+        }
         connection.close();
     }
 
@@ -197,7 +203,8 @@ public class DBUnitTest {
     }
 
     public static IDatabaseConnection getDBConnection() throws Exception {
-        DriverManagerDataSource dataSource = (DriverManagerDataSource) context.getBean("simpleDataSource");
+        String dataSourceBeanName = context.getEnvironment().getProperty("org.orcid.persistence.db.dataSource", "pooledDataSource");
+        DataSource dataSource = (DataSource) context.getBean(dataSourceBeanName);
         Connection jdbcConnection = dataSource.getConnection();
         IDatabaseConnection connection = new DatabaseConnection(jdbcConnection);
         connection.getConfig().setProperty(DatabaseConfig.PROPERTY_DATATYPE_FACTORY, new CustomDataTypeFactory());

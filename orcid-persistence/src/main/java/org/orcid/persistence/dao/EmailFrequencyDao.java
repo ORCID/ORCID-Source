@@ -13,7 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
  * 
  */
 public interface EmailFrequencyDao extends GenericDao<EmailFrequencyEntity, String> {
-    @Transactional(readOnly = true)
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     EmailFrequencyEntity findByOrcid(String orcid);
     
     @Transactional(propagation = Propagation.REQUIRED)

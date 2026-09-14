@@ -33,10 +33,7 @@ public class SourceManagerImpl implements SourceManager {
     @Autowired
     @Lazy
     private ClientDetailsManager clientDetailsManager;   
-    
-    @Autowired
-    private OrcidOauth2TokenDetailDao orcidOauth2TokenDetailDao;
-    
+
     @Autowired
     @Lazy
     private SourceNameCacheManager sourceNameCacheManager;

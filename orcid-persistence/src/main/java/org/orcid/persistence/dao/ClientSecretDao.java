@@ -34,7 +34,7 @@ public interface ClientSecretDao extends GenericDao<ClientSecretEntity, ClientSe
      * @param clientId
      * @return a list of all client secrets associated with a client
      * */
-    @Transactional(readOnly = true)
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     List<ClientSecretEntity> getClientSecretsByClientId(String clientId);
 
     /**
@@ -61,7 +61,7 @@ public interface ClientSecretDao extends GenericDao<ClientSecretEntity, ClientSe
      * @param limit the amount of results fetched by the query
      * @return A list of client secrets with non-primary keys
      * */
-    @Transactional(readOnly = true)
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     List<ClientSecretEntity> getNonPrimaryKeys(Integer limit);
     
     /**

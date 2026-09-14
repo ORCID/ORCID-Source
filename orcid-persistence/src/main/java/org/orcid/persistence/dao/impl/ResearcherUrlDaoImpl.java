@@ -30,7 +30,7 @@ public class ResearcherUrlDaoImpl extends GenericDaoImpl<ResearcherUrlEntity, Lo
      * */
     @Override
     @SuppressWarnings("unchecked")
-    @Transactional(readOnly = true)
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     @Cacheable(value = "researcher-urls", key = "#orcid.concat('-').concat(#lastModified)")
     public List<ResearcherUrlEntity> getResearcherUrls(String orcid, long lastModified) {
         Query query = entityManager.createQuery("FROM ResearcherUrlEntity WHERE orcid = :orcid order by displayIndex desc, dateCreated asc");
@@ -39,7 +39,7 @@ public class ResearcherUrlDaoImpl extends GenericDaoImpl<ResearcherUrlEntity, Lo
     }
     
     @Override
-    @Transactional(readOnly = true)
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     @Cacheable(value = "public-researcher-urls", key = "#orcid.concat('-').concat(#lastModified)")
     public List<ResearcherUrlEntity> getPublicResearcherUrls(String orcid, long lastModified) {
         return getResearcherUrls(orcid, PUBLIC_VISIBILITY);
@@ -54,7 +54,7 @@ public class ResearcherUrlDaoImpl extends GenericDaoImpl<ResearcherUrlEntity, Lo
      * */
     @Override
     @SuppressWarnings("unchecked")
-    @Transactional(readOnly = true)
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     public List<ResearcherUrlEntity> getResearcherUrls(String orcid, String visibility) {
         Query query = entityManager.createQuery("FROM ResearcherUrlEntity WHERE orcid = :orcid AND visibility = :visibility order by displayIndex desc, dateCreated asc");
         query.setParameter("orcid", orcid);
@@ -83,7 +83,7 @@ public class ResearcherUrlDaoImpl extends GenericDaoImpl<ResearcherUrlEntity, Lo
      * @return the ResearcherUrlEntity associated with the parameter id
      * */
     @Override
-    @Transactional(readOnly = true)
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     public ResearcherUrlEntity getResearcherUrl(String orcid, Long id) {
         TypedQuery<ResearcherUrlEntity> query = entityManager.createQuery("FROM ResearcherUrlEntity WHERE id = :id AND orcid = :orcid", ResearcherUrlEntity.class);
         query.setParameter("id", id);
@@ -119,7 +119,7 @@ public class ResearcherUrlDaoImpl extends GenericDaoImpl<ResearcherUrlEntity, Lo
 
     @SuppressWarnings("unchecked")
     @Override
-    @Transactional(readOnly = true)
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     public List<BigInteger> getIdsForClientSourceCorrection(int limit, List<String> nonPublicClients) {
         Query query = entityManager.createNativeQuery("SELECT id FROM researcher_url WHERE client_source_id = source_id AND client_source_id IN :nonPublicClients");
         query.setParameter("nonPublicClients", nonPublicClients);
@@ -137,7 +137,7 @@ public class ResearcherUrlDaoImpl extends GenericDaoImpl<ResearcherUrlEntity, Lo
 
     @SuppressWarnings("unchecked")
     @Override
-    @Transactional(readOnly = true)
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     public List<BigInteger> getIdsForUserSourceCorrection(int limit, List<String> publicClients) {
         Query query = entityManager.createNativeQuery("SELECT id FROM researcher_url WHERE client_source_id = source_id AND client_source_id IN :publicClients");
         query.setParameter("publicClients", publicClients);
@@ -155,7 +155,7 @@ public class ResearcherUrlDaoImpl extends GenericDaoImpl<ResearcherUrlEntity, Lo
 
     @SuppressWarnings("unchecked")
     @Override
-    @Transactional(readOnly = true)
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     public List<BigInteger> getIdsForUserOBOUpdate(String clientDetailsId, int max) {
         Query query = entityManager.createNativeQuery("SELECT id FROM researcher_url WHERE client_source_id = :clientDetailsId AND assertion_origin_source_id IS NULL");
         query.setParameter("clientDetailsId", clientDetailsId);
@@ -173,7 +173,7 @@ public class ResearcherUrlDaoImpl extends GenericDaoImpl<ResearcherUrlEntity, Lo
 
     @SuppressWarnings("unchecked")
     @Override
-    @Transactional(readOnly = true)
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     public List<BigInteger> getIdsForUserOBORecords(String clientDetailsId, int max) {
         Query query = entityManager.createNativeQuery("SELECT id FROM researcher_url WHERE client_source_id = :clientDetailsId AND assertion_origin_source_id IS NOT NULL");
         query.setParameter("clientDetailsId", clientDetailsId);
@@ -191,7 +191,7 @@ public class ResearcherUrlDaoImpl extends GenericDaoImpl<ResearcherUrlEntity, Lo
 
     @SuppressWarnings("unchecked")
     @Override
-    @Transactional(readOnly = true)
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     public List<BigInteger> getIdsForUserOBORecords(int max) {
         Query query = entityManager.createNativeQuery("SELECT id FROM researcher_url WHERE assertion_origin_source_id IS NOT NULL");
         query.setMaxResults(max);
@@ -200,7 +200,7 @@ public class ResearcherUrlDaoImpl extends GenericDaoImpl<ResearcherUrlEntity, Lo
 
     @SuppressWarnings("unchecked")
     @Override
-    @Transactional(readOnly = true)
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     public List<BigInteger> getIdsOfResearcherUrlsReferencingClientProfiles(int max, List<String> clientProfileOrcidIds) {
         Query query = entityManager.createNativeQuery("SELECT id FROM researcher_url WHERE source_id IN :ids");
         query.setParameter("ids", clientProfileOrcidIds);

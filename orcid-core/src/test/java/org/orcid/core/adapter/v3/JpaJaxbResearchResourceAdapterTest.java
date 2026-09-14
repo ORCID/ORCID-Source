@@ -98,7 +98,7 @@ public class JpaJaxbResearchResourceAdapterTest extends MockSourceNameCache {
     }
     
     @Test
-    public void testEntityToModel() throws JAXBException, IllegalAccessException {
+    public void fromResearchResourceEntityToModelTest() throws JAXBException, IllegalAccessException {
         ResearchResourceEntity e = getResearchResourceEntity();
         ResearchResource m = jpaJaxbResearchResourceAdapter.toModel(e);
         assertNotNull(m.getCreatedDate());
@@ -181,11 +181,16 @@ public class JpaJaxbResearchResourceAdapterTest extends MockSourceNameCache {
     }
 
     @Test
-    public void testModelToEntity() throws JAXBException {
+    public void testResearchResourceToResearchResourceEntityTest() throws JAXBException {
         ResearchResource r = getResearchResource();
         ResearchResourceEntity e = jpaJaxbResearchResourceAdapter.toEntity(r);
         assertNull(e.getDateCreated());
         assertNull(e.getLastModified());
+        assertNull(e.getOrcid());
+        assertNull(e.getDisplayIndex());
+        assertNull(e.getSourceId());
+        assertNull(e.getClientSourceId());
+
         StartDateEntity start = new StartDateEntity(1999, 2, 2);
         EndDateEntity end = new EndDateEntity(2012, 2, 2);
         assertEquals(start.getYear(), e.getStartDate().getYear());
@@ -200,13 +205,10 @@ public class JpaJaxbResearchResourceAdapterTest extends MockSourceNameCache {
         assertEquals("Giant Laser Award2", e.getTranslatedTitle());
         assertEquals("de", e.getTranslatedTitleLanguageCode());
         assertEquals("PUBLIC", e.getVisibility());
+        assertEquals("http://xsede.org/GiantLaserAward", e.getUrl());
         assertEquals(
                 "{\"workExternalIdentifier\":[{\"relationship\":\"SELF\",\"url\":null,\"workExternalIdentifierType\":\"PROPOSAL_ID\",\"workExternalIdentifierId\":{\"content\":\"123456\"}},{\"relationship\":\"SELF\",\"url\":null,\"workExternalIdentifierType\":\"HANDLE\",\"workExternalIdentifierId\":{\"content\":\"https://grants.net/123456\"}}]}",
                 e.getExternalIdentifiersJson());
-        // assertEquals("",e.getProfile().getId());
-        // assertEquals(Long.valueOf(1l),e.getDisplayIndex());
-        // assertEquals("https://orcid.org/0000-0000-0000-0000",e.getSourceId());
-        // assertEquals("https://orcid.org/0000-0000-0000-0000",e.getClientSourceId());
 
         // item1
         assertEquals("Giant Laser 1", e.getResourceItems().get(0).getResourceName());

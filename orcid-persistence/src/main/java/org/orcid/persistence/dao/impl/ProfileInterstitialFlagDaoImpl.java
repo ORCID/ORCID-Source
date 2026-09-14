@@ -26,7 +26,7 @@ public class ProfileInterstitialFlagDaoImpl extends GenericDaoImpl<ProfileInters
     }
 
     @Override
-    @Transactional(readOnly = true)
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     public boolean hasInterstitialFlag(String orcid, String interstitialName) {
         Query query = entityManager.createNativeQuery("select count(*) from profile_interstitial_flag where orcid = :orcid and interstitial_name = :interstitialName");
         query.setParameter("orcid", orcid);
@@ -36,7 +36,7 @@ public class ProfileInterstitialFlagDaoImpl extends GenericDaoImpl<ProfileInters
     }
 
     @Override
-    @Transactional(readOnly = true)
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     public List<ProfileInterstitialFlagEntity> findByOrcid(String orcid) {
         TypedQuery<ProfileInterstitialFlagEntity> query = entityManager.createQuery("from ProfileInterstitialFlagEntity where orcid = :orcid", ProfileInterstitialFlagEntity.class);
         query.setParameter("orcid", orcid);

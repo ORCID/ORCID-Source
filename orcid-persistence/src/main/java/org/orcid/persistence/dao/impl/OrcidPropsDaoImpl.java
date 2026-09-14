@@ -67,7 +67,7 @@ public class OrcidPropsDaoImpl extends GenericDaoImpl<OrcidPropsEntity, String> 
      *             if there are more than one row with the same key name
      * */
     @Override
-    @Transactional(readOnly = true)
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     public boolean exists(String key) throws NonUniqueResultException {
         Assert.hasText(key, "Cannot look for empty keys");
         Query query = entityManager.createQuery("FROM OrcidPropsEntity WHERE key=:key");
@@ -83,7 +83,7 @@ public class OrcidPropsDaoImpl extends GenericDaoImpl<OrcidPropsEntity, String> 
     }
 
     @Override
-    @Transactional(readOnly = true)
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     public String getValue(String key) {
         Assert.hasText(key, "Cannot look for empty keys");
         Query query = entityManager.createQuery("SELECT o.value FROM OrcidPropsEntity o WHERE o.key=:key");

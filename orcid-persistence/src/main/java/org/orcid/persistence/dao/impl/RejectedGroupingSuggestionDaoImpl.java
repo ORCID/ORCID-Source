@@ -16,7 +16,7 @@ public class RejectedGroupingSuggestionDaoImpl extends GenericDaoImpl<RejectedGr
     
     @SuppressWarnings("unchecked")
     @Override
-    @Transactional(readOnly = true)
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     public RejectedGroupingSuggestionEntity findGroupingSuggestionIdAndOrcid(String orcid, String putCodes) {
         Query query = entityManager.createQuery("FROM RejectedGroupingSuggestionEntity WHERE orcid = :orcid AND id = :putCodes", RejectedGroupingSuggestionEntity.class);
         query.setParameter("orcid", orcid);

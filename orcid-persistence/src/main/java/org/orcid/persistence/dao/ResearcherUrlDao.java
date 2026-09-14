@@ -16,10 +16,10 @@ public interface ResearcherUrlDao extends GenericDao<ResearcherUrlEntity, Long> 
      * @return 
      *          the list of researcher urls associated with the orcid profile
      * */
-    @Transactional(readOnly = true)
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     public List<ResearcherUrlEntity> getResearcherUrls(String orcid, long lastModified);
     
-    @Transactional(readOnly = true)
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     public List<ResearcherUrlEntity> getPublicResearcherUrls(String orcid, long lastModified);
 
     /**
@@ -29,7 +29,7 @@ public interface ResearcherUrlDao extends GenericDao<ResearcherUrlEntity, Long> 
      * @return 
      *          the list of researcher urls associated with the orcid profile
      * */
-    @Transactional(readOnly = true)
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     public List<ResearcherUrlEntity> getResearcherUrls(String orcid, String visibility);
     
     /**
@@ -47,7 +47,7 @@ public interface ResearcherUrlDao extends GenericDao<ResearcherUrlEntity, Long> 
      * @param id
      * @return the ResearcherUrlEntity associated with the parameter id
      * */
-    @Transactional(readOnly = true)
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     public ResearcherUrlEntity getResearcherUrl(String orcid, Long id);
     
     /**
@@ -69,34 +69,34 @@ public interface ResearcherUrlDao extends GenericDao<ResearcherUrlEntity, Long> 
     @Transactional(propagation = Propagation.REQUIRED)
     void removeAllResearcherUrls(String orcid);
 
-    @Transactional(readOnly = true)
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     List<BigInteger> getIdsForClientSourceCorrection(int limit, List<String> nonPublicClients);
 
     @Transactional(propagation = Propagation.REQUIRED)
     void correctClientSource(List<BigInteger> ids);
 
-    @Transactional(readOnly = true)
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     List<BigInteger> getIdsForUserSourceCorrection(int limit, List<String> publicClients);
 
     @Transactional(propagation = Propagation.REQUIRED)
     void correctUserSource(List<BigInteger> ids);
 
-    @Transactional(readOnly = true)
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     List<BigInteger> getIdsForUserOBOUpdate(String clientDetailsId, int max);
 
     @Transactional(propagation = Propagation.REQUIRED)
     void updateUserOBODetails(List<BigInteger> ids);
 
-    @Transactional(readOnly = true)
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     List<BigInteger> getIdsForUserOBORecords(String clientDetailsId, int max);
 
     @Transactional(propagation = Propagation.REQUIRED)
     void revertUserOBODetails(List<BigInteger> ids);
 
-    @Transactional(readOnly = true)
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     public List<BigInteger> getIdsForUserOBORecords(int max);
 
-    @Transactional(readOnly = true)
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     List<BigInteger> getIdsOfResearcherUrlsReferencingClientProfiles(int max, List<String> clientProfileOrcidIds);
 
     @Transactional(propagation = Propagation.REQUIRED)

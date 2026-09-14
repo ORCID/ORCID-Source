@@ -7,24 +7,24 @@ import org.orcid.persistence.jpa.entities.GroupIdRecordEntity;
 import org.springframework.transaction.annotation.Transactional;
 
 public interface GroupIdRecordDao extends GenericDao<GroupIdRecordEntity, Long> {
-    @Transactional(readOnly = true)
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     List<GroupIdRecordEntity> getGroupIdRecords(int pageSize, int page);
 
-    @Transactional(readOnly = true)
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     boolean exists(String groupId);
 
-    @Transactional(readOnly = true)
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     GroupIdRecordEntity findByGroupId(String groupId);
 
-    @Transactional(readOnly = true)
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     GroupIdRecordEntity findByName(String name);
     
-    @Transactional(readOnly = true)
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     boolean haveAnyPeerReview(String groupId);
     
-    @Transactional(readOnly = true)
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     boolean duplicateExists(Long putCode, String groupId);
     
-    @Transactional(readOnly = true)
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     List<GroupIdRecordEntity> getIssnRecordsSortedBySyncDate(int batchSize, Date syncTime);
 }
