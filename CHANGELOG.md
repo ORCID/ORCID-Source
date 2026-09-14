@@ -1,3 +1,9 @@
+## v3.0.90 - 2026-09-14
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.0.89...v3.0.90)
+
+- [#7717](https://github.com/ORCID/ORCID-Source/pull/7717): Check address on research resource org
+
 ## v3.0.89 - 2026-09-14
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.0.88...v3.0.89)
