@@ -1,6 +1,7 @@
 package org.orcid.frontend.web.controllers;
 
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -9,11 +10,21 @@ import org.mockito.Spy;
 import org.orcid.core.manager.BackupCodeManager;
 import org.orcid.core.manager.EncryptionManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
+import org.orcid.core.manager.RecoveryPhone;
+import org.orcid.core.manager.RecoveryPhoneManager;
 import org.orcid.core.manager.TwoFactorAuthenticationManager;
 import org.orcid.frontend.email.RecordEmailSender;
+import org.orcid.frontend.recoveryphone.RecoveryPhoneSaveRequest;
+import org.orcid.frontend.recoveryphone.RecoveryPhoneSaveResponse;
+import org.orcid.frontend.recoveryphone.RecoveryPhoneSendCodeRequest;
+import org.orcid.frontend.recoveryphone.RecoveryPhoneSendCodeResponse;
+import org.orcid.frontend.recoveryphone.RecoveryPhoneVerificationService;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
+import org.orcid.core.togglz.Features;
 import org.orcid.pojo.*;
+import org.springframework.mock.web.MockHttpSession;
 import org.springframework.web.servlet.ModelAndView;
+import org.togglz.junit.TogglzRule;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -38,6 +49,12 @@ public class TwoFactorAuthenticationControllerTest {
     private BackupCodeManager backupCodeManager;
 
     @Mock
+    private RecoveryPhoneManager recoveryPhoneManager;
+
+    @Mock
+    private RecoveryPhoneVerificationService recoveryPhoneVerificationService;
+
+    @Mock
     private RecordEmailSender recordEmailSender;
 
     @Mock
@@ -53,9 +70,15 @@ public class TwoFactorAuthenticationControllerTest {
     @Mock
     private HttpServletResponse response;
 
+    private final MockHttpSession session = new MockHttpSession();
+
+    @Rule
+    public TogglzRule togglzRule = TogglzRule.allDisabled(Features.class);
+
     @Before
     public void setUp() {
         MockitoAnnotations.initMocks(this);
+        when(request.getSession()).thenReturn(session);
         doReturn(ORCID).when(controller).getCurrentUserOrcid();
         doReturn("redirectUrl").when(controller).calculateRedirectUrl(anyString());
         doReturn("redirectUrl").when(controller).calculateRedirectUrl(any(HttpServletRequest.class), any(HttpServletResponse.class), anyBoolean());
@@ -233,5 +256,177 @@ public class TwoFactorAuthenticationControllerTest {
         assertNull(result.getRedirectUrl());
         assertEquals(1, result.getErrors().size());
         assertEquals("2FA.verificationCode.invalid", result.getErrors().get(0));
+    }
+
+    // Recovery phone number
+
+    private void enableRecoveryPhoneFeature() {
+        togglzRule.enable(Features.TWO_FACTOR_RECOVERY_PHONE);
+        when(twoFactorAuthenticationManager.userUsing2FA(ORCID)).thenReturn(true);
+    }
+
+    private void elevateSession() {
+        session.setAttribute("RECOVERY_PHONE_ELEVATION_TS", System.currentTimeMillis());
+    }
+
+    private static RecoveryPhoneSendCodeRequest sendCodeRequest() {
+        RecoveryPhoneSendCodeRequest form = new RecoveryPhoneSendCodeRequest();
+        form.setPhoneNumber("+441234567890");
+        return form;
+    }
+
+    private static RecoveryPhoneSaveRequest saveRequest() {
+        RecoveryPhoneSaveRequest form = new RecoveryPhoneSaveRequest();
+        form.setPhoneNumber("+441234567890");
+        form.setVerificationCode("123456");
+        return form;
+    }
+
+    @Test
+    public void testStatusOmitsRecoveryPhoneWhenFeatureIsOff() {
+        when(twoFactorAuthenticationManager.userUsing2FA(ORCID)).thenReturn(true);
+
+        TwoFactorAuthStatus status = controller.get2FAStatus();
+
+        assertNull(status.getMaskedRecoveryPhoneNumber());
+        verify(recoveryPhoneManager, never()).getRecoveryPhone(anyString());
+    }
+
+    @Test
+    public void testStatusMasksTheRecoveryPhoneNumber() {
+        enableRecoveryPhoneFeature();
+        java.util.Date created = new java.util.Date();
+        when(recoveryPhoneManager.getRecoveryPhone(ORCID)).thenReturn(new RecoveryPhone("7890", created, created));
+
+        TwoFactorAuthStatus status = controller.get2FAStatus();
+
+        assertEquals("***********7890", status.getMaskedRecoveryPhoneNumber());
+        assertNotNull(status.getRecoveryPhoneCreationDate());
+        assertFalse(status.isRecoveryPhoneModified());
+    }
+
+    @Test
+    public void testStatusReportsANumberThatHasBeenChangedAsModified() {
+        enableRecoveryPhoneFeature();
+        java.util.Date created = new java.util.Date(1_600_000_000_000L);
+        java.util.Date modified = new java.util.Date(1_600_000_000_000L + (10 * 60 * 1000L));
+        when(recoveryPhoneManager.getRecoveryPhone(ORCID)).thenReturn(new RecoveryPhone("7890", created, modified));
+
+        assertTrue(controller.get2FAStatus().isRecoveryPhoneModified());
+    }
+
+    @Test
+    public void testAuthChallengeRejectsAWrongPassword() {
+        enableRecoveryPhoneFeature();
+        ProfileEntity profile = new ProfileEntity();
+        profile.setEncryptedPassword("hashed");
+        when(profileEntityCacheManager.retrieve(ORCID)).thenReturn(profile);
+        when(encryptionManager.hashMatches("nope", "hashed")).thenReturn(false);
+
+        AuthChallenge form = new AuthChallenge();
+        form.setPassword("nope");
+        AuthChallenge result = controller.verifyRecoveryPhoneAuthChallenge(request, form);
+
+        assertTrue(result.isInvalidPassword());
+        assertNull(session.getAttribute("RECOVERY_PHONE_ELEVATION_TS"));
+    }
+
+    @Test
+    public void testAuthChallengeElevatesTheSessionOnSuccess() {
+        enableRecoveryPhoneFeature();
+        ProfileEntity profile = new ProfileEntity();
+        profile.setEncryptedPassword("hashed");
+        when(profileEntityCacheManager.retrieve(ORCID)).thenReturn(profile);
+        when(encryptionManager.hashMatches("correct", "hashed")).thenReturn(true);
+        when(twoFactorAuthenticationManager.validateTwoFactorAuthForm(eq(ORCID), any(AuthChallenge.class))).thenReturn(true);
+
+        AuthChallenge form = new AuthChallenge();
+        form.setPassword("correct");
+        AuthChallenge result = controller.verifyRecoveryPhoneAuthChallenge(request, form);
+
+        assertTrue(result.isSuccess());
+        assertNotNull(session.getAttribute("RECOVERY_PHONE_ELEVATION_TS"));
+    }
+
+    @Test
+    public void testSendCodeNeedsAPassedChallenge() {
+        enableRecoveryPhoneFeature();
+
+        RecoveryPhoneSendCodeResponse response = controller.sendRecoveryPhoneCode(request, sendCodeRequest());
+
+        assertEquals(TwoFactorAuthenticationController.CHALLENGE_REQUIRED, response.getErrorCode());
+        verify(recoveryPhoneVerificationService, never()).sendCode(anyString(), any(RecoveryPhoneSendCodeRequest.class));
+    }
+
+    @Test
+    public void testSendCodeRefusesAnExpiredChallenge() {
+        enableRecoveryPhoneFeature();
+        session.setAttribute("RECOVERY_PHONE_ELEVATION_TS", System.currentTimeMillis() - (16 * 60 * 1000L));
+
+        assertEquals(TwoFactorAuthenticationController.CHALLENGE_REQUIRED,
+                controller.sendRecoveryPhoneCode(request, sendCodeRequest()).getErrorCode());
+    }
+
+    @Test
+    public void testSendCodeIsRefusedWhenTheFeatureIsOff() {
+        when(twoFactorAuthenticationManager.userUsing2FA(ORCID)).thenReturn(true);
+        elevateSession();
+
+        assertEquals(TwoFactorAuthenticationController.FEATURE_DISABLED,
+                controller.sendRecoveryPhoneCode(request, sendCodeRequest()).getErrorCode());
+    }
+
+    @Test
+    public void testSendCodeIsRefusedWhen2FAIsOff() {
+        togglzRule.enable(Features.TWO_FACTOR_RECOVERY_PHONE);
+        when(twoFactorAuthenticationManager.userUsing2FA(ORCID)).thenReturn(false);
+        elevateSession();
+
+        assertEquals(TwoFactorAuthenticationController.TWO_FACTOR_DISABLED,
+                controller.sendRecoveryPhoneCode(request, sendCodeRequest()).getErrorCode());
+    }
+
+    @Test
+    public void testSendCodeDelegatesOnceElevated() {
+        enableRecoveryPhoneFeature();
+        elevateSession();
+        when(recoveryPhoneVerificationService.sendCode(eq(ORCID), any(RecoveryPhoneSendCodeRequest.class)))
+                .thenReturn(RecoveryPhoneSendCodeResponse.success(30));
+
+        RecoveryPhoneSendCodeResponse response = controller.sendRecoveryPhoneCode(request, sendCodeRequest());
+
+        assertTrue(response.isSuccess());
+        assertEquals(30, response.getResendAfterSeconds());
+    }
+
+    @Test
+    public void testSaveReportsAFailedCodeAndKeepsTheElevation() {
+        enableRecoveryPhoneFeature();
+        elevateSession();
+        when(recoveryPhoneVerificationService.verifyCode(eq(ORCID), anyString(), anyString())).thenReturn("INVALID_CODE");
+
+        RecoveryPhoneSaveResponse response = controller.saveRecoveryPhone(request, saveRequest());
+
+        assertFalse(response.isSuccess());
+        assertEquals("INVALID_CODE", response.getErrorCode());
+        verify(recoveryPhoneManager, never()).saveRecoveryPhone(anyString(), anyString());
+        assertNotNull(session.getAttribute("RECOVERY_PHONE_ELEVATION_TS"));
+    }
+
+    @Test
+    public void testSaveStoresTheNumberAndClearsTheElevation() {
+        enableRecoveryPhoneFeature();
+        elevateSession();
+        java.util.Date now = new java.util.Date();
+        when(recoveryPhoneVerificationService.verifyCode(eq(ORCID), anyString(), anyString())).thenReturn(null);
+        when(recoveryPhoneVerificationService.normalize("+441234567890")).thenReturn("+441234567890");
+        when(recoveryPhoneManager.getRecoveryPhone(ORCID)).thenReturn(new RecoveryPhone("7890", now, now));
+
+        RecoveryPhoneSaveResponse response = controller.saveRecoveryPhone(request, saveRequest());
+
+        assertTrue(response.isSuccess());
+        assertEquals("***********7890", response.getMaskedRecoveryPhoneNumber());
+        verify(recoveryPhoneManager).saveRecoveryPhone(ORCID, "+441234567890");
+        assertNull(session.getAttribute("RECOVERY_PHONE_ELEVATION_TS"));
     }
 }

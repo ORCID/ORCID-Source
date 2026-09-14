@@ -49,6 +49,9 @@ public class TwoFactorAuthenticationManagerTest {
     private BackupCodeManager backupCodeManager;
 
     @Mock
+    private RecoveryPhoneManager recoveryPhoneManager;
+
+    @Mock
     private ProfileDao profileDao;
 
     @Mock
@@ -128,6 +131,8 @@ public class TwoFactorAuthenticationManagerTest {
         verify(profileDao).disable2FA(anyString());
         verify(profileEventDao).persist(any(ProfileEventEntity.class));
         verify(backupCodeManager).removeUnusedBackupCodes(anyString());
+        // turning 2FA off resets every 2FA backup option
+        verify(recoveryPhoneManager).removeRecoveryPhone(anyString());
     }
 
     @Test
@@ -136,6 +141,7 @@ public class TwoFactorAuthenticationManagerTest {
         verify(profileDao).disable2FA(anyString());
         verify(profileEventDao).persist(any(ProfileEventEntity.class));
         verify(backupCodeManager).removeUnusedBackupCodes(anyString());
+        verify(recoveryPhoneManager).removeRecoveryPhone(anyString());
     }
 
     @Test
