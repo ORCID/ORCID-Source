@@ -1,3 +1,9 @@
+## v3.0.86 - 2026-09-14
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.0.85...v3.0.86)
+
+- [#7713](https://github.com/ORCID/ORCID-Source/pull/7713): PD-13531 When the org have a null country, which is invalid, but some orgs in …
+
 ## v3.0.85 - 2026-09-14
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.0.84...v3.0.85)
