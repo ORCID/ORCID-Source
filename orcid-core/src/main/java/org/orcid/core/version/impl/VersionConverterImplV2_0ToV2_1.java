@@ -4,6 +4,7 @@ import java.beans.BeanInfo;
 import java.beans.IntrospectionException;
 import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedHashSet;
@@ -72,16 +73,20 @@ public class VersionConverterImplV2_0ToV2_1 implements V2VersionConverter {
         try {
             BeanInfo beanInfo = Introspector.getBeanInfo(source.getClass());
             for (PropertyDescriptor pd : beanInfo.getPropertyDescriptors()) {
-                if ("class".equals(pd.getName()) || pd.getReadMethod() == null) {
+                if ("class".equals(pd.getName())) {
+                    continue;
+                }
+                Method readMethod = readMethodFor(pd, source.getClass());
+                if (readMethod == null) {
                     continue;
                 }
                 if (pd.getWriteMethod() != null) {
-                    Object value = pd.getReadMethod().invoke(source);
+                    Object value = readMethod.invoke(source);
                     pd.getWriteMethod().invoke(target, copyValue(value, downgrade));
                 } else if (Collection.class.isAssignableFrom(pd.getPropertyType())) {
-                    Object sourceColl = pd.getReadMethod().invoke(source);
+                    Object sourceColl = readMethod.invoke(source);
                     if (sourceColl instanceof Collection) {
-                        Object targetCollObj = pd.getReadMethod().invoke(target);
+                        Object targetCollObj = readMethod.invoke(target);
                         if (targetCollObj instanceof Collection) {
                             @SuppressWarnings("unchecked")
                             Collection<Object> targetColl = (Collection<Object>) targetCollObj;
@@ -95,9 +100,9 @@ public class VersionConverterImplV2_0ToV2_1 implements V2VersionConverter {
                     }
                 } else {
                     // Handles getter-only non-collection complex properties
-                    Object sourceObj = pd.getReadMethod().invoke(source);
+                    Object sourceObj = readMethod.invoke(source);
                     if (sourceObj != null) {
-                        Object targetObj = pd.getReadMethod().invoke(target);
+                        Object targetObj = readMethod.invoke(target);
                         if (targetObj != null) {
                             copyInto(sourceObj, targetObj, downgrade);
                         }
@@ -106,6 +111,36 @@ public class VersionConverterImplV2_0ToV2_1 implements V2VersionConverter {
             }
         } catch (ReflectiveOperationException | IntrospectionException e) {
             throw new RuntimeException("Unable to copy " + source.getClass(), e);
+        }
+    }
+
+    /**
+     * The property's read method, falling back to an "is" accessor for boxed Boolean.
+     *
+     * The JavaBeans Introspector accepts an "is" prefix only for primitive boolean, so a property
+     * declared as {@code Boolean isVerified()} has no read method and is skipped, dropping the
+     * value from the converted object. Email is the one that bites: verified, current and primary
+     * are all boxed, so all three were skipped, and verified and primary - the two that reach the
+     * wire - came back null from /v2.0 and /v2.1 for an address the database has as both. Orika,
+     * which this converter replaced, resolved "is" for Boolean as well, so nothing was lost
+     * before the migration.
+     *
+     * Deliberately narrow: boxed Boolean only. Widening it would change properties nobody has
+     * reported a problem with.
+     */
+    private Method readMethodFor(PropertyDescriptor pd, Class<?> sourceClass) {
+        if (pd.getReadMethod() != null) {
+            return pd.getReadMethod();
+        }
+        if (!Boolean.class.equals(pd.getPropertyType()) || pd.getName().isEmpty()) {
+            return null;
+        }
+        String accessor = "is" + Character.toUpperCase(pd.getName().charAt(0)) + pd.getName().substring(1);
+        try {
+            Method candidate = sourceClass.getMethod(accessor);
+            return Boolean.class.equals(candidate.getReturnType()) ? candidate : null;
+        } catch (NoSuchMethodException e) {
+            return null;
         }
     }
 
