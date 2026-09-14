@@ -1,3 +1,9 @@
+## v3.0.85 - 2026-09-14
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.0.84...v3.0.85)
+
+- [#7712](https://github.com/ORCID/ORCID-Source/pull/7712): More unit tests1
+
 ## v3.0.84 - 2026-09-12
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.0.83...v3.0.84)
