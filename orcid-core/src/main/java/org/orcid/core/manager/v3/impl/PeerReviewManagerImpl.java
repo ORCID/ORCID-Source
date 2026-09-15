@@ -162,19 +162,19 @@ public class PeerReviewManagerImpl extends PeerReviewManagerReadOnlyImpl impleme
         
         orcidSecurityManager.checkSourceAndThrow(existingEntity);
 
+        createIssnGroupIdIfNecessary(peerReview);
+        OrgEntity updatedOrganization = null;
+        if (peerReview.getOrganization() != null) {
+            updatedOrganization = orgManager.getOrgEntity(peerReview);
+        }
+
         jpaJaxbPeerReviewAdapter.toPeerReviewEntity(peerReview, existingEntity);        
         existingEntity.setVisibility(originalVisibility.name());
 
         // Be sure it doesn't overwrite the source
         sourceEntityUtils.populateSourceAwareEntityFromSource(originalSource, existingEntity);
-        createIssnGroupIdIfNecessary(peerReview);
         
-        if (peerReview.getOrganization() != null) {
-            OrgEntity updatedOrganization = orgManager.getOrgEntity(peerReview);
-            existingEntity.setOrg(updatedOrganization);
-        } else {
-            existingEntity.setOrg(null);
-        }
+        existingEntity.setOrg(updatedOrganization);
         
         existingEntity = peerReviewDao.merge(existingEntity);
         notificationManager.sendAmendEmail(orcid, AmendedSection.PEER_REVIEW, createItemList(existingEntity, ActionType.UPDATE, peerReview.getExternalIdentifiers(), peerReview.getSubjectExternalIdentifier()));

@@ -178,6 +178,9 @@ public class ProfileFundingManagerImpl extends ProfileFundingManagerReadOnlyImpl
 
         orcidSecurityManager.checkSource(pfe);
 
+        // Fetch organization FIRST before mutating pfe (prevents auto-flush errors during query)
+        OrgEntity updatedOrganization = orgManager.getOrgEntity(funding);
+
         jpaJaxbFundingAdapter.toProfileFundingEntity(funding, pfe);
         pfe.setVisibility(originalVisibility.name());
 
@@ -185,9 +188,6 @@ public class ProfileFundingManagerImpl extends ProfileFundingManagerReadOnlyImpl
         pfe.setSourceId(existingSourceId);
         pfe.setClientSourceId(existingClientSourceId);
 
-        // Updates the give organization with the latest organization from
-        // database, or, create a new one
-        OrgEntity updatedOrganization = orgManager.getOrgEntity(funding);
         pfe.setOrg(updatedOrganization);
 
         pfe = profileFundingDao.merge(pfe);

@@ -166,6 +166,9 @@ public class PeerReviewManagerImpl extends PeerReviewManagerReadOnlyImpl impleme
             externalIDValidator.validateWorkOrPeerReview(peerReview.getSubjectExternalIdentifier());
         }             
         
+        createIssnGroupIdIfNecessary(peerReview);
+        OrgEntity updatedOrganization = orgManager.getOrgEntity(peerReview);
+
         jpaJaxbPeerReviewAdapter.toPeerReviewEntity(peerReview, existingEntity);        
         existingEntity.setVisibility(originalVisibility);
         
@@ -173,8 +176,6 @@ public class PeerReviewManagerImpl extends PeerReviewManagerReadOnlyImpl impleme
         existingEntity.setSourceId(existingSourceId);
         existingEntity.setClientSourceId(existingClientSourceId);        
 
-        createIssnGroupIdIfNecessary(peerReview);
-        OrgEntity updatedOrganization = orgManager.getOrgEntity(peerReview);
         existingEntity.setOrg(updatedOrganization);
         
         existingEntity = peerReviewDao.merge(existingEntity);
