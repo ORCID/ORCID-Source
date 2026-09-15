@@ -27,6 +27,7 @@ import org.orcid.persistence.jpa.entities.OrgAffiliationRelationEntity;
 import org.orcid.persistence.jpa.entities.OrgEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.SourceEntity;
+import org.springframework.transaction.annotation.Transactional;
 
 public class AffiliationsManagerImpl extends AffiliationsManagerReadOnlyImpl implements AffiliationsManager {
     @Resource
@@ -57,6 +58,7 @@ public class AffiliationsManagerImpl extends AffiliationsManagerReadOnlyImpl imp
      * @return the added education
      * */
     @Override
+    @Transactional
     public Education createEducationAffiliation(String orcid, Education education, boolean isApiRequest) {
         SourceEntity sourceEntity = sourceManager.retrieveSourceEntity();
         activityValidator.validateEducation(education, sourceEntity, true, isApiRequest, null);
@@ -95,6 +97,7 @@ public class AffiliationsManagerImpl extends AffiliationsManagerReadOnlyImpl imp
      * @return the updated education
      * */
     @Override
+    @Transactional
     public Education updateEducationAffiliation(String orcid, Education education, boolean isApiRequest) {
         OrgAffiliationRelationEntity educationEntity = orgAffiliationRelationDao.getOrgAffiliationRelation(orcid, education.getPutCode());                
         SourceEntity sourceEntity = sourceManager.retrieveSourceEntity();
@@ -135,6 +138,7 @@ public class AffiliationsManagerImpl extends AffiliationsManagerReadOnlyImpl imp
      * @return the added employment
      * */
     @Override
+    @Transactional
     public Employment createEmploymentAffiliation(String orcid, Employment employment, boolean isApiRequest) {
         SourceEntity sourceEntity = sourceManager.retrieveSourceEntity();
         activityValidator.validateEmployment(employment, sourceEntity, true, isApiRequest, null);
@@ -173,6 +177,7 @@ public class AffiliationsManagerImpl extends AffiliationsManagerReadOnlyImpl imp
      * @return the updated employment
      * */
     @Override
+    @Transactional
     public Employment updateEmploymentAffiliation(String orcid, Employment employment, boolean isApiRequest) {
         OrgAffiliationRelationEntity employmentEntity = orgAffiliationRelationDao.getOrgAffiliationRelation(orcid, employment.getPutCode());        
         String originalVisibility = employmentEntity.getVisibility();  
@@ -215,6 +220,7 @@ public class AffiliationsManagerImpl extends AffiliationsManagerReadOnlyImpl imp
      * @return true if the affiliation was deleted, false otherwise
      * */
     @Override
+    @Transactional
     public boolean checkSourceAndDelete(String orcid, Long affiliationId) {
         OrgAffiliationRelationEntity affiliationEntity = orgAffiliationRelationDao.getOrgAffiliationRelation(orcid, affiliationId);                
         orcidSecurityManager.checkSource(affiliationEntity);

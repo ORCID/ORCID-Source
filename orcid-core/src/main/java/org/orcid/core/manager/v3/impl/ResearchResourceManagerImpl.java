@@ -28,6 +28,7 @@ import org.orcid.persistence.dao.ResearchResourceDao;
 import org.orcid.persistence.jpa.entities.OrgEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.ResearchResourceEntity;
+import org.springframework.transaction.annotation.Transactional;
 
 public class ResearchResourceManagerImpl extends ResearchResourceManagerReadOnlyImpl implements ResearchResourceManager {
 
@@ -62,6 +63,7 @@ public class ResearchResourceManagerImpl extends ResearchResourceManagerReadOnly
     private SourceEntityUtils sourceEntityUtils;
 
     @Override
+    @Transactional
     public ResearchResource createResearchResource(String orcid, ResearchResource rr, boolean isApiRequest) {
         Source activeSource = sourceManager.retrieveActiveSource();
         activityValidator.validateResearchResource(rr, activeSource, true, isApiRequest, null);
@@ -102,6 +104,7 @@ public class ResearchResourceManagerImpl extends ResearchResourceManagerReadOnly
     }
 
     @Override
+    @Transactional
     public ResearchResource updateResearchResource(String orcid, ResearchResource rr, boolean isApiRequest) {
         Source activeSource = sourceManager.retrieveActiveSource();
         ResearchResourceEntity rre = rrDao.getResearchResource(orcid, rr.getPutCode());
@@ -145,6 +148,7 @@ public class ResearchResourceManagerImpl extends ResearchResourceManagerReadOnly
     }
 
     @Override
+    @Transactional
     public boolean checkSourceAndRemoveResearchResource(String orcid, Long researchResourceId) {
         ResearchResourceEntity rr = rrDao.getResearchResource(orcid, researchResourceId);
         orcidSecurityManager.checkSourceAndThrow(rr);
