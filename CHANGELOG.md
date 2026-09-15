@@ -1,3 +1,9 @@
+## v3.0.93 - 2026-09-15
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.0.92...v3.0.93)
+
+- [#7719](https://github.com/ORCID/ORCID-Source/pull/7719): Set the transactions back to the manager level for activities
+
 ## v3.0.92 - 2026-09-15
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.0.91...v3.0.92)
