@@ -58,7 +58,7 @@ public class InternalApiServiceDelegatorImpl implements InternalApiServiceDelega
 
     @Override
     public Response viewPersonLastModified(String orcid) {
-        orcidSecurityManager.checkScopes(ScopePathType.INTERNAL_PERSON_LAST_MODIFIED);
+        orcidSecurityManager.checkScopes(ScopePathType.INTERNAL_PERSON_LAST_MODIFIED, ScopePathType.INTERNAL);
         Date lastModified = profileEntityManagerReadOnly.getLastModifiedDate(orcid);
         LastModifiedResponse obj = new LastModifiedResponse(orcid, lastModified.toString());        
         Response response = Response.ok(obj).build(); 
