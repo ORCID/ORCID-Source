@@ -110,6 +110,10 @@ public class AffiliationsManagerImpl extends AffiliationsManagerReadOnlyImpl imp
 
         activityValidator.validateEducation(education, sourceEntity, false, isApiRequest, Visibility.valueOf(originalVisibility));
         
+        // Updates the give organization with the latest organization from
+        // database, or, create a new one
+        OrgEntity updatedOrganization = orgManager.getOrgEntity(education);
+
         jpaJaxbEducationAdapter.toOrgAffiliationRelationEntity(education, educationEntity);
         educationEntity.setVisibility(originalVisibility);
         
@@ -117,9 +121,6 @@ public class AffiliationsManagerImpl extends AffiliationsManagerReadOnlyImpl imp
         educationEntity.setSourceId(existingSourceId);
         educationEntity.setClientSourceId(existingClientSourceId);
 
-        // Updates the give organization with the latest organization from
-        // database, or, create a new one
-        OrgEntity updatedOrganization = orgManager.getOrgEntity(education);
         educationEntity.setOrg(updatedOrganization);
 
         educationEntity.setAffiliationType(AffiliationType.EDUCATION.name());
@@ -191,6 +192,10 @@ public class AffiliationsManagerImpl extends AffiliationsManagerReadOnlyImpl imp
 
         activityValidator.validateEmployment(employment, sourceEntity, false, isApiRequest, Visibility.valueOf(originalVisibility));
         
+        // Updates the give organization with the latest organization from
+        // database, or, create a new one
+        OrgEntity updatedOrganization = orgManager.getOrgEntity(employment);
+
         jpaJaxbEmploymentAdapter.toOrgAffiliationRelationEntity(employment, employmentEntity);
         employmentEntity.setVisibility(originalVisibility);
                 
@@ -198,9 +203,6 @@ public class AffiliationsManagerImpl extends AffiliationsManagerReadOnlyImpl imp
         employmentEntity.setSourceId(existingSourceId);
         employmentEntity.setClientSourceId(existingClientSourceId);
                 
-        // Updates the give organization with the latest organization from
-        // database, or, create a new one
-        OrgEntity updatedOrganization = orgManager.getOrgEntity(employment);
         employmentEntity.setOrg(updatedOrganization);
 
         employmentEntity.setAffiliationType(AffiliationType.EMPLOYMENT.name());

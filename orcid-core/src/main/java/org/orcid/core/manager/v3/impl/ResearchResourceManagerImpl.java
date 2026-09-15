@@ -126,6 +126,15 @@ public class ResearchResourceManagerImpl extends ResearchResourceManagerReadOnly
 
         orcidSecurityManager.checkSourceAndThrow(rre);
 
+        // Fetch organizations FIRST before mutating rre (prevents auto-flush errors during query)
+        List<OrgEntity> updatedOrganizations = orgManager.getOrgEntities(rr.getProposal().getHosts());
+        List<List<OrgEntity>> itemOrganizationsList = new ArrayList<>();
+        if (rr.getResourceItems() != null) {
+            for (int i = 0; i < rr.getResourceItems().size(); i++) {
+                itemOrganizationsList.add(orgManager.getOrgEntities(rr.getResourceItems().get(i).getHosts()));
+            }
+        }
+
         jpaJaxbResearchResourceAdapter.toEntity(rr, rre);
         rre.setVisibility(originalVisibility.name());
 
@@ -133,10 +142,9 @@ public class ResearchResourceManagerImpl extends ResearchResourceManagerReadOnly
         sourceEntityUtils.populateSourceAwareEntityFromSource(originalSource, rre);
 
         // update orgs (ordering managed by @OrderColumn on lists)
-        List<OrgEntity> updatedOrganizations = orgManager.getOrgEntities(rr.getProposal().getHosts());
         rre.setHosts(updatedOrganizations);
         for (int i = 0; i < rr.getResourceItems().size(); i++) {
-            rre.getResourceItems().get(i).setHosts(orgManager.getOrgEntities(rr.getResourceItems().get(i).getHosts()));
+            rre.getResourceItems().get(i).setHosts(itemOrganizationsList.get(i));
             rre.getResourceItems().get(i).setResearchResourceEntity(rre);
         }
 

@@ -370,6 +370,9 @@ public class AffiliationsManagerImpl extends AffiliationsManagerReadOnlyImpl imp
             checkAffiliationExternalIDsForDuplicates(orcid, affiliation, activeSource, existingAffiliations);
         }
 
+        // Fetch organization FIRST before mutating entity (prevents auto-flush errors during query)
+        OrgEntity updatedOrganization = orgManager.getOrgEntity(affiliation);
+
         switch (type) {
         case DISTINCTION:
             jpaJaxbDistinctionAdapter.toOrgAffiliationRelationEntity((Distinction) affiliation, entity);
@@ -403,9 +406,6 @@ public class AffiliationsManagerImpl extends AffiliationsManagerReadOnlyImpl imp
 
         sourceEntityUtils.populateSourceAwareEntityFromSource(originalSource, entity);
 
-        // Updates the give organization with the latest organization from
-        // database, or, create a new one
-        OrgEntity updatedOrganization = orgManager.getOrgEntity(affiliation);
         entity.setOrg(updatedOrganization);
 
         entity.setAffiliationType(type.name());
