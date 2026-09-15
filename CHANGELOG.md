@@ -1,3 +1,9 @@
+## v3.0.92 - 2026-09-15
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.0.91...v3.0.92)
+
+- [#7718](https://github.com/ORCID/ORCID-Source/pull/7718): Remove SQL from error messages
+
 ## v3.0.91 - 2026-09-15
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.0.90...v3.0.91)
