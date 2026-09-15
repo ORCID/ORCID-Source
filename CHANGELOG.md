@@ -1,3 +1,27 @@
+## v3.0.90 - 2026-09-14
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.0.89...v3.0.90)
+
+- [#7717](https://github.com/ORCID/ORCID-Source/pull/7717): Check address on research resource org
+
+## v3.0.89 - 2026-09-14
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.0.88...v3.0.89)
+
+- [#7714](https://github.com/ORCID/ORCID-Source/pull/7714): Fix mapping error when translated title code is null
+
+## v3.0.88 - 2026-09-14
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.0.87...v3.0.88)
+
+- [#7676](https://github.com/ORCID/ORCID-Source/pull/7676): PD-13369 carry Liquibase's history in the database seed
+
+## v3.0.87 - 2026-09-14
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.0.86...v3.0.87)
+
+- [#7715](https://github.com/ORCID/ORCID-Source/pull/7715): Revert "PD-6176 Index version-of and funded-by external identifiers in Solr"
+
 ## v3.0.86 - 2026-09-14
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.0.85...v3.0.86)
