@@ -1,3 +1,9 @@
+## v3.0.94 - 2026-09-16
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.0.93...v3.0.94)
+
+- [#7722](https://github.com/ORCID/ORCID-Source/pull/7722): Resolves dual-connection checkout and pool starvation
+
 ## v3.0.93 - 2026-09-15
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.0.92...v3.0.93)
