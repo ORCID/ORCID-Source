@@ -1,0 +1,201 @@
+Command timed out after 60s (default timeout applied by the system) and was forcibly terminated by the system. 
+The command did not fail or crash — it was killed because it exceeded the time limit. 
+If your command needs more time, retry the command and use the `timeout` parameter to extend the time limit.
+Command output:
+[INFO] Scanning for projects...
+[WARNING] 
+[WARNING] Some problems were encountered while building the effective model for org.orcid:orcid-web:war:release-2.0.0
+[WARNING] 'build.plugins.plugin.version' for org.codehaus.mojo:tomcat-maven-plugin is missing. @ line 241, column 21
+[WARNING] 
+[WARNING] Some problems were encountered while building the effective model for org.orcid:orcid-pub-web:war:release-2.0.0
+[WARNING] 'build.plugins.plugin.version' for org.codehaus.mojo:tomcat-maven-plugin is missing. @ line 127, column 21
+[WARNING] 
+[WARNING] Some problems were encountered while building the effective model for org.orcid:orcid-api-web:war:release-2.0.0
+[WARNING] 'dependencies.dependency.(groupId:artifactId:type:classifier)' must be unique: org.togglz:togglz-junit:jar -> version 2.4.1.Final vs (?) @ line 84, column 21
+[WARNING] 'build.plugins.plugin.version' for org.codehaus.mojo:tomcat-maven-plugin is missing. @ line 93, column 22
+[WARNING] 
+[WARNING] Some problems were encountered while building the effective model for org.orcid:orcid-scheduler-web:war:release-2.0.0
+[WARNING] 'build.plugins.plugin.version' for org.codehaus.mojo:tomcat-maven-plugin is missing. @ line 75, column 22
+[WARNING] 
+[WARNING] Some problems were encountered while building the effective model for org.orcid:orcid-internal-api:war:release-2.0.0
+[WARNING] 'build.plugins.plugin.version' for org.codehaus.mojo:tomcat-maven-plugin is missing. @ line 86, column 22
+[WARNING] 
+[WARNING] Some problems were encountered while building the effective model for org.orcid:orcid-activemq:war:release-2.0.0
+[WARNING] 'build.plugins.plugin.version' for org.codehaus.mojo:tomcat-maven-plugin is missing. @ line 70, column 22
+[WARNING] 
+[WARNING] Some problems were encountered while building the effective model for org.orcid:orcid-message-listener:war:release-2.0.0
+[WARNING] 'build.plugins.plugin.version' for org.codehaus.mojo:tomcat-maven-plugin is missing. @ line 162, column 22
+[WARNING] 
+[WARNING] It is highly recommended to fix these problems because they threaten the stability of your build.
+[WARNING] 
+[WARNING] For this reason, future Maven versions might no longer support building such malformed projects.
+[WARNING] 
+[INFO] ------------------------------------------------------------------------
+[INFO] Reactor Build Order:
+[INFO] 
+[INFO] ORCID - Parent                                                     [pom]
+[INFO] ORCID - Test                                                       [jar]
+[INFO] ORCID - Utils                                                      [jar]
+[INFO] ORCID - Persistence                                                [jar]
+[INFO] ORCID - Core                                                       [jar]
+[INFO] ORCID - API Commons                                                [jar]
+[INFO] ORCID - Web                                                        [war]
+[INFO] ORCID - Public API                                                 [war]
+[INFO] ORCID - Tier 2 Services Web                                        [war]
+[INFO] ORCID - Scheduler                                                  [war]
+[INFO] ORCID - Internal API                                               [war]
+[INFO] ORCID - ActiveMQ                                                   [war]
+[INFO] ORCID - Message Listener                                           [war]
+[INFO] 
+[INFO] -----------------------< org.orcid:orcid-parent >-----------------------
+[INFO] Building ORCID - Parent release-2.0.0                             [1/13]
+[INFO]   from pom.xml
+[INFO] --------------------------------[ pom ]---------------------------------
+[INFO] 
+[INFO] --- clean:3.2.0:clean (default-clean) @ orcid-parent ---
+[INFO] 
+[INFO] --- enforcer:3.0.0-M3:enforce (enforce-versions) @ orcid-parent ---
+[INFO] 
+[INFO] --- install:3.1.4:install (default-install) @ orcid-parent ---
+[INFO] Installing /Users/camizum/OrcidDev/github/ORCID-Source/pom.xml to /Users/camizum/.m2/repository/org/orcid/orcid-parent/release-2.0.0/orcid-parent-release-2.0.0.pom
+[INFO] 
+[INFO] ------------------------< org.orcid:orcid-test >------------------------
+[INFO] Building ORCID - Test release-2.0.0                               [2/13]
+[INFO]   from orcid-test/pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- clean:3.2.0:clean (default-clean) @ orcid-test ---
+[INFO] Deleting /Users/camizum/OrcidDev/github/ORCID-Source/orcid-test/target
+[INFO] 
+[INFO] --- enforcer:3.0.0-M2:enforce (enforce-versions) @ orcid-test ---
+[INFO] 
+[INFO] --- resources:3.2.0:resources (default-resources) @ orcid-test ---
+[INFO] Using 'UTF-8' encoding to copy filtered resources.
+[INFO] Using 'UTF-8' encoding to copy filtered properties files.
+[INFO] Copying 61 resources
+[INFO] 
+[INFO] --- compiler:3.8.1:compile (default-compile) @ orcid-test ---
+[INFO] Changes detected - recompiling the module!
+[INFO] Compiling 6 source files to /Users/camizum/OrcidDev/github/ORCID-Source/orcid-test/target/classes
+[INFO] 
+[INFO] --- resources:3.2.0:testResources (default-testResources) @ orcid-test ---
+[INFO] Using 'UTF-8' encoding to copy filtered resources.
+[INFO] Using 'UTF-8' encoding to copy filtered properties files.
+[INFO] skip non existing resourceDirectory /Users/camizum/OrcidDev/github/ORCID-Source/orcid-test/src/test/resources
+[INFO] 
+[INFO] --- compiler:3.8.1:testCompile (default-testCompile) @ orcid-test ---
+[INFO] No sources to compile
+[INFO] 
+[INFO] --- surefire:3.0.0-M5:test (default-test) @ orcid-test ---
+[INFO] Tests are skipped.
+[INFO] 
+[INFO] --- jar:3.5.0:jar (default-jar) @ orcid-test ---
+[INFO] Building jar: /Users/camizum/OrcidDev/github/ORCID-Source/orcid-test/target/orcid-test.jar
+[INFO] 
+[INFO] --- install:3.1.4:install (default-install) @ orcid-test ---
+[INFO] Installing /Users/camizum/OrcidDev/github/ORCID-Source/orcid-test/pom.xml to /Users/camizum/.m2/repository/org/orcid/orcid-test/release-2.0.0/orcid-test-release-2.0.0.pom
+[INFO] Installing /Users/camizum/OrcidDev/github/ORCID-Source/orcid-test/target/orcid-test.jar to /Users/camizum/.m2/repository/org/orcid/orcid-test/release-2.0.0/orcid-test-release-2.0.0.jar
+[INFO] 
+[INFO] -----------------------< org.orcid:orcid-utils >------------------------
+[INFO] Building ORCID - Utils release-2.0.0                              [3/13]
+[INFO]   from orcid-utils/pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- clean:3.2.0:clean (default-clean) @ orcid-utils ---
+[INFO] Deleting /Users/camizum/OrcidDev/github/ORCID-Source/orcid-utils/target
+[INFO] 
+[INFO] --- enforcer:3.0.0-M3:enforce (enforce-versions) @ orcid-utils ---
+[INFO] 
+[INFO] --- resources:3.2.0:resources (default-resources) @ orcid-utils ---
+[INFO] Using 'UTF-8' encoding to copy filtered resources.
+[INFO] Using 'UTF-8' encoding to copy filtered properties files.
+[INFO] skip non existing resourceDirectory /Users/camizum/OrcidDev/github/ORCID-Source/orcid-utils/src/main/resources
+[INFO] 
+[INFO] --- compiler:3.8.1:compile (default-compile) @ orcid-utils ---
+[INFO] Changes detected - recompiling the module!
+[INFO] Compiling 117 source files to /Users/camizum/OrcidDev/github/ORCID-Source/orcid-utils/target/classes
+[INFO] /Users/camizum/OrcidDev/github/ORCID-Source/orcid-utils/src/main/java/org/orcid/utils/sms/AwsNotifySmsSender.java: Some input files use or override a deprecated API.
+[INFO] /Users/camizum/OrcidDev/github/ORCID-Source/orcid-utils/src/main/java/org/orcid/utils/sms/AwsNotifySmsSender.java: Recompile with -Xlint:deprecation for details.
+[INFO] 
+[INFO] --- resources:3.2.0:testResources (default-testResources) @ orcid-utils ---
+[INFO] Using 'UTF-8' encoding to copy filtered resources.
+[INFO] Using 'UTF-8' encoding to copy filtered properties files.
+[INFO] skip non existing resourceDirectory /Users/camizum/OrcidDev/github/ORCID-Source/orcid-utils/src/test/resources
+[INFO] 
+[INFO] --- compiler:3.8.1:testCompile (default-testCompile) @ orcid-utils ---
+[INFO] Changes detected - recompiling the module!
+[INFO] Compiling 4 source files to /Users/camizum/OrcidDev/github/ORCID-Source/orcid-utils/target/test-classes
+[INFO] 
+[INFO] --- surefire:3.0.0-M5:test (default-test) @ orcid-utils ---
+[INFO] Tests are skipped.
+[INFO] 
+[INFO] --- jar:3.5.0:jar (default-jar) @ orcid-utils ---
+[INFO] Building jar: /Users/camizum/OrcidDev/github/ORCID-Source/orcid-utils/target/orcid-utils-release-2.0.0.jar
+[INFO] 
+[INFO] --- install:3.1.4:install (default-install) @ orcid-utils ---
+[INFO] Installing /Users/camizum/OrcidDev/github/ORCID-Source/orcid-utils/pom.xml to /Users/camizum/.m2/repository/org/orcid/orcid-utils/release-2.0.0/orcid-utils-release-2.0.0.pom
+[INFO] Installing /Users/camizum/OrcidDev/github/ORCID-Source/orcid-utils/target/orcid-utils-release-2.0.0.jar to /Users/camizum/.m2/repository/org/orcid/orcid-utils/release-2.0.0/orcid-utils-release-2.0.0.jar
+[INFO] 
+[INFO] --------------------< org.orcid:orcid-persistence >---------------------
+[INFO] Building ORCID - Persistence release-2.0.0                        [4/13]
+[INFO]   from orcid-persistence/pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- clean:3.2.0:clean (default-clean) @ orcid-persistence ---
+[INFO] Deleting /Users/camizum/OrcidDev/github/ORCID-Source/orcid-persistence/target
+[INFO] 
+[INFO] --- enforcer:3.0.0-M3:enforce (enforce-versions) @ orcid-persistence ---
+[INFO] 
+[INFO] --- resources:3.2.0:resources (default-resources) @ orcid-persistence ---
+[INFO] Using 'UTF-8' encoding to copy filtered resources.
+[INFO] Using 'UTF-8' encoding to copy filtered properties files.
+[INFO] Copying 1 resource
+[INFO] Copying 378 resources
+[INFO] 
+[INFO] --- compiler:3.8.1:compile (default-compile) @ orcid-persistence ---
+[INFO] Changes detected - recompiling the module!
+[INFO] Compiling 254 source files to /Users/camizum/OrcidDev/github/ORCID-Source/orcid-persistence/target/classes
+[INFO] /Users/camizum/OrcidDev/github/ORCID-Source/orcid-persistence/src/main/java/org/orcid/persistence/jpa/entities/OrcidOauth2AuthoriziationCodeDetail.java: Some input files use or override a deprecated API.
+[INFO] /Users/camizum/OrcidDev/github/ORCID-Source/orcid-persistence/src/main/java/org/orcid/persistence/jpa/entities/OrcidOauth2AuthoriziationCodeDetail.java: Recompile with -Xlint:deprecation for details.
+[INFO] /Users/camizum/OrcidDev/github/ORCID-Source/orcid-persistence/src/main/java/org/orcid/persistence/dao/impl/OrcidOauth2TokenDetailDaoImpl.java: Some input files use unchecked or unsafe operations.
+[INFO] /Users/camizum/OrcidDev/github/ORCID-Source/orcid-persistence/src/main/java/org/orcid/persistence/dao/impl/OrcidOauth2TokenDetailDaoImpl.java: Recompile with -Xlint:unchecked for details.
+[INFO] 
+[INFO] --- resources:3.2.0:testResources (default-testResources) @ orcid-persistence ---
+[INFO] Using 'UTF-8' encoding to copy filtered resources.
+[INFO] Using 'UTF-8' encoding to copy filtered properties files.
+[INFO] Copying 23 resources
+[INFO] 
+[INFO] --- compiler:3.8.1:testCompile (default-testCompile) @ orcid-persistence ---
+[INFO] Changes detected - recompiling the module!
+[INFO] Compiling 34 source files to /Users/camizum/OrcidDev/github/ORCID-Source/orcid-persistence/target/test-classes
+[INFO] /Users/camizum/OrcidDev/github/ORCID-Source/orcid-persistence/src/test/java/org/orcid/persistence/dao/ResearchResourceDaoTest.java: Some input files use or override a deprecated API.
+[INFO] /Users/camizum/OrcidDev/github/ORCID-Source/orcid-persistence/src/test/java/org/orcid/persistence/dao/ResearchResourceDaoTest.java: Recompile with -Xlint:deprecation for details.
+[INFO] 
+[INFO] --- surefire:3.0.0-M5:test (default-test) @ orcid-persistence ---
+[INFO] Tests are skipped.
+[INFO] 
+[INFO] --- jar:3.5.0:jar (default-jar) @ orcid-persistence ---
+[INFO] Building jar: /Users/camizum/OrcidDev/github/ORCID-Source/orcid-persistence/target/orcid-persistence.jar
+[INFO] 
+[INFO] --- install:3.1.4:install (default-install) @ orcid-persistence ---
+[INFO] Installing /Users/camizum/OrcidDev/github/ORCID-Source/orcid-persistence/pom.xml to /Users/camizum/.m2/repository/org/orcid/orcid-persistence/release-2.0.0/orcid-persistence-release-2.0.0.pom
+[INFO] Installing /Users/camizum/OrcidDev/github/ORCID-Source/orcid-persistence/target/orcid-persistence.jar to /Users/camizum/.m2/repository/org/orcid/orcid-persistence/release-2.0.0/orcid-persistence-release-2.0.0.jar
+[INFO] 
+[INFO] ------------------------< org.orcid:orcid-core >------------------------
+[INFO] Building ORCID - Core release-2.0.0                               [5/13]
+[INFO]   from orcid-core/pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- clean:3.2.0:clean (default-clean) @ orcid-core ---
+[INFO] Deleting /Users/camizum/OrcidDev/github/ORCID-Source/orcid-core/target
+[INFO] 
+[INFO] --- enforcer:3.0.0-M3:enforce (enforce-versions) @ orcid-core ---
+[INFO] 
+[INFO] --- resources:3.2.0:resources (default-resources) @ orcid-core ---
+[INFO] Using 'UTF-8' encoding to copy filtered resources.
+[INFO] Using 'UTF-8' encoding to copy filtered properties files.
+[INFO] Copying 769 resources
+[INFO] 
+[INFO] --- compiler:3.8.1:compile (default-compile) @ orcid-core ---
+[INFO] Changes detected - recompiling the module!
+[INFO] Compiling 941 source files to /Users/camizum/OrcidDev/github/ORCID-Source/orcid-core/target/classes
