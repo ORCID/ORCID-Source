@@ -834,6 +834,20 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
         query.executeUpdate();
     }
 
+    @Override
+    @Transactional
+    public int updateForcePasswordReset(List<String> ids, Date forcePasswordResetDate) {
+        if (ids == null || ids.isEmpty()) {
+            return 0;
+        }
+
+        Query query = entityManager.createNativeQuery("UPDATE profile SET force_password_reset = :forcePasswordResetDate WHERE orcid IN :ids");
+        query.setParameter("ids", ids);
+        query.setParameter("forcePasswordResetDate", forcePasswordResetDate);
+        query.setHint("jakarta.persistence.query.timeout", queryTimeout);
+        return query.executeUpdate();
+    }
+
     @SuppressWarnings("unchecked")
     @Override
     @Transactional(value = "transactionManagerReadOnly", readOnly = true)

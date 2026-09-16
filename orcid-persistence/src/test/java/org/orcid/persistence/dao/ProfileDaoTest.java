@@ -277,6 +277,29 @@ public class ProfileDaoTest extends DBUnitTest {
     @Test
     @Rollback(true)
     @Transactional(propagation = Propagation.REQUIRES_NEW)
+    public void testUpdateForcePasswordReset() {
+        Date forcePasswordResetDate = new Date();
+        List<String> orcidIds = Arrays.asList("4444-4444-4444-4442", "4444-4444-4444-4443");
+
+        int updatedProfiles = profileDao.updateForcePasswordReset(orcidIds, forcePasswordResetDate);
+
+        assertEquals(2, updatedProfiles);
+
+        entityManager.clear();
+
+        for (String orcidId : orcidIds) {
+            ProfileEntity profileEntity = profileDao.find(orcidId);
+            assertNotNull(profileEntity.getForcePasswordReset());
+            assertTrue(Math.abs(profileEntity.getForcePasswordReset().getTime() - forcePasswordResetDate.getTime()) < 1000);
+        }
+
+        ProfileEntity untouchedProfile = profileDao.find("4444-4444-4444-4446");
+        assertNull(untouchedProfile.getForcePasswordReset());
+    }
+
+    @Test
+    @Rollback(true)
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void testGetConfirmedProfileCount() {
         String orcid = "4444-4444-4444-4446";
         Long confirmedProfileCount = profileDao.getConfirmedProfileCount();

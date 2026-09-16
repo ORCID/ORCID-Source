@@ -206,6 +206,9 @@ public interface ProfileDao extends GenericDao<ProfileEntity, String> {
     @Transactional(propagation = Propagation.REQUIRED)
     void updateIndexingStatus(List<String> ids, IndexingStatus reindex);
 
+    @Transactional(propagation = Propagation.REQUIRED)
+    int updateForcePasswordReset(List<String> ids, Date forcePasswordResetDate);
+
     @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     public List<String> registeredBetween(Date startDate, Date endDate);
 
