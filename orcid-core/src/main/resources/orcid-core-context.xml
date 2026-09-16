@@ -300,7 +300,7 @@
 	
 	<bean id="profileEntityGenericCacheManager" class="org.orcid.core.cache.impl.GenericCacheManagerImpl">
         <property name="cache" ref="profileEntityCache" />
-        <property name="profileEntityManager" ref="profileEntityManagerV3" />
+        <property name="profileEntityManager" ref="profileEntityManagerReadOnlyV3" />
         <property name="retriever" ref="profileEntityRetriever" />
     </bean>
     
