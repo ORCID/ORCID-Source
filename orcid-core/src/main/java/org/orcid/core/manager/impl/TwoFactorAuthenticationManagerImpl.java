@@ -116,7 +116,10 @@ public class TwoFactorAuthenticationManagerImpl implements TwoFactorAuthenticati
     @Override
     @Transactional
     public void disable2FAByRecoveryPhone(String orcid) {
-        LOG.warn("2FA disabled by recovery phone for %s", orcid);
+        // {}, not %s: slf4j takes its placeholder that way. The line above uses %s and has therefore
+        // been printing the literal characters instead of the iD for as long as it has existed; that one
+        // is not this ticket's to change, but there is no reason to copy it.
+        LOG.warn("2FA disabled by recovery phone for {}", orcid);
         transactionTemplate.execute(new TransactionCallback<Boolean>() {
             @Override
             public Boolean doInTransaction(TransactionStatus status) {
