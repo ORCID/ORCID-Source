@@ -52,6 +52,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
 import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
 import org.apache.commons.lang3.StringUtils;
@@ -159,6 +160,7 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
     }
 
     @Override
+    @Transactional
     public Work createWork(String orcid, Work work, boolean isApiRequest, List<Work> existingWorks) {
         SourceEntity sourceEntity = sourceManager.retrieveSourceEntity();
 
@@ -359,6 +361,7 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
     }
 
     @Override
+    @Transactional
     public Work updateWork(String orcid, Work work, boolean isApiRequest, List<Work> existingWorks) {
         WorkEntity workEntity = workDao.getWork(orcid, work.getPutCode());
 
@@ -422,6 +425,7 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
     }
 
     @Override
+    @Transactional
     public boolean checkSourceAndRemoveWork(String orcid, Long workId) {
         boolean result = true;
         WorkEntity workEntity = workDao.getWork(orcid, workId);

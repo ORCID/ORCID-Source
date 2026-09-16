@@ -29,6 +29,7 @@ import org.orcid.persistence.jpa.entities.ProfileFundingEntity;
 import org.orcid.persistence.jpa.entities.SourceEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.transaction.annotation.Transactional;
 
 public class ProfileFundingManagerImpl extends ProfileFundingManagerReadOnlyImpl implements ProfileFundingManager {
 
@@ -98,6 +99,7 @@ public class ProfileFundingManagerImpl extends ProfileFundingManagerReadOnlyImpl
      * @return the added funding
      */
     @Override
+    @Transactional
     public Funding createFunding(String orcid, Funding funding, boolean isApiRequest, List<Funding> existingFundings) {
         SourceEntity sourceEntity = sourceManager.retrieveSourceEntity();
         activityValidator.validateFunding(funding, sourceEntity, true, isApiRequest, null);
@@ -155,6 +157,7 @@ public class ProfileFundingManagerImpl extends ProfileFundingManagerReadOnlyImpl
      * @return the updated funding
      */
     @Override
+    @Transactional
     public Funding updateFunding(String orcid, Funding funding, boolean isApiRequest, List<Funding> existingFundings) {
         SourceEntity sourceEntity = sourceManager.retrieveSourceEntity();
         ProfileFundingEntity pfe = profileFundingDao.getProfileFunding(orcid, funding.getPutCode());
@@ -175,6 +178,9 @@ public class ProfileFundingManagerImpl extends ProfileFundingManagerReadOnlyImpl
 
         orcidSecurityManager.checkSource(pfe);
 
+        // Fetch organization FIRST before mutating pfe (prevents auto-flush errors during query)
+        OrgEntity updatedOrganization = orgManager.getOrgEntity(funding);
+
         jpaJaxbFundingAdapter.toProfileFundingEntity(funding, pfe);
         pfe.setVisibility(originalVisibility.name());
 
@@ -182,9 +188,6 @@ public class ProfileFundingManagerImpl extends ProfileFundingManagerReadOnlyImpl
         pfe.setSourceId(existingSourceId);
         pfe.setClientSourceId(existingClientSourceId);
 
-        // Updates the give organization with the latest organization from
-        // database, or, create a new one
-        OrgEntity updatedOrganization = orgManager.getOrgEntity(funding);
         pfe.setOrg(updatedOrganization);
 
         pfe = profileFundingDao.merge(pfe);
@@ -205,6 +208,7 @@ public class ProfileFundingManagerImpl extends ProfileFundingManagerReadOnlyImpl
      * @return true if the funding was deleted, false otherwise
      */
     @Override
+    @Transactional
     public boolean checkSourceAndDelete(String orcid, Long fundingId) {
         ProfileFundingEntity pfe = profileFundingDao.getProfileFunding(orcid, fundingId);
         orcidSecurityManager.checkSource(pfe);

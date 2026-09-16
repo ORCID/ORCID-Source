@@ -60,6 +60,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
 import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
 import org.orcid.core.adapter.mapstruct.ContributorsRolesAndSequencesMapperV3;
@@ -187,6 +188,7 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
     }
 
     @Override
+    @Transactional
     public Work createWork(String orcid, Work work, boolean isApiRequest, List<Work> existingWorks) {
         Source activeSource = sourceManager.retrieveActiveSource();
 
@@ -379,6 +381,7 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
     }
 
     @Override
+    @Transactional
     public Work updateWork(String orcid, Work work, boolean isApiRequest, List<Work> existingWorks) {
         WorkEntity workEntity = workDao.getWork(orcid, work.getPutCode());
         Work workSaved = jpaJaxbWorkAdapter.toWork(workEntity);
@@ -437,6 +440,7 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
     }
 
     @Override
+    @Transactional
     public boolean checkSourceAndRemoveWork(String orcid, Long workId) {
         boolean result = true;
         WorkEntity workEntity = workDao.getWork(orcid, workId);
@@ -546,6 +550,7 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
     }
 
     @Override
+    @Transactional
     public Work createWork(String orcid, WorkForm workForm) {
         Work work = workForm.toWork();
         work.setPutCode(null);
@@ -578,6 +583,7 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
     }
 
     @Override
+    @Transactional
     public Work updateWork(String orcid, WorkForm workForm) {
         Work work = workForm.toWork();
 
@@ -627,6 +633,7 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
     }
 
     @Override
+    @Transactional
     public boolean updateFeaturedWorks(String orcid, Map<Long, Integer> featuredDisplayIndexMap) {
         boolean isPublic = workDao.isPublic(orcid, new ArrayList<>(featuredDisplayIndexMap.keySet()));
         boolean result = true;

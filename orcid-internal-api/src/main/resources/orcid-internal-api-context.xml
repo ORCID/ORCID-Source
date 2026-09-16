@@ -19,6 +19,7 @@
      <!-- Override data source configuration so we can customize it for the internal api -->
      <bean id="pooledDataSource" class="com.zaxxer.hikari.HikariDataSource" destroy-method="close">
         <property name="poolName" value="${org.orcid.persistence.internal_api.db.poolName:orcid-internal}" />
+        <property name="autoCommit" value="false" />
         <property name="driverClassName" value="${org.orcid.persistence.db.class}" />
         <property name="jdbcUrl" value="${org.orcid.persistence.db.url}" />
         <property name="username" value="${org.orcid.persistence.db.username}" />
@@ -33,6 +34,7 @@
     
     <bean id="pooledDataSourceReadOnly" class="com.zaxxer.hikari.HikariDataSource" destroy-method="close">
         <property name="poolName" value="${org.orcid.persistence.internal_api.db.readonly.poolName:orcid-internal-readonly}" />
+        <property name="autoCommit" value="false" />
         <property name="driverClassName" value="${org.orcid.persistence.db.readonly.class}" />
         <property name="jdbcUrl" value="${org.orcid.persistence.db.readonly.url}" />
         <property name="username" value="${org.orcid.persistence.db.readonly.username}" />
