@@ -116,7 +116,10 @@ public enum Features implements Feature {
     SEND_EMAIL_ON_RESET_PASSWORD,
 
     @Label("2FA recovery phone number (add/manage from account settings)")
-    TWO_FACTOR_RECOVERY_PHONE;
+    TWO_FACTOR_RECOVERY_PHONE,
+
+    @Label("Login - recovery phone interstitial")
+    LOGIN_RECOVERY_PHONE_INTERSTITIAL;
     public boolean isActive() {
         return FeatureContext.getFeatureManager().isActive(this);
     }

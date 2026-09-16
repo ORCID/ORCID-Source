@@ -9,6 +9,7 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
 import java.util.Date;
@@ -37,6 +38,8 @@ public class RecoveryPhoneManagerTest {
 
     private static final String PHONE = "+441234567890";
 
+    private static final String ENCRYPTED = "encrypted-number";
+
     @Mock
     private ProfileRecoveryPhoneDao profileRecoveryPhoneDao;
 
@@ -61,10 +64,10 @@ public class RecoveryPhoneManagerTest {
     }
 
     @Test
-    public void getRecoveryPhoneExposesOnlyLastFourAndDates() {
+    public void getRecoveryPhoneMapsTheLastFourAndTheDates() {
         Date created = new Date(1000L);
         Date modified = new Date(2000L);
-        when(profileRecoveryPhoneDao.findByOrcid(ORCID)).thenReturn(entity("hashed", "7890", created, modified));
+        when(profileRecoveryPhoneDao.findByOrcid(ORCID)).thenReturn(entity(ENCRYPTED, "7890", created, modified));
 
         RecoveryPhone recoveryPhone = recoveryPhoneManager.getRecoveryPhone(ORCID);
 
@@ -74,32 +77,66 @@ public class RecoveryPhoneManagerTest {
     }
 
     @Test
-    public void saveStoresOnlyAHashAndTheLastFourDigits() {
+    public void getRecoveryPhoneNeverDecrypts() {
+        when(profileRecoveryPhoneDao.findByOrcid(ORCID)).thenReturn(entity(ENCRYPTED, "7890", new Date(), new Date()));
+
+        recoveryPhoneManager.getRecoveryPhone(ORCID);
+
+        // The point of keeping the number on its own accessor: the Account settings panel polls this
+        // one for the mask and the dates, and no poll should cost a decryption.
+        verifyNoInteractions(encryptionManager);
+    }
+
+    @Test
+    public void getDecryptedPhoneNumberDecryptsTheStoredNumber() {
+        when(profileRecoveryPhoneDao.findByOrcid(ORCID)).thenReturn(entity(ENCRYPTED, "7890", new Date(), new Date()));
+        when(encryptionManager.decryptForInternalUse(ENCRYPTED)).thenReturn(PHONE);
+
+        String phoneNumber = recoveryPhoneManager.getDecryptedPhoneNumber(ORCID);
+
+        // The stored column is what gets decrypted, and the caller gets the number back in full:
+        // the recovery flows text it without the user re-typing it.
+        verify(encryptionManager).decryptForInternalUse(ENCRYPTED);
+        assertEquals(PHONE, phoneNumber);
+    }
+
+    @Test
+    public void getDecryptedPhoneNumberReturnsNullWhenNoneStored() {
         when(profileRecoveryPhoneDao.findByOrcid(ORCID)).thenReturn(null);
-        when(encryptionManager.hashForInternalUse(PHONE)).thenReturn("hashed-number");
+        assertNull(recoveryPhoneManager.getDecryptedPhoneNumber(ORCID));
+    }
+
+    @Test
+    public void saveStoresTheEncryptedNumberAndTheLastFour() {
+        when(profileRecoveryPhoneDao.findByOrcid(ORCID)).thenReturn(null);
+        when(encryptionManager.encryptForInternalUse(PHONE)).thenReturn(ENCRYPTED);
 
         boolean isNew = recoveryPhoneManager.saveRecoveryPhone(ORCID, PHONE);
 
         assertTrue(isNew);
-        verify(profileRecoveryPhoneDao).upsert(ORCID, "hashed-number", "7890");
+        verify(profileRecoveryPhoneDao).upsert(ORCID, ENCRYPTED, "7890");
+        // Reversibly encrypted, never hashed, and the plain number never reaches the DAO.
+        verify(encryptionManager, never()).hashForInternalUse(anyString());
+        verify(profileRecoveryPhoneDao, never()).upsert(eq(ORCID), eq(PHONE), anyString());
         assertEquals(ProfileEventType.PROFILE_RECOVERY_PHONE_ADDED, capturedEventType());
     }
 
     @Test
     public void savingOverAnExistingNumberIsRecordedAsAnUpdate() {
-        when(profileRecoveryPhoneDao.findByOrcid(ORCID)).thenReturn(entity("old-hash", "1234", new Date(), new Date()));
-        when(encryptionManager.hashForInternalUse(anyString())).thenReturn("new-hash");
+        when(profileRecoveryPhoneDao.findByOrcid(ORCID)).thenReturn(entity("old-encrypted", "1234", new Date(), new Date()));
+        when(encryptionManager.encryptForInternalUse(anyString())).thenReturn("new-encrypted");
 
         boolean isNew = recoveryPhoneManager.saveRecoveryPhone(ORCID, PHONE);
 
         assertFalse(isNew);
+        verify(profileRecoveryPhoneDao).upsert(ORCID, "new-encrypted", "7890");
         assertEquals(ProfileEventType.PROFILE_RECOVERY_PHONE_UPDATED, capturedEventType());
     }
 
     @Test
     public void lastFourIsTakenFromTheDigitsOnly() {
         when(profileRecoveryPhoneDao.findByOrcid(ORCID)).thenReturn(null);
-        when(encryptionManager.hashForInternalUse(anyString())).thenReturn("hash");
+        when(encryptionManager.encryptForInternalUse(anyString())).thenReturn(ENCRYPTED);
 
         recoveryPhoneManager.saveRecoveryPhone(ORCID, "+1 (555) 010-9876");
 
@@ -124,29 +161,13 @@ public class RecoveryPhoneManagerTest {
         assertEquals(ProfileEventType.PROFILE_RECOVERY_PHONE_REMOVED, capturedEventType());
     }
 
-    @Test
-    public void matchesComparesTheSuppliedNumberAgainstTheStoredHash() {
-        when(profileRecoveryPhoneDao.findByOrcid(ORCID)).thenReturn(entity("hashed-number", "7890", new Date(), new Date()));
-        when(encryptionManager.hashMatches(PHONE, "hashed-number")).thenReturn(true);
-        when(encryptionManager.hashMatches("+15550000000", "hashed-number")).thenReturn(false);
-
-        assertTrue(recoveryPhoneManager.matches(ORCID, PHONE));
-        assertFalse(recoveryPhoneManager.matches(ORCID, "+15550000000"));
-    }
-
-    @Test
-    public void matchesIsFalseWhenThereIsNoStoredNumber() {
-        when(profileRecoveryPhoneDao.findByOrcid(ORCID)).thenReturn(null);
-        assertFalse(recoveryPhoneManager.matches(ORCID, PHONE));
-    }
-
     private ProfileEventType capturedEventType() {
         ArgumentCaptor<ProfileEventEntity> captor = ArgumentCaptor.forClass(ProfileEventEntity.class);
         verify(profileEventDao).persist(captor.capture());
         return captor.getValue().getType();
     }
 
-    private static ProfileRecoveryPhoneEntity entity(String hash, String lastFour, Date created, Date modified) {
+    private static ProfileRecoveryPhoneEntity entity(String encrypted, String lastFour, Date created, Date modified) {
         ProfileRecoveryPhoneEntity entity = new ProfileRecoveryPhoneEntity() {
             private static final long serialVersionUID = 1L;
 
@@ -160,7 +181,7 @@ public class RecoveryPhoneManagerTest {
                 return modified;
             }
         };
-        entity.setHashedPhoneNumber(hash);
+        entity.setEncryptedPhoneNumber(encrypted);
         entity.setLastFour(lastFour);
         return entity;
     }

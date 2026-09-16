@@ -115,6 +115,22 @@ public class TwoFactorAuthenticationManagerImpl implements TwoFactorAuthenticati
 
     @Override
     @Transactional
+    public void disable2FAByRecoveryPhone(String orcid) {
+        LOG.warn("2FA disabled by recovery phone for %s", orcid);
+        transactionTemplate.execute(new TransactionCallback<Boolean>() {
+            @Override
+            public Boolean doInTransaction(TransactionStatus status) {
+                profileDao.disable2FA(orcid);
+                backupCodeManager.removeUnusedBackupCodes(orcid);
+                recoveryPhoneManager.removeRecoveryPhone(orcid);
+                profileEventDao.persist(new ProfileEventEntity(orcid, ProfileEventType.PROFILE_2FA_DISABLED_BY_RECOVERY_PHONE));
+                return true;
+            }
+        });
+    }
+
+    @Override
+    @Transactional
     public void adminDisable2FA(String orcid, String adminOrcidId) {
         String message = String.format("Admin %s have disabled 2FA for %s", adminOrcidId, orcid);
         LOG.warn(message);

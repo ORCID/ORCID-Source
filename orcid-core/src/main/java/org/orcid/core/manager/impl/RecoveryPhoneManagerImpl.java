@@ -39,10 +39,22 @@ public class RecoveryPhoneManagerImpl implements RecoveryPhoneManager {
     }
 
     @Override
+    public String getDecryptedPhoneNumber(String orcid) {
+        ProfileRecoveryPhoneEntity entity = profileRecoveryPhoneDao.findByOrcid(orcid);
+        if (entity == null) {
+            return null;
+        }
+        // Decrypting lives here and not in getRecoveryPhone because the Account settings panel polls
+        // that one for the mask and the dates alone; only the flows that have to text the number pay
+        // for the crypto, and the result must not reach a log line, a RUM attribute or an HTTP response.
+        return encryptionManager.decryptForInternalUse(entity.getEncryptedPhoneNumber());
+    }
+
+    @Override
     @Transactional
     public boolean saveRecoveryPhone(String orcid, String e164PhoneNumber) {
         boolean isNew = profileRecoveryPhoneDao.findByOrcid(orcid) == null;
-        profileRecoveryPhoneDao.upsert(orcid, encryptionManager.hashForInternalUse(e164PhoneNumber), lastFour(e164PhoneNumber));
+        profileRecoveryPhoneDao.upsert(orcid, encryptionManager.encryptForInternalUse(e164PhoneNumber), lastFour(e164PhoneNumber));
         profileEventDao.persist(new ProfileEventEntity(orcid,
                 isNew ? ProfileEventType.PROFILE_RECOVERY_PHONE_ADDED : ProfileEventType.PROFILE_RECOVERY_PHONE_UPDATED));
         LOG.info("Recovery phone {} for {}", isNew ? "added" : "updated", orcid);
@@ -56,15 +68,6 @@ public class RecoveryPhoneManagerImpl implements RecoveryPhoneManager {
             profileEventDao.persist(new ProfileEventEntity(orcid, ProfileEventType.PROFILE_RECOVERY_PHONE_REMOVED));
             LOG.info("Recovery phone removed for {}", orcid);
         }
-    }
-
-    @Override
-    public boolean matches(String orcid, String e164PhoneNumber) {
-        ProfileRecoveryPhoneEntity entity = profileRecoveryPhoneDao.findByOrcid(orcid);
-        if (entity == null || e164PhoneNumber == null) {
-            return false;
-        }
-        return encryptionManager.hashMatches(e164PhoneNumber, entity.getHashedPhoneNumber());
     }
 
     private String lastFour(String e164PhoneNumber) {

@@ -13,10 +13,11 @@ import jakarta.persistence.Table;
 /**
  * The 2FA recovery phone number for a record.
  *
- * The plain number is never persisted: only a salted one way hash of the E.164
- * form plus the last four digits, which are all that is ever displayed back to
- * the user. To act on the number the user has to supply it again so it can be
- * hashed and compared.
+ * The number is held in E.164 form, reversibly encrypted with the same
+ * mechanism as the 2FA secret, alongside the last four digits, which are all
+ * that is ever displayed back to the user. The encryption has to be reversible
+ * because the Registry sends a text to the stored number without the user
+ * re-typing it; the encrypted column is the only place the full number exists.
  */
 @Entity
 @Table(name = "profile_recovery_phone")
@@ -28,7 +29,7 @@ public class ProfileRecoveryPhoneEntity extends BaseEntity<Long> implements Seri
 
     private String orcid;
 
-    private String hashedPhoneNumber;
+    private String encryptedPhoneNumber;
 
     private String lastFour;
 
@@ -53,13 +54,13 @@ public class ProfileRecoveryPhoneEntity extends BaseEntity<Long> implements Seri
         this.orcid = orcid;
     }
 
-    @Column(name = "hashed_phone_number")
-    public String getHashedPhoneNumber() {
-        return hashedPhoneNumber;
+    @Column(name = "encrypted_phone_number", nullable = false)
+    public String getEncryptedPhoneNumber() {
+        return encryptedPhoneNumber;
     }
 
-    public void setHashedPhoneNumber(String hashedPhoneNumber) {
-        this.hashedPhoneNumber = hashedPhoneNumber;
+    public void setEncryptedPhoneNumber(String encryptedPhoneNumber) {
+        this.encryptedPhoneNumber = encryptedPhoneNumber;
     }
 
     @Column(name = "last_four", length = 4)

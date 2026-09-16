@@ -4,12 +4,26 @@ public interface RecoveryPhoneManager {
 
     /**
      * The stored recovery phone for the record, or null if there isn't one.
+     * It carries the last four digits and the dates only, so it costs no
+     * decryption: the Account settings panel polls this on every refresh.
      */
     RecoveryPhone getRecoveryPhone(String orcid);
 
     /**
+     * The stored number in E.164 form, or null when there is none.
+     *
+     * This is the only path that decrypts the stored number, and it exists for
+     * the flows that have to send a text to it without the user re-typing it.
+     * The value must never be written to a log line, put in a RUM attribute key
+     * or value, or returned over HTTP (R1.2): anything that reaches the user
+     * carries the last four digits only.
+     */
+    String getDecryptedPhoneNumber(String orcid);
+
+    /**
      * Stores the given E.164 number as the record's recovery phone, replacing
-     * any existing one. Only a hash and the last four digits are persisted.
+     * any existing one. The number is persisted reversibly encrypted, together
+     * with the last four digits.
      *
      * @return true if this created a new recovery phone, false if it replaced
      *         an existing one.
@@ -21,11 +35,5 @@ public interface RecoveryPhoneManager {
      * turning 2FA off resets every 2FA backup option.
      */
     void removeRecoveryPhone(String orcid);
-
-    /**
-     * Whether the given E.164 number is the record's stored recovery phone.
-     * The caller has to supply the number: we cannot recover it from storage.
-     */
-    boolean matches(String orcid, String e164PhoneNumber);
 
 }

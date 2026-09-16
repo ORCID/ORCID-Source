@@ -431,4 +431,5 @@
   <include file="/db/updates/add_member_id_to_client_details.xml" />
   <include file="/db/updates/dw_profile_last_login_idx_and_view.xml" />
   <include file="/db/updates/create_profile_recovery_phone_table.xml" />
+  <include file="/db/updates/recovery_phone_encrypted_number.xml" />
 </databaseChangeLog>

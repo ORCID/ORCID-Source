@@ -10,7 +10,7 @@ public interface ProfileRecoveryPhoneDao extends GenericDao<ProfileRecoveryPhone
      * Stores the recovery phone for a record, replacing any existing one. A
      * record can only ever have a single recovery phone number.
      */
-    void upsert(String orcid, String hashedPhoneNumber, String lastFour);
+    void upsert(String orcid, String encryptedPhoneNumber, String lastFour);
 
     boolean deleteByOrcid(String orcid);
 

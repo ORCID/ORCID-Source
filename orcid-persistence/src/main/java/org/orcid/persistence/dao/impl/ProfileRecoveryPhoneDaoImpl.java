@@ -25,17 +25,17 @@ public class ProfileRecoveryPhoneDaoImpl extends GenericDaoImpl<ProfileRecoveryP
 
     @Override
     @Transactional
-    public void upsert(String orcid, String hashedPhoneNumber, String lastFour) {
+    public void upsert(String orcid, String encryptedPhoneNumber, String lastFour) {
         // dateCreated and lastModified are stamped by the BaseEntity lifecycle callbacks
         ProfileRecoveryPhoneEntity existing = findByOrcid(orcid);
         if (existing == null) {
             ProfileRecoveryPhoneEntity entity = new ProfileRecoveryPhoneEntity();
             entity.setOrcid(orcid);
-            entity.setHashedPhoneNumber(hashedPhoneNumber);
+            entity.setEncryptedPhoneNumber(encryptedPhoneNumber);
             entity.setLastFour(lastFour);
             this.persist(entity);
         } else {
-            existing.setHashedPhoneNumber(hashedPhoneNumber);
+            existing.setEncryptedPhoneNumber(encryptedPhoneNumber);
             existing.setLastFour(lastFour);
             this.merge(existing);
         }

@@ -5,7 +5,10 @@ import java.util.Date;
 /**
  * The stored recovery phone for a record, as far as anything outside the
  * persistence layer is allowed to see it: the last four digits and the dates.
- * The number itself never leaves the database in a readable form.
+ * The number itself never leaves the database in a readable form through this
+ * object. The one path that reads it is
+ * {@link RecoveryPhoneManager#getDecryptedPhoneNumber(String)}, kept separate
+ * so that the callers who only want the mask and the dates never decrypt.
  */
 public class RecoveryPhone {
 

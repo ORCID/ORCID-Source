@@ -1,0 +1,62 @@
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
+
+    <!--
+        The recovery phone number has to be recoverable: the Registry sends a text to the stored
+        number without the user re-typing it, which a one way hash cannot support. The number is
+        now held in E.164 form, reversibly encrypted with the same mechanism as the 2FA secret.
+    -->
+    <changeSet id="RECOVERY-PHONE-ADD-ENCRYPTED-NUMBER" author="Leonardo Mendoza">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <columnExists tableName="profile_recovery_phone" columnName="encrypted_phone_number"/>
+            </not>
+        </preConditions>
+        <!-- Nullable: a NOT NULL column cannot be added to a table that already holds rows, and
+             any row written before this change has no encrypted number to migrate. The rows that
+             would hold a NULL are cleared below, and the column is made NOT NULL after that. -->
+        <addColumn tableName="profile_recovery_phone">
+            <column name="encrypted_phone_number" type="VARCHAR(255)"/>
+        </addColumn>
+    </changeSet>
+
+    <!--
+        Rows written by the earlier hashed build of this same branch carry no encrypted number, and
+        there is nothing to migrate them from: a one way hash cannot be turned back into a number.
+        Deleting them is safe because profile_recovery_phone only exists on this unmerged branch, so
+        no deployed environment holds a row, and it is the honest outcome anyway: a user whose row
+        goes is back to having no recovery number, which the panel and the sign in options already
+        handle. The precondition keeps the delete to databases that still carry the hashed column,
+        so a database that has already migrated can never have its live rows wiped by a re-run.
+    -->
+    <changeSet id="RECOVERY-PHONE-CLEAR-UNMIGRATABLE-ROWS" author="Leonardo Mendoza">
+        <preConditions onFail="MARK_RAN">
+            <columnExists tableName="profile_recovery_phone" columnName="hashed_phone_number"/>
+        </preConditions>
+        <delete tableName="profile_recovery_phone"/>
+    </changeSet>
+
+    <changeSet id="RECOVERY-PHONE-DROP-HASHED-NUMBER" author="Leonardo Mendoza">
+        <preConditions onFail="MARK_RAN">
+            <columnExists tableName="profile_recovery_phone" columnName="hashed_phone_number"/>
+        </preConditions>
+        <dropColumn tableName="profile_recovery_phone" columnName="hashed_phone_number"/>
+    </changeSet>
+
+    <!--
+        NOT NULL because nothing downstream can tell a missing number from a stored one: the
+        decryption returns null instead of failing, so a row with a NULL number would claim a
+        recovery number exists while having none, showing a mask in the panel and offering the
+        sign in option for a text that can never be sent. A row either carries a number or is
+        not there at all.
+    -->
+    <changeSet id="RECOVERY-PHONE-ENCRYPTED-NUMBER-NOT-NULL" author="Leonardo Mendoza">
+        <preConditions onFail="MARK_RAN">
+            <columnExists tableName="profile_recovery_phone" columnName="encrypted_phone_number"/>
+        </preConditions>
+        <addNotNullConstraint tableName="profile_recovery_phone" columnName="encrypted_phone_number"
+                              columnDataType="VARCHAR(255)"/>
+    </changeSet>
+
+</databaseChangeLog>
