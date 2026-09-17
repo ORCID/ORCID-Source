@@ -364,6 +364,18 @@ public class TwoFactorAuthenticationControllerTest {
     }
 
     @Test
+    public void testStatusReportsANumberChangedSecondsAfterItWasAddedAsModified() {
+        // A user who adds a number and corrects it straight away has changed it; the panel must date
+        // the row from the change, not from the first entry.
+        enableRecoveryPhoneFeature();
+        java.util.Date created = new java.util.Date(1_600_000_000_000L);
+        java.util.Date modified = new java.util.Date(1_600_000_000_000L + (5 * 1000L));
+        when(recoveryPhoneManager.getRecoveryPhone(ORCID)).thenReturn(storedRecoveryPhone("7890", created, modified));
+
+        assertTrue(controller.get2FAStatus().isRecoveryPhoneModified());
+    }
+
+    @Test
     public void testStatusReportsANumberThatHasBeenChangedAsModified() {
         enableRecoveryPhoneFeature();
         java.util.Date created = new java.util.Date(1_600_000_000_000L);

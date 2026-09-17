@@ -53,7 +53,11 @@ public class TwoFactorAuthenticationController extends BaseController {
     private static final String RECOVERY_PHONE_MASK = "***********";
 
     /** Ignore the sub second gap between the insert and its last_modified. */
-    private static final long RECOVERY_PHONE_MODIFIED_THRESHOLD_MILLIS = 60 * 1000L;
+    // A row's two timestamps are stamped by the same lifecycle callback when it is created, so they
+    // differ by at most a few milliseconds until the number is actually changed. A minute here would
+    // read a number corrected right after it was added as never modified, which the panel then dates
+    // from the wrong event.
+    private static final long RECOVERY_PHONE_MODIFIED_THRESHOLD_MILLIS = 1000L;
 
     static final String FEATURE_DISABLED = "FEATURE_DISABLED";
 
