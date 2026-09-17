@@ -12,6 +12,7 @@ import org.orcid.core.common.manager.EmailFrequencyManager;
 import org.orcid.core.manager.ClientDetailsEntityCacheManager;
 import org.orcid.core.manager.EncryptionManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
+import org.orcid.core.manager.RecoveryPhoneManager;
 import org.orcid.core.manager.v3.AddressManager;
 import org.orcid.core.manager.v3.BiographyManager;
 import org.orcid.core.manager.v3.EmailManager;
@@ -218,6 +219,26 @@ public class ProfileEntityManagerImplTest extends DBUnitTest {
         assertEquals(0, notificationManager.findByOrcid("4444-4444-4444-4441", true, 0, 1000).size());
     }
     
+    /*
+     * Deactivating a record clears 2FA at the DAO, which used to leave the recovery
+     * phone number - encrypted, but personal data about a named person - behind in
+     * profile_recovery_phone. The number has to go the same way it does when 2FA is
+     * turned off through the manager. Deprecation runs the same clearRecord, so this
+     * one test covers both doors.
+     */
+    @Test
+    public void testDeactivateRecordRemovesTheRecoveryPhoneNumber() throws Exception {
+        RecoveryPhoneManager realRecoveryPhoneManager = (RecoveryPhoneManager) ReflectionTestUtils.getField(profileEntityManager, "recoveryPhoneManager");
+        RecoveryPhoneManager recoveryPhoneManager = Mockito.mock(RecoveryPhoneManager.class);
+        ReflectionTestUtils.setField(profileEntityManager, "recoveryPhoneManager", recoveryPhoneManager);
+        try {
+            assertTrue(profileEntityManager.deactivateRecord("4444-4444-4444-4443"));
+            Mockito.verify(recoveryPhoneManager, Mockito.times(1)).removeRecoveryPhone("4444-4444-4444-4443");
+        } finally {
+            ReflectionTestUtils.setField(profileEntityManager, "recoveryPhoneManager", realRecoveryPhoneManager);
+        }
+    }
+
     @Test    
     public void testReviewProfile() throws Exception {
     	boolean result = profileEntityManager.reviewProfile("4444-4444-4444-4441");
