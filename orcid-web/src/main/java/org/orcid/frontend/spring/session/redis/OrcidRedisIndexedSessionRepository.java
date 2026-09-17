@@ -132,11 +132,12 @@ public class OrcidRedisIndexedSessionRepository implements FindByIndexNameSessio
     }
 
     public void save(OrcidRedisIndexedSessionRepository.RedisSession session) {
-        ServletRequestAttributes att = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
-        HttpServletRequest request = att.getRequest();
+        HttpServletRequest request = getCurrentRequest();
 
-        if(updateSession()) {
-            logger.debug("Saving session for " + request.getRequestURI() + " - " + request.getMethod());
+        if (updateSession(request)) {
+            if (request != null) {
+                logger.debug("Saving session for " + request.getRequestURI() + " - " + request.getMethod());
+            }
             session.save();
             if (session.isNew) {
                 String sessionCreatedKey = this.getSessionCreatedChannel(session.getId());
@@ -205,12 +206,13 @@ public class OrcidRedisIndexedSessionRepository implements FindByIndexNameSessio
             } else if ("maxInactiveInterval".equals(key)) {
                 loaded.setMaxInactiveInterval(Duration.ofSeconds((long)(Integer)entry.getValue()));
             } else if ("lastAccessedTime".equals(key)) {
-                ServletRequestAttributes att = (ServletRequestAttributes)RequestContextHolder.getRequestAttributes();
-                HttpServletRequest request = att.getRequest();
-                if(updateSession()) {
-                    logger.debug("Updating last accessed time for " + request.getRequestURI() + " - " + request.getMethod());
+                HttpServletRequest request = getCurrentRequest();
+                if (updateSession(request)) {
+                    if (request != null) {
+                        logger.debug("Updating last accessed time for " + request.getRequestURI() + " - " + request.getMethod());
+                    }
                     loaded.setLastAccessedTime(Instant.ofEpochMilli((Long) entry.getValue()));
-                } else {
+                } else if (request != null) {
                     logger.trace("Ignoring last accessed time for " + request.getRequestURI() + " - " + request.getMethod());
                 }
             } else if (key.startsWith("sessionAttr:")) {
@@ -362,14 +364,15 @@ public class OrcidRedisIndexedSessionRepository implements FindByIndexNameSessio
         return this.sessionRedisOperations.boundHashOps(key);
     }
 
-    private boolean updateSession() {
+    private HttpServletRequest getCurrentRequest() {
         ServletRequestAttributes att = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
-        // It is unlikely that `att` will ever be null, but let's add a catch for it
-        if(att == null) {
-            logger.warn("ServletRequestAttributes were null");
-            return false;
+        return att == null ? null : att.getRequest();
+    }
+
+    private boolean updateSession(HttpServletRequest request) {
+        if (request == null) {
+            return true;
         }
-        HttpServletRequest request = att.getRequest();
         String url = request.getRequestURI().substring(request.getContextPath().length());
         if((request.getMethod().equals("GET") && GET_SKIP_SAVE_SESSION.contains(url))
                 || ALWAYS_SKIP_SAVE_SESSION.contains(url)
@@ -413,16 +416,15 @@ public class OrcidRedisIndexedSessionRepository implements FindByIndexNameSessio
         }
 
         public void setLastAccessedTime(Instant lastAccessedTime) {
-            if(updateSession()) {
-                ServletRequestAttributes att = (ServletRequestAttributes)RequestContextHolder.getRequestAttributes();
-                HttpServletRequest request = att.getRequest();
-                logger.debug("Set last accessed time for REDIS_SESSION: " + request.getRequestURI().toString() + " - " + request.getMethod());
+            HttpServletRequest request = getCurrentRequest();
+            if (updateSession(request)) {
+                if (request != null) {
+                    logger.debug("Set last accessed time for REDIS_SESSION: " + request.getRequestURI().toString() + " - " + request.getMethod());
+                }
                 this.cached.setLastAccessedTime(lastAccessedTime);
                 this.delta.put("lastAccessedTime", this.getLastAccessedTime().toEpochMilli());
                 this.flushImmediateIfNecessary();
-            } else {
-                ServletRequestAttributes att = (ServletRequestAttributes)RequestContextHolder.getRequestAttributes();
-                HttpServletRequest request = att.getRequest();
+            } else if (request != null) {
                 logger.trace("Set last accessed time for REDIS_SESSION: " + request.getRequestURI().toString() + " - " + request.getMethod());
             }
         }
