@@ -23,7 +23,7 @@ public class IdentityProviderDaoImpl extends GenericDaoImpl<IdentityProviderEnti
     }
 
     @Override
-    @Transactional(readOnly = true)
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     public IdentityProviderEntity findByProviderid(String providerid) {
         TypedQuery<IdentityProviderEntity> query = entityManager.createQuery("from IdentityProviderEntity i where i.providerid = :providerid", IdentityProviderEntity.class);
         query.setParameter("providerid", providerid);

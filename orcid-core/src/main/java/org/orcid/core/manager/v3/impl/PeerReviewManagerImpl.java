@@ -42,6 +42,7 @@ import org.orcid.persistence.jpa.entities.OrgEntity;
 import org.orcid.persistence.jpa.entities.PeerReviewEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.pojo.ajaxForm.PojoUtil;
+import org.springframework.transaction.annotation.Transactional;
 
 public class PeerReviewManagerImpl extends PeerReviewManagerReadOnlyImpl implements PeerReviewManager {
 
@@ -85,6 +86,7 @@ public class PeerReviewManagerImpl extends PeerReviewManagerReadOnlyImpl impleme
     private SourceEntityUtils sourceEntityUtils;
 
     @Override
+    @Transactional
     public PeerReview createPeerReview(String orcid, PeerReview peerReview, boolean isApiRequest) {
         Source activeSource = sourceManager.retrieveActiveSource();
 
@@ -132,6 +134,7 @@ public class PeerReviewManagerImpl extends PeerReviewManagerReadOnlyImpl impleme
     }
 
     @Override
+    @Transactional
     public PeerReview updatePeerReview(String orcid, PeerReview peerReview, boolean isApiRequest) {
         PeerReviewEntity existingEntity = peerReviewDao.getPeerReview(orcid, peerReview.getPutCode());
         Visibility originalVisibility = Visibility.valueOf(existingEntity.getVisibility());
@@ -159,19 +162,19 @@ public class PeerReviewManagerImpl extends PeerReviewManagerReadOnlyImpl impleme
         
         orcidSecurityManager.checkSourceAndThrow(existingEntity);
 
+        createIssnGroupIdIfNecessary(peerReview);
+        OrgEntity updatedOrganization = null;
+        if (peerReview.getOrganization() != null) {
+            updatedOrganization = orgManager.getOrgEntity(peerReview);
+        }
+
         jpaJaxbPeerReviewAdapter.toPeerReviewEntity(peerReview, existingEntity);        
         existingEntity.setVisibility(originalVisibility.name());
 
         // Be sure it doesn't overwrite the source
         sourceEntityUtils.populateSourceAwareEntityFromSource(originalSource, existingEntity);
-        createIssnGroupIdIfNecessary(peerReview);
         
-        if (peerReview.getOrganization() != null) {
-            OrgEntity updatedOrganization = orgManager.getOrgEntity(peerReview);
-            existingEntity.setOrg(updatedOrganization);
-        } else {
-            existingEntity.setOrg(null);
-        }
+        existingEntity.setOrg(updatedOrganization);
         
         existingEntity = peerReviewDao.merge(existingEntity);
         notificationManager.sendAmendEmail(orcid, AmendedSection.PEER_REVIEW, createItemList(existingEntity, ActionType.UPDATE, peerReview.getExternalIdentifiers(), peerReview.getSubjectExternalIdentifier()));
@@ -179,6 +182,7 @@ public class PeerReviewManagerImpl extends PeerReviewManagerReadOnlyImpl impleme
     }
 
     @Override
+    @Transactional
     public boolean checkSourceAndDelete(String orcid, Long peerReviewId) {
         PeerReviewEntity pr = peerReviewDao.getPeerReview(orcid, peerReviewId);
         orcidSecurityManager.checkSourceAndThrow(pr);

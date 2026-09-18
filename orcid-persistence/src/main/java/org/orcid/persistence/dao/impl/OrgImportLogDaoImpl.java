@@ -17,7 +17,7 @@ public class OrgImportLogDaoImpl extends GenericDaoImpl<OrgImportLogEntity, Long
 
     @SuppressWarnings("unchecked")
     @Override
-    @Transactional(readOnly = true)
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     public List<String> getImportSourceOrder() {
         Query query = entityManager.createNativeQuery("SELECT source FROM (SELECT MAX(start_time) AS start, source_type AS source from org_import_log GROUP BY source_type) AS dr ORDER BY start ASC;");
         return (List<String>) query.getResultList();

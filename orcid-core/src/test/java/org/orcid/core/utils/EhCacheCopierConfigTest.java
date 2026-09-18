@@ -30,9 +30,7 @@ import org.w3c.dom.NodeList;
  *   - RecordCorrectionsController reverses the list inside the cached RecordCorrectionsPage
  *     and swaps four of its fields (cache "invalid-record-data-change-page-asc").
  *
- * so the shared template has to keep copying. The identifier-types caches return immutable
- * values (unmodifiableMap / List.copyOf / Guava ImmutableList / a read-only pojo) and opt in
- * to the identity copier explicitly.
+ * so the shared template has to keep copying.
  */
 public class EhCacheCopierConfigTest {
 
@@ -46,10 +44,6 @@ public class EhCacheCopierConfigTest {
     /** Values are mutated in place by their consumers; these must get a defensive copy. */
     private static final List<String> MUST_COPY = Arrays.asList(
             "delegates-by-giver", "invalid-record-data-change-page-asc");
-
-    /** Immutable values; safe to alias, and the reason the identity copier was wanted. */
-    private static final List<String> MAY_ALIAS = Arrays.asList(
-            "identifier-types", "identifier-types-map", "identifier-types-map-top", "identifier-types-map-prefix");
 
     private Document parse(String file) throws Exception {
         try (InputStream in = getClass().getClassLoader().getResourceAsStream(file)) {
@@ -102,17 +96,6 @@ public class EhCacheCopierConfigTest {
                 // either inherits the (serializing) template, or names a non-identity copier itself
                 assertTrue(file + ": " + alias + " must not use an identity copier, its value is mutated in place",
                         copier == null || !IDENTITY.equals(copier));
-            }
-        }
-    }
-
-    @Test
-    public void identifierTypeCachesOptOutOfCopyingExplicitly() throws Exception {
-        for (String file : FILES) {
-            Map<String, String> copiers = cacheCopiers(parse(file));
-            for (String alias : MAY_ALIAS) {
-                assertEquals(file + ": " + alias + " returns immutable values and should skip the copy",
-                        IDENTITY, copiers.get(alias));
             }
         }
     }

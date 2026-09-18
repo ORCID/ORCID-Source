@@ -8,7 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 public interface EmailScheduleDao extends GenericDao<EmailScheduleEntity, Long> {
 
-    @Transactional(readOnly = true)
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     Long getValidScheduleId();
 
     @Transactional(propagation = Propagation.REQUIRED)

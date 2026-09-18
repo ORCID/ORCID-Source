@@ -16,19 +16,19 @@ import org.springframework.transaction.annotation.Transactional;
  */
 public interface ClientDetailsDao extends GenericDao<ClientDetailsEntity, String> {
 
-    @Transactional(readOnly = true)
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     ClientDetailsEntity findByClientId(String clientId, long lastModified);
 
-    @Transactional(readOnly = true)
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     Date getLastModified(String clientId);
 
-    @Transactional(readOnly = true)
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     Map<String, Date> getLastModifiedByClientIds(List<String> clientIds);
 
-    @Transactional(readOnly = true)
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     List<ClientDetailsEntity> findByClientIds(List<String> clientIds);
     
-    @Transactional(readOnly = true)
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     Date getLastModifiedByIdP(String idp);
     
     @Transactional(propagation = Propagation.REQUIRED)
@@ -46,37 +46,37 @@ public interface ClientDetailsDao extends GenericDao<ClientDetailsEntity, String
     @Transactional(propagation = Propagation.REQUIRED)
     boolean createClientSecret(String clientId, String clientSecret);
     
-    @Transactional(readOnly = true)
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     List<ClientSecretEntity> getClientSecretsByClientId(String clientId);
     
-    @Transactional(readOnly = true)
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     boolean exists(String clientId);
     
-    @Transactional(readOnly = true)
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     boolean belongsTo(String clientId, String groupId);
     
-    @Transactional(readOnly = true)
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     List<ClientDetailsEntity> findByGroupId(String groupId);
     
     @Transactional(propagation = Propagation.REQUIRED)
     public void removeClient(String clientId);
     
-    @Transactional(readOnly = true)
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     public ClientDetailsEntity getPublicClient(String ownerId);
     
-    @Transactional(readOnly = true)
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     String getMemberName(String clientId);
     
-    @Transactional(readOnly = true)
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     boolean existsAndIsNotPublicClient(String clientId);
     
-    @Transactional(readOnly = true)
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     Date getLastModifiedIfNotPublicClient(String clientId);
     
-    @Transactional(readOnly = true)
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     ClientDetailsEntity findByIdP(String idp);
 
-    @Transactional(readOnly = true)
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     List<String> findLegacyClientIds();
     
     @Transactional(propagation = Propagation.REQUIRED)
@@ -97,7 +97,7 @@ public interface ClientDetailsDao extends GenericDao<ClientDetailsEntity, String
     @Transactional(propagation = Propagation.REQUIRED)
     boolean updateNotificationInfo(String clientId, boolean notificationEnabled, String notificationWebUrl, String notificationDomains);
     
-    @Transactional(readOnly = true)
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     List<ClientDetailsEntity> findMVPEnabled();
 
 }

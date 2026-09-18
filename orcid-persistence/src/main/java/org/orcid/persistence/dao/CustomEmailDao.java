@@ -21,7 +21,7 @@ public interface CustomEmailDao extends GenericDao<CustomEmailEntity, CustomEmai
      * @param clientDetailsId
      * @return a list containing all custom emails associated with a client
      * */
-    @Transactional(readOnly = true)
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     List<CustomEmailEntity> getCustomEmails(String clientDetailsId);
     
     /**
@@ -30,7 +30,7 @@ public interface CustomEmailDao extends GenericDao<CustomEmailEntity, CustomEmai
      * @param emailType
      * @return a CustomEmailEntity object if the email is found, null otherwise
      * */
-    @Transactional(readOnly = true)
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     CustomEmailEntity findByClientIdAndEmailType(String clientDetailsId, EmailType emailType, long lastModified);
     
     /**
@@ -75,7 +75,7 @@ public interface CustomEmailDao extends GenericDao<CustomEmailEntity, CustomEmai
      * @param emailType
      * @return true if a custom email with id=clientDetailsId and email type=emailType exists
      * */
-    @Transactional(readOnly = true)
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     boolean exists(String clientDetailsId, EmailType emailType);
     
     /**
@@ -84,6 +84,6 @@ public interface CustomEmailDao extends GenericDao<CustomEmailEntity, CustomEmai
      * @param emailType
      * @return the last modified date of the custom email, null in case the email doesn't exists
      * */
-    @Transactional(readOnly = true)
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     Date getLastModified(String clientDetailsId, EmailType emailType);
 }

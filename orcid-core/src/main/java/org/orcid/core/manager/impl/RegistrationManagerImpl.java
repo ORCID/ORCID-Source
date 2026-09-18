@@ -1,11 +1,7 @@
 package org.orcid.core.manager.impl;
 
 import java.security.NoSuchAlgorithmException;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import jakarta.annotation.Resource;
 
@@ -118,7 +114,7 @@ public class RegistrationManagerImpl implements RegistrationManager {
         affiliationForm.setCity(Text.valueOf(orgDisambiguated.getCity()));
         affiliationForm.setCountry(Text.valueOf(orgDisambiguated.getCountry()));
         Affiliation affiliation = registration.getAffiliationForm().toAffiliation();
-        Employment created = affiliationsManager.createEmploymentAffiliation(orcid, (Employment) affiliation, false);
+        Employment created = affiliationsManager.createEmploymentAffiliation(orcid, (Employment) affiliation, false, List.of());
         // If and only if an affiliation is included and default visibility is PUBLIC, mark as featured
         if (registration.getActivitiesVisibilityDefault() != null 
                 && registration.getActivitiesVisibilityDefault().getVisibility() != null

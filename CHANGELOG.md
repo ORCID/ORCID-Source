@@ -1,3 +1,206 @@
+## v3.23.2 - 2026-09-18
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.23.1...v3.23.2)
+
+- [#7716](https://github.com/ORCID/ORCID-Source/pull/7716): Revert "Revert "PD-6176 Index version-of and funded-by external identifiers in Solr""
+
+## v3.23.1 - 2026-09-18
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.23.0...v3.23.1)
+
+- [#7666](https://github.com/ORCID/ORCID-Source/pull/7666): PD-6120 Retry requests that times out, if the retry fails, return a 504
+
+## v3.23.0 - 2026-09-18
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.0.94...v3.23.0)
+
+## v3.0.94 - 2026-09-16
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.0.93...v3.0.94)
+
+- [#7722](https://github.com/ORCID/ORCID-Source/pull/7722): Resolves dual-connection checkout and pool starvation
+
+## v3.0.93 - 2026-09-15
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.0.92...v3.0.93)
+
+- [#7719](https://github.com/ORCID/ORCID-Source/pull/7719): Set the transactions back to the manager level for activities
+
+## v3.0.92 - 2026-09-15
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.0.91...v3.0.92)
+
+- [#7718](https://github.com/ORCID/ORCID-Source/pull/7718): Remove SQL from error messages
+
+## v3.0.91 - 2026-09-15
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.0.90...v3.0.91)
+
+- [#7720](https://github.com/ORCID/ORCID-Source/pull/7720): Fix auto commit on internal api
+
+## v3.0.90 - 2026-09-14
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.0.89...v3.0.90)
+
+- [#7717](https://github.com/ORCID/ORCID-Source/pull/7717): Check address on research resource org
+
+## v3.0.89 - 2026-09-14
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.0.88...v3.0.89)
+
+- [#7714](https://github.com/ORCID/ORCID-Source/pull/7714): Fix mapping error when translated title code is null
+
+## v3.0.88 - 2026-09-14
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.0.87...v3.0.88)
+
+- [#7676](https://github.com/ORCID/ORCID-Source/pull/7676): PD-13369 carry Liquibase's history in the database seed
+
+## v3.0.87 - 2026-09-14
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.0.86...v3.0.87)
+
+- [#7715](https://github.com/ORCID/ORCID-Source/pull/7715): Revert "PD-6176 Index version-of and funded-by external identifiers in Solr"
+
+## v3.0.86 - 2026-09-14
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.0.85...v3.0.86)
+
+- [#7713](https://github.com/ORCID/ORCID-Source/pull/7713): PD-13531 When the org have a null country, which is invalid, but some orgs in …
+
+## v3.0.85 - 2026-09-14
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.0.84...v3.0.85)
+
+- [#7712](https://github.com/ORCID/ORCID-Source/pull/7712): More unit tests1
+
+## v3.0.84 - 2026-09-12
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.0.83...v3.0.84)
+
+- [#7711](https://github.com/ORCID/ORCID-Source/pull/7711): Implemented autocomit for jpabeans and pooled data sources
+
+## v3.0.83 - 2026-09-11
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.0.82...v3.0.83)
+
+- [#7710](https://github.com/ORCID/ORCID-Source/pull/7710): Fix empty journal title error
+
+## v3.0.82 - 2026-09-11
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.0.81...v3.0.82)
+
+- [#7709](https://github.com/ORCID/ORCID-Source/pull/7709): Provide the exising list of fundings as a parameter
+
+## v3.0.81 - 2026-09-11
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.0.80...v3.0.81)
+
+- [#7699](https://github.com/ORCID/ORCID-Source/pull/7699): J21-011 make a bulk works POST atomic again
+
+## v3.0.80 - 2026-09-11
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.0.79...v3.0.80)
+
+- [#7700](https://github.com/ORCID/ORCID-Source/pull/7700): J21-008 stop a create request setting the client OBO flag
+
+## v3.0.79 - 2026-09-11
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.0.78...v3.0.79)
+
+- [#7701](https://github.com/ORCID/ORCID-Source/pull/7701): J21-010 enforce the premium notification scope again
+
+## v3.0.78 - 2026-09-11
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.0.77...v3.0.78)
+
+- [#7708](https://github.com/ORCID/ORCID-Source/pull/7708): Provide the list of existing works as a parameter to the manager
+
+## v3.0.77 - 2026-09-11
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.0.76...v3.0.77)
+
+- [#7707](https://github.com/ORCID/ORCID-Source/pull/7707): Added the tests for source null
+
+## v3.0.76 - 2026-09-11
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.0.75...v3.0.76)
+
+- [#7706](https://github.com/ORCID/ORCID-Source/pull/7706): PD-13495 Fixed null mappings for contributors V2 and V3 both works and fundings
+- [#7705](https://github.com/ORCID/ORCID-Source/pull/7705): Error response from /funding endpoint for GET XML request where source is user
+
+## v3.0.75 - 2026-09-11
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.0.74...v3.0.75)
+
+- [#7703](https://github.com/ORCID/ORCID-Source/pull/7703): J21-009 report the invalid enum value instead of a generic bad request
+
+## v3.0.74 - 2026-09-10
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.0.73...v3.0.74)
+
+- [#7698](https://github.com/ORCID/ORCID-Source/pull/7698): J21-007 return the reviewer role and the locale in the published vocabulary
+
+## v3.0.73 - 2026-09-10
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.0.72...v3.0.73)
+
+- [#7697](https://github.com/ORCID/ORCID-Source/pull/7697): Fix for the NullPointerException in PersonDetailsManagerReadOnlyImpl when retrieving public person details for ORCID records that do not contain a record name.
+
+## v3.0.72 - 2026-09-10
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.0.71...v3.0.72)
+
+- [#7696](https://github.com/ORCID/ORCID-Source/pull/7696): Check the source on unclaimed records
+
+## v3.0.71 - 2026-09-10
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.0.70...v3.0.71)
+
+- [#7695](https://github.com/ORCID/ORCID-Source/pull/7695): PD-13467  Revert the Ehcache to SerializerCopier
+
+## v3.0.70 - 2026-09-10
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.0.69...v3.0.70)
+
+- [#7694](https://github.com/ORCID/ORCID-Source/pull/7694): PD-13466 - fixed log4j logging for pub api
+
+## v3.0.69 - 2026-09-10
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.0.68...v3.0.69)
+
+- [#7693](https://github.com/ORCID/ORCID-Source/pull/7693): Remove empty fields from funding after mapping
+
+## v3.0.68 - 2026-09-10
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.0.67...v3.0.68)
+
+- [#7692](https://github.com/ORCID/ORCID-Source/pull/7692): PD-13463 fixed so readonly transactions read from readonlydb
+
+## v3.0.67 - 2026-09-10
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.0.66...v3.0.67)
+
+- [#7691](https://github.com/ORCID/ORCID-Source/pull/7691): Remove logs
+
+## v3.0.66 - 2026-09-09
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.0.65...v3.0.66)
+
+- [#7690](https://github.com/ORCID/ORCID-Source/pull/7690): PD-13450 Fixed administrative type for notifications
+
+## v3.0.65 - 2026-09-09
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.0.64...v3.0.65)
+
+- [#7689](https://github.com/ORCID/ORCID-Source/pull/7689): PD-13448  fixed null subject mapping for PeerReview
+
+## v3.0.64 - 2026-09-09
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.0.63...v3.0.64)
+
+- [#7688](https://github.com/ORCID/ORCID-Source/pull/7688): PD-13438  added the mapping for source in notifications
+
 ## v3.0.63 - 2026-09-08
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.0.62...v3.0.63)

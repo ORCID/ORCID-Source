@@ -14,10 +14,10 @@ import org.springframework.transaction.annotation.Transactional;
  */
 public interface WebhookDao extends GenericDao<WebhookEntity, WebhookEntityPk> {
 
-    @Transactional(readOnly = true)
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     List<WebhookEntity> findWebhooksReadyToProcess(Date profileModifiedBefore, int retryDelayMinutes, int maxResults, Set<String> clientsToExclude);
 
-    @Transactional(readOnly = true)
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     long countWebhooksReadyToProcess(Date profileModifiedBefore, int retryDelayMinutes);
 
     @Transactional(propagation = Propagation.REQUIRED)

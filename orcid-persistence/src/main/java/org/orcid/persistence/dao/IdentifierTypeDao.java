@@ -14,10 +14,10 @@ public interface IdentifierTypeDao extends GenericDao<IdentifierTypeEntity, Long
     @Transactional(propagation = Propagation.REQUIRED)
     public IdentifierTypeEntity updateIdentifierType(IdentifierTypeEntity identifierType);
     
-    @Transactional(readOnly = true)
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     public IdentifierTypeEntity getEntityByName(String idName);
 
-    @Transactional(readOnly = true)
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     public List<IdentifierTypeEntity> getEntities();
     
 }

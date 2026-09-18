@@ -274,49 +274,49 @@ public class OrgAffiliationRelationDaoImpl extends GenericDaoImpl<OrgAffiliation
     }
 
     @Override
-    @Transactional(readOnly = true)
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     @Cacheable(value = "distinctions-summaries", key = "#userOrcid.concat('-').concat(#lastModified)")
     public List<OrgAffiliationRelationEntity> getDistinctionSummaries(String userOrcid, long lastModified) {
         return getByUserAndType(userOrcid, AFFILIATION_TYPE_DISTINCTION);
     }
 
     @Override
-    @Transactional(readOnly = true)
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     @Cacheable(value = "educations-summaries", key = "#userOrcid.concat('-').concat(#lastModified)")
     public List<OrgAffiliationRelationEntity> getEducationSummaries(String userOrcid, long lastModified) {
         return getByUserAndType(userOrcid, AFFILIATION_TYPE_EDUCATION);
     }
 
     @Override
-    @Transactional(readOnly = true)
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     @Cacheable(value = "employments-summaries", key = "#userOrcid.concat('-').concat(#lastModified)")
     public List<OrgAffiliationRelationEntity> getEmploymentSummaries(String userOrcid, long lastModified) {
         return getByUserAndType(userOrcid, AFFILIATION_TYPE_EMPLOYMENT);
     }
 
     @Override
-    @Transactional(readOnly = true)
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     @Cacheable(value = "invited-positions-summaries", key = "#userOrcid.concat('-').concat(#lastModified)")
     public List<OrgAffiliationRelationEntity> getInvitedPositionSummaries(String userOrcid, long lastModified) {
         return getByUserAndType(userOrcid, AFFILIATION_TYPE_INVITED_POSITION);
     }
 
     @Override
-    @Transactional(readOnly = true)
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     @Cacheable(value = "memberships-summaries", key = "#userOrcid.concat('-').concat(#lastModified)")
     public List<OrgAffiliationRelationEntity> getMembershipSummaries(String userOrcid, long lastModified) {
         return getByUserAndType(userOrcid, AFFILIATION_TYPE_MEMBERSHIP);
     }
 
     @Override
-    @Transactional(readOnly = true)
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     @Cacheable(value = "qualifications-summaries", key = "#userOrcid.concat('-').concat(#lastModified)")
     public List<OrgAffiliationRelationEntity> getQualificationSummaries(String userOrcid, long lastModified) {
         return getByUserAndType(userOrcid, AFFILIATION_TYPE_QUALIFICATION);
     }
 
     @Override
-    @Transactional(readOnly = true)
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     @Cacheable(value = "services-summaries", key = "#userOrcid.concat('-').concat(#lastModified)")
     public List<OrgAffiliationRelationEntity> getServiceSummaries(String userOrcid, long lastModified) {
         return getByUserAndType(userOrcid, AFFILIATION_TYPE_SERVICE);
@@ -333,7 +333,7 @@ public class OrgAffiliationRelationDaoImpl extends GenericDaoImpl<OrgAffiliation
      *         matches the given type
      */
     @Override
-    @Transactional(readOnly = true)
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     public List<OrgAffiliationRelationEntity> getByUserAndType(String userOrcid, String type) {
         TypedQuery<OrgAffiliationRelationEntity> query = entityManager
                 .createQuery("from OrgAffiliationRelationEntity where orcid=:userOrcid and affiliationType=:affiliationType", OrgAffiliationRelationEntity.class);
@@ -350,7 +350,7 @@ public class OrgAffiliationRelationDaoImpl extends GenericDaoImpl<OrgAffiliation
      * @return the list of affiliations that belongs to the user
      */
     @Override
-    @Transactional(readOnly = true)
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     public List<OrgAffiliationRelationEntity> getByUser(String orcid) {
         TypedQuery<OrgAffiliationRelationEntity> query = entityManager.createQuery("from OrgAffiliationRelationEntity where orcid=:orcid order by dateCreated asc",
                 OrgAffiliationRelationEntity.class);
@@ -388,7 +388,7 @@ public class OrgAffiliationRelationDaoImpl extends GenericDaoImpl<OrgAffiliation
     }
 
     @Override
-    @Transactional(readOnly = true)
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     public Boolean hasPublicAffiliations(String orcid) {
         Query query = entityManager.createNativeQuery("SELECT count(*) FROM org_affiliation_relation WHERE orcid=:orcid AND visibility='PUBLIC'");
         query.setParameter("orcid", orcid);
@@ -398,7 +398,7 @@ public class OrgAffiliationRelationDaoImpl extends GenericDaoImpl<OrgAffiliation
 
     @SuppressWarnings("unchecked")
     @Override
-    @Transactional(readOnly = true)
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     public List<BigInteger> getIdsForClientSourceCorrection(int limit, List<String> nonPublicClients) {
         Query query = entityManager
                 .createNativeQuery("SELECT id FROM org_affiliation_relation WHERE client_source_id = source_id AND client_source_id IN :nonPublicClients");
@@ -417,7 +417,7 @@ public class OrgAffiliationRelationDaoImpl extends GenericDaoImpl<OrgAffiliation
 
     @SuppressWarnings("unchecked")
     @Override
-    @Transactional(readOnly = true)
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     public List<BigInteger> getIdsForUserSourceCorrection(int limit, List<String> publicClients) {
         Query query = entityManager
                 .createNativeQuery("SELECT id FROM org_affiliation_relation WHERE client_source_id = source_id AND client_source_id IN :publicClients");
@@ -436,7 +436,7 @@ public class OrgAffiliationRelationDaoImpl extends GenericDaoImpl<OrgAffiliation
 
     @SuppressWarnings("unchecked")
     @Override
-    @Transactional(readOnly = true)
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     public List<BigInteger> getIdsForUserOBOUpdate(String clientDetailsId, int max) {
         Query query = entityManager
                 .createNativeQuery("SELECT id FROM org_affiliation_relation WHERE client_source_id = :clientDetailsId AND assertion_origin_source_id IS NULL");
@@ -455,7 +455,7 @@ public class OrgAffiliationRelationDaoImpl extends GenericDaoImpl<OrgAffiliation
 
     @SuppressWarnings("unchecked")
     @Override
-    @Transactional(readOnly = true)
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     public List<OrgAffiliationRelationEntity> getOrgAffiliationRelationsReferencingOrgs(List<Long> orgIds) {
         Query query = entityManager.createQuery("from OrgAffiliationRelationEntity where org.id in (:orgIds)");
         query.setParameter("orgIds", orgIds);
@@ -464,7 +464,7 @@ public class OrgAffiliationRelationDaoImpl extends GenericDaoImpl<OrgAffiliation
 
     @SuppressWarnings("unchecked")
     @Override
-    @Transactional(readOnly = true)
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     public List<BigInteger> getIdsForUserOBORecords(String clientDetailsId, int max) {
         Query query = entityManager
                 .createNativeQuery("SELECT id FROM org_affiliation_relation WHERE client_source_id = :clientDetailsId AND assertion_origin_source_id IS NOT NULL");
@@ -504,7 +504,7 @@ public class OrgAffiliationRelationDaoImpl extends GenericDaoImpl<OrgAffiliation
 
     @SuppressWarnings("unchecked")
     @Override
-    @Transactional(readOnly = true)
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     public List<BigInteger> getIdsForUserOBORecords(int max) {
         Query query = entityManager.createNativeQuery("SELECT id FROM org_affiliation_relation WHERE assertion_origin_source_id IS NOT NULL");
         query.setMaxResults(max);
@@ -513,7 +513,7 @@ public class OrgAffiliationRelationDaoImpl extends GenericDaoImpl<OrgAffiliation
 
     @SuppressWarnings("unchecked")
     @Override
-    @Transactional(readOnly = true)
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     public List<BigInteger> getIdsOfOrgAffiliationRelationsReferencingClientProfiles(int max, List<String> clientProfileOrcidIds) {
         Query query = entityManager.createNativeQuery("SELECT id FROM org_affiliation_relation WHERE source_id IN :ids");
         query.setParameter("ids", clientProfileOrcidIds);

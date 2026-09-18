@@ -30,6 +30,7 @@ import org.orcid.jaxb.model.v3.release.record.*;
 import org.orcid.persistence.jpa.entities.OrgAffiliationRelationEntity;
 import org.orcid.persistence.jpa.entities.OrgEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
+import org.springframework.transaction.annotation.Transactional;
 
 public class AffiliationsManagerImpl extends AffiliationsManagerReadOnlyImpl implements AffiliationsManager {
 
@@ -67,8 +68,9 @@ public class AffiliationsManagerImpl extends AffiliationsManagerReadOnlyImpl imp
      * @return the added employment
      */
     @Override
-    public Distinction createDistinctionAffiliation(String orcid, Distinction distinction, boolean isApiRequest) {
-        return (Distinction) createAffiliation(orcid, distinction, isApiRequest, AffiliationType.DISTINCTION);
+    @Transactional
+    public Distinction createDistinctionAffiliation(String orcid, Distinction distinction, boolean isApiRequest, List<Affiliation> existingAffiliations) {
+        return (Distinction) createAffiliation(orcid, distinction, isApiRequest, AffiliationType.DISTINCTION, existingAffiliations);
     }
 
     /**
@@ -81,8 +83,9 @@ public class AffiliationsManagerImpl extends AffiliationsManagerReadOnlyImpl imp
      * @return the updated distinction
      */
     @Override
-    public Distinction updateDistinctionAffiliation(String orcid, Distinction distinction, boolean isApiRequest) {
-        return (Distinction) updateAffiliation(orcid, distinction, isApiRequest, AffiliationType.DISTINCTION);
+    @Transactional
+    public Distinction updateDistinctionAffiliation(String orcid, Distinction distinction, boolean isApiRequest, List<Affiliation> existingAffiliations) {
+        return (Distinction) updateAffiliation(orcid, distinction, isApiRequest, AffiliationType.DISTINCTION, existingAffiliations);
     }
 
     /**
@@ -95,8 +98,9 @@ public class AffiliationsManagerImpl extends AffiliationsManagerReadOnlyImpl imp
      * @return the added education
      */
     @Override
-    public Education createEducationAffiliation(String orcid, Education education, boolean isApiRequest) {
-        return (Education) createAffiliation(orcid, education, isApiRequest, AffiliationType.EDUCATION);
+    @Transactional
+    public Education createEducationAffiliation(String orcid, Education education, boolean isApiRequest, List<Affiliation> existingAffiliations) {
+        return (Education) createAffiliation(orcid, education, isApiRequest, AffiliationType.EDUCATION, existingAffiliations);
     }
 
     /**
@@ -109,8 +113,9 @@ public class AffiliationsManagerImpl extends AffiliationsManagerReadOnlyImpl imp
      * @return the updated education
      */
     @Override
-    public Education updateEducationAffiliation(String orcid, Education education, boolean isApiRequest) {
-        return (Education) updateAffiliation(orcid, education, isApiRequest, AffiliationType.EDUCATION);
+    @Transactional
+    public Education updateEducationAffiliation(String orcid, Education education, boolean isApiRequest, List<Affiliation> existingAffiliations) {
+        return (Education) updateAffiliation(orcid, education, isApiRequest, AffiliationType.EDUCATION, existingAffiliations);
     }
 
     /**
@@ -123,8 +128,9 @@ public class AffiliationsManagerImpl extends AffiliationsManagerReadOnlyImpl imp
      * @return the added employment
      */
     @Override
-    public Employment createEmploymentAffiliation(String orcid, Employment employment, boolean isApiRequest) {
-        return (Employment) createAffiliation(orcid, employment, isApiRequest, AffiliationType.EMPLOYMENT);
+    @Transactional
+    public Employment createEmploymentAffiliation(String orcid, Employment employment, boolean isApiRequest, List<Affiliation> existingAffiliations) {
+        return (Employment) createAffiliation(orcid, employment, isApiRequest, AffiliationType.EMPLOYMENT, existingAffiliations);
     }
 
     /**
@@ -137,8 +143,9 @@ public class AffiliationsManagerImpl extends AffiliationsManagerReadOnlyImpl imp
      * @return the updated employment
      */
     @Override
-    public Employment updateEmploymentAffiliation(String orcid, Employment employment, boolean isApiRequest) {
-        return (Employment) updateAffiliation(orcid, employment, isApiRequest, AffiliationType.EMPLOYMENT);
+    @Transactional
+    public Employment updateEmploymentAffiliation(String orcid, Employment employment, boolean isApiRequest, List<Affiliation> existingAffiliations) {
+        return (Employment) updateAffiliation(orcid, employment, isApiRequest, AffiliationType.EMPLOYMENT, existingAffiliations);
     }
 
     /**
@@ -151,8 +158,9 @@ public class AffiliationsManagerImpl extends AffiliationsManagerReadOnlyImpl imp
      * @return the added invitedPosition
      */
     @Override
-    public InvitedPosition createInvitedPositionAffiliation(String orcid, InvitedPosition invitedPosition, boolean isApiRequest) {
-        return (InvitedPosition) createAffiliation(orcid, invitedPosition, isApiRequest, AffiliationType.INVITED_POSITION);
+    @Transactional
+    public InvitedPosition createInvitedPositionAffiliation(String orcid, InvitedPosition invitedPosition, boolean isApiRequest, List<Affiliation> existingAffiliations) {
+        return (InvitedPosition) createAffiliation(orcid, invitedPosition, isApiRequest, AffiliationType.INVITED_POSITION, existingAffiliations);
     }
 
     /**
@@ -165,8 +173,9 @@ public class AffiliationsManagerImpl extends AffiliationsManagerReadOnlyImpl imp
      * @return the updated invitedPosition
      */
     @Override
-    public InvitedPosition updateInvitedPositionAffiliation(String orcid, InvitedPosition invitedPosition, boolean isApiRequest) {
-        return (InvitedPosition) updateAffiliation(orcid, invitedPosition, isApiRequest, AffiliationType.INVITED_POSITION);
+    @Transactional
+    public InvitedPosition updateInvitedPositionAffiliation(String orcid, InvitedPosition invitedPosition, boolean isApiRequest, List<Affiliation> existingAffiliations) {
+        return (InvitedPosition) updateAffiliation(orcid, invitedPosition, isApiRequest, AffiliationType.INVITED_POSITION, existingAffiliations);
     }
 
     /**
@@ -179,8 +188,9 @@ public class AffiliationsManagerImpl extends AffiliationsManagerReadOnlyImpl imp
      * @return the added membership
      */
     @Override
-    public Membership createMembershipAffiliation(String orcid, Membership membership, boolean isApiRequest) {
-        return (Membership) createAffiliation(orcid, membership, isApiRequest, AffiliationType.MEMBERSHIP);
+    @Transactional
+    public Membership createMembershipAffiliation(String orcid, Membership membership, boolean isApiRequest, List<Affiliation> existingAffiliations) {
+        return (Membership) createAffiliation(orcid, membership, isApiRequest, AffiliationType.MEMBERSHIP, existingAffiliations);
     }
 
     /**
@@ -193,8 +203,9 @@ public class AffiliationsManagerImpl extends AffiliationsManagerReadOnlyImpl imp
      * @return the updated membership
      */
     @Override
-    public Membership updateMembershipAffiliation(String orcid, Membership membership, boolean isApiRequest) {
-        return (Membership) updateAffiliation(orcid, membership, isApiRequest, AffiliationType.MEMBERSHIP);
+    @Transactional
+    public Membership updateMembershipAffiliation(String orcid, Membership membership, boolean isApiRequest, List<Affiliation> existingAffiliations) {
+        return (Membership) updateAffiliation(orcid, membership, isApiRequest, AffiliationType.MEMBERSHIP, existingAffiliations);
     }
 
     /**
@@ -207,8 +218,9 @@ public class AffiliationsManagerImpl extends AffiliationsManagerReadOnlyImpl imp
      * @return the added qualification
      */
     @Override
-    public Qualification createQualificationAffiliation(String orcid, Qualification qualification, boolean isApiRequest) {
-        return (Qualification) createAffiliation(orcid, qualification, isApiRequest, AffiliationType.QUALIFICATION);
+    @Transactional
+    public Qualification createQualificationAffiliation(String orcid, Qualification qualification, boolean isApiRequest, List<Affiliation> existingAffiliations) {
+        return (Qualification) createAffiliation(orcid, qualification, isApiRequest, AffiliationType.QUALIFICATION, existingAffiliations);
     }
 
     /**
@@ -221,8 +233,9 @@ public class AffiliationsManagerImpl extends AffiliationsManagerReadOnlyImpl imp
      * @return the updated qualification
      */
     @Override
-    public Qualification updateQualificationAffiliation(String orcid, Qualification qualification, boolean isApiRequest) {
-        return (Qualification) updateAffiliation(orcid, qualification, isApiRequest, AffiliationType.QUALIFICATION);
+    @Transactional
+    public Qualification updateQualificationAffiliation(String orcid, Qualification qualification, boolean isApiRequest, List<Affiliation> existingAffiliations) {
+        return (Qualification) updateAffiliation(orcid, qualification, isApiRequest, AffiliationType.QUALIFICATION, existingAffiliations);
     }
 
     /**
@@ -235,8 +248,9 @@ public class AffiliationsManagerImpl extends AffiliationsManagerReadOnlyImpl imp
      * @return the added service
      */
     @Override
-    public Service createServiceAffiliation(String orcid, Service service, boolean isApiRequest) {
-        return (Service) createAffiliation(orcid, service, isApiRequest, AffiliationType.SERVICE);
+    @Transactional
+    public Service createServiceAffiliation(String orcid, Service service, boolean isApiRequest, List<Affiliation> existingAffiliations) {
+        return (Service) createAffiliation(orcid, service, isApiRequest, AffiliationType.SERVICE, existingAffiliations);
     }
 
     /**
@@ -249,16 +263,17 @@ public class AffiliationsManagerImpl extends AffiliationsManagerReadOnlyImpl imp
      * @return the updated service
      */
     @Override
-    public Service updateServiceAffiliation(String orcid, Service service, boolean isApiRequest) {
-        return (Service) updateAffiliation(orcid, service, isApiRequest, AffiliationType.SERVICE);
+    @Transactional
+    public Service updateServiceAffiliation(String orcid, Service service, boolean isApiRequest, List<Affiliation> existingAffiliations) {
+        return (Service) updateAffiliation(orcid, service, isApiRequest, AffiliationType.SERVICE, existingAffiliations);
     }
 
-    private Affiliation createAffiliation(String orcid, Affiliation affiliation, boolean isApiRequest, AffiliationType type) {
+    private Affiliation createAffiliation(String orcid, Affiliation affiliation, boolean isApiRequest, AffiliationType type, List<Affiliation> existingAffiliations) {
         Source activeSource = sourceManager.retrieveActiveSource();
         activityValidator.validateAffiliation(affiliation, activeSource, true, isApiRequest, null);
 
         if (isApiRequest) {
-            checkAffiliationExternalIDsForDuplicates(orcid, affiliation, activeSource);
+            checkAffiliationExternalIDsForDuplicates(orcid, affiliation, activeSource, existingAffiliations);
         }
 
         OrgAffiliationRelationEntity entity = null;
@@ -337,7 +352,7 @@ public class AffiliationsManagerImpl extends AffiliationsManagerReadOnlyImpl imp
         return result;
     }
 
-    public Affiliation updateAffiliation(String orcid, Affiliation affiliation, boolean isApiRequest, AffiliationType type) {
+    public Affiliation updateAffiliation(String orcid, Affiliation affiliation, boolean isApiRequest, AffiliationType type, List<Affiliation> existingAffiliations) {
         OrgAffiliationRelationEntity entity = orgAffiliationRelationDao.getOrgAffiliationRelation(orcid, affiliation.getPutCode());
 
         Source activeSource = sourceManager.retrieveActiveSource();
@@ -352,8 +367,11 @@ public class AffiliationsManagerImpl extends AffiliationsManagerReadOnlyImpl imp
                 org.orcid.jaxb.model.v3.release.common.Visibility.valueOf(originalVisibility));
 
         if (isApiRequest) {
-            checkAffiliationExternalIDsForDuplicates(orcid, affiliation, activeSource);
+            checkAffiliationExternalIDsForDuplicates(orcid, affiliation, activeSource, existingAffiliations);
         }
+
+        // Fetch organization FIRST before mutating entity (prevents auto-flush errors during query)
+        OrgEntity updatedOrganization = orgManager.getOrgEntity(affiliation);
 
         switch (type) {
         case DISTINCTION:
@@ -388,9 +406,6 @@ public class AffiliationsManagerImpl extends AffiliationsManagerReadOnlyImpl imp
 
         sourceEntityUtils.populateSourceAwareEntityFromSource(originalSource, entity);
 
-        // Updates the give organization with the latest organization from
-        // database, or, create a new one
-        OrgEntity updatedOrganization = orgManager.getOrgEntity(affiliation);
         entity.setOrg(updatedOrganization);
 
         entity.setAffiliationType(type.name());
@@ -441,6 +456,7 @@ public class AffiliationsManagerImpl extends AffiliationsManagerReadOnlyImpl imp
      * @return true if the affiliation was deleted, false otherwise
      */
     @Override
+    @Transactional
     public boolean checkSourceAndDelete(String orcid, Long affiliationId) {
         OrgAffiliationRelationEntity affiliationEntity = orgAffiliationRelationDao.getOrgAffiliationRelation(orcid, affiliationId);
         orcidSecurityManager.checkSourceAndThrow(affiliationEntity);
@@ -553,10 +569,9 @@ public class AffiliationsManagerImpl extends AffiliationsManagerReadOnlyImpl imp
         orgAffiliationRelationDao.removeAllAffiliations(orcid);
     }
 
-    private void checkAffiliationExternalIDsForDuplicates(String orcid, Affiliation incoming, Source activeSource) {
-        List<Affiliation> affiliations = getAffiliations(orcid);
-        if (affiliations != null) {
-            for (Affiliation affiliation : affiliations) {
+    private void checkAffiliationExternalIDsForDuplicates(String orcid, Affiliation incoming, Source activeSource, List<Affiliation> existingAffiliations) {
+        if (existingAffiliations != null && !existingAffiliations.isEmpty()) {
+            for (Affiliation affiliation : existingAffiliations) {
                 // If it is the same element, ignore it, to prevent false
                 // duplicate exceptions
                 if (incoming.getPutCode() != null && incoming.getPutCode().equals(affiliation.getPutCode())) {
@@ -576,6 +591,7 @@ public class AffiliationsManagerImpl extends AffiliationsManagerReadOnlyImpl imp
     }
     
     @Override
+    @Transactional
     public boolean setOnlyFeatured(String orcid, Long affiliationId) {
         // Ensure the target affiliation exists and belongs to the user
         OrgAffiliationRelationEntity entity = orgAffiliationRelationDao.getOrgAffiliationRelation(orcid, affiliationId);

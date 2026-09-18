@@ -72,7 +72,7 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
      */
     @SuppressWarnings("unchecked")
     @Override
-    @Transactional(readOnly = true)
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     public Map<String, Date> findOrcidsByIndexingStatus(IndexingStatus indexingStatus, int maxResults, Integer delay) {
         return findOrcidsByIndexingStatus(indexingStatus, maxResults, Collections.EMPTY_LIST, delay);
     }
@@ -95,7 +95,7 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
      */
     @SuppressWarnings("unchecked")
     @Override
-    @Transactional(readOnly = true)
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     public Map<String, Date> findOrcidsByIndexingStatus(IndexingStatus indexingStatus, int maxResults, Collection<String> orcidsToExclude, Integer delay) {
         StringBuilder builder = new StringBuilder("SELECT p.orcid, p.last_modified FROM profile p WHERE p.indexing_status = :indexingStatus");
 
@@ -139,7 +139,7 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
 
     @SuppressWarnings("unchecked")
     @Override
-    @Transactional(readOnly = true)
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     public List<String> findUnclaimedNotIndexedAfterWaitPeriod(int waitPeriodDays, int maxDaysBack, int maxResults, Collection<String> orcidsToExclude) {
 
         StringBuilder builder = new StringBuilder("SELECT orcid FROM profile p");
@@ -173,7 +173,7 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
 
     @SuppressWarnings("unchecked")
     @Override
-    @Transactional(readOnly = true)
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     public List<Triple<String, String, Boolean>> findEmailsUnverfiedDays(int daysUnverified, EmailEventType eventSent) {
         int rangeStart = daysUnverified;
         int rangeEnd = daysUnverified - 1;
@@ -194,7 +194,7 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
 
     @SuppressWarnings("unchecked")
     @Override
-    @Transactional(readOnly = true)
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     public List<String> findUnclaimedNeedingReminder(int remindAfterDays, int maxResults, Collection<String> orcidsToExclude) {
         StringBuilder builder = new StringBuilder(
                 "SELECT p.orcid FROM profile p LEFT JOIN profile_event e ON e.orcid = p.orcid AND e.profile_event_type = :profileEventType");
@@ -223,7 +223,7 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
     }
 
     @Override
-    @Transactional(readOnly = true)
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     public List<String> findByMissingEventTypes(int maxResults, List<ProfileEventType> pets, Collection<String> orcidsToExclude, boolean not) {
         return findByMissingEventTypes(maxResults, pets, orcidsToExclude, not, false);
     }
@@ -251,7 +251,7 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
      */
     @SuppressWarnings("unchecked")
     @Override
-    @Transactional(readOnly = true)
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     public List<String> findByMissingEventTypes(int maxResults, List<ProfileEventType> pets, Collection<String> orcidsToExclude, boolean not,
             boolean checkQuarterlyTipsEnabled) {
         /*
@@ -310,7 +310,7 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
     }
 
     @Override
-    @Transactional(readOnly = true)
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     public List<String> findOrcidsNeedingEmailMigration(int maxResults) {
         TypedQuery<String> query = entityManager.createQuery("select p.id from ProfileEntity p where email is not null and orcidType != 'CLIENT'", String.class);
         query.setMaxResults(maxResults);
@@ -318,7 +318,7 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
     }
 
     @Override
-    @Transactional(readOnly = true)
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     public List<ProfileEntity> findProfilesThatMissedIndexing(int maxResults) {
         TypedQuery<ProfileEntity> query = entityManager.createQuery(
                 "from ProfileEntity where (lastModified > lastIndexedDate or lastIndexedDate is null) and indexingStatus not in ('PENDING', 'IGNORE') order by lastModified",
@@ -328,7 +328,7 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
     }
 
     @Override
-    @Transactional(readOnly = true)
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     public boolean orcidExists(String orcid) {
         TypedQuery<Long> query = entityManager.createQuery("select count(pe.id) from ProfileEntity pe where pe.id=:orcid", Long.class);
         query.setParameter("orcid", orcid);
@@ -337,7 +337,7 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
     }
 
     @Override
-    @Transactional(readOnly = true)
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     public boolean hasBeenGivenPermissionTo(String giverOrcid, String receiverOrcid) {
         TypedQuery<Long> query = entityManager
                 .createQuery("select count(gpt.id) from GivenPermissionToEntity gpt where gpt.giver = :giverOrcid and gpt.receiver = :receiverOrcid", Long.class);
@@ -348,7 +348,7 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
     }
 
     @Override
-    @Transactional(readOnly = true)
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     public boolean existsAndNotClaimedAndBelongsTo(String messageOrcid, String clientId) {
         TypedQuery<Long> query = entityManager.createQuery(
                 "select count(p.id) from ProfileEntity p where p.claimed = FALSE and (p.source.sourceClient.id = :clientId or p.source.sourceProfile.id = :clientId) and p.id = :messageOrcid",
@@ -360,7 +360,7 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
     }
 
     @Override
-    @Transactional(readOnly = true)
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     public IndexingStatus retrieveIndexingStatus(String orcid) {
         TypedQuery<IndexingStatus> query = entityManager.createQuery("select indexingStatus from ProfileEntity where id = :orcid", IndexingStatus.class);
         query.setParameter("orcid", orcid);
@@ -389,7 +389,7 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
     }
 
     @Override
-    @Transactional(readOnly = true)
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     public Long getConfirmedProfileCount() {
         TypedQuery<Long> query = entityManager.createQuery("select count(pe) from ProfileEntity pe where pe.completedDate is not null", Long.class);
         return query.getSingleResult();
@@ -413,7 +413,7 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
     }
 
     @Override
-    @Transactional(readOnly = true)
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     public String retrieveOrcidType(String orcid) {
         TypedQuery<String> query = entityManager.createQuery("select orcidType from ProfileEntity where id = :orcid", String.class);
         query.setParameter("orcid", orcid);
@@ -422,7 +422,7 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
     }
 
     @Override
-    @Transactional(readOnly = true)
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     public List<Object[]> findInfoForDecryptionAnalysis() {
         Query query = entityManager.createQuery("select id, encryptedSecurityAnswer from ProfileEntity");
         @SuppressWarnings("unchecked")
@@ -431,7 +431,7 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
     }
 
     @Override
-    @Transactional(readOnly = true)
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     public String retrieveLocale(String orcid) {
         TypedQuery<String> query = entityManager.createQuery("select locale from ProfileEntity where id = :orcid", String.class);
         query.setParameter("orcid", orcid);
@@ -478,13 +478,13 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
     }
 
     @Override
-    @Transactional(readOnly = true)
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     public boolean isProfileDeprecated(String orcid) {
         return retrievePrimaryAccountOrcid(orcid) != null;
     }
 
     @Override
-    @Transactional(readOnly = true)
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     public String retrievePrimaryAccountOrcid(String deprecatedOrcid) {
         Query query = entityManager.createNativeQuery("select primary_record from profile where orcid = :orcid");
         query.setParameter("orcid", deprecatedOrcid);
@@ -527,7 +527,7 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
     }
 
     @Override
-    @Transactional(readOnly = true)
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     public boolean getClaimedStatus(String orcid) {
         Query query = entityManager.createNativeQuery("select claimed from profile where orcid=:orcid");
         query.setParameter("orcid", orcid);
@@ -542,7 +542,7 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
      * @return the client type, null if it is not a client
      */
     @Override
-    @Transactional(readOnly = true)
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     public String getClientType(String orcid) {
         TypedQuery<String> query = entityManager.createQuery("select clientType from ClientDetailsEntity where id = :orcid", String.class);
         query.setParameter("orcid", orcid);
@@ -558,7 +558,7 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
      * @return the group type, null if it is not a group
      */
     @Override
-    @Transactional(readOnly = true)
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     public String getGroupType(String orcid) {
         TypedQuery<String> query = entityManager.createQuery("select groupType from ProfileEntity where id = :orcid", String.class);
         query.setParameter("orcid", orcid);
@@ -622,7 +622,7 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
     }
 
     @Override
-    @Transactional(readOnly = true)
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     public boolean isLocked(String orcid) {
         TypedQuery<Boolean> query = entityManager.createQuery("select recordLocked from ProfileEntity where id = :orcid", Boolean.class);
         query.setParameter("orcid", orcid);
@@ -636,7 +636,7 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
     }
 
     @Override
-    @Transactional(readOnly = true)
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     public boolean isDeactivated(String orcid) {
         TypedQuery<Date> query = entityManager.createQuery("select deactivationDate from ProfileEntity where id = :orcid", Date.class);
         query.setParameter("orcid", orcid);
@@ -645,7 +645,7 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
     }
 
     @Override
-    @Transactional(readOnly = true)
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     public boolean isReviewed(String orcid) {
         TypedQuery<Boolean> query = entityManager.createQuery("select reviewed from ProfileEntity where id = :orcid", Boolean.class);
         query.setParameter("orcid", orcid);
@@ -682,7 +682,7 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
     }
 
     @Override
-    @Transactional(readOnly = true)
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     public boolean getClaimedStatusByEmailHash(String emailHash) {
         Query query = entityManager.createNativeQuery("SELECT claimed FROM profile WHERE orcid=(SELECT orcid FROM email WHERE email_hash = :emailHash)");
         query.setParameter("emailHash", emailHash);
@@ -702,7 +702,7 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
 
     @SuppressWarnings("unchecked")
     @Override
-    @Transactional(readOnly = true)
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     public List<String> getProfilesWithNoHashedOrcid(int limit) {
         Query query = entityManager.createNativeQuery("select orcid from profile where hashed_orcid is null");
         query.setMaxResults(limit);
@@ -719,7 +719,7 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
     }
 
     @Override
-    @Transactional(readOnly = true)
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     public Date getLastLogin(String orcid) {
         TypedQuery<Date> query = entityManager.createQuery("select lastLogin from ProfileEntity where id = :orcid", Date.class);
         query.setParameter("orcid", orcid);
@@ -768,7 +768,7 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
 
     @SuppressWarnings("unchecked")
     @Override
-    @Transactional(readOnly = true)
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     public List<OrcidGrantedAuthority> getGrantedAuthoritiesForProfile(String orcid) {
         Query query = entityManager.createQuery("from OrcidGrantedAuthority where orcid = :orcid");
         query.setParameter("orcid", orcid);
@@ -777,7 +777,7 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
 
     @SuppressWarnings("unchecked")
     @Override
-    @Transactional(readOnly = true)
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     public List<ProfileEventEntity> getProfileEvents(String orcid, List<ProfileEventType> eventTypes) {
         Query query = entityManager.createQuery("from ProfileEventEntity where orcid = :orcid and type IN :types");
         query.setParameter("orcid", orcid);
@@ -786,7 +786,7 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
     }
 
     @Override
-    @Transactional(readOnly = true)
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     public ProfileEntity getLockedReason(String orcid) {
         TypedQuery<ProfileEntity> query = entityManager.createQuery("FROM ProfileEntity where orcid = :orcid", ProfileEntity.class);
         query.setParameter("orcid", orcid);
@@ -794,7 +794,7 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
     }
 
     @Override
-    @Transactional(readOnly = true)
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     public List<ProfileEntity> findByOrcidType(String orcidType) {
         TypedQuery<ProfileEntity> query = entityManager.createQuery("FROM ProfileEntity where orcidType = :orcidType", ProfileEntity.class);
         query.setParameter("orcidType", orcidType);
@@ -811,7 +811,7 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
 
     @SuppressWarnings("unchecked")
     @Override
-    @Transactional(readOnly = true)
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     public List<String> getAllOrcidIdsForInvalidRecords() {
         Query query = entityManager
                 .createNativeQuery("SELECT orcid FROM profile WHERE profile_deactivation_date IS NOT NULL OR deprecated_date IS NOT NULL OR record_locked IS TRUE");
@@ -836,7 +836,7 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
 
     @SuppressWarnings("unchecked")
     @Override
-    @Transactional(readOnly = true)
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     public List<String> registeredBetween(Date startDate, Date endDate) {
         Query query = entityManager.createNativeQuery("SELECT orcid FROM profile WHERE date_created between :startDate and :endDate");
         query.setParameter("startDate", startDate);
@@ -852,7 +852,7 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
     }
 
     @Override
-    @Transactional(readOnly = true)
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     public boolean isOrcidValidAsDelegate(String orcid) {
         TypedQuery<Long> query = entityManager.createQuery(
                 "SELECT count(p) FROM ProfileEntity p WHERE p.id=:orcid AND p.deactivationDate is NULL AND p.deprecatedDate is NULL AND p.primaryRecord is NULL AND (p.recordLocked is NULL OR p.recordLocked is FALSE)",
@@ -866,7 +866,7 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
 
     @SuppressWarnings("unchecked")
     @Override
-    @Transactional(readOnly = true)
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     public List<Object[]> getSigninLock(String orcid) {
         Query query = entityManager.createNativeQuery("SELECT signin_lock_start, signin_lock_last_attempt, signin_lock_count from profile WHERE orcid= :orcid");
         query.setParameter("orcid", orcid);
@@ -909,7 +909,7 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
     }
 
     @Override
-    @Transactional(readOnly = true)
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     public boolean haveMemberPushedWorksOrAffiliationsToRecord(String orcid, String clientId) {
         try {
             String queryString = "select p.orcid from profile p where p.orcid = :orcid and ( exists (select 1 from work w where w.orcid = p.orcid and w.client_source_id = :clientId) or exists (select 1 from org_affiliation_relation o where o.orcid = p.orcid and o.client_source_id = :clientId));";
@@ -927,7 +927,7 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
     }
 
     @Override
-    @Transactional(readOnly = true)
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     public List<Pair<String, String>> findEmailsToSendAddWorksEmail(int profileCreatedNumberOfDaysAgo) {
         StringBuilder qs = new StringBuilder("SELECT e.email, p.orcid FROM email e ");
         qs.append("LEFT JOIN email_frequency ef ON e.orcid = ef.orcid ");
