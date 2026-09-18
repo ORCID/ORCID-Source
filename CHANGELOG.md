@@ -1,3 +1,30 @@
+## v3.23.4 - 2026-09-18
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.23.3...v3.23.4)
+
+## v3.23.3 - 2026-09-18
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.23.2...v3.23.3)
+
+- [#7686](https://github.com/ORCID/ORCID-Source/pull/7686): PD-0000 pin Apache HttpClient 4.x to 4.5.14
+- [#7663](https://github.com/ORCID/ORCID-Source/pull/7663): PD-7614 account recovery endpoints
+
+## v3.23.2 - 2026-09-18
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.23.1...v3.23.2)
+
+- [#7716](https://github.com/ORCID/ORCID-Source/pull/7716): Revert "Revert "PD-6176 Index version-of and funded-by external identifiers in Solr""
+
+## v3.23.1 - 2026-09-18
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.23.0...v3.23.1)
+
+- [#7666](https://github.com/ORCID/ORCID-Source/pull/7666): PD-6120 Retry requests that times out, if the retry fails, return a 504
+
+## v3.23.0 - 2026-09-18
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.0.94...v3.23.0)
+
 ## v3.0.94 - 2026-09-16
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.0.93...v3.0.94)
