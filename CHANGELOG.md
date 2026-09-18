@@ -1,3 +1,9 @@
+## v3.23.9 - 2026-09-18
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.23.8...v3.23.9)
+
+- [#7660](https://github.com/ORCID/ORCID-Source/pull/7660): PD-5941 Store email event when password is reset and email is added or removed
+
 ## v3.23.8 - 2026-09-18
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.23.7...v3.23.8)
