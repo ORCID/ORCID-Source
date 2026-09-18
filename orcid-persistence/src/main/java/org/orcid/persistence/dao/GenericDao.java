@@ -24,10 +24,13 @@ public interface GenericDao<E extends OrcidEntity<I>, I extends Serializable> {
     @Transactional(propagation = Propagation.REQUIRED)
     void detatch(E e);
 
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     E find(I id);
 
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     List<E> findLastModifiedBefore(Date latestDate, int maxResults);
 
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     List<E> getAll();
 
     @Transactional(propagation = Propagation.REQUIRED)
@@ -42,12 +45,14 @@ public interface GenericDao<E extends OrcidEntity<I>, I extends Serializable> {
     @Transactional(propagation = Propagation.REQUIRED)
     void flush();
     
+    @Deprecated
+    @Transactional(propagation = Propagation.REQUIRED)
     void flushWithoutTransactional();
 
     @Transactional(propagation = Propagation.REQUIRED)
     void persist(E e);
     
-    @Transactional(propagation = Propagation.REQUIRED)
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     Long countAll();
 
 }

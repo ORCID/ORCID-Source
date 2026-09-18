@@ -26,7 +26,7 @@ the software.
 
     <properties>
         <java.version>21</java.version>
-        <spring.version>6.2.17</spring.version>
+        <spring.version>6.2.19</spring.version>
         <security.version>6.5.11</security.version>
         <liquibase.version>4.9.1</liquibase.version>
         <jersey.version>3.1.10</jersey.version>
@@ -46,10 +46,16 @@ the software.
         <libphonenumber.version>9.0.30</libphonenumber.version>
         <twilio.version>12.1.1</twilio.version>
         <solr.version>8.0.0</solr.version>
+        <!-- Apache HttpClient 4.x. ORCID code is on httpclient5; the 4.x line is only here
+             because AWS SDK v1 (aws-java-sdk-s3) needs it and solr-solrj pulls in 4.5.6.
+             Anything below 4.5.8 lacks RequestConfig.Builder#setNormalizeUri. -->
+        <httpclient4.version>4.5.14</httpclient4.version>
+        <httpcore4.version>4.4.16</httpcore4.version>
         <junit.version>4.13.2</junit.version>
         <main.basedir>${project.basedir}</main.basedir>
         <branchVersion>1.1.5-SNAPSHOT</branchVersion>
         <togglz.version>4.4.0</togglz.version>
+        <slf4j.version>2.0.17</slf4j.version>
     </properties>
 
     <modules>    
@@ -432,6 +438,12 @@ the software.
 
     <dependencyManagement>
         <dependencies>
+            <!-- SLF4J API -->
+            <dependency>
+                <groupId>org.slf4j</groupId>
+                <artifactId>slf4j-api</artifactId>
+                <version>${slf4j.version}</version>
+            </dependency>
             <dependency>
                 <groupId>commons-lang</groupId>
                 <artifactId>commons-lang</artifactId>
@@ -719,6 +731,21 @@ the software.
                 <scope>compile</scope>
             </dependency>
             <dependency>
+                <groupId>org.apache.httpcomponents</groupId>
+                <artifactId>httpclient</artifactId>
+                <version>${httpclient4.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.httpcomponents</groupId>
+                <artifactId>httpmime</artifactId>
+                <version>${httpclient4.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.httpcomponents</groupId>
+                <artifactId>httpcore</artifactId>
+                <version>${httpcore4.version}</version>
+            </dependency>
+            <dependency>
                 <groupId>commons-codec</groupId>
                 <artifactId>commons-codec</artifactId>
                 <version>1.9</version>
@@ -893,11 +920,6 @@ the software.
                 <version>2.1.6</version>
             </dependency>
             <dependency>
-                <groupId>ma.glasnost.orika</groupId>
-                <artifactId>orika-core</artifactId>
-                <version>1.4.6</version>
-            </dependency>
-            <dependency>
                 <groupId>xml-apis</groupId>
                 <artifactId>xml-apis</artifactId>
                 <version>1.4.01</version>
@@ -1006,7 +1028,7 @@ the software.
             <dependency>
                <groupId>org.orcid</groupId>
                <artifactId>orcid-model</artifactId>
-               <version>4.0.0</version>
+               <version>4.0.1</version>
             </dependency>
             <dependency>
                <groupId>org.orcid</groupId>

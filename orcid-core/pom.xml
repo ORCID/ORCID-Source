@@ -177,13 +177,9 @@
             <artifactId>opencsv</artifactId>
         </dependency>
         <dependency>
-            <groupId>ma.glasnost.orika</groupId>
-            <artifactId>orika-core</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>ma.glasnost.orika</groupId>
-            <artifactId>orika-eclipse-tools</artifactId>
-            <version>1.4.6</version><!-- please verify the latest version -->
+            <groupId>org.mapstruct</groupId>
+            <artifactId>mapstruct</artifactId>
+            <version>1.6.3</version>
         </dependency>
         <dependency>
             <groupId>org.bouncycastle</groupId>
@@ -336,6 +332,19 @@
     </dependencies>
     <build>
         <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <annotationProcessorPaths>
+                        <path>
+                            <groupId>org.mapstruct</groupId>
+                            <artifactId>mapstruct-processor</artifactId>
+                            <version>1.6.3</version>
+                        </path>
+                    </annotationProcessorPaths>
+                </configuration>
+            </plugin>
         </plugins>
     </build>
 </project>

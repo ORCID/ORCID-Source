@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.Set;
 
 import jakarta.annotation.Resource;
-import jakarta.transaction.Transactional;
 
 import org.orcid.core.adapter.v3.JpaJaxbResearchResourceAdapter;
 import org.orcid.core.manager.v3.read_only.ResearchResourceManagerReadOnly;
@@ -31,28 +30,24 @@ public class ResearchResourceManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl
     protected JpaJaxbResearchResourceAdapter jpaJaxbResearchResourceAdapter;
     
     @Override
-    @Transactional
     public ResearchResource getResearchResource(String orcid, Long researchResourceId) {
         ResearchResourceEntity e = rrDao.getResearchResource(orcid, researchResourceId);
         return jpaJaxbResearchResourceAdapter.toModel(e);
     }
 
     @Override
-    @Transactional
     public ResearchResourceSummary getResearchResourceSummary(String orcid, Long researchResourceId) {
         ResearchResourceEntity e = rrDao.getResearchResource(orcid, researchResourceId);
         return jpaJaxbResearchResourceAdapter.toSummary(e);
     }
 
     @Override
-    @Transactional
     public List<ResearchResource> findResearchResources(String orcid) {
         List<ResearchResourceEntity> e = rrDao.getByUser(orcid, getLastModified(orcid));
         return jpaJaxbResearchResourceAdapter.toModels(e);
     }
 
     @Override
-    @Transactional
     public List<ResearchResourceSummary> getResearchResourceSummaryList(String orcid) {
         List<ResearchResourceEntity> e = rrDao.getByUser(orcid, getLastModified(orcid));
         return jpaJaxbResearchResourceAdapter.toSummaries(e);
