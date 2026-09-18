@@ -1,3 +1,9 @@
+## v3.23.10 - 2026-09-18
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.23.9...v3.23.10)
+
+- [#7655](https://github.com/ORCID/ORCID-Source/pull/7655): PD-6046 PD-6045 PD-6045 PD-6046 PD-6044 PD-6042 PD-6043 PD-5850  add 2FA recovery phone number
+
 ## v3.23.9 - 2026-09-18
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.23.8...v3.23.9)
