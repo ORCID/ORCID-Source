@@ -8,6 +8,7 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
 import org.codehaus.jettison.json.JSONArray;
@@ -26,6 +27,10 @@ public class RecoveryPhoneVerificationServiceTest {
     private static final String OTHER_ORCID = "0000-0000-0000-0002";
 
     private static final String PHONE = "+441234567890";
+
+    private static final String OTHER_PHONE = "+441234567891";
+
+    private static final String THIRD_PHONE = "+441234567892";
 
     private RecoveryPhoneVerificationService service;
 
@@ -46,6 +51,9 @@ public class RecoveryPhoneVerificationServiceTest {
         service.setCodeTtlSeconds(300);
         service.setMaxAttempts(3);
         service.setResendBufferSeconds(30);
+        // the shipped defaults, so every other case runs with the caps live
+        service.setMaxSendsPerDay(10);
+        service.setMaxDestinationsPerDay(3);
         awsSender = new CapturingSender("aws");
         service.setSenders(Arrays.asList(awsSender));
     }
@@ -205,6 +213,125 @@ public class RecoveryPhoneVerificationServiceTest {
         send(ORCID, PHONE);
 
         assertTrue(send(OTHER_ORCID, PHONE).isSuccess());
+    }
+
+    /*
+     * The buffer spaces texts out; on its own a record can still be made to send
+     * all day. These cover the two ceilings that stop that.
+     */
+
+    private static final int A_DAY_AND_A_SECOND = (24 * 60 * 60) + 1;
+
+    /** Sends spaced far enough apart that only the caps can refuse them. */
+    private RecoveryPhoneSendCodeResponse sendPastTheBuffer(String orcid, String phone) {
+        store.ageEntriesBySeconds(orcid, 31);
+        return send(orcid, phone);
+    }
+
+    @Test
+    public void theTextAfterTheDailyCapIsRefused() {
+        service.setMaxSendsPerDay(3);
+
+        assertTrue(send(ORCID, PHONE).isSuccess());
+        assertTrue(sendPastTheBuffer(ORCID, PHONE).isSuccess());
+        assertTrue(sendPastTheBuffer(ORCID, PHONE).isSuccess());
+        RecoveryPhoneSendCodeResponse response = sendPastTheBuffer(ORCID, PHONE);
+
+        assertFalse(response.isSuccess());
+        assertEquals(RecoveryPhoneVerificationService.SEND_LIMIT_REACHED, response.getErrorCode());
+        assertEquals("the refused send must not have texted anyone", 3, awsSender.sent);
+    }
+
+    @Test
+    public void theDailyCapRollsOverWithTheWindow() {
+        service.setMaxSendsPerDay(2);
+        send(ORCID, PHONE);
+        sendPastTheBuffer(ORCID, PHONE);
+        assertEquals(RecoveryPhoneVerificationService.SEND_LIMIT_REACHED, sendPastTheBuffer(ORCID, PHONE).getErrorCode());
+
+        store.ageEntriesBySeconds(ORCID, A_DAY_AND_A_SECOND);
+
+        assertTrue("a day later the record starts again", send(ORCID, PHONE).isSuccess());
+    }
+
+    @Test
+    public void aTextTheProviderRefusedDoesNotCountTowardsTheCap() {
+        service.setMaxSendsPerDay(2);
+        awsSender.fail = true;
+        assertEquals(RecoveryPhoneVerificationService.SMS_SEND_FAILED, send(ORCID, PHONE).getErrorCode());
+
+        awsSender.fail = false;
+        assertTrue(send(ORCID, PHONE).isSuccess());
+        assertTrue(sendPastTheBuffer(ORCID, PHONE).isSuccess());
+        assertEquals(RecoveryPhoneVerificationService.SEND_LIMIT_REACHED, sendPastTheBuffer(ORCID, PHONE).getErrorCode());
+    }
+
+    @Test
+    public void theCapCountsTextsToEveryNumberTheRecordReached() {
+        service.setMaxSendsPerDay(2);
+        service.setMaxDestinationsPerDay(9);
+
+        assertTrue(send(ORCID, PHONE).isSuccess());
+        assertTrue(sendPastTheBuffer(ORCID, OTHER_PHONE).isSuccess());
+
+        assertEquals(RecoveryPhoneVerificationService.SEND_LIMIT_REACHED, sendPastTheBuffer(ORCID, THIRD_PHONE).getErrorCode());
+    }
+
+    @Test
+    public void aFurtherDistinctNumberIsRefusedEvenWithSendsToSpare() {
+        service.setMaxSendsPerDay(10);
+        service.setMaxDestinationsPerDay(2);
+        assertTrue(send(ORCID, PHONE).isSuccess());
+        assertTrue(sendPastTheBuffer(ORCID, OTHER_PHONE).isSuccess());
+
+        RecoveryPhoneSendCodeResponse response = sendPastTheBuffer(ORCID, THIRD_PHONE);
+
+        assertEquals(RecoveryPhoneVerificationService.SEND_LIMIT_REACHED, response.getErrorCode());
+        assertEquals(2, awsSender.sent);
+        // a number this record has already texted is not a new destination
+        assertTrue(sendPastTheBuffer(ORCID, PHONE).isSuccess());
+    }
+
+    @Test
+    public void theDestinationCapRollsOverWithTheWindow() {
+        service.setMaxDestinationsPerDay(1);
+        assertTrue(send(ORCID, PHONE).isSuccess());
+        assertEquals(RecoveryPhoneVerificationService.SEND_LIMIT_REACHED, sendPastTheBuffer(ORCID, OTHER_PHONE).getErrorCode());
+
+        store.ageEntriesBySeconds(ORCID, A_DAY_AND_A_SECOND);
+
+        assertTrue(send(ORCID, OTHER_PHONE).isSuccess());
+    }
+
+    @Test
+    public void aCapOfZeroIsNoCap() {
+        service.setMaxSendsPerDay(0);
+        service.setMaxDestinationsPerDay(0);
+
+        for (int i = 0; i < 12; i++) {
+            assertTrue(sendPastTheBuffer(ORCID, PHONE).isSuccess());
+        }
+        assertTrue(sendPastTheBuffer(ORCID, OTHER_PHONE).isSuccess());
+    }
+
+    @Test
+    public void oneRecordsCapIsItsOwn() {
+        service.setMaxSendsPerDay(1);
+        assertTrue(send(ORCID, PHONE).isSuccess());
+        assertEquals(RecoveryPhoneVerificationService.SEND_LIMIT_REACHED, sendPastTheBuffer(ORCID, PHONE).getErrorCode());
+
+        assertTrue(send(OTHER_ORCID, PHONE).isSuccess());
+    }
+
+    @Test
+    public void whatIsStoredToCountTheTextsHoldsNoPhoneNumber() {
+        send(ORCID, PHONE);
+
+        String stored = store.storedHistory(ORCID);
+        assertNotNull(stored);
+        assertFalse("the send history must not hold the number it texted", stored.contains("441234567890"));
+        assertFalse(stored.contains("1234567890"));
+        assertFalse(stored.contains("234567890"));
     }
 
     @Test
@@ -368,13 +495,25 @@ public class RecoveryPhoneVerificationServiceTest {
 
         private static String ageHistoryBySeconds(String stored, int seconds) {
             try {
+                long by = seconds * 1000L;
                 JSONObject json = new JSONObject(stored);
                 JSONArray sends = json.getJSONArray("sends");
-                JSONArray aged = new JSONArray();
+                JSONArray agedSends = new JSONArray();
                 for (int i = 0; i < sends.length(); i++) {
-                    aged.put(sends.getLong(i) - (seconds * 1000L));
+                    agedSends.put(sends.getLong(i) - by);
                 }
-                json.put("sends", aged);
+                json.put("sends", agedSends);
+                // and the destinations, which carry their own stamps: ageing one
+                // half only would make the window look as though it rolled over
+                // for the send cap and not for the destination cap
+                JSONObject destinations = json.getJSONObject("destinations");
+                JSONObject agedDestinations = new JSONObject();
+                Iterator<?> digests = destinations.keys();
+                while (digests.hasNext()) {
+                    String digest = String.valueOf(digests.next());
+                    agedDestinations.put(digest, destinations.getLong(digest) - by);
+                }
+                json.put("destinations", agedDestinations);
                 return json.toString();
             } catch (JSONException e) {
                 throw new IllegalStateException("could not age the stored send history", e);

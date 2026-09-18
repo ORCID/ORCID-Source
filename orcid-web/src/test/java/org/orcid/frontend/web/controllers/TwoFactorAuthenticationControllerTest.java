@@ -470,6 +470,19 @@ public class TwoFactorAuthenticationControllerTest {
     }
 
     @Test
+    public void testSendCodePassesThroughTheDailySendLimit() {
+        enableRecoveryPhoneFeature();
+        elevateSession();
+        when(recoveryPhoneVerificationService.sendCode(eq(ORCID), any(RecoveryPhoneSendCodeRequest.class)))
+                .thenReturn(RecoveryPhoneSendCodeResponse.failure(RecoveryPhoneVerificationService.SEND_LIMIT_REACHED));
+
+        RecoveryPhoneSendCodeResponse response = controller.sendRecoveryPhoneCode(request, sendCodeRequest());
+
+        assertFalse(response.isSuccess());
+        assertEquals(RecoveryPhoneVerificationService.SEND_LIMIT_REACHED, response.getErrorCode());
+    }
+
+    @Test
     public void testSaveReportsAFailedCodeAndKeepsTheElevation() {
         enableRecoveryPhoneFeature();
         elevateSession();
@@ -736,6 +749,23 @@ public class TwoFactorAuthenticationControllerTest {
         assertEquals("+441234567890", sentRequest.getValue().getPhoneNumber());
         // The locale is the server's, not something the client can set here
         assertEquals("en", sentRequest.getValue().getLocale());
+    }
+
+    @Test
+    public void testChallengeSendCodePassesThroughTheDailySendLimit() {
+        enableRecoveryPhoneFeature();
+        java.util.Date now = new java.util.Date();
+        when(recoveryPhoneManager.getRecoveryPhone(ORCID)).thenReturn(storedRecoveryPhone("7890", now, now));
+        when(recoveryPhoneManager.getDecryptedPhoneNumber(ORCID)).thenReturn("+441234567890");
+        when(recoveryPhoneVerificationService.sendCode(eq(ORCID), any(RecoveryPhoneSendCodeRequest.class)))
+                .thenReturn(RecoveryPhoneSendCodeResponse.failure(RecoveryPhoneVerificationService.SEND_LIMIT_REACHED));
+
+        RecoveryPhoneChallengeSendCodeResponse response = controller.sendRecoveryPhoneChallengeCode();
+
+        assertFalse(response.isSuccess());
+        assertEquals(RecoveryPhoneVerificationService.SEND_LIMIT_REACHED, response.getErrorCode());
+        // the mask still comes back: the user is looking at a number they own
+        assertEquals("***********7890", response.getMaskedRecoveryPhoneNumber());
     }
 
     @Test
