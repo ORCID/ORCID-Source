@@ -1,3 +1,9 @@
+## v3.23.1 - 2026-09-18
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.23.0...v3.23.1)
+
+- [#7666](https://github.com/ORCID/ORCID-Source/pull/7666): PD-6120 Retry requests that times out, if the retry fails, return a 504
+
 ## v3.23.0 - 2026-09-18
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.0.94...v3.23.0)
