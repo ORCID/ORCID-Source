@@ -61,9 +61,11 @@ public interface WorkManager extends WorkManagerReadOnly {
      *            The work that will be persited
      * @param isApiRequest
      *          Does the request comes from the API?
+     * @param existingWorks
+     *            The list of existing works for the user
      * @return the work already persisted on database
      * */
-    Work createWork(String orcid, Work work, boolean isApiRequest);
+    Work createWork(String orcid, Work work, boolean isApiRequest, List<Work> existingWorks);
 
     /**
      * Add a list of works to the given profile
@@ -72,11 +74,12 @@ public interface WorkManager extends WorkManagerReadOnly {
      *            The list of works that want to be added
      * @param orcid
      *            The id of the user we want to add the works to
-     * 
+     * @param existingWorks
+     *            The list of existing works for the user
      * @return the work bulk with the put codes of the new works or the error
      *         that indicates why a work can't be added
      */
-    WorkBulk createWorks(String orcid, WorkBulk work);
+    WorkBulk createWorks(String orcid, WorkBulk work, List<Work> existingWorks);
     
     /**
      * Edits an existing work
@@ -85,9 +88,11 @@ public interface WorkManager extends WorkManagerReadOnly {
      *            The work to be edited
      * @param isApiRequest
      *          Does the request comes from the API? 
+     * @param existingWorks
+     *            The list of existing works for the user
      * @return The updated entity
      * */
-    Work updateWork(String orcid, Work work, boolean isApiRequest); 
+    Work updateWork(String orcid, Work work, boolean isApiRequest, List<Work> existingWorks);
     
     boolean checkSourceAndRemoveWork(String orcid, Long workId);
 

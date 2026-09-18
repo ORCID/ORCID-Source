@@ -272,7 +272,7 @@ public class WorkManagerReadOnlyImplTest {
 
         when(workEntityCacheManager.retrieveMinimizedWorks(ORCID_1, 0L)).thenReturn(minimizedWorks);
         when(clientDetailsEntityCacheManager.retrieveAll(any())).thenReturn(new HashMap<>());
-        when(sourceEntityUtils.extractSourceFromEntityComplete(any())).thenReturn(new Source());
+        when(sourceEntityUtils.extractSourceFromEntityComplete(any(), any())).thenReturn(new Source());
         when(jpaJaxbWorkAdapter.toWorkSummaryFromMinimized(minimizedWorks)).thenReturn(expectedWorkSummaries);
 
         List<WorkSummary> result = workManagerReadOnly.getWorksSummaryList(ORCID_1);

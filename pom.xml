@@ -50,6 +50,7 @@ the software.
         <main.basedir>${project.basedir}</main.basedir>
         <branchVersion>1.1.5-SNAPSHOT</branchVersion>
         <togglz.version>4.4.0</togglz.version>
+        <slf4j.version>2.0.17</slf4j.version>
     </properties>
 
     <modules>    
@@ -432,6 +433,12 @@ the software.
 
     <dependencyManagement>
         <dependencies>
+            <!-- SLF4J API -->
+            <dependency>
+                <groupId>org.slf4j</groupId>
+                <artifactId>slf4j-api</artifactId>
+                <version>${slf4j.version}</version>
+            </dependency>
             <dependency>
                 <groupId>commons-lang</groupId>
                 <artifactId>commons-lang</artifactId>

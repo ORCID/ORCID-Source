@@ -35,12 +35,14 @@ public class ActivitiesStatusDao {
     @PersistenceContext
     protected EntityManager entityManager;
 
+    @Transactional(readOnly = true)
     public ActivitiesStatusEntity get(String orcid) {
         Query query = entityManager.createNativeQuery("SELECT * FROM activities_status WHERE orcid = :orcid", ActivitiesStatusEntity.class);
         query.setParameter("orcid", orcid);
         return (ActivitiesStatusEntity) query.getSingleResult();
     }
 
+    @Transactional(readOnly = true)
     public boolean exists(String orcid) {
         Query query = entityManager.createNativeQuery("SELECT count(*) FROM activities_status WHERE orcid=:orcid");
         query.setParameter("orcid", orcid);
@@ -112,6 +114,7 @@ public class ActivitiesStatusDao {
         return query.executeUpdate() > 0;
     }
 
+    @Transactional(readOnly = true)
     public List<ActivitiesStatusEntity> getFailedElements(int batchSize) {
         TypedQuery<ActivitiesStatusEntity> query = entityManager.createQuery(
                 "FROM ActivitiesStatusEntity WHERE educationsStatus > 0 OR employmentsStatus > 0 OR fundingsStatus > 0 OR peerReviewsStatus > 0 OR worksStatus > 0 ORDER BY id",
