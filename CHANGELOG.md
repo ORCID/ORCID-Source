@@ -1,3 +1,9 @@
+## v3.23.6 - 2026-09-18
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.23.5...v3.23.6)
+
+- [#7724](https://github.com/ORCID/ORCID-Source/pull/7724): Revert "PD-0000 pin Apache HttpClient 4.x to 4.5.14"
+
 ## v3.23.5 - 2026-09-18
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.23.4...v3.23.5)
