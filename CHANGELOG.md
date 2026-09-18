@@ -1,3 +1,9 @@
+## v3.23.2 - 2026-09-18
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.23.1...v3.23.2)
+
+- [#7716](https://github.com/ORCID/ORCID-Source/pull/7716): Revert "Revert "PD-6176 Index version-of and funded-by external identifiers in Solr""
+
 ## v3.23.1 - 2026-09-18
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.23.0...v3.23.1)
