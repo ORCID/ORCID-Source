@@ -14,8 +14,15 @@ public class ProfileRecoveryPhoneDaoImpl extends GenericDaoImpl<ProfileRecoveryP
         super(ProfileRecoveryPhoneEntity.class);
     }
 
+    /**
+     * Reads go to the read-only pool, as every DAO read does since PD-13463. Inside
+     * {@link #upsert} this method is called on {@code this}, not through the proxy, so
+     * that lookup stays in the write transaction: an existence check that decides
+     * between insert and update must not be answered by a replica.
+     */
     @Override
     @SuppressWarnings("unchecked")
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     public ProfileRecoveryPhoneEntity findByOrcid(String orcid) {
         Query query = entityManager.createQuery("FROM ProfileRecoveryPhoneEntity WHERE orcid = :orcid");
         query.setParameter("orcid", orcid);
