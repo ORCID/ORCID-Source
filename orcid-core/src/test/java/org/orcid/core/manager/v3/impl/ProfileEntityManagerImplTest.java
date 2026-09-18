@@ -44,6 +44,7 @@ import org.orcid.core.constants.RevokeReason;
 import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.ClientDetailsEntityCacheManager;
 import org.orcid.core.manager.EncryptionManager;
+import org.orcid.core.manager.RecoveryPhoneManager;
 import org.orcid.core.manager.v3.AddressManager;
 import org.orcid.core.manager.v3.AffiliationsManager;
 import org.orcid.core.manager.v3.BiographyManager;
@@ -179,6 +180,8 @@ public class ProfileEntityManagerImplTest {
     private ResearcherUrlManager researcherUrlManager;
     @Mock
     private RedisClient redisClient;
+    @Mock
+    private RecoveryPhoneManager recoveryPhoneManager;
 
     @Before
     public void setUp() {
@@ -217,6 +220,7 @@ public class ProfileEntityManagerImplTest {
         inject(ProfileEntityManagerImpl.class, "biographyManager", biographyManager);
         inject(ProfileEntityManagerImpl.class, "emailFrequencyManager", emailFrequencyManager);
         inject(ProfileEntityManagerImpl.class, "redisClient", redisClient);
+        inject(ProfileEntityManagerImpl.class, "recoveryPhoneManager", recoveryPhoneManager);
 
         doAnswer(invocation -> {
             TransactionCallback<?> callback = (TransactionCallback<?>) invocation.getArguments()[0];
@@ -365,6 +369,25 @@ public class ProfileEntityManagerImplTest {
         verify(profileDao).deactivate("orcid");
         verify(orcidOauth2TokenDetailDao).disableAccessTokenByUserOrcid("orcid", RevokeReason.RECORD_DEACTIVATED.name());
         verify(profileHistoryEventManager).recordEvent(ProfileHistoryEventType.SET_DEFAULT_VIS_TO_PRIVATE, "orcid", "deactivated/deprecated");
+    }
+
+    /*
+     * Deactivation clears 2FA at the DAO, which used to leave the recovery phone
+     * number - encrypted, but personal data about a named person - behind in
+     * profile_recovery_phone. It has to go the same way it does when 2FA is turned
+     * off through the manager. Deprecation runs the same clearRecord, so this one
+     * test covers both doors.
+     */
+    @Test
+    public void deactivateRecordRemovesTheRecoveryPhoneNumber() {
+        when(profileDao.updateDefaultVisibility("orcid", org.orcid.jaxb.model.common_v2.Visibility.PRIVATE.name())).thenReturn(true);
+        when(recordNameManagerV3.exists("orcid")).thenReturn(false);
+        when(biographyManager.exists("orcid")).thenReturn(false);
+
+        assertTrue(manager.deactivateRecord("orcid"));
+
+        verify(profileDao).disable2FA("orcid");
+        verify(recoveryPhoneManager).removeRecoveryPhone("orcid");
     }
 
     @Test
