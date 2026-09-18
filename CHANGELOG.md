@@ -1,3 +1,9 @@
+## v3.23.5 - 2026-09-18
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.23.4...v3.23.5)
+
+- [#7659](https://github.com/ORCID/ORCID-Source/pull/7659): PD-6175 allow RRID as an identifier type for funded-by relationships
+
 ## v3.23.4 - 2026-09-18
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.23.3...v3.23.4)
