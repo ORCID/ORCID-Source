@@ -96,13 +96,21 @@ public class RecoveryPhoneVerificationService {
             return RecoveryPhoneSendCodeResponse.failure(SMS_RECIPIENT_NOT_ALLOWED);
         }
 
-        // One pending code per record: refuse a resend until the buffer has passed
-        RecoveryPhoneCodeEntry pending = recoveryPhoneCodeStore.get(orcid);
-        if (pending != null) {
-            int remaining = remainingResendSeconds(pending);
-            if (remaining > 0) {
-                return RecoveryPhoneSendCodeResponse.failure(RESEND_TOO_SOON, remaining);
-            }
+        // What bounds sending is read from the record's own history of texts, not
+        // from the pending code: confirming a code, running its attempts out and
+        // letting it expire all remove the pending entry, and a buffer kept there
+        // went with it - so a send was accepted immediately after any of the three
+        long now = System.currentTimeMillis();
+        RecoveryPhoneSendHistory history = recoveryPhoneCodeStore.getSendHistory(orcid);
+        if (history == null) {
+            // Stored but unreadable. Starting a fresh history here would be a way
+            // to clear the buffer rather than wait it out
+            return RecoveryPhoneSendCodeResponse.failure(CODE_STORAGE_UNAVAILABLE);
+        }
+        history.prune(now, resendBufferSeconds * 1000L);
+        int remaining = remainingResendSeconds(history, now);
+        if (remaining > 0) {
+            return RecoveryPhoneSendCodeResponse.failure(RESEND_TOO_SOON, remaining);
         }
 
         String selectedProvider = StringUtils.lowerCase(StringUtils.defaultIfBlank(provider, "aws"));
@@ -111,15 +119,29 @@ public class RecoveryPhoneVerificationService {
             return RecoveryPhoneSendCodeResponse.failure(SMS_PROVIDER_NOT_CONFIGURED);
         }
 
+        // Proven before the text goes out rather than after it: a send whose
+        // history cannot be written is a send nothing would count, and the
+        // cheapest moment to discover that is while nobody has been texted yet
+        if (!recoveryPhoneCodeStore.saveSendHistory(orcid, history, resendBufferSeconds)) {
+            return RecoveryPhoneSendCodeResponse.failure(CODE_STORAGE_UNAVAILABLE);
+        }
+
         String code = generateCode();
         SmsSendResult result = sender.sendCode(phoneE164, code, sanitizeLocale(request.getLocale()));
         if (!result.isSuccess()) {
+            // Nothing reached anyone, so nothing is recorded against the record:
+            // a provider outage is not something to spend a user's allowance on
             LOG.warn("Unable to send a recovery phone verification code for {}: {}", orcid, result.getErrorCode());
             return RecoveryPhoneSendCodeResponse.failure(SMS_SEND_FAILED);
         }
 
+        history.recordSend(now);
+        if (!recoveryPhoneCodeStore.saveSendHistory(orcid, history, resendBufferSeconds)) {
+            return RecoveryPhoneSendCodeResponse.failure(CODE_STORAGE_UNAVAILABLE);
+        }
+
         RecoveryPhoneCodeEntry entry = new RecoveryPhoneCodeEntry(code, phoneE164, result.getProvider(), result.getProviderMessageId(), 0,
-                System.currentTimeMillis());
+                now);
         if (!recoveryPhoneCodeStore.save(orcid, entry, codeTtlSeconds)) {
             // Better to fail loudly than to leave the user with a code we cannot confirm
             return RecoveryPhoneSendCodeResponse.failure(CODE_STORAGE_UNAVAILABLE);
@@ -194,8 +216,11 @@ public class RecoveryPhoneVerificationService {
         recoveryPhoneCodeStore.remove(orcid);
     }
 
-    private int remainingResendSeconds(RecoveryPhoneCodeEntry entry) {
-        long elapsed = (System.currentTimeMillis() - entry.getSentAt()) / 1000L;
+    private int remainingResendSeconds(RecoveryPhoneSendHistory history, long now) {
+        if (history.isEmpty()) {
+            return 0;
+        }
+        long elapsed = (now - history.lastSentAt()) / 1000L;
         long remaining = resendBufferSeconds - elapsed;
         return remaining > 0 ? (int) remaining : 0;
     }

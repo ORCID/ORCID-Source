@@ -10,6 +10,9 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.codehaus.jettison.json.JSONArray;
+import org.codehaus.jettison.json.JSONException;
+import org.codehaus.jettison.json.JSONObject;
 import org.junit.Before;
 import org.junit.Test;
 import org.orcid.utils.phone.PhoneNumberValidator;
@@ -112,6 +115,98 @@ public class RecoveryPhoneVerificationServiceTest {
         assertTrue(send(ORCID, PHONE).isSuccess());
     }
 
+    /*
+     * The three ways the pending code disappears, and the reason the buffer
+     * cannot be read off it: each of these left the next send accepted at once.
+     */
+
+    @Test
+    public void resendIsRefusedAfterTheAttemptsAreExhausted() {
+        send(ORCID, PHONE);
+        for (int attempt = 0; attempt <= 3; attempt++) {
+            service.verifyCode(ORCID, PHONE, "000000");
+        }
+        assertNull("the attempts should have taken the pending code with them", store.get(ORCID));
+
+        RecoveryPhoneSendCodeResponse response = send(ORCID, PHONE);
+
+        assertFalse(response.isSuccess());
+        assertEquals(RecoveryPhoneVerificationService.RESEND_TOO_SOON, response.getErrorCode());
+        assertTrue(response.getResendAfterSeconds() > 0);
+        assertEquals("only the first send should have texted anyone", 1, awsSender.sent);
+    }
+
+    @Test
+    public void resendIsRefusedAfterTheCodeWasUsed() {
+        send(ORCID, PHONE);
+        assertNull(service.verifyCode(ORCID, PHONE, awsSender.lastCode));
+
+        RecoveryPhoneSendCodeResponse response = send(ORCID, PHONE);
+
+        assertEquals(RecoveryPhoneVerificationService.RESEND_TOO_SOON, response.getErrorCode());
+        assertEquals(1, awsSender.sent);
+    }
+
+    @Test
+    public void resendIsRefusedWhenThePendingCodeHasGoneOnItsOwn() {
+        send(ORCID, PHONE);
+        // what an expiry or an eviction leaves behind
+        store.remove(ORCID);
+
+        RecoveryPhoneSendCodeResponse response = send(ORCID, PHONE);
+
+        assertEquals(RecoveryPhoneVerificationService.RESEND_TOO_SOON, response.getErrorCode());
+        assertEquals(1, awsSender.sent);
+    }
+
+    @Test
+    public void resendIsAllowedOnceTheBufferHasPassedWithNoPendingCode() {
+        send(ORCID, PHONE);
+        for (int attempt = 0; attempt <= 3; attempt++) {
+            service.verifyCode(ORCID, PHONE, "000000");
+        }
+        store.ageEntriesBySeconds(ORCID, 31);
+
+        assertTrue(send(ORCID, PHONE).isSuccess());
+        assertEquals(2, awsSender.sent);
+    }
+
+    @Test
+    public void nothingIsTextedWhenTheSendHistoryCannotBeWritten() {
+        store.failSaves = true;
+
+        RecoveryPhoneSendCodeResponse response = send(ORCID, PHONE);
+
+        assertEquals(RecoveryPhoneVerificationService.CODE_STORAGE_UNAVAILABLE, response.getErrorCode());
+        assertEquals("a text nothing can count is a text that should not go out", 0, awsSender.sent);
+    }
+
+    @Test
+    public void nothingIsTextedWhenTheSendHistoryCannotBeRead() {
+        store.historyIsUnreadable = true;
+
+        RecoveryPhoneSendCodeResponse response = send(ORCID, PHONE);
+
+        assertEquals(RecoveryPhoneVerificationService.CODE_STORAGE_UNAVAILABLE, response.getErrorCode());
+        assertEquals(0, awsSender.sent);
+    }
+
+    @Test
+    public void aSendTheProviderRefusedDoesNotStartTheBuffer() {
+        awsSender.fail = true;
+        assertEquals(RecoveryPhoneVerificationService.SMS_SEND_FAILED, send(ORCID, PHONE).getErrorCode());
+
+        awsSender.fail = false;
+        assertTrue("nobody was texted, so nothing should be waited out", send(ORCID, PHONE).isSuccess());
+    }
+
+    @Test
+    public void oneRecordsBufferIsItsOwn() {
+        send(ORCID, PHONE);
+
+        assertTrue(send(OTHER_ORCID, PHONE).isSuccess());
+    }
+
     @Test
     public void aNewCodeRetiresThePreviousOne() {
         send(ORCID, PHONE);
@@ -203,13 +298,20 @@ public class RecoveryPhoneVerificationServiceTest {
 
     /**
      * Stands in for the redis backed store, and lets a test pretend time has
-     * passed by rewriting the entry's sent-at stamp.
+     * passed by rewriting the stored stamps - both the pending code's and the
+     * send history's, because the two have to age together for the same reason
+     * they have to be stored apart.
      */
     private static class FakeStore extends RecoveryPhoneCodeStore {
 
         private final Map<String, RecoveryPhoneCodeEntry> entries = new HashMap<>();
 
+        /** Serialized, as Redis holds it, so a test can rewrite what is stored. */
+        private final Map<String, String> histories = new HashMap<>();
+
         private boolean failSaves;
+
+        private boolean historyIsUnreadable;
 
         @Override
         public boolean save(String orcid, RecoveryPhoneCodeEntry entry, int ttlSeconds) {
@@ -231,11 +333,51 @@ public class RecoveryPhoneVerificationServiceTest {
             entries.remove(orcid);
         }
 
+        @Override
+        public boolean saveSendHistory(String orcid, RecoveryPhoneSendHistory history, int ttlSeconds) {
+            if (failSaves) {
+                return false;
+            }
+            histories.put(orcid, history.serialize());
+            return true;
+        }
+
+        @Override
+        public RecoveryPhoneSendHistory getSendHistory(String orcid) {
+            if (historyIsUnreadable) {
+                return null;
+            }
+            return RecoveryPhoneSendHistory.parse(histories.get(orcid));
+        }
+
+        String storedHistory(String orcid) {
+            return histories.get(orcid);
+        }
+
         void ageEntriesBySeconds(String orcid, int seconds) {
             RecoveryPhoneCodeEntry entry = entries.get(orcid);
             if (entry != null) {
                 entries.put(orcid, new RecoveryPhoneCodeEntry(entry.getCode(), entry.getPhoneE164(), entry.getProvider(),
                         entry.getProviderMessageId(), entry.getAttempts(), entry.getSentAt() - (seconds * 1000L)));
+            }
+            String history = histories.get(orcid);
+            if (history != null) {
+                histories.put(orcid, ageHistoryBySeconds(history, seconds));
+            }
+        }
+
+        private static String ageHistoryBySeconds(String stored, int seconds) {
+            try {
+                JSONObject json = new JSONObject(stored);
+                JSONArray sends = json.getJSONArray("sends");
+                JSONArray aged = new JSONArray();
+                for (int i = 0; i < sends.length(); i++) {
+                    aged.put(sends.getLong(i) - (seconds * 1000L));
+                }
+                json.put("sends", aged);
+                return json.toString();
+            } catch (JSONException e) {
+                throw new IllegalStateException("could not age the stored send history", e);
             }
         }
     }
@@ -247,6 +389,8 @@ public class RecoveryPhoneVerificationServiceTest {
         private String lastTo;
 
         private String lastCode;
+
+        private int sent;
 
         private boolean fail;
 
@@ -266,6 +410,7 @@ public class RecoveryPhoneVerificationServiceTest {
             if (fail) {
                 return SmsSendResult.failure(provider, "PROVIDER_ERROR", "boom");
             }
+            this.sent++;
             return SmsSendResult.success(provider, "message-id", "PENDING");
         }
     }
