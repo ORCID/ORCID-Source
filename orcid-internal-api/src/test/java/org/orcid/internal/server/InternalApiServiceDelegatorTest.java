@@ -3,6 +3,7 @@ package org.orcid.internal.server;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.verify;
@@ -11,6 +12,7 @@ import static org.mockito.Mockito.when;
 import java.util.Collections;
 import java.util.Date;
 
+import org.junit.Before;
 import jakarta.ws.rs.core.Response;
 
 import org.junit.Test;
@@ -21,9 +23,11 @@ import org.mockito.junit.MockitoJUnitRunner;
 import org.orcid.core.exception.OrcidAccessControlException;
 import org.orcid.core.manager.v3.MembersManager;
 import org.orcid.core.manager.v3.OrcidSecurityManager;
+import org.orcid.core.manager.v3.ProfileEntityManager;
 import org.orcid.core.manager.v3.read_only.EmailManagerReadOnly;
 import org.orcid.core.manager.v3.read_only.ProfileEntityManagerReadOnly;
-import org.orcid.core.utils.SecurityContextTestUtils;
+import org.orcid.core.manager.impl.OrcidUrlManager;
+import org.orcid.core.utils.cache.redis.RedisClient;
 import org.orcid.internal.server.delegator.InternalApiServiceDelegator;
 import org.orcid.internal.util.AccountRecoveryMatchRequest;
 import org.orcid.internal.util.AccountRecoveryMatchResponse;
@@ -35,6 +39,7 @@ import org.orcid.internal.util.LastModifiedResponse;
 import org.orcid.internal.util.MemberInfo;
 import org.orcid.jaxb.model.error_v2.OrcidError;
 import org.orcid.jaxb.model.message.ScopePathType;
+import org.orcid.utils.ExpiringLinkService;
 import org.orcid.pojo.ajaxForm.Client;
 import org.orcid.pojo.ajaxForm.Member;
 import org.orcid.pojo.ajaxForm.Text;
@@ -59,6 +64,23 @@ public class InternalApiServiceDelegatorTest {
 
     @Mock
     private OrcidSecurityManager orcidSecurityManager;
+
+    @Mock
+    private ProfileEntityManager profileEntityManager;
+
+    @Mock
+    private ExpiringLinkService expiringLinkService;
+
+    @Mock
+    private RedisClient redisClient;
+
+    @Mock
+    private OrcidUrlManager orcidUrlManager;
+
+    @Before
+    public void setUp() {
+        internalApiServiceDelegator.setResetLinkExpirationInMinutes(1440L);
+    }
 
     @Test
     public void viewStatusTextTest() {
@@ -169,7 +191,7 @@ public class InternalApiServiceDelegatorTest {
 
     @Test
     public void accountRecoveryMatchTest() {
-        SecurityContextTestUtils.setUpSecurityContextForClientOnly("APP-5555555555555555", ScopePathType.INTERNAL_ACCOUNT_RECOVERY);
+        when(emailManagerReadOnly.findOrcidIdByEmail(USER_EMAIL)).thenReturn(USER_ORCID);
         Response response = internalApiServiceDelegator.accountRecoveryMatch(matchRequest(USER_ORCID, USER_EMAIL));
         assertNotNull(response);
         AccountRecoveryMatchResponse info = (AccountRecoveryMatchResponse) response.getEntity();
@@ -183,7 +205,8 @@ public class InternalApiServiceDelegatorTest {
      */
     @Test
     public void accountRecoveryMatchIsNotAnEmailOracleTest() {
-        SecurityContextTestUtils.setUpSecurityContextForClientOnly("APP-5555555555555555", ScopePathType.INTERNAL_ACCOUNT_RECOVERY);
+        when(emailManagerReadOnly.findOrcidIdByEmail(USER_EMAIL)).thenReturn(USER_ORCID);
+        when(emailManagerReadOnly.findOrcidIdByEmail("nobody@user.com")).thenReturn(null);
 
         // A registered email, paired with the wrong iD
         Response wrongPair = internalApiServiceDelegator.accountRecoveryMatch(matchRequest("0000-0000-0000-0000", USER_EMAIL));
@@ -202,13 +225,15 @@ public class InternalApiServiceDelegatorTest {
 
     @Test(expected = OrcidAccessControlException.class)
     public void accountRecoveryMatchWrongScopeTest() {
-        SecurityContextTestUtils.setUpSecurityContextForClientOnly("APP-5555555555555555", ScopePathType.INTERNAL);
+        doThrow(new OrcidAccessControlException()).when(orcidSecurityManager).checkScopes(ScopePathType.INTERNAL_ACCOUNT_RECOVERY);
         internalApiServiceDelegator.accountRecoveryMatch(matchRequest(USER_ORCID, USER_EMAIL));
     }
 
     @Test
-    public void accountRecoveryResetLinkTest() {
-        SecurityContextTestUtils.setUpSecurityContextForClientOnly("APP-5555555555555555", ScopePathType.INTERNAL_ACCOUNT_RECOVERY);
+    public void accountRecoveryResetLinkTest() throws Exception {
+        when(profileEntityManager.orcidExists(USER_ORCID)).thenReturn(true);
+        when(expiringLinkService.generateExpiringToken(USER_ORCID, 1440L, ExpiringLinkService.ExpiringLinkType.PASSWORD_RESET)).thenReturn("jwt-token");
+        when(orcidUrlManager.getBaseUrl()).thenReturn("https://orcid.org");
         Response response = internalApiServiceDelegator.accountRecoveryResetLink(resetLinkRequest(USER_ORCID));
         assertNotNull(response);
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
@@ -223,7 +248,7 @@ public class InternalApiServiceDelegatorTest {
 
     @Test
     public void accountRecoveryResetLinkUnknownRecordTest() {
-        SecurityContextTestUtils.setUpSecurityContextForClientOnly("APP-5555555555555555", ScopePathType.INTERNAL_ACCOUNT_RECOVERY);
+        when(profileEntityManager.orcidExists("0000-0000-0000-0000")).thenReturn(false);
         Response response = internalApiServiceDelegator.accountRecoveryResetLink(resetLinkRequest("0000-0000-0000-0000"));
         assertNotNull(response);
         assertEquals(Response.Status.NOT_FOUND.getStatusCode(), response.getStatus());
@@ -231,7 +256,7 @@ public class InternalApiServiceDelegatorTest {
 
     @Test(expected = OrcidAccessControlException.class)
     public void accountRecoveryResetLinkWrongScopeTest() {
-        SecurityContextTestUtils.setUpSecurityContextForClientOnly("APP-5555555555555555", ScopePathType.INTERNAL);
+        doThrow(new OrcidAccessControlException()).when(orcidSecurityManager).checkScopes(ScopePathType.INTERNAL_ACCOUNT_RECOVERY);
         internalApiServiceDelegator.accountRecoveryResetLink(resetLinkRequest(USER_ORCID));
     }
 }
