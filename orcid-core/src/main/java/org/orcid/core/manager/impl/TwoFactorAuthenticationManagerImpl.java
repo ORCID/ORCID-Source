@@ -23,7 +23,6 @@ import org.orcid.pojo.AuthChallenge;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionTemplate;
 
@@ -58,7 +57,6 @@ public class TwoFactorAuthenticationManagerImpl implements TwoFactorAuthenticati
     private TransactionTemplate transactionTemplate;
 
     @Override
-    @Transactional
     public String getQRCode(String orcid) {
         if (userUsing2FA(orcid)) {
             // don't allow generation of new code if user already using
@@ -83,7 +81,6 @@ public class TwoFactorAuthenticationManagerImpl implements TwoFactorAuthenticati
     }
 
     @Override
-    @Transactional
     public List<String> enable2FA(String orcid) {
         LOG.info("2FA enabled for %s", orcid);
         return transactionTemplate.execute(new TransactionCallback<List<String>>() {
@@ -98,7 +95,6 @@ public class TwoFactorAuthenticationManagerImpl implements TwoFactorAuthenticati
     }
 
     @Override
-    @Transactional
     public void disable2FA(String orcid) {
         LOG.warn("2FA disabled for %s", orcid);
         transactionTemplate.execute(new TransactionCallback<Boolean>() {
@@ -114,7 +110,6 @@ public class TwoFactorAuthenticationManagerImpl implements TwoFactorAuthenticati
     }
 
     @Override
-    @Transactional
     public void disable2FAByRecoveryPhone(String orcid) {
         // {}, not %s: slf4j takes its placeholder that way. The line above uses %s and has therefore
         // been printing the literal characters instead of the iD for as long as it has existed; that one
@@ -133,7 +128,6 @@ public class TwoFactorAuthenticationManagerImpl implements TwoFactorAuthenticati
     }
 
     @Override
-    @Transactional
     public void adminDisable2FA(String orcid, String adminOrcidId) {
         String message = String.format("Admin %s have disabled 2FA for %s", adminOrcidId, orcid);
         LOG.warn(message);

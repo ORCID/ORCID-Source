@@ -191,8 +191,7 @@ public class OrcidOauth2TokenDetailServiceImpl implements OrcidOauth2TokenDetail
     @Transactional
     public void createNew(OrcidOauth2TokenDetail detail) {
         orcidOauth2TokenDetailDao.persist(detail); 
-        orcidOauth2TokenDetailDao.flush();
-    }        
+    }
 
     @Override
     public List<OrcidOauth2TokenDetail> findByClientIdAndUserName(String clientId, String userName) {

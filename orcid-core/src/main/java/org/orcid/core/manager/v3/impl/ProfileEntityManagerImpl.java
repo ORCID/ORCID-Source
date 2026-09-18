@@ -219,7 +219,6 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
     }
 
     @Override
-    @Transactional
     public boolean enableDeveloperTools(String orcid) {
         return transactionTemplate.execute(new TransactionCallback<Boolean>() {
             @Override
@@ -237,7 +236,6 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
      * @return true if the developer tools where disabeled on that profile
      */
     @Override
-    @Transactional
     public boolean disableDeveloperTools(String orcid) {
         return transactionTemplate.execute(new TransactionCallback<Boolean>() {
             @Override
@@ -295,7 +293,6 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
     }
 
     @Override
-    @Transactional
     public boolean reviewProfile(String orcid) {
         return transactionTemplate.execute(new TransactionCallback<Boolean>() {
             @Override
@@ -306,7 +303,6 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
     }
 
     @Override
-    @Transactional
     public boolean unreviewProfile(String orcid) {
         return transactionTemplate.execute(new TransactionCallback<Boolean>() {
             @Override
@@ -406,7 +402,6 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
         }
         // Update profile entity in the DB
         profileDao.merge(profile);
-        profileDao.flush();
         
         // Update the visibility for every bio element to the visibility
         // selected by the user
@@ -453,7 +448,6 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
     }
 
     @Override
-    @Transactional
     public void updateLocale(String orcid, AvailableLocales locale) {
         transactionTemplate.execute(new TransactionCallback<Boolean>() {
             @Override
@@ -533,14 +527,12 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
     }
 
     @Override
-    @Transactional
     public void updatePassword(String orcid, String password) {
         transactionTemplate.execute(new TransactionCallback<Boolean>() {
             @Override
             public Boolean doInTransaction(TransactionStatus status) {
                 String encryptedPassword = encryptionManager.hashForInternalUse(password);
                 profileDao.changeEncryptedPassword(orcid, encryptedPassword);
-                profileHistoryEventManager.recordEvent(ProfileHistoryEventType.RESET_PASSWORD, orcid);
                 return true;
             }
         });
@@ -552,7 +544,6 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
     }
 
     @Override
-    @Transactional
     public void updateLastLoginDetails(String orcid, String ipAddress) {
         transactionTemplate.execute(new TransactionCallback<Boolean>() {
             @Override
@@ -576,7 +567,6 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
      * @return true if the account was locked
      */
     @Override
-    @Transactional
     public boolean lockProfile(String orcid, String lockReason, String description, String adminUser) {
         return transactionTemplate.execute(new TransactionCallback<Boolean>() {
             @Override
@@ -594,7 +584,6 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
      * @return true if the account was unlocked
      */
     @Override
-    @Transactional
     public boolean unlockProfile(String orcid) {
         return transactionTemplate.execute(new TransactionCallback<Boolean>() {
             @Override
@@ -610,7 +599,6 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
     }
 
     @Override
-    @Transactional
     public void startSigninLock(String orcid) {
         transactionTemplate.execute(new TransactionCallback<Boolean>() {
             @Override
@@ -622,7 +610,6 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
     }
     
     @Override
-    @Transactional
     public void resetSigninLock(String orcid) {
         transactionTemplate.execute(new TransactionCallback<Boolean>() {
             @Override
@@ -634,7 +621,6 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
     }
     
     @Override
-    @Transactional
     public void updateSigninLock(String orcid, Integer count) {
         transactionTemplate.execute(new TransactionCallback<Boolean>() {
             @Override
@@ -650,7 +636,6 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
     }
 
     @Override
-    @Transactional
     public boolean updateDeprecation(String deprecated, String primary) {
         return transactionTemplate.execute(new TransactionCallback<Boolean>() {
             @Override

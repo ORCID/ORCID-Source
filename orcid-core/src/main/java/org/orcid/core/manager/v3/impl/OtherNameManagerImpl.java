@@ -24,7 +24,6 @@ import org.orcid.jaxb.model.v3.release.record.OtherNames;
 import org.orcid.persistence.jpa.entities.OtherNameEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.pojo.ajaxForm.PojoUtil;
-import org.springframework.transaction.annotation.Transactional;
 
 public class OtherNameManagerImpl extends OtherNameManagerReadOnlyImpl implements OtherNameManager {
 
@@ -44,7 +43,6 @@ public class OtherNameManagerImpl extends OtherNameManagerReadOnlyImpl implement
     private SourceEntityUtils sourceEntityUtils;
 
     @Override
-    @Transactional
     public boolean deleteOtherName(String orcid, Long putCode, boolean checkSource) {
         OtherNameEntity otherNameEntity = otherNameDao.getOtherName(orcid, putCode);
 
@@ -61,7 +59,6 @@ public class OtherNameManagerImpl extends OtherNameManagerReadOnlyImpl implement
     }
 
     @Override
-    @Transactional
     public OtherName createOtherName(String orcid, OtherName otherName, boolean isApiRequest) {
         Source activeSource = sourceManager.retrieveActiveSource();
         // Validate the otherName
@@ -90,7 +87,6 @@ public class OtherNameManagerImpl extends OtherNameManagerReadOnlyImpl implement
     }
 
     @Override
-    @Transactional
     public OtherName updateOtherName(String orcid, Long putCode, OtherName otherName, boolean isApiRequest) {
         Source activeSource = sourceManager.retrieveActiveSource();
         OtherNameEntity updatedOtherNameEntity = otherNameDao.getOtherName(orcid, putCode);
@@ -121,7 +117,6 @@ public class OtherNameManagerImpl extends OtherNameManagerReadOnlyImpl implement
     }
 
     @Override
-    @Transactional
     public OtherNames updateOtherNames(String orcid, OtherNames otherNames) {
         List<OtherNameEntity> existingOtherNamesEntityList = otherNameDao.getOtherNames(orcid, getLastModified(orcid));
         // Delete the deleted ones

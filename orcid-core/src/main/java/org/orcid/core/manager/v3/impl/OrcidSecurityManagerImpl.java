@@ -798,8 +798,11 @@ public class OrcidSecurityManagerImpl implements OrcidSecurityManager {
                 Set<String> scopes = authDetails.getScopes();
                 if (scopes != null && scopes.contains(ScopePathType.ORCID_PROFILE_CREATE.value())) {
                     ProfileEntity profile = profileEntityCacheManager.retrieve(orcid);
-                    if (profile != null && Boolean.TRUE.equals(profile.getClaimed())) {
-                        throw new IllegalStateException("Non client credential scope found in client request");
+                    if(profile != null) {
+                        String clientId = sourceManager.retrieveActiveSourceId();
+                        if(Boolean.TRUE.equals(profile.getClaimed()) || !clientIsProfileSource(clientId, profile)) {
+                            throw new IllegalStateException("Non client credential scope found in client request");
+                        }
                     }
                 }
                 return;
@@ -809,6 +812,12 @@ public class OrcidSecurityManagerImpl implements OrcidSecurityManager {
             }
         }
         throw new OrcidUnauthorizedException("Access token is for a different record");
+    }
+
+    private boolean clientIsProfileSource(String clientId, ProfileEntity profile) {
+        Boolean claimed = profile.getClaimed();
+        SourceEntity source = profile.getSource();
+        return source != null && (claimed == null || !claimed) && clientId.equals(SourceEntityUtils.getSourceId(source));
     }
 
     private void checkClientType() {

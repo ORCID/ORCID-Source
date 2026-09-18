@@ -94,7 +94,7 @@ public class JpaJaxbEmailAdapterTest extends MockSourceNameCache {
     }
 
     @Test
-    public void testEmailToEmailEntity() throws JAXBException {
+    public void emailToEmailEntityTest() throws JAXBException {
         Email email = getEmail();
         assertNotNull(email);
         EmailEntity entity = jpaJaxbEmailAdapter.toEmailEntity(email);

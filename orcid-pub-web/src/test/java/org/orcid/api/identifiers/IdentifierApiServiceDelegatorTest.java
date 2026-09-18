@@ -2,72 +2,82 @@ package org.orcid.api.identifiers;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.when;
 
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
-import jakarta.annotation.Resource;
-import jakarta.ws.rs.core.GenericEntity;
 import jakarta.ws.rs.core.Response;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
+import org.orcid.api.identifiers.delegator.IdentifierApiServiceDelegator;
 import org.orcid.pojo.IdentifierType;
-import org.orcid.test.OrcidJUnit4ClassRunner;
-import org.springframework.security.authentication.AnonymousAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.util.ReflectionTestUtils;
 
-@RunWith(OrcidJUnit4ClassRunner.class)
-@ContextConfiguration(locations = { "classpath:test-orcid-t1-web-context.xml" })
 public class IdentifierApiServiceDelegatorTest {
 
-    @Resource
-    IdentifierApiServiceImpl service;
+    private IdentifierApiServiceImpl service;
+
+    @Mock
+    private IdentifierApiServiceDelegator serviceDelegator;
 
     @Before
-    public void init(){
-        // setup security context
-        ArrayList<GrantedAuthority> roles = new ArrayList<GrantedAuthority>();
-        roles.add(new SimpleGrantedAuthority("ROLE_ANONYMOUS"));
-        Authentication auth = new AnonymousAuthenticationToken("anonymous", "anonymous", roles);
-        SecurityContextHolder.getContext().setAuthentication(auth);
+    public void init() {
+        MockitoAnnotations.initMocks(this);
+        service = new IdentifierApiServiceImpl();
+        ReflectionTestUtils.setField(service, "serviceDelegator", serviceDelegator);
+    }
+
+    @SuppressWarnings("unchecked")
+    private List<IdentifierType> getTypes(Response response) {
+        return (List<IdentifierType>) response.getEntity();
     }
     
     @Test
     public void testviewIdentifierTypes() {
-        assertEquals(service.viewIdentifierTypes(null).getStatus(), 200);
-        Response r = service.viewIdentifierTypes(null);
-        @SuppressWarnings("unchecked")
-        List<IdentifierType> types = (List<IdentifierType>) r.getEntity();
-        Boolean found = false;
-        for (IdentifierType t : types){
-            if (t.getName().equals("doi")){
-                assertEquals("doi: Digital object identifier",t.getDescription());
-                found = true;
+        IdentifierType doi = new IdentifierType();
+        doi.setName("doi");
+        doi.setDescription("doi: Digital object identifier");
+        List<IdentifierType> mockedTypes = Collections.singletonList(doi);
+        when(serviceDelegator.getIdentifierTypes("en")).thenReturn(Response.ok(mockedTypes).build());
+
+        try (Response r = service.viewIdentifierTypes(null)) {
+            assertEquals(200, r.getStatus());
+            List<IdentifierType> types = getTypes(r);
+            boolean found = false;
+            for (IdentifierType t : types) {
+                if (t.getName().equals("doi")) {
+                    assertEquals("doi: Digital object identifier", t.getDescription());
+                    found = true;
+                }
             }
+            assertTrue("no description for DOI found", found);
         }
-        assertTrue("no description for DOI found",found);
     }
     
     @Test
     public void testviewIdentifierTypesWithLocale() {
-        assertEquals(service.viewIdentifierTypes("es").getStatus(), 200);
-        Response r = service.viewIdentifierTypes("es");
-        @SuppressWarnings("unchecked")
-        List<IdentifierType> types = (List<IdentifierType>) r.getEntity();
-        Boolean found = false;
-        for (IdentifierType t : types){
-            if (t.getName().equals("doi")){
-                assertEquals("doi: Identificador de objeto digital",t.getDescription());
-                found = true;
+        IdentifierType doi = new IdentifierType();
+        doi.setName("doi");
+        doi.setDescription("doi: Identificador de objeto digital");
+        List<IdentifierType> mockedTypes = Collections.singletonList(doi);
+        when(serviceDelegator.getIdentifierTypes("es")).thenReturn(Response.ok(mockedTypes).build());
+
+        try (Response r = service.viewIdentifierTypes("es")) {
+            assertEquals(200, r.getStatus());
+            List<IdentifierType> types = getTypes(r);
+            boolean found = false;
+            for (IdentifierType t : types) {
+                if (t.getName().equals("doi")) {
+                    assertEquals("doi: Identificador de objeto digital", t.getDescription());
+                    found = true;
+                }
             }
+            assertTrue("no description for DOI found", found);
         }
-        assertTrue("no description for DOI found",found);
     }
 
     

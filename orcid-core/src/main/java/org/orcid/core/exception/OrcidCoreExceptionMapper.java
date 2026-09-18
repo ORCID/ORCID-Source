@@ -255,7 +255,12 @@ public class OrcidCoreExceptionMapper {
         String devMessage = messageSource.getMessage("apiError." + errorCode + ".developerMessage", null, "", locale);        
         if (devMessage == "")
             devMessage = t.getClass().getCanonicalName();
-        
+
+        // For 404 messages, do not include more details, so we don't expose query details to the client
+        if (errorCode == 9011 || errorCode == 9016 || errorCode == 9027 || errorCode == 9028 || errorCode == 9029 || errorCode == 9041) {
+            return devMessage;
+        }
+
         String exceptionMessage = t.getLocalizedMessage();
         String validationMessage = messageSource.getMessage("apiError.validation.message", null, "", locale);
         if (exceptionMessage != null) {

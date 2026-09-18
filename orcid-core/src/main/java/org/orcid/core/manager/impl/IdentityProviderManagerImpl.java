@@ -50,7 +50,6 @@ public class IdentityProviderManagerImpl implements IdentityProviderManager {
     }
 
     @Override
-    @Transactional
     public String retrieveFreshIdentitifyProviderName(String providerid, Locale locale) {
         IdentityProviderEntity idp = identityProviderDao.findByProviderid(providerid);
         List<IdentityProviderNameEntity> names = idp.getNames();

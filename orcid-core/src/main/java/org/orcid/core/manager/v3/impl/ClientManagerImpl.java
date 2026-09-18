@@ -80,19 +80,16 @@ public class ClientManagerImpl implements ClientManager {
     private ProfileLastModifiedDao profileLastModifiedDao;
 
     @Override
-    @Transactional
     public Client create(Client newClient) throws IllegalArgumentException {
         return create(newClient, false, false);
     }
 
     @Override
-    @Transactional
     public Client createPublicClient(Client newClient) {
         return create(newClient, true, false);
     }
 
     @Override
-    @Transactional
     public Client createWithConfigValues(Client newClient) {
         return create(newClient, false, true);
     }
@@ -198,7 +195,6 @@ public class ClientManagerImpl implements ClientManager {
     }
 
     @Override
-    @Transactional
     public Client edit(Client existingClient, boolean updateConfigValues) {
         if (!clientDetailsDao.exists(existingClient.getId())) {
             throw new IllegalArgumentException("Invalid client id provided: " + existingClient.getId());
@@ -213,16 +209,19 @@ public class ClientManagerImpl implements ClientManager {
             }
         }
 
+        // This is now 100% safe! MapStruct will ignore core/config fields.
         jpaJaxbClientAdapter.toEntity(existingClient, clientDetails);        
+        
         clientDetails.manuallyUpdateLastModified();
         
-        // Check if we should update client configuration values
+        // We only manually map the config values if the flag is true
+        // allowAutoDeprecate is mapped unconditionally by the adapter above
         if (updateConfigValues) {
-            // Authentication provider id
             clientDetails.setAuthenticationProviderId(existingClient.getAuthenticationProviderId());
-            // Enable persistent tokens
+            clientDetails.setEmailAccessReason(existingClient.getEmailAccessReason());
             clientDetails.setPersistentTokensEnabled(existingClient.isPersistentTokensEnabled());
             clientDetails.setUserOBOEnabled(existingClient.isUserOBOEnabled());
+            
             refreshGrantTypesForObo(clientDetails, existingClient.isOboEnabled());
         }
 
@@ -259,25 +258,29 @@ public class ClientManagerImpl implements ClientManager {
     }
 
     @Override
-    @Transactional
     public String resetAndGetClientSecret(String clientId) {
-        try {
-            String newSecret = encryptionManager.encryptForInternalUse(UUID.randomUUID().toString());
-            clientSecretDao.revokeAllKeys(clientId);
-            boolean created  = clientSecretDao.createClientSecret(clientId, newSecret);
-            if (created) {
-                clientDetailsDao.updateLastModified(clientId);
-                String sourceId = sourceManager.retrieveActiveSourceId();
-                profileLastModifiedDao.updateLastModifiedDateWithoutResult(sourceId);
-            } else {
-                LOGGER.warn("Client secret creation failed for client {}", clientId);
-            }
+        return transactionTemplate.execute(new TransactionCallback<String>() {
+            @Override
+            public String doInTransaction(TransactionStatus status) {
+                try {
+                    String newSecret = encryptionManager.encryptForInternalUse(UUID.randomUUID().toString());
+                    clientSecretDao.revokeAllKeys(clientId);
+                    boolean created = clientSecretDao.createClientSecret(clientId, newSecret);
+                    if (created) {
+                        clientDetailsDao.updateLastModified(clientId);
+                        String sourceId = sourceManager.retrieveActiveSourceId();
+                        profileLastModifiedDao.updateLastModifiedDateWithoutResult(sourceId);
+                    } else {
+                        LOGGER.warn("Client secret creation failed for client {}", clientId);
+                    }
 
-            return encryptionManager.decryptForInternalUse(newSecret);
-        } catch (Exception e) {
-            LOGGER.error("Unable to reset client secret for client {}", clientId, e);
-            throw e;
-        }
+                    return encryptionManager.decryptForInternalUse(newSecret);
+                } catch (Exception e) {
+                    LOGGER.error("Unable to reset client secret for client {}", clientId, e);
+                    throw e;
+                }
+            }
+        });
     }
 
     private void refreshGrantTypesForObo(ClientDetailsEntity clientDetails, boolean enableObo) {
