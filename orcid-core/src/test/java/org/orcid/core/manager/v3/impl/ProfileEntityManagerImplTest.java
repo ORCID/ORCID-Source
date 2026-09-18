@@ -1,439 +1,762 @@
 package org.orcid.core.manager.v3.impl;
 
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
-import org.orcid.core.common.manager.EmailFrequencyManager;
-import org.orcid.core.manager.ClientDetailsEntityCacheManager;
-import org.orcid.core.manager.EncryptionManager;
-import org.orcid.core.manager.ProfileEntityCacheManager;
-import org.orcid.core.manager.v3.AddressManager;
-import org.orcid.core.manager.v3.BiographyManager;
-import org.orcid.core.manager.v3.EmailManager;
-import org.orcid.core.manager.v3.ExternalIdentifierManager;
-import org.orcid.core.manager.v3.NotificationManager;
-import org.orcid.core.manager.v3.OtherNameManager;
-import org.orcid.core.manager.v3.ProfileEntityManager;
-import org.orcid.core.manager.v3.ProfileHistoryEventManager;
-import org.orcid.core.manager.v3.ProfileKeywordManager;
-import org.orcid.core.manager.v3.RecordNameManager;
-import org.orcid.core.manager.v3.ResearcherUrlManager;
-import org.orcid.core.profile.history.ProfileHistoryEventType;
-import org.orcid.jaxb.model.common.AvailableLocales;
-import org.orcid.jaxb.model.message.ScopePathType;
-import org.orcid.jaxb.model.v3.release.common.Visibility;
-import org.orcid.jaxb.model.v3.release.record.Address;
-import org.orcid.jaxb.model.v3.release.record.Addresses;
-import org.orcid.jaxb.model.v3.release.record.Biography;
-import org.orcid.jaxb.model.v3.release.record.Keyword;
-import org.orcid.jaxb.model.v3.release.record.Keywords;
-import org.orcid.jaxb.model.v3.release.record.OtherName;
-import org.orcid.jaxb.model.v3.release.record.OtherNames;
-import org.orcid.jaxb.model.v3.release.record.PersonExternalIdentifier;
-import org.orcid.jaxb.model.v3.release.record.PersonExternalIdentifiers;
-import org.orcid.jaxb.model.v3.release.record.ResearcherUrl;
-import org.orcid.jaxb.model.v3.release.record.ResearcherUrls;
-import org.orcid.persistence.dao.OrcidOauth2TokenDetailDao;
-import org.orcid.persistence.dao.ProfileDao;
-import org.orcid.persistence.dao.UserConnectionDao;
-import org.orcid.persistence.jpa.entities.OrcidOauth2TokenDetail;
-import org.orcid.persistence.jpa.entities.ProfileEntity;
-import org.orcid.persistence.jpa.entities.UserConnectionStatus;
-import org.orcid.persistence.jpa.entities.UserconnectionEntity;
-import org.orcid.persistence.jpa.entities.UserconnectionPK;
-import org.orcid.pojo.ApplicationSummary;
-import org.orcid.pojo.ajaxForm.Checkbox;
-import org.orcid.pojo.ajaxForm.Claim;
-import org.orcid.pojo.ajaxForm.Text;
-import org.orcid.test.DBUnitTest;
-import org.orcid.test.OrcidJUnit4ClassRunner;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.util.ReflectionTestUtils;
-import org.springframework.transaction.annotation.Transactional;
-
-import jakarta.annotation.Resource;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyBoolean;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.isNull;
+import static org.mockito.Mockito.doAnswer;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.lenient;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
-/**
- * @author: Declan Newman (declan) Date: 10/02/2012
- */
-@RunWith(OrcidJUnit4ClassRunner.class)
-@ContextConfiguration(locations = { "classpath:test-orcid-core-context.xml" })
-public class ProfileEntityManagerImplTest extends DBUnitTest {
-    private static final String CLIENT_ID_1 = "APP-5555555555555555";   
-    private static final String CLIENT_ID_2 = "APP-5555555555555556";
-    private static final String USER_ORCID = "0000-0000-0000-0001";
-    
-    @Resource(name = "profileEntityManagerV3")
-    private ProfileEntityManager profileEntityManager;
-    
-    @Resource(name = "profileEntityCacheManager")
-    private ProfileEntityCacheManager profileEntityCacheManager;
-    
-    @Resource(name = "emailManagerV3")
+import java.lang.reflect.Field;
+import java.security.InvalidParameterException;
+import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import jakarta.persistence.NoResultException;
+
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.runners.MockitoJUnitRunner;
+import org.orcid.core.aop.ProfileLastModifiedAspect;
+import org.orcid.core.common.manager.EmailFrequencyManager;
+import org.orcid.core.constants.RevokeReason;
+import org.orcid.core.locale.LocaleManager;
+import org.orcid.core.manager.ClientDetailsEntityCacheManager;
+import org.orcid.core.manager.EncryptionManager;
+import org.orcid.core.manager.v3.AddressManager;
+import org.orcid.core.manager.v3.AffiliationsManager;
+import org.orcid.core.manager.v3.BiographyManager;
+import org.orcid.core.manager.v3.EmailManager;
+import org.orcid.core.manager.v3.ExternalIdentifierManager;
+import org.orcid.core.manager.v3.GivenPermissionToManager;
+import org.orcid.core.manager.v3.NotificationManager;
+import org.orcid.core.manager.v3.OtherNameManager;
+import org.orcid.core.manager.v3.PeerReviewManager;
+import org.orcid.core.manager.v3.ProfileEmailDomainManager;
+import org.orcid.core.manager.v3.ProfileFundingManager;
+import org.orcid.core.manager.v3.ProfileHistoryEventManager;
+import org.orcid.core.manager.v3.ProfileKeywordManager;
+import org.orcid.core.manager.v3.RecordNameManager;
+import org.orcid.core.manager.v3.ResearchResourceManager;
+import org.orcid.core.manager.v3.ResearcherUrlManager;
+import org.orcid.core.manager.v3.WorkManager;
+import org.orcid.core.manager.v3.read_only.RecordNameManagerReadOnly;
+import org.orcid.core.manager.v3.read_only.impl.ManagerReadOnlyBaseImpl;
+import org.orcid.core.manager.v3.read_only.impl.ProfileEntityManagerReadOnlyImpl;
+import org.orcid.core.profile.history.ProfileHistoryEventType;
+import org.orcid.core.utils.cache.redis.RedisClient;
+import org.orcid.jaxb.model.clientgroup.MemberType;
+import org.orcid.jaxb.model.common.AvailableLocales;
+import org.orcid.jaxb.model.message.ScopePathType;
+import org.orcid.jaxb.model.v3.release.common.Visibility;
+import org.orcid.jaxb.model.v3.release.record.Biography;
+import org.orcid.jaxb.model.v3.release.record.CreditName;
+import org.orcid.jaxb.model.v3.release.record.Email;
+import org.orcid.jaxb.model.v3.release.record.Emails;
+import org.orcid.jaxb.model.v3.release.record.FamilyName;
+import org.orcid.jaxb.model.v3.release.record.GivenNames;
+import org.orcid.jaxb.model.v3.release.record.Name;
+import org.orcid.persistence.dao.AddressDao;
+import org.orcid.persistence.dao.BackupCodeDao;
+import org.orcid.persistence.dao.ExternalIdentifierDao;
+import org.orcid.persistence.dao.OrcidOauth2TokenDetailDao;
+import org.orcid.persistence.dao.OtherNameDao;
+import org.orcid.persistence.dao.ProfileDao;
+import org.orcid.persistence.dao.ProfileKeywordDao;
+import org.orcid.persistence.dao.ProfileLastModifiedDao;
+import org.orcid.persistence.dao.ResearcherUrlDao;
+import org.orcid.persistence.dao.UserConnectionDao;
+import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
+import org.orcid.persistence.jpa.entities.BaseEntity;
+import org.orcid.persistence.jpa.entities.IndexingStatus;
+import org.orcid.persistence.jpa.entities.OrcidOauth2TokenDetail;
+import org.orcid.persistence.jpa.entities.ProfileEmailDomainEntity;
+import org.orcid.persistence.jpa.entities.ProfileEntity;
+import org.orcid.pojo.ApplicationSummary;
+import org.orcid.pojo.ajaxForm.Checkbox;
+import org.orcid.pojo.ajaxForm.Claim;
+import org.orcid.pojo.ajaxForm.Reactivation;
+import org.orcid.pojo.ajaxForm.Text;
+import org.springframework.context.NoSuchMessageException;
+import org.springframework.transaction.support.TransactionCallback;
+import org.springframework.transaction.support.TransactionTemplate;
+
+@RunWith(MockitoJUnitRunner.class)
+public class ProfileEntityManagerImplTest {
+
+    private ProfileEntityManagerImpl manager;
+
+    @Mock
+    private ProfileDao profileDao;
+    @Mock
+    private TransactionTemplate transactionTemplate;
+    @Mock
     private EmailManager emailManager;
-    
-    @Resource(name = "recordNameManagerV3")
-    private RecordNameManager recordNameManager;
-    
-    @Resource(name = "biographyManagerV3")
-    private BiographyManager biographyManager;
-    
-    @Resource
-    private UserConnectionDao userConnectionDao;
-    
-    @Resource(name = "notificationManagerV3")
+    @Mock
+    private ProfileEmailDomainManager profileEmailDomainManager;
+    @Mock
+    private WorkManager workManager;
+    @Mock
+    private ProfileFundingManager fundingManager;
+    @Mock
+    private AffiliationsManager affiliationsManager;
+    @Mock
+    private PeerReviewManager peerReviewManager;
+    @Mock
+    private ResearchResourceManager researchResourceManager;
+    @Mock
+    private AddressDao addressDao;
+    @Mock
+    private ExternalIdentifierDao externalIdentifierDao;
+    @Mock
+    private ResearcherUrlDao researcherUrlDao;
+    @Mock
+    private OtherNameDao otherNameDao;
+    @Mock
+    private ProfileKeywordDao profileKeywordDao;
+    @Mock
+    private BackupCodeDao backupCodeDao;
+    @Mock
     private NotificationManager notificationManager;
-    
-    @Resource
-    private ClientDetailsEntityCacheManager clientDetailsEntityCacheManager;
-
-    @Resource(name="orcidOauth2TokenDetailDao")
+    @Mock
+    private GivenPermissionToManager givenPermissionToManager;
+    @Mock
+    private UserConnectionDao userConnectionDao;
+    @Mock
+    private ProfileHistoryEventManager profileHistoryEventManager;
+    @Mock
     private OrcidOauth2TokenDetailDao orcidOauth2TokenDetailDao;
-    
-    @Resource(name = "addressManagerV3")
-    private AddressManager addressManager;
-    
-    @Resource(name = "externalIdentifierManagerV3")
-    private ExternalIdentifierManager externalIdentifierManager;
-
-    @Resource(name = "profileKeywordManagerV3")
-    private ProfileKeywordManager profileKeywordManager;
-
-    @Resource(name = "otherNameManagerV3")
-    private OtherNameManager otherNameManager;
-
-    @Resource(name = "researcherUrlManagerV3")
-    private ResearcherUrlManager researcherUrlManager;
-    
+    @Mock
+    private OrcidOauth2TokenDetailDao orcidOauth2TokenDetailDaoReadOnly;
+    @Mock
+    private ProfileLastModifiedDao profileLastModifiedDao;
+    @Mock
+    private ClientDetailsEntityCacheManager clientDetailsEntityCacheManager;
+    @Mock
+    private LocaleManager localeManager;
+    @Mock
+    private EncryptionManager encryptionManager;
+    @Mock
+    private RecordNameManager recordNameManagerV3;
+    @Mock
+    private RecordNameManagerReadOnly recordNameManagerReadOnlyV3;
+    @Mock
+    private BiographyManager biographyManager;
     @Mock
     private EmailFrequencyManager emailFrequencyManager;
-    
-    @BeforeClass
-    public static void initDBUnitData() throws Exception {
-        initDBUnitData(Arrays.asList("/data/SourceClientDetailsEntityData.xml", "/data/ProfileEntityData.xml", "/data/RecordNameEntityData.xml", "/data/BiographyEntityData.xml", "/data/ClientDetailsEntityData.xml"));
-    }
+    @Mock
+    private ProfileLastModifiedAspect profileLastModifiedAspect;
+    @Mock
+    private AddressManager addressManager;
+    @Mock
+    private ExternalIdentifierManager externalIdentifierManager;
+    @Mock
+    private ProfileKeywordManager profileKeywordManager;
+    @Mock
+    private OtherNameManager otherNameManager;
+    @Mock
+    private ResearcherUrlManager researcherUrlManager;
+    @Mock
+    private RedisClient redisClient;
 
-    @AfterClass
-    public static void removeDBUnitData() throws Exception {
-        removeDBUnitData(Arrays.asList("/data/ClientDetailsEntityData.xml", "/data/RecordNameEntityData.xml", "/data/BiographyEntityData.xml", "/data/ProfileEntityData.xml", "/data/SourceClientDetailsEntityData.xml"));
-    }    
-    
     @Before
     public void setUp() {
-        MockitoAnnotations.initMocks(this);
-        ReflectionTestUtils.setField(profileEntityManager, "emailFrequencyManager", emailFrequencyManager);
-        Mockito.when(emailFrequencyManager.createOnClaim(Mockito.anyString(), Mockito.anyBoolean())).thenReturn(true);
+        manager = new ProfileEntityManagerImpl();
+
+        inject(ProfileEntityManagerReadOnlyImpl.class, "profileDao", profileDao);
+        inject(ProfileEntityManagerReadOnlyImpl.class, "orcidOauth2TokenDetailDaoReadOnly", orcidOauth2TokenDetailDaoReadOnly);
+        inject(ManagerReadOnlyBaseImpl.class, "profileLastModifiedAspect", profileLastModifiedAspect);
+
+        inject(ProfileEntityManagerImpl.class, "transactionTemplate", transactionTemplate);
+        inject(ProfileEntityManagerImpl.class, "emailManager", emailManager);
+        inject(ProfileEntityManagerImpl.class, "profileEmailDomainManager", profileEmailDomainManager);
+        inject(ProfileEntityManagerImpl.class, "workManager", workManager);
+        inject(ProfileEntityManagerImpl.class, "fundingManager", fundingManager);
+        inject(ProfileEntityManagerImpl.class, "affiliationsManager", affiliationsManager);
+        inject(ProfileEntityManagerImpl.class, "peerReviewManager", peerReviewManager);
+        inject(ProfileEntityManagerImpl.class, "researchResourceManager", researchResourceManager);
+        inject(ProfileEntityManagerImpl.class, "addressDao", addressDao);
+        inject(ProfileEntityManagerImpl.class, "externalIdentifierDao", externalIdentifierDao);
+        inject(ProfileEntityManagerImpl.class, "researcherUrlDao", researcherUrlDao);
+        inject(ProfileEntityManagerImpl.class, "otherNameDao", otherNameDao);
+        inject(ProfileEntityManagerImpl.class, "profileKeywordDao", profileKeywordDao);
+        inject(ProfileEntityManagerImpl.class, "backupCodeDao", backupCodeDao);
+        inject(ProfileEntityManagerImpl.class, "notificationManager", notificationManager);
+        inject(ProfileEntityManagerImpl.class, "givenPermissionToManager", givenPermissionToManager);
+        inject(ProfileEntityManagerImpl.class, "userConnectionDao", userConnectionDao);
+        inject(ProfileEntityManagerImpl.class, "profileHistoryEventManager", profileHistoryEventManager);
+        inject(ProfileEntityManagerImpl.class, "orcidOauth2TokenDetailDao", orcidOauth2TokenDetailDao);
+        inject(ProfileEntityManagerImpl.class, "orcidOauth2TokenDetailDaoReadOnly", orcidOauth2TokenDetailDaoReadOnly);
+        inject(ProfileEntityManagerImpl.class, "profileLastModifiedDao", profileLastModifiedDao);
+        inject(ProfileEntityManagerImpl.class, "clientDetailsEntityCacheManager", clientDetailsEntityCacheManager);
+        inject(ProfileEntityManagerImpl.class, "localeManager", localeManager);
+        inject(ProfileEntityManagerImpl.class, "encryptionManager", encryptionManager);
+        inject(ProfileEntityManagerImpl.class, "recordNameManagerV3", recordNameManagerV3);
+        inject(ProfileEntityManagerImpl.class, "recordNameManagerReadOnlyV3", recordNameManagerReadOnlyV3);
+        inject(ProfileEntityManagerImpl.class, "biographyManager", biographyManager);
+        inject(ProfileEntityManagerImpl.class, "emailFrequencyManager", emailFrequencyManager);
+        inject(ProfileEntityManagerImpl.class, "redisClient", redisClient);
+
+        doAnswer(invocation -> {
+            TransactionCallback<?> callback = (TransactionCallback<?>) invocation.getArguments()[0];
+            return callback.doInTransaction(null);
+        }).when(transactionTemplate).execute(any(TransactionCallback.class));
+
+        lenient().when(profileLastModifiedAspect.retrieveLastModifiedDate(anyString())).thenReturn(new Date());
     }
-    
+
     @Test
-    public void testFindByOrcid() throws Exception {
-        String harrysOrcid = "4444-4444-4444-4444";
-        ProfileEntity profileEntity = profileEntityCacheManager.retrieve(harrysOrcid);
-        assertNotNull(profileEntity);
-        assertEquals(harrysOrcid, profileEntity.getId());
+    public void findByOrcidDelegates() {
+        ProfileEntity profile = new ProfileEntity();
+        profile.setId("0000-0000-0000-0001");
+        when(profileDao.find("0000-0000-0000-0001")).thenReturn(profile);
+
+        assertEquals(profile, manager.findByOrcid("0000-0000-0000-0001"));
     }
 
-    @Test    
-    public void testDeprecateProfile() throws Exception {
-        ProfileHistoryEventManager profileHistoryEventManager = Mockito.mock(ProfileHistoryEventManagerImpl.class);
-        ReflectionTestUtils.setField(profileEntityManager, "profileHistoryEventManager", profileHistoryEventManager);
-        Mockito.doNothing().when(profileHistoryEventManager).recordEvent(Mockito.any(ProfileHistoryEventType.class), Mockito.anyString(), Mockito.anyString());
-        
-        UserconnectionPK pk = new UserconnectionPK();
-        pk.setProviderid("providerId");
-        pk.setProvideruserid("provideruserid");
-        pk.setUserid("4444-4444-4444-4441");
-        
-        UserconnectionEntity userConnection = new UserconnectionEntity();
-        userConnection.setAccesstoken("blah");
-        userConnection.setConnectionSatus(UserConnectionStatus.STARTED);
-        userConnection.setDisplayname("blah");
-        userConnection.setEmail("blah@blah.com");
-        userConnection.setOrcid("4444-4444-4444-4441");
-        userConnection.setId(pk);
-        userConnection.setRank(1);
-        userConnectionDao.persist(userConnection);
-        assertNotNull(userConnection.getDateCreated());
-        assertNotNull(userConnection.getLastModified());
-        
-        ProfileEntity profileEntityToDeprecate = profileEntityCacheManager.retrieve("4444-4444-4444-4441");     
-        assertNull(profileEntityToDeprecate.getPrimaryRecord());
-        boolean result = profileEntityManager.deprecateProfile("4444-4444-4444-4441", "4444-4444-4444-4442", ProfileEntity.USER_DRIVEN_DEPRECATION, null);
-        assertTrue(result);
-        profileEntityToDeprecate = profileEntityCacheManager.retrieve("4444-4444-4444-4441");
-        assertNotNull(profileEntityToDeprecate.getPrimaryRecord());
-        assertNotNull(profileEntityToDeprecate.getDeprecatedMethod());
-        assertEquals(ProfileEntity.USER_DRIVEN_DEPRECATION, profileEntityToDeprecate.getDeprecatedMethod());
-        assertEquals("4444-4444-4444-4442", profileEntityToDeprecate.getPrimaryRecord().getId());
-        assertEquals(0, userConnectionDao.findByOrcid("4444-4444-4444-4441").size());
-        assertFalse(profileEntityToDeprecate.getUsing2FA());
-        assertNull(profileEntityToDeprecate.getSecretFor2FA());
-        assertEquals(0, notificationManager.findByOrcid("4444-4444-4444-4441", true, 0, 1000).size());
+    @Test
+    public void isLockedDelegates() {
+        when(profileDao.isLocked("orcid")).thenReturn(true);
+        assertTrue(manager.isLocked("orcid"));
     }
-    
-    @Test    
-    public void testDeactivateRecord() throws Exception {
-        ProfileHistoryEventManager profileHistoryEventManager = Mockito.mock(ProfileHistoryEventManagerImpl.class);
-        ReflectionTestUtils.setField(profileEntityManager, "profileHistoryEventManager", profileHistoryEventManager);
-        Mockito.doNothing().when(profileHistoryEventManager).recordEvent(Mockito.any(ProfileHistoryEventType.class), Mockito.anyString(), Mockito.anyString());
-        
-        UserconnectionPK pk = new UserconnectionPK();
-        pk.setProviderid("providerId");
-        pk.setProvideruserid("provideruserid");
-        pk.setUserid("4444-4444-4444-4441");
-        
-        UserconnectionEntity userConnection = new UserconnectionEntity();
-        userConnection.setAccesstoken("blah");
-        userConnection.setConnectionSatus(UserConnectionStatus.STARTED);
-        userConnection.setDisplayname("blah");
-        userConnection.setEmail("blah@blah.com");
-        userConnection.setOrcid("4444-4444-4444-4441");
-        userConnection.setId(pk);
-        userConnection.setRank(1);
-        userConnectionDao.persist(userConnection);
-        assertNotNull(userConnection.getDateCreated());
-        assertNotNull(userConnection.getLastModified());
-        
-        boolean result = profileEntityManager.deactivateRecord("4444-4444-4444-4441");
-        assertTrue(result);
 
-        ProfileEntity deactivated = profileEntityCacheManager.retrieve("4444-4444-4444-4441");     
-        assertEquals(0, userConnectionDao.findByOrcid("4444-4444-4444-4441").size());
-        assertFalse(deactivated.getUsing2FA());
-        assertNull(deactivated.getSecretFor2FA());
-        assertEquals(0, notificationManager.findByOrcid("4444-4444-4444-4441", true, 0, 1000).size());
+    @Test
+    public void getLockedReasonFormatsAllParts() {
+        ProfileEntity profile = new ProfileEntity();
+        profile.setReasonLocked("spam");
+        profile.setReasonLockedDescription("details");
+        profile.setRecordLockingAdmin("admin");
+        profile.setRecordLockedDate(new Date(0));
+        when(profileDao.getLockedReason("orcid")).thenReturn(profile);
+
+        assertEquals(" by admin on 01-01-1970 for: spam - details", manager.getLockedReason("orcid"));
     }
-    
-    @Test    
-    public void testReviewProfile() throws Exception {
-    	boolean result = profileEntityManager.reviewProfile("4444-4444-4444-4441");
-        assertTrue(result);
-    	
-    	result = profileEntityManager.unreviewProfile("4444-4444-4444-4442");
-    	assertTrue(result);
+
+    @Test
+    public void getLockedReasonReturnsEmptyWhenNoReason() {
+        ProfileEntity profile = new ProfileEntity();
+        profile.setReasonLocked("");
+        when(profileDao.getLockedReason("orcid")).thenReturn(profile);
+
+        assertEquals("", manager.getLockedReason("orcid"));
     }
-    
-    @Test  
-    @Transactional
-    public void testClaimChangingVisibility() {
-        String orcid = "0000-0000-0000-0001";
+
+    @Test
+    public void isOrcidValidAsDelegateDelegates() {
+        when(profileDao.isOrcidValidAsDelegate("orcid")).thenReturn(true);
+        assertTrue(manager.isOrcidValidAsDelegate("orcid"));
+    }
+
+    @Test
+    public void haveMemberPushedWorksOrAffiliationsToRecordReturnsFalseForBlankInput() {
+        assertFalse(manager.haveMemberPushedWorksOrAffiliationsToRecord("", "client"));
+        assertFalse(manager.haveMemberPushedWorksOrAffiliationsToRecord("orcid", ""));
+    }
+
+    @Test
+    public void haveMemberPushedWorksOrAffiliationsToRecordDelegatesWhenValid() {
+        when(profileDao.haveMemberPushedWorksOrAffiliationsToRecord("orcid", "client")).thenReturn(true);
+        assertTrue(manager.haveMemberPushedWorksOrAffiliationsToRecord("orcid", "client"));
+    }
+
+    @Test
+    public void hasTokenDelegatesToReadOnlyDao() {
+        when(orcidOauth2TokenDetailDaoReadOnly.hasToken("orcid")).thenReturn(true);
+        assertTrue(manager.hasToken("orcid", 123L));
+    }
+
+    @Test
+    public void orcidExistsDelegates() {
+        when(profileDao.orcidExists("orcid")).thenReturn(true);
+        assertTrue(manager.orcidExists("orcid"));
+    }
+
+    @Test
+    public void hasBeenGivenPermissionToDelegates() {
+        when(profileDao.hasBeenGivenPermissionTo("g", "r")).thenReturn(true);
+        assertTrue(manager.hasBeenGivenPermissionTo("g", "r"));
+    }
+
+    @Test
+    public void findByCreditNameReturnsNullWhenNameMissing() {
+        when(recordNameManagerV3.findByCreditName("credit")).thenReturn(null);
+        assertNull(manager.findByCreditName("credit"));
+    }
+
+    @Test
+    public void findByCreditNameReturnsPathWhenFound() {
+        Name name = new Name();
+        name.setPath("0000-0000-0000-0001");
+        when(recordNameManagerV3.findByCreditName("credit")).thenReturn(name);
+        assertEquals("0000-0000-0000-0001", manager.findByCreditName("credit"));
+    }
+
+    @Test
+    public void deprecateProfileReturnsFalseWhenDaoDoesNotDeprecate() {
+        when(profileDao.deprecateProfile("d", "p", "method", "admin")).thenReturn(false);
+        assertFalse(manager.deprecateProfile("d", "p", "method", "admin"));
+    }
+
+    @Test
+    public void deprecateProfileMovesEmailsDomainsClearsRecordAndRecordsHistoryEvent() {
+        when(profileDao.deprecateProfile("d", "p", "method", "admin")).thenReturn(true);
+        Emails emails = new Emails();
+        emails.setEmails(Arrays.asList(email("a@test.org"), email("b@test.org")));
+        when(emailManager.getEmails("d")).thenReturn(emails);
+        when(profileEmailDomainManager.getEmailDomains("d")).thenReturn(Arrays.asList(emailDomain("test.org")));
+        when(profileDao.updateDefaultVisibility("d", org.orcid.jaxb.model.common_v2.Visibility.PRIVATE.name())).thenReturn(true);
+        when(recordNameManagerV3.exists("d")).thenReturn(true);
+        when(biographyManager.exists("d")).thenReturn(false);
+
+        assertTrue(manager.deprecateProfile("d", "p", "method", "admin"));
+
+        verify(emailManager).moveEmailToOtherAccount("a@test.org", "d", "p");
+        verify(emailManager).moveEmailToOtherAccount("b@test.org", "d", "p");
+        verify(profileEmailDomainManager).moveEmailDomainToAnotherAccount("test.org", "d", "p");
+        verify(orcidOauth2TokenDetailDao, never()).disableAccessTokenByUserOrcid(anyString(), anyString());
+        verify(profileHistoryEventManager).recordEvent(ProfileHistoryEventType.SET_DEFAULT_VIS_TO_PRIVATE, "d", "deactivated/deprecated");
+        verify(profileLastModifiedDao).updateLastModifiedDateAndIndexingStatus("d", IndexingStatus.REINDEX);
+    }
+
+    @Test
+    public void deprecateProfileSkipsHistoryEventWhenDefaultVisibilityNotUpdated() {
+        when(profileDao.deprecateProfile("d", "p", "method", "admin")).thenReturn(true);
+        when(emailManager.getEmails("d")).thenReturn(new Emails());
+        when(profileEmailDomainManager.getEmailDomains("d")).thenReturn(new ArrayList<ProfileEmailDomainEntity>());
+        when(profileDao.updateDefaultVisibility("d", org.orcid.jaxb.model.common_v2.Visibility.PRIVATE.name())).thenReturn(false);
+        when(recordNameManagerV3.exists("d")).thenReturn(false);
+        when(biographyManager.exists("d")).thenReturn(false);
+
+        manager.deprecateProfile("d", "p", "method", "admin");
+
+        verify(profileHistoryEventManager, never()).recordEvent(any(ProfileHistoryEventType.class), anyString(), anyString());
+    }
+
+    @Test
+    public void deactivateRecordClearsRecordHidesEmailsAndDisablesTokens() {
+        when(profileDao.updateDefaultVisibility("orcid", org.orcid.jaxb.model.common_v2.Visibility.PRIVATE.name())).thenReturn(true);
+        when(recordNameManagerV3.exists("orcid")).thenReturn(false);
+        when(biographyManager.exists("orcid")).thenReturn(false);
+
+        assertTrue(manager.deactivateRecord("orcid"));
+
+        verify(emailManager).hideAllEmails("orcid");
+        verify(profileDao).deactivate("orcid");
+        verify(orcidOauth2TokenDetailDao).disableAccessTokenByUserOrcid("orcid", RevokeReason.RECORD_DEACTIVATED.name());
+        verify(profileHistoryEventManager).recordEvent(ProfileHistoryEventType.SET_DEFAULT_VIS_TO_PRIVATE, "orcid", "deactivated/deprecated");
+    }
+
+    @Test
+    public void enableDeveloperToolsDelegates() {
+        when(profileDao.updateDeveloperTools("orcid", true)).thenReturn(true);
+        assertTrue(manager.enableDeveloperTools("orcid"));
+    }
+
+    @Test
+    public void disableDeveloperToolsDelegates() {
+        when(profileDao.updateDeveloperTools("orcid", false)).thenReturn(true);
+        assertTrue(manager.disableDeveloperTools("orcid"));
+    }
+
+    @Test
+    public void isProfileClaimedDelegates() {
+        when(profileDao.getClaimedStatus("orcid")).thenReturn(true);
+        assertTrue(manager.isProfileClaimed("orcid"));
+    }
+
+    @Test
+    public void getGroupTypeDelegates() {
+        MemberType expected = MemberType.values()[0];
+        when(profileDao.getGroupType("orcid")).thenReturn(expected.name());
+        assertEquals(expected, manager.getGroupType("orcid"));
+    }
+
+    @Test
+    public void getGroupTypeThrowsForInvalidType() {
+        when(profileDao.getGroupType("orcid")).thenReturn("INVALID");
+        assertThrows(IllegalArgumentException.class, () -> manager.getGroupType("orcid"));
+    }
+
+    @Test
+    public void updateLastModifedAndIndexingStatusDelegatesToAspect() {
+        manager.updateLastModifedAndIndexingStatus("orcid");
+        verify(profileLastModifiedAspect).updateLastModifiedDateAndIndexingStatus("orcid");
+    }
+
+    @Test
+    public void updateLastModifedDelegatesToAspect() {
+        manager.updateLastModifed("orcid");
+        verify(profileLastModifiedAspect).updateLastModifiedDate("orcid");
+    }
+
+    @Test
+    public void isDeactivatedDelegates() {
+        when(profileDao.isDeactivated("orcid")).thenReturn(true);
+        assertTrue(manager.isDeactivated("orcid"));
+    }
+
+    @Test
+    public void isReviewedDelegates() {
+        when(profileDao.isReviewed("orcid")).thenReturn(true);
+        assertTrue(manager.isReviewed("orcid"));
+    }
+
+    @Test
+    public void reviewProfileDelegates() {
+        when(profileDao.reviewProfile("orcid")).thenReturn(true);
+        assertTrue(manager.reviewProfile("orcid"));
+    }
+
+    @Test
+    public void unreviewProfileDelegates() {
+        when(profileDao.unreviewProfile("orcid")).thenReturn(true);
+        assertTrue(manager.unreviewProfile("orcid"));
+    }
+
+    @Test
+    public void getApplicationsFiltersDisabledOboAndNullClientsAndSorts() {
+        OrcidOauth2TokenDetail t1 = token("clientB", "/read-limited", new Date(2000), false, null);
+        OrcidOauth2TokenDetail t2 = token("clientA", "/activities/update", new Date(3000), false, null);
+        OrcidOauth2TokenDetail t3 = token("clientA", "/person/read-limited", new Date(1000), false, null);
+        OrcidOauth2TokenDetail disabled = token("clientA", "/orcid-profile/read-limited", new Date(1000), true, null);
+        OrcidOauth2TokenDetail obo = token("clientB", "/orcid-profile/read-limited", new Date(1000), false, "obo-client");
+        OrcidOauth2TokenDetail noClient = token("missing", "/read-limited", new Date(1000), false, null);
+        when(orcidOauth2TokenDetailDaoReadOnly.findByUserName("orcid")).thenReturn(Arrays.asList(t1, t2, t3, disabled, obo, noClient));
+
+        when(clientDetailsEntityCacheManager.retrieve("clientA")).thenReturn(client("clientA", "Alpha", "https://a.test"));
+        when(clientDetailsEntityCacheManager.retrieve("clientB")).thenReturn(client("clientB", "beta", "https://b.test"));
+        when(clientDetailsEntityCacheManager.retrieve("missing")).thenReturn(null);
+        when(localeManager.resolveMessage(anyString())).thenAnswer(i -> (String) i.getArguments()[0]);
+
+        List<ApplicationSummary> apps = manager.getApplications("orcid");
+
+        assertEquals(2, apps.size());
+        assertEquals("clientA", apps.get(0).getClientId());
+        assertEquals("clientB", apps.get(1).getClientId());
+        assertEquals(new Date(1000), apps.get(0).getApprovalDate());
+        assertTrue(apps.get(0).getScopePaths().containsKey(ScopePathType.ACTIVITIES_UPDATE.toString()));
+        assertTrue(apps.get(0).getScopePaths().containsKey(ScopePathType.PERSON_READ_LIMITED.toString()));
+    }
+
+    @Test
+    public void getApplicationsSkipsScopeLabelsMissingFromMessages() {
+        OrcidOauth2TokenDetail token = token("clientA", "/activities/update", new Date(1000), false, null);
+        when(orcidOauth2TokenDetailDaoReadOnly.findByUserName("orcid")).thenReturn(Arrays.asList(token));
+        when(clientDetailsEntityCacheManager.retrieve("clientA")).thenReturn(client("clientA", "Alpha", "https://a.test"));
+        when(localeManager.resolveMessage(anyString())).thenThrow(new NoSuchMessageException("missing"));
+
+        List<ApplicationSummary> apps = manager.getApplications("orcid");
+
+        assertEquals(1, apps.size());
+        assertTrue(apps.get(0).getScopePaths().isEmpty());
+    }
+
+    @Test
+    public void getOrcidHashReturnsNullForBlankInput() {
+        assertNull(manager.getOrcidHash(null));
+        assertNull(manager.getOrcidHash(" "));
+    }
+
+    @Test
+    public void getOrcidHashDelegatesToEncryptionManager() throws Exception {
+        when(encryptionManager.sha256Hash("value")).thenReturn("hash");
+        assertEquals("hash", manager.getOrcidHash("value"));
+    }
+
+    @Test
+    public void getOrcidHashWrapsNoSuchAlgorithmException() throws Exception {
+        when(encryptionManager.sha256Hash("value")).thenThrow(new NoSuchAlgorithmException("nope"));
+        assertThrows(RuntimeException.class, () -> manager.getOrcidHash("value"));
+    }
+
+    @Test
+    public void retrivePublicDisplayNameReturnsEmptyWhenNoPublicName() {
+        when(recordNameManagerReadOnlyV3.fetchDisplayablePublicName("orcid")).thenReturn(null);
+        assertEquals("", manager.retrivePublicDisplayName("orcid"));
+    }
+
+    @Test
+    public void retrivePublicDisplayNameReturnsNameWhenPresent() {
+        when(recordNameManagerReadOnlyV3.fetchDisplayablePublicName("orcid")).thenReturn("Public Name");
+        assertEquals("Public Name", manager.retrivePublicDisplayName("orcid"));
+    }
+
+    @Test
+    public void claimProfileAndUpdatePreferencesThrowsWhenEmailVerificationFails() {
+        when(emailManager.verifySetCurrentAndPrimary("orcid", "a@b.com")).thenReturn(false);
+        assertThrows(InvalidParameterException.class, () -> manager.claimProfileAndUpdatePreferences("orcid", "a@b.com", AvailableLocales.EN, claim(false)));
+    }
+
+    @Test
+    public void claimProfileAndUpdatePreferencesUpdatesProfileAndVisibilitiesAndCreatesFrequency() {
+        Claim claim = claim(false);
+        when(emailManager.verifySetCurrentAndPrimary("orcid", "a@b.com")).thenReturn(true);
+        ProfileEntity profile = new ProfileEntity();
+        when(profileDao.find("orcid")).thenReturn(profile);
+        when(encryptionManager.hashForInternalUse("password#1")).thenReturn("enc");
+        when(biographyManager.exists("orcid")).thenReturn(true);
+        Biography bio = new Biography();
+        bio.setVisibility(Visibility.PUBLIC);
+        when(biographyManager.getBiography("orcid")).thenReturn(bio);
+        when(emailFrequencyManager.emailFrequencyExists("orcid")).thenReturn(false);
+
+        assertTrue(manager.claimProfileAndUpdatePreferences("orcid", "a@b.com", AvailableLocales.EN, claim));
+
+        assertTrue(profile.getClaimed());
+        assertEquals(IndexingStatus.REINDEX, profile.getIndexingStatus());
+        assertEquals("enc", profile.getEncryptedPassword());
+        assertEquals(AvailableLocales.EN.name(), profile.getLocale());
+        assertEquals(Visibility.PRIVATE.name(), profile.getActivitiesVisibilityDefault());
+        verify(addressDao).updateVisibility("orcid", Visibility.PRIVATE);
+        verify(profileKeywordDao).updateVisibility("orcid", Visibility.PRIVATE);
+        verify(otherNameDao).updateVisibility("orcid", Visibility.PRIVATE);
+        verify(researcherUrlDao).updateVisibility("orcid", Visibility.PRIVATE);
+        verify(externalIdentifierDao).updateVisibility("orcid", Visibility.PRIVATE);
+        verify(biographyManager).updateBiography(eq("orcid"), any(Biography.class));
+        verify(emailFrequencyManager).createOnClaim("orcid", false);
+    }
+
+    @Test
+    public void claimProfileAndUpdatePreferencesUpdatesExistingFrequencySetting() {
+        Claim claim = claim(true);
+        when(emailManager.verifySetCurrentAndPrimary("orcid", "a@b.com")).thenReturn(true);
+        when(profileDao.find("orcid")).thenReturn(new ProfileEntity());
+        when(encryptionManager.hashForInternalUse("password#1")).thenReturn("enc");
+        when(biographyManager.exists("orcid")).thenReturn(false);
+        when(emailFrequencyManager.emailFrequencyExists("orcid")).thenReturn(true);
+
+        manager.claimProfileAndUpdatePreferences("orcid", "a@b.com", null, claim);
+
+        verify(emailFrequencyManager).updateSendQuarterlyTips("orcid", true);
+        verify(emailFrequencyManager, never()).createOnClaim(anyString(), anyBoolean());
+    }
+
+    @Test
+    public void updateLocaleDelegates() {
+        manager.updateLocale("orcid", AvailableLocales.EN);
+        verify(profileDao).updateLocale("orcid", AvailableLocales.EN.name());
+    }
+
+    @Test
+    public void isProfileClaimedByEmailUsesEmailHashFromManager() {
+        Map<String, String> keys = new HashMap<String, String>();
+        keys.put(EmailManager.HASH, "email-hash");
+        when(emailManager.getEmailKeys("a@b.com")).thenReturn(keys);
+        when(profileDao.getClaimedStatusByEmailHash("email-hash")).thenReturn(true);
+
+        assertTrue(manager.isProfileClaimedByEmail("a@b.com"));
+    }
+
+    @Test
+    public void reactivateFromAdminPathClearsAdditionalEmails() {
+        ProfileEntity profile = new ProfileEntity();
+        profile.setDeactivationDate(new Date());
+        when(profileDao.find("orcid")).thenReturn(profile);
+
+        List<String> toNotify = manager.reactivate("orcid", " primary@test.org ", null);
+
+        assertTrue(toNotify.isEmpty());
+        verify(emailManager).reactivatePrimaryEmail("orcid", "primary@test.org");
+        verify(profileEmailDomainManager).processDomain("orcid", "primary@test.org");
+        verify(emailManager).clearEmailsAfterReactivation("orcid");
+        assertNull(profile.getDeactivationDate());
+        assertTrue(profile.getClaimed());
+        assertEquals(IndexingStatus.PENDING, profile.getIndexingStatus());
+    }
+
+    @Test
+    public void reactivateFromUserPathRecreatesAdditionalEmailsUpdatesNameAndReturnsNotifyList() {
+        Reactivation reactivation = reactivation();
+        ProfileEntity profile = new ProfileEntity();
+        profile.setDeactivationDate(new Date());
+        when(profileDao.find("orcid")).thenReturn(profile);
+        when(encryptionManager.hashForInternalUse("reactivation#1")).thenReturn("encrypted");
+        Name existingName = new Name();
+        when(recordNameManagerReadOnlyV3.getRecordName("orcid")).thenReturn(existingName);
+        when(emailManager.reactivateOrCreate("orcid", "add1@test.org", Visibility.PUBLIC)).thenReturn(true);
+        when(emailManager.reactivateOrCreate("orcid", "add2@test.org", Visibility.PUBLIC)).thenReturn(false);
+
+        List<String> toNotify = manager.reactivate("orcid", "primary@test.org", reactivation);
+
+        assertEquals(1, toNotify.size());
+        assertEquals("add1@test.org", toNotify.get(0));
+        assertEquals("encrypted", profile.getEncryptedPassword());
+        assertEquals(Visibility.PUBLIC.name(), profile.getActivitiesVisibilityDefault());
+        assertEquals("Given", existingName.getGivenNames().getContent());
+        assertEquals("Family", existingName.getFamilyName().getContent());
+        verify(recordNameManagerV3).updateRecordName("orcid", existingName);
+        verify(emailManager).clearEmailsAfterReactivation("orcid");
+    }
+
+    @Test
+    public void updatePasswordHashesAndPersists() {
+        when(encryptionManager.hashForInternalUse("password")).thenReturn("encrypted");
+
+        manager.updatePassword("orcid", "password");
+
+        verify(profileDao).changeEncryptedPassword("orcid", "encrypted");
+        verify(profileHistoryEventManager, never()).recordEvent(any(ProfileHistoryEventType.class), anyString(), anyString());
+    }
+
+    @Test
+    public void isProfileDeprecatedDelegates() {
+        when(profileDao.isProfileDeprecated("orcid")).thenReturn(true);
+        assertTrue(manager.isProfileDeprecated("orcid"));
+    }
+
+    @Test
+    public void updateLastLoginDetailsDelegates() {
+        manager.updateLastLoginDetails("orcid", "127.0.0.1");
+        verify(profileDao).updateLastLoginDetails("orcid", "127.0.0.1");
+    }
+
+    @Test
+    public void retrieveLocaleConvertsStringToEnum() {
+        when(profileDao.retrieveLocale("orcid")).thenReturn("EN");
+        assertEquals(AvailableLocales.EN, manager.retrieveLocale("orcid"));
+    }
+
+    @Test
+    public void lockProfileDelegates() {
+        when(profileDao.lockProfile("orcid", "reason", "desc", "admin")).thenReturn(true);
+        assertTrue(manager.lockProfile("orcid", "reason", "desc", "admin"));
+    }
+
+    @Test
+    public void unlockProfileDelegates() {
+        when(profileDao.unlockProfile("orcid")).thenReturn(true);
+        assertTrue(manager.unlockProfile("orcid"));
+    }
+
+    @Test
+    public void getLastLoginDelegates() {
+        Date now = new Date();
+        when(profileDao.getLastLogin("orcid")).thenReturn(now);
+        assertEquals(now, manager.getLastLogin("orcid"));
+    }
+
+    @Test
+    public void startSigninLockDelegates() {
+        manager.startSigninLock("orcid");
+        verify(profileDao).startSigninLock("orcid");
+    }
+
+    @Test
+    public void resetSigninLockDelegates() {
+        manager.resetSigninLock("orcid");
+        verify(profileDao).resetSigninLock("orcid");
+    }
+
+    @Test
+    public void updateSigninLockDelegates() {
+        manager.updateSigninLock("orcid", 3);
+        verify(profileDao).updateSigninLock("orcid", 3);
+    }
+
+    @Test
+    public void getSigninLockDelegates() {
+        List<Object[]> values = new ArrayList<Object[]>();
+        values.add(new Object[] { "orcid", 3 });
+        when(profileDao.getSigninLock("orcid")).thenReturn(values);
+        assertEquals(values, manager.getSigninLock("orcid"));
+    }
+
+    @Test
+    public void updateDeprecationDelegates() {
+        when(profileDao.updateDeprecation("deprecated", "primary")).thenReturn(true);
+        assertTrue(manager.updateDeprecation("deprecated", "primary"));
+    }
+
+    private void inject(Class<?> declaringClass, String field, Object value) {
+        try {
+            Field f = declaringClass.getDeclaredField(field);
+            f.setAccessible(true);
+            f.set(manager, value);
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to inject field " + field + " in " + declaringClass.getName(), e);
+        }
+    }
+
+    private Email email(String value) {
+        Email e = new Email();
+        e.setEmail(value);
+        return e;
+    }
+
+    private ProfileEmailDomainEntity emailDomain(String domain) {
+        ProfileEmailDomainEntity entity = new ProfileEmailDomainEntity();
+        entity.setEmailDomain(domain);
+        return entity;
+    }
+
+    private Claim claim(boolean sendOrcidNews) {
         Claim claim = new Claim();
-        claim.setActivitiesVisibilityDefault(org.orcid.pojo.ajaxForm.Visibility.valueOf(org.orcid.jaxb.model.common_v2.Visibility.PRIVATE));
-        claim.setPassword(Text.valueOf("passwordTest1"));
-        claim.setPasswordConfirm(Text.valueOf("passwordTest1"));
-        Checkbox checked = new Checkbox();
-        checked.setValue(true);
-        claim.setSendChangeNotifications(checked);
-        claim.setSendOrcidNews(checked);
-        claim.setTermsOfUse(checked);
-        
-        assertTrue(profileEntityManager.claimProfileAndUpdatePreferences(orcid, "public_0000-0000-0000-0001@test.orcid.org", AvailableLocales.EN, claim));
-        ProfileEntity profile = profileEntityManager.findByOrcid(orcid);
-        assertNotNull(profile);
-        
-        Addresses addresses = addressManager.getAddresses(orcid);
-        assertEquals(3, addresses.getAddress().size());
-        for(Address a : addresses.getAddress()) {
-            assertEquals(Visibility.PRIVATE, a.getVisibility());
-        }
-        
-        PersonExternalIdentifiers extIds = externalIdentifierManager.getExternalIdentifiers(orcid);
-        assertEquals(3, extIds.getExternalIdentifiers().size());
-        for(PersonExternalIdentifier extId : extIds.getExternalIdentifiers()) {
-            assertEquals(Visibility.PRIVATE, extId.getVisibility());
-        }
-        
-        Keywords keywords = profileKeywordManager.getKeywords(orcid);
-        assertEquals(3, keywords.getKeywords().size());
-        for(Keyword k : keywords.getKeywords()) {
-            assertEquals(Visibility.PRIVATE, k.getVisibility());
-        }
-        
-        OtherNames otherNames = otherNameManager.getOtherNames(orcid);
-        assertEquals(3, otherNames.getOtherNames().size());
-        for(OtherName o : otherNames.getOtherNames()) {
-            assertEquals(Visibility.PRIVATE, o.getVisibility());
-        }
-        
-        ResearcherUrls rUrls = researcherUrlManager.getResearcherUrls(orcid);
-        assertEquals(3, rUrls.getResearcherUrls().size());
-        for(ResearcherUrl r : rUrls.getResearcherUrls()) {
-            assertEquals(Visibility.PRIVATE, r.getVisibility());
-        }
-        
-        Biography bio = biographyManager.getBiography("0000-0000-0000-0001");
-        assertEquals(org.orcid.jaxb.model.v3.release.common.Visibility.PRIVATE, bio.getVisibility());
-    }
-    
-    @Test
-    public void testUpdatePassword() {
-        EncryptionManager encryptionManager = (EncryptionManager) ReflectionTestUtils.getField(profileEntityManager, "encryptionManager");
-        ProfileDao profileDao = (ProfileDao) ReflectionTestUtils.getField(profileEntityManager, "profileDao");
-        ProfileHistoryEventManager profileHistoryEventManager = (ProfileHistoryEventManager) ReflectionTestUtils.getField(profileEntityManager, "profileHistoryEventManager");
-        
-        EncryptionManager mockEncryptionManager = Mockito.mock(EncryptionManager.class);
-        ProfileDao mockProfileDao = Mockito.mock(ProfileDao.class);
-        ProfileHistoryEventManager mockProfileHistoryEventManager = Mockito.mock(ProfileHistoryEventManagerImpl.class);
-        
-        ReflectionTestUtils.setField(profileEntityManager, "encryptionManager", mockEncryptionManager);
-        ReflectionTestUtils.setField(profileEntityManager, "profileDao", mockProfileDao);
-        ReflectionTestUtils.setField(profileEntityManager, "profileHistoryEventManager", mockProfileHistoryEventManager);
-        
-        Mockito.when(mockEncryptionManager.hashForInternalUse(Mockito.eq("password"))).thenReturn("encryptedPassword");
-        Mockito.doNothing().when(mockProfileDao).changeEncryptedPassword(Mockito.eq("orcid"), Mockito.eq("encryptedPassword"));
-        Mockito.doNothing().when(mockProfileHistoryEventManager).recordEvent(Mockito.eq(ProfileHistoryEventType.RESET_PASSWORD), Mockito.eq("orcid"));
-        
-        profileEntityManager.updatePassword("orcid", "password");
-        
-        Mockito.verify(mockProfileHistoryEventManager, Mockito.times(1)).recordEvent(Mockito.eq(ProfileHistoryEventType.RESET_PASSWORD), Mockito.eq("orcid"));
-        
-        ReflectionTestUtils.setField(profileEntityManager, "encryptionManager", encryptionManager);
-        ReflectionTestUtils.setField(profileEntityManager, "profileDao", profileDao);
-        ReflectionTestUtils.setField(profileEntityManager, "profileHistoryEventManager", profileHistoryEventManager);
-    }
-    
-    @Test
-    public void testGetApplications() {
-        Date expiration = new Date(System.currentTimeMillis() + 10000);
-        createToken(CLIENT_ID_1, "token-1", USER_ORCID, expiration, "/read-limited", false);
-        createToken(CLIENT_ID_1, "token-2", USER_ORCID, expiration, "/orcid-profile/read-limited", false);
-        createToken(CLIENT_ID_1, "token-3", USER_ORCID, expiration, "/activities/update", false);
-        createToken(CLIENT_ID_1, "token-4", USER_ORCID, expiration, "/activities/read-limited", false);
-        createToken(CLIENT_ID_1, "token-5", USER_ORCID, expiration, "/orcid-works/read-limited", false);
-        
-        createToken(CLIENT_ID_2, "token-6", USER_ORCID, expiration, "/read-limited", false);
-        createToken(CLIENT_ID_2, "token-7", USER_ORCID, expiration, "/orcid-profile/read-limited", false);
-        createToken(CLIENT_ID_2, "token-8", USER_ORCID, expiration, "/activities/update", false);
-        
-        List<ApplicationSummary> applications = profileEntityManager.getApplications(USER_ORCID);
-        assertNotNull(applications);
-        assertEquals(2, applications.size());
-        assertEquals(5, applications.get(0).getScopePaths().keySet().size());
-        assertTrue(applications.get(0).getScopePaths().keySet().contains(ScopePathType.READ_LIMITED.toString()));
-        assertTrue(applications.get(0).getScopePaths().keySet().contains(ScopePathType.ORCID_PROFILE_READ_LIMITED.toString()));
-        assertTrue(applications.get(0).getScopePaths().keySet().contains(ScopePathType.ACTIVITIES_UPDATE.toString()));
-        assertTrue(applications.get(0).getScopePaths().keySet().contains(ScopePathType.ACTIVITIES_READ_LIMITED.toString()));
-        assertTrue(applications.get(0).getScopePaths().keySet().contains(ScopePathType.ORCID_WORKS_READ_LIMITED.toString()));
-        
-        assertEquals(3, applications.get(1).getScopePaths().keySet().size());
-        assertTrue(applications.get(1).getScopePaths().keySet().contains(ScopePathType.READ_LIMITED.toString()));
-        assertTrue(applications.get(1).getScopePaths().keySet().contains(ScopePathType.ORCID_PROFILE_READ_LIMITED.toString()));
-        assertTrue(applications.get(1).getScopePaths().keySet().contains(ScopePathType.ACTIVITIES_UPDATE.toString()));
-
-        // test ordering based on name
-        assertEquals(CLIENT_ID_1, applications.get(0).getClientId());
-        assertEquals(CLIENT_ID_2, applications.get(1).getClientId());
-        // Remove the tokens
-        orcidOauth2TokenDetailDao.disableClientAccessTokensByUserOrcid(USER_ORCID, CLIENT_ID_1);
-        orcidOauth2TokenDetailDao.disableClientAccessTokensByUserOrcid(USER_ORCID, CLIENT_ID_2);
-    }
-    
-    @SuppressWarnings("unused")
-    @Test
-    public void testDontGetDuplicatedApplications() {
-        // Be sure to remove all applications for that user and client
-        Long seed = System.currentTimeMillis();
-        Date expiration = new Date(System.currentTimeMillis() + 10000);
-        OrcidOauth2TokenDetail token1 = createToken(CLIENT_ID_1, "token-1-" + seed, USER_ORCID, expiration, "/read-limited", false); // Displayed
-        OrcidOauth2TokenDetail token2 = createToken(CLIENT_ID_1, "token-2-" + seed, USER_ORCID, expiration, "/orcid-profile/read-limited", false); // Displayed
-        OrcidOauth2TokenDetail token3 = createToken(CLIENT_ID_1, "token-3-" + seed, USER_ORCID, expiration, "/activities/update", false); // Displayed
-        OrcidOauth2TokenDetail token4 = createToken(CLIENT_ID_1, "token-4-" + seed, USER_ORCID, expiration, "/read-limited", false);
-        OrcidOauth2TokenDetail token5 = createToken(CLIENT_ID_1, "token-5-" + seed, USER_ORCID, expiration, "/orcid-profile/read-limited", false);
-        OrcidOauth2TokenDetail token6 = createToken(CLIENT_ID_1, "token-6-" + seed, USER_ORCID, expiration, "/activities/update", false);
-        OrcidOauth2TokenDetail token7 = createToken(CLIENT_ID_1, "token-7-" + seed, USER_ORCID, expiration, "/read-limited", false);
-        OrcidOauth2TokenDetail token8 = createToken(CLIENT_ID_1, "token-8-" + seed, USER_ORCID, expiration, "/orcid-profile/read-limited", false);
-        OrcidOauth2TokenDetail token9 = createToken(CLIENT_ID_1, "token-9-" + seed, USER_ORCID, expiration, "/activities/update", false);
-        OrcidOauth2TokenDetail token10 = createToken(CLIENT_ID_1, "token-10-" + seed, USER_ORCID, expiration, "/person/read-limited", false); // Displayed
-        OrcidOauth2TokenDetail token11 = createToken(CLIENT_ID_1, "token-11-" + seed, USER_ORCID, expiration, "/person/read-limited", false);
-        
-        List<ApplicationSummary> applications = profileEntityManager.getApplications(USER_ORCID);
-        assertNotNull(applications);
-        assertEquals(1, applications.size());
-        
-        // scopes grouped by label - Read limited information from your biography., Read your information with visibility set to Trusted Parties, Add/update your research activities (works, affiliations, etc)
-        assertEquals(4, applications.get(0).getScopePaths().keySet().size());
-        assertTrue(applications.get(0).getScopePaths().keySet().contains(ScopePathType.READ_LIMITED.toString()));
-        assertTrue(applications.get(0).getScopePaths().keySet().contains(ScopePathType.ORCID_PROFILE_READ_LIMITED.toString()));
-        assertTrue(applications.get(0).getScopePaths().keySet().contains(ScopePathType.ACTIVITIES_UPDATE.toString()));
-        assertTrue(applications.get(0).getScopePaths().keySet().contains(ScopePathType.PERSON_READ_LIMITED.toString()));
-
-        orcidOauth2TokenDetailDao.disableClientAccessTokensByUserOrcid(USER_ORCID, CLIENT_ID_1);
-
-        applications = profileEntityManager.getApplications(USER_ORCID);
-        assertNotNull(applications);
-        assertTrue(applications.isEmpty());
-    }
-    
-    @Test
-    public void testDontGetDuplicatedApplicationsSameScopes() {
-        // Be sure to remove all applications for that user and client
-        orcidOauth2TokenDetailDao.disableClientAccessTokensByUserOrcid(USER_ORCID, CLIENT_ID_1);
-        Long seed = System.currentTimeMillis();
-        Date expiration = new Date(System.currentTimeMillis() + 10000);
-        createToken(CLIENT_ID_1, "token-1-" + seed, USER_ORCID, expiration, "/openid", false); // Displayed
-        createToken(CLIENT_ID_1, "token-2-" + seed, USER_ORCID, expiration, "/openid", false);
-        createToken(CLIENT_ID_1, "token-3-" + seed, USER_ORCID, expiration, "/openid", false);
-
-        List<ApplicationSummary> applications = profileEntityManager.getApplications(USER_ORCID);
-        assertNotNull(applications);
-        assertEquals(1, applications.size());
-
-        orcidOauth2TokenDetailDao.disableClientAccessTokensByUserOrcid(USER_ORCID, CLIENT_ID_1);
-
-        applications = profileEntityManager.getApplications(USER_ORCID);
-        assertNotNull(applications);
-        assertEquals(0, applications.size());
+        claim.getPassword().setValue("password#1");
+        org.orcid.pojo.ajaxForm.Visibility defaultVisibility = org.orcid.pojo.ajaxForm.Visibility.valueOf(org.orcid.jaxb.model.common_v2.Visibility.PRIVATE);
+        claim.setActivitiesVisibilityDefault(defaultVisibility);
+        Checkbox sendNews = new Checkbox();
+        sendNews.setValue(sendOrcidNews);
+        claim.setSendOrcidNews(sendNews);
+        return claim;
     }
 
-    @Test
-    public void testUpdateDeprecation() throws Exception {
-        boolean result = profileEntityManager.updateDeprecation("0000-0000-0000-0004","4444-4444-4444-4441");
-        assertTrue(result);
-
-        ProfileEntity profile = profileEntityManager.findByOrcid("0000-0000-0000-0004");
-        assertEquals("4444-4444-4444-4441", profile.getPrimaryRecord().getId());
+    private Reactivation reactivation() {
+        Reactivation r = new Reactivation();
+        r.getPassword().setValue("reactivation#1");
+        r.getGivenNames().setValue("Given");
+        r.getFamilyNames().setValue("Family");
+        org.orcid.pojo.ajaxForm.Visibility defaultVisibility = org.orcid.pojo.ajaxForm.Visibility.valueOf(org.orcid.jaxb.model.common_v2.Visibility.PUBLIC);
+        r.setActivitiesVisibilityDefault(defaultVisibility);
+        r.setEmailsAdditional(Arrays.asList(Text.valueOf(" add1@test.org "), Text.valueOf("add2@test.org"), new Text()));
+        return r;
     }
 
-    @Test
-    public void testIsReviewed() throws Exception {
-        profileEntityManager.reviewProfile("4444-4444-4444-4441");
-        boolean result = profileEntityManager.isReviewed("4444-4444-4444-4441");
-        assertTrue(result);
-
-        profileEntityManager.unreviewProfile("4444-4444-4444-4442");
-        result = profileEntityManager.isReviewed("4444-4444-4444-4442");
-        assertFalse(result);
-    }
-    
-    @Transactional
-    public OrcidOauth2TokenDetail createToken(String clientId, String tokenValue, String userOrcid, Date expirationDate, String scopes, boolean disabled) {
+    private OrcidOauth2TokenDetail token(String clientId, String scope, Date created, boolean disabled, String oboClientId) {
         OrcidOauth2TokenDetail token = new OrcidOauth2TokenDetail();
-        token.setApproved(true);
         token.setClientDetailsId(clientId);
-        token.setOrcid(userOrcid);
-        token.setScope(scopes);
+        token.setScope(scope);
         token.setTokenDisabled(disabled);
-        token.setTokenExpiration(expirationDate);
-        token.setTokenType("bearer");
-        token.setTokenValue(tokenValue);
-        orcidOauth2TokenDetailDao.persist(token);
-        assertNotNull(token.getDateCreated());
-        assertNotNull(token.getLastModified());
+        token.setOboClientDetailsId(oboClientId);
+        setEntityDateCreated(token, created);
         return token;
     }
-    
+
+    private ClientDetailsEntity client(String id, String name, String website) {
+        ClientDetailsEntity client = new ClientDetailsEntity();
+        client.setId(id);
+        client.setClientName(name);
+        client.setClientWebsite(website);
+        return client;
+    }
+
+    private void setEntityDateCreated(Object entity, Date created) {
+        try {
+            Field f = BaseEntity.class.getDeclaredField("dateCreated");
+            f.setAccessible(true);
+            f.set(entity, created);
+        } catch (Exception e) {
+            throw new RuntimeException("Unable to set dateCreated", e);
+        }
+    }
 }

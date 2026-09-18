@@ -32,8 +32,8 @@ public interface EmailDao extends GenericDao<EmailEntity, String> {
     void addEmail(String orcid, String email, String emailHash, String visibility, String sourceId, String clientSourceId);      
 
     @Transactional(propagation = Propagation.REQUIRED)
-    void removeEmail(String orcid, String email);
-    
+    boolean removeEmail(String orcid, String email);
+
     @SuppressWarnings("rawtypes")
     @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     List findIdByCaseInsensitiveEmail(List<String> emails);
