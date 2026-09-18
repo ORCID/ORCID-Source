@@ -1,3 +1,10 @@
+## v3.23.3 - 2026-09-18
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.23.2...v3.23.3)
+
+- [#7686](https://github.com/ORCID/ORCID-Source/pull/7686): PD-0000 pin Apache HttpClient 4.x to 4.5.14
+- [#7663](https://github.com/ORCID/ORCID-Source/pull/7663): PD-7614 account recovery endpoints
+
 ## v3.23.2 - 2026-09-18
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.23.1...v3.23.2)
