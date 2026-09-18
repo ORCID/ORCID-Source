@@ -76,7 +76,7 @@ public class InternalApiServiceDelegatorTest {
         assertNotNull(obj);
         assertEquals(USER_ORCID, obj.getOrcid());
         assertEquals(lastModified.toString(), obj.getLastModified());
-        verify(orcidSecurityManager).checkScopes(ScopePathType.INTERNAL_PERSON_LAST_MODIFIED);
+        verify(orcidSecurityManager).checkScopes(ScopePathType.INTERNAL_PERSON_LAST_MODIFIED, ScopePathType.INTERNAL);
     }
 
     @Test

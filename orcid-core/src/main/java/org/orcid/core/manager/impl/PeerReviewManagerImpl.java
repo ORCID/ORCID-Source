@@ -41,6 +41,7 @@ import org.orcid.persistence.jpa.entities.PeerReviewEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.SourceEntity;
 import org.orcid.pojo.ajaxForm.PojoUtil;
+import org.springframework.transaction.annotation.Transactional;
 
 public class PeerReviewManagerImpl extends PeerReviewManagerReadOnlyImpl implements PeerReviewManager {
 
@@ -81,6 +82,7 @@ public class PeerReviewManagerImpl extends PeerReviewManagerReadOnlyImpl impleme
     private SourceEntityUtils sourceEntityUtils;
 
     @Override
+    @Transactional
     public PeerReview createPeerReview(String orcid, PeerReview peerReview, boolean isApiRequest) {
         SourceEntity sourceEntity = sourceManager.retrieveSourceEntity();
 
@@ -135,6 +137,7 @@ public class PeerReviewManagerImpl extends PeerReviewManagerReadOnlyImpl impleme
     }
 
     @Override
+    @Transactional
     public PeerReview updatePeerReview(String orcid, PeerReview peerReview, boolean isApiRequest) {
         PeerReviewEntity existingEntity = peerReviewDao.getPeerReview(orcid, peerReview.getPutCode());
         String originalVisibility = existingEntity.getVisibility();
@@ -163,6 +166,9 @@ public class PeerReviewManagerImpl extends PeerReviewManagerReadOnlyImpl impleme
             externalIDValidator.validateWorkOrPeerReview(peerReview.getSubjectExternalIdentifier());
         }             
         
+        createIssnGroupIdIfNecessary(peerReview);
+        OrgEntity updatedOrganization = orgManager.getOrgEntity(peerReview);
+
         jpaJaxbPeerReviewAdapter.toPeerReviewEntity(peerReview, existingEntity);        
         existingEntity.setVisibility(originalVisibility);
         
@@ -170,8 +176,6 @@ public class PeerReviewManagerImpl extends PeerReviewManagerReadOnlyImpl impleme
         existingEntity.setSourceId(existingSourceId);
         existingEntity.setClientSourceId(existingClientSourceId);        
 
-        createIssnGroupIdIfNecessary(peerReview);
-        OrgEntity updatedOrganization = orgManager.getOrgEntity(peerReview);
         existingEntity.setOrg(updatedOrganization);
         
         existingEntity = peerReviewDao.merge(existingEntity);
@@ -191,6 +195,7 @@ public class PeerReviewManagerImpl extends PeerReviewManagerReadOnlyImpl impleme
     }
 
     @Override
+    @Transactional
     public boolean checkSourceAndDelete(String orcid, Long peerReviewId) {
         PeerReviewEntity pr = peerReviewDao.getPeerReview(orcid, peerReviewId);
         orcidSecurityManager.checkSource(pr);

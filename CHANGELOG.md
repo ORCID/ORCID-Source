@@ -1,3 +1,43 @@
+## v3.23.1 - 2026-09-18
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.23.0...v3.23.1)
+
+- [#7666](https://github.com/ORCID/ORCID-Source/pull/7666): PD-6120 Retry requests that times out, if the retry fails, return a 504
+
+## v3.23.0 - 2026-09-18
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.0.94...v3.23.0)
+
+## v3.0.94 - 2026-09-16
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.0.93...v3.0.94)
+
+- [#7722](https://github.com/ORCID/ORCID-Source/pull/7722): Resolves dual-connection checkout and pool starvation
+
+## v3.0.93 - 2026-09-15
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.0.92...v3.0.93)
+
+- [#7719](https://github.com/ORCID/ORCID-Source/pull/7719): Set the transactions back to the manager level for activities
+
+## v3.0.92 - 2026-09-15
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.0.91...v3.0.92)
+
+- [#7718](https://github.com/ORCID/ORCID-Source/pull/7718): Remove SQL from error messages
+
+## v3.0.91 - 2026-09-15
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.0.90...v3.0.91)
+
+- [#7720](https://github.com/ORCID/ORCID-Source/pull/7720): Fix auto commit on internal api
+
+## v3.0.90 - 2026-09-14
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.0.89...v3.0.90)
+
+- [#7717](https://github.com/ORCID/ORCID-Source/pull/7717): Check address on research resource org
+
 ## v3.0.89 - 2026-09-14
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.0.88...v3.0.89)
