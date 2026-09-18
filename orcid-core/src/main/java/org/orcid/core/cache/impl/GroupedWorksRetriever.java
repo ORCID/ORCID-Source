@@ -17,7 +17,6 @@
 package org.orcid.core.cache.impl;
 
 import jakarta.annotation.Resource;
-import jakarta.transaction.Transactional;
 
 import org.orcid.core.cache.OrcidString;
 import org.orcid.core.cache.Retriever;
@@ -36,7 +35,6 @@ public class GroupedWorksRetriever implements Retriever<OrcidString, Works> {
     private WorkManagerReadOnly workManagerReadOnly;
 
     @Override
-    @Transactional
     public Works retrieve(OrcidString key) {
         return workManagerReadOnly.getWorksAsGroups(key.getOrcid());
     }

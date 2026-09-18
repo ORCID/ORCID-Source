@@ -152,7 +152,7 @@ public class PersonDetailsManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl im
         Person person = new Person();
 
         Name name = recordNameManager.getRecordName(orcid);
-        if (Visibility.PUBLIC.equals(name.getVisibility())) {
+        if (name != null && Visibility.PUBLIC.equals(name.getVisibility())) {
             person.setName(name);
         }
 
