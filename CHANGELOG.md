@@ -1,3 +1,10 @@
+## v3.23.7 - 2026-09-18
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.23.6...v3.23.7)
+
+- [#7687](https://github.com/ORCID/ORCID-Source/pull/7687): Bump js-yaml from 3.14.1 to 3.15.2 in /orcid-web/src/main/webapp/static/javascript/ng1Orcid
+- [#7680](https://github.com/ORCID/ORCID-Source/pull/7680): Amontenegro/pd 6059 if modified since
+
 ## v3.23.6 - 2026-09-18
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.23.5...v3.23.6)
