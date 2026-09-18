@@ -47,6 +47,8 @@ import org.orcid.persistence.jpa.entities.SourceEntity;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.test.util.ReflectionTestUtils;
+import org.springframework.transaction.support.TransactionCallback;
+import org.springframework.transaction.support.TransactionTemplate;
 
 @RunWith(MockitoJUnitRunner.class)
 public class EmailManagerTest {
@@ -73,6 +75,8 @@ public class EmailManagerTest {
     private JpaJaxbEmailAdapter jpaJaxbEmailAdapter;
     @Mock
     private ProfileLastModifiedAspect profileLastModifiedAspect;
+    @Mock
+    private TransactionTemplate transactionTemplate;
 
     @Before
     public void setUp() {
@@ -87,10 +91,15 @@ public class EmailManagerTest {
         ReflectionTestUtils.setField(emailManager, "encryptionManager", encryptionManager);
         ReflectionTestUtils.setField(emailManager, "jpaJaxbEmailAdapter", jpaJaxbEmailAdapter);
         ReflectionTestUtils.setField(emailManager, "profileLastModifiedAspect", profileLastModifiedAspect);
+        ReflectionTestUtils.setField(emailManager, "transactionTemplate", transactionTemplate);
 
         lenient().when(encryptionManager.getEmailHash(anyString())).thenAnswer(i -> "hash:" + i.getArguments()[0]);
         lenient().when(jpaJaxbEmailAdapter.toEmailList(any(Collection.class))).thenAnswer(i -> toEmailList((Collection<EmailEntity>) i.getArguments()[0]));
         lenient().when(profileLastModifiedAspect.retrieveLastModifiedDate(anyString())).thenReturn(new Date(1L));
+        lenient().when(transactionTemplate.execute(any())).thenAnswer(i -> {
+            TransactionCallback<?> callback = i.getArgument(0);
+            return callback.doInTransaction(null);
+        });
     }
 
     @Test
@@ -384,7 +393,6 @@ public class EmailManagerTest {
         assertTrue(existing.getVerified());
         assertNotNull(existing.getDateVerified());
         verify(emailDao).merge(existing);
-        verify(emailDao).flush();
     }
 
     @Test
@@ -419,7 +427,6 @@ public class EmailManagerTest {
         assertFalse(existing.getVerified());
         assertEquals(Visibility.PRIVATE.name(), existing.getVisibility());
         verify(emailDao).merge(existing);
-        verify(emailDao).flush();
     }
 
     @Test
