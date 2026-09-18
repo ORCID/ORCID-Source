@@ -205,6 +205,7 @@ public class EmailManagerImpl extends EmailManagerReadOnlyImpl implements EmailM
      * calling function should know that the primary email have changed
      */
     @Override
+    @Transactional
     public Map<String, String> setPrimary(String orcid, String email, HttpServletRequest request) {
         Map<String, String> keys = new HashMap<String, String>();
         Email currentPrimaryEmail = this.findPrimaryEmail(orcid);
@@ -230,6 +231,7 @@ public class EmailManagerImpl extends EmailManagerReadOnlyImpl implements EmailM
      * have changed
      */    
     @Override
+    @Transactional
     public Map<String, String> editEmail(String orcid, String original, String edited, HttpServletRequest request) {
         Map<String, String> keys = new HashMap<String, String>();
         EmailEntity originalEntity = emailDao.findByEmail(original); 
