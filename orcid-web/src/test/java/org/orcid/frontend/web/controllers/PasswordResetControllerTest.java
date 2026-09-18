@@ -44,7 +44,7 @@ import org.orcid.core.manager.v3.read_only.EmailManagerReadOnly;
 import org.orcid.core.utils.cache.redis.RedisClient;
 import org.orcid.frontend.email.RecordEmailSender;
 import org.orcid.frontend.web.forms.OneTimeResetPasswordForm;
-import org.orcid.frontend.web.util.PasswordResetTokenEntry;
+import org.orcid.core.utils.cache.redis.PasswordResetTokenEntry;
 import org.orcid.jaxb.model.v3.release.record.Email;
 import org.orcid.jaxb.model.v3.release.record.Emails;
 import org.orcid.persistence.jpa.entities.ProfileEntity;

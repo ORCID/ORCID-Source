@@ -178,11 +178,11 @@ public class AffiliationsControllerTest {
         form.setPutCode(null);
 
         Employment emp = createMockAffiliation(456L);
-        when(affiliationsManager.createEmploymentAffiliation(eq(ORCID), any(Employment.class), eq(false))).thenReturn(emp);
+        when(affiliationsManager.createEmploymentAffiliation(eq(ORCID), any(Employment.class), eq(false), anyList())).thenReturn(emp);
 
         org.orcid.pojo.ajaxForm.AffiliationForm result = affiliationsController.postAffiliation(request, form);
         assertEquals("456", result.getPutCode().getValue());
-        verify(affiliationsManager).createEmploymentAffiliation(eq(ORCID), any(Employment.class), eq(false));
+        verify(affiliationsManager).createEmploymentAffiliation(eq(ORCID), any(Employment.class), eq(false), anyList());
     }
 
     @Test
@@ -192,11 +192,11 @@ public class AffiliationsControllerTest {
         form.setSource(ORCID);
 
         Employment emp = createMockAffiliation(123L);
-        when(affiliationsManager.updateEmploymentAffiliation(eq(ORCID), any(Employment.class), eq(false))).thenReturn(emp);
+        when(affiliationsManager.updateEmploymentAffiliation(eq(ORCID), any(Employment.class), eq(false), anyList())).thenReturn(emp);
 
         org.orcid.pojo.ajaxForm.AffiliationForm result = affiliationsController.postAffiliation(request, form);
         assertEquals("123", result.getPutCode().getValue());
-        verify(affiliationsManager).updateEmploymentAffiliation(eq(ORCID), any(Employment.class), eq(false));
+        verify(affiliationsManager).updateEmploymentAffiliation(eq(ORCID), any(Employment.class), eq(false), anyList());
     }
 
     @Test
@@ -206,7 +206,7 @@ public class AffiliationsControllerTest {
 
         AffiliationForm result = affiliationsController.postAffiliation(request, form);
         assertFalse(result.getErrors().isEmpty());
-        verify(affiliationsManager, never()).createEmploymentAffiliation(any(), any(), anyBoolean());
+        verify(affiliationsManager, never()).createEmploymentAffiliation(any(), any(), anyBoolean(), anyList());
     }
 
     @Test

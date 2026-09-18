@@ -907,7 +907,7 @@ public class WorksController extends BaseWorkspaceController {
     /**
      * updates visibility of works
      */
-    @RequestMapping(value = "/{workIdsStr}/visibility/{visibilityStr}", method = RequestMethod.GET)
+    @RequestMapping(value = "/{workIdsStr}/visibility/{visibilityStr}", method = RequestMethod.POST)
     public @ResponseBody ArrayList<Long> updateVisibility(@PathVariable("workIdsStr") String workIdsStr, @PathVariable("visibilityStr") String visibilityStr) {
         // make sure this is a users work
         String orcid = getEffectiveUserOrcid();

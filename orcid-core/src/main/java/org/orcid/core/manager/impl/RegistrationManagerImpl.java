@@ -1,11 +1,7 @@
 package org.orcid.core.manager.impl;
 
 import java.security.NoSuchAlgorithmException;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import jakarta.annotation.Resource;
 
@@ -47,7 +43,6 @@ import org.orcid.pojo.ajaxForm.Text;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionTemplate;
 
@@ -119,7 +114,7 @@ public class RegistrationManagerImpl implements RegistrationManager {
         affiliationForm.setCity(Text.valueOf(orgDisambiguated.getCity()));
         affiliationForm.setCountry(Text.valueOf(orgDisambiguated.getCountry()));
         Affiliation affiliation = registration.getAffiliationForm().toAffiliation();
-        Employment created = affiliationsManager.createEmploymentAffiliation(orcid, (Employment) affiliation, false);
+        Employment created = affiliationsManager.createEmploymentAffiliation(orcid, (Employment) affiliation, false, List.of());
         // If and only if an affiliation is included and default visibility is PUBLIC, mark as featured
         if (registration.getActivitiesVisibilityDefault() != null 
                 && registration.getActivitiesVisibilityDefault().getVisibility() != null
@@ -229,7 +224,6 @@ public class RegistrationManagerImpl implements RegistrationManager {
      * @return the new record
      * @throws NoSuchAlgorithmException 
      */
-    @Transactional
     private String createMinimalProfile(Registration registration, boolean usedCaptcha, Locale locale, String ip) {
         Date now = new Date();
         String orcid = orcidGenerationManager.createNewOrcid();
@@ -268,7 +262,6 @@ public class RegistrationManagerImpl implements RegistrationManager {
         newRecord.setAuthorities(authorities);
 
         profileDao.persist(newRecord);
-        profileDao.flush();
         
         // Set primary email
         EmailEntity primaryEmailEntity = new EmailEntity();

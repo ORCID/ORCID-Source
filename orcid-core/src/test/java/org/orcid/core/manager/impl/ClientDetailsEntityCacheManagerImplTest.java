@@ -17,7 +17,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.orcid.core.manager.ClientDetailsManager;
+import org.orcid.core.manager.read_only.ClientDetailsManagerReadOnly;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.springframework.test.util.ReflectionTestUtils;
 
@@ -26,7 +26,7 @@ public class ClientDetailsEntityCacheManagerImplTest {
     private ClientDetailsEntityCacheManagerImpl cacheManager;
 
     @Mock
-    private ClientDetailsManager clientDetailsManager;
+    private ClientDetailsManagerReadOnly clientDetailsManager;
 
     @Mock
     private Cache<Object, ClientDetailsEntity> clientDetailsCache;

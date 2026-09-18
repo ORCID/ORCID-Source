@@ -26,13 +26,8 @@ import org.orcid.frontend.salesforce.model.Member;
 public class SalesForceAdapterTest {
 
     private SalesForceAdapter salesForceAdapter = new SalesForceAdapter();
-    private SalesForceMapperFacadeFactory salesForceMapperFacadeFactory = new SalesForceMapperFacadeFactory();
     {
-        try {
-            salesForceAdapter.setMapperFacade(salesForceMapperFacadeFactory.getMemberMapperFacade());
-        } catch (Exception e) {
-            throw new RuntimeException("Error initializing mapper", e);
-        }
+        salesForceAdapter.setSalesForceMapper(new SalesForceMapper());
     }
 
     @Test
