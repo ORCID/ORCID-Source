@@ -490,13 +490,18 @@ public class TwoFactorAuthenticationControllerTest {
         java.util.Date now = new java.util.Date();
         when(recoveryPhoneVerificationService.verifyCode(eq(ORCID), anyString(), anyString())).thenReturn(null);
         when(recoveryPhoneVerificationService.normalize("+441234567890")).thenReturn("+441234567890");
-        when(recoveryPhoneManager.getRecoveryPhone(ORCID)).thenReturn(storedRecoveryPhone("7890", now, now));
+        when(recoveryPhoneManager.saveRecoveryPhone(ORCID, "+441234567890")).thenReturn(storedRecoveryPhone("7890", now, now));
 
         RecoveryPhoneSaveResponse response = controller.saveRecoveryPhone(request, saveRequest());
 
         assertTrue(response.isSuccess());
         assertEquals("***********7890", response.getMaskedRecoveryPhoneNumber());
+        assertFalse(response.isRecoveryPhoneModified());
         verify(recoveryPhoneManager).saveRecoveryPhone(ORCID, "+441234567890");
+        // Answered from the row the save wrote. A read after the write would go to the
+        // read-only pool, a replica on a deployed environment, and could still carry the
+        // previous number or none at all
+        verify(recoveryPhoneManager, never()).getRecoveryPhone(anyString());
         assertNull(session.getAttribute("RECOVERY_PHONE_ELEVATION_TS"));
     }
 
@@ -698,8 +703,9 @@ public class TwoFactorAuthenticationControllerTest {
         java.util.Date now = new java.util.Date();
         when(recoveryPhoneVerificationService.verifyCode(eq(ORCID), anyString(), anyString())).thenReturn(null);
         when(recoveryPhoneVerificationService.normalize("+441234567890")).thenReturn("+441234567890");
-        // Nothing stored while the guard looks, the new number once it is saved
-        when(recoveryPhoneManager.getRecoveryPhone(ORCID)).thenReturn(null).thenReturn(storedRecoveryPhone("7890", now, now));
+        // Nothing stored while the guard looks; the save answers with what it wrote
+        when(recoveryPhoneManager.getRecoveryPhone(ORCID)).thenReturn(null);
+        when(recoveryPhoneManager.saveRecoveryPhone(ORCID, "+441234567890")).thenReturn(storedRecoveryPhone("7890", now, now));
         RecoveryPhoneSaveRequest form = saveRequest();
         form.setContext(TwoFactorAuthenticationController.CONTEXT_INTERSTITIAL);
 

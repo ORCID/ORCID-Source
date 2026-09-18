@@ -25,8 +25,10 @@ public class ProfileRecoveryPhoneDaoImpl extends GenericDaoImpl<ProfileRecoveryP
 
     @Override
     @Transactional
-    public void upsert(String orcid, String encryptedPhoneNumber, String lastFour) {
-        // dateCreated and lastModified are stamped by the BaseEntity lifecycle callbacks
+    public UpsertResult upsert(String orcid, String encryptedPhoneNumber, String lastFour) {
+        // The lookup is a call on this, not on the proxy, so it runs inside this write
+        // transaction on the primary: the existence check that decides insert or update
+        // has to see the row this same connection may have written a moment ago
         ProfileRecoveryPhoneEntity existing = findByOrcid(orcid);
         if (existing == null) {
             ProfileRecoveryPhoneEntity entity = new ProfileRecoveryPhoneEntity();
@@ -34,11 +36,16 @@ public class ProfileRecoveryPhoneDaoImpl extends GenericDaoImpl<ProfileRecoveryP
             entity.setEncryptedPhoneNumber(encryptedPhoneNumber);
             entity.setLastFour(lastFour);
             this.persist(entity);
-        } else {
-            existing.setEncryptedPhoneNumber(encryptedPhoneNumber);
-            existing.setLastFour(lastFour);
-            this.merge(existing);
+            // dateCreated and lastModified were stamped by the BaseEntity lifecycle callback
+            return new UpsertResult(entity, true);
         }
+        existing.setEncryptedPhoneNumber(encryptedPhoneNumber);
+        existing.setLastFour(lastFour);
+        this.merge(existing);
+        // The update callback that stamps lastModified runs at flush, and the transaction
+        // this joined commits after the caller has already built its answer from the row
+        this.flush();
+        return new UpsertResult(existing, false);
     }
 
     @Override

@@ -25,10 +25,13 @@ public interface RecoveryPhoneManager {
      * any existing one. The number is persisted reversibly encrypted, together
      * with the last four digits.
      *
-     * @return true if this created a new recovery phone, false if it replaced
-     *         an existing one.
+     * @return the stored recovery phone as it now stands, from the row this
+     *         call wrote. Callers answer from it rather than calling
+     *         {@link #getRecoveryPhone(String)} straight after: that read goes
+     *         to the read-only pool, which is a replica in a deployed
+     *         environment and may not yet carry what was just written.
      */
-    boolean saveRecoveryPhone(String orcid, String e164PhoneNumber);
+    RecoveryPhone saveRecoveryPhone(String orcid, String e164PhoneNumber);
 
     /**
      * Removes the recovery phone, if any. Called when 2FA is disabled, since

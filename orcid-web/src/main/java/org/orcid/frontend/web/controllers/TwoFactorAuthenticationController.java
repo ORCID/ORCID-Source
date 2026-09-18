@@ -176,13 +176,17 @@ public class TwoFactorAuthenticationController extends BaseController {
         }
 
         String phoneE164 = recoveryPhoneVerificationService.normalize(form.getPhoneNumber());
-        recoveryPhoneManager.saveRecoveryPhone(orcid, phoneE164);
+        RecoveryPhone saved = recoveryPhoneManager.saveRecoveryPhone(orcid, phoneE164);
         request.getSession().removeAttribute(RECOVERY_PHONE_ELEVATION_ATTRIBUTE);
 
+        // The answer is built from the row the save wrote, not read back: a read goes to
+        // the read-only pool, and on a deployed environment that is a replica which can
+        // still be answering with the previous number, or with none, for a moment after
+        // the primary has committed
         RecoveryPhoneSaveResponse response = new RecoveryPhoneSaveResponse();
         response.setSuccess(true);
         TwoFactorAuthStatus status = new TwoFactorAuthStatus();
-        applyRecoveryPhoneState(orcid, status);
+        applyRecoveryPhoneState(saved, status);
         response.setMaskedRecoveryPhoneNumber(status.getMaskedRecoveryPhoneNumber());
         response.setRecoveryPhoneCreationDate(status.getRecoveryPhoneCreationDate());
         response.setRecoveryPhoneLastModifiedDate(status.getRecoveryPhoneLastModifiedDate());
@@ -396,7 +400,10 @@ public class TwoFactorAuthenticationController extends BaseController {
     }
 
     private void applyRecoveryPhoneState(String orcid, TwoFactorAuthStatus status) {
-        RecoveryPhone recoveryPhone = recoveryPhoneManager.getRecoveryPhone(orcid);
+        applyRecoveryPhoneState(recoveryPhoneManager.getRecoveryPhone(orcid), status);
+    }
+
+    private void applyRecoveryPhoneState(RecoveryPhone recoveryPhone, TwoFactorAuthStatus status) {
         if (recoveryPhone == null) {
             return;
         }

@@ -108,12 +108,17 @@ public class RecoveryPhoneManagerTest {
 
     @Test
     public void saveStoresTheEncryptedNumberAndTheLastFour() {
-        when(profileRecoveryPhoneDao.findByOrcid(ORCID)).thenReturn(null);
+        Date now = new Date();
         when(encryptionManager.encryptForInternalUse(PHONE)).thenReturn(ENCRYPTED);
+        when(profileRecoveryPhoneDao.upsert(ORCID, ENCRYPTED, "7890"))
+                .thenReturn(new ProfileRecoveryPhoneDao.UpsertResult(entity(ENCRYPTED, "7890", now, now), true));
 
-        boolean isNew = recoveryPhoneManager.saveRecoveryPhone(ORCID, PHONE);
+        RecoveryPhone saved = recoveryPhoneManager.saveRecoveryPhone(ORCID, PHONE);
 
-        assertTrue(isNew);
+        // Answered from the row the upsert wrote, never from a second lookup
+        assertEquals("7890", saved.getLastFour());
+        assertEquals(now, saved.getDateCreated());
+        verify(profileRecoveryPhoneDao, never()).findByOrcid(anyString());
         verify(profileRecoveryPhoneDao).upsert(ORCID, ENCRYPTED, "7890");
         // Reversibly encrypted, never hashed, and the plain number never reaches the DAO.
         verify(encryptionManager, never()).hashForInternalUse(anyString());
@@ -121,22 +126,34 @@ public class RecoveryPhoneManagerTest {
         assertEquals(ProfileEventType.PROFILE_RECOVERY_PHONE_ADDED, capturedEventType());
     }
 
+    /*
+     * findByOrcid runs on the read-only pool. Here it says there is no row - the
+     * answer a lagging replica gives seconds after the primary stored one - while
+     * the upsert, on the primary, found the row and replaced it. The event follows
+     * the upsert: recording this as an "added" would be wrong in the audit trail.
+     */
     @Test
     public void savingOverAnExistingNumberIsRecordedAsAnUpdate() {
-        when(profileRecoveryPhoneDao.findByOrcid(ORCID)).thenReturn(entity("old-encrypted", "1234", new Date(), new Date()));
+        Date created = new Date(System.currentTimeMillis() - 60_000L);
+        Date modified = new Date();
+        when(profileRecoveryPhoneDao.findByOrcid(ORCID)).thenReturn(null);
         when(encryptionManager.encryptForInternalUse(anyString())).thenReturn("new-encrypted");
+        when(profileRecoveryPhoneDao.upsert(ORCID, "new-encrypted", "7890"))
+                .thenReturn(new ProfileRecoveryPhoneDao.UpsertResult(entity("new-encrypted", "7890", created, modified), false));
 
-        boolean isNew = recoveryPhoneManager.saveRecoveryPhone(ORCID, PHONE);
+        RecoveryPhone saved = recoveryPhoneManager.saveRecoveryPhone(ORCID, PHONE);
 
-        assertFalse(isNew);
+        assertEquals(created, saved.getDateCreated());
+        assertEquals(modified, saved.getLastModified());
         verify(profileRecoveryPhoneDao).upsert(ORCID, "new-encrypted", "7890");
         assertEquals(ProfileEventType.PROFILE_RECOVERY_PHONE_UPDATED, capturedEventType());
     }
 
     @Test
     public void lastFourIsTakenFromTheDigitsOnly() {
-        when(profileRecoveryPhoneDao.findByOrcid(ORCID)).thenReturn(null);
         when(encryptionManager.encryptForInternalUse(anyString())).thenReturn(ENCRYPTED);
+        when(profileRecoveryPhoneDao.upsert(eq(ORCID), anyString(), anyString()))
+                .thenReturn(new ProfileRecoveryPhoneDao.UpsertResult(entity(ENCRYPTED, "9876", new Date(), new Date()), true));
 
         recoveryPhoneManager.saveRecoveryPhone(ORCID, "+1 (555) 010-9876");
 

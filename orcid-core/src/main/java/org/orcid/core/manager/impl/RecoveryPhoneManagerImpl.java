@@ -35,7 +35,7 @@ public class RecoveryPhoneManagerImpl implements RecoveryPhoneManager {
         if (entity == null) {
             return null;
         }
-        return new RecoveryPhone(entity.getLastFour(), entity.getDateCreated(), entity.getLastModified());
+        return toRecoveryPhone(entity);
     }
 
     @Override
@@ -52,13 +52,18 @@ public class RecoveryPhoneManagerImpl implements RecoveryPhoneManager {
 
     @Override
     @Transactional
-    public boolean saveRecoveryPhone(String orcid, String e164PhoneNumber) {
-        boolean isNew = profileRecoveryPhoneDao.findByOrcid(orcid) == null;
-        profileRecoveryPhoneDao.upsert(orcid, encryptionManager.encryptForInternalUse(e164PhoneNumber), lastFour(e164PhoneNumber));
+    public RecoveryPhone saveRecoveryPhone(String orcid, String e164PhoneNumber) {
+        // Whether this is a first number or a replacement is the DAO's to say: it decides
+        // inside its own write transaction. Asking findByOrcid here would open a second,
+        // read-only connection in the middle of this write and, on a deployed environment,
+        // ask a replica that may still be missing a row this record wrote seconds ago
+        ProfileRecoveryPhoneDao.UpsertResult result = profileRecoveryPhoneDao.upsert(orcid,
+                encryptionManager.encryptForInternalUse(e164PhoneNumber), lastFour(e164PhoneNumber));
+        boolean isNew = result.isInserted();
         profileEventDao.persist(new ProfileEventEntity(orcid,
                 isNew ? ProfileEventType.PROFILE_RECOVERY_PHONE_ADDED : ProfileEventType.PROFILE_RECOVERY_PHONE_UPDATED));
         LOG.info("Recovery phone {} for {}", isNew ? "added" : "updated", orcid);
-        return isNew;
+        return toRecoveryPhone(result.getEntity());
     }
 
     @Override
@@ -68,6 +73,10 @@ public class RecoveryPhoneManagerImpl implements RecoveryPhoneManager {
             profileEventDao.persist(new ProfileEventEntity(orcid, ProfileEventType.PROFILE_RECOVERY_PHONE_REMOVED));
             LOG.info("Recovery phone removed for {}", orcid);
         }
+    }
+
+    private static RecoveryPhone toRecoveryPhone(ProfileRecoveryPhoneEntity entity) {
+        return new RecoveryPhone(entity.getLastFour(), entity.getDateCreated(), entity.getLastModified());
     }
 
     private String lastFour(String e164PhoneNumber) {
