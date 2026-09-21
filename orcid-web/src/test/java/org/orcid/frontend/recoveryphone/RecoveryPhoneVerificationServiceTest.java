@@ -398,12 +398,17 @@ public class RecoveryPhoneVerificationServiceTest {
 
     @Test
     public void sendFailsWhenTheCodeCannotBeStored() {
-        store.failSaves = true;
+        // Only the code entry's write fails. The history was written and the
+        // text has already gone out by then, so this is the guard that decides
+        // what the user is told about a code they will never be able to use.
+        store.failCodeEntrySave = true;
 
         RecoveryPhoneSendCodeResponse response = send(ORCID, PHONE);
 
         assertFalse(response.isSuccess());
         assertEquals(RecoveryPhoneVerificationService.CODE_STORAGE_UNAVAILABLE, response.getErrorCode());
+        assertEquals("the text went out before the entry could be stored", 1, awsSender.sent);
+        assertNull("nothing may be left pending that the user cannot use", store.get(ORCID));
     }
 
     @Test
@@ -438,11 +443,22 @@ public class RecoveryPhoneVerificationServiceTest {
 
         private boolean failSaves;
 
+        /**
+         * Fails only the code entry's write, leaving the send history writable.
+         *
+         * They need separate switches. The service writes the history before it
+         * texts anything and the code entry after, so a single switch stops the
+         * run at the first write and the second guard is never reached - which
+         * left the test named for the code-entry guard exercising the history
+         * guard instead, and the code-entry guard covered by nothing.
+         */
+        private boolean failCodeEntrySave;
+
         private boolean historyIsUnreadable;
 
         @Override
         public boolean save(String orcid, RecoveryPhoneCodeEntry entry, int ttlSeconds) {
-            if (failSaves) {
+            if (failSaves || failCodeEntrySave) {
                 return false;
             }
             // round trip through the serialized form, as the real store does
