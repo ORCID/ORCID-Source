@@ -45,3 +45,6 @@ orcid-api-web/.factorypath
 orcid-core/.factorypath
 orcid-integration-test/.factorypath
 env.json
+# Python bytecode, e.g. from running .github/scripts/reactor_graph.py locally
+__pycache__/
+*.pyc
