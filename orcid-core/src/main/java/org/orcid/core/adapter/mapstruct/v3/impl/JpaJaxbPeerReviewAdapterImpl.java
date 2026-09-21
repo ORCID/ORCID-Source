@@ -13,6 +13,7 @@ import org.orcid.core.adapter.mapstruct.JSONPeerReviewWorkExternalIdentifierMapp
 import org.orcid.core.adapter.mapstruct.JSONWorkExternalIdentifiersMapperV3;
 import org.orcid.core.adapter.mapstruct.OrgMapperV3;
 import org.orcid.core.adapter.mapstruct.SourceMapperV3;
+import org.orcid.core.adapter.mapstruct.TitleMapperV3;
 import org.orcid.core.adapter.mapstruct.UrlMapperV3;
 import org.orcid.core.adapter.mapstruct.VisibilityMapperV3;
 import org.orcid.core.adapter.v3.JpaJaxbPeerReviewAdapter;
@@ -28,8 +29,9 @@ import org.orcid.persistence.jpa.entities.PeerReviewEntity;
         OrgMapperV3.class,
         FuzzyDateMapperV3.class,
         JSONWorkExternalIdentifiersMapperV3.class,
-        JSONPeerReviewWorkExternalIdentifierMapperV3.class
-        , UrlMapperV3.class
+        JSONPeerReviewWorkExternalIdentifierMapperV3.class,
+        UrlMapperV3.class,
+        TitleMapperV3.class
     }
 )
 public abstract class JpaJaxbPeerReviewAdapterImpl implements JpaJaxbPeerReviewAdapter {
@@ -42,7 +44,7 @@ public abstract class JpaJaxbPeerReviewAdapterImpl implements JpaJaxbPeerReviewA
     @Mapping(source = "putCode", target = "id")
     @Mapping(source = "url", target = "url")
     @Mapping(source = "subjectUrl", target = "subjectUrl")
-    @Mapping(source = "subjectName.title.content", target = "subjectName")
+    @Mapping(source = "subjectName.title", target = "subjectName")
     @Mapping(source = "subjectName.translatedTitle.content", target = "subjectTranslatedName")
     @Mapping(source = "subjectName.translatedTitle.languageCode", target = "subjectTranslatedNameLanguageCode")
     @Mapping(source = "subjectContainerName.content", target = "subjectContainerName")
@@ -58,7 +60,7 @@ public abstract class JpaJaxbPeerReviewAdapterImpl implements JpaJaxbPeerReviewA
     @Mapping(source = "putCode", target = "id")
     @Mapping(source = "url", target = "url")
     @Mapping(source = "subjectUrl", target = "subjectUrl")
-    @Mapping(source = "subjectName.title.content", target = "subjectName")
+    @Mapping(source = "subjectName.title", target = "subjectName")
     @Mapping(source = "subjectName.translatedTitle.content", target = "subjectTranslatedName")
     @Mapping(source = "subjectName.translatedTitle.languageCode", target = "subjectTranslatedNameLanguageCode")
     @Mapping(source = "subjectContainerName.content", target = "subjectContainerName")
@@ -79,7 +81,7 @@ public abstract class JpaJaxbPeerReviewAdapterImpl implements JpaJaxbPeerReviewA
     @Mapping(source = "id", target = "putCode")
     @Mapping(source = "url", target = "url")
     @Mapping(source = "subjectUrl", target = "subjectUrl")
-    @Mapping(source = "subjectName", target = "subjectName.title.content")
+    @Mapping(source = "subjectName", target = "subjectName.title")
     @Mapping(source = "subjectTranslatedName", target = "subjectName.translatedTitle.content")
     @Mapping(source = "subjectTranslatedNameLanguageCode", target = "subjectName.translatedTitle.languageCode")
     @Mapping(source = "subjectContainerName", target = "subjectContainerName.content")
@@ -94,16 +96,16 @@ public abstract class JpaJaxbPeerReviewAdapterImpl implements JpaJaxbPeerReviewA
 
     @AfterMapping
     protected void removeEmptyOptionalSubjectFields(PeerReviewEntity entity, @MappingTarget PeerReview peerReview) {
-        if (entity.getSubjectContainerName() == null) {
+        if (peerReview.getSubjectContainerName() != null && (peerReview.getSubjectContainerName().getContent() == null || peerReview.getSubjectContainerName().getContent().trim().isEmpty())) {
             peerReview.setSubjectContainerName(null);
         }
-        if (entity.getSubjectName() == null && entity.getSubjectTranslatedName() == null && entity.getSubjectTranslatedNameLanguageCode() == null) {
-            peerReview.setSubjectName(null);
-        }
-
-        if(entity.getSubjectTranslatedName() == null && entity.getSubjectTranslatedNameLanguageCode() == null){
-            if(peerReview.getSubjectName() != null) {
+        if (peerReview.getSubjectName() != null) {
+            if (peerReview.getSubjectName().getTranslatedTitle() != null && 
+                (peerReview.getSubjectName().getTranslatedTitle().getContent() == null || peerReview.getSubjectName().getTranslatedTitle().getContent().trim().isEmpty())) {
                 peerReview.getSubjectName().setTranslatedTitle(null);
+            }
+            if (peerReview.getSubjectName().getTitle() == null && peerReview.getSubjectName().getTranslatedTitle() == null) {
+                peerReview.setSubjectName(null);
             }
         }
     }

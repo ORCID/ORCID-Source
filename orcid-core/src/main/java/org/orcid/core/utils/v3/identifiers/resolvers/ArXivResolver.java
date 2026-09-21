@@ -143,9 +143,9 @@ public class ArXivResolver implements LinkResolver, MetadataResolver {
             if (currentElementName.equals("entry")) {
                 isOnEntry = false;
             } else if (currentElementName.equals("title")) {
-                if (this.title.length() > 0) {
+                if (this.title.length() > 0 && StringUtils.isNotBlank(this.title.toString())) {
                     WorkTitle workTitle = new WorkTitle();
-                    workTitle.setTitle(new Title(title.toString()));
+                    workTitle.setTitle(new Title(title.toString().trim()));
                     work.setWorkTitle(workTitle);
                 }
             } else if (currentElementName.equals("summary")) {
@@ -153,8 +153,8 @@ public class ArXivResolver implements LinkResolver, MetadataResolver {
                     work.setShortDescription(this.description.toString());
                 }
             } else if (currentElementName.equals("arxiv:journal_ref")) {
-                if (this.journalTitle.length() > 0) {
-                    work.setJournalTitle(new Title(this.journalTitle.toString()));
+                if (this.journalTitle.length() > 0 && StringUtils.isNotBlank(this.journalTitle.toString())) {
+                    work.setJournalTitle(new Title(this.journalTitle.toString().trim()));
                 }
             }
         }

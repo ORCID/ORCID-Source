@@ -14,6 +14,7 @@ import org.orcid.core.adapter.mapstruct.FuzzyDateMapperV3;
 import org.orcid.core.adapter.mapstruct.JSONWorkExternalIdentifiersMapperV3;
 import org.orcid.core.adapter.mapstruct.OrgMapperV3;
 import org.orcid.core.adapter.mapstruct.SourceMapperV3;
+import org.orcid.core.adapter.mapstruct.TitleMapperV3;
 import org.orcid.core.adapter.mapstruct.UrlMapperV3;
 import org.orcid.core.adapter.mapstruct.VisibilityMapperV3;
 import org.orcid.core.adapter.v3.JpaJaxbResearchResourceAdapter;
@@ -37,8 +38,9 @@ import org.orcid.persistence.jpa.entities.ResearchResourceItemEntity;
         VisibilityMapperV3.class,
         OrgMapperV3.class,
         FuzzyDateMapperV3.class,
-        JSONWorkExternalIdentifiersMapperV3.class
-        , UrlMapperV3.class
+        JSONWorkExternalIdentifiersMapperV3.class,
+        UrlMapperV3.class,
+        TitleMapperV3.class
     }
 )
 public abstract class JpaJaxbResearchResourceAdapterImpl implements JpaJaxbResearchResourceAdapter {
@@ -55,7 +57,7 @@ public abstract class JpaJaxbResearchResourceAdapterImpl implements JpaJaxbResea
 
     @Override
     @Mapping(source = "putCode", target = "id")
-    @Mapping(source = "proposal.title.title.content", target = "title")
+    @Mapping(source = "proposal.title.title", target = "title")
     @Mapping(source = "proposal.title.translatedTitle.content", target = "translatedTitle")
     @Mapping(source = "proposal.title.translatedTitle.languageCode", target = "translatedTitleLanguageCode")
     @Mapping(source = "proposal.externalIdentifiers", target = "externalIdentifiersJson")
@@ -70,7 +72,7 @@ public abstract class JpaJaxbResearchResourceAdapterImpl implements JpaJaxbResea
 
     @Override
     @Mapping(source = "putCode", target = "id")
-    @Mapping(source = "proposal.title.title.content", target = "title")
+    @Mapping(source = "proposal.title.title", target = "title")
     @Mapping(source = "proposal.title.translatedTitle.content", target = "translatedTitle")
     @Mapping(source = "proposal.title.translatedTitle.languageCode", target = "translatedTitleLanguageCode")
     @Mapping(source = "proposal.externalIdentifiers", target = "externalIdentifiersJson")
@@ -98,7 +100,7 @@ public abstract class JpaJaxbResearchResourceAdapterImpl implements JpaJaxbResea
 
     @Override
     @Mapping(source = "id", target = "putCode")
-    @Mapping(source = "title", target = "proposal.title.title.content")
+    @Mapping(source = "title", target = "proposal.title.title")
     @Mapping(source = "translatedTitle", target = "proposal.title.translatedTitle.content")
     @Mapping(source = "translatedTitleLanguageCode", target = "proposal.title.translatedTitle.languageCode")
     @Mapping(source = "externalIdentifiersJson", target = "proposal.externalIdentifiers")
@@ -116,15 +118,18 @@ public abstract class JpaJaxbResearchResourceAdapterImpl implements JpaJaxbResea
     protected void removeEmptyOptionalTitleFields(ResearchResourceEntity entity, @MappingTarget ResearchResource researchResource) {
         if (researchResource.getProposal() != null && researchResource.getProposal().getTitle() != null) {
             org.orcid.jaxb.model.v3.release.record.ResearchResourceTitle title = researchResource.getProposal().getTitle();
-            if (title.getTranslatedTitle() != null && title.getTranslatedTitle().getContent() == null && title.getTranslatedTitle().getLanguageCode() == null) {
+            if (title.getTranslatedTitle() != null && (title.getTranslatedTitle().getContent() == null || title.getTranslatedTitle().getContent().trim().isEmpty())) {
                 title.setTranslatedTitle(null);
+            }
+            if (title.getTitle() == null && title.getTranslatedTitle() == null) {
+                researchResource.getProposal().setTitle(null);
             }
         }
     }
 
     @Override
     @Mapping(source = "id", target = "putCode")
-    @Mapping(source = "title", target = "proposal.title.title.content")
+    @Mapping(source = "title", target = "proposal.title.title")
     @Mapping(source = "translatedTitle", target = "proposal.title.translatedTitle.content")
     @Mapping(source = "translatedTitleLanguageCode", target = "proposal.title.translatedTitle.languageCode")
     @Mapping(source = "externalIdentifiersJson", target = "proposal.externalIdentifiers")
@@ -141,8 +146,11 @@ public abstract class JpaJaxbResearchResourceAdapterImpl implements JpaJaxbResea
     protected void removeEmptyOptionalTitleFields(ResearchResourceEntity entity, @MappingTarget ResearchResourceSummary researchResourceSummary) {
         if (researchResourceSummary.getProposal() != null && researchResourceSummary.getProposal().getTitle() != null) {
             org.orcid.jaxb.model.v3.release.record.ResearchResourceTitle title = researchResourceSummary.getProposal().getTitle();
-            if (title.getTranslatedTitle() != null && title.getTranslatedTitle().getContent() == null && title.getTranslatedTitle().getLanguageCode() == null) {
+            if (title.getTranslatedTitle() != null && (title.getTranslatedTitle().getContent() == null || title.getTranslatedTitle().getContent().trim().isEmpty())) {
                 title.setTranslatedTitle(null);
+            }
+            if (title.getTitle() == null && title.getTranslatedTitle() == null) {
+                researchResourceSummary.getProposal().setTitle(null);
             }
         }
     }

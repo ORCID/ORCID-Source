@@ -14,6 +14,7 @@ import org.orcid.core.adapter.mapstruct.JSONPeerReviewWorkExternalIdentifierMapp
 import org.orcid.core.adapter.mapstruct.JSONWorkExternalIdentifiersMapperV2;
 import org.orcid.core.adapter.mapstruct.OrgMapperV2;
 import org.orcid.core.adapter.mapstruct.SourceMapperV2;
+import org.orcid.core.adapter.mapstruct.TitleMapperV2;
 import org.orcid.core.adapter.mapstruct.UrlMapperV2;
 import org.orcid.core.adapter.mapstruct.VisibilityMapperV2;
 import org.orcid.jaxb.model.record.summary_v2.PeerReviewSummary;
@@ -29,8 +30,9 @@ import org.orcid.persistence.jpa.entities.PeerReviewEntity;
         FuzzyDateMapperV2.class,
         OrgMapperV2.class,
         JSONWorkExternalIdentifiersMapperV2.class,
-        JSONPeerReviewWorkExternalIdentifierMapperV2.class
-        , UrlMapperV2.class
+        JSONPeerReviewWorkExternalIdentifierMapperV2.class,
+        UrlMapperV2.class,
+        TitleMapperV2.class
     }
 )
 public abstract class JpaJaxbPeerReviewAdapterImpl implements JpaJaxbPeerReviewAdapter {
@@ -67,7 +69,7 @@ public abstract class JpaJaxbPeerReviewAdapterImpl implements JpaJaxbPeerReviewA
     @Mapping(source = "subjectExternalIdentifier", target = "subjectExternalIdentifiersJson")
     @Mapping(source = "subjectContainerName.content", target = "subjectContainerName")
     @Mapping(source = "subjectType", target = "subjectType")
-    @Mapping(source = "subjectName.title.content", target = "subjectName")
+    @Mapping(source = "subjectName.title", target = "subjectName")
     @Mapping(source = "subjectName.translatedTitle.content", target = "subjectTranslatedName")
     @Mapping(source = "subjectName.translatedTitle.languageCode", target = "subjectTranslatedNameLanguageCode")
     @Mapping(source = "subjectUrl", target = "subjectUrl")
@@ -94,7 +96,7 @@ public abstract class JpaJaxbPeerReviewAdapterImpl implements JpaJaxbPeerReviewA
     @Mapping(source = "subjectExternalIdentifiersJson", target = "subjectExternalIdentifier")
     @Mapping(source = "subjectContainerName", target = "subjectContainerName.content")
     @Mapping(source = "subjectType", target = "subjectType")
-    @Mapping(source = "subjectName", target = "subjectName.title.content")
+    @Mapping(source = "subjectName", target = "subjectName.title")
     @Mapping(source = "subjectTranslatedName", target = "subjectName.translatedTitle.content")
     @Mapping(source = "subjectTranslatedNameLanguageCode", target = "subjectName.translatedTitle.languageCode")
     @Mapping(source = "subjectUrl", target = "subjectUrl")
@@ -106,11 +108,17 @@ public abstract class JpaJaxbPeerReviewAdapterImpl implements JpaJaxbPeerReviewA
 
     @AfterMapping
     protected void removeEmptyOptionalSubjectFields(PeerReviewEntity entity, @MappingTarget PeerReview peerReview) {
-        if (entity.getSubjectContainerName() == null) {
+        if (peerReview.getSubjectContainerName() != null && (peerReview.getSubjectContainerName().getContent() == null || peerReview.getSubjectContainerName().getContent().trim().isEmpty())) {
             peerReview.setSubjectContainerName(null);
         }
-        if (entity.getSubjectName() == null && entity.getSubjectTranslatedName() == null && entity.getSubjectTranslatedNameLanguageCode() == null) {
-            peerReview.setSubjectName(null);
+        if (peerReview.getSubjectName() != null) {
+            if (peerReview.getSubjectName().getTranslatedTitle() != null && 
+                (peerReview.getSubjectName().getTranslatedTitle().getContent() == null || peerReview.getSubjectName().getTranslatedTitle().getContent().trim().isEmpty())) {
+                peerReview.getSubjectName().setTranslatedTitle(null);
+            }
+            if (peerReview.getSubjectName().getTitle() == null && peerReview.getSubjectName().getTranslatedTitle() == null) {
+                peerReview.setSubjectName(null);
+            }
         }
     }
 
@@ -150,7 +158,7 @@ public abstract class JpaJaxbPeerReviewAdapterImpl implements JpaJaxbPeerReviewA
     @Mapping(source = "subjectExternalIdentifier", target = "subjectExternalIdentifiersJson")
     @Mapping(source = "subjectContainerName.content", target = "subjectContainerName")
     @Mapping(source = "subjectType", target = "subjectType")
-    @Mapping(source = "subjectName.title.content", target = "subjectName")
+    @Mapping(source = "subjectName.title", target = "subjectName")
     @Mapping(source = "subjectName.translatedTitle.content", target = "subjectTranslatedName")
     @Mapping(source = "subjectName.translatedTitle.languageCode", target = "subjectTranslatedNameLanguageCode")
     @Mapping(source = "subjectUrl", target = "subjectUrl")
