@@ -22,7 +22,7 @@ import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.cache.jcache.JCacheCacheManager;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.GenericXmlApplicationContext;
-import org.springframework.jdbc.datasource.DriverManagerDataSource;
+import javax.sql.DataSource;
 import org.springframework.test.context.ActiveProfiles;
 
 /**
@@ -99,17 +99,41 @@ public class DBUnitTest {
     public static void initDBUnitData(List<String> flatXMLDataFiles) throws Exception {
         clearCacheManagers();
         IDatabaseConnection connection = getDBConnection();
-        cleanAll(connection);
-        for (String flatXMLDataFile : flatXMLDataFiles) {
-            DatabaseOperation.INSERT.execute(connection, getDataSet(flatXMLDataFile));
+        try {
+            cleanAll(connection);
+            for (String flatXMLDataFile : flatXMLDataFiles) {
+                DatabaseOperation.INSERT.execute(connection, getDataSet(flatXMLDataFile));
+            }
+            commitIfNeeded(connection);
+        } finally {
+            connection.close();
         }
-        connection.close();
     }
 
     public static void removeDBUnitData(List<String> flatXMLDataFiles) throws Exception {
         IDatabaseConnection connection = getDBConnection();
-        cleanAll(connection);
-        connection.close();
+        try {
+            cleanAll(connection);
+            commitIfNeeded(connection);
+        } finally {
+            connection.close();
+        }
+    }
+
+    /**
+     * The connection comes from a pool whose connections have autoCommit off, so the deletes and
+     * inserts above are only durable once they are committed; without this they are rolled back
+     * when the connection is returned to the pool, silently and with no error.
+     *
+     * The close is in a finally for the same reason it is now a pool: a fixture that throws used to
+     * leak a throwaway connection, and now leaks a pooled one. The pool is small (maxPoolSize=20),
+     * so a handful of failing classes would exhaust it and turn a test failure into a connection
+     * timeout somewhere unrelated.
+     */
+    private static void commitIfNeeded(IDatabaseConnection connection) throws SQLException {
+        if (!connection.getConnection().getAutoCommit()) {
+            connection.getConnection().commit();
+        }
     }
 
     private static void clearCacheManagers() {
@@ -162,6 +186,12 @@ public class DBUnitTest {
      *
      * HSQLDB specific, which is what these tests run on (jdbc:hsqldb:mem:orcid). On any other engine
      * the SET DATABASE statement fails loudly on the first test rather than degrading quietly.
+     *
+     * Two properties of that statement are worth knowing before reusing this. It is SET DATABASE,
+     * not SET SESSION: integrity is off for every connection on this database, not just this one,
+     * which matters because the connection now comes from a pool the persistence layer shares. And
+     * it is not transactional, so a rollback does not put it back -- the finally below is the only
+     * thing that does. Both are tolerable here because surefire runs these classes one at a time.
      */
     private static void cleanAll(IDatabaseConnection connection) throws SQLException {
         Connection jdbcConnection = connection.getConnection();
@@ -181,7 +211,8 @@ public class DBUnitTest {
     }
 
     public static IDatabaseConnection getDBConnection() throws Exception {
-        DriverManagerDataSource dataSource = (DriverManagerDataSource) context.getBean("simpleDataSource");
+        String dataSourceBeanName = context.getEnvironment().getProperty("org.orcid.persistence.db.dataSource", "pooledDataSource");
+        DataSource dataSource = (DataSource) context.getBean(dataSourceBeanName);
         Connection jdbcConnection = dataSource.getConnection();
         IDatabaseConnection connection = new DatabaseConnection(jdbcConnection);
         connection.getConfig().setProperty(DatabaseConfig.PROPERTY_DATATYPE_FACTORY, new CustomDataTypeFactory());

@@ -57,12 +57,15 @@ public class JpaJaxbPeerReviewAdapterTest {
     }
 
     @Test
-    public void fromPeerReviewToPeerReviewEntity() throws JAXBException {
-        PeerReview e = getPeerReview(true);
+    public void fromPeerReviewToPeerReviewEntityTest() throws JAXBException {
+        PeerReview e = getPeerReview(true);        
         assertNotNull(e);
 
         PeerReviewEntity pe = jpaJaxbPeerReviewAdapter.toPeerReviewEntity(e);
         assertNotNull(pe);
+
+        assertNull(pe.getDateCreated());
+        assertNull(pe.getLastModified());
 
         // Source should be null, it is not set by the mapper
         assertNull(pe.getSourceId());
@@ -73,7 +76,7 @@ public class JpaJaxbPeerReviewAdapterTest {
 
         // General info
         assertEquals(Long.valueOf(12345), pe.getId());
-        assertEquals(Visibility.PRIVATE.name(), pe.getVisibility());
+        assertEquals(org.orcid.jaxb.model.v3.release.common.Visibility.PRIVATE.name(), pe.getVisibility());
         assertEquals("REVIEWER", pe.getRole());
         assertEquals("REVIEW", pe.getType());
         assertEquals("peer-review:url", pe.getUrl());
@@ -257,6 +260,20 @@ public class JpaJaxbPeerReviewAdapterTest {
         assertEquals("org:region", peerReview.getOrganization().getAddress().getRegion());
         assertNotNull(peerReview.getSource());
         assertEquals(CLIENT_SOURCE_ID, peerReview.getSource().retrieveSourcePath());
+    }
+
+    @Test
+    public void fromPeerReviewEntityToPeerReviewDoesNotCreateEmptyOptionalSubjectFields() throws IllegalAccessException {
+        PeerReviewEntity entity = getPeerReviewEntity();
+        entity.setSubjectContainerName(null);
+        entity.setSubjectName(null);
+        entity.setSubjectTranslatedName(null);
+        entity.setSubjectTranslatedNameLanguageCode(null);
+
+        PeerReview peerReview = jpaJaxbPeerReviewAdapter.toPeerReview(entity);
+
+        assertNull(peerReview.getSubjectContainerName());
+        assertNull(peerReview.getSubjectName());
     }
 
     @Test

@@ -199,7 +199,7 @@ public class WorkManagerTest extends BaseTest {
         Work work = getWork(null);
         work.setVisibility(Visibility.PRIVATE);
         
-        work = workManager.createWork(unclaimedOrcid, work, true);
+        work = workManager.createWork(unclaimedOrcid, work, true, List.of());
         
         // Keeps incoming visibility
         assertEquals(Visibility.PRIVATE, work.getVisibility());
@@ -211,7 +211,7 @@ public class WorkManagerTest extends BaseTest {
         Work work = getWork(null);
         work.setVisibility(Visibility.PRIVATE);
         
-        work = workManager.createWork(claimedOrcid, work, true);
+        work = workManager.createWork(claimedOrcid, work, true, List.of());
 
         // Respects user visibility
         assertEquals(Visibility.LIMITED, work.getVisibility());
@@ -221,7 +221,7 @@ public class WorkManagerTest extends BaseTest {
     @Test
     public void displayIndexIsSetTo_0_FromUI() {
         Work w1 = getWork("fromUI-1");
-        w1 = workManager.createWork(claimedOrcid, w1, false);
+        w1 = workManager.createWork(claimedOrcid, w1, false, List.of());
         WorkEntity w = workDao.find(w1.getPutCode());
 
         assertNotNull(w1);
@@ -231,7 +231,7 @@ public class WorkManagerTest extends BaseTest {
     @Test
     public void displayIndexIsSetTo_1_FromAPI() {        
         Work w1 = getWork("fromAPI-1");
-        w1 = workManager.createWork(claimedOrcid, w1, true);
+        w1 = workManager.createWork(claimedOrcid, w1, true, List.of());
         WorkEntity w = workDao.find(w1.getPutCode());
 
         assertNotNull(w1);
@@ -256,7 +256,7 @@ public class WorkManagerTest extends BaseTest {
         work.setWorkExternalIdentifiers(extIds1);
         work.setWorkType(WorkType.BOOK);
         assertNull(work.getPutCode());
-        work = workManager.createWork(orcid, work, true);
+        work = workManager.createWork(orcid, work, true, List.of());
         assertNotNull(work.getPutCode());
         assertEquals(CLIENT_1_ID, work.getSource().retrieveSourcePath());
         workDao.remove(work.getPutCode());
@@ -280,10 +280,10 @@ public class WorkManagerTest extends BaseTest {
         work.setWorkExternalIdentifiers(extIds1);
         work.setWorkType(WorkType.BOOK);
         work.setVisibility(Visibility.PUBLIC);
-        work = workManager.createWork(orcid, work, true);
+        work = workManager.createWork(orcid, work, true, List.of());
 
         work.getWorkTitle().getTitle().setContent("updated title");
-        work = workManager.updateWork(orcid, work, true);
+        work = workManager.updateWork(orcid, work, true, List.of(work));
         assertEquals("updated title", work.getWorkTitle().getTitle().getContent());
 
         workDao.remove(work.getPutCode());
@@ -313,39 +313,57 @@ public class WorkManagerTest extends BaseTest {
         work1.setWorkType(WorkType.BOOK);     
         
         // Create the original work
-        work1 = workManager.createWork(orcid, work1, true);
+        work1 = workManager.createWork(orcid, work1, true, List.of());
         assertNotNull(work1);
         assertNotNull(work1.getPutCode());
         Long putCode1 = work1.getPutCode();
         
         // Create the work again but with a VERSION_OF identifier
-        work1.setPutCode(null);
-        work1.getExternalIdentifiers().getExternalIdentifier().get(0).setRelationship(Relationship.VERSION_OF);
+        Work work2 = new Work();
+        work2.setWorkTitle(title1);
+        extIds1 = new ExternalIDs();
+        extId1 = new ExternalID();
+        extId1.setRelationship(Relationship.VERSION_OF);
+        extId1.setType("isbn");
+        extId1.setUrl(new Url("http://isbn/1/" + time));
+        extId1.setValue("isbn-1");
+
         // For VERSION_OF we should add one SELF identifier
         ExternalID extId2 = new ExternalID();
         extId2.setRelationship(Relationship.SELF);
         extId2.setType("arxiv");
         extId2.setUrl(new Url("http://arxiv/1/" + time));
         extId2.setValue("arxiv-1");
-        work1.getExternalIdentifiers().getExternalIdentifier().add(extId2);
+
+        extIds1.getExternalIdentifier().add(extId1);
+        extIds1.getExternalIdentifier().add(extId2);
+        work2.setWorkExternalIdentifiers(extIds1);
+        work2.setWorkType(WorkType.BOOK);
         
-        work1 = workManager.createWork(orcid, work1, true);
-        assertNotNull(work1);
-        assertNotNull(work1.getPutCode());
-        assertNotEquals(putCode1, work1.getPutCode());
+        work2 = workManager.createWork(orcid, work2, true, List.of(work1));
+        assertNotNull(work2);
+        assertNotNull(work2.getPutCode());
+        assertNotEquals(putCode1, work2.getPutCode());
         
-        Long putCode2 = work1.getPutCode();
-        
-        // Remove the extra identifier
-        work1.getExternalIdentifiers().getExternalIdentifier().remove(1);
-        
-        // Now try to create it with the same SELF identifier, should fail
-        work1.setPutCode(null);
-        work1.getExternalIdentifiers().getExternalIdentifier().get(0).setRelationship(Relationship.SELF);
+        Long putCode2 = work2.getPutCode();
+
+        Work work3 = new Work();
+        work3.setWorkTitle(title1);
+        work3.setWorkType(WorkType.BOOK);
+        // For VERSION_OF we should add one SELF identifier
+        ExternalIDs extIds3 = new ExternalIDs();
+        ExternalID extId3 = new ExternalID();
+        extId3.setRelationship(Relationship.SELF);
+        extId3.setType("isbn");
+        extId3.setUrl(new Url("http://isbn/1/" + time));
+        extId3.setValue("isbn-1");
+        extIds3.getExternalIdentifier().add(extId3);
+        work3.setWorkExternalIdentifiers(extIds3);
+        work3.setWorkType(WorkType.BOOK);
         
         try {
-            work1 = workManager.createWork(orcid, work1, true);
-            fail();
+            work1 = workManager.createWork(orcid, work3, true, List.of(work1, work2));
+            fail(); // Fail because there is a SELF with the same id
         } catch(OrcidDuplicatedActivityException e) {
             
         } catch(Exception e) {
@@ -353,19 +371,19 @@ public class WorkManagerTest extends BaseTest {
         }
         
         // Now create another with a SELF identifier but not the same one, should work
-        work1.setPutCode(null);
-        work1.getExternalIdentifiers().getExternalIdentifier().get(0).setRelationship(Relationship.SELF);
-        work1.getExternalIdentifiers().getExternalIdentifier().get(0).setValue("isbn-2");
+        work3.setPutCode(null);
+        work3.getExternalIdentifiers().getExternalIdentifier().get(0).setRelationship(Relationship.SELF);
+        work3.getExternalIdentifiers().getExternalIdentifier().get(0).setValue("isbn-2");
         
-        work1 = workManager.createWork(orcid, work1, true);
-        assertNotNull(work1);
-        assertNotNull(work1.getPutCode());
-        assertNotEquals(putCode1, work1.getPutCode());
-        assertNotEquals(putCode2, work1.getPutCode());
+        work3 = workManager.createWork(orcid, work3, true, List.of(work1, work2));
+        assertNotNull(work3);
+        assertNotNull(work3.getPutCode());
+        assertNotEquals(putCode1, work3.getPutCode());
+        assertNotEquals(putCode2, work3.getPutCode());
         
-        Long putCode4 = work1.getPutCode();
+        Long putCode3 = work3.getPutCode();
         
-        workManager.removeWorks(orcid, Arrays.asList(putCode1, putCode2, putCode2, putCode4));
+        workManager.removeWorks(orcid, Arrays.asList(putCode1, putCode2, putCode3));
     }
     
     @Test
@@ -417,7 +435,7 @@ public class WorkManagerTest extends BaseTest {
         work2.setWorkType(WorkType.BOOK);
         bulk.getBulk().add(work2);
                 
-        WorkBulk updatedBulk = workManager.createWorks(orcid, bulk);
+        WorkBulk updatedBulk = workManager.createWorks(orcid, bulk, List.of());
         
         assertNotNull(updatedBulk);
         assertEquals(2, updatedBulk.getBulk().size());
@@ -482,7 +500,7 @@ public class WorkManagerTest extends BaseTest {
         work2.setWorkType(WorkType.BOOK);
         bulk.getBulk().add(work2);
 
-        WorkBulk updatedBulk = workManager.createWorks(orcid, bulk);
+        WorkBulk updatedBulk = workManager.createWorks(orcid, bulk, List.of());
 
         assertNotNull(updatedBulk);
         assertEquals(2, updatedBulk.getBulk().size());
@@ -543,7 +561,7 @@ public class WorkManagerTest extends BaseTest {
 
         //Verify the work doesnt have source yet
         assertNull(work1.getSource());
-        WorkBulk newBulk = workManager.createWorks(orcid, bulk);
+        WorkBulk newBulk = workManager.createWorks(orcid, bulk, List.of() );
                 
         //To verify the work was created, verify it have a source
         assertEquals(1, newBulk.getBulk().size());
@@ -589,7 +607,7 @@ public class WorkManagerTest extends BaseTest {
 
         //Verify the work doesnt have source yet
         assertNull(work1.getSource());
-        WorkBulk newBulk = workManager.createWorks(orcid, bulk);
+        WorkBulk newBulk = workManager.createWorks(orcid, bulk, List.of());
                 
         //To verify the work was created, verify it have a source
         assertEquals(1, newBulk.getBulk().size());
@@ -600,40 +618,35 @@ public class WorkManagerTest extends BaseTest {
     public void testCreateWorksWithBulk_OneSelfExisting_OneSelfNew_DupError() throws IllegalAccessException {
         String orcid = "0000-0000-0000-0003";
         
-        WorkDao mockDao = Mockito.mock(WorkDao.class);
-        ReflectionTestUtils.setField(workManager, "workDao", mockDao);
-        
-        MinimizedWorkEntity work = getBasicMinimizedWork();
-        work.setDisplayIndex(1L);
-        work.setId(10000L);
-        work.setExternalIdentifiersJson("{\"workExternalIdentifier\":[{\"relationship\":\"SELF\", \"workExternalIdentifierType\":\"ISBN\",\"workExternalIdentifierId\":{\"content\":\"1234\"}}]}");
-        work.setClientSourceId(CLIENT_1_ID);        
-        
-        WorkEntityCacheManager cacheManagerMock = Mockito.mock(WorkEntityCacheManager.class);
-        // no work where user is source
-        List<MinimizedWorkEntity> works = new ArrayList<>();
-        works.add(work);
-        Mockito.when(cacheManagerMock.retrieveMinimizedWorks(Mockito.anyString(), Mockito.anyLong())).thenReturn(works);
-        ReflectionTestUtils.setField(workManager, "workEntityCacheManager", cacheManagerMock);
-
-        WorkBulk bulk = new WorkBulk();
+        // Existing work
         // Work # 1
-        Work work1 = new Work();
+        Work existingWork = new Work();
+        existingWork.setPutCode(10000L);
         WorkTitle title1 = new WorkTitle();
-        title1.setTitle(new Title("Work # 1"));
-        work1.setWorkTitle(title1);
+        title1.setTitle(new Title("Existing work # 1"));
+        existingWork.setWorkTitle(title1);
         ExternalIDs extIds1 = new ExternalIDs();
         ExternalID selfExtId1 = new ExternalID();
         selfExtId1.setRelationship(Relationship.SELF);
         selfExtId1.setType("isbn");
         selfExtId1.setValue("1234");
-        
+
         extIds1.getExternalIdentifier().add(selfExtId1);
+        existingWork.setWorkExternalIdentifiers(extIds1);
+        existingWork.setWorkType(WorkType.BOOK);
+        existingWork.setSource(Source.forClient(CLIENT_1_ID));
+
+        WorkBulk bulk = new WorkBulk();
+        // Work # 1
+        Work work1 = new Work();
+        WorkTitle title2 = new WorkTitle();
+        title2.setTitle(new Title("Work # 1"));
+        work1.setWorkTitle(title2);
         work1.setWorkExternalIdentifiers(extIds1);
         work1.setWorkType(WorkType.BOOK);
         bulk.getBulk().add(work1);
 
-        WorkBulk newBulk = workManager.createWorks(orcid, bulk);
+        WorkBulk newBulk = workManager.createWorks(orcid, bulk, List.of(existingWork));
                 
         //Verify it returns a dup error
         assertEquals(1, newBulk.getBulk().size());
@@ -691,7 +704,7 @@ public class WorkManagerTest extends BaseTest {
         work2.setWorkType(WorkType.BOOK);
         bulk.getBulk().add(work2);
 
-        WorkBulk updatedBulk = workManager.createWorks(orcid, bulk);
+        WorkBulk updatedBulk = workManager.createWorks(orcid, bulk, List.of());
 
         assertNotNull(updatedBulk);
         assertEquals(2, updatedBulk.getBulk().size());
@@ -757,7 +770,7 @@ public class WorkManagerTest extends BaseTest {
         work2.setWorkType(WorkType.JOURNAL_ARTICLE);
         bulk.getBulk().add(work2);
 
-        WorkBulk updatedBulk = workManager.createWorks(orcid, bulk);
+        WorkBulk updatedBulk = workManager.createWorks(orcid, bulk, List.of());
 
         assertNotNull(updatedBulk);
         assertEquals(2, updatedBulk.getBulk().size());
@@ -801,7 +814,7 @@ public class WorkManagerTest extends BaseTest {
             bulk.getBulk().add(work);
         }
 
-        bulk = workManager.createWorks(orcid, bulk);
+        bulk = workManager.createWorks(orcid, bulk, List.of());
 
         assertNotNull(bulk);
         assertEquals(5, bulk.getBulk().size());
@@ -845,6 +858,17 @@ public class WorkManagerTest extends BaseTest {
         String orcid = "0000-0000-0000-0003";
         when(mockSourceManager.retrieveActiveSource()).thenReturn(Source.forClient(CLIENT_2_ID));
 
+        ExternalID dupExtId = new ExternalID();
+        dupExtId.setRelationship(Relationship.SELF);
+        dupExtId.setType("doi");
+        dupExtId.setValue("1");
+
+        Work existing = getWork(null);
+        existing.getExternalIdentifiers().getExternalIdentifier().clear();
+        existing.getWorkTitle().getTitle().setContent("Work # 1");
+        existing.getExternalIdentifiers().getExternalIdentifier().add(dupExtId);
+        existing.setSource(Source.forClient(CLIENT_2_ID));
+
         // Lets send a bulk of 6 works
         WorkBulk bulk = new WorkBulk();
 
@@ -874,10 +898,6 @@ public class WorkManagerTest extends BaseTest {
 
         // Work # 5 - Duplicated of existing work
         Work work5 = getWork(null);
-        ExternalID dupExtId = new ExternalID();
-        dupExtId.setRelationship(Relationship.SELF);
-        dupExtId.setType("doi");
-        dupExtId.setValue("1");
         work5.getExternalIdentifiers().getExternalIdentifier().clear();
         work5.getExternalIdentifiers().getExternalIdentifier().add(dupExtId);
         work5.getWorkTitle().getTitle().setContent("Work # 5");
@@ -888,7 +908,7 @@ public class WorkManagerTest extends BaseTest {
         work6.getWorkTitle().getTitle().setContent(null);
         bulk.getBulk().add(work6);
 
-        bulk = workManager.createWorks(orcid, bulk);
+        bulk = workManager.createWorks(orcid, bulk, List.of(existing));
 
         assertNotNull(bulk);
         assertEquals(6, bulk.getBulk().size());
@@ -953,7 +973,7 @@ public class WorkManagerTest extends BaseTest {
 
         work.setWorkType(WorkType.BOOK);
 
-        Work newWork = workManager.createWork(orcid, work, true);
+        Work newWork = workManager.createWork(orcid, work, true, List.of());
         Long putCode = newWork.getPutCode();
 
         WorkBulk bulk = new WorkBulk();
@@ -978,7 +998,7 @@ public class WorkManagerTest extends BaseTest {
         bulk.getBulk().add(work3);
         bulk.getBulk().add(work4);
 
-        bulk = workManager.createWorks(orcid, bulk);
+        bulk = workManager.createWorks(orcid, bulk, List.of(newWork));
 
         assertNotNull(bulk);
         assertEquals(4, bulk.getBulk().size());
@@ -1507,11 +1527,11 @@ public class WorkManagerTest extends BaseTest {
     public void testAssertionOriginUpdate() {
         when(mockSourceManager.retrieveActiveSource()).thenReturn(Source.forClientWithClientOBO(CLIENT_1_ID, CLIENT_2_ID));
         Work work = getWork(null);
-        work = workManager.createWork(claimedOrcid, work, true);
+        work = workManager.createWork(claimedOrcid, work, true, List.of());
         work = workManager.getWork(claimedOrcid, work.getPutCode());
         assertEquals("Work title", work.getWorkTitle().getTitle().getContent());
         work.getWorkTitle().setTitle(new Title("updated"));
-        work = workManager.updateWork(claimedOrcid, work, true);
+        work = workManager.updateWork(claimedOrcid, work, true, List.of(work));
 
         assertNotNull(work);
         assertEquals("updated", work.getWorkTitle().getTitle().getContent());
@@ -1523,7 +1543,7 @@ public class WorkManagerTest extends BaseTest {
         // make a duplicate
         Work work2 = getWork(null);
         try {
-            workManager.createWork(claimedOrcid, work2, true);
+            workManager.createWork(claimedOrcid, work2, true, List.of(work));
             fail();
         } catch (OrcidDuplicatedActivityException e) {
 
@@ -1531,27 +1551,30 @@ public class WorkManagerTest extends BaseTest {
 
         // make a duplicate as a different assertion origin
         when(mockSourceManager.retrieveActiveSource()).thenReturn(Source.forClientWithClientOBO(CLIENT_1_ID, CLIENT_3_ID));
-        workManager.createWork(claimedOrcid, work2, true);
+        workManager.createWork(claimedOrcid, work2, true, List.of(work));
 
         // wrong sources:
-        work.getExternalIdentifiers().getExternalIdentifier().get(0).setValue("x");
+        Work work3 = getWork(null);
+        work3.setVisibility(work.getVisibility());
+        work3.setPutCode(work.getPutCode()); // Should be the same put code as the first work
+        work3.getExternalIdentifiers().getExternalIdentifier().get(0).setValue("x");
         try {
             when(mockSourceManager.retrieveActiveSource()).thenReturn(Source.forClientWithClientOBO(CLIENT_1_ID, CLIENT_3_ID));
-            workManager.updateWork(claimedOrcid, work, true);
+            workManager.updateWork(claimedOrcid, work3, true, List.of(work));
             fail();
         } catch (WrongSourceException e) {
         }
 
         try {
             when(mockSourceManager.retrieveActiveSource()).thenReturn(Source.forClient(CLIENT_1_ID));
-            workManager.updateWork(claimedOrcid, work, true);
+            workManager.updateWork(claimedOrcid, work3, true, List.of(work));
             fail();
         } catch (WrongSourceException e) {
 
         }
         try {
             when(mockSourceManager.retrieveActiveSource()).thenReturn(Source.forClient(CLIENT_2_ID));
-            workManager.updateWork(claimedOrcid, work, true);
+            workManager.updateWork(claimedOrcid, work3, true, List.of(work));
             fail();
         } catch (WrongSourceException e) {
 
@@ -1603,7 +1626,7 @@ public class WorkManagerTest extends BaseTest {
 
         ReflectionTestUtils.setField(workManager, "workDao", mockDao);
 
-        Work work = workManager.createWork(orcid, getWorkWith100Contributors(), true);
+        Work work = workManager.createWork(orcid, getWorkWith100Contributors(), true, List.of());
 
         ArgumentCaptor<WorkEntity> workEntityCaptor = ArgumentCaptor.forClass(WorkEntity.class);
         Mockito.verify(mockDao).persist(workEntityCaptor.capture());
@@ -1627,7 +1650,7 @@ public class WorkManagerTest extends BaseTest {
 
         ReflectionTestUtils.setField(workManager, "contributorsRolesAndSequencesConverter", mockContributorsRolesAndSequencesConverter);
 
-        Work work = workManager.createWork(orcid, getWorkWith100Contributors(), true);
+        Work work = workManager.createWork(orcid, getWorkWith100Contributors(), true, List.of());
 
         ArgumentCaptor<List<ContributorsRolesAndSequences>> captor = ArgumentCaptor.forClass((Class) List.class);
         Mockito.verify(mockContributorsRolesAndSequencesConverter).convertTo(captor.capture());
@@ -1650,7 +1673,7 @@ public class WorkManagerTest extends BaseTest {
 
         ReflectionTestUtils.setField(workManager, "workDao", mockDao);
 
-        Work work = workManager.createWork(orcid, getWork(null), true);
+        Work work = workManager.createWork(orcid, getWork(null), true, List.of());
 
         ArgumentCaptor<WorkEntity> workEntityCaptor = ArgumentCaptor.forClass(WorkEntity.class);
         Mockito.verify(mockDao).persist(workEntityCaptor.capture());
@@ -1723,7 +1746,7 @@ public class WorkManagerTest extends BaseTest {
 
         Work work = new Work();
         fillWork(work);
-        work = workManager.createWork(claimedOrcid, work, true);
+        work = workManager.createWork(claimedOrcid, work, true, List.of());
         WorkForm workSaved = WorkForm.valueOf(work, maxContributorsForUI);
 
         Work workToUpdate = new Work();
@@ -1736,7 +1759,7 @@ public class WorkManagerTest extends BaseTest {
 
         assertFalse(workSaved.compare(workForm));
 
-        workManager.updateWork(claimedOrcid, workToUpdate, true);
+        workManager.updateWork(claimedOrcid, workToUpdate, true, List.of());
 
         Mockito.verify(mockNotificationManager, Mockito.times(2)).sendAmendEmail(any(), any(), any());
 
@@ -1750,10 +1773,10 @@ public class WorkManagerTest extends BaseTest {
 
         Work work = new Work();
         fillWork(work);
-        Work workSaved = workManager.createWork(claimedOrcid, work, true);
+        Work workSaved = workManager.createWork(claimedOrcid, work, true, List.of());
         work.setPutCode(workSaved.getPutCode());
 
-        workManager.updateWork(claimedOrcid, workSaved, true);
+        workManager.updateWork(claimedOrcid, workSaved, true, List.of());
         
         Mockito.verify(mockNotificationManager, Mockito.times(1)).sendAmendEmail(any(), any(), any());
 
@@ -1767,7 +1790,7 @@ public class WorkManagerTest extends BaseTest {
 
         Work work = new Work();
         fillWork(work);
-        work = workManager.createWork(claimedOrcid, work, true);
+        work = workManager.createWork(claimedOrcid, work, true, List.of());
         WorkForm workSaved = WorkForm.valueOf(work, maxContributorsForUI);
 
         Work workToUpdate = new Work();
@@ -1781,7 +1804,7 @@ public class WorkManagerTest extends BaseTest {
 
         assertFalse(workSaved.compare(workFormToUpdate));
 
-        workManager.updateWork(claimedOrcid, workToUpdate, true);
+        workManager.updateWork(claimedOrcid, workToUpdate, true, List.of(work));
 
         Mockito.verify(mockNotificationManager, Mockito.times(2)).sendAmendEmail(any(), any(), any());
 
@@ -1795,7 +1818,7 @@ public class WorkManagerTest extends BaseTest {
 
         Work work = new Work();
         fillWork(work);
-        work = workManager.createWork(claimedOrcid, work, true);
+        work = workManager.createWork(claimedOrcid, work, true, List.of());
 
         Work w = workManager.getWork(claimedOrcid, work.getPutCode());
         WorkForm workSaved = WorkForm.valueOf(w, maxContributorsForUI);
@@ -1814,11 +1837,11 @@ public class WorkManagerTest extends BaseTest {
 
         assertFalse(workSaved.compare(workFormToUpdate));
 
-        Work workUpdated = workManager.updateWork(claimedOrcid, workToUpdate, true);
+        Work workUpdated = workManager.updateWork(claimedOrcid, workToUpdate, true, List.of(work));
 
         assertTrue(WorkForm.valueOf(workUpdated, maxContributorsForUI).compare(workFormToUpdate));
 
-        workManager.updateWork(claimedOrcid, workUpdated, true);
+        workManager.updateWork(claimedOrcid, workUpdated, true, List.of(workToUpdate));
 
         Mockito.verify(mockNotificationManager, Mockito.times(2)).sendAmendEmail(any(), any(), any());
 
@@ -1832,7 +1855,7 @@ public class WorkManagerTest extends BaseTest {
 
         Work work = new Work();
         fillWork(work);
-        work = workManager.createWork(claimedOrcid, work, true);
+        work = workManager.createWork(claimedOrcid, work, true, List.of());
 
         Work w = workManager.getWork(claimedOrcid, work.getPutCode());
         WorkForm workSaved = WorkForm.valueOf(w, maxContributorsForUI);
@@ -1851,11 +1874,11 @@ public class WorkManagerTest extends BaseTest {
 
         assertFalse(workSaved.compare(workFormToUpdate));
 
-        Work workUpdated = workManager.updateWork(claimedOrcid, workToUpdate, true);
+        Work workUpdated = workManager.updateWork(claimedOrcid, workToUpdate, true, List.of(work));
 
         assertTrue(WorkForm.valueOf(workUpdated, maxContributorsForUI).compare(workFormToUpdate));
 
-        workManager.updateWork(claimedOrcid, workToUpdate, true);
+        workManager.updateWork(claimedOrcid, workToUpdate, true, List.of(workToUpdate));
 
         Mockito.verify(mockNotificationManager, Mockito.times(2)).sendAmendEmail(any(), any(), any());
 
@@ -1869,13 +1892,13 @@ public class WorkManagerTest extends BaseTest {
 
         Work work = new Work();
         fillWork(work);
-        work = workManager.createWork(claimedOrcid, work, true);
+        work = workManager.createWork(claimedOrcid, work, true, List.of());
         // make a duplicate as a different assertion origin
         Work w = workManager.getWork(claimedOrcid, work.getPutCode());
         WorkForm workSaved = WorkForm.valueOf(w, maxContributorsForUI);
         
         // identical same source
-        workManager.updateWork(claimedOrcid, w, true);
+        workManager.updateWork(claimedOrcid, w, true, List.of(work));
 
         Work workToUpdate = new Work();
         fillWork(workToUpdate);
@@ -1892,7 +1915,7 @@ public class WorkManagerTest extends BaseTest {
         assertFalse(workSaved.compare(workFormToUpdate));
         try {
             when(mockSourceManager.retrieveActiveSource()).thenReturn(Source.forClientWithClientOBO(CLIENT_1_ID, CLIENT_3_ID));
-            workManager.updateWork(claimedOrcid, workToUpdate, true);
+            workManager.updateWork(claimedOrcid, workToUpdate, true, List.of(work));
             fail();
         } catch (Exception e) {
         }
@@ -1900,7 +1923,7 @@ public class WorkManagerTest extends BaseTest {
         //identical different source
          try {
             when(mockSourceManager.retrieveActiveSource()).thenReturn(Source.forClientWithClientOBO(CLIENT_1_ID, CLIENT_3_ID));
-            workManager.updateWork(claimedOrcid, w, true);
+            workManager.updateWork(claimedOrcid, w, true, List.of(work));
             fail();
         } catch (Exception e) {
         	
@@ -1950,7 +1973,7 @@ public class WorkManagerTest extends BaseTest {
 
         Work work = new Work();
         fillWork(work);
-        work = workManager.createWork(claimedOrcid, work, true);
+        work = workManager.createWork(claimedOrcid, work, true, List.of());
 
         WorkForm workSaved = WorkForm.valueOf(work, maxContributorsForUI);
 
@@ -1965,11 +1988,11 @@ public class WorkManagerTest extends BaseTest {
 
         WorkForm workFormToUpdate = WorkForm.valueOf(workToUpdate, 50);
 
-        workToUpdate = workManager.updateWork(claimedOrcid, workToUpdate, true);
+        workToUpdate = workManager.updateWork(claimedOrcid, workToUpdate, true, List.of(work));
 
         assertFalse(workSaved.compare(workFormToUpdate));
 
-        Work workUpdated = workManager.updateWork(claimedOrcid, workToUpdate, true);
+        Work workUpdated = workManager.updateWork(claimedOrcid, workToUpdate, true, List.of(workToUpdate));
 
         assertTrue(WorkForm.valueOf(workUpdated, maxContributorsForUI).compare(workFormToUpdate));
 

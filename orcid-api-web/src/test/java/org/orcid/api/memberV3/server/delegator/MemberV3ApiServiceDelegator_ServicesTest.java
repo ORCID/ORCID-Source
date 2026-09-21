@@ -388,7 +388,7 @@ public class MemberV3ApiServiceDelegator_ServicesTest extends MemberV3ApiService
         Service toCreate = (Service) Utils.getAffiliation(AffiliationType.SERVICE);
         toCreate.setSource(clientSource(CLIENT_2));
         Service created = service(9999L, Visibility.PUBLIC, "My department name", clientSource(CLIENT_1));
-        when(affiliationsManager.createServiceAffiliation(eq(ORCID), any(Service.class), eq(true))).thenReturn(created);
+        when(affiliationsManager.createServiceAffiliation(eq(ORCID), any(Service.class), eq(true), anyList())).thenReturn(created);
 
         Response response = serviceDelegator.createService(ORCID, toCreate);
         assertNotNull(response);
@@ -400,7 +400,7 @@ public class MemberV3ApiServiceDelegator_ServicesTest extends MemberV3ApiService
 
         // A client supplied source must never reach the manager.
         ArgumentCaptor<Service> captor = ArgumentCaptor.forClass(Service.class);
-        verify(affiliationsManager).createServiceAffiliation(eq(ORCID), captor.capture(), eq(true));
+        verify(affiliationsManager).createServiceAffiliation(eq(ORCID), captor.capture(), eq(true), anyList());
         assertNull(captor.getValue().getSource());
 
         // Remove new element
@@ -413,7 +413,7 @@ public class MemberV3ApiServiceDelegator_ServicesTest extends MemberV3ApiService
         Service element = (Service) Utils.getAffiliation(AffiliationType.SERVICE);
         element.setExternalIDs(duplicateExternalIDs());
         doThrow(new OrcidDuplicatedActivityException(new HashMap<String, String>()))
-                .when(affiliationsManager).createServiceAffiliation(eq(ORCID), any(Service.class), eq(true));
+                .when(affiliationsManager).createServiceAffiliation(eq(ORCID), any(Service.class), eq(true), anyList());
 
         serviceDelegator.createService(ORCID, element);
     }
@@ -440,7 +440,7 @@ public class MemberV3ApiServiceDelegator_ServicesTest extends MemberV3ApiService
         disambiguatedOrg.setDisambiguationSource("WDB");
         element.getOrganization().setDisambiguatedOrganization(disambiguatedOrg);
 
-        when(affiliationsManager.updateServiceAffiliation(eq(ORCID), any(Service.class), eq(true))).thenReturn(element);
+        when(affiliationsManager.updateServiceAffiliation(eq(ORCID), any(Service.class), eq(true), anyList())).thenReturn(element);
 
         response = serviceDelegator.updateService(ORCID, 47L, element);
         assertNotNull(response);
@@ -451,7 +451,7 @@ public class MemberV3ApiServiceDelegator_ServicesTest extends MemberV3ApiService
 
         verify(orcidSecurityManager).checkClientAccessAndScopes(ORCID, ScopePathType.AFFILIATIONS_UPDATE);
         ArgumentCaptor<Service> captor = ArgumentCaptor.forClass(Service.class);
-        verify(affiliationsManager).updateServiceAffiliation(eq(ORCID), captor.capture(), eq(true));
+        verify(affiliationsManager).updateServiceAffiliation(eq(ORCID), captor.capture(), eq(true), anyList());
         assertNull(captor.getValue().getSource());
     }
 
@@ -460,7 +460,7 @@ public class MemberV3ApiServiceDelegator_ServicesTest extends MemberV3ApiService
         Service stored = service(50L, Visibility.LIMITED, "SELF LIMITED Department", userSource(ORCID));
         when(affiliationsManagerReadOnly.getServiceAffiliation(ORCID, 50L)).thenReturn(stored);
         doThrow(new WrongSourceException(new HashMap<String, String>()))
-                .when(affiliationsManager).updateServiceAffiliation(eq(ORCID), any(Service.class), eq(true));
+                .when(affiliationsManager).updateServiceAffiliation(eq(ORCID), any(Service.class), eq(true), anyList());
 
         Response response = serviceDelegator.viewService(ORCID, 50L);
         assertNotNull(response);
@@ -477,7 +477,7 @@ public class MemberV3ApiServiceDelegator_ServicesTest extends MemberV3ApiService
         Service stored = service(47L, Visibility.PUBLIC, "PUBLIC Department", clientSource(CLIENT_1));
         when(affiliationsManagerReadOnly.getServiceAffiliation(ORCID, 47L)).thenReturn(stored);
         doThrow(new VisibilityMismatchException())
-                .when(affiliationsManager).updateServiceAffiliation(eq(ORCID), any(Service.class), eq(true));
+                .when(affiliationsManager).updateServiceAffiliation(eq(ORCID), any(Service.class), eq(true), anyList());
 
         Response response = serviceDelegator.viewService(ORCID, 47L);
         assertNotNull(response);
@@ -498,7 +498,7 @@ public class MemberV3ApiServiceDelegator_ServicesTest extends MemberV3ApiService
         // The manager restores the stored visibility when the request leaves it
         // null; that rule is proved in orcid-core, here we only check the
         // delegator returns what the manager produced.
-        when(affiliationsManager.updateServiceAffiliation(eq(ORCID), any(Service.class), eq(true)))
+        when(affiliationsManager.updateServiceAffiliation(eq(ORCID), any(Service.class), eq(true), anyList()))
                 .thenReturn(service(47L, Visibility.PUBLIC, "PUBLIC Department", clientSource(CLIENT_1)));
 
         Response response = serviceDelegator.viewService(ORCID, 47L);
@@ -518,7 +518,7 @@ public class MemberV3ApiServiceDelegator_ServicesTest extends MemberV3ApiService
         // Catches a delegator that sets a visibility on the element before handing it to
         // the manager: what is submitted must still carry the null the request arrived with.
         ArgumentCaptor<Service> submitted = ArgumentCaptor.forClass(Service.class);
-        verify(affiliationsManager).updateServiceAffiliation(eq(ORCID), submitted.capture(), eq(true));
+        verify(affiliationsManager).updateServiceAffiliation(eq(ORCID), submitted.capture(), eq(true), anyList());
         assertNull("keeping the stored visibility is the manager's job, not the delegator's", submitted.getValue().getVisibility());
     }
 
@@ -527,7 +527,7 @@ public class MemberV3ApiServiceDelegator_ServicesTest extends MemberV3ApiService
         Service stored = service(47L, Visibility.PUBLIC, "PUBLIC Department", clientSource(CLIENT_1));
         when(affiliationsManagerReadOnly.getServiceAffiliation(ORCID, 47L)).thenReturn(stored);
         doThrow(new OrcidDuplicatedActivityException(new HashMap<String, String>()))
-                .when(affiliationsManager).updateServiceAffiliation(eq(ORCID), any(Service.class), eq(true));
+                .when(affiliationsManager).updateServiceAffiliation(eq(ORCID), any(Service.class), eq(true), anyList());
 
         Response response = serviceDelegator.viewService(ORCID, 47L);
         Service element = (Service) response.getEntity();

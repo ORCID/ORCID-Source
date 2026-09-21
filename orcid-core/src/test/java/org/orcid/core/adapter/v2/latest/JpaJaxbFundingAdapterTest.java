@@ -51,7 +51,7 @@ public class JpaJaxbFundingAdapterTest {
     }
 
     @Test
-    public void toFundingEntityTest() throws JAXBException {
+    public void fromFundingToFundingEntityTest() throws JAXBException {
         Funding f = getFunding(true);
         assertNotNull(f);
         assertNotNull(f.getCreatedDate().getValue());
@@ -141,6 +141,13 @@ public class JpaJaxbFundingAdapterTest {
         assertEquals("ES", funding.getTitle().getTranslatedTitle().getLanguageCode());
         assertEquals(FundingType.SALARY_AWARD, funding.getType());
         assertEquals(Visibility.PRIVATE, funding.getVisibility());
+        assertNull(funding.getOrganizationDefinedType());
+
+        // Verify JAXB marshalling succeeds without AccessorException
+        JAXBContext context = JAXBContext.newInstance(Funding.class);
+        java.io.StringWriter writer = new java.io.StringWriter();
+        context.createMarshaller().marshal(funding, writer);
+        assertNotNull(writer.toString());
     }
 
     @Test

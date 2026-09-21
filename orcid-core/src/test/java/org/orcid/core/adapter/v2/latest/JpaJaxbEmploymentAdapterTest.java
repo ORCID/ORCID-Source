@@ -58,22 +58,24 @@ public class JpaJaxbEmploymentAdapterTest {
     }
 
     @Test
-    public void testToOrgAffiliationRelationEntity() throws JAXBException {
+    public void fromEmploymentToOrgAffiliationRelationEntityTest() throws JAXBException {
         Employment e = getEmployment(true);
         assertNotNull(e);
         assertNotNull(e.getCreatedDate().getValue());
         assertNotNull(e.getLastModifiedDate().getValue());
         OrgAffiliationRelationEntity oar = jpaJaxbEmploymentAdapter.toOrgAffiliationRelationEntity(e);
         assertNotNull(oar);
-        //General info
-        assertEquals(Long.valueOf(0), oar.getId());
+        // General info
         assertNull(oar.getDateCreated());
         assertNull(oar.getLastModified());
+        assertNull(oar.getUrl());
+        assertNull(oar.getExternalIdentifiersJson());
+        assertEquals(Long.valueOf(0), oar.getId());
         assertEquals(Visibility.PRIVATE.name(), oar.getVisibility());
         assertEquals("employment:department-name", oar.getDepartment());
         assertEquals("employment:role-title", oar.getTitle());
 
-        //Dates
+        // Dates
         assertEquals(Integer.valueOf(2), oar.getStartDate().getDay());
         assertEquals(Integer.valueOf(2), oar.getStartDate().getMonth());
         assertEquals(Integer.valueOf(1948), oar.getStartDate().getYear());
@@ -81,7 +83,7 @@ public class JpaJaxbEmploymentAdapterTest {
         assertEquals(Integer.valueOf(2), oar.getEndDate().getMonth());
         assertEquals(Integer.valueOf(1948), oar.getEndDate().getYear());
 
-        //Source
+        // Source
         assertNull(oar.getSourceId());
         assertNull(oar.getClientSourceId());
         assertNull(oar.getElementSourceId());

@@ -388,7 +388,7 @@ public class MemberV3ApiServiceDelegator_InvitedPositionsTest extends MemberV3Ap
         InvitedPosition toCreate = (InvitedPosition) Utils.getAffiliation(AffiliationType.INVITED_POSITION);
         toCreate.setSource(clientSource(CLIENT_2));
         InvitedPosition created = invitedPosition(9999L, Visibility.PUBLIC, "My department name", clientSource(CLIENT_1));
-        when(affiliationsManager.createInvitedPositionAffiliation(eq(ORCID), any(InvitedPosition.class), eq(true))).thenReturn(created);
+        when(affiliationsManager.createInvitedPositionAffiliation(eq(ORCID), any(InvitedPosition.class), eq(true), anyList())).thenReturn(created);
 
         Response response = serviceDelegator.createInvitedPosition(ORCID, toCreate);
         assertNotNull(response);
@@ -400,7 +400,7 @@ public class MemberV3ApiServiceDelegator_InvitedPositionsTest extends MemberV3Ap
 
         // A client supplied source must never reach the manager.
         ArgumentCaptor<InvitedPosition> captor = ArgumentCaptor.forClass(InvitedPosition.class);
-        verify(affiliationsManager).createInvitedPositionAffiliation(eq(ORCID), captor.capture(), eq(true));
+        verify(affiliationsManager).createInvitedPositionAffiliation(eq(ORCID), captor.capture(), eq(true), anyList());
         assertNull(captor.getValue().getSource());
 
         // Remove new element
@@ -413,7 +413,7 @@ public class MemberV3ApiServiceDelegator_InvitedPositionsTest extends MemberV3Ap
         InvitedPosition element = (InvitedPosition) Utils.getAffiliation(AffiliationType.INVITED_POSITION);
         element.setExternalIDs(duplicateExternalIDs());
         doThrow(new OrcidDuplicatedActivityException(new HashMap<String, String>()))
-                .when(affiliationsManager).createInvitedPositionAffiliation(eq(ORCID), any(InvitedPosition.class), eq(true));
+                .when(affiliationsManager).createInvitedPositionAffiliation(eq(ORCID), any(InvitedPosition.class), eq(true), anyList());
 
         serviceDelegator.createInvitedPosition(ORCID, element);
     }
@@ -440,7 +440,7 @@ public class MemberV3ApiServiceDelegator_InvitedPositionsTest extends MemberV3Ap
         disambiguatedOrg.setDisambiguationSource("WDB");
         element.getOrganization().setDisambiguatedOrganization(disambiguatedOrg);
 
-        when(affiliationsManager.updateInvitedPositionAffiliation(eq(ORCID), any(InvitedPosition.class), eq(true))).thenReturn(element);
+        when(affiliationsManager.updateInvitedPositionAffiliation(eq(ORCID), any(InvitedPosition.class), eq(true), anyList())).thenReturn(element);
 
         response = serviceDelegator.updateInvitedPosition(ORCID, 32L, element);
         assertNotNull(response);
@@ -451,7 +451,7 @@ public class MemberV3ApiServiceDelegator_InvitedPositionsTest extends MemberV3Ap
 
         verify(orcidSecurityManager).checkClientAccessAndScopes(ORCID, ScopePathType.AFFILIATIONS_UPDATE);
         ArgumentCaptor<InvitedPosition> captor = ArgumentCaptor.forClass(InvitedPosition.class);
-        verify(affiliationsManager).updateInvitedPositionAffiliation(eq(ORCID), captor.capture(), eq(true));
+        verify(affiliationsManager).updateInvitedPositionAffiliation(eq(ORCID), captor.capture(), eq(true), anyList());
         assertNull(captor.getValue().getSource());
     }
 
@@ -460,7 +460,7 @@ public class MemberV3ApiServiceDelegator_InvitedPositionsTest extends MemberV3Ap
         InvitedPosition stored = invitedPosition(35L, Visibility.LIMITED, "SELF LIMITED Department", userSource(ORCID));
         when(affiliationsManagerReadOnly.getInvitedPositionAffiliation(ORCID, 35L)).thenReturn(stored);
         doThrow(new WrongSourceException(new HashMap<String, String>()))
-                .when(affiliationsManager).updateInvitedPositionAffiliation(eq(ORCID), any(InvitedPosition.class), eq(true));
+                .when(affiliationsManager).updateInvitedPositionAffiliation(eq(ORCID), any(InvitedPosition.class), eq(true), anyList());
 
         Response response = serviceDelegator.viewInvitedPosition(ORCID, 35L);
         assertNotNull(response);
@@ -477,7 +477,7 @@ public class MemberV3ApiServiceDelegator_InvitedPositionsTest extends MemberV3Ap
         InvitedPosition stored = invitedPosition(32L, Visibility.PUBLIC, "PUBLIC Department", clientSource(CLIENT_1));
         when(affiliationsManagerReadOnly.getInvitedPositionAffiliation(ORCID, 32L)).thenReturn(stored);
         doThrow(new VisibilityMismatchException())
-                .when(affiliationsManager).updateInvitedPositionAffiliation(eq(ORCID), any(InvitedPosition.class), eq(true));
+                .when(affiliationsManager).updateInvitedPositionAffiliation(eq(ORCID), any(InvitedPosition.class), eq(true), anyList());
 
         Response response = serviceDelegator.viewInvitedPosition(ORCID, 32L);
         assertNotNull(response);
@@ -498,7 +498,7 @@ public class MemberV3ApiServiceDelegator_InvitedPositionsTest extends MemberV3Ap
         // The manager restores the stored visibility when the request leaves it
         // null; that rule is proved in orcid-core, here we only check the
         // delegator returns what the manager produced.
-        when(affiliationsManager.updateInvitedPositionAffiliation(eq(ORCID), any(InvitedPosition.class), eq(true)))
+        when(affiliationsManager.updateInvitedPositionAffiliation(eq(ORCID), any(InvitedPosition.class), eq(true), anyList()))
                 .thenReturn(invitedPosition(32L, Visibility.PUBLIC, "PUBLIC Department", clientSource(CLIENT_1)));
 
         Response response = serviceDelegator.viewInvitedPosition(ORCID, 32L);
@@ -518,7 +518,7 @@ public class MemberV3ApiServiceDelegator_InvitedPositionsTest extends MemberV3Ap
         // Catches a delegator that sets a visibility on the element before handing it to
         // the manager: what is submitted must still carry the null the request arrived with.
         ArgumentCaptor<InvitedPosition> submitted = ArgumentCaptor.forClass(InvitedPosition.class);
-        verify(affiliationsManager).updateInvitedPositionAffiliation(eq(ORCID), submitted.capture(), eq(true));
+        verify(affiliationsManager).updateInvitedPositionAffiliation(eq(ORCID), submitted.capture(), eq(true), anyList());
         assertNull("keeping the stored visibility is the manager's job, not the delegator's", submitted.getValue().getVisibility());
     }
 
@@ -527,7 +527,7 @@ public class MemberV3ApiServiceDelegator_InvitedPositionsTest extends MemberV3Ap
         InvitedPosition stored = invitedPosition(32L, Visibility.PUBLIC, "PUBLIC Department", clientSource(CLIENT_1));
         when(affiliationsManagerReadOnly.getInvitedPositionAffiliation(ORCID, 32L)).thenReturn(stored);
         doThrow(new OrcidDuplicatedActivityException(new HashMap<String, String>()))
-                .when(affiliationsManager).updateInvitedPositionAffiliation(eq(ORCID), any(InvitedPosition.class), eq(true));
+                .when(affiliationsManager).updateInvitedPositionAffiliation(eq(ORCID), any(InvitedPosition.class), eq(true), anyList());
 
         Response response = serviceDelegator.viewInvitedPosition(ORCID, 32L);
         InvitedPosition element = (InvitedPosition) response.getEntity();

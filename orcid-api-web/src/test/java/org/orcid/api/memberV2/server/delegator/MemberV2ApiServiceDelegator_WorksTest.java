@@ -364,7 +364,7 @@ public class MemberV2ApiServiceDelegator_WorksTest extends MemberV2ApiServiceDel
         String orcid = "4444-4444-4444-4445";
         String title = "work # 1 " + System.currentTimeMillis();
         Work created = work(100L, title, Visibility.PUBLIC, clientSource(CLIENT_1));
-        when(workManager.createWork(eq(orcid), any(Work.class), anyBoolean())).thenReturn(created);
+        when(workManager.createWork(eq(orcid), any(Work.class), anyBoolean(), anyList())).thenReturn(created);
 
         Response response = serviceDelegator.createWork(orcid, Utils.getWork(title));
 
@@ -373,7 +373,7 @@ public class MemberV2ApiServiceDelegator_WorksTest extends MemberV2ApiServiceDel
         assertEquals(Long.valueOf(100), putCode);
         verify(orcidSecurityManager).checkClientAccessAndScopes(orcid, ScopePathType.ORCID_WORKS_CREATE, ScopePathType.ORCID_WORKS_UPDATE);
         ArgumentCaptor<Work> submitted = ArgumentCaptor.forClass(Work.class);
-        verify(workManager).createWork(eq(orcid), submitted.capture(), eq(true));
+        verify(workManager).createWork(eq(orcid), submitted.capture(), eq(true), anyList());
         assertEquals(title, submitted.getValue().getWorkTitle().getTitle().getContent());
         assertNull("a client may not choose its own source", submitted.getValue().getSource());
         assertEquals(CLIENT_1_NAME, created.getSource().getSourceName().getContent());
@@ -397,7 +397,7 @@ public class MemberV2ApiServiceDelegator_WorksTest extends MemberV2ApiServiceDel
             work.setWorkExternalIdentifiers(externalIds("doi", "doi-" + i + "-" + time));
             persisted.getBulk().add(work);
         }
-        when(workManager.createWorks(eq(ORCID), any(WorkBulk.class))).thenReturn(persisted);
+        when(workManager.createWorks(eq(ORCID), any(WorkBulk.class), anyList())).thenReturn(persisted);
 
         Response response = serviceDelegator.createWorks(ORCID, bulk);
 
@@ -421,7 +421,7 @@ public class MemberV2ApiServiceDelegator_WorksTest extends MemberV2ApiServiceDel
         verify(orcidSecurityManager).checkClientAccessAndScopes(ORCID, ScopePathType.ORCID_WORKS_CREATE, ScopePathType.ORCID_WORKS_UPDATE);
         // every incoming work has had its source cleared before it is submitted
         ArgumentCaptor<WorkBulk> submitted = ArgumentCaptor.forClass(WorkBulk.class);
-        verify(workManager).createWorks(eq(ORCID), submitted.capture());
+        verify(workManager).createWorks(eq(ORCID), submitted.capture(), anyList());
         submitted.getValue().getBulk().forEach(element -> assertNull(((Work) element).getSource()));
     }
 
@@ -443,7 +443,7 @@ public class MemberV2ApiServiceDelegator_WorksTest extends MemberV2ApiServiceDel
         for (int i = 1; i < 5; i++) {
             persisted.getBulk().add(work((long) (i + 1), "title " + i, Visibility.PUBLIC, clientSource(CLIENT_1)));
         }
-        when(workManager.createWorks(eq(ORCID), any(WorkBulk.class))).thenReturn(persisted);
+        when(workManager.createWorks(eq(ORCID), any(WorkBulk.class), anyList())).thenReturn(persisted);
 
         Response response = serviceDelegator.createWorks(ORCID, bulk);
 
@@ -471,7 +471,7 @@ public class MemberV2ApiServiceDelegator_WorksTest extends MemberV2ApiServiceDel
         work.setWorkType(WorkType.EDITED_BOOK);
         Work updated = work(1L, "Updated work title", Visibility.PUBLIC, clientSource(CLIENT_1));
         updated.setWorkType(WorkType.EDITED_BOOK);
-        when(workManager.updateWork(eq(MY_ORCID), any(Work.class), anyBoolean())).thenReturn(updated);
+        when(workManager.updateWork(eq(MY_ORCID), any(Work.class), anyBoolean(), anyList())).thenReturn(updated);
 
         Response response = serviceDelegator.updateWork(MY_ORCID, 1L, work);
 
@@ -482,7 +482,7 @@ public class MemberV2ApiServiceDelegator_WorksTest extends MemberV2ApiServiceDel
         assertEquals(WorkType.EDITED_BOOK, returned.getWorkType());
         verify(orcidSecurityManager).checkClientAccessAndScopes(MY_ORCID, ScopePathType.ORCID_WORKS_UPDATE);
         ArgumentCaptor<Work> submitted = ArgumentCaptor.forClass(Work.class);
-        verify(workManager).updateWork(eq(MY_ORCID), submitted.capture(), eq(true));
+        verify(workManager).updateWork(eq(MY_ORCID), submitted.capture(), eq(true), anyList());
         assertNull("a client may not choose its own source", submitted.getValue().getSource());
     }
 
@@ -492,7 +492,7 @@ public class MemberV2ApiServiceDelegator_WorksTest extends MemberV2ApiServiceDel
         // entity; the rule belongs to that manager's tests.
         Work work = work(2L, "Another day in the life", Visibility.PUBLIC, userSource(MY_ORCID));
         doThrow(new WrongSourceException(Collections.singletonMap("activity", "work"))).when(workManager).updateWork(eq(MY_ORCID), any(Work.class),
-                anyBoolean());
+                anyBoolean(), anyList());
 
         serviceDelegator.updateWork(MY_ORCID, 2L, work);
         fail();
@@ -502,7 +502,7 @@ public class MemberV2ApiServiceDelegator_WorksTest extends MemberV2ApiServiceDel
     public void testUpdateWorkChangingVisibilityTest() {
         String orcid = "4444-4444-4444-4445";
         Work work = work(3L, "A Book With Contributors JSON", Visibility.PRIVATE, userSource(orcid));
-        doThrow(new VisibilityMismatchException()).when(workManager).updateWork(eq(orcid), any(Work.class), anyBoolean());
+        doThrow(new VisibilityMismatchException()).when(workManager).updateWork(eq(orcid), any(Work.class), anyBoolean(), anyList());
 
         serviceDelegator.updateWork(orcid, 3L, work);
         fail();
@@ -513,7 +513,7 @@ public class MemberV2ApiServiceDelegator_WorksTest extends MemberV2ApiServiceDel
         String orcid = "4444-4444-4444-4447";
         Work work = work(10L, "Journal article F", null, clientSource(CLIENT_1));
         Work updated = work(10L, "Journal article F", Visibility.PUBLIC, clientSource(CLIENT_1));
-        when(workManager.updateWork(eq(orcid), any(Work.class), anyBoolean())).thenReturn(updated);
+        when(workManager.updateWork(eq(orcid), any(Work.class), anyBoolean(), anyList())).thenReturn(updated);
 
         Response response = serviceDelegator.updateWork(orcid, 10L, work);
 
@@ -524,7 +524,7 @@ public class MemberV2ApiServiceDelegator_WorksTest extends MemberV2ApiServiceDel
         Utils.verifyLastModified(returned.getLastModifiedDate());
         assertEquals(Visibility.PUBLIC, returned.getVisibility());
         ArgumentCaptor<Work> submitted = ArgumentCaptor.forClass(Work.class);
-        verify(workManager).updateWork(eq(orcid), submitted.capture(), eq(true));
+        verify(workManager).updateWork(eq(orcid), submitted.capture(), eq(true), anyList());
         assertNull("keeping the stored visibility is the manager's job, not the delegator's", submitted.getValue().getVisibility());
     }
 
@@ -550,7 +550,7 @@ public class MemberV2ApiServiceDelegator_WorksTest extends MemberV2ApiServiceDel
     @Test
     public void testAddWorkWithInvalidExtIdTypeFail() {
         String orcid = "4444-4444-4444-4499";
-        when(workManager.createWork(eq(orcid), any(Work.class), anyBoolean())).thenAnswer(invocation -> {
+        when(workManager.createWork(eq(orcid), any(Work.class), anyBoolean(), anyList())).thenAnswer(invocation -> {
             Work submitted = invocation.getArgument(1);
             if ("INVALID".equals(submitted.getExternalIdentifiers().getExternalIdentifier().get(0).getType())) {
                 throw new ActivityIdentifierValidationException();

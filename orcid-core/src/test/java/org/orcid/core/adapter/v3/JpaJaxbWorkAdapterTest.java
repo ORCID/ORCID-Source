@@ -9,6 +9,8 @@ import java.io.InputStream;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
+import java.util.HashMap;
 
 import jakarta.xml.bind.JAXBContext;
 import jakarta.xml.bind.JAXBException;
@@ -23,9 +25,14 @@ import org.orcid.jaxb.model.common.Iso3166Country;
 import org.orcid.jaxb.model.common.Relationship;
 import org.orcid.jaxb.model.common.WorkType;
 import org.orcid.jaxb.model.v3.release.common.Visibility;
+import org.orcid.jaxb.model.v3.release.common.Contributor;
 import org.orcid.jaxb.model.v3.release.record.ExternalID;
 import org.orcid.jaxb.model.v3.release.record.Work;
 import org.orcid.jaxb.model.v3.release.record.summary.WorkSummary;
+import org.orcid.jaxb.model.v3.release.common.SourceClientId;
+import org.orcid.jaxb.model.v3.release.common.Source;
+import org.orcid.core.utils.SourceEntityUtils;
+import org.orcid.persistence.dao.RecordNameDao;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.MinimizedWorkEntity;
 import org.orcid.persistence.jpa.entities.PublicationDateEntity;
@@ -60,22 +67,22 @@ public class JpaJaxbWorkAdapterTest {
     }
 
     @Test
-    public void testToWorkEntity() throws JAXBException {
+    public void fromWorkToToWorkEntityTest() throws JAXBException {
         Work work = getWork(true);
         assertNotNull(work);
         WorkEntity workEntity = jpaJaxbWorkAdapter.toWorkEntity(work);
         assertNotNull(workEntity);
         assertNull(workEntity.getDateCreated());
         assertNull(workEntity.getLastModified());
-        assertEquals(org.orcid.jaxb.model.common_v2.Visibility.PRIVATE.name(), workEntity.getVisibility());
+        assertEquals(Visibility.PRIVATE.name(), workEntity.getVisibility());
         assertEquals(123, workEntity.getId().longValue());
         assertEquals("common:title", workEntity.getTitle());
         assertEquals("common:subtitle",workEntity.getSubtitle());
         assertEquals("common:translated-title", workEntity.getTranslatedTitle());
         assertEquals("en", workEntity.getTranslatedTitleLanguageCode());
         assertEquals("work:short-description", workEntity.getDescription());
-        assertEquals(org.orcid.jaxb.model.record_v2.CitationType.FORMATTED_UNSPECIFIED.name(), workEntity.getCitationType());
-        assertEquals(org.orcid.jaxb.model.record_v2.WorkType.ARTISTIC_PERFORMANCE.name(), workEntity.getWorkType());
+        assertEquals(CitationType.FORMATTED_UNSPECIFIED.name(), workEntity.getCitationType());
+        assertEquals(WorkType.ARTISTIC_PERFORMANCE.name(), workEntity.getWorkType());
         PublicationDateEntity publicationDateEntity = workEntity.getPublicationDate();
         assertNotNull(publicationDateEntity);
         assertEquals(1948, publicationDateEntity.getYear().intValue());
@@ -89,8 +96,9 @@ public class JpaJaxbWorkAdapterTest {
                 "{\"contributor\":[{\"contributorOrcid\":{\"uri\":\"https://orcid.org/8888-8888-8888-8880\",\"path\":\"8888-8888-8888-8880\",\"host\":\"orcid.org\"},\"creditName\":{\"content\":\"work:credit-name\"},\"contributorEmail\":{\"value\":\"work@contributor.email\"},\"contributorAttributes\":{\"contributorSequence\":\"FIRST\",\"contributorRole\":\"AUTHOR\"}}]}",
                 workEntity.getContributorsJson());
         assertEquals("en", workEntity.getLanguageCode());
-        assertEquals(org.orcid.jaxb.model.common_v2.Iso3166Country.AF.name(), workEntity.getIso2Country());
-
+        assertEquals(Iso3166Country.AF.name(), workEntity.getIso2Country());
+        assertEquals("common:journal-title", workEntity.getJournalTitle());
+        
         // Source
         assertNull(workEntity.getSourceId());
         assertNull(workEntity.getClientSourceId());
@@ -165,6 +173,51 @@ public class JpaJaxbWorkAdapterTest {
         Work mappedWork = jpaJaxbWorkAdapter.toWork(work);
 
         assertNull(mappedWork.getUrl());
+    }
+
+    @Test
+    public void fromWorkEntityWithContributorsMissingHostTest() throws Exception {
+        adapters.orcidUrlManager.setBaseUrl("https://testserver.orcid.org");
+        WorkEntity work = getWorkEntity();
+        work.setContributorsJson("{\n" +
+                "\t\"contributor\": [{\n" +
+                "\t\t\"contributorOrcid\": {\n" +
+                "\t\t\t\"uri\": \"https://qa.orcid.org/0009-0000-7948-587X\",\n" +
+                "\t\t\t\"path\": \"0009-0000-7948-587X\",\n" +
+                "\t\t\t\"host\": null\n" +
+                "\t\t},\n" +
+                "\t\t\"creditName\": {\n" +
+                "\t\t\t\"content\": \"Test Author\"\n" +
+                "\t\t},\n" +
+                "\t\t\"contributorEmail\": null,\n" +
+                "\t\t\"contributorAttributes\": {\n" +
+                "\t\t\t\"contributorSequence\": null,\n" +
+                "\t\t\t\"contributorRole\": \"http://credit.niso.org/contributor-roles/data-curation/\"\n" +
+                "\t\t}\n" +
+                "\t}]\n" +
+                "}");
+
+        Work mappedWork = jpaJaxbWorkAdapter.toWork(work);
+        assertNotNull(mappedWork.getWorkContributors());
+        assertEquals(1, mappedWork.getWorkContributors().getContributor().size());
+        Contributor c = mappedWork.getWorkContributors().getContributor().get(0);
+        assertNotNull(c.getContributorOrcid());
+        assertEquals("qa.orcid.org", c.getContributorOrcid().getHost());
+        assertEquals("0009-0000-7948-587X", c.getContributorOrcid().getPath());
+        assertNotNull(c.getCreditName());
+        assertEquals("Test Author", c.getCreditName().getContent());
+        assertNull(c.getContributorEmail());
+        assertNotNull(c.getContributorAttributes());
+        assertNull(c.getContributorAttributes().getContributorSequence());
+        assertEquals("http://credit.niso.org/contributor-roles/data-curation/", c.getContributorAttributes().getContributorRole());
+
+        // Verify JAXB XML serialization works without AccessorException
+        JAXBContext context = JAXBContext.newInstance(Work.class);
+        java.io.StringWriter writer = new java.io.StringWriter();
+        context.createMarshaller().marshal(mappedWork, writer);
+        String xml = writer.toString();
+        assertTrue(xml.contains("qa.orcid.org"));
+        assertTrue(xml.contains("Test Author"));
     }
 
     @Test
@@ -430,6 +483,92 @@ public class JpaJaxbWorkAdapterTest {
         assertEquals(workEntity2.getWorkType(), workEntity.getWorkType());
     }
 
+    @Test
+    public void clearInnerFieldsFromWorkToWorkEntityTest() throws IllegalAccessException {
+        WorkEntity workEntity = getWorkEntity();
+        // Verify values are not null
+        assertNotNull(workEntity.getCitation());
+        assertNotNull(workEntity.getCitationType());
+        assertNotNull(workEntity.getIso2Country());
+        assertNotNull(workEntity.getJournalTitle());
+        assertNotNull(workEntity.getTranslatedTitle());
+        assertNotNull(workEntity.getTranslatedTitleLanguageCode());
+        assertNotNull(workEntity.getSubtitle());
+
+        Work work = jpaJaxbWorkAdapter.toWork(workEntity);
+        // Verify values are not null
+        assertNotNull(work.getCreatedDate());
+        assertEquals(DateUtils.convertToDate("2015-06-05T10:15:20"), DateUtils.convertToDate(work.getCreatedDate().getValue()));
+        assertNotNull(work.getLastModifiedDate());
+        assertEquals(DateUtils.convertToDate("2015-06-05T10:15:20"), DateUtils.convertToDate(work.getLastModifiedDate().getValue()));
+        assertNotNull(work.getWorkCitation());
+        assertNotNull(work.getWorkCitation().getCitation());
+        assertNotNull(work.getWorkCitation().getWorkCitationType());
+        assertNotNull(work.getCountry());
+        assertNotNull(work.getCountry().getValue());
+        assertNotNull(work.getJournalTitle());
+        assertNotNull(work.getJournalTitle().getContent());
+        assertNotNull(work.getUrl());
+        assertNotNull(work.getUrl().getValue());
+        assertNotNull(work.getWorkTitle().getTranslatedTitle());
+        assertNotNull(work.getWorkTitle().getTranslatedTitle().getContent());
+        assertNotNull(work.getWorkTitle().getTranslatedTitle().getLanguageCode());
+        assertNotNull(work.getWorkTitle().getSubtitle());
+        assertNotNull(work.getWorkTitle().getSubtitle().getContent());
+
+        // Now clear values on work
+        work.getWorkCitation().setCitation(null);
+        work.getWorkCitation().setWorkCitationType(null);
+        work.getJournalTitle().setContent(null);
+        work.getUrl().setValue(null);
+        work.setCountry(null);
+        work.getWorkTitle().getTranslatedTitle().setContent(null);
+        work.getWorkTitle().getTranslatedTitle().setLanguageCode(null);
+        work.getWorkTitle().getSubtitle().setContent(null);
+
+        // Update work entity
+        jpaJaxbWorkAdapter.toWorkEntity(work, workEntity);
+
+        // Verify date created and last modified wasn't changed
+        Date date = DateUtils.convertToDate("2015-06-05T10:15:20");
+        assertEquals(date, workEntity.getDateCreated());
+        assertEquals(date, workEntity.getLastModified());
+
+        // Verify citation, country, journal title, url, translated title and subtitle get nullified
+        assertNull(workEntity.getCitation());
+        assertNull(workEntity.getCitationType());
+        assertNull(workEntity.getIso2Country());
+        assertNull(workEntity.getJournalTitle());
+        assertNull(workEntity.getTranslatedTitle());
+        assertNull(workEntity.getTranslatedTitleLanguageCode());
+        assertNull(workEntity.getSubtitle());
+
+        // Verify the rest of the fields haven't changed
+        WorkEntity workEntity2 = getWorkEntity();
+
+        assertEquals(workEntity2.getAddedToProfileDate(), workEntity.getAddedToProfileDate());
+        assertEquals(workEntity2.getAssertionOriginClientSourceId(), workEntity.getAssertionOriginClientSourceId());
+        assertEquals(workEntity2.getClientSourceId(), workEntity.getClientSourceId());
+        assertEquals(workEntity2.getContributorsJson(), workEntity.getContributorsJson());
+        assertEquals(workEntity2.getDateCreated(), workEntity.getDateCreated());
+        assertEquals(workEntity2.getDescription(), workEntity.getDescription());
+        assertEquals(workEntity2.getDisplayIndex(), workEntity.getDisplayIndex());
+        assertEquals(workEntity2.getElementAssertionOriginSourceId(), workEntity.getElementAssertionOriginSourceId());
+        assertEquals(workEntity2.getElementSourceId(), workEntity.getElementSourceId());
+        assertEquals(workEntity2.getExternalIdentifiersJson(), workEntity.getExternalIdentifiersJson());
+        assertEquals(workEntity2.getId(), workEntity.getId());
+        assertEquals(workEntity2.getLanguageCode(), workEntity.getLanguageCode());
+        assertEquals(workEntity2.getLastModified(), workEntity.getLastModified());
+        assertEquals(workEntity2.getOrcid(), workEntity.getOrcid());
+        assertEquals(workEntity2.getPublicationYear(), workEntity.getPublicationYear());
+        assertEquals(workEntity2.getPublicationMonth(), workEntity.getPublicationMonth());
+        assertEquals(workEntity2.getPublicationDay(), workEntity.getPublicationDay());
+        assertEquals(workEntity2.getSourceId(), workEntity.getSourceId());
+        assertEquals(workEntity2.getTitle(), workEntity.getTitle());
+        assertEquals(workEntity2.getVisibility(), workEntity.getVisibility());
+        assertEquals(workEntity2.getWorkType(), workEntity.getWorkType());
+    }
+
     private Work getWork(boolean full) throws JAXBException {
         JAXBContext context = JAXBContext.newInstance(new Class[] { Work.class });
         Unmarshaller unmarshaller = context.createUnmarshaller();
@@ -483,4 +622,62 @@ public class JpaJaxbWorkAdapterTest {
         assertNull(work.getPublicationYear());
 
     }
+
+    // --- PD-6145: the pre-resolved source map must be used instead of per-element resolution ---
+
+    private MinimizedWorkEntity minimizedWorkWithClientSource() {
+        MinimizedWorkEntity mWork = new MinimizedWorkEntity();
+        mWork.setId(12345L);
+        mWork.setWorkType(org.orcid.jaxb.model.common.WorkType.JOURNAL_ARTICLE.name());
+        mWork.setClientSourceId(CLIENT_SOURCE_ID);
+        mWork.setOrcid("0000-0000-0000-0001");
+        return mWork;
+    }
+
+    @Test
+    public void toWorkSummaryFromMinimizedUsesPreResolvedSource() {
+        MinimizedWorkEntity mWork = minimizedWorkWithClientSource();
+
+        Source preResolved = new Source();
+        preResolved.setSourceClientId(new SourceClientId("APP-PRE-RESOLVED"));
+        Map<String, Source> sourceMap = new HashMap<>();
+        sourceMap.put(SourceEntityUtils.getSourceKey(mWork), preResolved);
+
+        List<WorkSummary> summaries = jpaJaxbWorkAdapter.toWorkSummaryFromMinimized(Arrays.asList(mWork), sourceMap);
+
+        assertEquals(1, summaries.size());
+        // the map's Source is used verbatim, not re-derived from the entity
+        assertNotNull(summaries.get(0).getSource());
+        assertEquals("APP-PRE-RESOLVED", summaries.get(0).getSource().getSourceClientId().getPath());
+        // everything else still maps
+        assertEquals(Long.valueOf(12345), summaries.get(0).getPutCode());
+        assertEquals(WorkType.JOURNAL_ARTICLE, summaries.get(0).getType());
+    }
+
+    @Test
+    public void toWorkSummaryFromMinimizedFallsBackWhenSourceMapMisses() {
+        MinimizedWorkEntity mWork = minimizedWorkWithClientSource();
+
+        // a map that has no entry for this key, and a null map, must both still populate a source
+        List<WorkSummary> onMiss = jpaJaxbWorkAdapter.toWorkSummaryFromMinimized(Arrays.asList(mWork), new HashMap<String, Source>());
+        List<WorkSummary> onNullMap = jpaJaxbWorkAdapter.toWorkSummaryFromMinimized(Arrays.asList(mWork), null);
+
+        assertNotNull(onMiss.get(0).getSource());
+        assertEquals(CLIENT_SOURCE_ID, onMiss.get(0).getSource().getSourceClientId().getPath());
+        assertNotNull(onNullMap.get(0).getSource());
+        assertEquals(CLIENT_SOURCE_ID, onNullMap.get(0).getSource().getSourceClientId().getPath());
+    }
+
+    @Test
+    public void toWorkSummaryFromMinimizedWithoutMapStillResolvesSource() {
+        // guards the @Named isolation: the source-free method must never be selected
+        // implicitly for the no-map collection overload
+        MinimizedWorkEntity mWork = minimizedWorkWithClientSource();
+
+        List<WorkSummary> summaries = jpaJaxbWorkAdapter.toWorkSummaryFromMinimized(Arrays.asList(mWork));
+
+        assertNotNull(summaries.get(0).getSource());
+        assertEquals(CLIENT_SOURCE_ID, summaries.get(0).getSource().getSourceClientId().getPath());
+    }
+
 }

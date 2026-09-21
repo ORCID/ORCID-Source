@@ -5,6 +5,7 @@ import static org.mockito.ArgumentMatchers.nullable;
 import static org.mockito.Mockito.when;
 
 import java.net.URI;
+import java.util.Collections;
 import java.util.GregorianCalendar;
 
 import javax.xml.datatype.DatatypeConfigurationException;
@@ -309,6 +310,15 @@ public abstract class MemberV3ApiServiceDelegatorMockTestBase {
             String putCode = invocation.getArgument(2);
             return Response.created(URI.create("https://api.orcid.org/v3.0/" + (orcid != null ? orcid + "/" : "") + target + "/" + putCode)).build();
         });
+
+        // The delegator reads the record's existing activities and hands them to the manager, so
+        // the manager can spot a duplicate without going back to the database. An unstubbed mock
+        // returns null, and a null would both hide that the delegator made the call and make every
+        // anyList() matcher below miss. Empty is the honest default: these tests assert what the
+        // delegator does with one submitted item, not how the manager treats what is already there.
+        when(workManagerReadOnly.findWorks(anyString())).thenReturn(Collections.emptyList());
+        when(profileFundingManagerReadOnly.getFundingList(anyString())).thenReturn(Collections.emptyList());
+        when(affiliationsManagerReadOnly.getAffiliations(anyString())).thenReturn(Collections.emptyList());
     }
 
     @After

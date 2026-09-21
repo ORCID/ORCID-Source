@@ -127,7 +127,7 @@ public class MemberV2ApiServiceDelegator_FundingTest extends MemberV2ApiServiceD
         String orcid = "4444-4444-4444-4499";
         Funding funding = Utils.getFunding();
         funding.getExternalIdentifiers().getExternalIdentifier().get(0).setType("INVALID");
-        when(profileFundingManager.createFunding(eq(orcid), any(Funding.class), anyBoolean())).thenAnswer(invocation -> {
+        when(profileFundingManager.createFunding(eq(orcid), any(Funding.class), anyBoolean(), anyList())).thenAnswer(invocation -> {
             Funding submitted = invocation.getArgument(1);
             if ("INVALID".equals(submitted.getExternalIdentifiers().getExternalIdentifier().get(0).getType())) {
                 throw new ActivityIdentifierValidationException();
@@ -260,7 +260,7 @@ public class MemberV2ApiServiceDelegator_FundingTest extends MemberV2ApiServiceD
     public void testAddFunding() {
         Funding created = funding(100L, Visibility.PUBLIC, clientSource(CLIENT_1));
         created.getTitle().getTitle().setContent("Public Funding # 2");
-        when(profileFundingManager.createFunding(eq(OTHER_ORCID), any(Funding.class), anyBoolean())).thenReturn(created);
+        when(profileFundingManager.createFunding(eq(OTHER_ORCID), any(Funding.class), anyBoolean(), anyList())).thenReturn(created);
 
         Response response = serviceDelegator.createFunding(OTHER_ORCID, Utils.getFunding());
 
@@ -270,7 +270,7 @@ public class MemberV2ApiServiceDelegator_FundingTest extends MemberV2ApiServiceD
         assertTrue("Public Funding # 2".equals(created.getTitle().getTitle().getContent()));
         verify(orcidSecurityManager).checkClientAccessAndScopes(OTHER_ORCID, ScopePathType.FUNDING_CREATE, ScopePathType.FUNDING_UPDATE);
         ArgumentCaptor<Funding> submitted = ArgumentCaptor.forClass(Funding.class);
-        verify(profileFundingManager).createFunding(eq(OTHER_ORCID), submitted.capture(), eq(true));
+        verify(profileFundingManager).createFunding(eq(OTHER_ORCID), submitted.capture(), eq(true), anyList());
         assertNull("a client may not choose its own source", submitted.getValue().getSource());
     }
 
@@ -280,7 +280,7 @@ public class MemberV2ApiServiceDelegator_FundingTest extends MemberV2ApiServiceD
         funding.getTitle().getTitle().setContent("Updated funding title");
         Funding updated = funding(6L, Visibility.PUBLIC, clientSource(CLIENT_1));
         updated.getTitle().getTitle().setContent("Updated funding title");
-        when(profileFundingManager.updateFunding(eq(OTHER_ORCID), any(Funding.class), anyBoolean())).thenReturn(updated);
+        when(profileFundingManager.updateFunding(eq(OTHER_ORCID), any(Funding.class), anyBoolean(), anyList())).thenReturn(updated);
 
         Response response = serviceDelegator.updateFunding(OTHER_ORCID, 6L, funding);
 
@@ -289,7 +289,7 @@ public class MemberV2ApiServiceDelegator_FundingTest extends MemberV2ApiServiceD
         assertEquals("Updated funding title", ((Funding) response.getEntity()).getTitle().getTitle().getContent());
         verify(orcidSecurityManager).checkClientAccessAndScopes(OTHER_ORCID, ScopePathType.FUNDING_UPDATE);
         ArgumentCaptor<Funding> submitted = ArgumentCaptor.forClass(Funding.class);
-        verify(profileFundingManager).updateFunding(eq(OTHER_ORCID), submitted.capture(), eq(true));
+        verify(profileFundingManager).updateFunding(eq(OTHER_ORCID), submitted.capture(), eq(true), anyList());
         assertNull(submitted.getValue().getSource());
     }
 
@@ -299,7 +299,7 @@ public class MemberV2ApiServiceDelegator_FundingTest extends MemberV2ApiServiceD
         // stored entity; the rule belongs to that manager's tests.
         Funding funding = funding(5L, Visibility.PUBLIC, clientSource(CLIENT_2));
         doThrow(new WrongSourceException(Collections.singletonMap("activity", "funding"))).when(profileFundingManager).updateFunding(eq(OTHER_ORCID),
-                any(Funding.class), anyBoolean());
+                any(Funding.class), anyBoolean(), anyList());
 
         serviceDelegator.updateFunding(OTHER_ORCID, 5L, funding);
         fail();
@@ -308,7 +308,7 @@ public class MemberV2ApiServiceDelegator_FundingTest extends MemberV2ApiServiceD
     @Test(expected = VisibilityMismatchException.class)
     public void testUpdateFundingChangingVisibilityTest() {
         Funding funding = funding(6L, Visibility.PRIVATE, clientSource(CLIENT_1));
-        doThrow(new VisibilityMismatchException()).when(profileFundingManager).updateFunding(eq(OTHER_ORCID), any(Funding.class), anyBoolean());
+        doThrow(new VisibilityMismatchException()).when(profileFundingManager).updateFunding(eq(OTHER_ORCID), any(Funding.class), anyBoolean(), anyList());
 
         serviceDelegator.updateFunding(OTHER_ORCID, 6L, funding);
         fail();
@@ -318,7 +318,7 @@ public class MemberV2ApiServiceDelegator_FundingTest extends MemberV2ApiServiceD
     public void testUpdateFundingLeavingVisibilityNullTest() {
         Funding funding = funding(6L, null, clientSource(CLIENT_1));
         Funding updated = funding(6L, Visibility.PUBLIC, clientSource(CLIENT_1));
-        when(profileFundingManager.updateFunding(eq(OTHER_ORCID), any(Funding.class), anyBoolean())).thenReturn(updated);
+        when(profileFundingManager.updateFunding(eq(OTHER_ORCID), any(Funding.class), anyBoolean(), anyList())).thenReturn(updated);
 
         Response response = serviceDelegator.updateFunding(OTHER_ORCID, 6L, funding);
 
@@ -326,7 +326,7 @@ public class MemberV2ApiServiceDelegator_FundingTest extends MemberV2ApiServiceD
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
         assertEquals(Visibility.PUBLIC, ((Funding) response.getEntity()).getVisibility());
         ArgumentCaptor<Funding> submitted = ArgumentCaptor.forClass(Funding.class);
-        verify(profileFundingManager).updateFunding(eq(OTHER_ORCID), submitted.capture(), eq(true));
+        verify(profileFundingManager).updateFunding(eq(OTHER_ORCID), submitted.capture(), eq(true), anyList());
         assertNull("keeping the stored visibility is the manager's job, not the delegator's", submitted.getValue().getVisibility());
     }
 

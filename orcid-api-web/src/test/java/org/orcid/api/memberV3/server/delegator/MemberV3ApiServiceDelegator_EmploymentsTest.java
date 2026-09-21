@@ -394,7 +394,7 @@ public class MemberV3ApiServiceDelegator_EmploymentsTest extends MemberV3ApiServ
         Employment toCreate = (Employment) Utils.getAffiliation(AffiliationType.EMPLOYMENT);
         toCreate.setSource(clientSource(CLIENT_2));
         Employment created = employment(9999L, Visibility.PUBLIC, "My department name", clientSource(CLIENT_1));
-        when(affiliationsManager.createEmploymentAffiliation(eq(ORCID), any(Employment.class), eq(true))).thenReturn(created);
+        when(affiliationsManager.createEmploymentAffiliation(eq(ORCID), any(Employment.class), eq(true), anyList())).thenReturn(created);
 
         Response response = serviceDelegator.createEmployment(ORCID, toCreate);
         assertNotNull(response);
@@ -406,7 +406,7 @@ public class MemberV3ApiServiceDelegator_EmploymentsTest extends MemberV3ApiServ
 
         // A client supplied source must never reach the manager.
         ArgumentCaptor<Employment> captor = ArgumentCaptor.forClass(Employment.class);
-        verify(affiliationsManager).createEmploymentAffiliation(eq(ORCID), captor.capture(), eq(true));
+        verify(affiliationsManager).createEmploymentAffiliation(eq(ORCID), captor.capture(), eq(true), anyList());
         assertNull(captor.getValue().getSource());
 
         // Remove new element
@@ -419,7 +419,7 @@ public class MemberV3ApiServiceDelegator_EmploymentsTest extends MemberV3ApiServ
         Employment element = (Employment) Utils.getAffiliation(AffiliationType.EMPLOYMENT);
         element.setExternalIDs(duplicateExternalIDs());
         doThrow(new OrcidDuplicatedActivityException(new HashMap<String, String>()))
-                .when(affiliationsManager).createEmploymentAffiliation(eq(ORCID), any(Employment.class), eq(true));
+                .when(affiliationsManager).createEmploymentAffiliation(eq(ORCID), any(Employment.class), eq(true), anyList());
 
         serviceDelegator.createEmployment(ORCID, element);
     }
@@ -446,7 +446,7 @@ public class MemberV3ApiServiceDelegator_EmploymentsTest extends MemberV3ApiServ
         disambiguatedOrg.setDisambiguationSource("WDB");
         element.getOrganization().setDisambiguatedOrganization(disambiguatedOrg);
 
-        when(affiliationsManager.updateEmploymentAffiliation(eq(ORCID), any(Employment.class), eq(true))).thenReturn(element);
+        when(affiliationsManager.updateEmploymentAffiliation(eq(ORCID), any(Employment.class), eq(true), anyList())).thenReturn(element);
 
         response = serviceDelegator.updateEmployment(ORCID, 17L, element);
         assertNotNull(response);
@@ -457,7 +457,7 @@ public class MemberV3ApiServiceDelegator_EmploymentsTest extends MemberV3ApiServ
 
         verify(orcidSecurityManager).checkClientAccessAndScopes(ORCID, ScopePathType.AFFILIATIONS_UPDATE);
         ArgumentCaptor<Employment> captor = ArgumentCaptor.forClass(Employment.class);
-        verify(affiliationsManager).updateEmploymentAffiliation(eq(ORCID), captor.capture(), eq(true));
+        verify(affiliationsManager).updateEmploymentAffiliation(eq(ORCID), captor.capture(), eq(true), anyList());
         assertNull(captor.getValue().getSource());
     }
 
@@ -466,7 +466,7 @@ public class MemberV3ApiServiceDelegator_EmploymentsTest extends MemberV3ApiServ
         Employment stored = employment(17L, Visibility.PUBLIC, "PUBLIC Department", clientSource(CLIENT_1));
         when(affiliationsManagerReadOnly.getEmploymentAffiliation(ORCID, 17L)).thenReturn(stored);
         doThrow(new OrcidDuplicatedActivityException(new HashMap<String, String>()))
-                .when(affiliationsManager).updateEmploymentAffiliation(eq(ORCID), any(Employment.class), eq(true));
+                .when(affiliationsManager).updateEmploymentAffiliation(eq(ORCID), any(Employment.class), eq(true), anyList());
 
         Response response = serviceDelegator.viewEmployment(ORCID, 17L);
         Employment element = (Employment) response.getEntity();
@@ -482,7 +482,7 @@ public class MemberV3ApiServiceDelegator_EmploymentsTest extends MemberV3ApiServ
         Employment stored = employment(23L, Visibility.LIMITED, "SELF LIMITED Department", userSource(ORCID));
         when(affiliationsManagerReadOnly.getEmploymentAffiliation(ORCID, 23L)).thenReturn(stored);
         doThrow(new WrongSourceException(new HashMap<String, String>()))
-                .when(affiliationsManager).updateEmploymentAffiliation(eq(ORCID), any(Employment.class), eq(true));
+                .when(affiliationsManager).updateEmploymentAffiliation(eq(ORCID), any(Employment.class), eq(true), anyList());
 
         Response response = serviceDelegator.viewEmployment(ORCID, 23L);
         assertNotNull(response);
@@ -499,7 +499,7 @@ public class MemberV3ApiServiceDelegator_EmploymentsTest extends MemberV3ApiServ
         Employment stored = employment(17L, Visibility.PUBLIC, "PUBLIC Department", clientSource(CLIENT_1));
         when(affiliationsManagerReadOnly.getEmploymentAffiliation(ORCID, 17L)).thenReturn(stored);
         doThrow(new VisibilityMismatchException())
-                .when(affiliationsManager).updateEmploymentAffiliation(eq(ORCID), any(Employment.class), eq(true));
+                .when(affiliationsManager).updateEmploymentAffiliation(eq(ORCID), any(Employment.class), eq(true), anyList());
 
         Response response = serviceDelegator.viewEmployment(ORCID, 17L);
         assertNotNull(response);
@@ -520,7 +520,7 @@ public class MemberV3ApiServiceDelegator_EmploymentsTest extends MemberV3ApiServ
         // The manager restores the stored visibility when the request leaves it
         // null; that rule is proved in orcid-core, here we only check the
         // delegator returns what the manager produced.
-        when(affiliationsManager.updateEmploymentAffiliation(eq(ORCID), any(Employment.class), eq(true)))
+        when(affiliationsManager.updateEmploymentAffiliation(eq(ORCID), any(Employment.class), eq(true), anyList()))
                 .thenReturn(employment(17L, Visibility.PUBLIC, "PUBLIC Department", clientSource(CLIENT_1)));
 
         Response response = serviceDelegator.viewEmployment(ORCID, 17L);
@@ -540,7 +540,7 @@ public class MemberV3ApiServiceDelegator_EmploymentsTest extends MemberV3ApiServ
         // Catches a delegator that sets a visibility on the element before handing it to
         // the manager: what is submitted must still carry the null the request arrived with.
         ArgumentCaptor<Employment> submitted = ArgumentCaptor.forClass(Employment.class);
-        verify(affiliationsManager).updateEmploymentAffiliation(eq(ORCID), submitted.capture(), eq(true));
+        verify(affiliationsManager).updateEmploymentAffiliation(eq(ORCID), submitted.capture(), eq(true), anyList());
         assertNull("keeping the stored visibility is the manager's job, not the delegator's", submitted.getValue().getVisibility());
     }
 

@@ -191,7 +191,7 @@ public class MemberV3ApiServiceDelegator_FundingTest extends MemberV3ApiServiceD
         // pass the corrected funding on.
         Funding created = funding(1000L, "Public Funding # 2", Visibility.PUBLIC, clientSource(CLIENT_1));
         doThrow(new ActivityIdentifierValidationException()).doReturn(created).when(profileFundingManager).createFunding(eq(USER_4499), any(Funding.class),
-                eq(true));
+                eq(true), anyList());
 
         try {
             serviceDelegator.createFunding(USER_4499, funding);
@@ -433,7 +433,7 @@ public class MemberV3ApiServiceDelegator_FundingTest extends MemberV3ApiServiceD
         when(activitiesSummaryManagerReadOnly.getActivitiesSummary(eq(USER_4447), eq(false)))
                 .thenReturn(activitiesWithFundings(fundings(group("1", existing))))
                 .thenReturn(activitiesWithFundings(fundings(group("1", existing), group("2", added))));
-        when(profileFundingManager.createFunding(eq(USER_4447), any(Funding.class), eq(true)))
+        when(profileFundingManager.createFunding(eq(USER_4447), any(Funding.class), eq(true), anyList()))
                 .thenReturn(funding(1000L, "Public Funding # 2", Visibility.PUBLIC, clientSource(CLIENT_1)));
 
         Response response = serviceDelegator.viewActivities(USER_4447);
@@ -457,7 +457,7 @@ public class MemberV3ApiServiceDelegator_FundingTest extends MemberV3ApiServiceD
         verify(orcidSecurityManager).checkClientAccessAndScopes(USER_4447, ScopePathType.FUNDING_CREATE, ScopePathType.FUNDING_UPDATE);
         // A client supplied source must never reach the manager.
         ArgumentCaptor<Funding> captor = ArgumentCaptor.forClass(Funding.class);
-        verify(profileFundingManager).createFunding(eq(USER_4447), captor.capture(), eq(true));
+        verify(profileFundingManager).createFunding(eq(USER_4447), captor.capture(), eq(true), anyList());
         assertNull(captor.getValue().getSource());
 
         response = serviceDelegator.viewActivities(USER_4447);
@@ -499,7 +499,7 @@ public class MemberV3ApiServiceDelegator_FundingTest extends MemberV3ApiServiceD
         Funding rolledBack = funding(6L, "Public Funding # 1", Visibility.PUBLIC, clientSource(CLIENT_1));
         rolledBack.setDescription("This is the description for funding with id 6");
         when(profileFundingManagerReadOnly.getFunding(USER_4447, 6L)).thenReturn(stored).thenReturn(updated);
-        when(profileFundingManager.updateFunding(eq(USER_4447), any(Funding.class), eq(true))).thenReturn(updated).thenReturn(rolledBack);
+        when(profileFundingManager.updateFunding(eq(USER_4447), any(Funding.class), eq(true), anyList())).thenReturn(updated).thenReturn(rolledBack);
 
         Response response = serviceDelegator.viewFunding(USER_4447, 6L);
         assertNotNull(response);
@@ -537,7 +537,7 @@ public class MemberV3ApiServiceDelegator_FundingTest extends MemberV3ApiServiceD
     public void testUpdateFundingYouAreNotTheSourceOf() {
         when(profileFundingManagerReadOnly.getFunding(USER_4446, 5L)).thenReturn(funding(5L, "Public Funding", Visibility.PUBLIC, clientSource(CLIENT_2)));
         doThrow(new WrongSourceException(new HashMap<String, String>()))
-                .when(profileFundingManager).updateFunding(eq(USER_4446), any(Funding.class), eq(true));
+                .when(profileFundingManager).updateFunding(eq(USER_4446), any(Funding.class), eq(true), anyList());
 
         Response response = serviceDelegator.viewFunding(USER_4446, 5L);
         assertNotNull(response);
@@ -553,7 +553,7 @@ public class MemberV3ApiServiceDelegator_FundingTest extends MemberV3ApiServiceD
     @Test(expected = VisibilityMismatchException.class)
     public void testUpdateFundingChangingVisibilityTest() {
         when(profileFundingManagerReadOnly.getFunding(USER_4447, 6L)).thenReturn(funding(6L, "Public Funding # 1", Visibility.PUBLIC, clientSource(CLIENT_1)));
-        doThrow(new VisibilityMismatchException()).when(profileFundingManager).updateFunding(eq(USER_4447), any(Funding.class), eq(true));
+        doThrow(new VisibilityMismatchException()).when(profileFundingManager).updateFunding(eq(USER_4447), any(Funding.class), eq(true), anyList());
 
         Response response = serviceDelegator.viewFunding(USER_4447, 6L);
         assertNotNull(response);
@@ -572,7 +572,7 @@ public class MemberV3ApiServiceDelegator_FundingTest extends MemberV3ApiServiceD
         when(profileFundingManagerReadOnly.getFunding(USER_4447, 6L)).thenReturn(funding(6L, "Public Funding # 1", Visibility.PUBLIC, clientSource(CLIENT_1)));
         // Restoring the stored visibility is the manager's job and is proved
         // there; here the delegator must simply return what it produced.
-        when(profileFundingManager.updateFunding(eq(USER_4447), any(Funding.class), eq(true)))
+        when(profileFundingManager.updateFunding(eq(USER_4447), any(Funding.class), eq(true), anyList()))
                 .thenReturn(funding(6L, "Public Funding # 1", Visibility.PUBLIC, clientSource(CLIENT_1)));
 
         Response response = serviceDelegator.viewFunding(USER_4447, 6L);
@@ -591,7 +591,7 @@ public class MemberV3ApiServiceDelegator_FundingTest extends MemberV3ApiServiceD
         // Catches a delegator that sets a visibility on the element before handing it to
         // the manager: what is submitted must still carry the null the request arrived with.
         ArgumentCaptor<Funding> submitted = ArgumentCaptor.forClass(Funding.class);
-        verify(profileFundingManager).updateFunding(eq(USER_4447), submitted.capture(), eq(true));
+        verify(profileFundingManager).updateFunding(eq(USER_4447), submitted.capture(), eq(true), anyList());
         assertNull("keeping the stored visibility is the manager's job, not the delegator's", submitted.getValue().getVisibility());
     }
 

@@ -18,6 +18,7 @@ import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.ClientDetailsEntityCacheManager;
 import org.orcid.core.manager.EncryptionManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
+import org.orcid.core.manager.RecoveryPhoneManager;
 import org.orcid.core.manager.impl.OrcidUrlManager;
 import org.orcid.core.manager.v3.*;
 import org.orcid.core.manager.v3.read_only.RecordNameManagerReadOnly;
@@ -129,6 +130,9 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
     
     @Resource
     protected BackupCodeDao backupCodeDao;
+
+    @Resource
+    private RecoveryPhoneManager recoveryPhoneManager;
     
     @Resource
     private ProfileLastModifiedDao profileLastModifiedDao;
@@ -215,7 +219,6 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
     }
 
     @Override
-    @Transactional
     public boolean enableDeveloperTools(String orcid) {
         return transactionTemplate.execute(new TransactionCallback<Boolean>() {
             @Override
@@ -233,7 +236,6 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
      * @return true if the developer tools where disabeled on that profile
      */
     @Override
-    @Transactional
     public boolean disableDeveloperTools(String orcid) {
         return transactionTemplate.execute(new TransactionCallback<Boolean>() {
             @Override
@@ -291,7 +293,6 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
     }
 
     @Override
-    @Transactional
     public boolean reviewProfile(String orcid) {
         return transactionTemplate.execute(new TransactionCallback<Boolean>() {
             @Override
@@ -302,7 +303,6 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
     }
 
     @Override
-    @Transactional
     public boolean unreviewProfile(String orcid) {
         return transactionTemplate.execute(new TransactionCallback<Boolean>() {
             @Override
@@ -402,7 +402,6 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
         }
         // Update profile entity in the DB
         profileDao.merge(profile);
-        profileDao.flush();
         
         // Update the visibility for every bio element to the visibility
         // selected by the user
@@ -449,7 +448,6 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
     }
 
     @Override
-    @Transactional
     public void updateLocale(String orcid, AvailableLocales locale) {
         transactionTemplate.execute(new TransactionCallback<Boolean>() {
             @Override
@@ -529,14 +527,12 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
     }
 
     @Override
-    @Transactional
     public void updatePassword(String orcid, String password) {
         transactionTemplate.execute(new TransactionCallback<Boolean>() {
             @Override
             public Boolean doInTransaction(TransactionStatus status) {
                 String encryptedPassword = encryptionManager.hashForInternalUse(password);
                 profileDao.changeEncryptedPassword(orcid, encryptedPassword);
-                profileHistoryEventManager.recordEvent(ProfileHistoryEventType.RESET_PASSWORD, orcid);
                 return true;
             }
         });
@@ -548,7 +544,6 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
     }
 
     @Override
-    @Transactional
     public void updateLastLoginDetails(String orcid, String ipAddress) {
         transactionTemplate.execute(new TransactionCallback<Boolean>() {
             @Override
@@ -572,7 +567,6 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
      * @return true if the account was locked
      */
     @Override
-    @Transactional
     public boolean lockProfile(String orcid, String lockReason, String description, String adminUser) {
         return transactionTemplate.execute(new TransactionCallback<Boolean>() {
             @Override
@@ -590,7 +584,6 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
      * @return true if the account was unlocked
      */
     @Override
-    @Transactional
     public boolean unlockProfile(String orcid) {
         return transactionTemplate.execute(new TransactionCallback<Boolean>() {
             @Override
@@ -606,7 +599,6 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
     }
 
     @Override
-    @Transactional
     public void startSigninLock(String orcid) {
         transactionTemplate.execute(new TransactionCallback<Boolean>() {
             @Override
@@ -618,7 +610,6 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
     }
     
     @Override
-    @Transactional
     public void resetSigninLock(String orcid) {
         transactionTemplate.execute(new TransactionCallback<Boolean>() {
             @Override
@@ -630,7 +621,6 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
     }
     
     @Override
-    @Transactional
     public void updateSigninLock(String orcid, Integer count) {
         transactionTemplate.execute(new TransactionCallback<Boolean>() {
             @Override
@@ -646,7 +636,6 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
     }
 
     @Override
-    @Transactional
     public boolean updateDeprecation(String deprecated, String primary) {
         return transactionTemplate.execute(new TransactionCallback<Boolean>() {
             @Override
@@ -693,6 +682,10 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
         // Admin disabling 2FA, so, we should not notify the user
         profileDao.disable2FA(orcid);
         backupCodeDao.removedUsedBackupCodes(orcid);
+        // The recovery phone number is 2FA backup state too, and it is personal data that must
+        // not outlive the record: clearing 2FA at the DAO leaves the encrypted number behind,
+        // so it goes the same way it does when 2FA is turned off through the manager.
+        recoveryPhoneManager.removeRecoveryPhone(orcid);
 
         // delete notifications
         notificationManager.deleteNotificationsForRecord(orcid);

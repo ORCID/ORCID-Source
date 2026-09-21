@@ -16,7 +16,6 @@ import org.orcid.persistence.dao.EmailFrequencyDao;
 import org.orcid.persistence.jpa.entities.EmailFrequencyEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.transaction.annotation.Transactional;
 
 public class EmailFrequencyManagerImpl implements EmailFrequencyManager {
 
@@ -175,7 +174,6 @@ public class EmailFrequencyManagerImpl implements EmailFrequencyManager {
     }
     
     @Override
-    @Transactional
     public boolean update(String orcid, SendEmailFrequency sendChangeNotifications, SendEmailFrequency sendAdministrativeChangeNotifications,
             SendEmailFrequency sendMemberUpdateRequests, Boolean sendQuarterlyTips) {
         EmailFrequencyEntity entity = emailFrequencyDao.findByOrcid(orcid);
@@ -188,7 +186,6 @@ public class EmailFrequencyManagerImpl implements EmailFrequencyManager {
     }
     
     @Override
-    @Transactional
     public boolean updateById(String id, SendEmailFrequency sendChangeNotifications, SendEmailFrequency sendAdministrativeChangeNotifications,
             SendEmailFrequency sendMemberUpdateRequests, Boolean sendQuarterlyTips) {
         EmailFrequencyEntity entity = emailFrequencyDao.find(id);

@@ -178,7 +178,7 @@ public class MemberV3ApiServiceDelegator_WorksTest extends MemberV3ApiServiceDel
         for (int i = 1; i < 5; i++) {
             stored.getBulk().add(work(i, "title " + i, WorkType.BOOK, Visibility.PUBLIC, clientSource(CLIENT_1)));
         }
-        when(workManager.createWorks(eq(ORCID), any(WorkBulk.class))).thenReturn(stored);
+        when(workManager.createWorks(eq(ORCID), any(WorkBulk.class), anyList())).thenReturn(stored);
 
         Response response = serviceDelegator.createWorks(ORCID, bulk);
         assertNotNull(response);
@@ -513,7 +513,7 @@ public class MemberV3ApiServiceDelegator_WorksTest extends MemberV3ApiServiceDel
         WorkSummary added = summary(1000L, title, Visibility.PUBLIC, clientSource(CLIENT_1));
         when(activitiesSummaryManagerReadOnly.getActivitiesSummary(eq(USER_4445), eq(false))).thenReturn(activitiesWithWorks(works(group("1", existing))))
                 .thenReturn(activitiesWithWorks(works(group("1", existing), group("2", added))));
-        when(workManager.createWork(eq(USER_4445), any(Work.class), eq(true)))
+        when(workManager.createWork(eq(USER_4445), any(Work.class), eq(true), anyList()))
                 .thenReturn(work(1000L, title, WorkType.BOOK, Visibility.PUBLIC, clientSource(CLIENT_1)));
 
         Response response = serviceDelegator.viewActivities(USER_4445);
@@ -582,7 +582,7 @@ public class MemberV3ApiServiceDelegator_WorksTest extends MemberV3ApiServiceDel
             when(workManagerReadOnly.getWork(ORCID, (long) (i + 1))).thenReturn(w);
         }
         stored.setBulk(elements);
-        when(workManager.createWorks(eq(ORCID), any(WorkBulk.class))).thenReturn(stored);
+        when(workManager.createWorks(eq(ORCID), any(WorkBulk.class), anyList())).thenReturn(stored);
 
         Response response = serviceDelegator.createWorks(ORCID, bulk);
         assertNotNull(response);
@@ -593,7 +593,7 @@ public class MemberV3ApiServiceDelegator_WorksTest extends MemberV3ApiServiceDel
 
         // A client supplied source must never reach the manager, on any element.
         ArgumentCaptor<WorkBulk> captor = ArgumentCaptor.forClass(WorkBulk.class);
-        verify(workManager).createWorks(eq(ORCID), captor.capture());
+        verify(workManager).createWorks(eq(ORCID), captor.capture(), anyList());
         for (BulkElement element : captor.getValue().getBulk()) {
             assertNull(((Work) element).getSource());
         }
@@ -637,7 +637,7 @@ public class MemberV3ApiServiceDelegator_WorksTest extends MemberV3ApiServiceDel
         Work updated = work(1L, "Updated work title", WorkType.EDITED_BOOK, Visibility.PUBLIC, clientSource(CLIENT_1));
         Work rolledBack = work(1L, "A day in the life", WorkType.BOOK, Visibility.PUBLIC, clientSource(CLIENT_1));
         when(workManagerReadOnly.getWork(USER_4443, 1L)).thenReturn(stored).thenReturn(updated);
-        when(workManager.updateWork(eq(USER_4443), any(Work.class), eq(true))).thenReturn(updated).thenReturn(rolledBack);
+        when(workManager.updateWork(eq(USER_4443), any(Work.class), eq(true), anyList())).thenReturn(updated).thenReturn(rolledBack);
 
         Response response = serviceDelegator.viewWork(USER_4443, 1L);
         assertNotNull(response);
@@ -681,7 +681,7 @@ public class MemberV3ApiServiceDelegator_WorksTest extends MemberV3ApiServiceDel
     public void testUpdateWorkYouAreNotTheSourceOf() {
         when(workManagerReadOnly.getWork(USER_4443, 2L))
                 .thenReturn(work(2L, "Another day in the life", WorkType.BOOK, Visibility.PUBLIC, clientSource(CLIENT_2)));
-        doThrow(new WrongSourceException(new HashMap<String, String>())).when(workManager).updateWork(eq(USER_4443), any(Work.class), eq(true));
+        doThrow(new WrongSourceException(new HashMap<String, String>())).when(workManager).updateWork(eq(USER_4443), any(Work.class), eq(true), anyList());
 
         Response response = serviceDelegator.viewWork(USER_4443, 2L);
         assertNotNull(response);
@@ -703,7 +703,7 @@ public class MemberV3ApiServiceDelegator_WorksTest extends MemberV3ApiServiceDel
     @Test(expected = VisibilityMismatchException.class)
     public void testUpdateWorkChangingVisibilityTest() {
         when(workManagerReadOnly.getWork(USER_4445, 3L)).thenReturn(work(3L, "LIMITED", WorkType.BOOK, Visibility.LIMITED, clientSource(CLIENT_1)));
-        doThrow(new VisibilityMismatchException()).when(workManager).updateWork(eq(USER_4445), any(Work.class), eq(true));
+        doThrow(new VisibilityMismatchException()).when(workManager).updateWork(eq(USER_4445), any(Work.class), eq(true), anyList());
 
         Response response = serviceDelegator.viewWork(USER_4445, 3L);
         assertNotNull(response);
@@ -722,7 +722,7 @@ public class MemberV3ApiServiceDelegator_WorksTest extends MemberV3ApiServiceDel
         when(workManagerReadOnly.getWork(USER_4447, 10L)).thenReturn(work(10L, "PUBLIC", WorkType.BOOK, Visibility.PUBLIC, clientSource(CLIENT_1)));
         // Restoring the stored visibility is the manager's job and is proved
         // there; here the delegator must simply return what it produced.
-        when(workManager.updateWork(eq(USER_4447), any(Work.class), eq(true)))
+        when(workManager.updateWork(eq(USER_4447), any(Work.class), eq(true), anyList()))
                 .thenReturn(work(10L, "PUBLIC", WorkType.BOOK, Visibility.PUBLIC, clientSource(CLIENT_1)));
 
         Response response = serviceDelegator.viewWork(USER_4447, 10L);
@@ -743,7 +743,7 @@ public class MemberV3ApiServiceDelegator_WorksTest extends MemberV3ApiServiceDel
         // Catches a delegator that sets a visibility on the element before handing it to
         // the manager: what is submitted must still carry the null the request arrived with.
         ArgumentCaptor<Work> submitted = ArgumentCaptor.forClass(Work.class);
-        verify(workManager).updateWork(eq(USER_4447), submitted.capture(), eq(true));
+        verify(workManager).updateWork(eq(USER_4447), submitted.capture(), eq(true), anyList());
         assertNull("keeping the stored visibility is the manager's job, not the delegator's", submitted.getValue().getVisibility());
     }
 
@@ -770,7 +770,7 @@ public class MemberV3ApiServiceDelegator_WorksTest extends MemberV3ApiServiceDel
         // inside the manager and proved by ExternalIDValidatorTest; the
         // delegator's contract is to let the exception through untouched.
         doThrow(new ActivityIdentifierValidationException()).doReturn(work(1000L, "work # 1", WorkType.BOOK, Visibility.PUBLIC, clientSource(CLIENT_1)))
-                .when(workManager).createWork(eq(USER_4499), any(Work.class), eq(true));
+                .when(workManager).createWork(eq(USER_4499), any(Work.class), eq(true), anyList());
 
         try {
             work.getExternalIdentifiers().getExternalIdentifier().get(0).setType("INVALID");

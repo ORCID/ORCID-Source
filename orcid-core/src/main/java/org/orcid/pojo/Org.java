@@ -67,9 +67,13 @@ public class Org {
     public static Org valueOf(Organization organization) {
         Org org = new Org();
         org.setName(organization.getName());
-        org.setCity(organization.getAddress().getCity());
-        org.setRegion(organization.getAddress().getRegion());
-        org.setCountry(organization.getAddress().getCountry().name());
+        if(organization.getAddress() != null) {
+            org.setCity(organization.getAddress().getCity());
+            org.setRegion(organization.getAddress().getRegion());
+            if(organization.getAddress().getCountry() != null) {
+                org.setCountry(organization.getAddress().getCountry().name());
+            }
+        }
 
         if (organization.getDisambiguatedOrganization() != null) {
             org.setDisambiguationSource(organization.getDisambiguatedOrganization().getDisambiguationSource());

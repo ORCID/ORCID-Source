@@ -58,8 +58,8 @@ public class JpaJaxbPeerReviewAdapterTest {
     }
 
     @Test
-    public void fromPeerReviewToPeerReviewEntity() throws JAXBException {
-        PeerReview e = getPeerReview(true);
+    public void fromPeerReviewToPeerReviewEntityTest() throws JAXBException {
+        PeerReview e = getPeerReview(true);        
         assertNotNull(e);
 
         PeerReviewEntity pe = jpaJaxbPeerReviewAdapter.toPeerReviewEntity(e);
@@ -103,7 +103,6 @@ public class JpaJaxbPeerReviewAdapterTest {
         assertEquals(
                 "{\"workExternalIdentifier\":[{\"relationship\":\"SELF\",\"url\":{\"value\":\"https://localsystem.org/1234\"},\"workExternalIdentifierType\":\"SOURCE_WORK_ID\",\"workExternalIdentifierId\":{\"content\":\"1234\"}}]}",
                 pe.getExternalIdentifiersJson());
-
     }
 
     @Test
@@ -262,6 +261,20 @@ public class JpaJaxbPeerReviewAdapterTest {
 
         // no user obo
         assertNull(peerReview.getSource().getAssertionOriginOrcid());
+    }
+
+    @Test
+    public void fromPeerReviewEntityToPeerReviewDoesNotCreateEmptyOptionalSubjectFields() throws IllegalAccessException {
+        PeerReviewEntity entity = getPeerReviewEntity();
+        entity.setSubjectContainerName(null);
+        entity.setSubjectName(null);
+        entity.setSubjectTranslatedName(null);
+        entity.setSubjectTranslatedNameLanguageCode(null);
+
+        PeerReview peerReview = jpaJaxbPeerReviewAdapter.toPeerReview(entity);
+
+        assertNull(peerReview.getSubjectContainerName());
+        assertNull(peerReview.getSubjectName());
     }
 
     @Test

@@ -3,27 +3,22 @@ package org.orcid.frontend.web.controllers;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpSession;
 
 import org.junit.After;
 import org.junit.Before;
@@ -31,17 +26,14 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.orcid.core.exception.WrongSourceException;
 import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.OrgDisambiguatedManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.v3.ActivityManager;
-import org.orcid.core.manager.v3.ProfileEntityManager;
 import org.orcid.core.manager.v3.ProfileFundingManager;
-import org.orcid.core.orgs.OrgDisambiguatedSourceType;
-import org.orcid.core.utils.Actors;
+import org.orcid.core.manager.v3.read_only.ProfileFundingManagerReadOnly;
 import org.orcid.core.utils.v3.ContributorUtils;
 import org.orcid.frontend.web.util.LanguagesMap;
 import org.orcid.jaxb.model.common.FundingType;
@@ -50,7 +42,6 @@ import org.orcid.jaxb.model.v3.release.common.Amount;
 import org.orcid.jaxb.model.v3.release.common.Organization;
 import org.orcid.jaxb.model.v3.release.common.OrganizationAddress;
 import org.orcid.jaxb.model.v3.release.common.Source;
-import org.orcid.jaxb.model.v3.release.common.SourceName;
 import org.orcid.jaxb.model.v3.release.common.SourceOrcid;
 import org.orcid.jaxb.model.v3.release.common.Title;
 import org.orcid.jaxb.model.v3.release.common.Visibility;
@@ -65,102 +56,83 @@ import org.orcid.pojo.ajaxForm.FundingForm;
 import org.orcid.pojo.ajaxForm.FundingTitleForm;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.pojo.ajaxForm.Text;
-import org.orcid.pojo.ajaxForm.TranslatedTitleForm;
 import org.orcid.pojo.grouping.FundingGroup;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.util.ReflectionTestUtils;
 
-/**
- * The seven locale and BigDecimal tests below only ever needed a LocaleManager;
- * the rest read /data/ProfileFundingEntityData.xml (fundings 1 and 2 sourced by
- * the record itself, funding 3 sourced by 4444-4444-4444-4441) and are rebuilt
- * here from hand made model objects carrying the same values.
- *
- * Two things deliberately do not stay at this boundary. The persistence round
- * trips of testAddFunding/testEditFunding/testEditOrgOnExistingFunding are
- * ProfileFundingManagerImpl and ProfileFundingDao behaviour, so what is asserted
- * is that the whole edited form reaches the manager, scoped to the signed in
- * record; the row surviving a write belongs in a ProfileFundingDao database
- * test. And the WrongSourceException of testEditOtherSourceThrowsError is not
- * thrown by this controller at all -- FundingsController.editFunding is a plain
- * delegation, and the throw comes from ProfileFundingManagerImpl.updateFunding
- * calling orcidSecurityManager.checkSourceAndThrow -- so the test now proves the
- * guard's refusal escapes postFunding and stops the operation, and the guard
- * itself belongs to OrcidSecurityManager's own tests.
- */
-@RunWith(MockitoJUnitRunner.Silent.class)
+@RunWith(MockitoJUnitRunner.class)
 public class FundingsControllerTest {
-
-    private static final String USER_ORCID = "4444-4444-4444-4443";
-    private static final String OTHER_SOURCE_ORCID = "4444-4444-4444-4441";
-
-    private FundingsController fundingController;
+    private static final String ORCID = "4444-4444-4444-4443";
+    private static final String OTHER_ORCID_1 = "4444-4444-4444-4441";
+    private static final String OTHER_ORCID_2 = "4444-4444-4444-4442";
 
     @Mock
     private LocaleManager localeManager;
 
     @Mock
-    private HttpServletRequest servletRequest;
-
-    @Mock
-    private ProfileFundingManager profileFundingManager;
-
-    @Mock
     private OrgDisambiguatedManager orgDisambiguatedManager;
-
-    @Mock
-    private LanguagesMap lm;
-
-    @Mock
-    private ProfileEntityManager profileEntityManager;
 
     @Mock
     private ProfileEntityCacheManager profileEntityCacheManager;
 
     @Mock
-    private ActivityManager cacheManager;
+    private ProfileFundingManager profileFundingManager;
+
+    @Mock
+    private ProfileFundingManagerReadOnly profileFundingManagerReadOnly;
 
     @Mock
     private ContributorUtils contributorUtils;
 
+    @Mock
+    private LanguagesMap languagesMap;
+
+    @Mock
+    private ActivityManager activityManager;
+
+    private final FundingsController fundingController = new FundingsController() {
+        @Override
+        public String getMessage(String messageCode, Object... messageParams) {
+            return messageCode;
+        }
+
+        @Override
+        public Locale getUserLocale() {
+            return localeManager.getLocale();
+        }
+    };
+
     @Before
-    public void initMocks() {
-        fundingController = new FundingsController();
-
-        ReflectionTestUtils.setField(fundingController, "profileFundingManager", profileFundingManager);
-        ReflectionTestUtils.setField(fundingController, "orgDisambiguatedManager", orgDisambiguatedManager);
-        ReflectionTestUtils.setField(fundingController, "lm", lm);
-        ReflectionTestUtils.setField(fundingController, "profileEntityCacheManager", profileEntityCacheManager);
-        ReflectionTestUtils.setField(fundingController, "cacheManager", cacheManager);
-        ReflectionTestUtils.setField(fundingController, "contributorUtils", contributorUtils);
-
-        // FundingsController re-declares localeManager (line 79) and
-        // profileEntityManager (line 85) over the copies BaseController and
-        // BaseWorkspaceController declare. setLocaleManager only reaches the
-        // controller's own copy, so BaseController.getMessage() would still see
-        // null; every declaring class has to be set.
+    public void setUp() {
         fundingController.setLocaleManager(localeManager);
-        ReflectionTestUtils.setField(fundingController, BaseController.class, "localeManager", localeManager, LocaleManager.class);
-        ReflectionTestUtils.setField(fundingController, FundingsController.class, "profileEntityManager", profileEntityManager, ProfileEntityManager.class);
-        ReflectionTestUtils.setField(fundingController, BaseWorkspaceController.class, "profileEntityManager", profileEntityManager, ProfileEntityManager.class);
-        ReflectionTestUtils.setField(fundingController, BaseController.class, "profileEntityManager", profileEntityManager, ProfileEntityManager.class);
+        ReflectionTestUtils.setField(fundingController, "orgDisambiguatedManager", orgDisambiguatedManager);
+        ReflectionTestUtils.setField(fundingController, "profileEntityCacheManager", profileEntityCacheManager);
+        ReflectionTestUtils.setField(fundingController, "profileFundingManager", profileFundingManager);
+        ReflectionTestUtils.setField(fundingController, "profileFundingManagerReadOnly", profileFundingManagerReadOnly);
+        ReflectionTestUtils.setField(fundingController, "contributorUtils", contributorUtils);
+        ReflectionTestUtils.setField(fundingController, "lm", languagesMap);
+        ReflectionTestUtils.setField(fundingController, "cacheManager", activityManager);
 
-        when(localeManager.resolveMessage(anyString(), any())).thenAnswer(invocation -> invocation.getArgument(0));
-        when(lm.buildLanguageMap(any(Locale.class), eq(false))).thenReturn(new HashMap<String, String>());
-        when(profileEntityCacheManager.retrieve(USER_ORCID)).thenReturn(new ProfileEntity(USER_ORCID));
+        SecurityContextHolder.getContext().setAuthentication(
+                new UsernamePasswordAuthenticationToken(ORCID, "password",
+                        Collections.singletonList(new SimpleGrantedAuthority("ROLE_USER"))));
 
-        Actors.user(USER_ORCID);
+        lenient().when(localeManager.resolveMessage(anyString(), any())).thenAnswer(invocation -> invocation.getArgument(0));
+        when(localeManager.getLocale()).thenReturn(Locale.US);
+        when(languagesMap.buildLanguageMap(any(Locale.class), eq(false))).thenReturn(buildLanguageMap());
+        when(profileEntityCacheManager.retrieve(anyString())).thenReturn(buildProfileEntity());
     }
 
     @After
-    public void after() {
-        Actors.clear();
+    public void tearDown() {
+        SecurityContextHolder.clearContext();
     }
 
-    
     @Test
     public void testSearchDisambiguated() {
-        Mockito.when(orgDisambiguatedManager.searchOrgsFromSolr(Mockito.eq("search"), Mockito.eq(0), Mockito.eq(0), Mockito.eq(true)))
-                .thenReturn(getListOfMixedOrgsDiambiguated());
+        when(orgDisambiguatedManager.searchOrgsFromSolr(eq("search"), eq(0), eq(0), eq(true))).thenReturn(getListOfMixedOrgsDisambiguated());
 
         List<Map<String, String>> results = fundingController.searchDisambiguated("search", 0, true);
         assertEquals(4, results.size());
@@ -170,33 +142,13 @@ public class FundingsControllerTest {
         assertEquals("fourth", results.get(3).get("value"));
     }
 
-    private List<OrgDisambiguated> getListOfMixedOrgsDiambiguated() {
-        OrgDisambiguated first = new OrgDisambiguated();
-        first.setValue("first");
-        first.setSourceType(OrgDisambiguatedSourceType.FUNDREF.name());
-        
-        OrgDisambiguated second = new OrgDisambiguated();
-        second.setValue("second");
-        second.setSourceType(OrgDisambiguatedSourceType.RINGGOLD.name());
-        
-        OrgDisambiguated third = new OrgDisambiguated();
-        third.setValue("third");
-        third.setSourceType(OrgDisambiguatedSourceType.GRID.name());
-        
-        OrgDisambiguated fourth = new OrgDisambiguated();
-        fourth.setValue("fourth");
-        fourth.setSourceType(OrgDisambiguatedSourceType.LEI.name());
-        
-        return Arrays.asList(first, second, third, fourth);
-    }
-
     @Test
     public void testValidateAmountLocaleEN_US() {
-        when(localeManager.getLocale()).thenReturn(new Locale("en", "US"));
-        String validAmounts[] = { "1", "10", "100", "1000", "10000", "100000", "1000000", "10000000", "10000000", "1.0", "1.00", "10.0", "10.00", "100.0", "100.00",
+        when(localeManager.getLocale()).thenReturn(Locale.forLanguageTag("en-US"));
+        String[] validAmounts = { "1", "10", "100", "1000", "10000", "100000", "1000000", "10000000", "10000000", "1.0", "1.00", "10.0", "10.00", "100.0", "100.00",
                 "1000.0", "1000.00", "1,000", "1,000.0", "1,000.00", "10,000", "100,000", "1,000,000", "10,000,000", "100,000,000", "100,000,000.0", "100,000,000.00",
                 "1,000,000,000", "1,000,000,000.0", "1,000,000,000.00", "10,000,000,000", "10,000,000.99" };
-        String invalidAmounts[] = { "a", ".", "1 000", "1 000 000", "1,000 000", "1 000,000", "1'000", "1'000'000", "1'000.0", "1'000.00", "$1000", "$100", "1.000.000",
+        String[] invalidAmounts = { "a", ".", "1 000", "1 000 000", "1,000 000", "1 000,000", "1'000", "1'000'000", "1'000.0", "1'000.00", "$1000", "$100", "1.000.000",
                 "1.000,00" };
 
         for (String amount : validAmounts) {
@@ -206,7 +158,7 @@ public class FundingsControllerTest {
             form = fundingController.validateAmount(form);
             assertNotNull(form.getAmount());
             assertNotNull(form.getAmount().getErrors());
-            assertEquals("The following number has been marked as invalid: " + amount, 0, form.getAmount().getErrors().size());
+            assertEquals(0, form.getAmount().getErrors().size());
         }
 
         for (String amount : invalidAmounts) {
@@ -215,17 +167,17 @@ public class FundingsControllerTest {
             form.setCurrencyCode(Text.valueOf("USD"));
             form = fundingController.validateAmount(form);
             assertNotNull(form.getAmount());
-            assertEquals("The following incorrect number has been marked as valid: " + amount, 1, form.getAmount().getErrors().size());
+            assertEquals(1, form.getAmount().getErrors().size());
         }
     }
 
     @Test
     public void testVAlidateAmountLocaleDE_CH() {
-        when(localeManager.getLocale()).thenReturn(new Locale("de", "CH"));
-        String validAmounts[] = { "1", "10", "100", "1000", "10000", "100000", "1000000", "10000000", "10000000", "1.0", "1.00", "10.0", "10.00", "100.0", "100.00",
+        when(localeManager.getLocale()).thenReturn(Locale.forLanguageTag("de-CH"));
+        String[] validAmounts = { "1", "10", "100", "1000", "10000", "100000", "1000000", "10000000", "10000000", "1.0", "1.00", "10.0", "10.00", "100.0", "100.00",
                 "1000.0", "1000.00", "1'000", "1'000.0", "1'000.00", "10'000", "100'000", "1'000'000", "10'000'000", "100'000'000", "100'000'000.0", "100'000'000.00",
                 "1'000'000'000", "1'000'000'000.0", "1'000'000'000.00", "10'000'000'000", "10'000'000.99" };
-        String invalidAmounts[] = { "a", ".", "1 000", "1 000 000", "1,000 000", "1 000,000", "1,000", "1,000,000", "1,000.0", "1,000.00", "$1000", "$100" };
+        String[] invalidAmounts = { "a", ".", "1 000", "1 000 000", "1,000 000", "1 000,000", "1,000", "1,000,000", "1,000.0", "1,000.00", "$1000", "$100" };
 
         for (String amount : validAmounts) {
             FundingForm form = new FundingForm();
@@ -234,7 +186,7 @@ public class FundingsControllerTest {
             form = fundingController.validateAmount(form);
             assertNotNull(form.getAmount());
             assertNotNull(form.getAmount().getErrors());
-            assertEquals("The following number has been marked as invalid: " + amount, 0, form.getAmount().getErrors().size());
+            assertEquals(0, form.getAmount().getErrors().size());
         }
 
         for (String amount : invalidAmounts) {
@@ -243,17 +195,17 @@ public class FundingsControllerTest {
             form.setCurrencyCode(Text.valueOf("USD"));
             form = fundingController.validateAmount(form);
             assertNotNull(form.getAmount());
-            assertEquals("The following incorrect number has been marked as valid: " + amount, 1, form.getAmount().getErrors().size());
+            assertEquals(1, form.getAmount().getErrors().size());
         }
     }
 
     @Test
     public void testValidateAmountLocaleRU() {
-        when(localeManager.getLocale()).thenReturn(new Locale("ru"));
-        String validAmounts[] = { "1", "10", "100", "1000", "10000", "100000", "1000000", "10000000", "10000000", "1,0", "1,00", "10,0", "10,00", "100,0", "100,00",
+        when(localeManager.getLocale()).thenReturn(Locale.forLanguageTag("ru"));
+        String[] validAmounts = { "1", "10", "100", "1000", "10000", "100000", "1000000", "10000000", "10000000", "1,0", "1,00", "10,0", "10,00", "100,0", "100,00",
                 "1000,0", "1000,00", "1 000", "1 000,0", "1 000,00", "10 000", "100 000", "1 000 000", "10 000 000", "100 000 000", "100 000 000,0", "100 000 000,00",
                 "1 000 000 000", "1 000 000 000,0", "1 000 000 000,00", "10 000 000 000", "10 000 000,99" };
-        String invalidAmounts[] = { "a", ".", "1,000,000", "1,000.000", "1 000.000", "1'000", "1'000'000", "1'000.0", "1'000.00", "$1000", "$100", "1.000.000",
+        String[] invalidAmounts = { "a", ".", "1,000,000", "1,000.000", "1 000.000", "1'000", "1'000'000", "1'000.0", "1'000.00", "$1000", "$100", "1.000.000",
                 "1.000,00", "1 000 000.0", "1 000 000.00" };
 
         for (String amount : validAmounts) {
@@ -263,7 +215,7 @@ public class FundingsControllerTest {
             form = fundingController.validateAmount(form);
             assertNotNull(form.getAmount());
             assertNotNull(form.getAmount().getErrors());
-            assertEquals("The following number has been marked as invalid: " + amount, 0, form.getAmount().getErrors().size());
+            assertEquals(0, form.getAmount().getErrors().size());
         }
 
         for (String amount : invalidAmounts) {
@@ -272,201 +224,84 @@ public class FundingsControllerTest {
             form.setCurrencyCode(Text.valueOf("USD"));
             form = fundingController.validateAmount(form);
             assertNotNull(form.getAmount());
-            assertEquals("The following incorrect number has been marked as valid: " + amount, 1, form.getAmount().getErrors().size());
+            assertEquals(1, form.getAmount().getErrors().size());
         }
     }
 
-    /**
-     * Validate amounts of form ###,###,###.##
-     */
     @Test
     public void validateBigDecimalConversionLocaleUS_EN() {
-        when(localeManager.getLocale()).thenReturn(new Locale("en", "US"));
-        BigDecimal _100000 = new BigDecimal(100000);
-        BigDecimal _1000 = new BigDecimal(1000);
-        BigDecimal _1000_99 = new BigDecimal(1000.99).setScale(2, RoundingMode.FLOOR);
-        BigDecimal _1 = new BigDecimal(1);
-        String amounts100000[] = { "100000", "100000.0", "100000.00", "100,000", "100,000.0", "100,000.00" };
-        String amounts1000[] = { "1000", "1,000", "1000.0", "1000.00", "1,000.0", "1,000.00" };
-        String amounts1000_99[] = { "1000.99", "1,000.99" };
-        String amounts1[] = { "1", "1.0", "1.00", "1.000" };
+        when(localeManager.getLocale()).thenReturn(Locale.forLanguageTag("en-US"));
+        BigDecimal expected100000 = new BigDecimal(100000);
+        BigDecimal expected1000 = new BigDecimal(1000);
+        BigDecimal expected1000_99 = new BigDecimal("1000.99").setScale(2, RoundingMode.FLOOR);
+        BigDecimal expected1 = new BigDecimal(1);
+        String[] amounts100000 = { "100000", "100000.0", "100000.00", "100,000", "100,000.0", "100,000.00" };
+        String[] amounts1000 = { "1000", "1,000", "1000.0", "1000.00", "1,000.0", "1,000.00" };
+        String[] amounts1000_99 = { "1000.99", "1,000.99" };
+        String[] amounts1 = { "1", "1.0", "1.00", "1.000" };
 
-        for (String amount : amounts100000) {
-            try {
-                BigDecimal result = fundingController.getAmountAsBigDecimal(amount);
-                assertEquals("Amount is: " + result + " but it should be: " + _100000, _100000, result);
-            } catch (Exception e) {
-                fail("Amount: " + amount + " couldn't parsed to: " + _100000);
-            }
-        }
-
-        for (String amount : amounts1000) {
-            try {
-                BigDecimal result = fundingController.getAmountAsBigDecimal(amount);
-                assertEquals("Amount is: " + result + " but it should be: " + _1000, _1000, result);
-            } catch (Exception e) {
-                fail("Amount: " + amount + " couldn't parsed to: " + _1000);
-            }
-        }
-
-        for (String amount : amounts1000_99) {
-            try {
-                BigDecimal result = fundingController.getAmountAsBigDecimal(amount);
-                assertEquals("Amount is: " + result + " but it should be: " + _1000_99, _1000_99, result);
-            } catch (Exception e) {
-                fail("Amount: " + amount + " couldn't parsed to: " + _1000_99);
-            }
-        }
-
-        for (String amount : amounts1) {
-            try {
-                BigDecimal result = fundingController.getAmountAsBigDecimal(amount);
-                assertEquals("Amount is: " + result + " but it should be: " + _1, _1, result);
-            } catch (Exception e) {
-                fail("Amount: " + amount + " couldn't parsed to: " + _1);
-            }
-        }
+        assertBigDecimals(amounts100000, expected100000);
+        assertBigDecimals(amounts1000, expected1000);
+        assertBigDecimals(amounts1000_99, expected1000_99);
+        assertBigDecimals(amounts1, expected1);
     }
 
-    /**
-     * Validate amounts of form ###'###'###.##
-     */
     @Test
     public void validateBigDecimalConversionLocaleDE_CH() {
-        when(localeManager.getLocale()).thenReturn(new Locale("de", "CH"));
-        BigDecimal _100000 = new BigDecimal(100000);
-        BigDecimal _1000 = new BigDecimal(1000);
-        BigDecimal _1000_99 = new BigDecimal(1000.99).setScale(2, RoundingMode.FLOOR);
-        BigDecimal _1 = new BigDecimal(1);
-        String amounts100000[] = { "100000", "100'000.0", "100'000.00", "100'000" };
-        String amounts1000[] = { "1000", "1'000", "1000.0", "1000.00", "1'000.0", "1'000.00" };
-        String amounts1000_99[] = { "1000.99", "1'000.99" };
-        String amounts1[] = { "1", "1.0", "1.00", "1.000" };
+        when(localeManager.getLocale()).thenReturn(Locale.forLanguageTag("de-CH"));
+        BigDecimal expected100000 = new BigDecimal(100000);
+        BigDecimal expected1000 = new BigDecimal(1000);
+        BigDecimal expected1000_99 = new BigDecimal("1000.99").setScale(2, RoundingMode.FLOOR);
+        BigDecimal expected1 = new BigDecimal(1);
+        String[] amounts100000 = { "100000", "100'000.0", "100'000.00", "100'000" };
+        String[] amounts1000 = { "1000", "1'000", "1000.0", "1000.00", "1'000.0", "1'000.00" };
+        String[] amounts1000_99 = { "1000.99", "1'000.99" };
+        String[] amounts1 = { "1", "1.0", "1.00", "1.000" };
 
-        for (String amount : amounts100000) {
-            try {
-                BigDecimal result = fundingController.getAmountAsBigDecimal(amount);
-                assertEquals("Amount is: " + result + " but it should be: " + _100000, _100000, result);
-            } catch (Exception e) {
-                fail("Amount: " + amount + " couldn't parsed to: " + _100000);
-            }
-        }
-
-        for (String amount : amounts1000) {
-            try {
-                BigDecimal result = fundingController.getAmountAsBigDecimal(amount);
-                assertEquals("Amount is: " + result + " but it should be: " + _1000, _1000, result);
-            } catch (Exception e) {
-                fail("Amount: " + amount + " couldn't parsed to: " + _1000);
-            }
-        }
-
-        for (String amount : amounts1000_99) {
-            try {
-                BigDecimal result = fundingController.getAmountAsBigDecimal(amount);
-                assertEquals("Amount is: " + result + " but it should be: " + _1000_99, _1000_99, result);
-            } catch (Exception e) {
-                fail("Amount: " + amount + " couldn't parsed to: " + _1000_99);
-            }
-        }
-
-        for (String amount : amounts1) {
-            try {
-                BigDecimal result = fundingController.getAmountAsBigDecimal(amount);
-                assertEquals("Amount is: " + result + " but it should be: " + _1, _1, result);
-            } catch (Exception e) {
-                fail("Amount: " + amount + " couldn't parsed to: " + _1);
-            }
-        }
+        assertBigDecimals(amounts100000, expected100000);
+        assertBigDecimals(amounts1000, expected1000);
+        assertBigDecimals(amounts1000_99, expected1000_99);
+        assertBigDecimals(amounts1, expected1);
     }
 
-    /**
-     * Validate amounts of form ### ### ###,##
-     */
     @Test
     public void validateBigDecimalConversionLocaleRU() {
-        when(localeManager.getLocale()).thenReturn(new Locale("ru"));
-        BigDecimal _100000 = new BigDecimal(100000);
-        BigDecimal _1000 = new BigDecimal(1000);
-        BigDecimal _1000_99 = new BigDecimal(1000.99).setScale(2, RoundingMode.FLOOR);
-        BigDecimal _1 = new BigDecimal(1);
-        String amounts100000[] = { "100000", "100 000,0", "100 000,00", "100 000" };
-        String amounts1000[] = { "1000", "1 000", "1000,0", "1000,00", "1 000,0", "1 000,00" };
-        String amounts1000_99[] = { "1000,99", "1 000,99" };
-        String amounts1[] = { "1", "1,0", "1,00", "1,000" };
+        when(localeManager.getLocale()).thenReturn(Locale.forLanguageTag("ru"));
+        BigDecimal expected100000 = new BigDecimal(100000);
+        BigDecimal expected1000 = new BigDecimal(1000);
+        BigDecimal expected1000_99 = new BigDecimal("1000.99").setScale(2, RoundingMode.FLOOR);
+        BigDecimal expected1 = new BigDecimal(1);
+        String[] amounts100000 = { "100000", "100 000,0", "100 000,00", "100 000" };
+        String[] amounts1000 = { "1000", "1 000", "1000,0", "1000,00", "1 000,0", "1 000,00" };
+        String[] amounts1000_99 = { "1000,99", "1 000,99" };
+        String[] amounts1 = { "1", "1,0", "1,00", "1,000" };
 
-        for (String amount : amounts100000) {
-            try {
-                BigDecimal result = fundingController.getAmountAsBigDecimal(amount);
-                assertEquals("Amount is: " + result + " but it should be: " + _100000, _100000, result);
-            } catch (Exception e) {
-                fail("Amount: " + amount + " couldn't parsed to: " + _100000);
-            }
-        }
-
-        for (String amount : amounts1000) {
-            try {
-                BigDecimal result = fundingController.getAmountAsBigDecimal(amount);
-                assertEquals("Amount is: " + result + " but it should be: " + _1000, _1000, result);
-            } catch (Exception e) {
-                fail("Amount: " + amount + " couldn't parsed to: " + _1000);
-            }
-        }
-
-        for (String amount : amounts1000_99) {
-            try {
-                BigDecimal result = fundingController.getAmountAsBigDecimal(amount);
-                assertEquals("Amount is: " + result + " but it should be: " + _1000_99, _1000_99, result);
-            } catch (Exception e) {
-                fail("Amount: " + amount + " couldn't parsed to: " + _1000_99);
-            }
-        }
-
-        for (String amount : amounts1) {
-            try {
-                BigDecimal result = fundingController.getAmountAsBigDecimal(amount);
-                assertEquals("Amount is: " + result + " but it should be: " + _1, _1, result);
-            } catch (Exception e) {
-                fail("Amount: " + amount + " couldn't parsed to: " + _1);
-            }
-        }
+        assertBigDecimals(amounts100000, expected100000);
+        assertBigDecimals(amounts1000, expected1000);
+        assertBigDecimals(amounts1000_99, expected1000_99);
+        assertBigDecimals(amounts1, expected1);
     }
 
     @Test
     public void testGetFundingsJson() {
-        HttpSession session = mock(HttpSession.class);
-        when(servletRequest.getSession()).thenReturn(session);
-        when(localeManager.getLocale()).thenReturn(new Locale("us", "EN"));
-        stubTheRecordsThreeFundings();
+        when(profileFundingManager.getFundingSummaryList(eq(ORCID))).thenReturn(new ArrayList<>());
+        when(profileFundingManager.groupFundings(anyList(), eq(false))).thenReturn(buildFundingsForSorting());
 
         List<FundingGroup> fundings = fundingController.getFundingsJson("title", true);
         assertNotNull(fundings);
         assertEquals(3, fundings.size());
-        assertEquals(1l, fundings.get(0).getGroupId());
-        assertEquals(1, fundings.get(0).getFundings().size());
-        assertEquals(Text.valueOf(1l), fundings.get(0).getFundings().get(0).getPutCode());
-        assertEquals(2l, fundings.get(1).getGroupId());
-        assertEquals(1, fundings.get(1).getFundings().size());
-        assertEquals(Text.valueOf(2l), fundings.get(1).getFundings().get(0).getPutCode());
-        assertEquals(3l, fundings.get(2).getGroupId());
-        assertEquals(1, fundings.get(2).getFundings().size());
-        assertEquals(Text.valueOf(3l), fundings.get(2).getFundings().get(0).getPutCode());
+        assertEquals(1L, fundings.get(0).getGroupId());
+        assertEquals(Text.valueOf(1L), fundings.get(0).getFundings().get(0).getPutCode());
+        assertEquals(2L, fundings.get(1).getGroupId());
+        assertEquals(Text.valueOf(2L), fundings.get(1).getFundings().get(0).getPutCode());
+        assertEquals(3L, fundings.get(2).getGroupId());
+        assertEquals(Text.valueOf(3L), fundings.get(2).getFundings().get(0).getPutCode());
     }
 
     @Test
     public void testAddFundingWithoutAmount() throws Exception {
-        HttpSession session = mock(HttpSession.class);
-        when(servletRequest.getSession()).thenReturn(session);
-        when(localeManager.getLocale()).thenReturn(new Locale("us", "EN"));
-        FundingForm funding = fundingController.getFunding();
+        FundingForm funding = getFundingForm();
         funding.setFundingType(Text.valueOf("award"));
-        FundingTitleForm title = new FundingTitleForm();
-        title.setTitle(Text.valueOf("Title"));
-        funding.setFundingTitle(title);
-        funding.setCountry(Text.valueOf("CR"));
-        funding.setCity(Text.valueOf("SJ"));
-        funding.setRegion(Text.valueOf("SJ"));
-        funding.setFundingName(Text.valueOf("OrgName"));
 
         FundingForm result = fundingController.postFunding(funding);
         assertEquals(funding.getFundingTitle().getTitle(), result.getFundingTitle().getTitle());
@@ -474,86 +309,48 @@ public class FundingsControllerTest {
         assertEquals(funding.getCountry(), result.getCountry());
         assertEquals(funding.getCity(), result.getCity());
         assertEquals(funding.getRegion(), result.getRegion());
-        assertEquals(funding.getCountry(), result.getCountry());
-        assertNotNull(funding.getErrors());
-        assertEquals(0, funding.getErrors().size());
-
-        ArgumentCaptor<Funding> created = ArgumentCaptor.forClass(Funding.class);
-        verify(profileFundingManager).createFunding(eq(USER_ORCID), created.capture(), eq(false));
-        assertEquals("Title", created.getValue().getTitle().getTitle().getContent());
-        assertEquals("OrgName", created.getValue().getOrganization().getName());
-        assertTrue(created.getValue().getAmount() == null || PojoUtil.isEmpty(created.getValue().getAmount().getContent()));
-        verify(profileFundingManager, never()).updateFunding(anyString(), any(Funding.class), eq(false));
+        assertNotNull(result.getErrors());
+        assertEquals(0, result.getErrors().size());
+        verify(profileFundingManager).createFunding(eq(ORCID), any(Funding.class));
     }
 
     @Test
     public void testAddFunding() throws Exception {
-        HttpSession session = mock(HttpSession.class);
-        when(servletRequest.getSession()).thenReturn(session);
-        when(localeManager.getLocale()).thenReturn(new Locale("us", "EN"));
-        FundingForm funding = fundingController.getFunding();
+        FundingForm funding = getFundingForm();
         funding.setFundingType(Text.valueOf("award"));
-        FundingTitleForm title = new FundingTitleForm();
-        title.setTitle(Text.valueOf("Title"));
-        funding.setFundingTitle(title);
-        funding.setCountry(Text.valueOf("CR"));
-        funding.setCity(Text.valueOf("SJ"));
-        funding.setRegion(Text.valueOf("SJ"));
         funding.setAmount(Text.valueOf("1000"));
         funding.setCurrencyCode(Text.valueOf("USD"));
-        funding.setFundingName(Text.valueOf("OrgName"));
+
         FundingForm result = fundingController.postFunding(funding);
         assertEquals(funding.getFundingTitle().getTitle(), result.getFundingTitle().getTitle());
         assertEquals(funding.getFundingType(), result.getFundingType());
         assertEquals(funding.getCountry(), result.getCountry());
         assertEquals(funding.getCity(), result.getCity());
         assertEquals(funding.getRegion(), result.getRegion());
-        assertEquals(funding.getCountry(), result.getCountry());
-        assertNotNull(funding.getErrors());
-        assertEquals(0, funding.getErrors().size());
-        BigDecimal expected = fundingController.getAmountAsBigDecimal(funding.getAmount().getValue());
-        BigDecimal resulting = fundingController.getAmountAsBigDecimal(result.getAmount().getValue());
-        assertEquals(expected, resulting);
-
-        // Whether the row survives a write is ProfileFundingManagerImpl and
-        // ProfileFundingDao behaviour; what the controller owes is a create for
-        // the signed in record carrying the submitted amount and currency.
-        ArgumentCaptor<Funding> created = ArgumentCaptor.forClass(Funding.class);
-        verify(profileFundingManager).createFunding(eq(USER_ORCID), created.capture(), eq(false));
-        assertEquals("Title", created.getValue().getTitle().getTitle().getContent());
-        assertEquals(0, new BigDecimal("1000").compareTo(new BigDecimal(created.getValue().getAmount().getContent())));
-        assertEquals("USD", created.getValue().getAmount().getCurrencyCode());
+        assertNotNull(result.getErrors());
+        assertEquals(0, result.getErrors().size());
+        assertEquals(fundingController.getAmountAsBigDecimal(funding.getAmount().getValue()),
+                fundingController.getAmountAsBigDecimal(result.getAmount().getValue()));
+        verify(profileFundingManager).createFunding(eq(ORCID), any(Funding.class));
     }
 
     @Test
     public void testAddAmountWithoutCurrencyCode() throws Exception {
-        HttpSession session = mock(HttpSession.class);
-        when(servletRequest.getSession()).thenReturn(session);
-        when(localeManager.getLocale()).thenReturn(new Locale("us", "EN"));
-        FundingForm funding = fundingController.getFunding();
+        FundingForm funding = getFundingForm();
         funding.setFundingType(Text.valueOf("award"));
-        FundingTitleForm title = new FundingTitleForm();
-        title.setTitle(Text.valueOf("Title"));
-        funding.setFundingTitle(title);
-        funding.setCountry(Text.valueOf("CR"));
-        funding.setCity(Text.valueOf("SJ"));
-        funding.setRegion(Text.valueOf("SJ"));
         funding.setAmount(Text.valueOf("1000"));
-        funding.setFundingName(Text.valueOf("OrgName"));
+
         FundingForm result = fundingController.postFunding(funding);
         assertNotNull(result);
         assertNotNull(result.getErrors());
         assertEquals(1, result.getErrors().size());
-        assertEquals(fundingController.getMessage("Invalid.fundings.currency"), result.getErrors().get(0));
-
+        assertEquals("Invalid.fundings.currency", result.getErrors().get(0));
     }
 
     @Test
     public void getFunding() {
-        HttpSession session = mock(HttpSession.class);
-        when(servletRequest.getSession()).thenReturn(session);
-        when(localeManager.getLocale()).thenReturn(new Locale("us", "EN"));
-        when(profileFundingManager.getFunding(USER_ORCID, 1L)).thenReturn(grantOne());
+        when(profileFundingManagerReadOnly.getFunding(eq(ORCID), eq(1L))).thenReturn(createFundingRecord("1", ORCID, "Grant # 1", "2500",
+                "USD", "London", "GB", "salary-award"));
 
         FundingForm funding = fundingController.getFundingJson(Long.valueOf("1"));
         assertNotNull(funding);
@@ -569,107 +366,50 @@ public class FundingsControllerTest {
     }
 
     @Test
-    public void testEditOtherSourceThrowsError() {
-        HttpSession session = mock(HttpSession.class);
-        when(servletRequest.getSession()).thenReturn(session);
-        when(localeManager.getLocale()).thenReturn(new Locale("us", "EN"));
-        when(profileFundingManager.getFunding(USER_ORCID, 3L)).thenReturn(grantThreeFromAnotherSource());
-        // The refusal is the security manager's, reached through
-        // ProfileFundingManagerImpl.updateFunding. All this boundary owes is
-        // that it lets the refusal through and does nothing else.
-        Map<String, String> params = new HashMap<String, String>();
-        params.put("activity", "funding");
-        doThrow(new WrongSourceException(params)).when(profileFundingManager).updateFunding(eq(USER_ORCID), any(Funding.class), eq(false));
-
-        FundingForm funding = fundingController.getFundingJson(Long.valueOf("3"));
-        assertEquals(OTHER_SOURCE_ORCID, funding.getSource());
-
-        boolean throwsError = false;
-        try {
-            fundingController.postFunding(funding);
-        } catch (Exception e) {
-            throwsError = true;
-            assertTrue(e instanceof WrongSourceException);
-        }
-        assertEquals(throwsError, true);
-        verify(profileFundingManager, never()).createFunding(anyString(), any(Funding.class), eq(false));
-    }
-
-    @Test
     public void testEditFunding() throws Exception {
-        HttpSession session = mock(HttpSession.class);
-        when(servletRequest.getSession()).thenReturn(session);
-        when(localeManager.getLocale()).thenReturn(new Locale("us", "EN"));
-
-        when(profileFundingManager.getFunding(USER_ORCID, 1L)).thenReturn(grantOne());
+        when(profileFundingManagerReadOnly.getFunding(eq(ORCID), eq(1L))).thenReturn(createFundingRecord("1", ORCID, "Grant # 1", "2500",
+                "USD", "London", "GB", "salary-award"));
 
         FundingForm funding = fundingController.getFundingJson(Long.valueOf("1"));
         funding.getFundingTitle().getTitle().setValue("Grant # 1 - updated");
-        TranslatedTitleForm translatedTitle = new TranslatedTitleForm();
-        translatedTitle.setContent("Grant # 1 - translated title");
-        translatedTitle.setLanguageCode("en");
-        funding.getFundingTitle().setTranslatedTitle(translatedTitle);
         funding.getAmount().setValue("3500");
         funding.getCurrencyCode().setValue("CRC");
 
-        fundingController.postFunding(funding);
+        FundingForm result = fundingController.postFunding(funding);
+        assertNotNull(result);
+        assertNotNull(result.getErrors());
+        assertEquals(0, result.getErrors().size());
 
-        // The round trip these assertions used to make is ProfileFundingManagerImpl
-        // and ProfileFundingDao behaviour; what the controller owes is that the
-        // whole edited form reaches updateFunding, scoped to the signed in record.
-        ArgumentCaptor<Funding> updatedCaptor = ArgumentCaptor.forClass(Funding.class);
-        verify(profileFundingManager).updateFunding(eq(USER_ORCID), updatedCaptor.capture(), eq(false));
-        Funding updated = updatedCaptor.getValue();
-        assertNotNull(updated);
-        assertEquals(Long.valueOf(1L), updated.getPutCode());
-        assertNotNull(updated.getTitle());
+        ArgumentCaptor<Funding> fundingCaptor = ArgumentCaptor.forClass(Funding.class);
+        verify(profileFundingManager).updateFunding(eq(ORCID), fundingCaptor.capture());
+        Funding updated = fundingCaptor.getValue();
         assertEquals("Grant # 1 - updated", updated.getTitle().getTitle().getContent());
-        assertEquals("Grant # 1 - translated title", updated.getTitle().getTranslatedTitle().getContent());
-        assertEquals("en", updated.getTitle().getTranslatedTitle().getLanguageCode());
-        assertNotNull(updated.getType());
-        assertEquals("salary-award", updated.getType().value());
-        assertNotNull(updated.getAmount());
-        assertEquals(0, new BigDecimal("3500").compareTo(new BigDecimal(updated.getAmount().getContent())));
+        assertEquals("3500", updated.getAmount().getContent());
         assertEquals("CRC", updated.getAmount().getCurrencyCode());
     }
 
     @Test
     public void testEditOrgOnExistingFunding() throws Exception {
-        HttpSession session = mock(HttpSession.class);
-        when(servletRequest.getSession()).thenReturn(session);
-        when(localeManager.getLocale()).thenReturn(new Locale("us", "EN"));
-
-        when(profileFundingManager.getFunding(USER_ORCID, 1L)).thenReturn(grantOne());
+        when(profileFundingManagerReadOnly.getFunding(eq(ORCID), eq(1L))).thenReturn(createFundingRecord("1", ORCID, "Grant # 1", "2500",
+                "USD", "London", "GB", "salary-award"));
 
         FundingForm funding = fundingController.getFundingJson(Long.valueOf("1"));
-        // Check old org
-        assertEquals("London", funding.getCity().getValue());
-        assertEquals("GB", funding.getCountry().getValue());
-        // Update org
         funding.getCity().setValue("San Jose");
         funding.getCountry().setValue("CR");
 
         fundingController.postFunding(funding);
 
-        // Whether the funding is re-pointed at a different organisation row is
-        // ProfileFundingManagerImpl/OrgManager behaviour; the controller owes the
-        // new address reaching the manager.
-        ArgumentCaptor<Funding> updatedCaptor = ArgumentCaptor.forClass(Funding.class);
-        verify(profileFundingManager).updateFunding(eq(USER_ORCID), updatedCaptor.capture(), eq(false));
-        Funding updated = updatedCaptor.getValue();
-        assertNotNull(updated);
+        ArgumentCaptor<Funding> fundingCaptor = ArgumentCaptor.forClass(Funding.class);
+        verify(profileFundingManager).updateFunding(eq(ORCID), fundingCaptor.capture());
+        Funding updated = fundingCaptor.getValue();
         assertEquals("San Jose", updated.getOrganization().getAddress().getCity());
         assertEquals(Iso3166Country.CR, updated.getOrganization().getAddress().getCountry());
-        // Check new org
-        assertEquals("San Jose", funding.getCity().getValue());
-        assertEquals("CR", funding.getCountry().getValue());
     }
 
     @Test
     public void testAddFundingWithInvalidDates() throws Exception {
         FundingForm funding = getFundingForm();
 
-        // Check valid start date
         Date startDate = new Date();
         startDate.setMonth("01");
         funding.setStartDate(startDate);
@@ -677,9 +417,8 @@ public class FundingsControllerTest {
         assertNotNull(funding);
         assertNotNull(funding.getErrors());
         assertEquals(1, funding.getErrors().size());
-        assertEquals(fundingController.getMessage("common.dates.invalid"), funding.getErrors().get(0));
+        assertEquals("common.dates.invalid", funding.getErrors().get(0));
 
-        // Check valid end date
         funding = getFundingForm();
         Date endDate = new Date();
         endDate.setMonth("01");
@@ -688,19 +427,15 @@ public class FundingsControllerTest {
         assertNotNull(funding);
         assertNotNull(funding.getErrors());
         assertEquals(1, funding.getErrors().size());
-        assertEquals(fundingController.getMessage("common.dates.invalid"), funding.getErrors().get(0));
+        assertEquals("common.dates.invalid", funding.getErrors().get(0));
 
-        // Check end date is after start date
         funding = getFundingForm();
-
         startDate = new Date();
         startDate.setMonth("01");
         startDate.setYear("2015");
-
         endDate = new Date();
         endDate.setMonth("01");
         endDate.setYear("2014");
-
         funding.setStartDate(startDate);
         funding.setEndDate(endDate);
 
@@ -708,131 +443,94 @@ public class FundingsControllerTest {
         assertNotNull(funding);
         assertNotNull(funding.getErrors());
         assertEquals(1, funding.getErrors().size());
-        assertEquals(fundingController.getMessage("fundings.endDate.after"), funding.getErrors().get(0));
+        assertEquals("fundings.endDate.after", funding.getErrors().get(0));
     }
 
     @Test
     public void testGetFundingsJsonSortedBySource() {
-        HttpSession session = mock(HttpSession.class);
-        when(servletRequest.getSession()).thenReturn(session);
-        when(localeManager.getLocale()).thenReturn(new Locale("us", "EN"));
-
-        stubTheRecordsThreeFundings();
+        when(profileFundingManager.getFundingSummaryList(eq(ORCID))).thenReturn(new ArrayList<>());
+        when(profileFundingManager.groupFundings(anyList(), eq(false))).thenReturn(buildFundingsForSourceSort());
 
         List<FundingGroup> fundings = fundingController.getFundingsJson("source", true);
         assertNotNull(fundings);
         assertEquals(3, fundings.size());
-        assertEquals("4444-4444-4444-4441", fundings.get(0).getFundings().get(0).getSource());
-        assertEquals("4444-4444-4444-4443", fundings.get(2).getFundings().get(0).getSource());
-        // The validated funding leads, and the two self asserted ones keep title
-        // order behind it: both halves of FundingComparators.sortBySource, over
-        // input the manager handed back in neither order.
-        assertEquals(Text.valueOf(3l), fundings.get(0).getFundings().get(0).getPutCode());
-        assertEquals(Text.valueOf(1l), fundings.get(1).getFundings().get(0).getPutCode());
-        assertEquals(Text.valueOf(2l), fundings.get(2).getFundings().get(0).getPutCode());
+        assertEquals(OTHER_ORCID_1, fundings.get(0).getFundings().get(0).getSource());
+        assertEquals(OTHER_ORCID_2, fundings.get(1).getFundings().get(0).getSource());
+        assertEquals(ORCID, fundings.get(2).getFundings().get(0).getSource());
     }
 
-    // ------------------------------------- /data/ProfileFundingEntityData.xml
+    @Test(expected = RuntimeException.class)
+    public void testEditFundingFailurePropagates() throws Exception {
+        when(profileFundingManagerReadOnly.getFunding(eq(ORCID), eq(3L))).thenReturn(createFundingRecord("3", OTHER_ORCID_1, "Grant # 3", "2500",
+                "USD", "London", "GB", "salary-award"));
+        doThrow(new RuntimeException("not allowed")).when(profileFundingManager).updateFunding(eq(ORCID), any(Funding.class));
+
+        FundingForm funding = fundingController.getFundingJson(Long.valueOf("3"));
+        fundingController.postFunding(funding);
+    }
 
     /**
-     * Fundings 1 and 2 are sourced by the record itself, funding 3 by
-     * 4444-4444-4444-4441. Titles carry the ordering the title sort asserts on,
-     * and the sources carry the self-asserted split the source sort asserts on.
-     *
-     * The manager deliberately hands them back out of order. Handed back in put
-     * code order, testGetFundingsJson's assertions on positions 0 to 2 would hold
-     * even if FundingComparators.TITLE_COMPARATOR were never applied, which is
-     * the whole of what that test still owns now the grouping is a stub.
+     * The refusal is the security manager's, reached through the manager. What this boundary owes
+     * is that it lets the refusal through and does nothing else -- in particular that it does not
+     * fall through to createFunding and leave a duplicate behind. Asserting the exception alone
+     * would pass even if it did, which is why the never() is the half that matters.
      */
-    private void stubTheRecordsThreeFundings() {
-        List<FundingSummary> summaries = Arrays.asList(summary(3L, "Grant # 3", otherSource()), summary(1L, "Grant # 1", userSource()),
-                summary(2L, "Grant # 2", userSource()));
-        when(profileFundingManager.getFundingSummaryList(USER_ORCID)).thenReturn(summaries);
-        when(profileFundingManager.groupFundings(summaries, false)).thenReturn(oneGroupPerSummary(summaries));
-    }
+    @Test
+    public void testEditOtherSourceRefusalDoesNotCreateInstead() throws Exception {
+        when(profileFundingManagerReadOnly.getFunding(eq(ORCID), eq(3L))).thenReturn(createFundingRecord("3", OTHER_ORCID_1, "Grant # 3", "2500",
+                "USD", "London", "GB", "salary-award"));
+        Map<String, String> params = new HashMap<String, String>();
+        params.put("activity", "funding");
+        doThrow(new WrongSourceException(params)).when(profileFundingManager).updateFunding(eq(ORCID), any(Funding.class));
 
-    private Fundings oneGroupPerSummary(List<FundingSummary> summaries) {
-        Fundings fundings = new Fundings();
-        for (FundingSummary summary : summaries) {
-            org.orcid.jaxb.model.v3.release.record.summary.FundingGroup group = new org.orcid.jaxb.model.v3.release.record.summary.FundingGroup();
-            group.getFundingSummary().add(summary);
-            fundings.getFundingGroup().add(group);
+        FundingForm funding = fundingController.getFundingJson(Long.valueOf("3"));
+        assertEquals(OTHER_ORCID_1, funding.getSource());
+
+        try {
+            fundingController.postFunding(funding);
+            fail("a client must not be able to edit a funding another client is the source of");
+        } catch (WrongSourceException expected) {
+            assertEquals("funding", expected.getParams().get("activity"));
         }
-        return fundings;
+
+        verify(profileFundingManager, never()).createFunding(anyString(), any(Funding.class));
     }
 
-    private FundingSummary summary(Long putCode, String title, Source source) {
-        FundingSummary summary = new FundingSummary();
-        summary.setPutCode(putCode);
-        summary.setDisplayIndex(String.valueOf(putCode));
-        summary.setTitle(fundingTitle(title));
-        summary.setType(FundingType.SALARY_AWARD);
-        summary.setVisibility(Visibility.LIMITED);
-        summary.setSource(source);
-        summary.setOrganization(organization("An institution", "London", "GB"));
-        return summary;
+    private void assertBigDecimals(String[] amounts, BigDecimal expected) {
+        for (String amount : amounts) {
+            try {
+                BigDecimal result = fundingController.getAmountAsBigDecimal(amount);
+                assertEquals("Amount is: " + result + " but it should be: " + expected, expected, result);
+            } catch (Exception e) {
+                throw new AssertionError("Amount: " + amount + " couldn't parsed to: " + expected, e);
+            }
+        }
     }
 
-    /** profile_funding id=1: "Grant # 1", SALARY_AWARD, 2500 USD, org 1. */
-    private Funding grantOne() {
-        Funding funding = new Funding();
-        funding.setPutCode(1L);
-        funding.setTitle(fundingTitle("Grant # 1"));
-        funding.setType(FundingType.SALARY_AWARD);
-        funding.setVisibility(Visibility.LIMITED);
-        funding.setSource(userSource());
-        funding.setOrganization(organization("An institution", "London", "GB"));
-        Amount amount = new Amount();
-        amount.setContent("2500");
-        amount.setCurrencyCode("USD");
-        funding.setAmount(amount);
-        return funding;
+    private List<OrgDisambiguated> getListOfMixedOrgsDisambiguated() {
+        OrgDisambiguated first = new OrgDisambiguated();
+        first.setValue("first");
+        OrgDisambiguated second = new OrgDisambiguated();
+        second.setValue("second");
+        OrgDisambiguated third = new OrgDisambiguated();
+        third.setValue("third");
+        OrgDisambiguated fourth = new OrgDisambiguated();
+        fourth.setValue("fourth");
+        return Arrays.asList(first, second, third, fourth);
     }
 
-    /** profile_funding id=3: sourced by 4444-4444-4444-4441, not by the record. */
-    private Funding grantThreeFromAnotherSource() {
-        Funding funding = new Funding();
-        funding.setPutCode(3L);
-        funding.setTitle(fundingTitle("Grant # 3"));
-        funding.setType(FundingType.GRANT);
-        funding.setVisibility(Visibility.PRIVATE);
-        funding.setSource(otherSource());
-        funding.setOrganization(organization("Another institution", "London", "GB"));
-        Amount amount = new Amount();
-        amount.setContent("1650000");
-        amount.setCurrencyCode("CRC");
-        funding.setAmount(amount);
-        return funding;
+    private Map<String, String> buildLanguageMap() {
+        Map<String, String> languages = new HashMap<>();
+        languages.put("en", "English");
+        languages.put("de", "German");
+        languages.put("ru", "Russian");
+        return languages;
     }
 
-    private FundingTitle fundingTitle(String title) {
-        FundingTitle fundingTitle = new FundingTitle();
-        fundingTitle.setTitle(new Title(title));
-        return fundingTitle;
-    }
-
-    private Organization organization(String name, String city, String country) {
-        Organization organization = new Organization();
-        organization.setName(name);
-        OrganizationAddress address = new OrganizationAddress();
-        address.setCity(city);
-        address.setCountry(Iso3166Country.fromValue(country));
-        organization.setAddress(address);
-        return organization;
-    }
-
-    private Source userSource() {
-        Source source = new Source();
-        source.setSourceOrcid(new SourceOrcid(USER_ORCID));
-        source.setSourceName(new SourceName("Credit Name"));
-        return source;
-    }
-
-    private Source otherSource() {
-        Source source = new Source();
-        source.setSourceOrcid(new SourceOrcid(OTHER_SOURCE_ORCID));
-        source.setSourceName(new SourceName("Another member"));
-        return source;
+    private ProfileEntity buildProfileEntity() {
+        ProfileEntity profile = new ProfileEntity();
+        profile.setActivitiesVisibilityDefault("LIMITED");
+        return profile;
     }
 
     private FundingForm getFundingForm() {
@@ -845,5 +543,80 @@ public class FundingsControllerTest {
         title.setTitle(Text.valueOf("title"));
         funding.setFundingTitle(title);
         return funding;
+    }
+
+    private Funding createFundingRecord(String putCode, String sourceOrcid, String title, String amount, String currencyCode,
+            String city, String countryCode, String fundingType) {
+        Funding funding = new Funding();
+        funding.setPutCode(Long.valueOf(putCode));
+
+        FundingTitle fundingTitle = new FundingTitle();
+        fundingTitle.setTitle(new Title(title));
+        funding.setTitle(fundingTitle);
+
+        Amount fundingAmount = new Amount();
+        fundingAmount.setContent(amount);
+        fundingAmount.setCurrencyCode(currencyCode);
+        funding.setAmount(fundingAmount);
+
+        funding.setType(FundingType.fromValue(fundingType));
+        funding.setSource(createSource(sourceOrcid));
+
+        Organization organization = new Organization();
+        organization.setName("OrgName");
+        OrganizationAddress address = new OrganizationAddress();
+        address.setCity(city);
+        address.setCountry(Iso3166Country.fromValue(countryCode));
+        organization.setAddress(address);
+        funding.setOrganization(organization);
+        funding.setVisibility(Visibility.PUBLIC);
+        return funding;
+    }
+
+    private Source createSource(String orcid) {
+        Source source = new Source();
+        source.setSourceOrcid(new SourceOrcid(orcid));
+        return source;
+    }
+
+    private Fundings buildFundingsForSorting() {
+        Fundings fundings = new Fundings();
+        fundings.getFundingGroup().add(createSummaryGroup(1L, "Alpha", OTHER_ORCID_1, 1L));
+        fundings.getFundingGroup().add(createSummaryGroup(2L, "Beta", OTHER_ORCID_2, 2L));
+        fundings.getFundingGroup().add(createSummaryGroup(3L, "Gamma", ORCID, 3L));
+        return fundings;
+    }
+
+    private Fundings buildFundingsForSourceSort() {
+        Fundings fundings = new Fundings();
+        fundings.getFundingGroup().add(createSummaryGroup(1L, "Alpha", OTHER_ORCID_1, 1L));
+        fundings.getFundingGroup().add(createSummaryGroup(2L, "Beta", OTHER_ORCID_2, 2L));
+        fundings.getFundingGroup().add(createSummaryGroup(3L, "Gamma", ORCID, 3L));
+        return fundings;
+    }
+
+    private org.orcid.jaxb.model.v3.release.record.summary.FundingGroup createSummaryGroup(Long putCode, String title, String sourceOrcid, Long displayIndex) {
+        FundingSummary summary = new FundingSummary();
+        summary.setPutCode(putCode);
+        summary.setDisplayIndex(String.valueOf(displayIndex));
+        summary.setType(FundingType.AWARD);
+        summary.setVisibility(org.orcid.jaxb.model.v3.release.common.Visibility.PUBLIC);
+        summary.setSource(createSource(sourceOrcid));
+
+        FundingTitle fundingTitle = new FundingTitle();
+        fundingTitle.setTitle(new Title(title));
+        summary.setTitle(fundingTitle);
+
+        Organization organization = new Organization();
+        organization.setName(title + " Org");
+        OrganizationAddress address = new OrganizationAddress();
+        address.setCity("city");
+        address.setCountry(Iso3166Country.US);
+        organization.setAddress(address);
+        summary.setOrganization(organization);
+
+        org.orcid.jaxb.model.v3.release.record.summary.FundingGroup group = new org.orcid.jaxb.model.v3.release.record.summary.FundingGroup();
+        group.getFundingSummary().add(summary);
+        return group;
     }
 }

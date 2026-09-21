@@ -388,7 +388,7 @@ public class MemberV3ApiServiceDelegator_QualificationsTest extends MemberV3ApiS
         Qualification toCreate = (Qualification) Utils.getAffiliation(AffiliationType.QUALIFICATION);
         toCreate.setSource(clientSource(CLIENT_2));
         Qualification created = qualification(9999L, Visibility.PUBLIC, "My department name", clientSource(CLIENT_1));
-        when(affiliationsManager.createQualificationAffiliation(eq(ORCID), any(Qualification.class), eq(true))).thenReturn(created);
+        when(affiliationsManager.createQualificationAffiliation(eq(ORCID), any(Qualification.class), eq(true), anyList())).thenReturn(created);
 
         Response response = serviceDelegator.createQualification(ORCID, toCreate);
         assertNotNull(response);
@@ -400,7 +400,7 @@ public class MemberV3ApiServiceDelegator_QualificationsTest extends MemberV3ApiS
 
         // A client supplied source must never reach the manager.
         ArgumentCaptor<Qualification> captor = ArgumentCaptor.forClass(Qualification.class);
-        verify(affiliationsManager).createQualificationAffiliation(eq(ORCID), captor.capture(), eq(true));
+        verify(affiliationsManager).createQualificationAffiliation(eq(ORCID), captor.capture(), eq(true), anyList());
         assertNull(captor.getValue().getSource());
 
         // Remove new element
@@ -412,13 +412,13 @@ public class MemberV3ApiServiceDelegator_QualificationsTest extends MemberV3ApiS
     public void testAddQualificationNoCityNoCountry() {
         Qualification toCreate = (Qualification) Utils.getAffiliationNoCityNoCountry(AffiliationType.QUALIFICATION);
         Qualification created = qualification(9998L, Visibility.PUBLIC, "My department name", clientSource(CLIENT_1));
-        when(affiliationsManager.createQualificationAffiliation(eq(ORCID), any(Qualification.class), eq(true))).thenReturn(created);
+        when(affiliationsManager.createQualificationAffiliation(eq(ORCID), any(Qualification.class), eq(true), anyList())).thenReturn(created);
 
         Response response = serviceDelegator.createQualification(ORCID, toCreate);
         assertNotNull(response);
         assertEquals(Response.Status.CREATED.getStatusCode(), response.getStatus());
         assertEquals(Long.valueOf(9998L), Utils.getPutCode(response));
-        verify(affiliationsManager).createQualificationAffiliation(eq(ORCID), any(Qualification.class), eq(true));
+        verify(affiliationsManager).createQualificationAffiliation(eq(ORCID), any(Qualification.class), eq(true), anyList());
     }
 
     @Test(expected = OrcidDuplicatedActivityException.class)
@@ -426,7 +426,7 @@ public class MemberV3ApiServiceDelegator_QualificationsTest extends MemberV3ApiS
         Qualification element = (Qualification) Utils.getAffiliation(AffiliationType.QUALIFICATION);
         element.setExternalIDs(duplicateExternalIDs());
         doThrow(new OrcidDuplicatedActivityException(new HashMap<String, String>()))
-                .when(affiliationsManager).createQualificationAffiliation(eq(ORCID), any(Qualification.class), eq(true));
+                .when(affiliationsManager).createQualificationAffiliation(eq(ORCID), any(Qualification.class), eq(true), anyList());
 
         serviceDelegator.createQualification(ORCID, element);
     }
@@ -453,7 +453,7 @@ public class MemberV3ApiServiceDelegator_QualificationsTest extends MemberV3ApiS
         disambiguatedOrg.setDisambiguationSource("WDB");
         element.getOrganization().setDisambiguatedOrganization(disambiguatedOrg);
 
-        when(affiliationsManager.updateQualificationAffiliation(eq(ORCID), any(Qualification.class), eq(true))).thenReturn(element);
+        when(affiliationsManager.updateQualificationAffiliation(eq(ORCID), any(Qualification.class), eq(true), anyList())).thenReturn(element);
 
         response = serviceDelegator.updateQualification(ORCID, 42L, element);
         assertNotNull(response);
@@ -464,7 +464,7 @@ public class MemberV3ApiServiceDelegator_QualificationsTest extends MemberV3ApiS
 
         verify(orcidSecurityManager).checkClientAccessAndScopes(ORCID, ScopePathType.AFFILIATIONS_UPDATE);
         ArgumentCaptor<Qualification> captor = ArgumentCaptor.forClass(Qualification.class);
-        verify(affiliationsManager).updateQualificationAffiliation(eq(ORCID), captor.capture(), eq(true));
+        verify(affiliationsManager).updateQualificationAffiliation(eq(ORCID), captor.capture(), eq(true), anyList());
         assertNull(captor.getValue().getSource());
     }
 
@@ -473,7 +473,7 @@ public class MemberV3ApiServiceDelegator_QualificationsTest extends MemberV3ApiS
         Qualification stored = qualification(45L, Visibility.LIMITED, "SELF LIMITED Department", userSource(ORCID));
         when(affiliationsManagerReadOnly.getQualificationAffiliation(ORCID, 45L)).thenReturn(stored);
         doThrow(new WrongSourceException(new HashMap<String, String>()))
-                .when(affiliationsManager).updateQualificationAffiliation(eq(ORCID), any(Qualification.class), eq(true));
+                .when(affiliationsManager).updateQualificationAffiliation(eq(ORCID), any(Qualification.class), eq(true), anyList());
 
         Response response = serviceDelegator.viewQualification(ORCID, 45L);
         assertNotNull(response);
@@ -490,7 +490,7 @@ public class MemberV3ApiServiceDelegator_QualificationsTest extends MemberV3ApiS
         Qualification stored = qualification(42L, Visibility.PUBLIC, "PUBLIC Department", clientSource(CLIENT_1));
         when(affiliationsManagerReadOnly.getQualificationAffiliation(ORCID, 42L)).thenReturn(stored);
         doThrow(new VisibilityMismatchException())
-                .when(affiliationsManager).updateQualificationAffiliation(eq(ORCID), any(Qualification.class), eq(true));
+                .when(affiliationsManager).updateQualificationAffiliation(eq(ORCID), any(Qualification.class), eq(true), anyList());
 
         Response response = serviceDelegator.viewQualification(ORCID, 42L);
         assertNotNull(response);
@@ -511,7 +511,7 @@ public class MemberV3ApiServiceDelegator_QualificationsTest extends MemberV3ApiS
         // The manager restores the stored visibility when the request leaves it
         // null; that rule is proved in orcid-core, here we only check the
         // delegator returns what the manager produced.
-        when(affiliationsManager.updateQualificationAffiliation(eq(ORCID), any(Qualification.class), eq(true)))
+        when(affiliationsManager.updateQualificationAffiliation(eq(ORCID), any(Qualification.class), eq(true), anyList()))
                 .thenReturn(qualification(42L, Visibility.PUBLIC, "PUBLIC Department", clientSource(CLIENT_1)));
 
         Response response = serviceDelegator.viewQualification(ORCID, 42L);
@@ -531,7 +531,7 @@ public class MemberV3ApiServiceDelegator_QualificationsTest extends MemberV3ApiS
         // Catches a delegator that sets a visibility on the element before handing it to
         // the manager: what is submitted must still carry the null the request arrived with.
         ArgumentCaptor<Qualification> submitted = ArgumentCaptor.forClass(Qualification.class);
-        verify(affiliationsManager).updateQualificationAffiliation(eq(ORCID), submitted.capture(), eq(true));
+        verify(affiliationsManager).updateQualificationAffiliation(eq(ORCID), submitted.capture(), eq(true), anyList());
         assertNull("keeping the stored visibility is the manager's job, not the delegator's", submitted.getValue().getVisibility());
     }
 
@@ -540,7 +540,7 @@ public class MemberV3ApiServiceDelegator_QualificationsTest extends MemberV3ApiS
         Qualification stored = qualification(42L, Visibility.PUBLIC, "PUBLIC Department", clientSource(CLIENT_1));
         when(affiliationsManagerReadOnly.getQualificationAffiliation(ORCID, 42L)).thenReturn(stored);
         doThrow(new OrcidDuplicatedActivityException(new HashMap<String, String>()))
-                .when(affiliationsManager).updateQualificationAffiliation(eq(ORCID), any(Qualification.class), eq(true));
+                .when(affiliationsManager).updateQualificationAffiliation(eq(ORCID), any(Qualification.class), eq(true), anyList());
 
         Response response = serviceDelegator.viewQualification(ORCID, 42L);
         Qualification element = (Qualification) response.getEntity();

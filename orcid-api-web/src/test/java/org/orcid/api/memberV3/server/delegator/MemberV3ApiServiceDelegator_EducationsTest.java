@@ -395,7 +395,7 @@ public class MemberV3ApiServiceDelegator_EducationsTest extends MemberV3ApiServi
         Education toCreate = (Education) Utils.getAffiliation(AffiliationType.EDUCATION);
         toCreate.setSource(clientSource(CLIENT_2));
         Education created = education(9999L, Visibility.PUBLIC, "My department name", clientSource(CLIENT_1));
-        when(affiliationsManager.createEducationAffiliation(eq(ORCID), any(Education.class), eq(true))).thenReturn(created);
+        when(affiliationsManager.createEducationAffiliation(eq(ORCID), any(Education.class), eq(true), anyList())).thenReturn(created);
 
         Response response = serviceDelegator.createEducation(ORCID, toCreate);
         assertNotNull(response);
@@ -407,7 +407,7 @@ public class MemberV3ApiServiceDelegator_EducationsTest extends MemberV3ApiServi
 
         // A client supplied source must never reach the manager.
         ArgumentCaptor<Education> captor = ArgumentCaptor.forClass(Education.class);
-        verify(affiliationsManager).createEducationAffiliation(eq(ORCID), captor.capture(), eq(true));
+        verify(affiliationsManager).createEducationAffiliation(eq(ORCID), captor.capture(), eq(true), anyList());
         assertNull(captor.getValue().getSource());
 
         // Remove new element
@@ -428,7 +428,7 @@ public class MemberV3ApiServiceDelegator_EducationsTest extends MemberV3ApiServi
     @Test(expected = InvalidOrgAddressException.class)
     public void testAddEducationNoCityNoCountry() {
         Education toCreate = (Education) Utils.getAffiliationNoCityNoCountry(AffiliationType.EDUCATION);
-        doThrow(new InvalidOrgAddressException()).when(affiliationsManager).createEducationAffiliation(eq(ORCID), any(Education.class), eq(true));
+        doThrow(new InvalidOrgAddressException()).when(affiliationsManager).createEducationAffiliation(eq(ORCID), any(Education.class), eq(true), anyList());
 
         serviceDelegator.createEducation(ORCID, toCreate);
     }
@@ -438,7 +438,7 @@ public class MemberV3ApiServiceDelegator_EducationsTest extends MemberV3ApiServi
         Education element = (Education) Utils.getAffiliation(AffiliationType.EDUCATION);
         element.setExternalIDs(duplicateExternalIDs());
         doThrow(new OrcidDuplicatedActivityException(new HashMap<String, String>()))
-                .when(affiliationsManager).createEducationAffiliation(eq(ORCID), any(Education.class), eq(true));
+                .when(affiliationsManager).createEducationAffiliation(eq(ORCID), any(Education.class), eq(true), anyList());
 
         serviceDelegator.createEducation(ORCID, element);
     }
@@ -465,7 +465,7 @@ public class MemberV3ApiServiceDelegator_EducationsTest extends MemberV3ApiServi
         disambiguatedOrg.setDisambiguationSource("WDB");
         element.getOrganization().setDisambiguatedOrganization(disambiguatedOrg);
 
-        when(affiliationsManager.updateEducationAffiliation(eq(ORCID), any(Education.class), eq(true))).thenReturn(element);
+        when(affiliationsManager.updateEducationAffiliation(eq(ORCID), any(Education.class), eq(true), anyList())).thenReturn(element);
 
         response = serviceDelegator.updateEducation(ORCID, 20L, element);
         assertNotNull(response);
@@ -476,7 +476,7 @@ public class MemberV3ApiServiceDelegator_EducationsTest extends MemberV3ApiServi
 
         verify(orcidSecurityManager).checkClientAccessAndScopes(ORCID, ScopePathType.AFFILIATIONS_UPDATE);
         ArgumentCaptor<Education> captor = ArgumentCaptor.forClass(Education.class);
-        verify(affiliationsManager).updateEducationAffiliation(eq(ORCID), captor.capture(), eq(true));
+        verify(affiliationsManager).updateEducationAffiliation(eq(ORCID), captor.capture(), eq(true), anyList());
         assertNull(captor.getValue().getSource());
     }
 
@@ -485,7 +485,7 @@ public class MemberV3ApiServiceDelegator_EducationsTest extends MemberV3ApiServi
         Education stored = education(25L, Visibility.LIMITED, "SELF LIMITED Department", userSource(ORCID));
         when(affiliationsManagerReadOnly.getEducationAffiliation(ORCID, 25L)).thenReturn(stored);
         doThrow(new WrongSourceException(new HashMap<String, String>()))
-                .when(affiliationsManager).updateEducationAffiliation(eq(ORCID), any(Education.class), eq(true));
+                .when(affiliationsManager).updateEducationAffiliation(eq(ORCID), any(Education.class), eq(true), anyList());
 
         Response response = serviceDelegator.viewEducation(ORCID, 25L);
         assertNotNull(response);
@@ -502,7 +502,7 @@ public class MemberV3ApiServiceDelegator_EducationsTest extends MemberV3ApiServi
         Education stored = education(20L, Visibility.PUBLIC, "PUBLIC Department", clientSource(CLIENT_1));
         when(affiliationsManagerReadOnly.getEducationAffiliation(ORCID, 20L)).thenReturn(stored);
         doThrow(new VisibilityMismatchException())
-                .when(affiliationsManager).updateEducationAffiliation(eq(ORCID), any(Education.class), eq(true));
+                .when(affiliationsManager).updateEducationAffiliation(eq(ORCID), any(Education.class), eq(true), anyList());
 
         Response response = serviceDelegator.viewEducation(ORCID, 20L);
         assertNotNull(response);
@@ -523,7 +523,7 @@ public class MemberV3ApiServiceDelegator_EducationsTest extends MemberV3ApiServi
         // The manager restores the stored visibility when the request leaves it
         // null; that rule is proved in orcid-core, here we only check the
         // delegator returns what the manager produced.
-        when(affiliationsManager.updateEducationAffiliation(eq(ORCID), any(Education.class), eq(true)))
+        when(affiliationsManager.updateEducationAffiliation(eq(ORCID), any(Education.class), eq(true), anyList()))
                 .thenReturn(education(20L, Visibility.PUBLIC, "PUBLIC Department", clientSource(CLIENT_1)));
 
         Response response = serviceDelegator.viewEducation(ORCID, 20L);
@@ -543,7 +543,7 @@ public class MemberV3ApiServiceDelegator_EducationsTest extends MemberV3ApiServi
         // Catches a delegator that sets a visibility on the element before handing it to
         // the manager: what is submitted must still carry the null the request arrived with.
         ArgumentCaptor<Education> submitted = ArgumentCaptor.forClass(Education.class);
-        verify(affiliationsManager).updateEducationAffiliation(eq(ORCID), submitted.capture(), eq(true));
+        verify(affiliationsManager).updateEducationAffiliation(eq(ORCID), submitted.capture(), eq(true), anyList());
         assertNull("keeping the stored visibility is the manager's job, not the delegator's", submitted.getValue().getVisibility());
     }
 
@@ -552,7 +552,7 @@ public class MemberV3ApiServiceDelegator_EducationsTest extends MemberV3ApiServi
         Education stored = education(20L, Visibility.PUBLIC, "PUBLIC Department", clientSource(CLIENT_1));
         when(affiliationsManagerReadOnly.getEducationAffiliation(ORCID, 20L)).thenReturn(stored);
         doThrow(new OrcidDuplicatedActivityException(new HashMap<String, String>()))
-                .when(affiliationsManager).updateEducationAffiliation(eq(ORCID), any(Education.class), eq(true));
+                .when(affiliationsManager).updateEducationAffiliation(eq(ORCID), any(Education.class), eq(true), anyList());
 
         Response response = serviceDelegator.viewEducation(ORCID, 20L);
         Education element = (Education) response.getEntity();

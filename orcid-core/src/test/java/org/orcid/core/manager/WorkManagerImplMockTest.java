@@ -10,6 +10,7 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -133,7 +134,7 @@ public class WorkManagerImplMockTest {
         doThrow(wrongSource()).when(orcidSecurityManager).checkSource(stored);
 
         try {
-            workManager.updateWork(ORCID, work("A different title"), true);
+            workManager.updateWork(ORCID, work("A different title"), true, Collections.emptyList());
             fail("a client must not update a work another client is the source of");
         } catch (WrongSourceException expected) {
             assertEquals("work", expected.getParams().get("activity"));

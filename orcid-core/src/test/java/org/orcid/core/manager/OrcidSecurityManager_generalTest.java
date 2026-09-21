@@ -32,6 +32,7 @@ import org.orcid.jaxb.model.record_v2.PersonalDetails;
 import org.orcid.jaxb.model.record_v2.Record;
 import org.orcid.jaxb.model.record_v2.Work;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
+import org.orcid.persistence.jpa.entities.SourceEntity;
 import org.orcid.core.exception.OrcidUnauthorizedException;
 
 /**
@@ -1222,11 +1223,16 @@ public class OrcidSecurityManager_generalTest extends OrcidSecurityManagerTestBa
         // leave the two refusal tests above green.
         //
         // Same actor, same required scope and same call as the write test
-        // above -- the claimed flag is the only thing that differs.
+        // above -- the claimed flag is what differs.
         // ORCID_PROFILE_CREATE inherits ORCID_BIO_UPDATE, so checkScopes is
         // satisfied and cannot be what makes this call return.
+        //
+        // Since J21-005 the record must also be sourced by this client, so the
+        // fixture gives it one; without that the call is refused and this test
+        // would be asserting a rule the production code no longer has.
         SecurityContextTestUtils.setUpSecurityContextForClientOnly(CLIENT_1, ScopePathType.ORCID_PROFILE_CREATE);
-        when(profileEntityCacheManager.retrieve(ORCID_1)).thenReturn(profileWithClaimed(false));
+        when(sourceManager.retrieveSourceOrcid()).thenReturn(CLIENT_1);
+        when(profileEntityCacheManager.retrieve(ORCID_1)).thenReturn(profileSourcedBy(CLIENT_1));
 
         orcidSecurityManager.checkClientAccessAndScopes(ORCID_1, ScopePathType.ORCID_BIO_UPDATE);
     }
@@ -1251,6 +1257,18 @@ public class OrcidSecurityManager_generalTest extends OrcidSecurityManagerTestBa
         ProfileEntity profile = new ProfileEntity();
         profile.setId(ORCID_1);
         profile.setClaimed(claimed);
+        return profile;
+    }
+
+    /**
+     * An unclaimed record created by the given client. Since J21-005 the client credentials path
+     * requires both halves: the record unclaimed, and this client its source.
+     */
+    private ProfileEntity profileSourcedBy(String clientId) {
+        ProfileEntity profile = profileWithClaimed(false);
+        SourceEntity source = new SourceEntity();
+        source.setCachedSourceId(clientId);
+        profile.setSource(source);
         return profile;
     }
 }

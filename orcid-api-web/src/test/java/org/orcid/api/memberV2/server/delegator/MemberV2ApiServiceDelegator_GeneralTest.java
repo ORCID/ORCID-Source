@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.anyLong;
@@ -498,8 +499,8 @@ public class MemberV2ApiServiceDelegator_GeneralTest extends MemberV2ApiServiceD
 
         Funding funding = Utils.getFunding();
         funding.setPutCode(1L);
-        when(profileFundingManager.createFunding(eq(orcid), any(Funding.class), anyBoolean())).thenReturn(funding);
-        when(profileFundingManager.updateFunding(eq(orcid), any(Funding.class), anyBoolean())).thenReturn(funding);
+        when(profileFundingManager.createFunding(eq(orcid), any(Funding.class), anyBoolean(), anyList())).thenReturn(funding);
+        when(profileFundingManager.updateFunding(eq(orcid), any(Funding.class), anyBoolean(), anyList())).thenReturn(funding);
 
         Keyword keyword = Utils.getKeyword();
         keyword.setPutCode(1L);
@@ -523,8 +524,8 @@ public class MemberV2ApiServiceDelegator_GeneralTest extends MemberV2ApiServiceD
 
         Work work = Utils.getWork("work # 1");
         work.setPutCode(1L);
-        when(workManager.createWork(eq(orcid), any(Work.class), anyBoolean())).thenReturn(work);
-        when(workManager.updateWork(eq(orcid), any(Work.class), anyBoolean())).thenReturn(work);
+        when(workManager.createWork(eq(orcid), any(Work.class), anyBoolean(), anyList())).thenReturn(work);
+        when(workManager.updateWork(eq(orcid), any(Work.class), anyBoolean(), anyList())).thenReturn(work);
     }
 
     private Address addressWithPutCode(Long putCode) {

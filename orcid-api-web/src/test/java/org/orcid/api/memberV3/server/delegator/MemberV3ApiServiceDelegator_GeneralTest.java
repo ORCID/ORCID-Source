@@ -374,9 +374,9 @@ public class MemberV3ApiServiceDelegator_GeneralTest extends MemberV3ApiServiceD
         assertNoContent(serviceDelegator.deleteAddress(UNCLAIMED, putCode));
 
         // Test education
-        when(affiliationsManager.createEducationAffiliation(eq(UNCLAIMED), any(Education.class), eq(true))).thenReturn(education(1L));
+        when(affiliationsManager.createEducationAffiliation(eq(UNCLAIMED), any(Education.class), eq(true), anyList())).thenReturn(education(1L));
         when(affiliationsManagerReadOnly.getEducationAffiliation(UNCLAIMED, 1L)).thenReturn(education(1L));
-        when(affiliationsManager.updateEducationAffiliation(eq(UNCLAIMED), any(Education.class), eq(true))).thenReturn(education(1L));
+        when(affiliationsManager.updateEducationAffiliation(eq(UNCLAIMED), any(Education.class), eq(true), anyList())).thenReturn(education(1L));
         response = serviceDelegator.createEducation(UNCLAIMED, (Education) Utils.getAffiliation(AffiliationType.EDUCATION));
         assertCreated(response);
         assertEquals(Long.valueOf(1L), Utils.getPutCode(response));
@@ -389,9 +389,9 @@ public class MemberV3ApiServiceDelegator_GeneralTest extends MemberV3ApiServiceD
         assertNoContent(serviceDelegator.deleteAffiliation(UNCLAIMED, 1L));
 
         // Test employment
-        when(affiliationsManager.createEmploymentAffiliation(eq(UNCLAIMED), any(Employment.class), eq(true))).thenReturn(employment(2L));
+        when(affiliationsManager.createEmploymentAffiliation(eq(UNCLAIMED), any(Employment.class), eq(true), anyList())).thenReturn(employment(2L));
         when(affiliationsManagerReadOnly.getEmploymentAffiliation(UNCLAIMED, 2L)).thenReturn(employment(2L));
-        when(affiliationsManager.updateEmploymentAffiliation(eq(UNCLAIMED), any(Employment.class), eq(true))).thenReturn(employment(2L));
+        when(affiliationsManager.updateEmploymentAffiliation(eq(UNCLAIMED), any(Employment.class), eq(true), anyList())).thenReturn(employment(2L));
         response = serviceDelegator.createEmployment(UNCLAIMED, (Employment) Utils.getAffiliation(AffiliationType.EMPLOYMENT));
         assertCreated(response);
         response = serviceDelegator.viewEmployment(UNCLAIMED, 2L);
@@ -417,9 +417,9 @@ public class MemberV3ApiServiceDelegator_GeneralTest extends MemberV3ApiServiceD
         assertNoContent(serviceDelegator.deleteExternalIdentifier(UNCLAIMED, 3L));
 
         // Test funding
-        when(profileFundingManager.createFunding(eq(UNCLAIMED), any(Funding.class), eq(true))).thenReturn(funding(4L));
+        when(profileFundingManager.createFunding(eq(UNCLAIMED), any(Funding.class), eq(true), anyList())).thenReturn(funding(4L));
         when(profileFundingManagerReadOnly.getFunding(UNCLAIMED, 4L)).thenReturn(funding(4L));
-        when(profileFundingManager.updateFunding(eq(UNCLAIMED), any(Funding.class), eq(true))).thenReturn(funding(4L));
+        when(profileFundingManager.updateFunding(eq(UNCLAIMED), any(Funding.class), eq(true), anyList())).thenReturn(funding(4L));
         response = serviceDelegator.createFunding(UNCLAIMED, Utils.getFunding());
         assertCreated(response);
         response = serviceDelegator.viewFunding(UNCLAIMED, 4L);
@@ -482,9 +482,9 @@ public class MemberV3ApiServiceDelegator_GeneralTest extends MemberV3ApiServiceD
         assertNoContent(serviceDelegator.deleteResearcherUrl(UNCLAIMED, 8L));
 
         // Test work
-        when(workManager.createWork(eq(UNCLAIMED), any(Work.class), eq(true))).thenReturn(work(9L));
+        when(workManager.createWork(eq(UNCLAIMED), any(Work.class), eq(true), anyList())).thenReturn(work(9L));
         when(workManagerReadOnly.getWork(UNCLAIMED, 9L)).thenReturn(work(9L));
-        when(workManager.updateWork(eq(UNCLAIMED), any(Work.class), eq(true))).thenReturn(work(9L));
+        when(workManager.updateWork(eq(UNCLAIMED), any(Work.class), eq(true), anyList())).thenReturn(work(9L));
         response = serviceDelegator.createWork(UNCLAIMED, Utils.getWork("work # 1 " + System.currentTimeMillis()));
         assertCreated(response);
         response = serviceDelegator.viewWork(UNCLAIMED, 9L);

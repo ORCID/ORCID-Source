@@ -10,6 +10,7 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -158,7 +159,7 @@ public class ProfileFundingManagerImplMockTest {
         doThrow(wrongSource()).when(orcidSecurityManager).checkSource(stored);
 
         try {
-            profileFundingManager.updateFunding(ORCID, funding(Visibility.PUBLIC), true);
+            profileFundingManager.updateFunding(ORCID, funding(Visibility.PUBLIC), true, Collections.emptyList());
             fail("a client must not update a funding another client is the source of");
         } catch (WrongSourceException expected) {
             assertEquals("work", expected.getParams().get("activity"));
@@ -200,7 +201,7 @@ public class ProfileFundingManagerImplMockTest {
         when(profileFundingDao.getProfileFunding(ORCID, PUT_CODE)).thenReturn(storedFunding(Visibility.PUBLIC, Actors.CLIENT_A));
 
         try {
-            profileFundingManager.updateFunding(ORCID, funding(Visibility.PRIVATE), true);
+            profileFundingManager.updateFunding(ORCID, funding(Visibility.PRIVATE), true, Collections.emptyList());
             fail("an API update must not move a public funding to private");
         } catch (VisibilityMismatchException expected) {
             // the API renders this as 9035
@@ -227,7 +228,7 @@ public class ProfileFundingManagerImplMockTest {
             return target;
         }).when(jpaJaxbFundingAdapter).toProfileFundingEntity(any(Funding.class), any(ProfileFundingEntity.class));
 
-        profileFundingManager.updateFunding(ORCID, funding(null), true);
+        profileFundingManager.updateFunding(ORCID, funding(null), true, Collections.emptyList());
 
         ArgumentCaptor<ProfileFundingEntity> merged = ArgumentCaptor.forClass(ProfileFundingEntity.class);
         verify(profileFundingDao).merge(merged.capture());

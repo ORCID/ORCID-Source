@@ -7,6 +7,7 @@ import static org.mockito.Mockito.when;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 
 import jakarta.ws.rs.core.Response;
 
@@ -295,6 +296,14 @@ public abstract class MemberV2ApiServiceDelegatorMockBase {
             String putCode = invocation.getArgument(2);
             return Response.created(URI.create("/" + (orcid == null ? "" : orcid + "/") + target + "/" + putCode)).build();
         });
+
+        // The delegator reads the record's existing activities and hands them to the manager, so
+        // the manager can spot a duplicate without going back to the database. An unstubbed mock
+        // returns null, and a null would both hide that the delegator made the call and make every
+        // anyList() matcher below miss. Empty is the honest default: these tests assert what the
+        // delegator does with one submitted item, not how the manager treats what is already there.
+        when(workManagerReadOnly.findWorks(anyString())).thenReturn(Collections.emptyList());
+        when(profileFundingManagerReadOnly.getFundingList(anyString())).thenReturn(Collections.emptyList());
     }
 
     // ------------------------------------------------------------- fixtures

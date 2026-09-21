@@ -13,7 +13,6 @@ import org.orcid.persistence.dao.UserConnectionDao;
 import org.orcid.persistence.jpa.entities.UserConnectionStatus;
 import org.orcid.persistence.jpa.entities.UserconnectionEntity;
 import org.orcid.persistence.jpa.entities.UserconnectionPK;
-import org.springframework.transaction.annotation.Transactional;
 
 /**
  * 
@@ -70,7 +69,6 @@ public class UserConnectionManagerImpl implements UserConnectionManager {
     }
 
     @Override
-    @Transactional
     public void update(String providerUserId, String providerId, String accessToken, Long expireTime) {
         UserconnectionEntity userConnection = userConnectionDao.findByProviderIdAndProviderUserId(providerUserId, providerId);
         if (userConnection != null) {

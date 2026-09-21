@@ -49,7 +49,7 @@ public class JpaJaxbExternalIdentifierAdapterTest {
     }
 
     @Test
-    public void testToExternalIdentifierEntity() throws JAXBException {
+    public void fromExternalIdentifierToExternalIdentifierEntityTest() throws JAXBException {
         ExternalIdentifierEntity entity = jpaJaxbExternalIdentifierAdapter.toExternalIdentifierEntity(getExternalIdentifier());
         assertNotNull(entity);
         assertEquals("A-0003", entity.getExternalIdCommonName());

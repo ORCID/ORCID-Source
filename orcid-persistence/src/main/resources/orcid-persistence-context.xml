@@ -16,7 +16,7 @@
                
     <context:property-placeholder location="\${org.orcid.config.file}" ignore-resource-not-found="true" ignore-unresolvable="true" />
             
-    <tx:annotation-driven proxy-target-class="true" />
+    <tx:annotation-driven order="2" proxy-target-class="true" />
     
     <context:component-scan
 		base-package="org.orcid.persistence.aop" />
@@ -258,6 +258,8 @@
     <bean id="identifierTypeDao" class="org.orcid.persistence.dao.impl.IdentifierTypeDaoImpl" />
     
     <bean id="backupCodeDao" class="org.orcid.persistence.dao.impl.BackupCodeDaoImpl" />
+
+    <bean id="profileRecoveryPhoneDao" class="org.orcid.persistence.dao.impl.ProfileRecoveryPhoneDaoImpl" />
     
     <bean id="orgImportLogDao" class="org.orcid.persistence.dao.impl.OrgImportLogDaoImpl" />
     
@@ -289,7 +291,8 @@
     <property name="persistenceUnitName" value="orcid" />
     <property name="jpaPropertyMap">
         <map>
-            <entry key="hibernate.connection.autocommit" value="${org.orcid.persistence.db.autocommit:false}" />
+            <entry key="hibernate.connection.autocommit" value="false" />
+            <entry key="hibernate.connection.provider_disables_autocommit" value="true" />
             <entry key="hibernate.generate_statistics" value="${org.orcid.persistence.db.hibernateStatistics:false}" />
             <!-- JDBC Fetch Size: Number of rows retrieved per DB network round-trip -->
             <entry key="hibernate.jdbc.fetch_size" value="${org.orcid.persistence.db.fetchSize:100}" />
@@ -297,6 +300,12 @@
             <entry key="hibernate.jdbc.batch_size" value="${org.orcid.persistence.db.batchSize:50}" />
             <!-- Default Batch Fetch Size: Automatically batches lazy-loaded entities/collections (fixes N+1 queries) -->
             <entry key="hibernate.default_batch_fetch_size" value="${org.orcid.persistence.db.defaultBatchFetchSize:32}" />
+            <!-- Query Plan Cache Max Size: Maximum number of parsed query plans to cache in memory -->
+            <entry key="hibernate.query.plan_cache_max_size" value="${org.orcid.persistence.db.queryPlanCacheMaxSize:4096}" />
+            <!-- Pretty-print SQL statements in logs (default: true) -->
+            <entry key="hibernate.format_sql" value="${org.orcid.persistence.db.formatSql:false}" />
+            <!-- Log inline SQL comments for origin tracing (default: true) -->
+            <entry key="hibernate.use_sql_comments" value="${org.orcid.persistence.db.useSqlComments:false}" />
         </map>
     </property>
 </bean>
@@ -307,11 +316,18 @@
     <property name="persistenceUnitName" value="orcid" />
     <property name="jpaPropertyMap">
         <map>
-            <entry key="hibernate.connection.autocommit" value="${org.orcid.persistence.db.readonly.autocommit:false}" />
+            <entry key="hibernate.connection.autocommit" value="false" />
+            <entry key="hibernate.connection.provider_disables_autocommit" value="true" />
             <entry key="hibernate.generate_statistics" value="${org.orcid.persistence.db.readonly.hibernateStatistics:false}" />
             <!-- Read-Only Fetch Configurations -->
             <entry key="hibernate.jdbc.fetch_size" value="${org.orcid.persistence.db.readonly.fetchSize:100}" />
             <entry key="hibernate.default_batch_fetch_size" value="${org.orcid.persistence.db.readonly.defaultBatchFetchSize:32}" />
+            <!-- Query Plan Cache Max Size: Maximum number of parsed query plans to cache in memory -->
+            <entry key="hibernate.query.plan_cache_max_size" value="${org.orcid.persistence.db.readonly.queryPlanCacheMaxSize:4096}" />
+            <!-- Pretty-print SQL statements in logs (default: true) -->
+            <entry key="hibernate.format_sql" value="${org.orcid.persistence.db.readonly.formatSql:false}" />
+            <!-- Log inline SQL comments for origin tracing (default: true) -->
+            <entry key="hibernate.use_sql_comments" value="${org.orcid.persistence.db.readonly.useSqlComments:false}" />
         </map>
     </property>
 </bean>
@@ -362,6 +378,7 @@
 
 	<bean id="pooledDataSource" class="com.zaxxer.hikari.HikariDataSource" destroy-method="close">
         <property name="poolName" value="\${org.orcid.persistence.dataSourceName:orcid}" />
+        <property name="autoCommit" value="false" />
         <property name="driverClassName" value="\${org.orcid.persistence.db.class}" />
         <property name="jdbcUrl" value="\${org.orcid.persistence.db.url}" />
         <property name="username" value="\${org.orcid.persistence.db.username}" />
@@ -372,6 +389,7 @@
         <property name="idleTimeout" value="\${org.orcid.persistence.db.hikari.idleTimeout:600000}" />
         <property name="maxLifetime" value="\${org.orcid.persistence.db.hikari.maxLifetime:1800000}" />
         <property name="keepaliveTime" value="\${org.orcid.persistence.db.hikari.keepaliveTime:120000}" />
+        <property name="leakDetectionThreshold" value="\${org.orcid.persistence.db.hikari.leakDetectionThreshold:0}" />
         <!-- PostgreSQL JDBC Driver Properties -->
         <property name="dataSourceProperties">
             <props>
@@ -382,6 +400,7 @@
     
     <bean id="pooledDataSourceReadOnly" class="com.zaxxer.hikari.HikariDataSource" destroy-method="close">
         <property name="poolName" value="\${org.orcid.persistence.db.readonly.dataSourceName:orcidreadonly}" />
+        <property name="autoCommit" value="false" />
         <property name="driverClassName" value="\${org.orcid.persistence.db.readonly.class}" />
         <property name="jdbcUrl" value="\${org.orcid.persistence.db.readonly.url}" />
         <property name="username" value="\${org.orcid.persistence.db.readonly.username}" />
@@ -392,6 +411,7 @@
         <property name="idleTimeout" value="\${org.orcid.persistence.db.readonly.hikari.idleTimeout:600000}" />
         <property name="maxLifetime" value="\${org.orcid.persistence.db.readonly.hikari.maxLifetime:1800000}" />
         <property name="keepaliveTime" value="\${org.orcid.persistence.db.readonly.hikari.keepaliveTime:120000}" />
+        <property name="leakDetectionThreshold" value="\${org.orcid.persistence.db.readonly.hikari.leakDetectionThreshold:0}" />
         <property name="readOnly" value="true" />
         <!-- PostgreSQL JDBC Driver Properties -->
         <property name="dataSourceProperties">

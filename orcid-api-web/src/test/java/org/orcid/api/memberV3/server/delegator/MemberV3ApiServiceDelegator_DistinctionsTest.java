@@ -394,7 +394,7 @@ public class MemberV3ApiServiceDelegator_DistinctionsTest extends MemberV3ApiSer
         Distinction toCreate = (Distinction) Utils.getAffiliation(AffiliationType.DISTINCTION);
         toCreate.setSource(clientSource(CLIENT_2));
         Distinction created = distinction(9999L, Visibility.PUBLIC, "My department name", clientSource(CLIENT_1));
-        when(affiliationsManager.createDistinctionAffiliation(eq(ORCID), any(Distinction.class), eq(true))).thenReturn(created);
+        when(affiliationsManager.createDistinctionAffiliation(eq(ORCID), any(Distinction.class), eq(true), anyList())).thenReturn(created);
 
         Response response = serviceDelegator.createDistinction(ORCID, toCreate);
         assertNotNull(response);
@@ -406,7 +406,7 @@ public class MemberV3ApiServiceDelegator_DistinctionsTest extends MemberV3ApiSer
 
         // A client supplied source must never reach the manager.
         ArgumentCaptor<Distinction> captor = ArgumentCaptor.forClass(Distinction.class);
-        verify(affiliationsManager).createDistinctionAffiliation(eq(ORCID), captor.capture(), eq(true));
+        verify(affiliationsManager).createDistinctionAffiliation(eq(ORCID), captor.capture(), eq(true), anyList());
         assertNull(captor.getValue().getSource());
 
         // Remove new element
@@ -419,7 +419,7 @@ public class MemberV3ApiServiceDelegator_DistinctionsTest extends MemberV3ApiSer
         Distinction element = (Distinction) Utils.getAffiliation(AffiliationType.DISTINCTION);
         element.setExternalIDs(duplicateExternalIDs());
         doThrow(new OrcidDuplicatedActivityException(new HashMap<String, String>()))
-                .when(affiliationsManager).createDistinctionAffiliation(eq(ORCID), any(Distinction.class), eq(true));
+                .when(affiliationsManager).createDistinctionAffiliation(eq(ORCID), any(Distinction.class), eq(true), anyList());
 
         serviceDelegator.createDistinction(ORCID, element);
     }
@@ -446,7 +446,7 @@ public class MemberV3ApiServiceDelegator_DistinctionsTest extends MemberV3ApiSer
         disambiguatedOrg.setDisambiguationSource("WDB");
         element.getOrganization().setDisambiguatedOrganization(disambiguatedOrg);
 
-        when(affiliationsManager.updateDistinctionAffiliation(eq(ORCID), any(Distinction.class), eq(true))).thenReturn(element);
+        when(affiliationsManager.updateDistinctionAffiliation(eq(ORCID), any(Distinction.class), eq(true), anyList())).thenReturn(element);
 
         response = serviceDelegator.updateDistinction(ORCID, 27L, element);
         assertNotNull(response);
@@ -457,7 +457,7 @@ public class MemberV3ApiServiceDelegator_DistinctionsTest extends MemberV3ApiSer
 
         verify(orcidSecurityManager).checkClientAccessAndScopes(ORCID, ScopePathType.AFFILIATIONS_UPDATE);
         ArgumentCaptor<Distinction> captor = ArgumentCaptor.forClass(Distinction.class);
-        verify(affiliationsManager).updateDistinctionAffiliation(eq(ORCID), captor.capture(), eq(true));
+        verify(affiliationsManager).updateDistinctionAffiliation(eq(ORCID), captor.capture(), eq(true), anyList());
         assertNull(captor.getValue().getSource());
     }
 
@@ -466,7 +466,7 @@ public class MemberV3ApiServiceDelegator_DistinctionsTest extends MemberV3ApiSer
         Distinction stored = distinction(30L, Visibility.LIMITED, "SELF LIMITED Department", userSource(ORCID));
         when(affiliationsManagerReadOnly.getDistinctionAffiliation(ORCID, 30L)).thenReturn(stored);
         doThrow(new WrongSourceException(new HashMap<String, String>()))
-                .when(affiliationsManager).updateDistinctionAffiliation(eq(ORCID), any(Distinction.class), eq(true));
+                .when(affiliationsManager).updateDistinctionAffiliation(eq(ORCID), any(Distinction.class), eq(true), anyList());
 
         Response response = serviceDelegator.viewDistinction(ORCID, 30L);
         assertNotNull(response);
@@ -483,7 +483,7 @@ public class MemberV3ApiServiceDelegator_DistinctionsTest extends MemberV3ApiSer
         Distinction stored = distinction(27L, Visibility.PUBLIC, "PUBLIC Department", clientSource(CLIENT_1));
         when(affiliationsManagerReadOnly.getDistinctionAffiliation(ORCID, 27L)).thenReturn(stored);
         doThrow(new VisibilityMismatchException())
-                .when(affiliationsManager).updateDistinctionAffiliation(eq(ORCID), any(Distinction.class), eq(true));
+                .when(affiliationsManager).updateDistinctionAffiliation(eq(ORCID), any(Distinction.class), eq(true), anyList());
 
         Response response = serviceDelegator.viewDistinction(ORCID, 27L);
         assertNotNull(response);
@@ -504,7 +504,7 @@ public class MemberV3ApiServiceDelegator_DistinctionsTest extends MemberV3ApiSer
         // The manager restores the stored visibility when the request leaves it
         // null; that rule is proved in orcid-core, here we only check the
         // delegator returns what the manager produced.
-        when(affiliationsManager.updateDistinctionAffiliation(eq(ORCID), any(Distinction.class), eq(true)))
+        when(affiliationsManager.updateDistinctionAffiliation(eq(ORCID), any(Distinction.class), eq(true), anyList()))
                 .thenReturn(distinction(27L, Visibility.PUBLIC, "PUBLIC Department", clientSource(CLIENT_1)));
 
         Response response = serviceDelegator.viewDistinction(ORCID, 27L);
@@ -524,7 +524,7 @@ public class MemberV3ApiServiceDelegator_DistinctionsTest extends MemberV3ApiSer
         // Catches a delegator that sets a visibility on the element before handing it to
         // the manager: what is submitted must still carry the null the request arrived with.
         ArgumentCaptor<Distinction> submitted = ArgumentCaptor.forClass(Distinction.class);
-        verify(affiliationsManager).updateDistinctionAffiliation(eq(ORCID), submitted.capture(), eq(true));
+        verify(affiliationsManager).updateDistinctionAffiliation(eq(ORCID), submitted.capture(), eq(true), anyList());
         assertNull("keeping the stored visibility is the manager's job, not the delegator's", submitted.getValue().getVisibility());
     }
 
@@ -533,7 +533,7 @@ public class MemberV3ApiServiceDelegator_DistinctionsTest extends MemberV3ApiSer
         Distinction stored = distinction(27L, Visibility.PUBLIC, "PUBLIC Department", clientSource(CLIENT_1));
         when(affiliationsManagerReadOnly.getDistinctionAffiliation(ORCID, 27L)).thenReturn(stored);
         doThrow(new OrcidDuplicatedActivityException(new HashMap<String, String>()))
-                .when(affiliationsManager).updateDistinctionAffiliation(eq(ORCID), any(Distinction.class), eq(true));
+                .when(affiliationsManager).updateDistinctionAffiliation(eq(ORCID), any(Distinction.class), eq(true), anyList());
 
         Response response = serviceDelegator.viewDistinction(ORCID, 27L);
         Distinction element = (Distinction) response.getEntity();
