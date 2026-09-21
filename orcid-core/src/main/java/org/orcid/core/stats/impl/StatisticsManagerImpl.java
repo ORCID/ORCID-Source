@@ -3,7 +3,7 @@ package org.orcid.core.stats.impl;
 import java.text.NumberFormat;
 import java.util.Locale;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 
 import org.orcid.core.stats.StatisticsManager;
 import org.orcid.core.utils.statistics.StatisticsEnum;

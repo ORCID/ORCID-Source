@@ -2,9 +2,10 @@ package org.orcid.persistence.dao.impl;
 
 import java.util.List;
 
-import javax.annotation.Resource;
-import javax.persistence.EntityManager;
-import javax.transaction.Transactional;
+import jakarta.annotation.Resource;
+import jakarta.persistence.EntityManager;
+
+import org.springframework.transaction.annotation.Transactional;
 
 import org.orcid.persistence.dao.MemberChosenOrgDisambiguatedDao;
 import org.orcid.persistence.jpa.entities.MemberChosenOrgDisambiguatedEntity;
@@ -16,6 +17,7 @@ public class MemberChosenOrgDisambiguatedDaoImpl implements MemberChosenOrgDisam
 
     @SuppressWarnings("unchecked")
     @Override
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     public List<MemberChosenOrgDisambiguatedEntity> getAll() {
         return entityManager.createQuery("from MemberChosenOrgDisambiguatedEntity").getResultList();
     }

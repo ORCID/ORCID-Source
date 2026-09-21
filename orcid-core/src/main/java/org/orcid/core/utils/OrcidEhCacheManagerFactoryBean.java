@@ -2,7 +2,7 @@ package org.orcid.core.utils;
 
 import java.io.File;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.RandomStringUtils;

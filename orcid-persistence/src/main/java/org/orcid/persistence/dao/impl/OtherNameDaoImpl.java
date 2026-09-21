@@ -3,7 +3,7 @@ package org.orcid.persistence.dao.impl;
 import java.math.BigInteger;
 import java.util.List;
 
-import javax.persistence.Query;
+import jakarta.persistence.Query;
 
 import org.orcid.jaxb.model.v3.release.common.Visibility;
 import org.orcid.persistence.aop.UpdateProfileLastModifiedAndIndexingStatus;
@@ -29,6 +29,7 @@ public class OtherNameDaoImpl extends GenericDaoImpl<OtherNameEntity, Long> impl
      * */
     @Override
     @SuppressWarnings("unchecked")
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     @Cacheable(value = "dao-other-names", key = "#orcid.concat('-').concat(#lastModified)")
     public List<OtherNameEntity> getOtherNames(String orcid, long lastModified) {
         Query query = entityManager.createQuery("FROM OtherNameEntity WHERE orcid=:orcid order by displayIndex desc, dateCreated asc");
@@ -37,6 +38,7 @@ public class OtherNameDaoImpl extends GenericDaoImpl<OtherNameEntity, Long> impl
     }
     
     @Override
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     @Cacheable(value = "public-other-names", key = "#orcid.concat('-').concat(#lastModified)")
     public List<OtherNameEntity> getPublicOtherNames(String orcid, long lastModified) {
         return getOtherNames(orcid, PUBLIC_VISIBILITY);
@@ -44,6 +46,7 @@ public class OtherNameDaoImpl extends GenericDaoImpl<OtherNameEntity, Long> impl
 
     @Override
     @SuppressWarnings("unchecked")
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     public List<OtherNameEntity> getOtherNames(String orcid, String visibility) {
         Query query = entityManager.createQuery("FROM OtherNameEntity WHERE orcid=:orcid AND visibility=:visibility order by displayIndex desc, dateCreated asc");
         query.setParameter("orcid", orcid);
@@ -91,13 +94,14 @@ public class OtherNameDaoImpl extends GenericDaoImpl<OtherNameEntity, Long> impl
     @Transactional
     @UpdateProfileLastModifiedAndIndexingStatus
     public boolean deleteOtherName(OtherNameEntity otherName) {
-        Assert.notNull(otherName);
-        Query query = entityManager.createQuery("DELETE FROM OtherNameEntity WHERE id=:id");
+        Assert.notNull(otherName, "must not be null");
+        Query query = entityManager.createQuery("DELETE FROM OtherNameEntity n WHERE n.id=:id");
         query.setParameter("id", otherName.getId());
         return query.executeUpdate() > 0 ? true : false;
     }
 
     @Override
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     public OtherNameEntity getOtherName(String orcid, Long putCode) {
         Query query = entityManager.createQuery("FROM OtherNameEntity WHERE orcid=:orcid and id=:id");
         query.setParameter("orcid", orcid);
@@ -109,13 +113,14 @@ public class OtherNameDaoImpl extends GenericDaoImpl<OtherNameEntity, Long> impl
     @Transactional
     @UpdateProfileLastModifiedAndIndexingStatus
     public void removeAllOtherNames(String orcid) {
-        Query query = entityManager.createQuery("delete from OtherNameEntity where orcid = :orcid");
+        Query query = entityManager.createQuery("delete from OtherNameEntity n where n.orcid = :orcid");
         query.setParameter("orcid", orcid);
         query.executeUpdate();
     }
 
     @SuppressWarnings("unchecked")
     @Override
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     public List<BigInteger> getIdsForClientSourceCorrection(int limit, List<String> nonPublicClients) {
         Query query = entityManager.createNativeQuery("SELECT other_name_id FROM other_name WHERE client_source_id = source_id AND client_source_id IN :nonPublicClients");
         query.setParameter("nonPublicClients", nonPublicClients);
@@ -133,6 +138,7 @@ public class OtherNameDaoImpl extends GenericDaoImpl<OtherNameEntity, Long> impl
 
     @SuppressWarnings("unchecked")
     @Override
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     public List<BigInteger> getIdsForUserSourceCorrection(int limit, List<String> publicClients) {
         Query query = entityManager.createNativeQuery("SELECT other_name_id FROM other_name WHERE client_source_id = source_id AND client_source_id IN :publicClients");
         query.setParameter("publicClients", publicClients);
@@ -150,6 +156,7 @@ public class OtherNameDaoImpl extends GenericDaoImpl<OtherNameEntity, Long> impl
 
     @SuppressWarnings("unchecked")
     @Override
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     public List<BigInteger> getIdsForUserOBOUpdate(String clientDetailsId, int max) {
         Query query = entityManager.createNativeQuery("SELECT other_name_id FROM other_name WHERE client_source_id = :clientDetailsId AND assertion_origin_source_id IS NULL");
         query.setParameter("clientDetailsId", clientDetailsId);
@@ -167,6 +174,7 @@ public class OtherNameDaoImpl extends GenericDaoImpl<OtherNameEntity, Long> impl
 
     @SuppressWarnings("unchecked")
     @Override
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     public List<BigInteger> getIdsForUserOBORecords(String clientDetailsId, int max) {
         Query query = entityManager.createNativeQuery("SELECT other_name_id FROM other_name WHERE client_source_id = :clientDetailsId AND assertion_origin_source_id IS NOT NULL");
         query.setParameter("clientDetailsId", clientDetailsId);
@@ -184,6 +192,7 @@ public class OtherNameDaoImpl extends GenericDaoImpl<OtherNameEntity, Long> impl
 
     @SuppressWarnings("unchecked")
     @Override
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     public List<BigInteger> getIdsForUserOBORecords(int max) {
         Query query = entityManager.createNativeQuery("SELECT other_name_id FROM other_name WHERE assertion_origin_source_id IS NOT NULL");
         query.setMaxResults(max);
@@ -192,6 +201,7 @@ public class OtherNameDaoImpl extends GenericDaoImpl<OtherNameEntity, Long> impl
 
     @SuppressWarnings("unchecked")
     @Override
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     public List<BigInteger> getIdsOfOtherNamesReferencingClientProfiles(int max, List<String> clientProfileOrcidIds) {
         Query query = entityManager.createNativeQuery("SELECT other_name_id FROM other_name WHERE source_id IN :ids");
         query.setParameter("ids", clientProfileOrcidIds);

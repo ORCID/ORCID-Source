@@ -5,7 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 
 import org.orcid.core.manager.NotificationManager;
 import org.orcid.core.manager.OrcidSecurityManager;
@@ -100,15 +100,13 @@ public class ProfileFundingManagerImpl extends ProfileFundingManagerReadOnlyImpl
      */
     @Override
     @Transactional
-    public Funding createFunding(String orcid, Funding funding, boolean isApiRequest) {
+    public Funding createFunding(String orcid, Funding funding, boolean isApiRequest, List<Funding> existingFundings) {
         SourceEntity sourceEntity = sourceManager.retrieveSourceEntity();
         activityValidator.validateFunding(funding, sourceEntity, true, isApiRequest, null);
 
         // Check for duplicates
-        List<ProfileFundingEntity> existingFundings = profileFundingDao.getByUser(orcid, getLastModified(orcid));
-        List<Funding> fundings = jpaJaxbFundingAdapter.toFunding(existingFundings);
-        if (fundings != null && isApiRequest) {
-            for (Funding exstingFunding : fundings) {
+        if (existingFundings != null && isApiRequest) {
+            for (Funding exstingFunding : existingFundings) {
                 activityValidator.checkExternalIdentifiersForDuplicates(funding, exstingFunding, exstingFunding.getSource(), sourceEntity);
             }
         }
@@ -133,7 +131,6 @@ public class ProfileFundingManagerImpl extends ProfileFundingManagerReadOnlyImpl
         setIncomingWorkPrivacy(profileFundingEntity, profile);
         DisplayIndexCalculatorHelper.setDisplayIndexOnNewEntity(profileFundingEntity, isApiRequest);
         profileFundingDao.persist(profileFundingEntity);
-        profileFundingDao.flush();
         if (isApiRequest) {
             notificationManager.sendAmendEmail(orcid, AmendedSection.FUNDING, createItemList(profileFundingEntity, funding.getExternalIdentifiers(), ActionType.CREATE));
         }
@@ -160,7 +157,8 @@ public class ProfileFundingManagerImpl extends ProfileFundingManagerReadOnlyImpl
      * @return the updated funding
      */
     @Override
-    public Funding updateFunding(String orcid, Funding funding, boolean isApiRequest) {
+    @Transactional
+    public Funding updateFunding(String orcid, Funding funding, boolean isApiRequest, List<Funding> existingFundings) {
         SourceEntity sourceEntity = sourceManager.retrieveSourceEntity();
         ProfileFundingEntity pfe = profileFundingDao.getProfileFunding(orcid, funding.getPutCode());
         Visibility originalVisibility = Visibility.valueOf(pfe.getVisibility());
@@ -171,16 +169,17 @@ public class ProfileFundingManagerImpl extends ProfileFundingManagerReadOnlyImpl
 
         activityValidator.validateFunding(funding, sourceEntity, false, isApiRequest, originalVisibility);
         if (isApiRequest) {
-            List<ProfileFundingEntity> existingFundings = profileFundingDao.getByUser(orcid, getLastModified(orcid));
-            for (ProfileFundingEntity existingFunding : existingFundings) {
-                Funding existing = jpaJaxbFundingAdapter.toFunding(existingFunding);
-                if (!existing.getPutCode().equals(funding.getPutCode())) {
-                    activityValidator.checkExternalIdentifiersForDuplicates(funding, existing, existing.getSource(), sourceEntity);
+            for (Funding existingFunding : existingFundings) {
+                if (!existingFunding.getPutCode().equals(funding.getPutCode())) {
+                    activityValidator.checkExternalIdentifiersForDuplicates(funding, existingFunding, existingFunding.getSource(), sourceEntity);
                 }
             }
         }
 
         orcidSecurityManager.checkSource(pfe);
+
+        // Fetch organization FIRST before mutating pfe (prevents auto-flush errors during query)
+        OrgEntity updatedOrganization = orgManager.getOrgEntity(funding);
 
         jpaJaxbFundingAdapter.toProfileFundingEntity(funding, pfe);
         pfe.setVisibility(originalVisibility.name());
@@ -189,13 +188,9 @@ public class ProfileFundingManagerImpl extends ProfileFundingManagerReadOnlyImpl
         pfe.setSourceId(existingSourceId);
         pfe.setClientSourceId(existingClientSourceId);
 
-        // Updates the give organization with the latest organization from
-        // database, or, create a new one
-        OrgEntity updatedOrganization = orgManager.getOrgEntity(funding);
         pfe.setOrg(updatedOrganization);
 
         pfe = profileFundingDao.merge(pfe);
-        profileFundingDao.flush();
         if (isApiRequest) {
             notificationManager.sendAmendEmail(orcid, AmendedSection.FUNDING, createItemList(pfe, funding.getExternalIdentifiers(), ActionType.UPDATE));
         }

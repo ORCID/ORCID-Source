@@ -29,6 +29,7 @@ import org.orcid.jaxb.model.v3.release.record.summary.*;
 import org.orcid.jaxb.model.v3.release.record.summary.Educations;
 import org.orcid.jaxb.model.v3.release.record.summary.Employments;
 import org.orcid.jaxb.model.v3.release.record.summary.Works;
+import org.orcid.jaxb.model.v3.release.record.Record;
 import org.orcid.jaxb.model.v3.release.search.Search;
 import org.orcid.jaxb.model.v3.release.search.expanded.ExpandedSearch;
 import org.slf4j.Logger;
@@ -36,10 +37,12 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.Resource;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.Status;
+import jakarta.annotation.Resource;
+import jakarta.ws.rs.core.Response;
+import jakarta.ws.rs.core.Response.Status;
 import java.util.*;
+
+import org.apache.hc.core5.http.ParseException;
 
 @Component
 public class MemberV3ApiServiceDelegatorImpl implements
@@ -253,11 +256,7 @@ public class MemberV3ApiServiceDelegatorImpl implements
     @Override
     public Response viewWorks(String orcid) {
         checkProfileStatus(orcid, true);
-        long begintime = System.currentTimeMillis();
-        long start = System.currentTimeMillis();
         List<WorkSummary> worksList = workManagerReadOnly.getWorksSummaryList(orcid);
-        long finish = System.currentTimeMillis();
-        LOGGER.debug("1. Time taken reading summaries " + (finish - start));
         // Lets copy the list so we don't modify the cached collection
         List<WorkSummary> filteredList = null;
         if (worksList != null) {
@@ -265,12 +264,8 @@ public class MemberV3ApiServiceDelegatorImpl implements
         }
         worksList = filteredList;
 
-        start = System.currentTimeMillis();
         orcidSecurityManager.checkAndFilter(orcid, worksList, ScopePathType.ORCID_WORKS_READ_LIMITED);
-        finish = System.currentTimeMillis();
-        LOGGER.debug("2. Time taken filtering summaries " + (finish - start));
         // Should we filter the version-of identifiers before grouping?
-        start = System.currentTimeMillis();
         if(filterVersionOfIdentifiers) {
             for(WorkSummary w : worksList) {
                 if(w.getExternalIdentifiers() != null && !w.getExternalIdentifiers().getExternalIdentifier().isEmpty()) {
@@ -284,24 +279,11 @@ public class MemberV3ApiServiceDelegatorImpl implements
                 }
             }
         }
-        finish = System.currentTimeMillis();
-        LOGGER.debug("3. Time taken removing VERSION_OF identifiers " + (finish - start));
-
-        start = System.currentTimeMillis();
         Works works = workManager.groupWorks(worksList, false);
-        finish = System.currentTimeMillis();
-        LOGGER.debug("4. Time taken grouping works " + (finish - start));
-        start = System.currentTimeMillis();
         Api3_0LastModifiedDatesHelper.calculateLastModified(works);
         ActivityUtils.cleanEmptyFields(works);
         ActivityUtils.setPathToWorks(works, orcid);
-        finish = System.currentTimeMillis();
-        LOGGER.debug("5. Time taken to set metadata " + (finish - start));
-        start = System.currentTimeMillis();
         sourceUtils.setSourceName(works);
-        finish = System.currentTimeMillis();
-        LOGGER.debug("6. Time taken setting source names " + (finish - start));
-        LOGGER.debug("7. Total Time taken processing the summaries " + (finish - begintime));
         return Response.ok(works).build();
     }
 
@@ -321,7 +303,8 @@ public class MemberV3ApiServiceDelegatorImpl implements
         checkProfileStatus(orcid, false);
         orcidSecurityManager.checkClientAccessAndScopes(orcid, ScopePathType.ORCID_WORKS_CREATE, ScopePathType.ORCID_WORKS_UPDATE);
         clearSource(work);
-        Work w = workManager.createWork(orcid, work, true);
+        List<Work> existingWorks = workManagerReadOnly.findWorks(orcid);
+        Work w = workManager.createWork(orcid, work, true, existingWorks);
         sourceUtils.setSourceName(w);
         return apiUtils.buildApiResponse(orcid, "work", String.valueOf(w.getPutCode()), "apiError.creatework_response.exception");
     }
@@ -334,7 +317,8 @@ public class MemberV3ApiServiceDelegatorImpl implements
             throw new MismatchedPutCodeException(addParmsMismatchedPutCode(putCode, work.getPutCode()));                                     
         }
         clearSource(work);
-        Work w = workManager.updateWork(orcid, work, true);
+        List<Work> existingWorks = workManagerReadOnly.findWorks(orcid);
+        Work w = workManager.updateWork(orcid, work, true, existingWorks);
         sourceUtils.setSourceName(w);
         return Response.ok(w).build();
     }
@@ -351,7 +335,8 @@ public class MemberV3ApiServiceDelegatorImpl implements
                 }
             }
         }
-        works = workManager.createWorks(orcid, works);
+        List<Work> existingWorks = workManagerReadOnly.findWorks(orcid);
+        works = workManager.createWorks(orcid, works, existingWorks);
         sourceUtils.setSourceName(works);
         return Response.ok(works).build();
     }
@@ -413,7 +398,8 @@ public class MemberV3ApiServiceDelegatorImpl implements
         checkProfileStatus(orcid, false);
         orcidSecurityManager.checkClientAccessAndScopes(orcid, ScopePathType.FUNDING_CREATE, ScopePathType.FUNDING_UPDATE);
         clearSource(funding);
-        Funding f = profileFundingManager.createFunding(orcid, funding, true);
+
+        Funding f = profileFundingManager.createFunding(orcid, funding, true, profileFundingManagerReadOnly.getFundingList(orcid));
         sourceUtils.setSourceName(f);
         return apiUtils.buildApiResponse(orcid, "funding", String.valueOf(f.getPutCode()), "apiError.createfunding_response.exception");
     }
@@ -426,7 +412,7 @@ public class MemberV3ApiServiceDelegatorImpl implements
             throw new MismatchedPutCodeException(addParmsMismatchedPutCode(putCode, funding.getPutCode()));                            
         }
         clearSource(funding);
-        Funding f = profileFundingManager.updateFunding(orcid, funding, true);
+        Funding f = profileFundingManager.updateFunding(orcid, funding, true, profileFundingManagerReadOnly.getFundingList(orcid));
         sourceUtils.setSourceName(f);
         return Response.ok(f).build();
     }
@@ -485,7 +471,7 @@ public class MemberV3ApiServiceDelegatorImpl implements
         checkProfileStatus(orcid, false);
         orcidSecurityManager.checkClientAccessAndScopes(orcid, ScopePathType.AFFILIATIONS_CREATE, ScopePathType.AFFILIATIONS_UPDATE);
         clearSource(education);
-        Education e = affiliationsManager.createEducationAffiliation(orcid, education, true);
+        Education e = affiliationsManager.createEducationAffiliation(orcid, education, true, affiliationsManagerReadOnly.getAffiliations(orcid));
         sourceUtils.setSourceName(e);
         return apiUtils.buildApiResponse(orcid, "education", String.valueOf(e.getPutCode()), "apiError.createeducation_response.exception");
     }
@@ -498,7 +484,7 @@ public class MemberV3ApiServiceDelegatorImpl implements
             throw new MismatchedPutCodeException(addParmsMismatchedPutCode(putCode, education.getPutCode()));                            
         }
         clearSource(education);
-        Education e = affiliationsManager.updateEducationAffiliation(orcid, education, true);
+        Education e = affiliationsManager.updateEducationAffiliation(orcid, education, true, affiliationsManagerReadOnly.getAffiliations(orcid));
         sourceUtils.setSourceName(e);
         return Response.ok(e).build();
     }
@@ -549,7 +535,7 @@ public class MemberV3ApiServiceDelegatorImpl implements
         checkProfileStatus(orcid, false);
         orcidSecurityManager.checkClientAccessAndScopes(orcid, ScopePathType.AFFILIATIONS_CREATE, ScopePathType.AFFILIATIONS_UPDATE);
         clearSource(employment);
-        Employment e = affiliationsManager.createEmploymentAffiliation(orcid, employment, true);
+        Employment e = affiliationsManager.createEmploymentAffiliation(orcid, employment, true, affiliationsManagerReadOnly.getAffiliations(orcid));
         sourceUtils.setSourceName(e);
         return apiUtils.buildApiResponse(orcid, "employment", String.valueOf(e.getPutCode()), "apiError.createemployment_response.exception");
     }
@@ -562,7 +548,7 @@ public class MemberV3ApiServiceDelegatorImpl implements
             throw new MismatchedPutCodeException(addParmsMismatchedPutCode(putCode, employment.getPutCode()));                            
         }
         clearSource(employment);
-        Employment e = affiliationsManager.updateEmploymentAffiliation(orcid, employment, true);
+        Employment e = affiliationsManager.updateEmploymentAffiliation(orcid, employment, true, affiliationsManagerReadOnly.getAffiliations(orcid));
         sourceUtils.setSourceName(e);
         return Response.ok(e).build();
     }
@@ -1098,7 +1084,7 @@ public class MemberV3ApiServiceDelegatorImpl implements
     }
 
     @Override
-    public Response searchByQuery(Map<String, List<String>> solrParams) {
+    public Response searchByQuery(Map<String, List<String>> solrParams) throws ParseException {
         orcidSecurityManager.checkScopes(ScopePathType.READ_PUBLIC);
         validateSearchParams(solrParams);
         Search search = orcidSearchManager.findOrcidIds(solrParams);
@@ -1106,7 +1092,7 @@ public class MemberV3ApiServiceDelegatorImpl implements
     }
     
     @Override
-    public Response searchByQueryCSV(Map<String, List<String>> solrParams) {
+    public Response searchByQueryCSV(Map<String, List<String>> solrParams) throws ParseException {
         validateSearchParams(solrParams);
         String search = orcidSearchManager.findOrcidIdsAsCSV(solrParams);
         return Response.ok(search).build();
@@ -1208,7 +1194,7 @@ public class MemberV3ApiServiceDelegatorImpl implements
         checkProfileStatus(orcid, false);
         orcidSecurityManager.checkClientAccessAndScopes(orcid, ScopePathType.AFFILIATIONS_CREATE, ScopePathType.AFFILIATIONS_UPDATE);
         clearSource(distinction);
-        Distinction e = affiliationsManager.createDistinctionAffiliation(orcid, distinction, true);
+        Distinction e = affiliationsManager.createDistinctionAffiliation(orcid, distinction, true, affiliationsManagerReadOnly.getAffiliations(orcid));
         sourceUtils.setSourceName(e);
         return apiUtils.buildApiResponse(orcid, "distinction", String.valueOf(e.getPutCode()), "apiError.createdistinction_response.exception");
     }
@@ -1221,7 +1207,7 @@ public class MemberV3ApiServiceDelegatorImpl implements
             throw new MismatchedPutCodeException(addParmsMismatchedPutCode(putCode, distinction.getPutCode()));                            
         }
         clearSource(distinction);
-        Distinction e = affiliationsManager.updateDistinctionAffiliation(orcid, distinction, true);
+        Distinction e = affiliationsManager.updateDistinctionAffiliation(orcid, distinction, true, affiliationsManagerReadOnly.getAffiliations(orcid));
         sourceUtils.setSourceName(e);
         return Response.ok(e).build();
     }
@@ -1274,7 +1260,7 @@ public class MemberV3ApiServiceDelegatorImpl implements
         checkProfileStatus(orcid, false);
         orcidSecurityManager.checkClientAccessAndScopes(orcid, ScopePathType.AFFILIATIONS_CREATE, ScopePathType.AFFILIATIONS_UPDATE);
         clearSource(invitedPosition);
-        InvitedPosition e = affiliationsManager.createInvitedPositionAffiliation(orcid, invitedPosition, true);
+        InvitedPosition e = affiliationsManager.createInvitedPositionAffiliation(orcid, invitedPosition, true, affiliationsManagerReadOnly.getAffiliations(orcid));
         sourceUtils.setSourceName(e);
         return apiUtils.buildApiResponse(orcid, "invited-position", String.valueOf(e.getPutCode()), "apiError.createdistinction_response.exception");
     }
@@ -1287,7 +1273,7 @@ public class MemberV3ApiServiceDelegatorImpl implements
             throw new MismatchedPutCodeException(addParmsMismatchedPutCode(putCode, invitedPosition.getPutCode()));                 
         }
         clearSource(invitedPosition);
-        InvitedPosition e = affiliationsManager.updateInvitedPositionAffiliation(orcid, invitedPosition, true);
+        InvitedPosition e = affiliationsManager.updateInvitedPositionAffiliation(orcid, invitedPosition, true, affiliationsManagerReadOnly.getAffiliations(orcid));
         sourceUtils.setSourceName(e);
         return Response.ok(e).build();
     }
@@ -1340,7 +1326,7 @@ public class MemberV3ApiServiceDelegatorImpl implements
         checkProfileStatus(orcid, false);
         orcidSecurityManager.checkClientAccessAndScopes(orcid, ScopePathType.AFFILIATIONS_CREATE, ScopePathType.AFFILIATIONS_UPDATE);
         clearSource(membership);
-        Membership e = affiliationsManager.createMembershipAffiliation(orcid, membership, true);
+        Membership e = affiliationsManager.createMembershipAffiliation(orcid, membership, true, affiliationsManagerReadOnly.getAffiliations(orcid));
         sourceUtils.setSourceName(e);
         return apiUtils.buildApiResponse(orcid, "membership", String.valueOf(e.getPutCode()), "apiError.createdistinction_response.exception");
     }
@@ -1353,7 +1339,7 @@ public class MemberV3ApiServiceDelegatorImpl implements
             throw new MismatchedPutCodeException(addParmsMismatchedPutCode(putCode, membership.getPutCode()));
         }
         clearSource(membership);
-        Membership e = affiliationsManager.updateMembershipAffiliation(orcid, membership, true);
+        Membership e = affiliationsManager.updateMembershipAffiliation(orcid, membership, true, affiliationsManagerReadOnly.getAffiliations(orcid));
         sourceUtils.setSourceName(e);
         return Response.ok(e).build();
     }
@@ -1406,7 +1392,7 @@ public class MemberV3ApiServiceDelegatorImpl implements
         checkProfileStatus(orcid, false);
         orcidSecurityManager.checkClientAccessAndScopes(orcid, ScopePathType.AFFILIATIONS_CREATE, ScopePathType.AFFILIATIONS_UPDATE);
         clearSource(qualification);
-        Qualification e = affiliationsManager.createQualificationAffiliation(orcid, qualification, true);
+        Qualification e = affiliationsManager.createQualificationAffiliation(orcid, qualification, true, affiliationsManagerReadOnly.getAffiliations(orcid));
         sourceUtils.setSourceName(e);
         return apiUtils.buildApiResponse(orcid, "qualification", String.valueOf(e.getPutCode()), "apiError.createdistinction_response.exception");
     }
@@ -1419,7 +1405,7 @@ public class MemberV3ApiServiceDelegatorImpl implements
             throw new MismatchedPutCodeException(addParmsMismatchedPutCode(putCode, qualification.getPutCode()));                 
         }
         clearSource(qualification);
-        Qualification e = affiliationsManager.updateQualificationAffiliation(orcid, qualification, true);
+        Qualification e = affiliationsManager.updateQualificationAffiliation(orcid, qualification, true, affiliationsManagerReadOnly.getAffiliations(orcid));
         sourceUtils.setSourceName(e);
         return Response.ok(e).build();
     }
@@ -1472,7 +1458,7 @@ public class MemberV3ApiServiceDelegatorImpl implements
         checkProfileStatus(orcid, false);
         orcidSecurityManager.checkClientAccessAndScopes(orcid, ScopePathType.AFFILIATIONS_CREATE, ScopePathType.AFFILIATIONS_UPDATE);
         clearSource(service);
-        Service e = affiliationsManager.createServiceAffiliation(orcid, service, true);
+        Service e = affiliationsManager.createServiceAffiliation(orcid, service, true, affiliationsManagerReadOnly.getAffiliations(orcid));
         sourceUtils.setSourceName(e);
         return apiUtils.buildApiResponse(orcid, "service", String.valueOf(e.getPutCode()), "apiError.createdistinction_response.exception");
     }
@@ -1485,7 +1471,7 @@ public class MemberV3ApiServiceDelegatorImpl implements
             throw new MismatchedPutCodeException(addParmsMismatchedPutCode(putCode, service.getPutCode()));      
         }
         clearSource(service);
-        Service e = affiliationsManager.updateServiceAffiliation(orcid, service, true);
+        Service e = affiliationsManager.updateServiceAffiliation(orcid, service, true, affiliationsManagerReadOnly.getAffiliations(orcid));
         sourceUtils.setSourceName(e);
         return Response.ok(e).build();
     }

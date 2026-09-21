@@ -1,9 +1,9 @@
 package org.orcid.persistence.dao.impl;
 
-import javax.annotation.Resource;
-import javax.persistence.EntityManager;
-import javax.persistence.Query;
-import javax.persistence.TypedQuery;
+import jakarta.annotation.Resource;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.Query;
+import jakarta.persistence.TypedQuery;
 
 import org.orcid.persistence.dao.EventDao;
 import org.orcid.persistence.jpa.entities.EventEntity;
@@ -31,6 +31,7 @@ public class EventDaoImpl implements EventDao {
     }
 
     @Override
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     public EventEntity find(long id) {
         return entityManager.find(EventEntity.class, id);
     }
@@ -42,6 +43,7 @@ public class EventDaoImpl implements EventDao {
     }
 
     @Override
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     public List<EventEntity> findAll() {
         TypedQuery<EventEntity> query = entityManager.createQuery("from EventEntity", EventEntity.class);
         return query.getResultList();
@@ -68,6 +70,7 @@ public class EventDaoImpl implements EventDao {
     }
 
     @Override
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     public List<EventEntity> findByEventType(EventType eventType) {
         TypedQuery<EventEntity> query = entityManager.createQuery("from EventEntity where eventType = :eventType", EventEntity.class);
         query.setParameter("eventType", eventType.getValue());

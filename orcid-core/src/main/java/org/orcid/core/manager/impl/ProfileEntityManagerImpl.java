@@ -4,7 +4,7 @@ import java.security.NoSuchAlgorithmException;
 import java.util.Date;
 import java.util.Map;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 
 import org.apache.commons.lang3.StringUtils;
 import org.orcid.core.manager.EncryptionManager;
@@ -13,13 +13,15 @@ import org.orcid.core.manager.RecordNameManager;
 import org.orcid.core.manager.read_only.RecordNameManagerReadOnly;
 import org.orcid.core.manager.read_only.impl.ProfileEntityManagerReadOnlyImpl;
 import org.orcid.core.manager.v3.EmailManager;
-import org.orcid.core.oauth.OrcidOauth2TokenDetailService;
 import org.orcid.jaxb.model.clientgroup.MemberType;
 import org.orcid.jaxb.model.common_v2.Locale;
 import org.orcid.jaxb.model.record_v2.Name;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionCallback;
+import org.springframework.transaction.support.TransactionTemplate;
 
 /**
  * @author Declan Newman (declan) Date: 10/02/2012
@@ -34,13 +36,13 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
     private EmailManager emailManagerV3;
 
     @Resource
-    private OrcidOauth2TokenDetailService orcidOauth2TokenService;
-
-    @Resource
     private RecordNameManager recordNameManager;
     
     @Resource
     private RecordNameManagerReadOnly recordNameManagerReadOnly;
+
+    @Resource
+    private TransactionTemplate transactionTemplate;
 
     @Override
     public boolean orcidExists(String orcid) {
@@ -75,7 +77,12 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
      */
     @Override
     public boolean enableDeveloperTools(String orcid) {
-        return profileDao.updateDeveloperTools(orcid, true);
+        return transactionTemplate.execute(new TransactionCallback<Boolean>() {
+            @Override
+            public Boolean doInTransaction(TransactionStatus status) {
+                return profileDao.updateDeveloperTools(orcid, true);
+            }
+        });
     }
 
     /**
@@ -87,7 +94,12 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
      */
     @Override
     public boolean disableDeveloperTools(String orcid) {
-        return profileDao.updateDeveloperTools(orcid, false);
+        return transactionTemplate.execute(new TransactionCallback<Boolean>() {
+            @Override
+            public Boolean doInTransaction(TransactionStatus status) {
+                return profileDao.updateDeveloperTools(orcid, false);
+            }
+        });
     }
 
     @Override
@@ -124,17 +136,22 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
 
     @Override
     public boolean reviewProfile(String orcid) {
-        return profileDao.reviewProfile(orcid);
+        return transactionTemplate.execute(new TransactionCallback<Boolean>() {
+            @Override
+            public Boolean doInTransaction(TransactionStatus status) {
+                return profileDao.reviewProfile(orcid);
+            }
+        });
     }
 
     @Override
     public boolean unreviewProfile(String orcid) {
-        return profileDao.unreviewProfile(orcid);
-    }
-
-    @Override
-    public void disableApplication(Long tokenId, String userOrcid) {
-        orcidOauth2TokenService.disableAccessToken(tokenId, userOrcid);
+        return transactionTemplate.execute(new TransactionCallback<Boolean>() {
+            @Override
+            public Boolean doInTransaction(TransactionStatus status) {
+                return profileDao.unreviewProfile(orcid);
+            }
+        });
     }
 
     @Override
@@ -153,7 +170,13 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
 
     @Override
     public void updateLocale(String orcid, Locale locale) {
-        profileDao.updateLocale(orcid, locale.name());
+        transactionTemplate.execute(new TransactionCallback<Boolean>() {
+            @Override
+            public Boolean doInTransaction(TransactionStatus status) {
+                profileDao.updateLocale(orcid, locale.name());
+                return true;
+            }
+        });
     }
 
     @Override
@@ -164,8 +187,14 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
 
     @Override
     public void updatePassword(String orcid, String password) {
-        String encryptedPassword = encryptionManager.hashForInternalUse(password);
-        profileDao.changeEncryptedPassword(orcid, encryptedPassword);
+        transactionTemplate.execute(new TransactionCallback<Boolean>() {
+            @Override
+            public Boolean doInTransaction(TransactionStatus status) {
+                String encryptedPassword = encryptionManager.hashForInternalUse(password);
+                profileDao.changeEncryptedPassword(orcid, encryptedPassword);
+                return true;
+            }
+        });
     }
 
     @Override
@@ -175,7 +204,13 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
 
     @Override
     public void updateLastLoginDetails(String orcid, String ipAddress) {
-        profileDao.updateLastLoginDetails(orcid, ipAddress);
+        transactionTemplate.execute(new TransactionCallback<Boolean>() {
+            @Override
+            public Boolean doInTransaction(TransactionStatus status) {
+                profileDao.updateLastLoginDetails(orcid, ipAddress);
+                return true;
+            }
+        });
     }
 
     @Override
@@ -191,6 +226,12 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
 
     @Override
     public void update2FASecret(String orcid, String secret) {
-        profileDao.update2FASecret(orcid, secret);
+        transactionTemplate.execute(new TransactionCallback<Boolean>() {
+            @Override
+            public Boolean doInTransaction(TransactionStatus status) {
+                profileDao.update2FASecret(orcid, secret);
+                return true;
+            }
+        });
     }        
 }

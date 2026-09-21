@@ -4,7 +4,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 
 import org.orcid.core.adapter.JpaJaxbFundingAdapter;
 import org.orcid.core.manager.read_only.ProfileFundingManagerReadOnly;

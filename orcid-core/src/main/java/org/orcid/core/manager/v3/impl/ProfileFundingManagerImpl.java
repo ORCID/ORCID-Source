@@ -2,7 +2,7 @@ package org.orcid.core.manager.v3.impl;
 
 import java.util.*;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 
 import org.orcid.core.manager.ClientDetailsEntityCacheManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
@@ -53,7 +53,7 @@ public class ProfileFundingManagerImpl extends ProfileFundingManagerReadOnlyImpl
     private NotificationManager notificationManager;
 
     @Resource
-    private ClientDetailsEntityCacheManager clientDetailsEntityCacheManager;
+    private SourceEntityUtils sourceEntityUtils;
 
     /**
      * Removes the relationship that exists between a funding and a profile.
@@ -110,6 +110,12 @@ public class ProfileFundingManagerImpl extends ProfileFundingManagerReadOnlyImpl
         return profileFundingDao.updateToMaxDisplay(orcid, fundingId);
     }
 
+    @Override
+    @Transactional
+    public Funding createFunding(String orcid, Funding funding) {
+        return createFunding(orcid, funding, false, List.of());
+    }
+
     /**
      * Add a new funding to the given user
      * 
@@ -121,16 +127,14 @@ public class ProfileFundingManagerImpl extends ProfileFundingManagerReadOnlyImpl
      */
     @Override
     @Transactional
-    public Funding createFunding(String orcid, Funding funding, boolean isApiRequest) {
+    public Funding createFunding(String orcid, Funding funding, boolean isApiRequest, List<Funding> existingFundings) {
         Source activeSource = sourceManager.retrieveActiveSource();
         activityValidator.validateFunding(funding, activeSource, true, isApiRequest, null);
 
         // Check for duplicates
-        List<ProfileFundingEntity> existingFundings = profileFundingDao.getByUser(orcid, getLastModified(orcid));
-        List<Funding> fundings = jpaJaxbFundingAdapter.toFunding(existingFundings);
-        if (fundings != null && isApiRequest) {
-            for (Funding exstingFunding : fundings) {
-                activityValidator.checkExternalIdentifiersForDuplicates(funding, exstingFunding, exstingFunding.getSource(), activeSource);
+        if (existingFundings != null && isApiRequest) {
+            for (Funding existingFunding : existingFundings) {
+                activityValidator.checkExternalIdentifiersForDuplicates(funding, existingFunding, existingFunding.getSource(), activeSource);
             }
         }
 
@@ -143,13 +147,12 @@ public class ProfileFundingManagerImpl extends ProfileFundingManagerReadOnlyImpl
         profileFundingEntity.setOrg(updatedOrganization);
 
         // Set the source
-        SourceEntityUtils.populateSourceAwareEntityFromSource(activeSource, profileFundingEntity);
+        sourceEntityUtils.populateSourceAwareEntityFromSource(activeSource, profileFundingEntity);
 
         ProfileEntity profile = profileEntityCacheManager.retrieve(orcid);        
         setIncomingPrivacy(profileFundingEntity, profile, isApiRequest);
         DisplayIndexCalculatorHelper.setDisplayIndexOnNewEntity(profileFundingEntity, isApiRequest);
         profileFundingDao.persist(profileFundingEntity);
-        profileFundingDao.flush();
         if (isApiRequest) {
             notificationManager.sendAmendEmail(orcid, AmendedSection.FUNDING, createItemList(profileFundingEntity, funding.getExternalIdentifiers(), ActionType.CREATE));
         }
@@ -167,6 +170,12 @@ public class ProfileFundingManagerImpl extends ProfileFundingManagerReadOnlyImpl
         }
     }
 
+    @Override
+    @Transactional
+    public Funding updateFunding(String orcid, Funding funding) {
+        return updateFunding(orcid, funding, false, List.of());
+    }
+
     /**
      * Updates a funding that belongs to the given user
      * 
@@ -177,41 +186,38 @@ public class ProfileFundingManagerImpl extends ProfileFundingManagerReadOnlyImpl
      * @return the updated funding
      */
     @Override
-    public Funding updateFunding(String orcid, Funding funding, boolean isApiRequest) {
+    @Transactional
+    public Funding updateFunding(String orcid, Funding funding, boolean isApiRequest, List<Funding> existingFundings) {
         Source activeSOurce = sourceManager.retrieveActiveSource();
         ProfileFundingEntity pfe = profileFundingDao.getProfileFunding(orcid, funding.getPutCode());
         Visibility originalVisibility = Visibility.valueOf(pfe.getVisibility());
 
         // Save the original source
-        Source originalSource = SourceEntityUtils.extractSourceFromEntity(pfe, clientDetailsEntityCacheManager);
+        Source originalSource = sourceEntityUtils.extractSourceFromEntity(pfe);
 
         activityValidator.validateFunding(funding, activeSOurce, false, isApiRequest, originalVisibility);
-        if (isApiRequest) {
-            List<ProfileFundingEntity> existingFundings = profileFundingDao.getByUser(orcid, getLastModified(orcid));
-            for (ProfileFundingEntity existingFunding : existingFundings) {
-                Funding existing = jpaJaxbFundingAdapter.toFunding(existingFunding);
-                if (!existing.getPutCode().equals(funding.getPutCode())) {
-                    activityValidator.checkExternalIdentifiersForDuplicates(funding, existing, existing.getSource(), activeSOurce);
+        if (existingFundings != null && isApiRequest) {
+            for (Funding existingFunding : existingFundings) {
+                if (!existingFunding.getPutCode().equals(funding.getPutCode())) {
+                    activityValidator.checkExternalIdentifiersForDuplicates(funding, existingFunding, existingFunding.getSource(), activeSOurce);
                 }
             }
         }
 
         orcidSecurityManager.checkSourceAndThrow(pfe);
+        //Fetch organization FIRST before mutating pfe (prevents auto-flush errors during query)
+        OrgEntity updatedOrganization = orgManager.getOrgEntity(funding);
         jpaJaxbFundingAdapter.toProfileFundingEntity(funding, pfe);
         if (pfe.getVisibility() == null) {
             pfe.setVisibility(originalVisibility.name());
         }
 
         // Be sure it doesn't overwrite the source
-        SourceEntityUtils.populateSourceAwareEntityFromSource(originalSource, pfe);
+        sourceEntityUtils.populateSourceAwareEntityFromSource(originalSource, pfe);
 
-        // Updates the give organization with the latest organization from
-        // database, or, create a new one
-        OrgEntity updatedOrganization = orgManager.getOrgEntity(funding);
         pfe.setOrg(updatedOrganization);
 
         pfe = profileFundingDao.merge(pfe);
-        profileFundingDao.flush();
         if (isApiRequest) {
             notificationManager.sendAmendEmail(orcid, AmendedSection.FUNDING, createItemList(pfe, funding.getExternalIdentifiers(), ActionType.UPDATE));
         }

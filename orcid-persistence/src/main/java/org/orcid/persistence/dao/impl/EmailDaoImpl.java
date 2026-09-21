@@ -1,9 +1,10 @@
 package org.orcid.persistence.dao.impl;
 
+import java.util.Date;
 import java.util.List;
 
-import javax.persistence.Query;
-import javax.persistence.TypedQuery;
+import jakarta.persistence.Query;
+import jakarta.persistence.TypedQuery;
 
 import org.orcid.persistence.aop.UpdateProfileLastModified;
 import org.orcid.persistence.aop.UpdateProfileLastModifiedAndIndexingStatus;
@@ -29,6 +30,7 @@ public class EmailDaoImpl extends GenericDaoImpl<EmailEntity, String> implements
     }
 
     @Override
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     public boolean emailExists(String emailHash) {
         Assert.hasText(emailHash, "Cannot check for an empty email hash");
         TypedQuery<Long> query = entityManager.createQuery("select count(*) from EmailEntity where id = :emailHash", Long.class);
@@ -38,6 +40,7 @@ public class EmailDaoImpl extends GenericDaoImpl<EmailEntity, String> implements
     }
     
     @Override
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     public String findOrcidIdByEmailHash(String emailHash) {
         TypedQuery<String> query = entityManager.createQuery("select orcid from EmailEntity where id = :emailHash", String.class);
         query.setParameter("emailHash", emailHash);
@@ -45,6 +48,7 @@ public class EmailDaoImpl extends GenericDaoImpl<EmailEntity, String> implements
     }
 
     @Override
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     public String findOrcidByVerifiedEmail(String emailHash) {
         TypedQuery<String> query = entityManager.createQuery("select orcid from EmailEntity where id = :emailHash and verified = true", String.class);
         query.setParameter("emailHash", emailHash);
@@ -85,7 +89,7 @@ public class EmailDaoImpl extends GenericDaoImpl<EmailEntity, String> implements
     @Override
     @Transactional
     @UpdateProfileLastModifiedAndIndexingStatus
-    public void removeEmail(String orcid, String email) {
+    public boolean removeEmail(String orcid, String email) {
         String deleteEmailEvent = "delete from email_event where trim(lower(email)) = trim(lower(:email))";
         String deleteEmail = "delete from email where orcid = :orcid and trim(lower(email)) = trim(lower(:email))";
 
@@ -96,11 +100,12 @@ public class EmailDaoImpl extends GenericDaoImpl<EmailEntity, String> implements
         query = entityManager.createNativeQuery(deleteEmail);
         query.setParameter("email", email);
         query.setParameter("orcid", orcid);
-        query.executeUpdate();
+        return query.executeUpdate() > 0;
     }
 
     @Override
     @SuppressWarnings("rawtypes")
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     public List findIdByCaseInsensitiveEmail(List<String> emails) {
         for (int i=0; i < emails.size(); i++) {
             if (emails.get(i) != emails.get(i).toLowerCase().trim()) emails.set(i, emails.get(i).toLowerCase().trim());
@@ -129,6 +134,7 @@ public class EmailDaoImpl extends GenericDaoImpl<EmailEntity, String> implements
     }
     
     @Override
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     public boolean isVerified(String orcid, String email) {
         Query query = entityManager.createNativeQuery("select is_verified from email where orcid=:orcid and email=:email and is_primary=true");
         query.setParameter("orcid", orcid);
@@ -147,6 +153,7 @@ public class EmailDaoImpl extends GenericDaoImpl<EmailEntity, String> implements
     }
     
     @Override
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     @Cacheable(value = "emails", key = "#orcid.concat('-').concat(#lastModified)")
     public List<EmailEntity> findByOrcid(String orcid, long lastModified) {
         TypedQuery<EmailEntity> query = entityManager.createQuery("from EmailEntity where orcid = :orcid", EmailEntity.class);
@@ -156,12 +163,14 @@ public class EmailDaoImpl extends GenericDaoImpl<EmailEntity, String> implements
     }
     
     @Override
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     @Cacheable(value = "public-emails", key = "#orcid.concat('-').concat(#lastModified)")
     public List<EmailEntity> findPublicEmails(String orcid, long lastModified) {
         return findByOrcid(orcid, PUBLIC_VISIBILITY);
     }
     
     @Override
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     public List<EmailEntity> findPublicEmailsIncludeUnverified(String orcid) {
         TypedQuery<EmailEntity> query = entityManager.createQuery("from EmailEntity where orcid = :orcid and visibility = 'PUBLIC'", EmailEntity.class);
         query.setParameter("orcid", orcid);
@@ -170,6 +179,7 @@ public class EmailDaoImpl extends GenericDaoImpl<EmailEntity, String> implements
     }
     
     @Override
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     public List<EmailEntity> findByOrcid(String orcid, String visibility) {
         TypedQuery<EmailEntity> query = entityManager.createQuery("from EmailEntity where orcid = :orcid and visibility = :visibility", EmailEntity.class);
         query.setParameter("orcid", orcid);
@@ -182,9 +192,10 @@ public class EmailDaoImpl extends GenericDaoImpl<EmailEntity, String> implements
     @Transactional
     @UpdateProfileLastModifiedAndIndexingStatus
     public boolean updateVerifySetCurrentAndPrimary(String orcid, String email) {
-        Query query = entityManager.createQuery("update EmailEntity set current = true, primary = true, verified = true, lastModified=now() where orcid = :orcid and email = :email");
+        Query query = entityManager.createQuery("update EmailEntity e set e.current = true, e.primary = true, e.verified = true, e.lastModified = :lastModified where e.orcid = :orcid and e.email = :email");
         query.setParameter("orcid", orcid);
         query.setParameter("email", email);
+        query.setParameter("lastModified", new Date());
         return query.executeUpdate() > 0;
     }
 
@@ -200,6 +211,7 @@ public class EmailDaoImpl extends GenericDaoImpl<EmailEntity, String> implements
      *         client source of the record allows auto deprecating records
      */
     @Override
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     public boolean isAutoDeprecateEnableForEmailUsingHash(String emailHash) {
         Query query = entityManager.createNativeQuery("SELECT allow_auto_deprecate FROM client_details WHERE client_details_id=(SELECT client_source_id FROM profile WHERE orcid=(SELECT orcid FROM email WHERE email_hash = :emailHash) AND claimed = false)");
         query.setParameter("emailHash", emailHash);
@@ -213,6 +225,7 @@ public class EmailDaoImpl extends GenericDaoImpl<EmailEntity, String> implements
     }
     
     @Override
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     public boolean isPrimaryEmail(String email) {
         Query query = entityManager.createNativeQuery("select is_primary from email where email=:email");
         query.setParameter("email", email);
@@ -226,6 +239,7 @@ public class EmailDaoImpl extends GenericDaoImpl<EmailEntity, String> implements
     }
     
     @Override
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     public boolean isPrimaryEmail(String orcid, String email) {
         Query query = entityManager.createNativeQuery("select is_primary from email where orcid=:orcid and email=:email");
         query.setParameter("orcid", orcid);
@@ -240,6 +254,7 @@ public class EmailDaoImpl extends GenericDaoImpl<EmailEntity, String> implements
     }
 
     @Override
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     public EmailEntity findPrimaryEmail(String orcid) {
         TypedQuery<EmailEntity> query = entityManager.createQuery("from EmailEntity where orcid = :orcid and primary = true", EmailEntity.class);
         query.setParameter("orcid", orcid);
@@ -249,9 +264,10 @@ public class EmailDaoImpl extends GenericDaoImpl<EmailEntity, String> implements
     @Override
     @Transactional
     public boolean hideAllEmails(String orcid) {
-        Query query = entityManager.createQuery("update EmailEntity set visibility = :visibility, email = null, lastModified=now() where orcid = :orcid");
+        Query query = entityManager.createQuery("update EmailEntity e set e.visibility = :visibility, e.email = null, e.lastModified = :lastModified where e.orcid = :orcid");
         query.setParameter("orcid", orcid);
         query.setParameter("visibility", PRIVATE_VISIBILITY);
+        query.setParameter("lastModified", new Date());
         return query.executeUpdate() > 0;
     }
 
@@ -259,15 +275,17 @@ public class EmailDaoImpl extends GenericDaoImpl<EmailEntity, String> implements
     @Transactional
     @UpdateProfileLastModifiedAndIndexingStatus
     public boolean updateVisibility(String orcid, String email, String visibility) {
-        Query query = entityManager.createQuery("update EmailEntity set visibility = :visibility, lastModified=now() where email = :email and orcid = :orcid");
+        Query query = entityManager.createQuery("update EmailEntity e set e.visibility = :visibility, e.lastModified = :lastModified where e.email = :email and e.orcid = :orcid");
         query.setParameter("orcid", orcid);
         query.setParameter("email", email);
         query.setParameter("visibility", visibility);
+        query.setParameter("lastModified", new Date());
         return query.executeUpdate() > 0;
     }
 
     @Override
     @SuppressWarnings("unchecked")
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     public List<String> getEmailsToHash(Integer batchSize) {
         Query query = entityManager.createNativeQuery("select id from email where email_hash is null", String.class);
         query.setMaxResults(batchSize);
@@ -275,14 +293,16 @@ public class EmailDaoImpl extends GenericDaoImpl<EmailEntity, String> implements
     }
     
     @Override    
+    @Transactional
     public boolean populateEmailHash(String email, String emailHash) {
-        Query query = entityManager.createQuery("update EmailEntity set id=:hash where email = :email");        
+        Query query = entityManager.createQuery("update EmailEntity e set e.id=:hash where e.email = :email");        
         query.setParameter("email", email);
         query.setParameter("hash", emailHash);
         return query.executeUpdate() > 0;
     }
 
     @Override
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     public EmailEntity findByEmail(String email) {
         TypedQuery<EmailEntity> query = entityManager.createQuery("from EmailEntity where email = :email", EmailEntity.class);
         query.setParameter("email", email);
@@ -291,6 +311,7 @@ public class EmailDaoImpl extends GenericDaoImpl<EmailEntity, String> implements
     }
 
     @Override
+    @Transactional
     public Integer clearEmailsAfterReactivation(String orcid) {
         Query query = entityManager.createNativeQuery("delete from email where email is null and orcid=:orcid");
         query.setParameter("orcid", orcid);
@@ -298,6 +319,7 @@ public class EmailDaoImpl extends GenericDaoImpl<EmailEntity, String> implements
     }
 
     @Override
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     public List getEmailAndHash(int iteration, int batchSize) {        
         int offset = iteration * batchSize;
         Query query = entityManager.createNativeQuery("select orcid, email, email_hash from email order by email");
@@ -308,6 +330,7 @@ public class EmailDaoImpl extends GenericDaoImpl<EmailEntity, String> implements
 
     @SuppressWarnings("unchecked")
     @Override
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     public List<String> getIdsForClientSourceCorrection(int limit, List<String> nonPublicClients) {
         Query query = entityManager.createNativeQuery("SELECT email_hash FROM email WHERE client_source_id = source_id AND client_source_id IN :nonPublicClients");
         query.setParameter("nonPublicClients", nonPublicClients);
@@ -325,6 +348,7 @@ public class EmailDaoImpl extends GenericDaoImpl<EmailEntity, String> implements
 
     @SuppressWarnings("unchecked")
     @Override
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     public List<String> getIdsForUserSourceCorrection(int limit, List<String> publicClients) {
         Query query = entityManager.createNativeQuery("SELECT email_hash FROM email WHERE client_source_id = source_id AND client_source_id IN :publicClients");
         query.setParameter("publicClients", publicClients);
@@ -342,6 +366,7 @@ public class EmailDaoImpl extends GenericDaoImpl<EmailEntity, String> implements
     
     @SuppressWarnings("unchecked")
     @Override
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     public List<EmailEntity> get2019VisibilityEmailRecipients(int offset, int batchSize) {
         Query query = entityManager.createNativeQuery("SELECT * from email WHERE is_verified IS TRUE AND is_primary IS TRUE AND orcid in (SELECT email.orcid FROM email INNER JOIN profile ON email.orcid = profile.orcid INNER JOIN email_frequency ON email.orcid = email_frequency.orcid WHERE email.is_current IS TRUE AND profile.record_locked IS FALSE AND profile.deprecated_date IS NULL AND profile.profile_deactivation_date IS NULL AND profile.activities_visibility_default='PRIVATE' AND email_frequency.send_quarterly_tips IS TRUE)", EmailEntity.class);
         query.setMaxResults(batchSize);
@@ -352,6 +377,7 @@ public class EmailDaoImpl extends GenericDaoImpl<EmailEntity, String> implements
     
     @SuppressWarnings("unchecked")
     @Override
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     public List<EmailEntity> getMarch2019QuarterlyEmailRecipients(int offset, int batchSize) {
         Query query = entityManager.createNativeQuery("SELECT * from email WHERE is_verified IS TRUE AND is_primary IS TRUE AND orcid in (SELECT email.orcid FROM email INNER JOIN profile ON email.orcid = profile.orcid INNER JOIN email_frequency ON email.orcid = email_frequency.orcid WHERE email.is_current IS TRUE AND profile.record_locked IS FALSE AND profile.deprecated_date IS NULL AND profile.profile_deactivation_date IS NULL AND email_frequency.send_quarterly_tips IS TRUE GROUP BY email.orcid HAVING count(*) = 1)", EmailEntity.class);
         query.setMaxResults(batchSize);
@@ -361,6 +387,7 @@ public class EmailDaoImpl extends GenericDaoImpl<EmailEntity, String> implements
 
     @SuppressWarnings("unchecked")
     @Override
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     public List<String> getIdsForUserOBOUpdate(String clientDetailsId, int max) {
         Query query = entityManager.createNativeQuery("SELECT email_hash FROM email WHERE client_source_id = :clientDetailsId AND assertion_origin_source_id IS NULL");
         query.setParameter("clientDetailsId", clientDetailsId);
@@ -378,6 +405,7 @@ public class EmailDaoImpl extends GenericDaoImpl<EmailEntity, String> implements
 
     @SuppressWarnings("unchecked")
     @Override
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     public List<String> getIdsForUserOBORecords(String clientDetailsId, int max) {
         Query query = entityManager.createNativeQuery("SELECT email_hash FROM email WHERE client_source_id = :clientDetailsId AND assertion_origin_source_id IS NOT NULL");
         query.setParameter("clientDetailsId", clientDetailsId);
@@ -394,6 +422,7 @@ public class EmailDaoImpl extends GenericDaoImpl<EmailEntity, String> implements
     }
 
     @Override
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     public String findNewestVerifiedOrNewestEmail(String orcid) {
         TypedQuery<String> query = entityManager.createQuery("select email from EmailEntity where orcid = :orcid order by verified desc, dateCreated desc", String.class);
         query.setParameter("orcid", orcid);
@@ -402,6 +431,7 @@ public class EmailDaoImpl extends GenericDaoImpl<EmailEntity, String> implements
     }
     
     @Override
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     public String findNewestPrimaryEmail(String orcid) {
         TypedQuery<String> query = entityManager.createQuery("select email from EmailEntity where orcid = :orcid and primary = true order by lastModified desc", String.class);
         query.setParameter("orcid", orcid);
@@ -411,6 +441,7 @@ public class EmailDaoImpl extends GenericDaoImpl<EmailEntity, String> implements
 
     @SuppressWarnings("unchecked")
     @Override
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     public List<String> getIdsForUserOBORecords(int max) {
         Query query = entityManager.createNativeQuery("SELECT email_hash FROM email WHERE assertion_origin_source_id IS NOT NULL");
         query.setMaxResults(max);
@@ -419,6 +450,7 @@ public class EmailDaoImpl extends GenericDaoImpl<EmailEntity, String> implements
 
     @SuppressWarnings("unchecked")
     @Override
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     public List<String> getIdsOfEmailsReferencingClientProfiles(int max, List<String> ids) {
         Query query = entityManager.createNativeQuery("SELECT email_hash FROM email WHERE source_id IN :ids");
         query.setParameter("ids", ids);

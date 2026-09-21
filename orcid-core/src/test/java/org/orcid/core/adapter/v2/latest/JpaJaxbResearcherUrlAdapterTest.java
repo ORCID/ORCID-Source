@@ -7,10 +7,10 @@ import static org.junit.Assert.assertNull;
 import java.io.InputStream;
 import java.util.Date;
 
-import javax.annotation.Resource;
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.Unmarshaller;
+import jakarta.annotation.Resource;
+import jakarta.xml.bind.JAXBContext;
+import jakarta.xml.bind.JAXBException;
+import jakarta.xml.bind.Unmarshaller;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -79,6 +79,16 @@ public class JpaJaxbResearcherUrlAdapterTest extends MockSourceNameCache {
         //Source
         assertEquals(CLIENT_SOURCE_ID, r.getSource().retrieveSourcePath());
     }      
+
+    @Test
+    public void fromResearcherUrlEntityWithBlankUrlDoesNotCreateUrlWrapper() throws IllegalAccessException {
+        ResearcherUrlEntity entity = getResearcherUrlEntity();
+        entity.setUrl(" ");
+
+        ResearcherUrl researcherUrl = jpaJaxbResearcherUrlAdapter.toResearcherUrl(entity);
+
+        assertNull(researcherUrl.getUrl());
+    }
     
     private ResearcherUrls getResearcherUrls() throws JAXBException {
         JAXBContext context = JAXBContext.newInstance(new Class[] { ResearcherUrls.class });

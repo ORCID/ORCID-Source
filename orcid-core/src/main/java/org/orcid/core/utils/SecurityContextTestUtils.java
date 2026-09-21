@@ -3,28 +3,23 @@ package org.orcid.core.utils;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-import java.io.Serializable;
 import java.util.*;
 
-import org.orcid.core.oauth.OrcidOAuth2Authentication;
+import org.orcid.core.oauth.OrcidBearerTokenAuthentication;
 import org.orcid.jaxb.model.message.ScopePathType;
-import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.context.SecurityContextImpl;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.oauth2.provider.OAuth2Request;
-import org.springframework.security.oauth2.provider.authentication.OAuth2AuthenticationDetails;
 
 public class SecurityContextTestUtils {
 
-	public final static String DEFAULT_CLIENT_ID = "APP-5555555555555555"; 
-	
+    public final static String DEFAULT_CLIENT_ID = "APP-5555555555555555";
+
     static public void setUpSecurityContext() {
         setUpSecurityContext(ScopePathType.ORCID_WORKS_CREATE);
     }
@@ -32,47 +27,31 @@ public class SecurityContextTestUtils {
     static public void setUpSecurityContext(ScopePathType... scopePathTypes) {
         setUpSecurityContext("4444-4444-4444-4441", scopePathTypes);
     }
-       
+
     static public void setUpSecurityContext(String userOrcid, ScopePathType... scopePathTypes) {
         setUpSecurityContext(userOrcid, DEFAULT_CLIENT_ID, scopePathTypes);
     }
-    
+
     static public void setUpSecurityContext(String userOrcid, String clientId, ScopePathType... scopePathTypes) {
         SecurityContextImpl securityContext = new SecurityContextImpl();
-        OrcidOAuth2Authentication mockedAuthentication = mock(OrcidOAuth2Authentication.class);
+        OrcidBearerTokenAuthentication mockedAuthentication = mock(OrcidBearerTokenAuthentication.class);
         securityContext.setAuthentication(mockedAuthentication);
         SecurityContextHolder.setContext(securityContext);
-        ProfileEntity userProfileEntity = new ProfileEntity(userOrcid);
-        when(mockedAuthentication.getPrincipal()).thenReturn(userProfileEntity);
-        Authentication userAuthentication = mock(Authentication.class);
-        when(userAuthentication.getPrincipal()).thenReturn(userProfileEntity);
-        when(mockedAuthentication.getUserAuthentication()).thenReturn(userAuthentication);
+        when(mockedAuthentication.getPrincipal()).thenReturn(clientId);
+        when(mockedAuthentication.getName()).thenReturn(clientId);
+        when(mockedAuthentication.getClientId()).thenReturn(clientId);
+        when(mockedAuthentication.getUserOrcid()).thenReturn(userOrcid);
         Set<String> scopes = new HashSet<String>();
         if (scopePathTypes != null) {
             for (ScopePathType scopePathType : scopePathTypes) {
                 scopes.add(scopePathType.value());
             }
         }
-        OAuth2Request authorizationRequest = new OAuth2Request(Collections.<String, String> emptyMap(), clientId,
-                Collections.<GrantedAuthority> emptyList(), true, scopes, Collections.<String> emptySet(), null, Collections.<String> emptySet(),
-                Collections.<String, Serializable> emptyMap());
-        when(mockedAuthentication.getOAuth2Request()).thenReturn(authorizationRequest);
-        when(mockedAuthentication.isAuthenticated()).thenReturn(true);
-        //for obo
-        OAuth2AuthenticationDetails authDetails = mock(OAuth2AuthenticationDetails.class);
-        //to use, set token in detail to be a token with OBO. -> when(authDetails.getTokenValue()).thenReturn("xxx");
-        when(mockedAuthentication.getDetails()).thenReturn(authDetails);
+        when(mockedAuthentication.getScopes()).thenReturn(scopes);
     }
 
     static public void setUpSecurityContextForClientOnly() {
         setUpSecurityContextForClientOnly("APP-5555555555555555");
-    }
-
-    static public void setUpSecurityContextForGroupIdClientOnly() {
-        Set<String> scopes = new HashSet<String>();
-        scopes.add(ScopePathType.GROUP_ID_RECORD_READ.value());
-        scopes.add(ScopePathType.GROUP_ID_RECORD_UPDATE.value());
-        setUpSecurityContextForClientOnly("APP-5555555555555555", scopes);
     }
 
     static public void setUpSecurityContextForClientOnly(String clientId) {
@@ -91,18 +70,13 @@ public class SecurityContextTestUtils {
 
     static public void setUpSecurityContextForClientOnly(String clientId, Set<String> scopes) {
         SecurityContextImpl securityContext = new SecurityContextImpl();
-        OrcidOAuth2Authentication mockedAuthentication = mock(OrcidOAuth2Authentication.class);
+        OrcidBearerTokenAuthentication mockedAuthentication = mock(OrcidBearerTokenAuthentication.class);
         securityContext.setAuthentication(mockedAuthentication);
         SecurityContextHolder.setContext(securityContext);
-        when(mockedAuthentication.getPrincipal()).thenReturn(new ProfileEntity(clientId));
-        when(mockedAuthentication.isClientOnly()).thenReturn(true);
-        OAuth2Request authorizationRequest = new OAuth2Request(Collections.<String, String> emptyMap(), clientId, Collections.<GrantedAuthority> emptyList(), true,
-                scopes, Collections.<String> emptySet(), null, Collections.<String> emptySet(), Collections.<String, Serializable> emptyMap());
-        when(mockedAuthentication.getOAuth2Request()).thenReturn(authorizationRequest);
-        when(mockedAuthentication.isAuthenticated()).thenReturn(true);
+        when(mockedAuthentication.getPrincipal()).thenReturn(clientId);
         when(mockedAuthentication.getName()).thenReturn(clientId);
-        OAuth2AuthenticationDetails authDetails = mock(OAuth2AuthenticationDetails.class);
-        when(mockedAuthentication.getDetails()).thenReturn(authDetails);
+        when(mockedAuthentication.getClientId()).thenReturn(clientId);
+        when(mockedAuthentication.getScopes()).thenReturn(scopes);
     }
 
     static public void setUpSecurityContextForAnonymous() {
@@ -114,10 +88,6 @@ public class SecurityContextTestUtils {
         SecurityContextHolder.setContext(securityContext);
     }
 
-    static public void clearSecurityContext() {
-        SecurityContextHolder.setContext(new SecurityContextImpl());
-    }
-    
     static public void setupSecurityContextForWebUser(String userId, String email) {
         UserDetails details = new User(userId, email, List.of());
         UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(userId, "password");
@@ -127,4 +97,10 @@ public class SecurityContextTestUtils {
         SecurityContextHolder.setContext(securityContext);
     }
 
+    static public void setUpSecurityContextForGroupIdClientOnly() {
+        Set<String> scopes = new HashSet<String>();
+        scopes.add(ScopePathType.GROUP_ID_RECORD_READ.value());
+        scopes.add(ScopePathType.GROUP_ID_RECORD_UPDATE.value());
+        setUpSecurityContextForClientOnly("APP-5555555555555555", scopes);
+    }
 }

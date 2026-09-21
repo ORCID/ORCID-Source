@@ -6,7 +6,7 @@ import static org.mockito.Mockito.when;
 import java.util.Arrays;
 import java.util.Map;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 
 import org.junit.After;
 import org.junit.AfterClass;

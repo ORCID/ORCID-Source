@@ -1,10 +1,13 @@
 package org.orcid.persistence.dao.impl;
 
+import java.time.Instant;
 import java.util.Date;
 
-import javax.annotation.Resource;
-import javax.persistence.EntityManager;
-import javax.persistence.Query;
+import jakarta.annotation.Resource;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.Query;
+
+import org.springframework.transaction.annotation.Transactional;
 
 import org.orcid.persistence.dao.MiscDao;
 
@@ -21,9 +24,16 @@ public class MiscDaoImpl implements MiscDao {
     }
 
     @Override
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     public Date retrieveDatabaseDatetime() {
         Query query = entityManager.createNativeQuery("SELECT now()");
-        return (Date) query.getSingleResult();
+        Object result = query.getSingleResult();
+        
+        // Handle both java.time.Instant and java.util.Date returns
+        if (result instanceof Instant) {
+            return Date.from((Instant) result);
+        }
+        return (Date) result;
     }
 
 }

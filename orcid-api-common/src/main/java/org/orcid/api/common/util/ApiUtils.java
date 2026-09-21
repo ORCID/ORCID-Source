@@ -3,8 +3,8 @@ package org.orcid.api.common.util;
 import java.net.URI;
 import java.net.URISyntaxException;
 
-import javax.annotation.Resource;
-import javax.ws.rs.core.Response;
+import jakarta.annotation.Resource;
+import jakarta.ws.rs.core.Response;
 
 import org.orcid.api.common.filter.ApiVersionFilter;
 import org.orcid.core.locale.LocaleManager;

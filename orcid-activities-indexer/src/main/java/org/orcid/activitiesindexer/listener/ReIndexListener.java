@@ -20,10 +20,10 @@ import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import javax.annotation.Resource;
-import javax.jms.Message;
-import javax.jms.MessageListener;
-import javax.xml.bind.JAXBException;
+import jakarta.annotation.Resource;
+import jakarta.jms.Message;
+import jakarta.jms.MessageListener;
+import jakarta.xml.bind.JAXBException;
 
 import org.orcid.activitiesindexer.s3.S3MessageProcessor;
 import org.orcid.utils.listener.LastModifiedMessage;

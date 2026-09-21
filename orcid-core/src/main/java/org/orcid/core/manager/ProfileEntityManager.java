@@ -19,7 +19,7 @@ public interface ProfileEntityManager extends ProfileEntityManagerReadOnly {
 
     boolean hasBeenGivenPermissionTo(String giverOrcid, String receiverOrcid);
 
-    boolean existsAndNotClaimedAndBelongsTo(String messageOrcid, String clientId);    
+    boolean existsAndNotClaimedAndBelongsTo(String messageOrcid, String clientId);
 
     boolean isProfileDeprecated(String orcid);
 
@@ -38,8 +38,6 @@ public interface ProfileEntityManager extends ProfileEntityManagerReadOnly {
     boolean unreviewProfile(String orcid);
 
     boolean reviewProfile(String orcid);
-    
-    void disableApplication(Long tokenId, String userOrcid);
     
     String getOrcidHash(String orcid) throws NoSuchAlgorithmException;
     

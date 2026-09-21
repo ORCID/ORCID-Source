@@ -5,12 +5,13 @@ import java.io.StringWriter;
 import java.util.Locale;
 import java.util.Map;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 
 import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.TemplateManager;
 import org.springframework.beans.factory.InitializingBean;
 
+import freemarker.core.TemplateClassResolver;
 import freemarker.template.Configuration;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
@@ -46,6 +47,8 @@ public class TemplateManagerImpl implements TemplateManager, InitializingBean {
         freeMarkerConfiguration = new Configuration();
         freeMarkerConfiguration.setClassForTemplateLoading(this.getClass(), "/org/orcid/core/template");
         freeMarkerConfiguration.setURLEscapingCharset("UTF-8");
+        // Templates must never be able to reach arbitrary classes; no template uses ?new
+        freeMarkerConfiguration.setNewBuiltinClassResolver(TemplateClassResolver.ALLOWS_NOTHING_RESOLVER);
     }
 
 }

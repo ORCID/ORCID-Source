@@ -9,9 +9,9 @@ import java.security.AccessControlException;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.annotation.Resource;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.UriInfo;
+import jakarta.annotation.Resource;
+import jakarta.ws.rs.core.Response;
+import jakarta.ws.rs.core.UriInfo;
 import javax.xml.datatype.XMLGregorianCalendar;
 
 import org.orcid.api.notificationsV2.server.delegator.NotificationsApiServiceDelegator;
@@ -24,8 +24,9 @@ import org.orcid.core.manager.NotificationManager;
 import org.orcid.core.manager.NotificationValidationManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.ProfileEntityManager;
+import org.orcid.core.manager.OrcidSecurityManager;
 import org.orcid.core.manager.SourceManager;
-import org.orcid.core.security.visibility.aop.AccessControl;
+import org.orcid.core.oauth.OrcidBearerTokenAuthentication;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.notification.permission_v2.NotificationPermissions;
 import org.orcid.jaxb.model.notification.permission_v2.NotificationPermission;
@@ -35,8 +36,6 @@ import org.orcid.utils.DateUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.oauth2.provider.OAuth2Authentication;
-import org.springframework.security.oauth2.provider.OAuth2Request;
 import org.springframework.stereotype.Component;
 
 /**
@@ -60,6 +59,9 @@ public class NotificationsApiServiceDelegatorImpl implements NotificationsApiSer
     private SourceManager sourceManager;
 
     @Resource
+    private OrcidSecurityManager orcidSecurityManager;
+
+    @Resource
     private LocaleManager localeManager;
 
     @Resource
@@ -74,14 +76,14 @@ public class NotificationsApiServiceDelegatorImpl implements NotificationsApiSer
     }
 
     @Override
-    @AccessControl(requiredScope = ScopePathType.PREMIUM_NOTIFICATION)
     public Response findPermissionNotifications(String orcid) {
+        orcidSecurityManager.checkScopes(ScopePathType.PREMIUM_NOTIFICATION);
         // Get the client profile information
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String clientId = null;
-        if (OAuth2Authentication.class.isAssignableFrom(authentication.getClass())) {
-            OAuth2Request authorizationRequest = ((OAuth2Authentication) authentication).getOAuth2Request();
-            clientId = authorizationRequest.getClientId();
+        if (OrcidBearerTokenAuthentication.class.isAssignableFrom(authentication.getClass())) {
+            OrcidBearerTokenAuthentication authDetails = (OrcidBearerTokenAuthentication) authentication;
+            clientId = authDetails.getClientId();
         }
 
         NotificationPermissions notifications = notificationManager.findPermissionsByOrcidAndClient(orcid, clientId, 0, MAX_NOTIFICATIONS_AVAILABLE);
@@ -89,8 +91,8 @@ public class NotificationsApiServiceDelegatorImpl implements NotificationsApiSer
     }
 
     @Override
-    @AccessControl(requiredScope = ScopePathType.PREMIUM_NOTIFICATION)
     public Response findPermissionNotification(String orcid, Long id) {
+        orcidSecurityManager.checkScopes(ScopePathType.PREMIUM_NOTIFICATION);
         checkIfProfileDeprecated(orcid);
         Notification notification = notificationManager.findByOrcidAndId(orcid, id);
         if (notification != null) {
@@ -114,8 +116,8 @@ public class NotificationsApiServiceDelegatorImpl implements NotificationsApiSer
     }
 
     @Override
-    @AccessControl(requiredScope = ScopePathType.PREMIUM_NOTIFICATION)
     public Response flagNotificationAsArchived(String orcid, Long id) throws OrcidNotificationAlreadyReadException {
+        orcidSecurityManager.checkScopes(ScopePathType.PREMIUM_NOTIFICATION);
         checkIfProfileDeprecated(orcid);
         Notification notification = notificationManager.flagAsArchived(orcid, id);
         if (notification == null) {
@@ -128,8 +130,8 @@ public class NotificationsApiServiceDelegatorImpl implements NotificationsApiSer
     }
 
     @Override
-    @AccessControl(requiredScope = ScopePathType.PREMIUM_NOTIFICATION)
     public Response addPermissionNotification(UriInfo uriInfo, String orcid, NotificationPermission notification) {
+        orcidSecurityManager.checkScopes(ScopePathType.PREMIUM_NOTIFICATION);
         checkIfProfileDeprecated(orcid);
         notificationValidationManager.validateNotificationPermission(notification);
         Notification createdNotification = notificationManager.createPermissionNotification(orcid, notification);

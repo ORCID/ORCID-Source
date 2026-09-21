@@ -3,7 +3,7 @@ package org.orcid.persistence.dao.impl;
 import java.math.BigInteger;
 import java.util.List;
 
-import javax.persistence.Query;
+import jakarta.persistence.Query;
 
 import org.apache.commons.lang.StringUtils;
 import org.orcid.jaxb.model.v3.release.common.Visibility;
@@ -29,6 +29,7 @@ public class ProfileKeywordDaoImpl extends GenericDaoImpl<ProfileKeywordEntity, 
      * */
     @Override
     @SuppressWarnings("unchecked")
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     @Cacheable(value = "dao-keywords", key = "#orcid.concat('-').concat(#lastModified)")
     public List<ProfileKeywordEntity> getProfileKeywords(String orcid, long lastModified) {
         Query query = entityManager.createQuery("FROM ProfileKeywordEntity WHERE orcid = :orcid order by displayIndex desc, dateCreated asc");
@@ -37,6 +38,7 @@ public class ProfileKeywordDaoImpl extends GenericDaoImpl<ProfileKeywordEntity, 
     }
     
     @Override
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     @Cacheable(value = "public-keywords", key = "#orcid.concat('-').concat(#lastModified)")
     public List<ProfileKeywordEntity> getPublicProfileKeywords(String orcid, long lastModified) {
         return getProfileKeywords(orcid, PUBLIC_VISIBILITY);
@@ -44,6 +46,7 @@ public class ProfileKeywordDaoImpl extends GenericDaoImpl<ProfileKeywordEntity, 
     
     @Override
     @SuppressWarnings("unchecked")
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     public List<ProfileKeywordEntity> getProfileKeywords(String orcid, String visibility) {
         Query query = entityManager.createQuery("FROM ProfileKeywordEntity WHERE orcid=:orcid AND visibility=:visibility order by displayIndex desc, dateCreated asc");
         query.setParameter("orcid", orcid);
@@ -61,7 +64,7 @@ public class ProfileKeywordDaoImpl extends GenericDaoImpl<ProfileKeywordEntity, 
     @Transactional
     @UpdateProfileLastModifiedAndIndexingStatus
     public boolean deleteProfileKeyword(String orcid, String keyword) {
-        Query query = entityManager.createQuery("DELETE FROM ProfileKeywordEntity WHERE orcid = :orcid AND keywordName = :keyword");
+        Query query = entityManager.createQuery("DELETE FROM ProfileKeywordEntity k WHERE k.orcid = :orcid AND k.keywordName = :keyword");
         query.setParameter("orcid", orcid);
         query.setParameter("keyword", keyword);
         return query.executeUpdate() > 0 ? true : false;
@@ -88,6 +91,7 @@ public class ProfileKeywordDaoImpl extends GenericDaoImpl<ProfileKeywordEntity, 
     }
 
     @Override
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     public ProfileKeywordEntity getProfileKeyword(String orcid, Long putCode) {
         Query query = entityManager.createQuery("FROM ProfileKeywordEntity WHERE orcid=:orcid and id=:id");
         query.setParameter("orcid", orcid);
@@ -99,7 +103,7 @@ public class ProfileKeywordDaoImpl extends GenericDaoImpl<ProfileKeywordEntity, 
     @Transactional
     @UpdateProfileLastModifiedAndIndexingStatus
     public boolean deleteProfileKeyword(ProfileKeywordEntity entity) {        
-        Query query = entityManager.createQuery("DELETE FROM ProfileKeywordEntity WHERE id=:id");
+        Query query = entityManager.createQuery("DELETE FROM ProfileKeywordEntity k WHERE k.id=:id");
         query.setParameter("id", entity.getId());
         return query.executeUpdate() > 0 ? true : false;
     }
@@ -108,13 +112,14 @@ public class ProfileKeywordDaoImpl extends GenericDaoImpl<ProfileKeywordEntity, 
     @Transactional
     @UpdateProfileLastModifiedAndIndexingStatus
     public void removeAllKeywords(String orcid) {
-        Query query = entityManager.createQuery("delete from ProfileKeywordEntity where profile_orcid = :orcid");
+        Query query = entityManager.createQuery("delete from ProfileKeywordEntity k where k.orcid = :orcid");
         query.setParameter("orcid", orcid);
         query.executeUpdate();
     }
 
     @SuppressWarnings("unchecked")
     @Override
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     public List<BigInteger> getIdsForClientSourceCorrection(int limit, List<String> nonPublicClients) {
         Query query = entityManager.createNativeQuery("SELECT id FROM profile_keyword WHERE client_source_id = source_id AND client_source_id IN :nonPublicClients");
         query.setParameter("nonPublicClients", nonPublicClients);
@@ -132,6 +137,7 @@ public class ProfileKeywordDaoImpl extends GenericDaoImpl<ProfileKeywordEntity, 
 
     @SuppressWarnings("unchecked")
     @Override
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     public List<BigInteger> getIdsForUserSourceCorrection(int limit, List<String> publicClients) {
         Query query = entityManager.createNativeQuery("SELECT id FROM profile_keyword WHERE client_source_id = source_id AND client_source_id IN :publicClients");
         query.setParameter("publicClients", publicClients);
@@ -149,6 +155,7 @@ public class ProfileKeywordDaoImpl extends GenericDaoImpl<ProfileKeywordEntity, 
 
     @SuppressWarnings("unchecked")
     @Override
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     public List<BigInteger> getIdsForUserOBOUpdate(String clientDetailsId, int max) {
         Query query = entityManager.createNativeQuery("SELECT id FROM profile_keyword WHERE client_source_id = :clientDetailsId AND assertion_origin_source_id IS NULL");
         query.setParameter("clientDetailsId", clientDetailsId);
@@ -166,6 +173,7 @@ public class ProfileKeywordDaoImpl extends GenericDaoImpl<ProfileKeywordEntity, 
 
     @SuppressWarnings("unchecked")
     @Override
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     public List<BigInteger> getIdsForUserOBORecords(String clientDetailsId, int max) {
         Query query = entityManager.createNativeQuery("SELECT id FROM profile_keyword WHERE client_source_id = :clientDetailsId AND assertion_origin_source_id IS NOT NULL");
         query.setParameter("clientDetailsId", clientDetailsId);
@@ -183,6 +191,7 @@ public class ProfileKeywordDaoImpl extends GenericDaoImpl<ProfileKeywordEntity, 
 
     @SuppressWarnings("unchecked")
     @Override
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     public List<BigInteger> getIdsForUserOBORecords(int max) {
         Query query = entityManager.createNativeQuery("SELECT id FROM profile_keyword WHERE assertion_origin_source_id IS NOT NULL");
         query.setMaxResults(max);
@@ -191,6 +200,7 @@ public class ProfileKeywordDaoImpl extends GenericDaoImpl<ProfileKeywordEntity, 
 
     @SuppressWarnings("unchecked")
     @Override
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     public List<BigInteger> getIdsOfKeywordsReferencingClientProfiles(int max, List<String> clientProfileOrcidIds) {
         Query query = entityManager.createNativeQuery("SELECT id FROM profile_keyword WHERE source_id IN :ids");
         query.setParameter("ids", clientProfileOrcidIds);

@@ -7,6 +7,21 @@ import org.togglz.core.context.FeatureContext;
 
 public enum Features implements Feature {
 
+    @Label("OAuth 1 - Use the authorization server to sign in")
+    OAUTH_SIGNIN,
+
+    @Label("OAuth 2 - Use the authorization server to authorize")
+    OAUTH_AUTHORIZATION,
+
+    @Label("OAuth 3 - Use the authorization server to exchange authorization codes, generate client credential tokens and refresh tokens")
+    OAUTH_AUTHORIZATION_CODE_EXCHANGE,
+
+    @Label("OAuth 4 - Use the authorization server to validate the token on every API request that contains one")
+    OAUTH_TOKEN_VALIDATION,
+
+    @Label("Real User Monitoring")
+    RUM,
+
     @Label("Search and Link Wizard with certified and featured links") 
     SEARCH_AND_LINK_WIZARD_WITH_CERTIFIED_AND_FEATURED_LINKS,
 
@@ -31,9 +46,12 @@ public enum Features implements Feature {
     @Label("OAUTH - domains interstitial")
     OAUTH_DOMAINS_INTERSTITIAL,
 
-    @Label("New Relic Browser Monitoring")
-    NEW_RELIC_BROWSER_MONITORING,
-  
+    @Label("Login - backup email interstitial")
+    LOGIN_BACKUP_EMAIL_INTERSTITIAL,
+
+    @Label("OAUTH - backup email interstitial")
+    OAUTH_BACKUP_EMAIL_INTERSTITIAL,
+
     @Label("Homepage Headless WordPress")
     WORDPRESS_HOME_PAGE,
 
@@ -82,18 +100,6 @@ public enum Features implements Feature {
     @Label("Enforce rate limiting for public API when disabled the rate monitoring is on. When disabled is the mode is monitoring only.")
     ENABLE_PAPI_RATE_LIMITING,
 
-    @Label("Use the authorization server to sign in")
-    OAUTH_SIGNIN,
-
-    @Label("Use the authorization server to authorize OAUTH requests")
-    OAUTH_AUTHORIZATION,
-
-    @Label("Use the authorization server to exchange authorization codes for authentication tokens")
-    OAUTH_AUTHORIZATION_CODE_EXCHANGE,
-
-    @Label("Use the authorization server to validate the token on every API request that contains one")
-    OAUTH_TOKEN_VALIDATION,
-
     @Label("Enable featured works logic in the UI")
     FEATURED_WORKS_UI,
 
@@ -107,8 +113,13 @@ public enum Features implements Feature {
     SEND_EMAIL_ON_DEPRECATE_RECORD,
     
     @Label("Send email on reset password")
-    SEND_EMAIL_ON_RESET_PASSWORD;
+    SEND_EMAIL_ON_RESET_PASSWORD,
 
+    @Label("2FA recovery phone number (add/manage from account settings)")
+    TWO_FACTOR_RECOVERY_PHONE,
+
+    @Label("Login - recovery phone interstitial")
+    LOGIN_RECOVERY_PHONE_INTERSTITIAL;
     public boolean isActive() {
         return FeatureContext.getFeatureManager().isActive(this);
     }

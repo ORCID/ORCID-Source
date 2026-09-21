@@ -6,9 +6,9 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.Map;
 
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.annotation.Resource;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 import org.orcid.core.common.manager.EventManager;
 import org.orcid.core.constants.OrcidOauth2Constants;
@@ -22,6 +22,7 @@ import org.orcid.core.manager.v3.read_only.EmailManagerReadOnly;
 import org.orcid.core.security.OrcidUserDetailsService;
 import org.orcid.core.togglz.Features;
 import org.orcid.core.utils.JsonUtils;
+import org.orcid.core.utils.OrcidRequestUtil;
 import org.orcid.frontend.web.exception.FeatureDisabledException;
 import org.orcid.persistence.jpa.entities.EventType;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
@@ -36,9 +37,11 @@ import org.slf4j.LoggerFactory;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationToken;
+import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -170,7 +173,8 @@ public class ShibbolethController extends BaseController {
             
             try {
                 notifyUser(shibIdentityProvider, userConnectionEntity);
-                processAuthentication(remoteUser, userConnectionEntity);
+                boolean userLoggedIn = processAuthentication(remoteUser, userConnectionEntity, request, response);
+                setLoggedInStatus(request, userLoggedIn);
                 if (Features.EVENTS.isActive()) {
                     eventManager.createEvent(EventType.SIGN_IN, request);
                 }
@@ -230,11 +234,12 @@ public class ShibbolethController extends BaseController {
             
             try {
                 notifyUser(shibIdentityProvider, userConnectionEntity);
-                processAuthentication(remoteUser, userConnectionEntity);
+                boolean userLoggedIn = processAuthentication(remoteUser, userConnectionEntity, request, response);
+                setLoggedInStatus(request, userLoggedIn);
             } catch (AuthenticationException e) {
                 // this should never happen
                 SecurityContextHolder.getContext().setAuthentication(null);
-                LOGGER.warn("User {0} should have been logged-in via Shibboleth, but was unable to due to a problem", remoteUser, e);
+                LOGGER.warn("User {} should have been logged-in via Shibboleth, but was unable to due to a problem", remoteUser, e);
             }
             codes.setRedirectUrl(calculateRedirectUrl(request, response, false, false, "shibboleth"));
             return codes;
@@ -242,6 +247,18 @@ public class ShibbolethController extends BaseController {
             codes.setRedirectUrl(orcidUrlManager.getBaseUrl() + "/2fa-signin");
             return codes;
         }
+    }
+
+    private boolean setLoggedInStatus(HttpServletRequest request, Boolean userLoggedIn) {
+        if(userLoggedIn) {
+            // Update the last login time
+            String ip = OrcidRequestUtil.getIpAddress(request);
+            String orcid = SecurityContextHolder.getContext().getAuthentication().getName();
+            LOGGER.trace("Updating last login details for user {}", orcid);
+            profileEntityManager.updateLastLoginDetails(orcid, ip);
+            return true;
+        }
+        return false;
     }
 
     private void notifyUser(String shibIdentityProvider, UserconnectionEntity userConnectionEntity) {
@@ -255,13 +272,30 @@ public class ShibbolethController extends BaseController {
         }
     }
     
-    private void processAuthentication(RemoteUser remoteUser, UserconnectionEntity userConnectionEntity) {
-        PreAuthenticatedAuthenticationToken token = new PreAuthenticatedAuthenticationToken(userConnectionEntity.getOrcid(), remoteUser.getUserId());
-        token.setDetails(getOrcidProfileUserDetails(userConnectionEntity.getOrcid()));
-        Authentication authentication = authenticationManager.authenticate(token);
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-        userConnectionEntity.setLastLogin(new Date());
-        userConnectionManager.update(userConnectionEntity);
+    private boolean processAuthentication(RemoteUser remoteUser, UserconnectionEntity userConnectionEntity, HttpServletRequest request, HttpServletResponse response) {
+        String orcidId = userConnectionEntity.getOrcid();
+        try {
+            PreAuthenticatedAuthenticationToken token = new PreAuthenticatedAuthenticationToken(userConnectionEntity.getOrcid(), remoteUser.getUserId());
+            token.setDetails(getOrcidProfileUserDetails(userConnectionEntity.getOrcid()));
+
+            Authentication authentication = authenticationManager.authenticate(token);
+            SecurityContext context = SecurityContextHolder.createEmptyContext();
+            context.setAuthentication(authentication);
+            SecurityContextHolder.setContext(context);
+            // Spring Security 6: SecurityContextHolderFilter no longer auto-saves the context
+            // to the session; we must persist it explicitly so the next request is authenticated.
+            new HttpSessionSecurityContextRepository().saveContext(context, request, response);
+            LOGGER.info("Institutional sign in - New session issued for " + SecurityContextHolder.getContext().getAuthentication().getName());
+            // Update the institutional sign in last login date
+            userConnectionEntity.setLastLogin(new Date());
+            userConnectionManager.update(userConnectionEntity);
+            return true;
+        } catch (AuthenticationException e) {
+            // this should never happen
+            SecurityContextHolder.clearContext();
+            LOGGER.warn("User '" + orcidId +  "' should have been logged-in, but we unable to due to a problem", e);
+        }
+        return false;
     }
 
     private void validate2FACodes(String orcid, TwoFactorAuthenticationCodes codes) {

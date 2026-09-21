@@ -2,7 +2,7 @@ package org.orcid.persistence.dao.impl;
 
 import java.util.List;
 
-import javax.persistence.Query;
+import jakarta.persistence.Query;
 
 import org.orcid.jaxb.model.v3.release.common.Visibility;
 import org.orcid.persistence.aop.UpdateProfileLastModifiedAndIndexingStatus;
@@ -33,7 +33,7 @@ public class ExternalIdentifierDaoImpl extends GenericDaoImpl<ExternalIdentifier
     @Transactional
     @UpdateProfileLastModifiedAndIndexingStatus
     public boolean removeExternalIdentifier(String orcid, String externalIdReference) {
-        Query query = entityManager.createQuery("delete from ExternalIdentifierEntity where orcid=:orcid and externalIdReference=:externalIdReference");
+        Query query = entityManager.createQuery("delete from ExternalIdentifierEntity ei where ei.orcid=:orcid and ei.externalIdReference=:externalIdReference");
         query.setParameter("orcid", orcid);
         query.setParameter("externalIdReference", externalIdReference);
         return query.executeUpdate() > 0 ? true : false;
@@ -41,6 +41,7 @@ public class ExternalIdentifierDaoImpl extends GenericDaoImpl<ExternalIdentifier
 
     @SuppressWarnings("unchecked")
     @Override
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     @Cacheable(value = "dao-external-identifiers", key = "#orcid.concat('-').concat(#lastModified)")
     public List<ExternalIdentifierEntity> getExternalIdentifiers(String orcid, long lastModified) {
         Query query = entityManager.createQuery("FROM ExternalIdentifierEntity WHERE orcid = :orcid order by displayIndex desc, dateCreated asc");
@@ -49,6 +50,7 @@ public class ExternalIdentifierDaoImpl extends GenericDaoImpl<ExternalIdentifier
     }
     
     @Override
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     @Cacheable(value = "public-external-identifiers", key = "#orcid.concat('-').concat(#lastModified)")
     public List<ExternalIdentifierEntity> getPublicExternalIdentifiers(String orcid, long lastModified) {
         return getExternalIdentifiers(orcid, PUBLIC_VISIBILITY);
@@ -65,6 +67,7 @@ public class ExternalIdentifierDaoImpl extends GenericDaoImpl<ExternalIdentifier
 
     @SuppressWarnings("unchecked")
     @Override
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     public List<ExternalIdentifierEntity> getExternalIdentifiers(String orcid, String visibility) {
         Query query = entityManager.createQuery("FROM ExternalIdentifierEntity WHERE orcid = :orcid and visibility = :visibility order by displayIndex desc, dateCreated asc");
         query.setParameter("orcid", orcid);
@@ -73,6 +76,7 @@ public class ExternalIdentifierDaoImpl extends GenericDaoImpl<ExternalIdentifier
     }
 
     @Override
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     public ExternalIdentifierEntity getExternalIdentifierEntity(String orcid, Long id) {
         Query query = entityManager.createQuery("FROM ExternalIdentifierEntity WHERE orcid = :orcid and id = :id");
         query.setParameter("orcid", orcid);
@@ -84,7 +88,7 @@ public class ExternalIdentifierDaoImpl extends GenericDaoImpl<ExternalIdentifier
     @Transactional
     @UpdateProfileLastModifiedAndIndexingStatus
     public boolean removeExternalIdentifier(String orcid, Long id) {
-        Query query = entityManager.createQuery("delete from ExternalIdentifierEntity where orcid=:orcid and id=:id");
+        Query query = entityManager.createQuery("delete from ExternalIdentifierEntity ei where ei.orcid=:orcid and ei.id=:id");
         query.setParameter("orcid", orcid);
         query.setParameter("id", id);
         return query.executeUpdate() > 0 ? true : false;
@@ -94,7 +98,7 @@ public class ExternalIdentifierDaoImpl extends GenericDaoImpl<ExternalIdentifier
     @Transactional
     @UpdateProfileLastModifiedAndIndexingStatus
     public void removeAllExternalIdentifiers(String orcid) {
-        Query query = entityManager.createQuery("delete from ExternalIdentifierEntity where orcid = :orcid");
+        Query query = entityManager.createQuery("delete from ExternalIdentifierEntity ei where ei.orcid = :orcid");
         query.setParameter("orcid", orcid);
         query.executeUpdate();
     }

@@ -38,8 +38,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
+import jakarta.annotation.Resource;
+import jakarta.servlet.http.HttpServletRequest;
 import java.util.*;
 import java.util.regex.Pattern;
 
@@ -907,7 +907,7 @@ public class WorksController extends BaseWorkspaceController {
     /**
      * updates visibility of works
      */
-    @RequestMapping(value = "/{workIdsStr}/visibility/{visibilityStr}", method = RequestMethod.GET)
+    @RequestMapping(value = "/{workIdsStr}/visibility/{visibilityStr}", method = RequestMethod.POST)
     public @ResponseBody ArrayList<Long> updateVisibility(@PathVariable("workIdsStr") String workIdsStr, @PathVariable("visibilityStr") String visibilityStr) {
         // make sure this is a users work
         String orcid = getEffectiveUserOrcid();

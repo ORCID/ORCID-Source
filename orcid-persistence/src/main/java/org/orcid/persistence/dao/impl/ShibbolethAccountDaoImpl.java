@@ -2,8 +2,8 @@ package org.orcid.persistence.dao.impl;
 
 import java.util.List;
 
-import javax.persistence.Query;
-import javax.persistence.TypedQuery;
+import jakarta.persistence.Query;
+import jakarta.persistence.TypedQuery;
 
 import org.orcid.persistence.dao.ShibbolethAccountDao;
 import org.orcid.persistence.jpa.entities.ShibbolethAccountEntity;
@@ -21,6 +21,7 @@ public class ShibbolethAccountDaoImpl extends GenericDaoImpl<ShibbolethAccountEn
     }
 
     @Override
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     public ShibbolethAccountEntity findByRemoteUserAndShibIdentityProvider(String remoteUser, String shibIdentityProvider) {
         TypedQuery<ShibbolethAccountEntity> query = entityManager.createQuery(
                 "from ShibbolethAccountEntity where remoteUser = :remoteUser and shibIdentityProvider = :shibIdentityProvider", ShibbolethAccountEntity.class);
@@ -31,6 +32,7 @@ public class ShibbolethAccountDaoImpl extends GenericDaoImpl<ShibbolethAccountEn
     }
 
     @Override
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     public List<ShibbolethAccountEntity> findByOrcid(String orcid) {
         TypedQuery<ShibbolethAccountEntity> query = entityManager.createQuery("from ShibbolethAccountEntity where orcid = :orcid", ShibbolethAccountEntity.class);
         query.setParameter("orcid", orcid);
@@ -40,7 +42,7 @@ public class ShibbolethAccountDaoImpl extends GenericDaoImpl<ShibbolethAccountEn
     @Override
     @Transactional
     public void removeByIdAndOrcid(Long id, String orcid) {
-        Query query = entityManager.createQuery("delete from ShibbolethAccountEntity where id = :id and orcid = :orcid");
+        Query query = entityManager.createQuery("delete from ShibbolethAccountEntity s where s.id = :id and s.orcid = :orcid");
         query.setParameter("id", id);
         query.setParameter("orcid", orcid);
         query.executeUpdate();

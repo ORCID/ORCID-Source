@@ -3,7 +3,9 @@ package org.orcid.api.memberV3.server.delegator;
 import java.util.List;
 import java.util.Map;
 
-import javax.ws.rs.core.Response;
+import jakarta.ws.rs.core.Response;
+
+import org.apache.hc.core5.http.ParseException;
 
 public interface MemberV3ApiServiceDelegator<DISTINCTION, EDUCATION, EMPLOYMENT, EXTERNAL_IDENTIFIER, INVITED_POSITION, FUNDING, GROUP_ID_RECORD, MEMBERSHIP, OTHER_NAME, PEER_REVIEW, QUALIFICATION, RESEARCHER_URL, SERVICE, WORK, WORK_BULK, ADDRESS, KEYWORD, RESEARCH_RESOURCE> {
 
@@ -145,7 +147,7 @@ public interface MemberV3ApiServiceDelegator<DISTINCTION, EDUCATION, EMPLOYMENT,
 
     Response viewPerson(String orcid);
 
-    Response searchByQuery(Map<String, List<String>> solrParams);
+    Response searchByQuery(Map<String, List<String>> solrParams) throws ParseException;
 
     Response viewClient(String clientId);
 
@@ -217,7 +219,7 @@ public interface MemberV3ApiServiceDelegator<DISTINCTION, EDUCATION, EMPLOYMENT,
 
     Response deleteResearchResource(String orcid, Long putCode);
 
-    Response searchByQueryCSV(Map<String, List<String>> solrParams);
+    Response searchByQueryCSV(Map<String, List<String>> solrParams) throws ParseException;
 
     Response expandedSearchByQuery(Map<String, List<String>> solrParams);
 

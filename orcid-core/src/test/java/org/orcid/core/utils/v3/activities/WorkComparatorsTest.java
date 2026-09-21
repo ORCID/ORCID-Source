@@ -83,7 +83,7 @@ public class WorkComparatorsTest {
     private List<WorkSummary> getWorkSummariesWithEqualDisplayIndexes(int offset) throws DatatypeConfigurationException {
         List<WorkSummary> summaries = new ArrayList<>();
         for (int i = offset; i < offset + 10; i++) {
-            summaries.add(getWorkSummary(0));
+            summaries.add(getWorkSummary(0, i));
         }
         return summaries;
     }
@@ -91,28 +91,25 @@ public class WorkComparatorsTest {
     private List<WorkSummary> getWorkSummariesWithOrderedDisplayIndexes(int offset) throws DatatypeConfigurationException {
         List<WorkSummary> summaries = new ArrayList<>();
         for (int i = offset; i < offset + 10; i++) {
-            summaries.add(getWorkSummary(i));
+            summaries.add(getWorkSummary(i, i));
         }
         return summaries;
     }
 
-    private WorkSummary getWorkSummary(int displayIndex) throws DatatypeConfigurationException {
+    private WorkSummary getWorkSummary(int displayIndex, int secondsOffset) throws DatatypeConfigurationException {
         WorkSummary summary = new WorkSummary();
         summary.setDisplayIndex(Integer.toString(displayIndex));
         WorkTitle title = new WorkTitle();
         title.setTitle(new Title("summary" + displayIndex));
         summary.setTitle(title);
-        waitABit();
-        summary.setCreatedDate(new CreatedDate(DatatypeFactory.newInstance().newXMLGregorianCalendar(new GregorianCalendar())));
+        summary.setCreatedDate(new CreatedDate(DatatypeFactory.newInstance().newXMLGregorianCalendar(getTimePlusSeconds(secondsOffset))));
         return summary;
     }
 
-    private void waitABit() {
-        try {
-            Thread.sleep(100);
-        } catch (InterruptedException e) {
-            throw new RuntimeException("Thread shouldn't be interrupted", e);
-        }
+    private GregorianCalendar getTimePlusSeconds(int seconds) {
+        GregorianCalendar c = new GregorianCalendar();
+        c.add(Calendar.SECOND, seconds);
+        return c;
     }
 
 }

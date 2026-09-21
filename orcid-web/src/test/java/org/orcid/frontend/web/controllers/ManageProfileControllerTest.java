@@ -16,6 +16,7 @@ import static org.mockito.internal.verification.VerificationModeFactory.times;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -30,35 +31,53 @@ import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 import org.orcid.core.aop.ProfileLastModifiedAspect;
 import org.orcid.core.locale.LocaleManager;
+import org.orcid.core.manager.impl.OrcidUrlManager;
 import org.orcid.core.manager.BackupCodeManager;
 import org.orcid.core.manager.EncryptionManager;
+import org.orcid.core.manager.InstitutionalSignInManager;
+import org.orcid.core.manager.PreferenceManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.TwoFactorAuthenticationManager;
+import org.orcid.core.manager.UserConnectionManager;
+import org.orcid.core.manager.v3.AddressManager;
 import org.orcid.core.manager.v3.BiographyManager;
 import org.orcid.core.manager.v3.EmailManager;
 import org.orcid.core.manager.v3.GivenPermissionToManager;
+import org.orcid.core.manager.v3.NotificationManager;
 import org.orcid.core.manager.v3.OrcidSecurityManager;
+import org.orcid.core.manager.v3.ProfileEmailDomainManager;
 import org.orcid.core.manager.v3.ProfileEntityManager;
+import org.orcid.core.manager.v3.ProfileHistoryEventManager;
+import org.orcid.core.manager.v3.ProfileInterstitialFlagManager;
 import org.orcid.core.manager.v3.RecordNameManager;
+import org.orcid.core.utils.cache.redis.RedisClient;
 import org.orcid.core.manager.v3.read_only.*;
 import org.orcid.core.security.OrcidRoles;
-import org.orcid.jaxb.model.v3.release.common.*;
+import org.orcid.frontend.service.TrustedPartiesService;
+import org.orcid.utils.alerting.SlackManager;
+import org.orcid.jaxb.model.common_v2.Visibility;
+import org.orcid.jaxb.model.v3.release.common.CreditName;
+import org.orcid.persistence.jpa.entities.*;
 import org.orcid.pojo.*;
+import org.orcid.pojo.ajaxForm.*;
 import org.orcid.utils.DateUtils;
 import org.orcid.core.utils.v3.OrcidIdentifierUtils;
 import org.orcid.frontend.email.RecordEmailSender;
+import org.orcid.jaxb.model.v3.release.common.Source;
+import org.orcid.jaxb.model.v3.release.common.SourceClientId;
+import org.orcid.jaxb.model.v3.release.common.SourceName;
+import org.orcid.jaxb.model.v3.release.record.*;
 import org.orcid.jaxb.model.v3.release.record.Biography;
 import org.orcid.jaxb.model.v3.release.record.Email;
 import org.orcid.jaxb.model.v3.release.record.Emails;
 import org.orcid.jaxb.model.v3.release.record.FamilyName;
 import org.orcid.jaxb.model.v3.release.record.GivenNames;
 import org.orcid.jaxb.model.v3.release.record.Name;
-import org.orcid.persistence.jpa.entities.EmailEntity;
-import org.orcid.persistence.jpa.entities.ProfileEntity;
-import org.orcid.pojo.ajaxForm.BiographyForm;
-import org.orcid.pojo.ajaxForm.Errors;
-import org.orcid.pojo.ajaxForm.NamesForm;
-import org.orcid.pojo.ajaxForm.Text;
+import org.orcid.jaxb.model.v3.release.record.Addresses;
+import org.orcid.jaxb.model.v3.release.common.OrcidIdentifier;
+import org.springframework.web.servlet.ModelAndView;
+import org.apache.commons.codec.binary.Base64;
+
 import org.orcid.test.TargetProxyHelper;
 import org.orcid.utils.ExpiringLinkService;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -97,35 +116,80 @@ public class ManageProfileControllerTest {
     private ProfileEmailDomainManagerReadOnly mockProfileEmailDomainManagerReadOnly;
 
     @Mock
+    private ProfileEmailDomainManager mockProfileEmailDomainManager;
+
+    @Mock
+    private UserConnectionManager mockUserConnectionManager;
+
+    @Mock
+    private PreferenceManager mockPreferenceManager;
+
+    @Mock
+    private SlackManager mockSlackManager;
+
+    @Mock
+    private NotificationManager mockNotificationManager;
+
+    @Mock
+    private ProfileInterstitialFlagManagerReadOnly mockProfileInterstitialFlagManagerReadOnly;
+
+    @Mock
+    private ProfileInterstitialFlagManager mockProfileInterstitialFlagManager;
+
+    @Mock
+    private RedisClient mockRedisClient;
+
+    @Mock
+    private TrustedPartiesService mockTrustedPartiesService;
+
+    @Mock
+    private InstitutionalSignInManager mockInstitutionalSignInManager;
+
+    @Mock
+    private AddressManager mockAddressManager;
+
+    @Mock
+    private BiographyManager mockBiographyManager;
+
+    @Mock
+    private RecordNameManager mockRecordNameManager;
+
+    @Mock
+    private OrcidUrlManager mockOrcidUrlManager;
+
+    @Mock
     private LocaleManager mockLocaleManager;
 
     @Mock
     private ProfileEntityManager mockProfileEntityManager;
-    
+
     @Mock
     private GivenPermissionToManager mockGivenPermissionToManager;
-    
+
     @Mock
     private GivenPermissionToManagerReadOnly mockGivenPermissionToManagerReadOnly;
-    
+
     @Mock
     private OrcidSecurityManager mockOrcidSecurityManager;
-    
+
     @Mock
     private OrcidIdentifierUtils mockOrcidIdentifierUtils;
-    
+
     @Mock
     private ProfileLastModifiedAspect profileLastModifiedAspect;
 
     @Mock
     private RecordNameManagerReadOnly mockRecordNameManagerReadOnlyV3;
-    
+
     @Mock
     private TwoFactorAuthenticationManager twoFactorAuthenticationManager;
-    
+
     @Mock
-    private RecordEmailSender mockRecordEmailSender;    
-    
+    private RecordEmailSender mockRecordEmailSender;
+
+    @Mock
+    private ProfileHistoryEventManager mockProfileHistoryEventManager;
+
     @Mock(name="profileEntityManagerReadOnlyV3")
     private ProfileEntityManagerReadOnly mockProfileEntityManagerReadOnly;
 
@@ -163,16 +227,31 @@ public class ManageProfileControllerTest {
         TargetProxyHelper.injectIntoProxy(controller, "emailManager", mockEmailManager);
         TargetProxyHelper.injectIntoProxy(controller, "emailManagerReadOnly", mockEmailManager);
         TargetProxyHelper.injectIntoProxy(controller, "profileEmailDomainManagerReadOnly", mockProfileEmailDomainManagerReadOnly);
+        TargetProxyHelper.injectIntoProxy(controller, "profileEmailDomainManager", mockProfileEmailDomainManager);
+        TargetProxyHelper.injectIntoProxy(controller, "userConnectionManager", mockUserConnectionManager);
+        TargetProxyHelper.injectIntoProxy(controller, "preferenceManager", mockPreferenceManager);
+        TargetProxyHelper.injectIntoProxy(controller, "slackManager", mockSlackManager);
+        TargetProxyHelper.injectIntoProxy(controller, "notificationManager", mockNotificationManager);
+        TargetProxyHelper.injectIntoProxy(controller, "profileInterstitialFlagManagerReadOnly", mockProfileInterstitialFlagManagerReadOnly);
+        TargetProxyHelper.injectIntoProxy(controller, "profileInterstitialFlagManager", mockProfileInterstitialFlagManager);
+        TargetProxyHelper.injectIntoProxy(controller, "redisClient", mockRedisClient);
+        TargetProxyHelper.injectIntoProxy(controller, "trustedPartiesService", mockTrustedPartiesService);
+        TargetProxyHelper.injectIntoProxy(controller, "institutionalSignInManager", mockInstitutionalSignInManager);
+        TargetProxyHelper.injectIntoProxy(controller, "expiringLinkService", mockExpiringLinkService);
+        TargetProxyHelper.injectIntoProxy(controller, "addressManager", mockAddressManager);
+        TargetProxyHelper.injectIntoProxy(controller, "biographyManager", mockBiographyManager);
+        TargetProxyHelper.injectIntoProxy(controller, "recordNameManager", mockRecordNameManager);
+        TargetProxyHelper.injectIntoProxy(controller, "orcidUrlManager", mockOrcidUrlManager);
         TargetProxyHelper.injectIntoProxy(controller, "localeManager", mockLocaleManager);
         TargetProxyHelper.injectIntoProxy(controller, "profileEntityManager", mockProfileEntityManager);
-        TargetProxyHelper.injectIntoProxy(controller, "givenPermissionToManager", mockGivenPermissionToManager); 
-        TargetProxyHelper.injectIntoProxy(controller, "givenPermissionToManagerReadOnly", mockGivenPermissionToManagerReadOnly); 
-        TargetProxyHelper.injectIntoProxy(controller, "orcidSecurityManager", mockOrcidSecurityManager);  
-        TargetProxyHelper.injectIntoProxy(controller, "orcidIdentifierUtils", mockOrcidIdentifierUtils);
+        TargetProxyHelper.injectIntoProxy(controller, "givenPermissionToManager", mockGivenPermissionToManager);
+        TargetProxyHelper.injectIntoProxy(controller, "givenPermissionToManagerReadOnly", mockGivenPermissionToManagerReadOnly);
+        TargetProxyHelper.injectIntoProxy(controller, "orcidSecurityManager", mockOrcidSecurityManager);
         TargetProxyHelper.injectIntoProxy(controller, "profileLastModifiedAspect", profileLastModifiedAspect);
         TargetProxyHelper.injectIntoProxy(controller, "recordNameManagerReadOnlyV3", mockRecordNameManagerReadOnlyV3);
         TargetProxyHelper.injectIntoProxy(controller, "twoFactorAuthenticationManager", twoFactorAuthenticationManager);
         TargetProxyHelper.injectIntoProxy(controller, "recordEmailSender", mockRecordEmailSender);
+        TargetProxyHelper.injectIntoProxy(controller, "profileHistoryEventManager", mockProfileHistoryEventManager);
         TargetProxyHelper.injectIntoProxy(controller, "profileEntityManagerReadOnly", mockProfileEntityManagerReadOnly);
         TargetProxyHelper.injectIntoProxy(controller, "personalDetailsManagerReadOnly", mockPersonalDetailsManagerReadOnly);
         TargetProxyHelper.injectIntoProxy(controller, "addressManagerReadOnly", mockAddressManagerReadOnly);
@@ -180,9 +259,12 @@ public class ManageProfileControllerTest {
         TargetProxyHelper.injectIntoProxy(controller, "researcherUrlManagerReadOnly", mockResearcherUrlManagerReadOnly);
         TargetProxyHelper.injectIntoProxy(controller, "externalIdentifierManagerReadOnly", mockExternalIdentifierManagerReadOnly);
         TargetProxyHelper.injectIntoProxy(controller, "expiringLinkService", mockExpiringLinkService);
+        TargetProxyHelper.injectIntoProxy(controller, "redisClient", mockRedisClient);
         TargetProxyHelper.injectIntoProxy(controller, "backupCodeManager", mockBackupCodeManager);
 
-                
+
+        when(twoFactorAuthenticationManager.validateTwoFactorAuthForm(anyString(), any())).thenReturn(true);
+
         when(mockOrcidSecurityManager.isPasswordConfirmationRequired()).thenReturn(true);
         when(mockEncryptionManager.hashMatches(Mockito.anyString(), Mockito.anyString())).thenReturn(true);
         when(mockEncryptionManager.hashMatches(eq("invalid password"), Mockito.anyString())).thenReturn(false);
@@ -198,9 +280,9 @@ public class ManageProfileControllerTest {
                 result.setPath(invocation.getArgument(0));
                 return result;
             }
-            
+
         });
-        
+
         when(mockLocaleManager.resolveMessage(Mockito.anyString(), any())).thenAnswer(new Answer<String>() {
 
             @Override
@@ -228,7 +310,7 @@ public class ManageProfileControllerTest {
                 Email email1 = new Email();
                 email1.setEmail(invocation.getArgument(0) + "_1@test.orcid.org");
                 email1.setSource(new Source());
-                email1.setVisibility(Visibility.PUBLIC);
+                email1.setVisibility(org.orcid.jaxb.model.v3.release.common.Visibility.PUBLIC);
                 email1.setVerified(true);
                 emails.getEmails().add(email1);
 
@@ -236,7 +318,7 @@ public class ManageProfileControllerTest {
                 email2.setEmail(invocation.getArgument(0) + "_2@test.orcid.org");
                 email2.setSource(new Source());
                 email2.getSource().setSourceName(new SourceName(USER_CREDIT_NAME));
-                email2.setVisibility(Visibility.PUBLIC);
+                email2.setVisibility(org.orcid.jaxb.model.v3.release.common.Visibility.PUBLIC);
                 email2.setVerified(true);
                 emails.getEmails().add(email2);
 
@@ -244,7 +326,7 @@ public class ManageProfileControllerTest {
                 email3.setEmail(invocation.getArgument(0) + "_3@test.orcid.org");
                 email3.setSource(new Source());
                 email3.getSource().setSourceClientId(new SourceClientId(USER_ORCID));
-                email3.setVisibility(Visibility.PUBLIC);
+                email3.setVisibility(org.orcid.jaxb.model.v3.release.common.Visibility.PUBLIC);
                 email3.setVerified(false);
                 emails.getEmails().add(email3);
                 return emails;
@@ -262,12 +344,12 @@ public class ManageProfileControllerTest {
                 email.setEmail(emailString);
                 email.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.PUBLIC.name());
                 ProfileEntity entity = new ProfileEntity(orcidString);
-                entity.setEncryptedPassword("password");                
+                entity.setEncryptedPassword("password");
                 email.setOrcid(orcidString);
                 return email;
             }
         });
-        
+
         when(mockGivenPermissionToManagerReadOnly.findByGiver(anyString(), anyLong())).thenAnswer(new Answer<List<DelegateForm>>(){
 
             @Override
@@ -288,27 +370,27 @@ public class ManageProfileControllerTest {
                 list.add(two);
                 return list;
             }
-            
+
         });
-        
+
         when(mockRecordNameManagerReadOnlyV3.fetchDisplayablePublicName(anyString())).thenAnswer(new Answer<String>() {
 
             @Override
             public String answer(InvocationOnMock invocation) throws Throwable {
                 return invocation.getArgument(0) + " Given Names " + invocation.getArgument(0) + " Family Name";
             }
-            
+
         });
-        
+
         ProfileEntity u1 = new ProfileEntity(USER_ORCID);
         u1.setEncryptedPassword("password");
-        
-        when(mockProfileEntityManagerReadOnly.findByOrcid(eq(USER_ORCID))).thenReturn(u1); 
-        
+
+        when(mockProfileEntityManagerReadOnly.findByOrcid(eq(USER_ORCID))).thenReturn(u1);
+
         ProfileEntity u2 = new ProfileEntity(DEPRECATED_USER_ORCID);
-        u2.setEncryptedPassword("password");        
-        
-        when(mockProfileEntityManagerReadOnly.findByOrcid(eq(DEPRECATED_USER_ORCID))).thenReturn(u2); 
+        u2.setEncryptedPassword("password");
+
+        when(mockProfileEntityManagerReadOnly.findByOrcid(eq(DEPRECATED_USER_ORCID))).thenReturn(u2);
     }
 
     private void mocksForDeprecatedAccounts() {
@@ -316,7 +398,7 @@ public class ManageProfileControllerTest {
             @Override
             public ProfileEntity answer(InvocationOnMock invocation) throws Throwable {
                 ProfileEntity entity = new ProfileEntity();
-                entity.setId(invocation.getArgument(0));                
+                entity.setId(invocation.getArgument(0));
 
                 // Mark it as deprecated
                 entity.setDeprecatedDate(new Date());
@@ -338,12 +420,12 @@ public class ManageProfileControllerTest {
                 return email;
             }
         });
-        
+
         ProfileEntity p = new ProfileEntity(DEPRECATED_USER_ORCID);
         p.setEncryptedPassword("password");
         p.setDeprecatedDate(new Date());
-        
-        when(mockProfileEntityManagerReadOnly.findByOrcid(eq(DEPRECATED_USER_ORCID))).thenReturn(p);     
+
+        when(mockProfileEntityManagerReadOnly.findByOrcid(eq(DEPRECATED_USER_ORCID))).thenReturn(p);
     }
 
     private void mocksForDeactivatedAccounts() {
@@ -373,12 +455,12 @@ public class ManageProfileControllerTest {
                 return email;
             }
         });
-        
+
         ProfileEntity p = new ProfileEntity(DEPRECATED_USER_ORCID);
         p.setEncryptedPassword("password");
         p.setDeactivationDate(new Date());
-        
-        when(mockProfileEntityManagerReadOnly.findByOrcid(eq(DEPRECATED_USER_ORCID))).thenReturn(p); 
+
+        when(mockProfileEntityManagerReadOnly.findByOrcid(eq(DEPRECATED_USER_ORCID))).thenReturn(p);
     }
 
     @Test
@@ -404,8 +486,8 @@ public class ManageProfileControllerTest {
 
         assertTrue(found1);
         assertTrue(found2);
-    }   
-    
+    }
+
     @Test
     public void testGetDeprecateProfile() {
         DeprecateProfile deprecateProfile = controller.getDeprecateProfile();
@@ -416,7 +498,7 @@ public class ManageProfileControllerTest {
         assertNull(deprecateProfile.getDeprecatingAccountName());
         assertNull(deprecateProfile.getDeprecatingEmails());
         assertNull(deprecateProfile.getDeprecatingOrcid());
-        assertNull(deprecateProfile.getDeprecatingPassword());
+        assertNull(deprecateProfile.getPassword());
         assertTrue(deprecateProfile.getErrors().isEmpty());
     }
 
@@ -428,7 +510,7 @@ public class ManageProfileControllerTest {
         DeprecateProfile deprecateProfile = new DeprecateProfile();
         deprecateProfile.setPrimaryOrcid(USER_ORCID);
         deprecateProfile.setDeprecatingOrcidOrEmail("0000-0000-0000-0002_1@test.orcid.org");
-        deprecateProfile.setDeprecatingPassword("password");
+        deprecateProfile.setPassword("password");
 
         deprecateProfile = controller.validateDeprecateProfile(deprecateProfile);
         assertNotNull(deprecateProfile.getDeprecatingAccountName());
@@ -452,7 +534,7 @@ public class ManageProfileControllerTest {
         // Using orcid
         deprecateProfile = new DeprecateProfile();
         deprecateProfile.setDeprecatingOrcidOrEmail(DEPRECATED_USER_ORCID);
-        deprecateProfile.setDeprecatingPassword("password");
+        deprecateProfile.setPassword("password");
 
         deprecateProfile = controller.validateDeprecateProfile(deprecateProfile);
         assertNotNull(deprecateProfile.getDeprecatingAccountName());
@@ -473,11 +555,11 @@ public class ManageProfileControllerTest {
         assertTrue(deprecateProfile.getPrimaryEmails().contains("0000-0000-0000-0001_2@test.orcid.org"));
         assertTrue(deprecateProfile.getPrimaryEmails().contains("0000-0000-0000-0001_3@test.orcid.org"));
         assertTrue(deprecateProfile.getErrors().isEmpty());
-        
+
         // Using orcid URL
         deprecateProfile = new DeprecateProfile();
         deprecateProfile.setDeprecatingOrcidOrEmail(DEPRECATED_USER_ORCID_URL);
-        deprecateProfile.setDeprecatingPassword("password");
+        deprecateProfile.setPassword("password");
 
         deprecateProfile = controller.validateDeprecateProfile(deprecateProfile);
         assertNotNull(deprecateProfile.getDeprecatingAccountName());
@@ -498,12 +580,12 @@ public class ManageProfileControllerTest {
         assertTrue(deprecateProfile.getPrimaryEmails().contains("0000-0000-0000-0001_3@test.orcid.org"));
 
         assertTrue(deprecateProfile.getErrors().isEmpty());
-        
+
         // Using orcid trim space
         deprecateProfile = new DeprecateProfile();
         deprecateProfile.setDeprecatingOrcidOrEmail(DEPRECATED_USER_ORCID + " ");
-        deprecateProfile.setDeprecatingPassword("password");
-        
+        deprecateProfile.setPassword("password");
+
         deprecateProfile = controller.validateDeprecateProfile(deprecateProfile);
         assertNotNull(deprecateProfile.getDeprecatingAccountName());
         assertNotNull(deprecateProfile.getDeprecatingEmails());
@@ -534,7 +616,7 @@ public class ManageProfileControllerTest {
         DeprecateProfile deprecateProfile = new DeprecateProfile();
         deprecateProfile.setPrimaryOrcid(USER_ORCID);
         deprecateProfile.setDeprecatingOrcidOrEmail("0000-0000-0000-0002_1@test.orcid.org");
-        deprecateProfile.setDeprecatingPassword("invalid password");
+        deprecateProfile.setPassword("invalid password");
 
         deprecateProfile = controller.validateDeprecateProfile(deprecateProfile);
         assertNull(deprecateProfile.getDeprecatingAccountName());
@@ -545,7 +627,7 @@ public class ManageProfileControllerTest {
         // Using orcid
         deprecateProfile = new DeprecateProfile();
         deprecateProfile.setDeprecatingOrcidOrEmail(DEPRECATED_USER_ORCID);
-        deprecateProfile.setDeprecatingPassword("invalid password");
+        deprecateProfile.setPassword("invalid password");
 
         deprecateProfile = controller.validateDeprecateProfile(deprecateProfile);
         assertNull(deprecateProfile.getDeprecatingAccountName());
@@ -565,7 +647,7 @@ public class ManageProfileControllerTest {
         DeprecateProfile deprecateProfile = new DeprecateProfile();
         deprecateProfile.setPrimaryOrcid(USER_ORCID);
         deprecateProfile.setDeprecatingOrcidOrEmail(DEPRECATED_USER_ORCID);
-        deprecateProfile.setDeprecatingPassword("password");
+        deprecateProfile.setPassword("password");
 
         deprecateProfile = controller.validateDeprecateProfile(deprecateProfile);
         assertNull(deprecateProfile.getDeprecatingAccountName());
@@ -576,7 +658,7 @@ public class ManageProfileControllerTest {
         // Using email
         deprecateProfile = new DeprecateProfile();
         deprecateProfile.setDeprecatingOrcidOrEmail("0000-0000-0000-0002_1@test.orcid.org");
-        deprecateProfile.setDeprecatingPassword("password");
+        deprecateProfile.setPassword("password");
 
         deprecateProfile = controller.validateDeprecateProfile(deprecateProfile);
         assertNull(deprecateProfile.getDeprecatingAccountName());
@@ -596,7 +678,7 @@ public class ManageProfileControllerTest {
         DeprecateProfile deprecateProfile = new DeprecateProfile();
         deprecateProfile.setPrimaryOrcid(USER_ORCID);
         deprecateProfile.setDeprecatingOrcidOrEmail(DEPRECATED_USER_ORCID);
-        deprecateProfile.setDeprecatingPassword("password");
+        deprecateProfile.setPassword("password");
 
         deprecateProfile = controller.validateDeprecateProfile(deprecateProfile);
         assertNull(deprecateProfile.getDeprecatingAccountName());
@@ -607,7 +689,7 @@ public class ManageProfileControllerTest {
         // Using email
         deprecateProfile = new DeprecateProfile();
         deprecateProfile.setDeprecatingOrcidOrEmail("0000-0000-0000-0002_1@test.orcid.org");
-        deprecateProfile.setDeprecatingPassword("password");
+        deprecateProfile.setPassword("password");
 
         deprecateProfile = controller.validateDeprecateProfile(deprecateProfile);
         assertNull(deprecateProfile.getDeprecatingAccountName());
@@ -623,7 +705,7 @@ public class ManageProfileControllerTest {
         DeprecateProfile deprecateProfile = new DeprecateProfile();
         deprecateProfile.setDeprecatingOrcidOrEmail(DEPRECATED_USER_ORCID);
         deprecateProfile.setPrimaryOrcid(DEPRECATED_USER_ORCID);
-        deprecateProfile.setDeprecatingPassword("password");
+        deprecateProfile.setPassword("password");
 
         deprecateProfile = controller.validateDeprecateProfile(deprecateProfile);
         assertNull(deprecateProfile.getDeprecatingAccountName());
@@ -633,31 +715,68 @@ public class ManageProfileControllerTest {
     }
 
     @Test
+    public void testValidateDeprecateProfileWith2FAFailure() {
+        SecurityContextHolder.getContext().setAuthentication(getAuthentication(USER_ORCID));
+
+        when(twoFactorAuthenticationManager.validateTwoFactorAuthForm(eq(DEPRECATED_USER_ORCID), any(DeprecateProfile.class))).thenReturn(false);
+
+        DeprecateProfile deprecateProfile = new DeprecateProfile();
+        deprecateProfile.setPrimaryOrcid(USER_ORCID);
+        deprecateProfile.setDeprecatingOrcidOrEmail(DEPRECATED_USER_ORCID);
+        deprecateProfile.setPassword("password");
+
+        deprecateProfile = controller.validateDeprecateProfile(deprecateProfile);
+
+        assertFalse(deprecateProfile.isSuccess());
+        assertNull(deprecateProfile.getTwoFactorToken());
+    }
+
+    @Test
     public void testConfirmDeprecateProfile() {
         SecurityContextHolder.getContext().setAuthentication(getAuthentication(USER_ORCID));
         DeprecateProfile deprecateProfile = new DeprecateProfile();
         deprecateProfile.setPrimaryOrcid(USER_ORCID);
         deprecateProfile.setDeprecatingOrcidOrEmail(DEPRECATED_USER_ORCID);
-        deprecateProfile.setDeprecatingPassword("password");
+        deprecateProfile.setPassword("password");
+        deprecateProfile.setTwoFactorToken("token");
+
+        when(mockRedisClient.get(DEPRECATED_USER_ORCID + "_two-factor-token")).thenReturn("token");
 
         deprecateProfile = controller.confirmDeprecateProfile(deprecateProfile);
         assertNotNull(deprecateProfile);
         assertTrue(deprecateProfile.getErrors().isEmpty());
         verify(mockRecordEmailSender, Mockito.times(0)).sendEmailListChangeEmail(eq(USER_ORCID), emailListChangeCaptor.capture());
     }
-    
+
+    @Test
+    public void testConfirmDeprecateProfileInvalidToken() {
+        SecurityContextHolder.getContext().setAuthentication(getAuthentication(USER_ORCID));
+        DeprecateProfile deprecateProfile = new DeprecateProfile();
+        deprecateProfile.setPrimaryOrcid(USER_ORCID);
+        deprecateProfile.setDeprecatingOrcidOrEmail(DEPRECATED_USER_ORCID);
+        deprecateProfile.setPassword("password");
+        deprecateProfile.setTwoFactorToken("invalid-token");
+
+        when(mockRedisClient.get(DEPRECATED_USER_ORCID + "_two-factor-token")).thenReturn("token");
+        when(twoFactorAuthenticationManager.userUsing2FA(DEPRECATED_USER_ORCID)).thenReturn(true);
+
+        deprecateProfile = controller.confirmDeprecateProfile(deprecateProfile);
+        assertNotNull(deprecateProfile);
+        assertTrue(StringUtils.isBlank(deprecateProfile.getTwoFactorToken()));
+    }
+
     @Test
     public void testConfirmDeprecateProfileCurrentProfileDeprecated() {
         ProfileEntity deprecatedEntity = new ProfileEntity();
         deprecatedEntity.setId("0000-0000-0000-0123");
         deprecatedEntity.setDeprecatedDate(new Date());
         when(mockProfileEntityCacheManager.retrieve("0000-0000-0000-0123")).thenReturn(deprecatedEntity);
-        
+
         SecurityContextHolder.getContext().setAuthentication(getAuthentication("0000-0000-0000-0123"));
         DeprecateProfile deprecateProfile = new DeprecateProfile();
         deprecateProfile.setPrimaryOrcid("0000-0000-0000-0123");
         deprecateProfile.setDeprecatingOrcidOrEmail("0000-0000-0000-0124");
-        deprecateProfile.setDeprecatingPassword("password");
+        deprecateProfile.setPassword("password");
 
         deprecateProfile = controller.confirmDeprecateProfile(deprecateProfile);
         assertNotNull(deprecateProfile);
@@ -665,19 +784,19 @@ public class ManageProfileControllerTest {
         assertEquals("deprecate_orcid.this_profile_deprecated", deprecateProfile.getErrors().get(0));
         verify(mockRecordEmailSender, Mockito.times(0)).sendEmailListChangeEmail(Mockito.anyString(), Mockito.any());
     }
-    
+
     @Test
     public void testConfirmDeprecateProfileCurrentProfileDeactivated() {
         ProfileEntity deprecatedEntity = new ProfileEntity();
         deprecatedEntity.setId("0000-0000-0000-0123");
         deprecatedEntity.setDeactivationDate(new Date());
         when(mockProfileEntityCacheManager.retrieve("0000-0000-0000-0123")).thenReturn(deprecatedEntity);
-        
+
         SecurityContextHolder.getContext().setAuthentication(getAuthentication("0000-0000-0000-0123"));
         DeprecateProfile deprecateProfile = new DeprecateProfile();
         deprecateProfile.setPrimaryOrcid("0000-0000-0000-0123");
         deprecateProfile.setDeprecatingOrcidOrEmail("0000-0000-0000-0124");
-        deprecateProfile.setDeprecatingPassword("password");
+        deprecateProfile.setPassword("password");
 
         deprecateProfile = controller.confirmDeprecateProfile(deprecateProfile);
         assertNotNull(deprecateProfile);
@@ -692,7 +811,7 @@ public class ManageProfileControllerTest {
         DeprecateProfile deprecateProfile = new DeprecateProfile();
         deprecateProfile.setPrimaryOrcid("0000-0000-0000-0003");
         deprecateProfile.setDeprecatingOrcidOrEmail("0000-0000-0000-0004");
-        deprecateProfile.setDeprecatingPassword("password");
+        deprecateProfile.setPassword("password");
 
         deprecateProfile = controller.confirmDeprecateProfile(deprecateProfile);
         assertNotNull(deprecateProfile);
@@ -709,7 +828,7 @@ public class ManageProfileControllerTest {
         DeprecateProfile deprecateProfile = new DeprecateProfile();
         deprecateProfile.setPrimaryOrcid(USER_ORCID);
         deprecateProfile.setDeprecatingOrcidOrEmail("0000-0000-0000-0002_1@test.orcid.org");
-        deprecateProfile.setDeprecatingPassword("invalid password");
+        deprecateProfile.setPassword("invalid password");
 
         deprecateProfile = controller.confirmDeprecateProfile(deprecateProfile);
         assertNull(deprecateProfile.getDeprecatingAccountName());
@@ -721,7 +840,7 @@ public class ManageProfileControllerTest {
         // Using orcid
         deprecateProfile = new DeprecateProfile();
         deprecateProfile.setDeprecatingOrcidOrEmail(DEPRECATED_USER_ORCID);
-        deprecateProfile.setDeprecatingPassword("invalid password");
+        deprecateProfile.setPassword("invalid password");
 
         deprecateProfile = controller.confirmDeprecateProfile(deprecateProfile);
         assertNull(deprecateProfile.getDeprecatingAccountName());
@@ -741,7 +860,7 @@ public class ManageProfileControllerTest {
         DeprecateProfile deprecateProfile = new DeprecateProfile();
         deprecateProfile.setPrimaryOrcid(USER_ORCID);
         deprecateProfile.setDeprecatingOrcidOrEmail(DEPRECATED_USER_ORCID);
-        deprecateProfile.setDeprecatingPassword("password");
+        deprecateProfile.setPassword("password");
 
         deprecateProfile = controller.confirmDeprecateProfile(deprecateProfile);
         assertNull(deprecateProfile.getDeprecatingAccountName());
@@ -753,7 +872,7 @@ public class ManageProfileControllerTest {
         // Using email
         deprecateProfile = new DeprecateProfile();
         deprecateProfile.setDeprecatingOrcidOrEmail("0000-0000-0000-0002_1@test.orcid.org");
-        deprecateProfile.setDeprecatingPassword("password");
+        deprecateProfile.setPassword("password");
 
         deprecateProfile = controller.confirmDeprecateProfile(deprecateProfile);
         assertNull(deprecateProfile.getDeprecatingAccountName());
@@ -774,7 +893,7 @@ public class ManageProfileControllerTest {
         DeprecateProfile deprecateProfile = new DeprecateProfile();
         deprecateProfile.setPrimaryOrcid(USER_ORCID);
         deprecateProfile.setDeprecatingOrcidOrEmail(DEPRECATED_USER_ORCID);
-        deprecateProfile.setDeprecatingPassword("password");
+        deprecateProfile.setPassword("password");
 
         deprecateProfile = controller.confirmDeprecateProfile(deprecateProfile);
         assertNull(deprecateProfile.getDeprecatingAccountName());
@@ -786,7 +905,7 @@ public class ManageProfileControllerTest {
         // Using email
         deprecateProfile = new DeprecateProfile();
         deprecateProfile.setDeprecatingOrcidOrEmail("0000-0000-0000-0002_1@test.orcid.org");
-        deprecateProfile.setDeprecatingPassword("password");
+        deprecateProfile.setPassword("password");
 
         deprecateProfile = controller.confirmDeprecateProfile(deprecateProfile);
         assertNull(deprecateProfile.getDeprecatingAccountName());
@@ -803,7 +922,7 @@ public class ManageProfileControllerTest {
         DeprecateProfile deprecateProfile = new DeprecateProfile();
         deprecateProfile.setDeprecatingOrcidOrEmail(DEPRECATED_USER_ORCID);
         deprecateProfile.setPrimaryOrcid(DEPRECATED_USER_ORCID);
-        deprecateProfile.setDeprecatingPassword("password");
+        deprecateProfile.setPassword("password");
 
         deprecateProfile = controller.confirmDeprecateProfile(deprecateProfile);
         assertNull(deprecateProfile.getDeprecatingAccountName());
@@ -828,23 +947,23 @@ public class ManageProfileControllerTest {
                 return entity;
             }
         });
-        
+
         ManageDelegate addDelegate = new ManageDelegate();
         addDelegate.setDelegateToManage("0000-0000-0000-0000");
         addDelegate.setPassword("password");
         controller.addDelegate(addDelegate);
         verify(mockGivenPermissionToManager, times(1)).create(USER_ORCID, "0000-0000-0000-0000");
     }
-    
+
     @Test
     public void testStripHtmlFromNames() {
         RecordNameManager mockRecordNameManager = Mockito.mock(RecordNameManager.class);
-        
+
         SecurityContextHolder.getContext().setAuthentication(getAuthentication(USER_ORCID));
         TargetProxyHelper.injectIntoProxy(controller, "recordNameManager", mockRecordNameManager);
-        
+
         when(mockRecordNameManager.exists(Mockito.anyString())).thenReturn(true);
-        
+
         NamesForm nf = new NamesForm();
         nf.setCreditName(Text.valueOf("<button onclick=\"alert('hello')\">Credit Name</button>"));
         nf.setGivenNames(Text.valueOf("<button onclick=\"alert('hello')\">Given Names</button>"));
@@ -854,25 +973,25 @@ public class ManageProfileControllerTest {
         assertEquals("Credit Name", nf.getCreditName().getValue());
         assertEquals("Given Names", nf.getGivenNames().getValue());
         assertEquals("Family Name", nf.getFamilyName().getValue());
-    
+
         Name name = new Name();
         name.setCreditName(new CreditName("Credit Name"));
         name.setFamilyName(new FamilyName("Family Name"));
         name.setGivenNames(new GivenNames("Given Names"));
-        name.setVisibility(Visibility.PUBLIC);
-        
+        name.setVisibility(org.orcid.jaxb.model.v3.release.common.Visibility.PUBLIC);
+
         verify(mockRecordNameManager, times(1)).updateRecordName(eq(USER_ORCID), eq(name));
     }
-    
+
     @Test
     public void testValidateBiography() {
         BiographyManager mockBiographyManager = Mockito.mock(BiographyManager.class);
-        
+
         SecurityContextHolder.getContext().setAuthentication(getAuthentication(USER_ORCID));
         TargetProxyHelper.injectIntoProxy(controller, "biographyManager", mockBiographyManager);
-        
+
         when(mockBiographyManager.exists(Mockito.anyString())).thenReturn(true);
-                
+
         BiographyForm bf = new BiographyForm();
         bf.setVisibility(org.orcid.pojo.ajaxForm.Visibility.valueOf(Visibility.PUBLIC));
         // No NPE exception on empty bio
@@ -883,144 +1002,150 @@ public class ManageProfileControllerTest {
         bf.setBiography(Text.valueOf(bio));
         controller.setBiographyFormJson(bf);
         assertEquals(1, bf.getErrors().size());
-        assertEquals("Length.changePersonalInfoForm.biography", bf.getErrors().get(0));        
+        assertEquals("Length.changePersonalInfoForm.biography", bf.getErrors().get(0));
         bio = StringUtils.repeat('a', 5000);
         bf.setBiography(Text.valueOf(bio));
         bf.setVisibility(null);
         controller.setBiographyFormJson(bf);
         assertEquals(1, bf.getErrors().size());
-        assertEquals("common.visibility.not_blank", bf.getErrors().get(0));        
-        
+        assertEquals("common.visibility.not_blank", bf.getErrors().get(0));
+
         bf.setBiography(Text.valueOf(bio));
         bf.setVisibility(org.orcid.pojo.ajaxForm.Visibility.valueOf(Visibility.PUBLIC));
         controller.setBiographyFormJson(bf);
-        assertTrue(bf.getErrors().isEmpty()); 
-        
+        assertTrue(bf.getErrors().isEmpty());
+
         Biography bioElement = new Biography();
-        bioElement.setContent(bio);      
-        bioElement.setVisibility(Visibility.PUBLIC);
-        
+        bioElement.setContent(bio);
+        bioElement.setVisibility(org.orcid.jaxb.model.v3.release.common.Visibility.PUBLIC);
+
         verify(mockBiographyManager, times(1)).updateBiography(eq(USER_ORCID), eq(bioElement));
     }
-    
+
     @Test
     public void testRevokeDelegate() {
         SecurityContextHolder.getContext().setAuthentication(getAuthentication(USER_ORCID));
         ManageDelegate manageDelegate = new ManageDelegate();
         manageDelegate.setDelegateToManage("0000-0000-0000-0000");
         manageDelegate.setPassword("password");
-        
+
         controller.revokeDelegate(manageDelegate);
-        
+
         assertEquals(0, manageDelegate.getErrors().size());
-        
-        verify(mockGivenPermissionToManager, times(1)).remove(eq(USER_ORCID), eq("0000-0000-0000-0000"));      
+
+        verify(mockGivenPermissionToManager, times(1)).remove(eq(USER_ORCID), eq("0000-0000-0000-0000"));
     }
-    
+
     @Test
     public void validateEmailAddressTest() {
-    	assertTrue(controller.validateEmailAddress("test@orcid.org"));
-    	assertTrue(controller.validateEmailAddress("test.test@orcid.org"));
-    	assertTrue(controller.validateEmailAddress("test-test@orcid.org"));
-    	assertTrue(controller.validateEmailAddress("test_test@orcid.org"));
-    	assertTrue(controller.validateEmailAddress("1test@orcid.org"));
-    	assertTrue(controller.validateEmailAddress("test1@orcid.org"));
-    	// Examples from https://en.wikipedia.org/wiki/Email_address#Examples
-    	assertTrue(controller.validateEmailAddress("user.name+tag+sorting@example.com"));
-    	assertTrue(controller.validateEmailAddress("example-indeed@strange-example.com"));
-    	assertTrue(controller.validateEmailAddress("#!$%&'*+-/=?^_`{}|~@example.org"));
-    	
-    	assertFalse(controller.validateEmailAddress(null));
-    	assertFalse(controller.validateEmailAddress(""));
-    	assertFalse(controller.validateEmailAddress("@"));
-    	assertFalse(controller.validateEmailAddress("@."));
-    	assertFalse(controller.validateEmailAddress("test"));
-    	assertFalse(controller.validateEmailAddress("test@"));
+        assertTrue(controller.validateEmailAddress("test@orcid.org"));
+        assertTrue(controller.validateEmailAddress("test.test@orcid.org"));
+        assertTrue(controller.validateEmailAddress("test-test@orcid.org"));
+        assertTrue(controller.validateEmailAddress("test_test@orcid.org"));
+        assertTrue(controller.validateEmailAddress("1test@orcid.org"));
+        assertTrue(controller.validateEmailAddress("test1@orcid.org"));
+        // Examples from https://en.wikipedia.org/wiki/Email_address#Examples
+        assertTrue(controller.validateEmailAddress("user.name+tag+sorting@example.com"));
+        assertTrue(controller.validateEmailAddress("example-indeed@strange-example.com"));
+        assertTrue(controller.validateEmailAddress("#!$%&'*+-/=?^_`{}|~@example.org"));
 
-    	assertFalse(controller.validateEmailAddress("@test"));
-    	assertFalse(controller.validateEmailAddress("@test.com"));
-    	// Examples from https://en.wikipedia.org/wiki/Email_address#Examples
-    	assertFalse(controller.validateEmailAddress("Abc.example.com"));
-    	assertFalse(controller.validateEmailAddress("A@b@c@example.com"));
-    	assertFalse(controller.validateEmailAddress("john.doe@example..com"));
+        assertFalse(controller.validateEmailAddress(null));
+        assertFalse(controller.validateEmailAddress(""));
+        assertFalse(controller.validateEmailAddress("@"));
+        assertFalse(controller.validateEmailAddress("@."));
+        assertFalse(controller.validateEmailAddress("test"));
+        assertFalse(controller.validateEmailAddress("test@"));
+
+        assertFalse(controller.validateEmailAddress("@test"));
+        assertFalse(controller.validateEmailAddress("@test.com"));
+        // Examples from https://en.wikipedia.org/wiki/Email_address#Examples
+        assertFalse(controller.validateEmailAddress("Abc.example.com"));
+        assertFalse(controller.validateEmailAddress("A@b@c@example.com"));
+        assertFalse(controller.validateEmailAddress("john.doe@example..com"));
 
         assertFalse(controller.validateEmailAddress("test@test"));
-    	assertTrue(controller.validateEmailAddress("john..doe@example.com"));
-    	assertTrue(controller.validateEmailAddress("a\"b(c)d,e:f;g<h>i[j\\k]l@example.com"));
+        assertTrue(controller.validateEmailAddress("john..doe@example.com"));
+        assertTrue(controller.validateEmailAddress("a\"b(c)d,e:f;g<h>i[j\\k]l@example.com"));
 
         assertTrue(controller.validateEmailAddress("test@test.inc"));
         assertTrue(controller.validateEmailAddress("test@test.africa"));
         assertTrue(controller.validateEmailAddress("test@test.中国"));
         assertTrue(controller.validateEmailAddress("test@test.llc"));
     }
-    
+
     @Test
     public void testDeleteEmailJsonBlankEmail() {
-        Errors errors = controller.deleteEmailJson("");
+        MockHttpServletRequest mockRequest = new MockHttpServletRequest();
+        Errors errors = controller.deleteEmailJson(mockRequest, "");
         assertNotNull(errors);
         assertEquals(1, errors.getErrors().size());
     }
-    
+
     @Test
     public void testDeleteEmailJsonWrongOwner() {
         SecurityContextHolder.getContext().setAuthentication(getAuthentication(USER_ORCID));
+        MockHttpServletRequest mockRequest = new MockHttpServletRequest();
         when(mockEmailManager.findOrcidIdByEmail(eq("email@email.com"))).thenReturn("another-orcid-id");
-        
-        Errors errors = controller.deleteEmailJson("email@email.com");
+
+        Errors errors = controller.deleteEmailJson(mockRequest, "email@email.com");
         assertNotNull(errors);
         assertEquals(1, errors.getErrors().size());
-        
+
         verify(mockEmailManager, Mockito.times(1)).findOrcidIdByEmail(eq("email@email.com"));
     }
-    
+
     @Test
     public void testDeleteEmailPrimaryEmail() {
         SecurityContextHolder.getContext().setAuthentication(getAuthentication(USER_ORCID));
+        MockHttpServletRequest mockRequest = new MockHttpServletRequest();
         when(mockEmailManager.findOrcidIdByEmail(eq("email@email.com"))).thenReturn(USER_ORCID);
         when(mockEmailManager.isPrimaryEmail(eq(USER_ORCID), eq("email@email.com"))).thenReturn(true);
-        
-        Errors errors = controller.deleteEmailJson("email@email.com");
+
+        Errors errors = controller.deleteEmailJson(mockRequest, "email@email.com");
         assertNotNull(errors);
         assertEquals(1, errors.getErrors().size());
-        
+
         verify(mockEmailManager, Mockito.times(1)).findOrcidIdByEmail(eq("email@email.com"));
         verify(mockEmailManager, Mockito.times(1)).isPrimaryEmail(eq(USER_ORCID), eq("email@email.com"));
     }
-    
+
     @Test
     public void testDeleteEmailOnlyEmail() {
         SecurityContextHolder.getContext().setAuthentication(getAuthentication(USER_ORCID));
+        MockHttpServletRequest mockRequest = new MockHttpServletRequest();
         when(mockEmailManager.findOrcidIdByEmail(eq("email@email.com"))).thenReturn(USER_ORCID);
         when(mockEmailManager.isPrimaryEmail(eq(USER_ORCID), eq("email@email.com"))).thenReturn(false);
         when(mockEmailManager.isUsersOnlyEmail(eq(USER_ORCID), eq("email@email.com"))).thenReturn(true);
-        
-        Errors errors = controller.deleteEmailJson("email@email.com");
+
+        Errors errors = controller.deleteEmailJson(mockRequest, "email@email.com");
         assertNotNull(errors);
         assertEquals(1, errors.getErrors().size());
-        
+
         verify(mockEmailManager, Mockito.times(1)).findOrcidIdByEmail(eq("email@email.com"));
         verify(mockEmailManager, Mockito.times(1)).isPrimaryEmail(eq(USER_ORCID), eq("email@email.com"));
         verify(mockEmailManager, Mockito.times(1)).isUsersOnlyEmail(eq(USER_ORCID), eq("email@email.com"));
     }
-    
+
     @Test
     public void testDeleteEmail() {
         SecurityContextHolder.getContext().setAuthentication(getAuthentication(USER_ORCID));
+        MockHttpServletRequest mockRequest = new MockHttpServletRequest();
         when(mockEmailManager.findOrcidIdByEmail(eq("email@email.com"))).thenReturn(USER_ORCID);
         when(mockEmailManager.isPrimaryEmail(eq(USER_ORCID), eq("email@email.com"))).thenReturn(false);
         when(mockEmailManager.isUsersOnlyEmail(eq(USER_ORCID), eq("email@email.com"))).thenReturn(false);
-        Mockito.doNothing().when(mockEmailManager).removeEmail(eq(USER_ORCID), eq("email@email.com"));
-        
-        Errors errors = controller.deleteEmailJson("email@email.com");
+        when(mockEmailManager.removeEmail(eq(USER_ORCID), eq("email@email.com"))).thenReturn(true);
+
+        Errors errors = controller.deleteEmailJson(mockRequest, "email@email.com");
         assertNotNull(errors);
         assertEquals(0, errors.getErrors().size());
-        
+
         verify(mockEmailManager, Mockito.times(1)).findOrcidIdByEmail(eq("email@email.com"));
         verify(mockEmailManager, Mockito.times(1)).isPrimaryEmail(eq(USER_ORCID), eq("email@email.com"));
         verify(mockEmailManager, Mockito.times(1)).isUsersOnlyEmail(eq(USER_ORCID), eq("email@email.com"));
-        verify(mockEmailManager, Mockito.times(1)).removeEmail(eq(USER_ORCID), eq("email@email.com"));        
+        verify(mockEmailManager, Mockito.times(1)).removeEmail(eq(USER_ORCID), eq("email@email.com"));
+        verify(mockProfileHistoryEventManager, Mockito.times(1)).recordEmailUpdateEvent(eq(USER_ORCID), eq("127.0.0.1"), eq("Email email@email.com was removed from " + USER_ORCID));
     }
-    
+
     @Test
     public void testVerifyEmail() {
         SecurityContextHolder.getContext().setAuthentication(getAuthentication(USER_ORCID));
@@ -1028,162 +1153,164 @@ public class ManageProfileControllerTest {
         email.setEmail("email@email.com");
         when(mockEmailManager.findPrimaryEmail(eq(USER_ORCID))).thenReturn(email);
         when(mockEmailManager.findOrcidIdByEmail(eq("email@email.com"))).thenReturn(USER_ORCID);
-        
-        MockHttpServletRequest mockRequest = new MockHttpServletRequest(); 
+
+        MockHttpServletRequest mockRequest = new MockHttpServletRequest();
         MockHttpSession mockSession = new MockHttpSession();
         mockRequest.setSession(mockSession);
         controller.verifyEmail(mockRequest, "email@email.com");
-        
+
         verify(mockRecordEmailSender, Mockito.times(1)).sendVerificationEmail(eq(USER_ORCID), eq("email@email.com"), eq(false));
     }
-    
+
     @Test
     public void testAddEmail_noPrimaryEmailChange() {
         SecurityContextHolder.getContext().setAuthentication(getAuthentication(USER_ORCID));
-        MockHttpServletRequest mockRequest = new MockHttpServletRequest(); 
+        MockHttpServletRequest mockRequest = new MockHttpServletRequest();
         MockHttpSession mockSession = new MockHttpSession();
         mockRequest.setSession(mockSession);
-        
-        AddEmail newEmail = new AddEmail();
-        newEmail.setValue("new@email.com");
-        newEmail.setPassword("password");
-        newEmail.setCurrent(true);
-        newEmail.setPrimary(false);
-        newEmail.setVerified(false);        
-        
-        when(mockEmailManager.addEmail(eq(USER_ORCID), eq(newEmail.toV3Email()))).thenReturn(Map.of());                        
-        when(mockEmailManager.emailExists(eq("new@email.com"))).thenReturn(false);
-        
-        controller.addEmails(mockRequest, newEmail);
 
-        verify(mockRecordEmailSender, Mockito.times(1)).sendVerificationEmail(eq(USER_ORCID), eq("new@email.com"), eq(false));
-    }
-    
-    @Test
-    public void testAddEmail_primaryEmailChange() {
-        SecurityContextHolder.getContext().setAuthentication(getAuthentication(USER_ORCID));
-        MockHttpServletRequest mockRequest = new MockHttpServletRequest(); 
-        MockHttpSession mockSession = new MockHttpSession();
-        mockRequest.setSession(mockSession);
-        
         AddEmail newEmail = new AddEmail();
         newEmail.setValue("new@email.com");
         newEmail.setPassword("password");
         newEmail.setCurrent(true);
         newEmail.setPrimary(false);
         newEmail.setVerified(false);
-        
-        when(mockEmailManager.addEmail(eq(USER_ORCID), eq(newEmail.toV3Email()))).thenReturn(Map.of("new", "new@email.com", "old", "old@email.com"));                     
-        when(mockEmailManager.emailExists(eq("new@email.com"))).thenReturn(false);        
-        
+
+        when(mockEmailManager.addEmail(eq(USER_ORCID), eq(newEmail.toV3Email()))).thenReturn(Map.of());
+        when(mockEmailManager.emailExists(eq("new@email.com"))).thenReturn(false);
+
         controller.addEmails(mockRequest, newEmail);
-        
+
         verify(mockRecordEmailSender, Mockito.times(1)).sendVerificationEmail(eq(USER_ORCID), eq("new@email.com"), eq(false));
+        verify(mockProfileHistoryEventManager, Mockito.times(1)).recordEmailUpdateEvent(eq(USER_ORCID), eq("127.0.0.1"), eq("Email new@email.com was added to " + USER_ORCID));
     }
-    
+
+    @Test
+    public void testAddEmail_primaryEmailChange() {
+        SecurityContextHolder.getContext().setAuthentication(getAuthentication(USER_ORCID));
+        MockHttpServletRequest mockRequest = new MockHttpServletRequest();
+        MockHttpSession mockSession = new MockHttpSession();
+        mockRequest.setSession(mockSession);
+
+        AddEmail newEmail = new AddEmail();
+        newEmail.setValue("new@email.com");
+        newEmail.setPassword("password");
+        newEmail.setCurrent(true);
+        newEmail.setPrimary(false);
+        newEmail.setVerified(false);
+
+        when(mockEmailManager.addEmail(eq(USER_ORCID), eq(newEmail.toV3Email()))).thenReturn(Map.of("new", "new@email.com", "old", "old@email.com"));
+        when(mockEmailManager.emailExists(eq("new@email.com"))).thenReturn(false);
+
+        controller.addEmails(mockRequest, newEmail);
+
+        verify(mockRecordEmailSender, Mockito.times(1)).sendVerificationEmail(eq(USER_ORCID), eq("new@email.com"), eq(false));
+        verify(mockProfileHistoryEventManager, Mockito.times(1)).recordEmailUpdateEvent(eq(USER_ORCID), eq("127.0.0.1"), eq("Email new@email.com was added to " + USER_ORCID));
+    }
+
     @Test
     public void testSetPrimary_nothingChange() {
         SecurityContextHolder.getContext().setAuthentication(getAuthentication(USER_ORCID));
-        MockHttpServletRequest mockRequest = new MockHttpServletRequest(); 
+        MockHttpServletRequest mockRequest = new MockHttpServletRequest();
         MockHttpSession mockSession = new MockHttpSession();
         mockRequest.setSession(mockSession);
-        
-        SecurityContextHolder.getContext().setAuthentication(getAuthentication(USER_ORCID));       
+
+        SecurityContextHolder.getContext().setAuthentication(getAuthentication(USER_ORCID));
         when(mockEmailManager.findOrcidIdByEmail(eq("email@orcid.org"))).thenReturn(USER_ORCID);
-        
+
         org.orcid.pojo.ajaxForm.Email email = new org.orcid.pojo.ajaxForm.Email();
         email.setValue("email@orcid.org");
-        
+
         when(mockEmailManager.setPrimary(eq(USER_ORCID), eq("email@orcid.org"), eq(mockRequest))).thenReturn(Map.of());
-        
+
         controller.setPrimary(mockRequest, email);
-        
+
         verify(mockRecordEmailSender, Mockito.never()).sendVerificationEmail(any(), any(), any());
     }
-    
+
     @Test
     public void testSetPrimary_primaryEmailChange() {
         SecurityContextHolder.getContext().setAuthentication(getAuthentication(USER_ORCID));
-        MockHttpServletRequest mockRequest = new MockHttpServletRequest(); 
+        MockHttpServletRequest mockRequest = new MockHttpServletRequest();
         MockHttpSession mockSession = new MockHttpSession();
         mockRequest.setSession(mockSession);
-        
-        SecurityContextHolder.getContext().setAuthentication(getAuthentication(USER_ORCID));       
+
+        SecurityContextHolder.getContext().setAuthentication(getAuthentication(USER_ORCID));
         when(mockEmailManager.findOrcidIdByEmail(eq("email@orcid.org"))).thenReturn(USER_ORCID);
-        
+
         org.orcid.pojo.ajaxForm.Email email = new org.orcid.pojo.ajaxForm.Email();
         email.setValue("email@orcid.org");
-                
+
         when(mockEmailManager.setPrimary(eq(USER_ORCID), eq("email@orcid.org"), eq(mockRequest))).thenReturn(Map.of("new", "email@orcid.org", "old", "old@orcid.org"));
-        
+
         controller.setPrimary(mockRequest, email);
-        
+
         verify(mockRecordEmailSender, Mockito.never()).sendVerificationEmail(any(), any(), any());
     }
-    
+
     @Test
     public void testSetPrimary_primaryEmailChangeAndPrimaryIsNotVerified() {
         SecurityContextHolder.getContext().setAuthentication(getAuthentication(USER_ORCID));
-        MockHttpServletRequest mockRequest = new MockHttpServletRequest(); 
+        MockHttpServletRequest mockRequest = new MockHttpServletRequest();
         MockHttpSession mockSession = new MockHttpSession();
         mockRequest.setSession(mockSession);
-        
-        SecurityContextHolder.getContext().setAuthentication(getAuthentication(USER_ORCID));       
+
+        SecurityContextHolder.getContext().setAuthentication(getAuthentication(USER_ORCID));
         when(mockEmailManager.findOrcidIdByEmail(eq("email@orcid.org"))).thenReturn(USER_ORCID);
-        
+
         org.orcid.pojo.ajaxForm.Email email = new org.orcid.pojo.ajaxForm.Email();
         email.setValue("email@orcid.org");
         email.setCurrent(true);
         email.setPrimary(false);
         email.setVerified(false);
-        
+
         when(mockEmailManager.setPrimary(eq(USER_ORCID), eq("email@orcid.org"), eq(mockRequest))).thenReturn(Map.of("new", "email@orcid.org", "old", "old@orcid.org", "sendVerification", "true"));
-        
+
         controller.setPrimary(mockRequest, email);
-        
+
         verify(mockRecordEmailSender, Mockito.times(1)).sendVerificationEmail(eq(USER_ORCID), eq("email@orcid.org"), eq(true));
     }
-    
+
     @Test
     public void testEditEmail_noPrimaryChange() {
         SecurityContextHolder.getContext().setAuthentication(getAuthentication(USER_ORCID));
-        MockHttpServletRequest mockRequest = new MockHttpServletRequest(); 
+        MockHttpServletRequest mockRequest = new MockHttpServletRequest();
         MockHttpSession mockSession = new MockHttpSession();
         mockRequest.setSession(mockSession);
-        
-        SecurityContextHolder.getContext().setAuthentication(getAuthentication(USER_ORCID));       
+
+        SecurityContextHolder.getContext().setAuthentication(getAuthentication(USER_ORCID));
         when(mockEmailManager.findOrcidIdByEmail(eq("old@orcid.org"))).thenReturn(USER_ORCID);
-        
+
         org.orcid.pojo.ajaxForm.EditEmail email = new org.orcid.pojo.ajaxForm.EditEmail();
         email.setEdited("email@orcid.org");
         email.setOriginal("old@orcid.org");
-        
+
         when(mockEmailManager.editEmail(eq(USER_ORCID), eq("old@orcid.org"), eq("email@orcid.org"), any())).thenReturn(Map.of("verifyAddress", "email@orcid.org"));
         when(mockEmailManager.emailExists(eq("old@orcid.org"))).thenReturn(true);
         when(mockEmailManager.emailExists(eq("email@orcid.org"))).thenReturn(false);
-        
+
         controller.editEmail(mockRequest, email);
-        
+
         verify(mockRecordEmailSender, Mockito.times(1)).sendVerificationEmail(eq(USER_ORCID), eq("email@orcid.org"), eq(false));
     }
-    
+
     @Test
     public void testEditEmail_primaryEmailChange() {
         SecurityContextHolder.getContext().setAuthentication(getAuthentication(USER_ORCID));
-        MockHttpServletRequest mockRequest = new MockHttpServletRequest(); 
+        MockHttpServletRequest mockRequest = new MockHttpServletRequest();
         MockHttpSession mockSession = new MockHttpSession();
         mockRequest.setSession(mockSession);
-        
-        SecurityContextHolder.getContext().setAuthentication(getAuthentication(USER_ORCID));       
+
+        SecurityContextHolder.getContext().setAuthentication(getAuthentication(USER_ORCID));
         when(mockEmailManager.findOrcidIdByEmail(eq("old@orcid.org"))).thenReturn(USER_ORCID);
-        
+
         org.orcid.pojo.ajaxForm.EditEmail email = new org.orcid.pojo.ajaxForm.EditEmail();
         email.setEdited("email@orcid.org");
         email.setOriginal("old@orcid.org");
-        
+
         when(mockEmailManager.editEmail(eq(USER_ORCID), eq("old@orcid.org"), eq("email@orcid.org"), any())).thenReturn(Map.of("verifyAddress", "email@orcid.org", "new", "email@orcid.org", "old", "old@orcid.org"));
         controller.editEmail(mockRequest, email);
-        
+
         verify(mockRecordEmailSender, Mockito.times(1)).sendVerificationEmail(eq(USER_ORCID), eq("email@orcid.org"), eq(true));
     }
 
@@ -1467,5 +1594,200 @@ public class ManageProfileControllerTest {
         verify(mockEncryptionManager, times(1)).hashMatches(eq("good-password"), eq("password"));
         verify(mockProfileEntityManager, times(0)).deactivateRecord(anyString());
         verify(mockRecordEmailSender, Mockito.times(0)).sendOrcidDeactivatedEmail(anyString());
+    }
+
+    @Test
+    public void testSearchForDelegateByEmail_Found() {
+        EmailEntity emailEntity = new EmailEntity();
+        emailEntity.setOrcid("0000-0000-0000-0005");
+        when(mockEmailManager.find(eq("delegate@test.com"))).thenReturn(emailEntity);
+        when(mockGivenPermissionToManagerReadOnly.findByGiver(eq(USER_ORCID), anyLong())).thenReturn(new ArrayList<>());
+
+        Map<String, Boolean> result = controller.searchForDelegateByEmail("delegate@test.com");
+        assertEquals(Boolean.TRUE, result.get("found"));
+        assertEquals(Boolean.FALSE, result.get("isSelf"));
+        assertEquals(Boolean.FALSE, result.get("isAlreadyAdded"));
+    }
+
+    @Test
+    public void testSearchForDelegateByOrcid_Found() {
+        when(mockProfileEntityManagerReadOnly.isOrcidValidAsDelegate(eq("0000-0000-0000-0005"))).thenReturn(true);
+        when(mockGivenPermissionToManagerReadOnly.findByGiver(eq(USER_ORCID), anyLong())).thenReturn(new ArrayList<>());
+
+        Map<String, Boolean> result = controller.searchForDelegateByOrcid("0000-0000-0000-0005");
+        assertEquals(Boolean.TRUE, result.get("found"));
+        assertEquals(Boolean.FALSE, result.get("isSelf"));
+    }
+
+    @Test
+    public void testAddDelegateByOrcid() {
+        ManageDelegate manageDelegate = new ManageDelegate();
+        manageDelegate.setDelegateToManage("0000-0000-0000-0005");
+        
+        ManageDelegate result = controller.addDelegateByOrcid(manageDelegate);
+        assertNotNull(result);
+        verify(mockGivenPermissionToManager, times(1)).create(eq(USER_ORCID), eq("0000-0000-0000-0005"));
+    }
+
+    @Test
+    public void testRevokeOwnDelegate() {
+        ManageDelegate manageDelegate = new ManageDelegate();
+        manageDelegate.setDelegateToManage("0000-0000-0000-0005");
+        
+        controller.revokeOwnDelegate(manageDelegate);
+        verify(mockGivenPermissionToManager, times(1)).remove(eq("0000-0000-0000-0005"), eq(USER_ORCID));
+        verify(mockNotificationManager, times(1)).sendRevokeNotificationToUserGrantingPermission(eq("0000-0000-0000-0005"), eq(USER_ORCID));
+    }
+
+    @Test
+    public void testGetDefaultPreference() {
+        ProfileEntity entity = new ProfileEntity();
+        entity.setActivitiesVisibilityDefault(Visibility.PRIVATE.value());
+        when(mockProfileEntityCacheManager.retrieve(eq(USER_ORCID))).thenReturn(entity);
+
+        Map<String, Object> result = controller.getDefaultPreference(new MockHttpServletRequest());
+        assertEquals(Visibility.PRIVATE.value(), result.get("default_visibility"));
+    }
+
+    @Test
+    public void testSetDefaultVisibility() {
+        controller.setDefaultVisibility("LIMITED");
+        verify(mockPreferenceManager, times(1)).updateDefaultVisibility(eq(USER_ORCID), eq(Visibility.LIMITED));
+    }
+
+    @Test
+    public void testGetProfileCountryJson() {
+        Addresses addresses = new Addresses();
+        when(mockAddressManagerReadOnly.getAddresses(eq(USER_ORCID))).thenReturn(addresses);
+
+        AddressesForm result = controller.getProfileCountryJson(new MockHttpServletRequest());
+        assertNotNull(result);
+    }
+
+    @Test
+    public void testGetNameForm() {
+        Name name = new Name();
+        name.setGivenNames(new GivenNames("Given"));
+        when(mockRecordNameManager.getRecordName(eq(USER_ORCID))).thenReturn(name);
+
+        NamesForm form = controller.getNameForm();
+        assertEquals("Given", form.getGivenNames().getValue());
+    }
+
+    @Test
+    public void testGetBiographyForm() {
+        Biography bio = new Biography();
+        bio.setContent("Bio content");
+        when(mockBiographyManager.getBiography(eq(USER_ORCID))).thenReturn(bio);
+
+        BiographyForm form = controller.getBiographyForm();
+        assertEquals("Bio content", form.getBiography().getValue());
+    }
+
+    @Test
+    public void testRevokeApplication() {
+        controller.revokeApplication("client-id");
+        verify(mockTrustedPartiesService, times(1)).disableClientAccess(eq("client-id"), eq(USER_ORCID));
+    }
+
+    @Test
+    public void testRevokeSocialAccount_Success() {
+        ManageSocialAccount manageSocialAccount = new ManageSocialAccount();
+        manageSocialAccount.setPassword("good-password");
+        UserconnectionPK id = new UserconnectionPK();
+        id.setProviderid("google");
+        id.setProvideruserid("12345");
+        manageSocialAccount.setId(id);
+
+        ProfileEntity profile = new ProfileEntity();
+        profile.setEncryptedPassword("encrypted-password");
+        when(mockProfileEntityCacheManager.retrieve(eq(USER_ORCID))).thenReturn(profile);
+        when(mockEncryptionManager.hashMatches(eq("good-password"), eq("encrypted-password"))).thenReturn(true);
+        when(twoFactorAuthenticationManager.validateTwoFactorAuthForm(eq(USER_ORCID), any())).thenReturn(true);
+        
+        UserconnectionEntity entity = new UserconnectionEntity();
+        entity.setId(id);
+        when(mockUserConnectionManager.findByProviderIdAndProviderUserId(eq("12345"), eq("google"))).thenReturn(entity);
+
+        ManageSocialAccount result = controller.revokeSocialAccount(manageSocialAccount);
+        assertTrue(result.isSuccess());
+        verify(mockUserConnectionManager, times(1)).remove(eq(USER_ORCID), eq(id));
+    }
+
+    @Test
+    public void testRevokeSocialAccount_InvalidPassword() {
+        ManageSocialAccount manageSocialAccount = new ManageSocialAccount();
+        manageSocialAccount.setPassword("bad-password");
+        
+        ProfileEntity profile = new ProfileEntity();
+        profile.setEncryptedPassword("encrypted-password");
+        when(mockProfileEntityCacheManager.retrieve(eq(USER_ORCID))).thenReturn(profile);
+        when(mockEncryptionManager.hashMatches(eq("bad-password"), eq("encrypted-password"))).thenReturn(false);
+
+        ManageSocialAccount result = controller.revokeSocialAccount(manageSocialAccount);
+        assertTrue(result.isInvalidPassword());
+        assertFalse(result.isSuccess());
+    }
+
+    @Test
+    public void testChangedPasswordJson_Success() {
+        ChangePassword cp = new ChangePassword();
+        cp.setOldPassword("old-password");
+        cp.setPassword("NewPassword123!");
+        cp.setRetypedPassword("NewPassword123!");
+
+        ProfileEntity profile = new ProfileEntity();
+        profile.setEncryptedPassword("encrypted-old-password");
+        when(mockProfileEntityCacheManager.retrieve(eq(USER_ORCID))).thenReturn(profile);
+        when(mockEncryptionManager.hashMatches(eq("old-password"), eq("encrypted-old-password"))).thenReturn(true);
+        when(twoFactorAuthenticationManager.validateTwoFactorAuthForm(eq(USER_ORCID), any())).thenReturn(true);
+        when(mockEmailManager.getEmails(eq(USER_ORCID))).thenReturn(new Emails());
+
+        ChangePassword result = controller.changedPasswordJson(new MockHttpServletRequest(), cp);
+        assertTrue(result.isSuccess());
+        verify(mockProfileEntityManager, times(1)).updatePassword(eq(USER_ORCID), eq("NewPassword123!"));
+    }
+
+    @Test
+    public void testGetEmailFrequencyOptions() {
+        when(mockEmailManager.getEmailFrequencyOptions()).thenReturn(new EmailFrequencyOptions());
+        EmailFrequencyOptions options = controller.getEmailFrequencyOptions();
+        assertNotNull(options);
+    }
+
+    @Test
+    public void testInterstitialFlags() {
+        when(mockProfileInterstitialFlagManagerReadOnly.hasInterstitialFlag(eq(USER_ORCID), eq("test-flag"))).thenReturn(true);
+        assertTrue(controller.hasInterstitialFlag("test-flag"));
+
+        ProfileInterstitialFlagEntity entity = new ProfileInterstitialFlagEntity();
+        when(mockProfileInterstitialFlagManager.addInterstitialFlag(eq(USER_ORCID), eq("test-flag"))).thenReturn(entity);
+        assertEquals(entity, controller.addInterstitialFlag("test-flag"));
+
+        when(mockProfileInterstitialFlagManagerReadOnly.findByOrcid(eq(USER_ORCID))).thenReturn(Arrays.asList("flag1", "flag2"));
+        List<String> flags = controller.getInterstitialFlags();
+        assertEquals(2, flags.size());
+        assertTrue(flags.contains("flag1"));
+        assertTrue(flags.contains("flag2"));
+    }
+
+    @Test
+    public void testGetTrustedOrgs() {
+        List<ApplicationSummary> apps = new ArrayList<>();
+        when(mockProfileEntityManager.getApplications(eq(USER_ORCID))).thenReturn(apps);
+        List<ApplicationSummary> result = controller.getTrustedOrgs();
+        assertEquals(apps, result);
+    }
+
+    @Test
+    public void testAuthorizeDelegatesRequest_Success() throws Exception {
+        String key = Base64.encodeBase64String("{\"managed\":\"0000-0000-0000-0001\",\"trusted\":\"0000-0000-0000-0005\"}".getBytes("UTF-8"));
+        when(mockEncryptionManager.decryptForExternalUse(anyString())).thenReturn("{\"managed\":\"0000-0000-0000-0001\",\"trusted\":\"0000-0000-0000-0005\"}");
+        when(mockEmailManager.isPrimaryEmailVerified(eq(USER_ORCID))).thenReturn(true);
+        when(mockOrcidUrlManager.getBaseUrl()).thenReturn("https://orcid.org");
+        
+        ModelAndView mav = controller.authorizeDelegatesRequest(key);
+        assertEquals("redirect:https://orcid.org/account?delegate=0000-0000-0000-0005", mav.getViewName());
+        verify(mockGivenPermissionToManager, times(1)).create(eq(USER_ORCID), eq("0000-0000-0000-0005"));
     }
 }

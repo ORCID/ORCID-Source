@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.GregorianCalendar;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 
 import org.codehaus.jettison.json.JSONException;
 import org.orcid.core.exception.*;

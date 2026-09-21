@@ -22,7 +22,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 
 import org.orcid.activitiesindexer.exception.DeprecatedRecordException;
 import org.orcid.activitiesindexer.exception.LockedRecordException;

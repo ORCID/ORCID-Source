@@ -1,6 +1,6 @@
 package org.orcid.core.manager.read_only.impl;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 
 import org.orcid.core.adapter.JpaJaxbNameAdapter;
 import org.orcid.core.manager.read_only.RecordNameManagerReadOnly;
@@ -34,7 +34,7 @@ public class RecordNameManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl imple
         try {
             return jpaJaxbNameAdapter.toName(recordNameDao.getRecordName(orcid, getLastModified(orcid)));             
         } catch(Exception e) {
-            LOGGER.error("Exception getting record name", e);
+            LOGGER.error("Exception getting record name for record: '" + orcid + "': " + e.getMessage());
         }
         return null;
     }
@@ -44,7 +44,7 @@ public class RecordNameManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl imple
         try {
             return jpaJaxbNameAdapter.toName(recordNameDao.findByCreditName(creditName));
         } catch(Exception e) {
-            LOGGER.error("Exception getting record name by credit name", e);
+            LOGGER.error("Exception getting record name for credit name: '" + creditName + "': " + e.getMessage());
         }
         return null;
     }

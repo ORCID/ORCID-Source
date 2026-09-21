@@ -9,13 +9,13 @@
 	xmlns:tx="http://www.springframework.org/schema/tx"
 	xmlns:mongo="http://www.springframework.org/schema/data/mongo"
 	xsi:schemaLocation="
-        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.3.xsd
-        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.3.xsd
+        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
         http://www.springframework.org/schema/cache http://www.springframework.org/schema/cache/spring-cache.xsd
-        http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.3.xsd 
-        http://www.springframework.org/schema/jms http://www.springframework.org/schema/jms/spring-jms-4.3.xsd
-        http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-4.3.xsd
-        http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-4.3.xsd
+        http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd 
+        http://www.springframework.org/schema/jms http://www.springframework.org/schema/jms/spring-jms.xsd
+        http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd
+        http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd
         http://www.springframework.org/schema/data/mongo
 		http://www.springframework.org/schema/data/mongo/spring-mongo.xsd">
 	
@@ -115,15 +115,26 @@
         <property name="persistenceUnitName" value="messageListener" />
         <property name="jpaPropertyMap">
             <map>
-                <entry key="hibernate.generate_statistics" value="${org.orcid.message-listener.db.hibernateStatistics:false}" />    
+                <entry key="hibernate.connection.autocommit" value="${org.orcid.persistence.db.autocommit:false}" />
+                <entry key="hibernate.generate_statistics" value="${org.orcid.persistence.db.hibernateStatistics:false}" />
+                <entry key="hibernate.jdbc.fetch_size" value="${org.orcid.persistence.db.fetchSize:100}" />
+                <!-- JDBC Batch Size: Batches INSERT/UPDATE statements -->
+                <entry key="hibernate.jdbc.batch_size" value="${org.orcid.persistence.db.batchSize:50}" />
+                <!-- Default Batch Fetch Size: Automatically batches lazy-loaded entities/collections (fixes N+1 queries) -->
+                <entry key="hibernate.default_batch_fetch_size" value="${org.orcid.persistence.db.defaultBatchFetchSize:32}" />
+                <entry key="hibernate.query.plan_cache_max_size" value="${org.orcid.persistence.db.queryPlanCacheMaxSize:4096}" />
+                <!-- Pretty-print SQL statements in logs (default: true) -->
+                <entry key="hibernate.format_sql" value="${org.orcid.persistence.db.formatSql:false}" />
+                <!-- Log inline SQL comments for origin tracing (default: true) -->
+                <entry key="hibernate.use_sql_comments" value="${org.orcid.persistence.db.useSqlComments:false}" />
             </map>
         </property>
     </bean>   
     
-    <bean id="simpleDataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource" destroy-method="close">
-        <property name="driverClass" value="${org.orcid.message-listener.db.class}" />
+    <bean id="simpleDataSource" class="com.zaxxer.hikari.HikariDataSource" destroy-method="close">
+        <property name="driverClassName" value="${org.orcid.message-listener.db.class}" />
         <property name="jdbcUrl" value="${org.orcid.message-listener.db.url}" />
-        <property name="user" value="${org.orcid.message-listener.db.username}" />
+        <property name="username" value="${org.orcid.message-listener.db.username}" />
         <property name="password" value="${org.orcid.message-listener.db.password}" />        
     </bean>
         

@@ -1,5 +1,6 @@
 package org.orcid.frontend.web.controllers;
 
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.text.NumberFormat;
@@ -10,9 +11,9 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.IntStream;
 
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.annotation.Resource;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang3.StringUtils;
 import org.orcid.core.exception.DeactivatedException;
@@ -33,7 +34,6 @@ import org.orcid.core.manager.v3.read_only.ProfileEntityManagerReadOnly;
 import org.orcid.core.manager.v3.read_only.ProfileFundingManagerReadOnly;
 import org.orcid.core.manager.v3.read_only.ResearchResourceManagerReadOnly;
 import org.orcid.core.manager.v3.read_only.WorkManagerReadOnly;
-import org.orcid.core.oauth.OrcidOauth2TokenDetailService;
 import org.orcid.core.utils.v3.ContributorUtils;
 import org.orcid.core.utils.v3.SourceUtils;
 import org.orcid.core.utils.v3.activities.FundingComparators;
@@ -79,6 +79,8 @@ import org.orcid.pojo.grouping.FundingGroup;
 import org.orcid.pojo.grouping.PeerReviewDuplicateGroup;
 import org.orcid.pojo.grouping.PeerReviewGroup;
 import org.orcid.pojo.grouping.WorkGroup;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -88,11 +90,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.context.request.ServletWebRequest;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.RedirectView;
 
 @Controller
 public class PublicProfileController extends BaseWorkspaceController {
+
+    private static final Logger logger = LoggerFactory.getLogger(PublicProfileController.class);
 
     @Resource(name = "membersManagerV3")
     MembersManager membersManager;
@@ -127,9 +132,6 @@ public class PublicProfileController extends BaseWorkspaceController {
     @Resource
     private OrgDisambiguatedManager orgDisambiguatedManager;
 
-    @Resource
-    private OrcidOauth2TokenDetailService orcidOauth2TokenService;
-
     @Resource(name = "sourceUtilsV3")
     private SourceUtils sourceUtils;
 
@@ -154,6 +156,9 @@ public class PublicProfileController extends BaseWorkspaceController {
     @Resource(name = "profileEntityManagerReadOnlyV3")
     private ProfileEntityManagerReadOnly profileEntityManagerReadOnly;
 
+    @Value("${org.orcid.frontend.web.controllers.works.page.max.items:100}")
+    private int maxWorksPerPageForUI;
+
     public static int ORCID_HASH_LENGTH = 8;
     private static final String PAGE_SIZE_DEFAULT = "50";
 
@@ -168,77 +173,37 @@ public class PublicProfileController extends BaseWorkspaceController {
     }
 
     @RequestMapping(value = { "/{orcid:(?:\\d{4}-){3,}\\d{3}[\\dX]}", "/{orcid:(?:\\d{4}-){3,}\\d{3}[\\dX]}/print" })
-    public ModelAndView publicPreview(HttpServletRequest request, HttpServletResponse response, @RequestParam(value = "page", defaultValue = "1") int pageNo,
-            @RequestParam(value = "v", defaultValue = "0") int v, @RequestParam(value = "maxResults", defaultValue = "15") int maxResults,
-            @PathVariable("orcid") String orcid) {
-
-        ProfileEntity profile = null;
-
+    public void ifModifiedSinceCheckEndpoint(HttpServletRequest request, HttpServletResponse response, @PathVariable("orcid") String orcid) throws IOException {
         try {
-            profile = profileEntityCacheManager.retrieve(orcid);
-        } catch (Exception e) {
-            response.setStatus(HttpStatus.NOT_FOUND.value());
-            return new ModelAndView("error-404");
-        }
-
-        Long lastModifiedTime = getLastModifiedTime(orcid);
-
-        ModelAndView mav = null;
-        if (request.getRequestURI().contains("/print")) {
-            mav = new ModelAndView("print_public_record");
-            mav.addObject("hideSupportWidget", true);
-            mav.addObject("noIndex", true);
-        } else {
-            mav = new ModelAndView("public_profile_v3");
-        }
-        
-        if (!domainsAllowingRobots.contains(orcidUrlManager.getBaseDomainRmProtocall())) {
-            mav.addObject("noIndex", true);
-        }
-        
-        mav.addObject("isPublicProfile", true);
-        mav.addObject("effectiveUserOrcid", orcid);
-        mav.addObject("lastModifiedTime", new java.util.Date(lastModifiedTime));
-
-        if (!workManagerReadOnly.hasPublicWorks(orcid)) {
-            mav.addObject("worksEmpty", true);
-        }
-        if (!researchResourceManagerReadOnly.hasPublicResearchResources(orcid)) {
-            mav.addObject("researchResourcesEmpty", true);
-        }
-
-        if (!affiliationsManagerReadOnly.hasPublicAffiliations(orcid)) {
-            mav.addObject("affiliationsEmpty", true);
-        }
-
-        if (!profileFundingManagerReadOnly.hasPublicFunding(orcid)) {
-            mav.addObject("fundingEmpty", true);
-        }
-
-        if (!peerReviewManagerReadOnly.hasPublicPeerReviews(orcid)) {
-            mav.addObject("peerReviewEmpty", true);
-        }
-
-        if (!profile.isReviewed()) {
-            if (!orcidOauth2TokenService.hasToken(orcid, lastModifiedTime)) {
-                mav.addObject("noIndex", true);
+            if(logger.isTraceEnabled()) {
+                logger.trace("If-Modified-Since: {}", request.getHeader("If-Modified-Since"));
             }
+            if(request.getHeader("If-Modified-Since") == null || request.getHeader("If-Modified-Since").length() == 0) {
+                // If the header is not present, return a 200 so the record is fetched
+                response.setStatus(HttpServletResponse.SC_OK);
+                return;
+            }
+            long lastModifiedTime = getLastModifiedTime(orcid);
+            // If the user is found, proceed to the preview
+            if (lastModifiedTime > 0) {
+                ServletWebRequest webRequest = new ServletWebRequest(request, response);
+                if (webRequest.checkNotModified(lastModifiedTime)) {
+                    // Record not modified, return 304.
+                    response.setStatus(HttpServletResponse.SC_NOT_MODIFIED);
+                } else {
+                    // Record modified, proceed to the preview using the proxy
+                    response.setStatus(HttpServletResponse.SC_OK);
+                }
+            } else {
+                // TODO: If the record is not found, return the 404 and make nginx render the angular 404 page.
+                response.setStatus(HttpServletResponse.SC_TEMPORARY_REDIRECT);
+                response.setHeader("Location", orcidUrlManager.getBaseUrl() + "/404");
+            }
+        } catch (Exception e) {
+            logger.warn("Error checking if-modified-since header for orcid " + orcid, e);
+            response.setStatus(HttpServletResponse.SC_SERVICE_UNAVAILABLE);
+            response.setHeader("Location", orcidUrlManager.getBaseUrl() + "/404");
         }
-        PublicRecordPersonDetails publicRecordPersonDetails = new PublicRecordPersonDetails();
-        publicRecordPersonDetails = getPersonDetails(orcid, true);
-
-        String orcidDescription1 = "ORCID record for ";
-        String orcidDescription2 = "ORCID provides an identifier for individuals to use with their name as they engage in research, scholarship, and innovation activities.";
-        
-        // Check the user is not locked, deactivated and has public name
-        if (profile.isAccountNonLocked() && profile.getDeactivationDate() == null && publicRecordPersonDetails.getDisplayName() != null) {
-            mav.addObject("ogTitle", publicRecordPersonDetails.getDisplayName() + " ("+ orcid +")" );
-            mav.addObject("ogDescription", orcidDescription1 + publicRecordPersonDetails.getDisplayName() + ". " +orcidDescription2  );
-        } else {
-            mav.addObject("ogTitle", orcid);
-            mav.addObject("ogDescription",  orcidDescription2 );
-        }
-        return mav;
     }
 
     @RequestMapping(value = "/{orcid:(?:\\d{4}-){3,}\\d{3}[\\dX]}/userInfo.json", method = RequestMethod.GET)
@@ -276,7 +241,7 @@ public class PublicProfileController extends BaseWorkspaceController {
         // False if it is not reviewed and doesn't have any integration
         if(!profile.isReviewed()) {
             String userOrcid = profile.getId();
-            if (!orcidOauth2TokenService.hasToken(userOrcid, getLastModifiedTime(userOrcid))) {
+            if (!profileEntityManagerReadOnly.hasToken(userOrcid, getLastModifiedTime(userOrcid))) {
                 // If the user doesn't have any token, check if it was created by member, if so, 
                 // verify if that member pushed any work of affiliation on creation time
                 SourceEntity source = profile.getSource();
@@ -446,6 +411,10 @@ public class PublicProfileController extends BaseWorkspaceController {
     @RequestMapping(value = "/{orcid:(?:\\d{4}-){3,}\\d{3}[\\dX]}/worksPage.json", method = RequestMethod.GET)
     public @ResponseBody Page<WorkGroup> getWorkGroupsJson(@PathVariable("orcid") String orcid, @RequestParam(value="pageSize", defaultValue = PAGE_SIZE_DEFAULT) int pageSize, @RequestParam("offset") int offset, @RequestParam("sort") String sort,
             @RequestParam("sortAsc") boolean sortAsc) {
+        if(pageSize > maxWorksPerPageForUI) {
+            // If the page size is greater than the max works per page for UI, return an empty page.
+            return new Page<WorkGroup>();
+        }
         try {
             orcidSecurityManager.checkProfile(orcid);
         } catch (Exception e) {
@@ -457,6 +426,10 @@ public class PublicProfileController extends BaseWorkspaceController {
     @RequestMapping(value = "/{orcid:(?:\\d{4}-){3,}\\d{3}[\\dX]}/worksExtendedPage.json", method = RequestMethod.GET)
     public @ResponseBody Page<WorkGroup> getWorksExtendedGroupsJson(@PathVariable("orcid") String orcid, @RequestParam(value="pageSize", defaultValue = PAGE_SIZE_DEFAULT) int pageSize, @RequestParam("offset") int offset, @RequestParam("sort") String sort,
                                                            @RequestParam("sortAsc") boolean sortAsc) {
+        if(pageSize > maxWorksPerPageForUI) {
+            // If the page size is greater than the max works per page for UI, return an empty page.
+            return new Page<WorkGroup>();
+        }
         try {
             orcidSecurityManager.checkProfile(orcid);
         } catch (Exception e) {

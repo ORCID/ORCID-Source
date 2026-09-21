@@ -5,12 +5,11 @@ import org.orcid.persistence.jpa.entities.EventType;
 import org.orcid.persistence.jpa.entities.EventStatsEntity;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.annotation.Resource;
-import javax.persistence.EntityManager;
-import javax.persistence.Query;
-import javax.persistence.TypedQuery;
+import jakarta.annotation.Resource;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.Query;
+import jakarta.persistence.TypedQuery;
 
-import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -39,6 +38,7 @@ public class EventStatsDaoImpl implements EventStatsDao {
     }
 
     @Override
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     public List<EventStatsEntity> findAll() {
         TypedQuery<EventStatsEntity> query = entityManager.createQuery("from EventStatsEntity", EventStatsEntity.class);
         return query.getResultList();
@@ -60,8 +60,11 @@ public class EventStatsDaoImpl implements EventStatsDao {
         List<Object[]> eventsListToRemove = new ArrayList<>();
         if (eventsList.size() > 0) {
             eventsList.forEach(item -> {
-                if ("anonymous".equals(item[3]) && item[4] != null && ((BigInteger) item[4]).intValue() < 1000) {
-                    eventsListToRemove.add(item);
+                if ("anonymous".equals(item[3]) && item[4] != null) {
+                    int count = ((Number) item[4]).intValue();
+                    if (count < 1000) {
+                        eventsListToRemove.add(item);
+                    }
                 }
             });
             eventsList.removeAll(eventsListToRemove);

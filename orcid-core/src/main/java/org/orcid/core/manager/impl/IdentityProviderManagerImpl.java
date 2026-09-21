@@ -6,8 +6,8 @@ import java.util.Locale;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import javax.annotation.Resource;
-import javax.transaction.Transactional;
+import jakarta.annotation.Resource;
+import jakarta.transaction.Transactional;
 
 import org.ehcache.Cache;
 import org.orcid.core.locale.LocaleManager;
@@ -50,7 +50,6 @@ public class IdentityProviderManagerImpl implements IdentityProviderManager {
     }
 
     @Override
-    @Transactional
     public String retrieveFreshIdentitifyProviderName(String providerid, Locale locale) {
         IdentityProviderEntity idp = identityProviderDao.findByProviderid(providerid);
         List<IdentityProviderNameEntity> names = idp.getNames();

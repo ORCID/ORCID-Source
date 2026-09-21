@@ -36,6 +36,8 @@ public class SessionCacheConfig extends AbstractHttpSessionApplicationInitialize
     private String password;
     @Value("${org.orcid.core.utils.cache.session.redis.connection_timeout_millis:2000}")
     private int connectionTimeoutMillis;
+    @Value("${org.orcid.core.utils.cache.session.redis.ssl.enabled:true}")
+    private boolean redisSslEnabled;
 
     @Value("${org.orcid.core.session.cookie.domain:dev.orcid.org}")
     private String cookieDomain;
@@ -55,7 +57,12 @@ public class SessionCacheConfig extends AbstractHttpSessionApplicationInitialize
         poolConfig.setMaxWaitMillis(this.poolWaitMillis);
 
         JedisClientConfiguration.JedisClientConfigurationBuilder jedisClientConfigurationBuilder = JedisClientConfiguration.builder();
-        jedisClientConfigurationBuilder.useSsl().and().connectTimeout(timeoutDuration).usePooling().poolConfig(poolConfig).build();
+
+        if (redisSslEnabled) {
+            jedisClientConfigurationBuilder.useSsl();
+        }
+
+        jedisClientConfigurationBuilder.connectTimeout(timeoutDuration).usePooling().poolConfig(poolConfig).build();
 
         return new JedisConnectionFactory(redisStandaloneConfiguration, jedisClientConfigurationBuilder.build());
     }

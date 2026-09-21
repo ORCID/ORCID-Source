@@ -5,8 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.annotation.Resource;
-import javax.transaction.Transactional;
+import jakarta.annotation.Resource;
 
 import org.orcid.core.exception.ApplicationException;
 import org.orcid.core.exception.OrcidDuplicatedElementException;
@@ -90,7 +89,6 @@ public class ProfileKeywordManagerImpl extends ProfileKeywordManagerReadOnlyImpl
     }
 
     @Override
-    @Transactional
     public Keyword updateKeyword(String orcid, Long putCode, Keyword keyword, boolean isApiRequest) {
         SourceEntity sourceEntity = sourceManager.retrieveSourceEntity();
         ProfileKeywordEntity updatedEntity = profileKeywordDao.getProfileKeyword(orcid, putCode);
@@ -126,7 +124,6 @@ public class ProfileKeywordManagerImpl extends ProfileKeywordManagerReadOnlyImpl
     }
 
     @Override
-    @Transactional
     public Keywords updateKeywords(String orcid, Keywords keywords) {
         List<ProfileKeywordEntity> existingKeywordsList = profileKeywordDao.getProfileKeywords(orcid, getLastModified(orcid));
         // Delete the deleted ones

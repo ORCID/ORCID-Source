@@ -3,7 +3,7 @@ package org.orcid.core.manager.impl;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 
 import org.orcid.core.manager.ActivitiesSummaryManager;
 import org.orcid.core.manager.BibtexManager;
@@ -145,16 +145,20 @@ public class BibtexManagerImpl extends ManagerReadOnlyBaseImpl implements Bibtex
         //title
         out.append(",\ntitle={"+escapeStringForBibtex((work.getWorkTitle() != null) ? work.getWorkTitle().getTitle().getContent() : "No Title")+"}");        
         //journal title
-        if (work.getJournalTitle() != null) {
+        if (work.getJournalTitle() != null && work.getJournalTitle().getContent() != null && !work.getJournalTitle().getContent().trim().isEmpty()) {
             out.append(",\njournal={"+escapeStringForBibtex(work.getJournalTitle().getContent())+"}");
         }
         //name
         List<String> names = new ArrayList<String>();
-        names.add(creditName);
+        if (creditName != null) {
+            names.add(creditName.trim());
+        }
         if (work.getWorkContributors() != null && work.getWorkContributors().getContributor() != null) {
             for (Contributor c : work.getWorkContributors().getContributor()) {
                 if (c.getCreditName() != null && c.getCreditName().getContent() != null) {
-                    names.add(c.getCreditName().getContent());
+                    if(!names.contains(c.getCreditName().getContent().trim())) {
+                        names.add(c.getCreditName().getContent().trim());
+                    }
                 }
             }
         }
@@ -231,6 +235,10 @@ public class BibtexManagerImpl extends ManagerReadOnlyBaseImpl implements Bibtex
     //from https://github.com/datacite/content-resolver/issues/2
     //this is the same as datacite and pangaea
     public final String escapeStringForBibtex(String text) {
+        if (text == null) {
+            return "";
+        }
+        
         StringBuilder sb=new StringBuilder(text.length());
         boolean nl=false;
         for (int codepoint : text.codePoints().toArray()){

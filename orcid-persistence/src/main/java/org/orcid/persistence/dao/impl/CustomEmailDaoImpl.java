@@ -3,9 +3,9 @@ package org.orcid.persistence.dao.impl;
 import java.util.Date;
 import java.util.List;
 
-import javax.persistence.NoResultException;
-import javax.persistence.Query;
-import javax.persistence.TypedQuery;
+import jakarta.persistence.NoResultException;
+import jakarta.persistence.Query;
+import jakarta.persistence.TypedQuery;
 
 import org.hibernate.NonUniqueResultException;
 import org.orcid.persistence.dao.CustomEmailDao;
@@ -27,6 +27,7 @@ public class CustomEmailDaoImpl extends GenericDaoImpl<CustomEmailEntity, Custom
      * @return a list containing all custom emails associated with a client
      * */
     @Override
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     public List<CustomEmailEntity> getCustomEmails(String clientDetailsId) {
         TypedQuery<CustomEmailEntity> query = entityManager.createQuery("from CustomEmailEntity WHERE clientDetailsEntity.id=:clientDetailsId", CustomEmailEntity.class);
         query.setParameter("clientDetailsId", clientDetailsId);        
@@ -40,6 +41,7 @@ public class CustomEmailDaoImpl extends GenericDaoImpl<CustomEmailEntity, Custom
      * @return a CustomEmailEntity object if the email is found, null otherwise
      * */
     @Override
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     @Cacheable(value = "custom-email", key = "#clientDetailsId.concat('-').concat(#emailType).concat('-').concat(#lastModified)")
     public CustomEmailEntity findByClientIdAndEmailType(String clientDetailsId, EmailType emailType, long lastModified) {
         TypedQuery<CustomEmailEntity> query = entityManager.createQuery("FROM CustomEmailEntity WHERE clientDetailsEntity.id=:clientDetailsId and emailType=:emailType", CustomEmailEntity.class);
@@ -120,8 +122,9 @@ public class CustomEmailDaoImpl extends GenericDaoImpl<CustomEmailEntity, Custom
      * @return true if a custom email with id=clientDetailsId and email type=emailType exists
      * */
     @Override
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     public boolean exists(String clientDetailsId, EmailType emailType) {
-        TypedQuery<Long> query = entityManager.createQuery("SELECT count(*) FROM CustomEmailEntity WHERE clientDetailsEntity.id=:clientDetailsId and emailType=:emailType", Long.class);
+        TypedQuery<Long> query = entityManager.createQuery("SELECT count(c) FROM CustomEmailEntity c WHERE c.clientDetailsEntity.id=:clientDetailsId and c.emailType=:emailType", Long.class);
         query.setParameter("clientDetailsId", clientDetailsId);
         query.setParameter("emailType", emailType);
         Long result = query.getSingleResult();
@@ -135,8 +138,9 @@ public class CustomEmailDaoImpl extends GenericDaoImpl<CustomEmailEntity, Custom
      * @return the last modified date of the custom email, null in case the email doesn't exists
      * */
     @Override
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     public Date getLastModified(String clientDetailsId, EmailType emailType) {
-        TypedQuery<Date> query = entityManager.createQuery("SELECT lastModified FROM CustomEmailEntity WHERE clientDetailsEntity.id=:clientDetailsId and emailType=:emailType", Date.class);
+        TypedQuery<Date> query = entityManager.createQuery("SELECT c.lastModified FROM CustomEmailEntity c WHERE c.clientDetailsEntity.id=:clientDetailsId and c.emailType=:emailType", Date.class);
         query.setParameter("clientDetailsId", clientDetailsId);
         query.setParameter("emailType", emailType);
         Date result = null;

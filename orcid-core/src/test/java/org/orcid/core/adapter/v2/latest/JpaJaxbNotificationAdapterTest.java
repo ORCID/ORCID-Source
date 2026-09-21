@@ -8,7 +8,7 @@ import static org.junit.Assert.assertTrue;
 import java.util.Date;
 import java.util.Set;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -16,6 +16,7 @@ import org.orcid.core.adapter.JpaJaxbNotificationAdapter;
 import org.orcid.jaxb.model.common_v2.Source;
 import org.orcid.jaxb.model.common_v2.SourceClientId;
 import org.orcid.jaxb.model.notification.amended_v2.NotificationAmended;
+import org.orcid.jaxb.model.notification.custom_v2.NotificationAdministrative;
 import org.orcid.jaxb.model.notification.custom_v2.NotificationCustom;
 import org.orcid.jaxb.model.notification.permission_v2.AuthorizationUrl;
 import org.orcid.jaxb.model.notification.permission_v2.Item;
@@ -26,11 +27,13 @@ import org.orcid.jaxb.model.notification_v2.Notification;
 import org.orcid.jaxb.model.notification_v2.NotificationType;
 import org.orcid.jaxb.model.record_v2.ExternalID;
 import org.orcid.persistence.jpa.entities.NotificationAddItemsEntity;
+import org.orcid.persistence.jpa.entities.NotificationAdministrativeEntity;
 import org.orcid.persistence.jpa.entities.NotificationAmendedEntity;
 import org.orcid.persistence.jpa.entities.NotificationCustomEntity;
 import org.orcid.persistence.jpa.entities.NotificationEntity;
 import org.orcid.persistence.jpa.entities.NotificationItemEntity;
 import org.orcid.test.OrcidJUnit4ClassRunner;
+import org.orcid.core.adapter.MockSourceNameCache;
 import org.orcid.core.utils.DateFieldsOnBaseEntityUtils;
 import org.orcid.utils.DateUtils;
 import org.springframework.test.context.ContextConfiguration;
@@ -42,7 +45,7 @@ import org.springframework.test.context.ContextConfiguration;
  */
 @RunWith(OrcidJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:test-orcid-core-context.xml" })
-public class JpaJaxbNotificationAdapterTest {
+public class JpaJaxbNotificationAdapterTest extends MockSourceNameCache {
 
     @Resource
     private JpaJaxbNotificationAdapter jpaJaxbNotificationAdapter;
@@ -81,6 +84,65 @@ public class JpaJaxbNotificationAdapterTest {
         assertEquals("Test subject", notificationCustom.getSubject());
         assertTrue(notification.getCreatedDate().toXMLFormat().startsWith("2014-01-01T09:17:56"));
         assertTrue(notification.getReadDate().toXMLFormat().startsWith("2014-03-04T17:43:06"));
+    }
+
+    @Test
+    public void testAdministrativeSubtypeIsPreserved() {
+        NotificationAdministrative notification = new NotificationAdministrative();
+        notification.setNotificationType(NotificationType.ADMINISTRATIVE);
+
+        NotificationEntity notificationEntity = jpaJaxbNotificationAdapter.toNotificationEntity(notification);
+
+        assertTrue(notificationEntity instanceof NotificationAdministrativeEntity);
+        assertEquals(NotificationType.ADMINISTRATIVE.name(), notificationEntity.getNotificationType());
+        assertTrue(jpaJaxbNotificationAdapter.toNotification(notificationEntity) instanceof NotificationAdministrative);
+    }
+
+    @Test
+    public void testEntityToNotificationWithSource() {
+        NotificationCustomEntity notificationEntity = new NotificationCustomEntity();
+        notificationEntity.setId(123L);
+        notificationEntity.setNotificationType(NotificationType.CUSTOM.name());
+        notificationEntity.setSubject("Test subject");
+        notificationEntity.setClientSourceId(CLIENT_SOURCE_ID);
+
+        Notification notification = jpaJaxbNotificationAdapter.toNotification(notificationEntity);
+
+        assertNotNull(notification);
+        assertNotNull(notification.getSource());
+        assertNotNull(notification.getSource().getSourceClientId());
+        assertEquals(CLIENT_SOURCE_ID, notification.getSource().getSourceClientId().getPath());
+        assertNotNull(notification.getSource().getSourceName());
+        assertEquals("Client name", notification.getSource().getSourceName().getContent());
+
+        NotificationAmendedEntity amendedEntity = new NotificationAmendedEntity();
+        amendedEntity.setId(124L);
+        amendedEntity.setNotificationType(NotificationType.AMENDED.name());
+        amendedEntity.setClientSourceId(CLIENT_SOURCE_ID);
+        amendedEntity.setAmendedSection("WORK");
+
+        Notification amendedNotification = jpaJaxbNotificationAdapter.toNotification(amendedEntity);
+        assertNotNull(amendedNotification);
+        assertTrue(amendedNotification instanceof NotificationAmended);
+        assertNotNull(amendedNotification.getSource());
+        assertNotNull(amendedNotification.getSource().getSourceClientId());
+        assertEquals(CLIENT_SOURCE_ID, amendedNotification.getSource().getSourceClientId().getPath());
+        assertNotNull(amendedNotification.getSource().getSourceName());
+        assertEquals("Client name", amendedNotification.getSource().getSourceName().getContent());
+
+        NotificationAddItemsEntity addItemsEntity = new NotificationAddItemsEntity();
+        addItemsEntity.setId(125L);
+        addItemsEntity.setNotificationType(NotificationType.PERMISSION.name());
+        addItemsEntity.setClientSourceId(CLIENT_SOURCE_ID);
+
+        Notification permissionNotification = jpaJaxbNotificationAdapter.toNotification(addItemsEntity);
+        assertNotNull(permissionNotification);
+        assertTrue(permissionNotification instanceof NotificationPermission);
+        assertNotNull(permissionNotification.getSource());
+        assertNotNull(permissionNotification.getSource().getSourceClientId());
+        assertEquals(CLIENT_SOURCE_ID, permissionNotification.getSource().getSourceClientId().getPath());
+        assertNotNull(permissionNotification.getSource().getSourceName());
+        assertEquals("Client name", permissionNotification.getSource().getSourceName().getContent());
     }
 
     @Test

@@ -4,8 +4,8 @@ import java.sql.Timestamp;
 import java.util.Date;
 import java.util.List;
 
-import javax.persistence.Query;
-import javax.persistence.TypedQuery;
+import jakarta.persistence.Query;
+import jakarta.persistence.TypedQuery;
 
 import org.orcid.persistence.dao.UserConnectionDao;
 import org.orcid.persistence.jpa.entities.UserconnectionEntity;
@@ -30,9 +30,10 @@ public class UserConnectionDaoImpl extends GenericDaoImpl<UserconnectionEntity, 
     }
 
     @Override
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     public UserconnectionEntity findByProviderIdAndProviderUserId(String providerUserId, String providerId) {
         TypedQuery<UserconnectionEntity> query = entityManager
-                .createQuery("from UserconnectionEntity where id.provideruserid = :providerUserId and providerid = :providerId", UserconnectionEntity.class);
+            .createQuery("from UserconnectionEntity where id.provideruserid = :providerUserId and id.providerid = :providerId", UserconnectionEntity.class);
         query.setParameter("providerUserId", providerUserId);
         query.setParameter("providerId", providerId);
         List<UserconnectionEntity> results = query.getResultList();
@@ -40,9 +41,10 @@ public class UserConnectionDaoImpl extends GenericDaoImpl<UserconnectionEntity, 
     }
 
     @Override
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     public UserconnectionEntity findByProviderIdAndProviderUserIdAndIdType(String providerUserId, String providerId, String idType) {
         TypedQuery<UserconnectionEntity> query = entityManager.createQuery(
-                "from UserconnectionEntity where id.provideruserid = :providerUserId and providerid = :providerId and idType = :idType", UserconnectionEntity.class);
+            "from UserconnectionEntity where id.provideruserid = :providerUserId and id.providerid = :providerId and idType = :idType", UserconnectionEntity.class);
         query.setParameter("providerUserId", providerUserId);
         query.setParameter("providerId", providerId);
         query.setParameter("idType", idType);
@@ -51,6 +53,7 @@ public class UserConnectionDaoImpl extends GenericDaoImpl<UserconnectionEntity, 
     }
 
     @Override
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     public List<UserconnectionEntity> findByOrcid(String orcid) {
         TypedQuery<UserconnectionEntity> query = entityManager.createQuery("from UserconnectionEntity where orcid = :orcid", UserconnectionEntity.class);
         query.setParameter("orcid", orcid);
@@ -60,12 +63,13 @@ public class UserConnectionDaoImpl extends GenericDaoImpl<UserconnectionEntity, 
     @Override
     @Transactional
     public void deleteByOrcid(String orcid) {
-        Query query = entityManager.createQuery("delete from UserconnectionEntity where orcid = :orcid");
+        Query query = entityManager.createQuery("delete from UserconnectionEntity u where u.orcid = :orcid");
         query.setParameter("orcid", orcid);
         query.executeUpdate();
     }
 
     @Override
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     public UserconnectionEntity findByUserConnectionId(String userConnectionId) {
         TypedQuery<UserconnectionEntity> query = entityManager.createQuery(
                 "from UserconnectionEntity where id.userid = :userConnectionId", UserconnectionEntity.class);

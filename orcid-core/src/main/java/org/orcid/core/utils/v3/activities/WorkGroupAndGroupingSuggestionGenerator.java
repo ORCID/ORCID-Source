@@ -33,7 +33,6 @@ public class WorkGroupAndGroupingSuggestionGenerator extends ActivitiesGroupGene
             workSummary = (WorkSummary) activity;
         }
 
-        
         if (groups.isEmpty()) {
             // If it is the first activity, create a new group for it
             ActivitiesGroup newGroup = createNewGroup(activity);

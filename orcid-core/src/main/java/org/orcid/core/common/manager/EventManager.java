@@ -1,6 +1,6 @@
 package org.orcid.core.common.manager;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 import org.orcid.persistence.jpa.entities.EventType;
 

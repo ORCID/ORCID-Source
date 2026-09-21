@@ -121,6 +121,12 @@ source_file = orcid-core/src/main/resources/i18n/email2faDisabled_en.properties
 source_lang = en
 type        = UNICODEPROPERTIES
 
+[o:orcid-inc-1:p:registry:r:email2faEnabled]
+file_filter = orcid-core/src/main/resources/i18n/email2faEnabled_<lang>.properties
+source_file = orcid-core/src/main/resources/i18n/email2faEnabled_en.properties
+source_lang = en
+type        = UNICODEPROPERTIES
+
 [o:orcid-inc-1:p:registry:r:identifiers]
 file_filter = orcid-core/src/main/resources/i18n/identifiers_<lang>.properties
 source_file = orcid-core/src/main/resources/i18n/identifiers_en.properties
@@ -148,12 +154,6 @@ type        = UNICODEPROPERTIES
 [o:orcid-inc-1:p:registry:r:notification-admin-delegate]
 file_filter = orcid-core/src/main/resources/i18n/notification_admin_delegate_<lang>.properties
 source_file = orcid-core/src/main/resources/i18n/notification_admin_delegate_en.properties
-source_lang = en
-type        = UNICODEPROPERTIES
-
-[o:orcid-inc-1:p:registry:r:notification-announcement]
-file_filter = orcid-core/src/main/resources/i18n/notification_announcement_<lang>.properties
-source_file = orcid-core/src/main/resources/i18n/notification_announcement_en.properties
 source_lang = en
 type        = UNICODEPROPERTIES
 

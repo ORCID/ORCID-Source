@@ -1,18 +1,13 @@
 package org.orcid.frontend.web.controllers;
 
 import java.io.UnsupportedEncodingException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
-import javax.annotation.Resource;
-import javax.persistence.NoResultException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.annotation.Resource;
+import jakarta.persistence.NoResultException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang.StringUtils;
@@ -29,8 +24,11 @@ import org.orcid.core.manager.v3.RecordNameManager;
 import org.orcid.core.manager.v3.read_only.*;
 import org.orcid.core.togglz.Features;
 import org.orcid.core.utils.JsonUtils;
+import org.orcid.core.utils.OrcidRequestUtil;
+import org.orcid.core.utils.cache.redis.RedisClient;
 import org.orcid.core.utils.v3.OrcidIdentifierUtils;
 import org.orcid.frontend.email.RecordEmailSender;
+import org.orcid.frontend.service.TrustedPartiesService;
 import org.orcid.frontend.web.util.CommonPasswords;
 import org.orcid.frontend.web.util.PasswordConstants;
 import org.orcid.jaxb.model.v3.release.record.Addresses;
@@ -45,6 +43,8 @@ import org.orcid.utils.OrcidStringUtils;
 import org.orcid.utils.alerting.SlackManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.MapBindingResult;
 import org.springframework.validation.ObjectError;
@@ -105,10 +105,7 @@ public class ManageProfileController extends BaseWorkspaceController {
     
     @Resource
     private PreferenceManager preferenceManager;
-    
-    @Resource
-    private OrcidIdentifierUtils orcidIdentifierUtils;
-    
+
     @Resource
     private GivenPermissionToManagerReadOnly givenPermissionToManagerReadOnly;
 
@@ -136,10 +133,24 @@ public class ManageProfileController extends BaseWorkspaceController {
     @Resource
     private ExpiringLinkService expiringLinkService;
 
+    @Resource
+    private RedisClient redisClient;
+
+    @Resource
+    private TrustedPartiesService trustedPartiesService;
+
+    @Resource
+    private InstitutionalSignInManager institutionalSignInManager;
+    @Autowired
+    private ProfileHistoryEventManager profileHistoryEventManager;
+
     @RequestMapping
     public ModelAndView manageProfile() {
         return new ModelAndView("manage");
     }
+
+    @Value("${org.orcid.security.two_factor.token_ttl:1800}")
+    private int twoFactorTokenTtl;
     
     @RequestMapping(value = "/search-for-delegate-by-email/{email}/")
     public @ResponseBody Map<String, Boolean> searchForDelegateByEmail(@PathVariable String email) {
@@ -235,21 +246,41 @@ public class ManageProfileController extends BaseWorkspaceController {
 
     @RequestMapping(value = "/revokeSocialAccount.json", method = RequestMethod.POST)
     public @ResponseBody ManageSocialAccount revokeSocialAccount(@RequestBody ManageSocialAccount manageSocialAccount) {
-        // Check password
-        String password = manageSocialAccount.getPassword();
         ProfileEntity profile = profileEntityCacheManager.retrieve(getCurrentUserOrcid());
-        if (orcidSecurityManager.isPasswordConfirmationRequired()
-                && (StringUtils.isBlank(password) || !encryptionManager.hashMatches(password, profile.getEncryptedPassword()))) {
-            manageSocialAccount.getErrors().add(getMessage("check_password_modal.incorrect_password"));
+
+        if (manageSocialAccount.getPassword() == null || !encryptionManager.hashMatches(manageSocialAccount.getPassword(), profile.getEncryptedPassword())) {
+            manageSocialAccount.setInvalidPassword(true);
             return manageSocialAccount;
         }
-        userConnectionManager.remove(getEffectiveUserOrcid(), manageSocialAccount.getIdToManage());
+        if (!twoFactorAuthenticationManager.validateTwoFactorAuthForm(getCurrentUserOrcid(), manageSocialAccount)) {
+            return manageSocialAccount;
+        }
+
+        String orcid = getEffectiveUserOrcid();
+        UserconnectionEntity entityToDelete = userConnectionManager.findByProviderIdAndProviderUserId(manageSocialAccount.getId().getProvideruserid(), manageSocialAccount.getId().getProviderid());
+        userConnectionManager.remove(orcid, manageSocialAccount.getId());
+        try {
+            // Notify user the alternate sign in account was removed
+            if(entityToDelete == null) {
+                log.error("Unable to notify user about institutional account removal, entityToDelete is null");
+                log.error("Account not found with provider user id: " + manageSocialAccount.getId().getProvideruserid() + " and provider id: " +  manageSocialAccount.getId().getProviderid());
+                return manageSocialAccount;
+            }
+            String userConnectionName = StringUtils.isBlank(entityToDelete.getDisplayname()) ? institutionalSignInManager.getInstitutionName(entityToDelete.getId().getProviderid()) : entityToDelete.getDisplayname();
+            recordEmailSender.alternateSignInAccountRemoved(getCurrentUserOrcid(), userConnectionName);
+        } catch (Exception e) {
+            log.error("Unable to notify user about institutional account removal", e);
+        }
+
+        manageSocialAccount.setSuccess(true);
         return manageSocialAccount;
     }
 
     @RequestMapping(value = "/revoke-application.json", method = RequestMethod.POST)
     public @ResponseBody boolean revokeApplication(@RequestParam("clientId") String clientId) {
-        profileEntityManager.disableClientAccess(clientId, getCurrentUserOrcid());
+        if(StringUtils.isNotBlank(clientId)) {
+            trustedPartiesService.disableClientAccess(clientId, getCurrentUserOrcid());
+        }
         return true;
     }
 
@@ -299,27 +330,37 @@ public class ManageProfileController extends BaseWorkspaceController {
         }
 
         if (cp.getOldPassword() == null || !encryptionManager.hashMatches(cp.getOldPassword(), profile.getEncryptedPassword())) {
+            cp.setInvalidPassword(true);
             errors.add(getMessage("orcid.frontend.change.password.current_password_incorrect"));
         }
-        if (cp.getPassword() != null && !cp.getPassword().isEmpty()) {
-        	final String newPassword  = cp.getPassword();
-        	 emailManager.getEmails(getCurrentUserOrcid()).getEmails().forEach(email -> {
-	        	if (!email.getEmail().isEmpty()  && newPassword.contains(email.getEmail())) {
-	        		errors.add(getMessage("Pattern.registrationForm.password.containsEmail"));
-	        	}
-	        	
-	        });
+
+        final String password = cp.getPassword();
+        if (password != null && !password.isEmpty()) {
+            List<org.orcid.jaxb.model.v3.release.record.Email> userEmails = emailManager.getEmails(getCurrentUserOrcid()).getEmails();
+            for (org.orcid.jaxb.model.v3.release.record.Email emailObj : userEmails) {
+                String email = emailObj.getEmail();
+                if (email != null && !email.isEmpty() && password.contains(email)) {
+                    cp.setPasswordContainsEmail(true);
+                    return cp;
+                }
+            }
+        }
+
+        cp.setErrors(errors);
+        if (!twoFactorAuthenticationManager.validateTwoFactorAuthForm(getCurrentUserOrcid(), cp)) {
+            return cp;
         }
 
         if (errors.size() == 0) {            
             profileEntityManager.updatePassword(getCurrentUserOrcid(), cp.getPassword());
+            if(Features.SEND_EMAIL_ON_RESET_PASSWORD.isActive()) {
+                recordEmailSender.sendOrcidSecurityResetPasswordEmail(getCurrentUserOrcid());
+            }
             //reset the lock fields
             profileEntityManager.resetSigninLock(getCurrentUserOrcid());
             profileEntityCacheManager.remove(getCurrentUserOrcid());
-            cp = new ChangePassword();
-            errors.add(getMessage("orcid.frontend.change.password.change.successfully"));
+            cp.setSuccess(true);
         }
-        cp.setErrors(errors);
         return cp;
     }
 
@@ -330,6 +371,7 @@ public class ManageProfileController extends BaseWorkspaceController {
 
     @RequestMapping(value = "/validate-deprecate-profile.json", method = RequestMethod.POST)
     public @ResponseBody DeprecateProfile validateDeprecateProfile(@RequestBody DeprecateProfile deprecateProfile) {
+        deprecateProfile.setSuccess(false);
         validateFormData(deprecateProfile);
         if (!deprecateProfile.getErrors().isEmpty()) {
             return deprecateProfile;
@@ -351,6 +393,10 @@ public class ManageProfileController extends BaseWorkspaceController {
 
         validateDeprecateAccountRequest(deprecateProfile, deprecatingEntity);
         if (deprecateProfile.getErrors() != null && !deprecateProfile.getErrors().isEmpty()) {
+            return deprecateProfile;
+        }
+
+        if (!twoFactorAuthenticationManager.validateTwoFactorAuthForm(deprecatingEntity.getId(), deprecateProfile)) {
             return deprecateProfile;
         }
 
@@ -376,13 +422,17 @@ public class ManageProfileController extends BaseWorkspaceController {
                     primaryEmails.getEmails().stream().map(e -> e.getEmail()).collect(Collectors.toList()));
         }
 
-        deprecateProfile.setVerificationCodeRequired(twoFactorAuthenticationManager.userUsing2FA(deprecatingOrcid));
+        deprecateProfile.setSuccess(true);
+        String twoFactorToken = UUID.randomUUID().toString();
+        redisClient.set(deprecatingEntity.getId() + "_two-factor-token", twoFactorToken, twoFactorTokenTtl);
+        deprecateProfile.setTwoFactorToken(twoFactorToken);
 
         return deprecateProfile;
     }
 
     @RequestMapping(value = "/confirm-deprecate-profile.json", method = RequestMethod.POST)
     public @ResponseBody DeprecateProfile confirmDeprecateProfile(@RequestBody DeprecateProfile deprecateProfile) {
+        deprecateProfile.setSuccess(false);
         validateFormData(deprecateProfile);
         if (deprecateProfile.getErrors() != null && !deprecateProfile.getErrors().isEmpty()) {
             return deprecateProfile;
@@ -405,16 +455,30 @@ public class ManageProfileController extends BaseWorkspaceController {
         if (deprecateProfile.getErrors() != null && !deprecateProfile.getErrors().isEmpty()) {
             return deprecateProfile;
         }
+
+        if (twoFactorAuthenticationManager.userUsing2FA(deprecatingEntity.getId())) {
+            String storedToken = redisClient.get(deprecatingEntity.getId() + "_two-factor-token");
+            if (storedToken == null || !storedToken.equals(deprecateProfile.getTwoFactorToken())) {
+                deprecateProfile.setTwoFactorToken("");
+                return deprecateProfile;
+            }
+        }
+
+
         Emails deprecatedAccountEmails = emailManager.getEmails(deprecatingEntity.getId());
 
         boolean deprecated = profileEntityManager.deprecateProfile(deprecatingEntity.getId(), primaryEntity.getId(), ProfileEntity.USER_DRIVEN_DEPRECATION, null);
         if (!deprecated) {
             deprecateProfile.setErrors(Arrays.asList(getMessage("deprecate_orcid.problem_deprecating")));
         }
-        
-        if(deprecated && Features.SEND_EMAIL_ON_DEPRECATE_RECORD.isActive()) {
-			recordEmailSender.sendOrcidSecurityDeprecatedEmail(deprecateProfile.getPrimaryOrcid(), deprecateProfile.getDeprecatingOrcid(), deprecatedAccountEmails);
-		}
+
+        if (deprecated) {
+            redisClient.remove(deprecatingEntity.getId() + "_two-factor-token");
+            if (Features.SEND_EMAIL_ON_DEPRECATE_RECORD.isActive()) {
+                recordEmailSender.sendOrcidSecurityDeprecatedEmail(deprecateProfile.getPrimaryOrcid(), deprecateProfile.getDeprecatingOrcid(), deprecatedAccountEmails);
+            }
+        }
+        deprecateProfile.setSuccess(true);
         return deprecateProfile;
     }
 
@@ -438,7 +502,7 @@ public class ManageProfileController extends BaseWorkspaceController {
 
     private void validateFormData(DeprecateProfile deprecateProfile) {
         List<String> errors = new ArrayList<>();
-        if (deprecateProfile.getDeprecatingPassword() == null || deprecateProfile.getDeprecatingPassword().trim().isEmpty()) {
+        if (deprecateProfile.getPassword() == null || deprecateProfile.getPassword().trim().isEmpty()) {
             errors.add(getMessage("deprecate_orcid.no_password_specified"));
         }
         if (deprecateProfile.getDeprecatingOrcidOrEmail() == null) {
@@ -448,7 +512,7 @@ public class ManageProfileController extends BaseWorkspaceController {
     }
 
     private void validateDeprecateAccountRequest(DeprecateProfile deprecateProfile, ProfileEntity deprecatingEntity) {
-        if (!encryptionManager.hashMatches(deprecateProfile.getDeprecatingPassword(), deprecatingEntity.getEncryptedPassword())) {
+        if (!encryptionManager.hashMatches(deprecateProfile.getPassword(), deprecatingEntity.getEncryptedPassword())) {
             deprecateProfile.setErrors(Arrays.asList(getMessage("check_password_modal.incorrect_password")));
         } else if (deprecatingEntity.getDeprecatedDate() != null) {
             deprecateProfile.setErrors(Arrays.asList(getMessage("deprecate_orcid.already_deprecated", deprecatingEntity.getId())));
@@ -658,17 +722,17 @@ public class ManageProfileController extends BaseWorkspaceController {
             newEmailCasted.setVisibility(newEmail.getVisibility());
             newEmailCasted.setPrimary(false);
             newEmailCasted.setVerified(false);
-            org.orcid.pojo.ajaxForm.Email response  = addEmails ( request, newEmailCasted);
+            org.orcid.pojo.ajaxForm.Email response = addEmails(request, newEmailCasted);
             errors.addAll(response.getErrors());
             if (newEmail.isPrimary() != null &&  newEmail.isPrimary()) {
-                org.orcid.pojo.ajaxForm.Email setAsPrimaryResponse  = setPrimary(request, newEmail);
+                org.orcid.pojo.ajaxForm.Email setAsPrimaryResponse = setPrimary(request, newEmail);
                 errors.addAll(setAsPrimaryResponse.getErrors());
             }
             
         }
         
         for (org.orcid.jaxb.model.v3.release.record.Email deletedEmail : deletedEmails) {
-            deleteEmailJson ( deletedEmail.getEmail() );    
+            deleteEmailJson(request, deletedEmail.getEmail());
         }
 
         // send security email
@@ -732,7 +796,11 @@ public class ManageProfileController extends BaseWorkspaceController {
             if(!keys.isEmpty()) {
                 request.getSession().setAttribute(EmailConstants.CHECK_EMAIL_VALIDATED, false);
             }
-            recordEmailSender.sendVerificationEmail(currentUserOrcid, OrcidStringUtils.filterEmailAddress(email.getValue()), email.isPrimary());
+            String emailAddress = OrcidStringUtils.filterEmailAddress(email.getValue());
+            // Store event
+            profileHistoryEventManager.recordEmailUpdateEvent(currentUserOrcid, OrcidRequestUtil.getIpAddress(request), "Email " + emailAddress + " was added to " + currentUserOrcid);
+            // Send email
+            recordEmailSender.sendVerificationEmail(currentUserOrcid, emailAddress, email.isPrimary());
         } else {
             email.setErrors(errors);
         }
@@ -765,7 +833,7 @@ public class ManageProfileController extends BaseWorkspaceController {
     }
 
     @RequestMapping(value = "/deleteEmail.json", method = RequestMethod.DELETE)
-    public @ResponseBody Errors deleteEmailJson(@RequestParam("email") String email) {
+    public @ResponseBody Errors deleteEmailJson(HttpServletRequest request, @RequestParam("email") String email) {
         Errors errors = new Errors();
         if (PojoUtil.isEmpty(email)) {
             errors.getErrors().add(getMessage("Email.personalInfoForm.email"));
@@ -797,7 +865,11 @@ public class ManageProfileController extends BaseWorkspaceController {
             return errors;
         } 
         
-        emailManager.removeEmail(currentUserOrcid, email);
+        boolean removed = emailManager.removeEmail(currentUserOrcid, email);
+        if(removed) {
+            // Store event
+            profileHistoryEventManager.recordEmailUpdateEvent(currentUserOrcid, OrcidRequestUtil.getIpAddress(request), "Email " + email + " was removed from " + currentUserOrcid);
+        }
         return errors;
     }
     
@@ -1105,9 +1177,9 @@ public class ManageProfileController extends BaseWorkspaceController {
         if (!emailManager.isPrimaryEmailVerified(orcid)) {
             try {
                 emailManager.verifyPrimaryEmail(orcid);
-            } catch(javax.persistence.NoResultException nre) {
+            } catch(jakarta.persistence.NoResultException nre) {
                 slackManager.sendSystemAlert(String.format("User with orcid %s have no primary email, so, we are setting the newest verified email, or, the newest email in case non is verified as the primary one", orcid));
-            } catch(javax.persistence.NonUniqueResultException nure) {
+            } catch(jakarta.persistence.NonUniqueResultException nure) {
                 slackManager.sendSystemAlert(String.format("User with orcid %s have more than one primary email, so, we are setting the latest modified primary as the primary one", orcid));
             } 
         }

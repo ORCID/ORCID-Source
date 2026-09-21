@@ -2,10 +2,12 @@ package org.orcid.persistence.dao.impl;
 
 import java.util.List;
 
-import javax.annotation.Resource;
-import javax.persistence.EntityManager;
-import javax.persistence.Query;
-import javax.persistence.TypedQuery;
+import jakarta.annotation.Resource;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.Query;
+import jakarta.persistence.TypedQuery;
+
+import org.springframework.transaction.annotation.Transactional;
 
 import org.orcid.persistence.dao.InvalidRecordDataChangeDao;
 import org.orcid.persistence.jpa.entities.InvalidRecordDataChangeEntity;
@@ -21,6 +23,7 @@ public class InvalidRecordDataChangeDaoImpl implements InvalidRecordDataChangeDa
     
     @SuppressWarnings("unchecked")
     @Override
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     public List<InvalidRecordDataChangeEntity> getByDateCreated(Long lastId, Long pageSize, boolean descendantOrder) {
         String queryStr = "SELECT * FROM invalid_record_data_changes WHERE id {GTorLT} {LAST_SEQUENCE} ORDER BY id {ORDER} LIMIT :pageSize";
         
@@ -40,6 +43,7 @@ public class InvalidRecordDataChangeDaoImpl implements InvalidRecordDataChangeDa
     }
 
     @Override
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     public boolean haveNext(Long sequence, boolean descendantOrder) {
         String queryStr = "SELECT COUNT(*) FROM InvalidRecordDataChangeEntity WHERE id {GTorLT} :sequence";        
         TypedQuery<Long> query = entityManager.createQuery(queryStr.replace("{GTorLT}", descendantOrder ? "<" : ">"), Long.class);
@@ -48,6 +52,7 @@ public class InvalidRecordDataChangeDaoImpl implements InvalidRecordDataChangeDa
     }
 
     @Override
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     public boolean havePrevious(Long sequence, boolean descendantOrder) {
         String queryStr = "SELECT COUNT(*) FROM InvalidRecordDataChangeEntity WHERE id {GTorLT} :sequence";        
         TypedQuery<Long> query = entityManager.createQuery(queryStr.replace("{GTorLT}", descendantOrder ? ">" : "<"), Long.class);

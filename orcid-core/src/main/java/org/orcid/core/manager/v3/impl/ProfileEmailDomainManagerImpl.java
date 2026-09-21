@@ -16,7 +16,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 import java.util.*;
 
 /**
@@ -51,11 +51,13 @@ public class ProfileEmailDomainManagerImpl extends ProfileEmailDomainManagerRead
 
         if (existingEmailDomains != null) {
             // VISIBILITY UPDATE FOR EXISTING DOMAINS
-            for (org.orcid.pojo.ajaxForm.ProfileEmailDomain emailDomain : newEmails.getEmailDomains()) {
-                for (ProfileEmailDomainEntity existingEmailDomain : existingEmailDomains) {
-                    if (StringUtils.equals(existingEmailDomain.getEmailDomain(), emailDomain.getValue())) {
-                        if (!StringUtils.equals(existingEmailDomain.getVisibility(), emailDomain.getVisibility())) {
-                            profileEmailDomainDao.updateVisibility(orcid, emailDomain.getValue(), emailDomain.getVisibility());
+            if (newEmails != null && newEmails.getEmailDomains() != null) {
+                for (org.orcid.pojo.ajaxForm.ProfileEmailDomain emailDomain : newEmails.getEmailDomains()) {
+                    for (ProfileEmailDomainEntity existingEmailDomain : existingEmailDomains) {
+                        if (StringUtils.equals(existingEmailDomain.getEmailDomain(), emailDomain.getValue())) {
+                            if (!StringUtils.equals(existingEmailDomain.getVisibility(), emailDomain.getVisibility())) {
+                                profileEmailDomainDao.updateVisibility(orcid, emailDomain.getValue(), emailDomain.getVisibility());
+                            }
                         }
                     }
                 }
@@ -129,7 +131,6 @@ public class ProfileEmailDomainManagerImpl extends ProfileEmailDomainManagerRead
         profileEmailDomainDao.removeAllEmailDomains(orcid);
     }
 
-    @Transactional
     public void moveEmailDomainToAnotherAccount(String emailDomain, String deprecatedOrcid, String primaryOrcid) {
         ProfileEmailDomainEntity existingEmailDomain = getEmailDomain(primaryOrcid, emailDomain);
         if (existingEmailDomain == null) {

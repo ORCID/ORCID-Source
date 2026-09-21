@@ -8,8 +8,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import javax.annotation.Resource;
-import javax.transaction.Transactional;
+import jakarta.annotation.Resource;
+import jakarta.transaction.Transactional;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
@@ -259,7 +259,6 @@ public class OrgDisambiguatedManagerImpl implements OrgDisambiguatedManager {
     }
 
     @Override
-    @Transactional
     public OrgDisambiguated findInDB(Long id) {
         OrgDisambiguatedEntity orgDisambiguatedEntity = orgDisambiguatedDaoReadOnly.find(id);
         OrgDisambiguated org = convertEntity(orgDisambiguatedEntity);
@@ -267,7 +266,6 @@ public class OrgDisambiguatedManagerImpl implements OrgDisambiguatedManager {
     }
 
     @Override
-    @Transactional
     public OrgDisambiguated findInDB(String idValue, String idType) {
         OrgDisambiguatedEntity orgDisambiguatedEntity = orgDisambiguatedDaoReadOnly.findBySourceIdAndSourceType(idValue, idType);
         if (orgDisambiguatedEntity != null)
@@ -411,7 +409,7 @@ public class OrgDisambiguatedManagerImpl implements OrgDisambiguatedManager {
                     "About to remove " + duplicatedExtIdentifiersToBeRemoved.size() + " duplicate external Ids for Disambiguated Org " + orgDisambiguatedEntity.getId());
             duplicatedExtIdentifiersToBeRemoved.stream().forEach((e) -> {
                 try {
-                    orgDisambiguatedExternalIdentifierDao.remove(e);
+                    orgDisambiguatedExternalIdentifierDao.remove(e.getId());
                     LOGGER.debug("Removed ext id " + e.getIdentifierType() + "::" + e.getIdentifier() + "::" + e.getId());
                 } catch (Exception ex) {
                     LOGGER.error("Exception when removing duplicate external ids for Disambiguated Org " + orgDisambiguatedEntity.getId(), ex);

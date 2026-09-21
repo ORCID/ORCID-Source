@@ -2,10 +2,11 @@ package org.orcid.persistence.dao.impl;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
-import javax.persistence.Query;
-import javax.persistence.TypedQuery;
+import jakarta.persistence.Query;
+import jakarta.persistence.TypedQuery;
 
 import org.orcid.persistence.aop.UpdateProfileLastModified;
 import org.orcid.persistence.aop.UpdateProfileLastModifiedAndIndexingStatus;
@@ -21,6 +22,7 @@ public class PeerReviewDaoImpl extends GenericDaoImpl<PeerReviewEntity, Long> im
     }
 
     @Override
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     public PeerReviewEntity getPeerReview(String userOrcid, Long peerReviewId) {
         Query query = entityManager.createQuery("from PeerReviewEntity where orcid=:userOrcid and id=:peerReviewId");
         query.setParameter("userOrcid", userOrcid);
@@ -32,13 +34,14 @@ public class PeerReviewDaoImpl extends GenericDaoImpl<PeerReviewEntity, Long> im
     @Transactional
     @UpdateProfileLastModifiedAndIndexingStatus
     public boolean removePeerReview(String userOrcid, Long peerReviewId) {
-        Query query = entityManager.createQuery("delete from PeerReviewEntity where orcid=:userOrcid and id=:peerReviewId");
+        Query query = entityManager.createQuery("delete from PeerReviewEntity pr where pr.orcid=:userOrcid and pr.id=:peerReviewId");
         query.setParameter("userOrcid", userOrcid);
         query.setParameter("peerReviewId", peerReviewId);
         return query.executeUpdate() > 0 ? true : false;
     }    
     
     @Override
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     @Cacheable(value = "peer-reviews", key = "#userOrcid.concat('-').concat(#lastModified)")
     public List<PeerReviewEntity> getByUser(String userOrcid, long lastModified) {
         TypedQuery<PeerReviewEntity> query = entityManager.createQuery("from PeerReviewEntity where orcid=:userOrcid order by completionDate.year desc, completionDate.month desc, completionDate.day desc", PeerReviewEntity.class);
@@ -47,6 +50,7 @@ public class PeerReviewDaoImpl extends GenericDaoImpl<PeerReviewEntity, Long> im
     }
 
     @Override
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     public List<Object[]> getPeerReviewsByOrcid(String orcid, boolean justPublic) {
         String sqlString = null;
         if (justPublic) {
@@ -61,6 +65,7 @@ public class PeerReviewDaoImpl extends GenericDaoImpl<PeerReviewEntity, Long> im
     }
 
     @Override
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     public List<PeerReviewEntity> getPeerReviewsByOrcidAndGroupId(String orcid, String groupId, boolean justPublic) {
         String sqlString = null;
         if(justPublic) {
@@ -89,10 +94,11 @@ public class PeerReviewDaoImpl extends GenericDaoImpl<PeerReviewEntity, Long> im
     @UpdateProfileLastModifiedAndIndexingStatus
     public boolean updateVisibilities(String orcid, ArrayList<Long> peerReviewIds, String visibility) {
         Query query = entityManager
-                .createQuery("update PeerReviewEntity set visibility=:visibility, lastModified=now() where id in (:peerReviewIds) and  orcid=:orcid");
+                .createQuery("update PeerReviewEntity pr set pr.visibility=:visibility, pr.lastModified = :lastModified where pr.id in (:peerReviewIds) and pr.orcid=:orcid");
         query.setParameter("peerReviewIds", peerReviewIds);
         query.setParameter("visibility", visibility);
         query.setParameter("orcid", orcid);
+        query.setParameter("lastModified", new Date());
         return query.executeUpdate() > 0 ? true : false;
     }
 
@@ -101,10 +107,11 @@ public class PeerReviewDaoImpl extends GenericDaoImpl<PeerReviewEntity, Long> im
     @UpdateProfileLastModifiedAndIndexingStatus
     public boolean updateVisibilityByGroupId(String orcid, String groupId, String visibility) {
         Query query = entityManager
-                .createQuery("update PeerReviewEntity set visibility=:visibility, lastModified=now() where groupId=:groupId and  orcid=:orcid");
+                .createQuery("update PeerReviewEntity pr set pr.visibility=:visibility, pr.lastModified = :lastModified where pr.groupId=:groupId and pr.orcid=:orcid");
         query.setParameter("groupId", groupId);
         query.setParameter("visibility", visibility);
         query.setParameter("orcid", orcid);
+        query.setParameter("lastModified", new Date());
         return query.executeUpdate() > 0 ? true : false;
     }
     
@@ -115,6 +122,7 @@ public class PeerReviewDaoImpl extends GenericDaoImpl<PeerReviewEntity, Long> im
      * @return a list of peer review ids with old ext ids          
      * */
     @Override
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     @SuppressWarnings("unchecked") 
     public List<BigInteger> getPeerReviewWithOldExtIds(long limit) {
         Query query = entityManager.createNativeQuery("SELECT distinct(id) FROM (SELECT id, json_array_elements(json_extract_path(external_identifiers_json, 'workExternalIdentifier')) AS j FROM peer_review WHERE external_identifiers_json is not null limit :limit) AS a WHERE (j->'relationship') is null");
@@ -123,6 +131,7 @@ public class PeerReviewDaoImpl extends GenericDaoImpl<PeerReviewEntity, Long> im
     }
     
     @Override
+    @Transactional
     public boolean increaseDisplayIndexOnAllElements(String orcid) {
         Query query = entityManager.createNativeQuery("update peer_review set display_index=(display_index + 1), last_modified=now() where orcid=:orcid");                
         query.setParameter("orcid", orcid);
@@ -133,21 +142,23 @@ public class PeerReviewDaoImpl extends GenericDaoImpl<PeerReviewEntity, Long> im
     @Transactional
     @UpdateProfileLastModifiedAndIndexingStatus
     public void removeAllPeerReviews(String orcid){
-        Query query = entityManager.createQuery("delete from PeerReviewEntity where orcid = :orcid");
+        Query query = entityManager.createQuery("delete from PeerReviewEntity pr where pr.orcid = :orcid");
         query.setParameter("orcid", orcid);
         query.executeUpdate();
     }
 
     @Override
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     public Boolean hasPublicPeerReviews(String orcid) {
         Query query = entityManager.createNativeQuery("select count(*) from peer_review where orcid=:orcid and visibility='PUBLIC'");
         query.setParameter("orcid", orcid);
-        Long result = ((BigInteger)query.getSingleResult()).longValue();
+        Long result = ((Number)query.getSingleResult()).longValue();
         return (result != null && result > 0);
     }
 
     @SuppressWarnings("unchecked")
     @Override
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     public List<PeerReviewEntity> getPeerReviewsReferencingOrgs(List<Long> orgIds) {
         Query query = entityManager.createQuery("from PeerReviewEntity where org.id in (:orgIds)");
         query.setParameter("orgIds", orgIds);

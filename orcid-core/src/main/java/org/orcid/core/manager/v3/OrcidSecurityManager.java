@@ -2,7 +2,7 @@ package org.orcid.core.manager.v3;
 
 import java.util.Collection;
 
-import javax.persistence.NoResultException;
+import jakarta.persistence.NoResultException;
 
 import org.orcid.core.exception.DeactivatedException;
 import org.orcid.core.exception.LockedException;
@@ -57,6 +57,4 @@ public interface OrcidSecurityManager {
     void checkAndFilter(String orcid, Person person);
 
     void checkAndFilter(String orcid, Record record);
-
-    String getOrcidFromToken();
 }

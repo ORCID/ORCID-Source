@@ -4,10 +4,10 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
-import javax.annotation.Resource;
-import javax.persistence.NoResultException;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.Status;
+import jakarta.annotation.Resource;
+import jakarta.persistence.NoResultException;
+import jakarta.ws.rs.core.Response;
+import jakarta.ws.rs.core.Response.Status;
 
 import org.apache.commons.lang3.text.StrSubstitutor;
 import org.apache.commons.lang3.tuple.ImmutablePair;
@@ -20,7 +20,6 @@ import org.orcid.jaxb.model.common.adapters.IllegalEnumValueException;
 import org.orcid.jaxb.model.v3.release.error.OrcidError;
 import org.springframework.context.MessageSource;
 import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.oauth2.common.exceptions.OAuth2Exception;
 
 import com.fasterxml.jackson.core.JsonParseException;
 
@@ -46,6 +45,9 @@ public class OrcidCoreExceptionMapper {
     
     @Resource(name = "sourceManagerV3")
     private SourceManager sourceManager;
+
+    @Resource
+    private SourceEntityUtils sourceEntityUtils;
 
     private static Map<Class<? extends Throwable>, Pair<Response.Status, Integer>> HTTP_STATUS_AND_ERROR_CODE_BY_THROWABLE_TYPE = new HashMap<>();
     {
@@ -83,7 +85,6 @@ public class OrcidCoreExceptionMapper {
         
         // 401
         HTTP_STATUS_AND_ERROR_CODE_BY_THROWABLE_TYPE.put(AuthenticationException.class, new ImmutablePair<>(Response.Status.UNAUTHORIZED, 9002));
-        HTTP_STATUS_AND_ERROR_CODE_BY_THROWABLE_TYPE.put(OAuth2Exception.class, new ImmutablePair<>(Response.Status.UNAUTHORIZED, 9003));
         HTTP_STATUS_AND_ERROR_CODE_BY_THROWABLE_TYPE.put(OrcidUnauthorizedException.class, new ImmutablePair<>(Response.Status.UNAUTHORIZED, 9017));
         HTTP_STATUS_AND_ERROR_CODE_BY_THROWABLE_TYPE.put(OrcidInvalidScopeException.class, new ImmutablePair<>(Response.Status.UNAUTHORIZED, 9015));        
         
@@ -226,7 +227,7 @@ public class OrcidCoreExceptionMapper {
         Map<String, String> params = null;
         if (t instanceof PutCodeFormatException) {
             params = new HashMap<String, String>();                                                               
-            params.put("clientName", SourceEntityUtils.getSourceName(sourceManager.retrieveActiveSource()));
+            params.put("clientName", sourceEntityUtils.getSourceName(sourceManager.retrieveActiveSource()));
         } else if (t instanceof ApplicationException) {
             params = ((ApplicationException) t).getParams();
         } else if (t instanceof IllegalEnumValueException) {
@@ -254,7 +255,12 @@ public class OrcidCoreExceptionMapper {
         String devMessage = messageSource.getMessage("apiError." + errorCode + ".developerMessage", null, "", locale);        
         if (devMessage == "")
             devMessage = t.getClass().getCanonicalName();
-        
+
+        // For 404 messages, do not include more details, so we don't expose query details to the client
+        if (errorCode == 9011 || errorCode == 9016 || errorCode == 9027 || errorCode == 9028 || errorCode == 9029 || errorCode == 9041) {
+            return devMessage;
+        }
+
         String exceptionMessage = t.getLocalizedMessage();
         String validationMessage = messageSource.getMessage("apiError.validation.message", null, "", locale);
         if (exceptionMessage != null) {

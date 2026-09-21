@@ -3,7 +3,7 @@ package org.orcid.core.manager.v3.impl;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 
 import org.orcid.core.exception.MissingGroupableExternalIDException;
 import org.orcid.core.manager.v3.GroupingSuggestionManager;

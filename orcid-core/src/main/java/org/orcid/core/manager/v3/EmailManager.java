@@ -3,7 +3,7 @@ package org.orcid.core.manager.v3;
 import java.util.List;
 import java.util.Map;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 import org.orcid.core.manager.v3.read_only.EmailManagerReadOnly;
 import org.orcid.jaxb.model.v3.release.common.Visibility;
@@ -27,7 +27,7 @@ public interface EmailManager extends EmailManagerReadOnly {
      */
     Map<String, String> addEmail(String orcid, Email email);
     
-    void removeEmail(String orcid, String email);        
+    boolean removeEmail(String orcid, String email);
     
     boolean verifyEmail(String orcid, String email);
     
@@ -88,5 +88,5 @@ public interface EmailManager extends EmailManagerReadOnly {
 
     void removeUnclaimedEmail(String orcid, String emailAddress);
 
-    List<String> removeEmails(String orcid, List<String> emailsToRemove);
+    List<Email> removeEmails(String orcid, List<String> emailsToRemove);
 }

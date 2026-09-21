@@ -7,21 +7,21 @@
     xmlns:jms="http://www.springframework.org/schema/jms"
     xmlns:util="http://www.springframework.org/schema/util"
     xsi:schemaLocation="
-        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.3.xsd
-        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.3.xsd
-        http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-4.3.xsd
-        http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.3.xsd
-         http://www.springframework.org/schema/jms http://www.springframework.org/schema/jms/spring-jms-4.3.xsd
+        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+        http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd
+        http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd
+         http://www.springframework.org/schema/jms http://www.springframework.org/schema/jms/spring-jms.xsd
          http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd" >
                
     <context:property-placeholder location="\${org.orcid.config.file}" ignore-resource-not-found="true" ignore-unresolvable="true" />
             
-    <tx:annotation-driven />
+    <tx:annotation-driven order="2" proxy-target-class="true" />
     
     <context:component-scan
 		base-package="org.orcid.persistence.aop" />
 		
-    <aop:aspectj-autoproxy />    
+    <aop:aspectj-autoproxy proxy-target-class="true" />    
 
     <bean id="applicationContextProvder"
                         class="org.orcid.persistence.spring.ApplicationContextProvider"/>
@@ -258,6 +258,8 @@
     <bean id="identifierTypeDao" class="org.orcid.persistence.dao.impl.IdentifierTypeDaoImpl" />
     
     <bean id="backupCodeDao" class="org.orcid.persistence.dao.impl.BackupCodeDaoImpl" />
+
+    <bean id="profileRecoveryPhoneDao" class="org.orcid.persistence.dao.impl.ProfileRecoveryPhoneDaoImpl" />
     
     <bean id="orgImportLogDao" class="org.orcid.persistence.dao.impl.OrgImportLogDaoImpl" />
     
@@ -283,27 +285,52 @@
         <property name="entityManager" ref="entityManagerReadOnly" />
     </bean>
     
-    <bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean" depends-on="liquibase">
-        <property name="jpaVendorAdapter" ref="jpaVendorAdapter" />
-        <property name="dataSource" ref="\${org.orcid.persistence.db.dataSource}" />
-        <property name="persistenceUnitName" value="orcid" />
-        <property name="jpaPropertyMap">
-            <map>
-                <entry key="hibernate.generate_statistics" value="\${org.orcid.persistence.db.hibernateStatistics:false}" />    
-            </map>
-        </property>
-    </bean>
-    
-    <bean id="entityManagerFactoryReadOnly" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean" depends-on="liquibase">
-        <property name="jpaVendorAdapter" ref="jpaVendorAdapter" />
-        <property name="dataSource" ref="\${org.orcid.persistence.db.readonly.dataSource}" />
-        <property name="persistenceUnitName" value="orcid" />
-        <property name="jpaPropertyMap">
-            <map>
-                <entry key="hibernate.generate_statistics" value="\${org.orcid.persistence.db.readonly.hibernateStatistics:false}" />    
-            </map>
-        </property>
-    </bean>
+<bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean" depends-on="liquibase">
+    <property name="jpaVendorAdapter" ref="jpaVendorAdapter" />
+    <property name="dataSource" ref="${org.orcid.persistence.db.dataSource}" />
+    <property name="persistenceUnitName" value="orcid" />
+    <property name="jpaPropertyMap">
+        <map>
+            <entry key="hibernate.connection.autocommit" value="false" />
+            <entry key="hibernate.connection.provider_disables_autocommit" value="true" />
+            <entry key="hibernate.generate_statistics" value="${org.orcid.persistence.db.hibernateStatistics:false}" />
+            <!-- JDBC Fetch Size: Number of rows retrieved per DB network round-trip -->
+            <entry key="hibernate.jdbc.fetch_size" value="${org.orcid.persistence.db.fetchSize:100}" />
+            <!-- JDBC Batch Size: Batches INSERT/UPDATE statements -->
+            <entry key="hibernate.jdbc.batch_size" value="${org.orcid.persistence.db.batchSize:50}" />
+            <!-- Default Batch Fetch Size: Automatically batches lazy-loaded entities/collections (fixes N+1 queries) -->
+            <entry key="hibernate.default_batch_fetch_size" value="${org.orcid.persistence.db.defaultBatchFetchSize:32}" />
+            <!-- Query Plan Cache Max Size: Maximum number of parsed query plans to cache in memory -->
+            <entry key="hibernate.query.plan_cache_max_size" value="${org.orcid.persistence.db.queryPlanCacheMaxSize:4096}" />
+            <!-- Pretty-print SQL statements in logs (default: true) -->
+            <entry key="hibernate.format_sql" value="${org.orcid.persistence.db.formatSql:false}" />
+            <!-- Log inline SQL comments for origin tracing (default: true) -->
+            <entry key="hibernate.use_sql_comments" value="${org.orcid.persistence.db.useSqlComments:false}" />
+        </map>
+    </property>
+</bean>
+
+<bean id="entityManagerFactoryReadOnly" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean" depends-on="liquibase">
+    <property name="jpaVendorAdapter" ref="jpaVendorAdapter" />
+    <property name="dataSource" ref="${org.orcid.persistence.db.readonly.dataSource}" />
+    <property name="persistenceUnitName" value="orcid" />
+    <property name="jpaPropertyMap">
+        <map>
+            <entry key="hibernate.connection.autocommit" value="false" />
+            <entry key="hibernate.connection.provider_disables_autocommit" value="true" />
+            <entry key="hibernate.generate_statistics" value="${org.orcid.persistence.db.readonly.hibernateStatistics:false}" />
+            <!-- Read-Only Fetch Configurations -->
+            <entry key="hibernate.jdbc.fetch_size" value="${org.orcid.persistence.db.readonly.fetchSize:100}" />
+            <entry key="hibernate.default_batch_fetch_size" value="${org.orcid.persistence.db.readonly.defaultBatchFetchSize:32}" />
+            <!-- Query Plan Cache Max Size: Maximum number of parsed query plans to cache in memory -->
+            <entry key="hibernate.query.plan_cache_max_size" value="${org.orcid.persistence.db.readonly.queryPlanCacheMaxSize:4096}" />
+            <!-- Pretty-print SQL statements in logs (default: true) -->
+            <entry key="hibernate.format_sql" value="${org.orcid.persistence.db.readonly.formatSql:false}" />
+            <!-- Log inline SQL comments for origin tracing (default: true) -->
+            <entry key="hibernate.use_sql_comments" value="${org.orcid.persistence.db.readonly.useSqlComments:false}" />
+        </map>
+    </property>
+</bean>
     
     <bean id="orcidEntityManagerFactory" class="org.orcid.persistence.spring.OrcidEntityManagerFactory">
         <property name="entityManagerFactory" ref="entityManagerFactory" />
@@ -349,40 +376,49 @@
         <property name="propagationBehaviorName" value="PROPAGATION_REQUIRED" />
     </bean>
 
-	<bean id="pooledDataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource" destroy-method="close">
-        <property name="dataSourceName" value="\${org.orcid.persistence.dataSourceName:orcid}" />
-        <property name="driverClass" value="\${org.orcid.persistence.db.class}" />
+	<bean id="pooledDataSource" class="com.zaxxer.hikari.HikariDataSource" destroy-method="close">
+        <property name="poolName" value="\${org.orcid.persistence.dataSourceName:orcid}" />
+        <property name="autoCommit" value="false" />
+        <property name="driverClassName" value="\${org.orcid.persistence.db.class}" />
         <property name="jdbcUrl" value="\${org.orcid.persistence.db.url}" />
-        <property name="user" value="\${org.orcid.persistence.db.username}" />
+        <property name="username" value="\${org.orcid.persistence.db.username}" />
         <property name="password" value="\${org.orcid.persistence.db.password}" />
-        <property name="initialPoolSize" value="\${org.orcid.persistence.db.initialPoolSize}" />
-        <property name="minPoolSize" value="\${org.orcid.persistence.db.minPoolSize}" />
-        <property name="maxPoolSize" value="\${org.orcid.persistence.db.maxPoolSize}" />
-        <property name="maxIdleTimeExcessConnections" value="\${org.orcid.persistence.db.maxIdleTimeExcessConnections:120}"/>
-        <property name="maxStatements" value="\${org.orcid.persistence.db.maxStatements}" />
-        <property name="idleConnectionTestPeriod" value="\${org.orcid.persistence.db.idleConnectionTestPeriod}" />
-        <property name="testConnectionOnCheckin" value="\${org.orcid.persistence.db.testConnectionOnCheckin}" />
-        <property name="testConnectionOnCheckout" value="\${org.orcid.persistence.db.testConnectionOnCheckout:false}" />
-        <property name="preferredTestQuery" value="\${org.orcid.persistence.db.preferredTestQuery}" />
-        <property name="numHelperThreads" value="\${org.orcid.persistence.db.numHelperThreads:10}"/>
+        <property name="minimumIdle" value="\${org.orcid.persistence.db.minPoolSize}" />
+        <property name="maximumPoolSize" value="\${org.orcid.persistence.db.maxPoolSize}" />
+        <property name="connectionTimeout" value="\${org.orcid.persistence.db.hikari.connectionTimeout:30000}" />
+        <property name="idleTimeout" value="\${org.orcid.persistence.db.hikari.idleTimeout:600000}" />
+        <property name="maxLifetime" value="\${org.orcid.persistence.db.hikari.maxLifetime:1800000}" />
+        <property name="keepaliveTime" value="\${org.orcid.persistence.db.hikari.keepaliveTime:120000}" />
+        <property name="leakDetectionThreshold" value="\${org.orcid.persistence.db.hikari.leakDetectionThreshold:0}" />
+        <!-- PostgreSQL JDBC Driver Properties -->
+        <property name="dataSourceProperties">
+            <props>
+                <prop key="defaultRowFetchSize">100</prop>
+            </props>
+        </property>
     </bean>
     
-    <bean id="pooledDataSourceReadOnly" class="com.mchange.v2.c3p0.ComboPooledDataSource" destroy-method="close">
-        <property name="dataSourceName" value="\${org.orcid.persistence.db.readonly.dataSourceName:orcidreadonly}" />
-        <property name="driverClass" value="\${org.orcid.persistence.db.readonly.class}" />
+    <bean id="pooledDataSourceReadOnly" class="com.zaxxer.hikari.HikariDataSource" destroy-method="close">
+        <property name="poolName" value="\${org.orcid.persistence.db.readonly.dataSourceName:orcidreadonly}" />
+        <property name="autoCommit" value="false" />
+        <property name="driverClassName" value="\${org.orcid.persistence.db.readonly.class}" />
         <property name="jdbcUrl" value="\${org.orcid.persistence.db.readonly.url}" />
-        <property name="user" value="\${org.orcid.persistence.db.readonly.username}" />
+        <property name="username" value="\${org.orcid.persistence.db.readonly.username}" />
         <property name="password" value="\${org.orcid.persistence.db.readonly.password}" />
-        <property name="initialPoolSize" value="\${org.orcid.persistence.db.readonly.initialPoolSize}" />
-        <property name="minPoolSize" value="\${org.orcid.persistence.db.readonly.minPoolSize}" />
-        <property name="maxPoolSize" value="\${org.orcid.persistence.db.readonly.maxPoolSize}" />
-        <property name="maxIdleTimeExcessConnections" value="\${org.orcid.persistence.db.maxIdleTimeExcessConnections:120}"/>
-        <property name="maxStatements" value="\${org.orcid.persistence.db.readonly.maxStatements}" />
-        <property name="idleConnectionTestPeriod" value="\${org.orcid.persistence.db.readonly.idleConnectionTestPeriod}" />
-        <property name="testConnectionOnCheckin" value="\${org.orcid.persistence.db.readonly.testConnectionOnCheckin}" />
-        <property name="testConnectionOnCheckout" value="\${org.orcid.persistence.db.readonly.testConnectionOnCheckout:false}" />
-        <property name="preferredTestQuery" value="\${org.orcid.persistence.db.readonly.preferredTestQuery}" />
-        <property name="numHelperThreads" value="\${org.orcid.persistence.db.readonly.numHelperThreads:10}"/>
+        <property name="minimumIdle" value="\${org.orcid.persistence.db.readonly.minPoolSize}" />
+        <property name="maximumPoolSize" value="\${org.orcid.persistence.db.readonly.maxPoolSize}" />
+        <property name="connectionTimeout" value="\${org.orcid.persistence.db.readonly.hikari.connectionTimeout:30000}" />
+        <property name="idleTimeout" value="\${org.orcid.persistence.db.readonly.hikari.idleTimeout:600000}" />
+        <property name="maxLifetime" value="\${org.orcid.persistence.db.readonly.hikari.maxLifetime:1800000}" />
+        <property name="keepaliveTime" value="\${org.orcid.persistence.db.readonly.hikari.keepaliveTime:120000}" />
+        <property name="leakDetectionThreshold" value="\${org.orcid.persistence.db.readonly.hikari.leakDetectionThreshold:0}" />
+        <property name="readOnly" value="true" />
+        <!-- PostgreSQL JDBC Driver Properties -->
+        <property name="dataSourceProperties">
+            <props>
+                <prop key="defaultRowFetchSize">100</prop>
+            </props>
+        </property>
     </bean>
 
     <bean id="simpleDataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
@@ -400,21 +436,18 @@
     </bean>	
     
     <!-- Features -->
-    <bean id="featuresDataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource" destroy-method="close">
-        <property name="dataSourceName" value="\${org.orcid.persistence.togglz.db.dataSourceName:features}" />
-        <property name="driverClass" value="\${org.orcid.persistence.togglz.db.class}" />
+    <bean id="featuresDataSource" class="com.zaxxer.hikari.HikariDataSource" destroy-method="close">
+        <property name="poolName" value="\${org.orcid.persistence.togglz.db.dataSourceName:features}" />
+        <property name="driverClassName" value="\${org.orcid.persistence.togglz.db.class}" />
         <property name="jdbcUrl" value="\${org.orcid.persistence.togglz.db.url}" />
-        <property name="user" value="\${org.orcid.persistence.togglz.db.username}" />
+        <property name="username" value="\${org.orcid.persistence.togglz.db.username}" />
         <property name="password" value="\${org.orcid.persistence.togglz.db.password}" />
-        <property name="initialPoolSize" value="\${org.orcid.persistence.togglz.db.initialPoolSize}" />
-        <property name="minPoolSize" value="\${org.orcid.persistence.togglz.db.minPoolSize}" />
-        <property name="maxPoolSize" value="\${org.orcid.persistence.togglz.db.maxPoolSize}" />
-        <property name="maxStatements" value="\${org.orcid.persistence.togglz.db.maxStatements}" />
-        <property name="idleConnectionTestPeriod" value="\${org.orcid.persistence.togglz.db.idleConnectionTestPeriod}" />
-        <property name="testConnectionOnCheckin" value="\${org.orcid.persistence.togglz.db.testConnectionOnCheckin}" />
-        <property name="testConnectionOnCheckout" value="\${org.orcid.persistence.togglz.db.testConnectionOnCheckout:false}" />
-        <property name="preferredTestQuery" value="\${org.orcid.persistence.togglz.db.preferredTestQuery}" />
-        <property name="numHelperThreads" value="\${org.orcid.persistence.togglz.db.numHelperThreads:10}"/>
+        <property name="minimumIdle" value="\${org.orcid.persistence.togglz.db.minPoolSize}" />
+        <property name="maximumPoolSize" value="\${org.orcid.persistence.togglz.db.maxPoolSize}" />
+        <property name="connectionTimeout" value="\${org.orcid.persistence.togglz.db.hikari.connectionTimeout:30000}" />
+        <property name="idleTimeout" value="\${org.orcid.persistence.togglz.db.hikari.idleTimeout:600000}" />
+        <property name="maxLifetime" value="\${org.orcid.persistence.togglz.db.hikari.maxLifetime:1800000}" />
+        <property name="keepaliveTime" value="\${org.orcid.persistence.togglz.db.hikari.keepaliveTime:120000}" />
     </bean>        
     
     <bean id="externalEncryptor" class="org.jasypt.encryption.pbe.PooledPBEStringEncryptor">

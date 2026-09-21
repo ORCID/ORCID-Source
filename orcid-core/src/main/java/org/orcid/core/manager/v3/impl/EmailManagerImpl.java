@@ -4,18 +4,19 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
+import jakarta.annotation.Resource;
+import jakarta.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang3.StringUtils;
 import org.orcid.core.manager.v3.EmailManager;
 import org.orcid.core.manager.v3.OrcidSecurityManager;
 import org.orcid.core.manager.v3.ProfileEmailDomainManager;
+import org.orcid.core.manager.v3.ProfileHistoryEventManager;
 import org.orcid.core.manager.v3.SourceManager;
 import org.orcid.core.manager.v3.read_only.impl.EmailManagerReadOnlyImpl;
 import org.orcid.core.togglz.Features;
+import org.orcid.core.utils.OrcidRequestUtil;
 import org.orcid.jaxb.model.v3.release.common.Visibility;
 import org.orcid.jaxb.model.v3.release.record.Email;
 import org.orcid.persistence.aop.UpdateProfileLastModifiedAndIndexingStatus;
@@ -54,10 +55,14 @@ public class EmailManagerImpl extends EmailManagerReadOnlyImpl implements EmailM
 
     @Resource(name = "orcidSecurityManagerV3")
     protected OrcidSecurityManager orcidSecurityManager;
+
+    @Resource(name = "profileHistoryEventManagerV3")
+    private ProfileHistoryEventManager profileHistoryEventManager;
     
     @Override
     @Transactional
-    public void removeEmail(String orcid, String email) {
+    @UpdateProfileLastModifiedAndIndexingStatus
+    public boolean removeEmail(String orcid, String email) {
         if (isPrimaryEmail(orcid, email)) {
             throw new IllegalArgumentException("Can't mark primary email as deleted");
         }
@@ -65,8 +70,7 @@ public class EmailManagerImpl extends EmailManagerReadOnlyImpl implements EmailM
         if (isUsersOnlyEmail(orcid, email)) {
             throw new IllegalArgumentException("Can't mark user's only email as deleted");
         }
-        emailDao.removeEmail(orcid, email);
-
+        return emailDao.removeEmail(orcid, email);
     }
 
     @Override
@@ -91,13 +95,13 @@ public class EmailManagerImpl extends EmailManagerReadOnlyImpl implements EmailM
                 profileEmailDomainManager.processDomain(orcid, primaryEmail);
             }
             return result;
-        } catch (javax.persistence.NoResultException nre) {
+        } catch (jakarta.persistence.NoResultException nre) {
             String alternativePrimaryEmail = emailDao.findNewestVerifiedOrNewestEmail(orcid);
             emailDao.updatePrimary(orcid, alternativePrimaryEmail);
             String message = String.format("User with orcid %s have no primary email, so, we are setting the newest verified email, or, the newest email in case non is verified as the primary one", orcid);
             LOGGER.error(message);            
             throw nre;
-        } catch (javax.persistence.NonUniqueResultException nure) {
+        } catch (jakarta.persistence.NonUniqueResultException nure) {
             String alternativePrimaryEmail = emailDao.findNewestPrimaryEmail(orcid);
             emailDao.updatePrimary(orcid, alternativePrimaryEmail);            
             String message = String.format("User with orcid %s have more than one primary email, so, we are setting the latest modified primary as the primary one", orcid);
@@ -201,6 +205,7 @@ public class EmailManagerImpl extends EmailManagerReadOnlyImpl implements EmailM
      * calling function should know that the primary email have changed
      */
     @Override
+    @Transactional
     public Map<String, String> setPrimary(String orcid, String email, HttpServletRequest request) {
         Map<String, String> keys = new HashMap<String, String>();
         Email currentPrimaryEmail = this.findPrimaryEmail(orcid);
@@ -209,6 +214,8 @@ public class EmailManagerImpl extends EmailManagerReadOnlyImpl implements EmailM
             emailDao.updatePrimary(orcid, email);
             keys.put("new", email);
             keys.put("old", currentPrimaryEmail.getEmail());
+            profileHistoryEventManager.recordEmailUpdateEvent(orcid, getRequestIpAddress(request),
+                    "Primary email changed from " + currentPrimaryEmail.getEmail() + " to " + email);
             
             if (!newPrimary.getVerified()) {
                 keys.put("sendVerification", "true");                
@@ -224,6 +231,7 @@ public class EmailManagerImpl extends EmailManagerReadOnlyImpl implements EmailM
      * have changed
      */    
     @Override
+    @Transactional
     public Map<String, String> editEmail(String orcid, String original, String edited, HttpServletRequest request) {
         Map<String, String> keys = new HashMap<String, String>();
         EmailEntity originalEntity = emailDao.findByEmail(original); 
@@ -248,6 +256,10 @@ public class EmailManagerImpl extends EmailManagerReadOnlyImpl implements EmailM
         
         emailDao.persist(updatedEntity);
         emailDao.remove(originalEntity.getId());
+        if (!StringUtils.equals(original, emailKeys.get(FILTERED_EMAIL))) {
+            profileHistoryEventManager.recordEmailUpdateEvent(orcid, getRequestIpAddress(request),
+                    "Email changed from " + original + " to " + emailKeys.get(FILTERED_EMAIL));
+        }
         keys.put("verifyAddress", emailKeys.get(FILTERED_EMAIL));
         return keys;
     }
@@ -274,7 +286,6 @@ public class EmailManagerImpl extends EmailManagerReadOnlyImpl implements EmailM
             entity.setDateVerified(new Date());
         }
         emailDao.merge(entity);
-        emailDao.flush();
     }
 
     @Override
@@ -300,7 +311,6 @@ public class EmailManagerImpl extends EmailManagerReadOnlyImpl implements EmailM
                 entity.setVerified(false);
                 entity.setVisibility(visibility.name());
                 emailDao.merge(entity);  
-                emailDao.flush();
                 if(!entity.getVerified()) {
                     return true;
                 }
@@ -322,24 +332,51 @@ public class EmailManagerImpl extends EmailManagerReadOnlyImpl implements EmailM
     }
 
     @Override
-    @Transactional
-    public List<String> removeEmails(String orcid, List<String> emailsToRemove) {
+    public List<Email> removeEmails(String orcid, List<String> emailsToRemove) {
         if (!orcidSecurityManager.isAdmin()) {
             throw new AccessDeniedException("Admin privileges required to remove emails");
         }
 
-        List<EmailEntity> currentEmailsList = emailDao.findByOrcid(orcid, System.currentTimeMillis());
-        if (emailsToRemove.size() == currentEmailsList.size()) {
+        List<EmailEntity> currentEmails = emailDao.findByOrcid(orcid, System.currentTimeMillis());
+
+        if (emailsToRemove.size() >= currentEmails.size()) {
             throw new IllegalArgumentException("Can't mark all user's as deleted");
         }
 
-        for (String email : emailsToRemove) {
-            emailDao.removeEmail(orcid, email);
-        }
+        List<EmailEntity> remainingEmails = transactionTemplate.execute(status -> {
+            emailsToRemove.forEach(email -> emailDao.removeEmail(orcid, email));
+            List<EmailEntity> remaining = emailDao.findByOrcid(orcid, System.currentTimeMillis());
+            ensurePrimaryEmail(orcid, remaining);
+            return remaining;
+        });
 
-        return emailDao.findByOrcid(orcid, System.currentTimeMillis())
-                .stream()
-                .map(EmailEntity::getEmail)
-                .collect(Collectors.toList());
+        List<Email> result = toEmailList(remainingEmails);
+        org.orcid.jaxb.model.v3.release.record.Emails emails = new org.orcid.jaxb.model.v3.release.record.Emails();
+        emails.setEmails(result);
+        profileEmailDomainManager.updateEmailDomains(orcid, null, emails);
+
+        return result;
+    }
+
+    private void ensurePrimaryEmail(String orcid, List<EmailEntity> emails) {
+        boolean hasPrimaryEmail = emails.stream()
+                .anyMatch(email -> Boolean.TRUE.equals(email.getPrimary()));
+
+        if (!hasPrimaryEmail && !emails.isEmpty()) {
+            String newPrimaryEmail = emails.get(0).getEmail();
+            emailDao.updatePrimary(orcid, newPrimaryEmail);
+            emails.get(0).setPrimary(Boolean.TRUE);
+        }
+    }
+
+    private List<Email> toEmailList(List<EmailEntity> entities) {
+        return jpaJaxbEmailAdapter.toEmailList(entities);
+    }
+
+    private String getRequestIpAddress(HttpServletRequest request) {
+        if (request == null) {
+            return "unknown";
+        }
+        return OrcidRequestUtil.getIpAddress(request);
     }
 }

@@ -1,7 +1,7 @@
 package org.orcid.authorization.authentication;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 
 import org.apache.thrift.TSerializable;
 import org.springframework.security.web.authentication.WebAuthenticationDetails;

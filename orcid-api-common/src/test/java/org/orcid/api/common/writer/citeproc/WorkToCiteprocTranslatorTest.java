@@ -49,9 +49,9 @@ public class WorkToCiteprocTranslatorTest {
         
         WorkToCiteprocTranslator t = new WorkToCiteprocTranslator();
         CSLItemData d = t.toCiteproc(w, null, true );  
-        Assert.assertEquals(d.getAuthor().length, 1);
-        Assert.assertEquals(d.getAuthor()[0].getLiteral(), "Altshuler, D.M. and Durbin, R.M. and Abecasis, G.R. and Bentley, D.R. and Chakravarti, A. and Clark, A.G. and Donnelly, P. and Eichler, E.E. and Flicek, P. and Gabriel, S.B. and Gibbs, R.A. and Gre...");
-        Assert.assertEquals(d.getDOI(), "10.1234/1234");
+        Assert.assertEquals(1, d.getAuthor().length);
+        Assert.assertEquals("D.M. Altshuler et all.", d.getAuthor()[0].getLiteral());
+        Assert.assertEquals("10.1234/1234", d.getDOI());
     }
     
     @Test

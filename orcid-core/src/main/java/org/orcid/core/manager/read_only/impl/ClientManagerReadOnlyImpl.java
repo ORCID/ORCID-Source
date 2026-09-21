@@ -4,7 +4,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 
 import org.orcid.core.adapter.JpaJaxbClientAdapter;
 import org.orcid.core.manager.read_only.ClientManagerReadOnly;

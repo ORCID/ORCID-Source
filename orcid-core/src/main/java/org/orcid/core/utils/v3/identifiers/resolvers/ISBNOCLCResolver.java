@@ -4,7 +4,7 @@ import java.util.List;
 
 import org.apache.commons.validator.routines.ISBNValidator;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 
 import org.apache.commons.lang3.StringUtils;
 import org.orcid.core.utils.v3.identifiers.PIDNormalizationService;

@@ -7,10 +7,10 @@ import static org.junit.Assert.assertNull;
 import java.io.InputStream;
 import java.util.Date;
 
-import javax.annotation.Resource;
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.Unmarshaller;
+import jakarta.annotation.Resource;
+import jakarta.xml.bind.JAXBContext;
+import jakarta.xml.bind.JAXBException;
+import jakarta.xml.bind.Unmarshaller;
 
 import org.junit.After;
 import org.junit.Before;
@@ -94,7 +94,7 @@ public class JpaJaxbEmailAdapterTest extends MockSourceNameCache {
     }
 
     @Test
-    public void testEmailToEmailEntity() throws JAXBException {
+    public void emailToEmailEntityTest() throws JAXBException {
         Email email = getEmail();
         assertNotNull(email);
         EmailEntity entity = jpaJaxbEmailAdapter.toEmailEntity(email);

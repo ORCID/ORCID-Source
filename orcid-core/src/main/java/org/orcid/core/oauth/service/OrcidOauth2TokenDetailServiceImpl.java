@@ -4,14 +4,14 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
+import java.util.TreeSet;
 
-import javax.annotation.Resource;
-import javax.persistence.NoResultException;
+import jakarta.annotation.Resource;
+import jakarta.persistence.NoResultException;
 
 import org.apache.commons.lang3.StringUtils;
 import org.orcid.core.constants.RevokeReason;
 import org.orcid.core.oauth.OrcidOauth2TokenDetailService;
-import org.orcid.core.utils.cache.redis.RedisClient;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.persistence.dao.OrcidOauth2TokenDetailDao;
 import org.orcid.persistence.jpa.entities.OrcidOauth2TokenDetail;
@@ -20,7 +20,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.Cacheable;
-import org.springframework.security.oauth2.common.util.OAuth2Utils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -37,10 +36,7 @@ public class OrcidOauth2TokenDetailServiceImpl implements OrcidOauth2TokenDetail
     
     @Resource(name="orcidOauth2TokenDetailDaoReadOnly")
     private OrcidOauth2TokenDetailDao orcidOauth2TokenDetailDaoReadOnly;
-    
-    @Resource
-    private RedisClient redisClient;
-    
+
     @Value("${org.orcid.core.utils.cache.redis.enabled:true}") 
     private boolean isTokenCacheEnabled;
 
@@ -140,10 +136,6 @@ public class OrcidOauth2TokenDetailServiceImpl implements OrcidOauth2TokenDetail
     @Override
     @Transactional
     public void revokeAccessToken(String accessToken) {
-        // Remove the token from the cache
-        if(isTokenCacheEnabled) {
-            redisClient.remove(accessToken);
-        }
         // Revoke the token
         orcidOauth2TokenDetailDao.revokeAccessToken(accessToken);
     }
@@ -199,8 +191,7 @@ public class OrcidOauth2TokenDetailServiceImpl implements OrcidOauth2TokenDetail
     @Transactional
     public void createNew(OrcidOauth2TokenDetail detail) {
         orcidOauth2TokenDetailDao.persist(detail); 
-        orcidOauth2TokenDetailDao.flush();
-    }        
+    }
 
     @Override
     public List<OrcidOauth2TokenDetail> findByClientIdAndUserName(String clientId, String userName) {
@@ -243,9 +234,6 @@ public class OrcidOauth2TokenDetailServiceImpl implements OrcidOauth2TokenDetail
         // Remove them from the cache
         for(String accessToken : tokensToDisable) {
             LOGGER.info("Token {} will be disabled because auth code {} was reused", accessToken, authorizationCode);
-            if(isTokenCacheEnabled) {
-                redisClient.remove(accessToken);
-            }            
         }
         // Disable them
         return orcidOauth2TokenDetailDao.disableAccessTokenByCodeAndClient(authorizationCode, clientID, reason.name());
@@ -259,23 +247,15 @@ public class OrcidOauth2TokenDetailServiceImpl implements OrcidOauth2TokenDetail
 
     @Override
     @Transactional
-    public void disableClientAccess(String clientDetailsId, String userOrcid) {
-        // As a security measure, remove any user tokens from the cache
-        List<OrcidOauth2TokenDetail> userTokens = findByUserName(userOrcid);
-        if(userTokens != null && !userTokens.isEmpty()) {
-            for(OrcidOauth2TokenDetail token : userTokens) {
-                if(clientDetailsId.equals(token.getClientDetailsId())) {
-                    redisClient.remove(token.getTokenValue());
-                }
-            }
-        }
-        // And then disable all user tokens
-        orcidOauth2TokenDetailDao.disableClientAccessTokensByUserOrcid(userOrcid, clientDetailsId);
-    }
-    
-    @Override
-    @Transactional
     public boolean updateScopes(String acessToken, Set<String> newScopes) {
-        return orcidOauth2TokenDetailDao.updateScopes(acessToken, OAuth2Utils.formatParameterList(newScopes));        
+        return orcidOauth2TokenDetailDao.updateScopes(acessToken, formatScopeList(newScopes));
+    }
+
+    private String formatScopeList(Set<String> scopes) {
+        if (scopes == null || scopes.isEmpty()) {
+            return null;
+        }
+
+        return String.join(" ", new TreeSet<>(scopes));
     }
 }

@@ -16,7 +16,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 
 import org.junit.After;
 import org.junit.AfterClass;
@@ -41,6 +41,7 @@ import org.orcid.jaxb.model.v3.release.common.Source;
 import org.orcid.jaxb.model.v3.release.record.AffiliationType;
 import org.orcid.jaxb.model.v3.release.record.summary.EmploymentSummary;
 import org.orcid.persistence.constants.SendEmailFrequency;
+import org.orcid.persistence.dao.ClientDetailsDao;
 import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
@@ -53,8 +54,9 @@ import org.orcid.test.DBUnitTest;
 import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.orcid.test.TargetProxyHelper;
 import org.orcid.utils.OrcidStringUtils;
-import org.springframework.security.oauth2.common.exceptions.InvalidRequestException;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.support.TransactionTemplate;
 
 @RunWith(OrcidJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:test-orcid-core-context.xml" })
@@ -84,7 +86,7 @@ public class RegistrationManagerImplTest extends DBUnitTest {
     
     @Mock
     private ProfileHistoryEventManager mockProfileHistoryEventManager;
-    
+
     @Resource
     private ProfileHistoryEventManager profileHistoryEventManager;
     
@@ -93,9 +95,26 @@ public class RegistrationManagerImplTest extends DBUnitTest {
     
     @Resource
     ProfileDao profileDao;
+
+    @Resource
+    ClientDetailsDao clientDetailsDao;
+
+    @Resource
+    private PlatformTransactionManager transactionManager;
     
     @Resource(name = "notificationManagerV3")
     org.orcid.core.manager.v3.NotificationManager notificationV3Manager;
+
+    private void markUnclaimedWithSourceClient(String orcid, String clientId) {
+        new TransactionTemplate(transactionManager).execute(status -> {
+            ProfileEntity entity = profileDao.find(orcid);
+            entity.setClaimed(false);
+            ClientDetailsEntity clientEntity = clientDetailsDao.find(clientId);
+            entity.setSource(new SourceEntity(clientEntity));
+            profileDao.merge(entity);
+            return null;
+        });
+    }
 
     @Resource(name = "affiliationsManagerV3")
     private AffiliationsManager affiliationsManager;
@@ -181,7 +200,7 @@ public class RegistrationManagerImplTest extends DBUnitTest {
         try {
             registrationManager.createMinimalRegistration(form, true, java.util.Locale.ENGLISH, "0.0.0.0");
             fail();
-        } catch(InvalidRequestException e) {
+        } catch(IllegalArgumentException e) {
             assertEquals("Unable to register user due: Email " + email + " already exists and is claimed, so, it can't be used again", e.getMessage());
         } catch(Exception e) {
             fail();
@@ -192,7 +211,7 @@ public class RegistrationManagerImplTest extends DBUnitTest {
         try {
             registrationManager.createMinimalRegistration(form, true, java.util.Locale.ENGLISH, "0.0.0.0");
             fail();
-        } catch(InvalidRequestException e) {
+        } catch(IllegalArgumentException e) {
             assertEquals("Unable to register user due: Email " + email.toLowerCase() + " already exists and is claimed, so, it can't be used again", e.getMessage());
         } catch(Exception e) {
             fail();
@@ -204,7 +223,7 @@ public class RegistrationManagerImplTest extends DBUnitTest {
         try {
             registrationManager.createMinimalRegistration(form, true, java.util.Locale.ENGLISH, "0.0.0.0");
             fail();
-        } catch(InvalidRequestException e) {
+        } catch(IllegalArgumentException e) {
             assertEquals("Unable to register user due: Email " + spacedEmail + " already exists and is claimed, so, it can't be used again", e.getMessage());
         } catch(Exception e) {
             fail();
@@ -230,7 +249,7 @@ public class RegistrationManagerImplTest extends DBUnitTest {
         try {
             registrationManager.createMinimalRegistration(form, true, java.util.Locale.ENGLISH, "0.0.0.0");
             fail();
-        } catch(InvalidRequestException e) {
+        } catch(IllegalArgumentException e) {
             assertEquals("Unable to register user due: Email " + email + " already exists and is claimed, so, it can't be used again", e.getMessage());
         } catch(Exception e) {
             fail();
@@ -244,11 +263,8 @@ public class RegistrationManagerImplTest extends DBUnitTest {
         try {
             Registration form = createRegistrationForm(email, true);
             String orcidId = registrationManager.createMinimalRegistration(form, true, java.util.Locale.ENGLISH, "0.0.0.0");
-            ProfileEntity entity = profileDao.find(orcidId);
-            entity.setClaimed(false);
-            entity.setSource(new SourceEntity(new ClientDetailsEntity(CLIENT_ID_AUTODEPRECATE_DISABLED)));
-            profileDao.merge(entity);
-        } catch(InvalidRequestException e) {
+            markUnclaimedWithSourceClient(orcidId, CLIENT_ID_AUTODEPRECATE_DISABLED);
+        } catch(IllegalArgumentException e) {
             fail();
         } catch(Exception e) {
             fail();
@@ -258,7 +274,7 @@ public class RegistrationManagerImplTest extends DBUnitTest {
             Registration form = createRegistrationForm(email, true);
             registrationManager.createMinimalRegistration(form, true, java.util.Locale.ENGLISH, "0.0.0.0");
             fail();
-        } catch(InvalidRequestException e) {
+        } catch(IllegalArgumentException e) {
             assertEquals("Unable to register user due: Autodeprecate is not enabled for " + email, e.getMessage());
         } catch(Exception e) {
             fail();
@@ -274,11 +290,8 @@ public class RegistrationManagerImplTest extends DBUnitTest {
         try {
             Registration form = createRegistrationForm(email, true);
             String orcidId = registrationManager.createMinimalRegistration(form, true, java.util.Locale.ENGLISH, "0.0.0.0");
-            ProfileEntity entity = profileDao.find(orcidId);
-            entity.setClaimed(false);
-            entity.setSource(new SourceEntity(new ClientDetailsEntity(CLIENT_ID_AUTODEPRECATE_DISABLED)));
-            profileDao.merge(entity);
-        } catch(InvalidRequestException e) {
+            markUnclaimedWithSourceClient(orcidId, CLIENT_ID_AUTODEPRECATE_DISABLED);
+        } catch(IllegalArgumentException e) {
             fail();
         } catch(Exception e) {
             fail();
@@ -293,7 +306,7 @@ public class RegistrationManagerImplTest extends DBUnitTest {
             Registration form = createRegistrationFormMultipleEmails(email2, emailsAdditionalList, true);  
             registrationManager.createMinimalRegistration(form, true, java.util.Locale.ENGLISH, "0.0.0.0");
             fail();
-        } catch(InvalidRequestException e) {
+        } catch(IllegalArgumentException e) {
             assertEquals("Unable to register user due: Autodeprecate is not enabled for " + email, e.getMessage());
         } catch(Exception e) {
             fail();
@@ -309,11 +322,8 @@ public class RegistrationManagerImplTest extends DBUnitTest {
         try {
             Registration form = createRegistrationForm(email, true);
             orcidBefore = registrationManager.createMinimalRegistration(form, true, java.util.Locale.ENGLISH, "0.0.0.0");
-            ProfileEntity entity = profileDao.find(orcidBefore);
-            entity.setClaimed(false);
-            entity.setSource(new SourceEntity(new ClientDetailsEntity(CLIENT_ID_AUTODEPRECATE_ENABLED)));
-            profileDao.merge(entity);
-        } catch(InvalidRequestException e) {
+            markUnclaimedWithSourceClient(orcidBefore, CLIENT_ID_AUTODEPRECATE_ENABLED);
+        } catch(IllegalArgumentException e) {
             fail();
         } catch(Exception e) {
             fail();
@@ -343,11 +353,8 @@ public class RegistrationManagerImplTest extends DBUnitTest {
         try {
             Registration form = createRegistrationForm(email, true);
             orcidBefore = registrationManager.createMinimalRegistration(form, true, java.util.Locale.ENGLISH, "0.0.0.0");
-            ProfileEntity entity = profileDao.find(orcidBefore);
-            entity.setClaimed(false);
-            entity.setSource(new SourceEntity(new ClientDetailsEntity(CLIENT_ID_AUTODEPRECATE_ENABLED)));
-            profileDao.merge(entity);
-        } catch(InvalidRequestException e) {
+            markUnclaimedWithSourceClient(orcidBefore, CLIENT_ID_AUTODEPRECATE_ENABLED);
+        } catch(IllegalArgumentException e) {
             fail();
         } catch(Exception e) {
             fail();
@@ -385,11 +392,8 @@ public class RegistrationManagerImplTest extends DBUnitTest {
         try {
             Registration form = createRegistrationForm(email, true);
             orcid1 = registrationManager.createMinimalRegistration(form, true, java.util.Locale.ENGLISH, "0.0.0.0");
-            ProfileEntity entity = profileDao.find(orcid1);
-            entity.setClaimed(false);
-            entity.setSource(new SourceEntity(new ClientDetailsEntity(CLIENT_ID_AUTODEPRECATE_ENABLED)));
-            profileDao.merge(entity);
-        } catch(InvalidRequestException e) {
+            markUnclaimedWithSourceClient(orcid1, CLIENT_ID_AUTODEPRECATE_ENABLED);
+        } catch(IllegalArgumentException e) {
             fail();
         } catch(Exception e) {
             fail();
@@ -407,11 +411,8 @@ public class RegistrationManagerImplTest extends DBUnitTest {
         try {
             Registration form = createRegistrationForm(email2, true);
             orcid2 = registrationManager.createMinimalRegistration(form, true, java.util.Locale.ENGLISH, "0.0.0.0");
-            ProfileEntity entity = profileDao.find(orcid2);
-            entity.setClaimed(false);
-            entity.setSource(new SourceEntity(new ClientDetailsEntity(CLIENT_ID_AUTODEPRECATE_ENABLED)));
-            profileDao.merge(entity);
-        } catch(InvalidRequestException e) {
+            markUnclaimedWithSourceClient(orcid2, CLIENT_ID_AUTODEPRECATE_ENABLED);
+        } catch(IllegalArgumentException e) {
             fail();
         } catch(Exception e) {
             fail();
@@ -433,7 +434,7 @@ public class RegistrationManagerImplTest extends DBUnitTest {
             Registration form = createRegistrationFormMultipleEmails(email3, emailsAdditionalList, true);
             registrationManager.createMinimalRegistration(form, true, java.util.Locale.ENGLISH, "0.0.0.0");
             fail();
-        } catch(InvalidRequestException e) {
+        } catch(IllegalArgumentException e) {
             assertEquals("Unable to register user due: More than 2 duplicate emails", e.getMessage());
         } catch(Exception e) {
             fail();

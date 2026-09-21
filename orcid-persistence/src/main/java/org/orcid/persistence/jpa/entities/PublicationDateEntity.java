@@ -1,7 +1,7 @@
 package org.orcid.persistence.jpa.entities;
 
-import javax.persistence.Column;
-import javax.persistence.Embeddable;
+import jakarta.persistence.Column;
+import jakarta.persistence.Embeddable;
 
 @Embeddable
 public class PublicationDateEntity extends FuzzyDateEntity {

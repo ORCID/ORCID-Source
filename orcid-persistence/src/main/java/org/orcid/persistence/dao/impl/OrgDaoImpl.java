@@ -3,8 +3,8 @@ package org.orcid.persistence.dao.impl;
 import java.math.BigInteger;
 import java.util.List;
 
-import javax.persistence.Query;
-import javax.persistence.TypedQuery;
+import jakarta.persistence.Query;
+import jakarta.persistence.TypedQuery;
 
 import org.orcid.persistence.dao.OrgDao;
 import org.orcid.persistence.jpa.entities.AmbiguousOrgEntity;
@@ -25,6 +25,7 @@ public class OrgDaoImpl extends GenericDaoImpl<OrgEntity, Long> implements OrgDa
     }
 
     @Override
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     public List<AmbiguousOrgEntity> getAmbiguousOrgs(int firstResult, int maxResults) {
         // Order by ID so we can page through in a predictable way
         TypedQuery<AmbiguousOrgEntity> query = entityManager.createQuery("from AmbiguousOrgEntity order by id", AmbiguousOrgEntity.class);
@@ -34,6 +35,7 @@ public class OrgDaoImpl extends GenericDaoImpl<OrgEntity, Long> implements OrgDa
     }
 
     @Override
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     public List<OrgEntity> getOrgs(String searchTerm, int firstResult, int maxResults) {
         TypedQuery<OrgEntity> query = entityManager.createQuery("from OrgEntity where lower(name) like lower(:searchTerm) || '%' order by name", OrgEntity.class);
         query.setParameter("searchTerm", searchTerm);
@@ -43,6 +45,7 @@ public class OrgDaoImpl extends GenericDaoImpl<OrgEntity, Long> implements OrgDa
     }
 
     @Override
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     public List<OrgEntity> getOrgsByName(String searchTerm) {
         TypedQuery<OrgEntity> query = entityManager.createQuery("from OrgEntity where lower(name) like lower(:searchTerm) order by name", OrgEntity.class);
         query.setParameter("searchTerm", searchTerm);
@@ -50,6 +53,7 @@ public class OrgDaoImpl extends GenericDaoImpl<OrgEntity, Long> implements OrgDa
     }
 
     @Override
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     public OrgEntity findByNameCityRegionAndCountry(String name, String city, String region, String country) {
         TypedQuery<OrgEntity> query = entityManager.createQuery("from OrgEntity where name = :name and city = :city and region = :region and country = :country",
                 OrgEntity.class);
@@ -62,6 +66,7 @@ public class OrgDaoImpl extends GenericDaoImpl<OrgEntity, Long> implements OrgDa
     }
 
     @Override
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     public OrgEntity findByNameCityRegionCountryAndType(String name, String city, String region, String country, String sourceType) {
         TypedQuery<OrgEntity> query = entityManager.createQuery(
                 "from OrgEntity where name = :name and city = :city and region = :region and country = :country and orgDisambiguated.sourceType = :orgType",
@@ -90,6 +95,7 @@ public class OrgDaoImpl extends GenericDaoImpl<OrgEntity, Long> implements OrgDa
     }
 
     @Override
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     public OrgEntity findByAddressAndDisambiguatedOrg(String name, String city, String region, String country, OrgDisambiguatedEntity orgDisambiguated) {
         TypedQuery<OrgEntity> query = entityManager.createQuery(
                 "from OrgEntity where COALESCE(name, '') = :name and COALESCE(city, '') = :city and COALESCE(region, '') = :region and country = :country and (orgDisambiguated.id = :orgDisambiguatedId or (orgDisambiguated is null and :orgDisambiguatedId is null))",
@@ -107,6 +113,7 @@ public class OrgDaoImpl extends GenericDaoImpl<OrgEntity, Long> implements OrgDa
 
     @SuppressWarnings("unchecked")
     @Override
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     public List<BigInteger> getIdsForClientSourceCorrection(int limit, List<String> nonPublicClients) {
         Query query = entityManager.createNativeQuery("SELECT id FROM org WHERE client_source_id = source_id AND client_source_id IN :nonPublicClients");
         query.setParameter("nonPublicClients", nonPublicClients);
@@ -124,6 +131,7 @@ public class OrgDaoImpl extends GenericDaoImpl<OrgEntity, Long> implements OrgDa
 
     @SuppressWarnings("unchecked")
     @Override
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     public List<BigInteger> getIdsForUserSourceCorrection(int limit, List<String> publicClients) {
         Query query = entityManager.createNativeQuery("SELECT id FROM org WHERE client_source_id = source_id AND client_source_id IN :publicClients");
         query.setParameter("publicClients", publicClients);
@@ -141,6 +149,7 @@ public class OrgDaoImpl extends GenericDaoImpl<OrgEntity, Long> implements OrgDa
 
     @SuppressWarnings("unchecked")
     @Override
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     public List<Object[]> findConstraintViolatingDuplicateOrgDetails() {
         Query query = entityManager.createNativeQuery(
                 "SELECT name, CASE WHEN city IS NULL OR city = '' THEN 'nocity' ELSE city END AS citygroup, CASE WHEN region IS NULL OR region = '' THEN 'noregion' ELSE region END AS regiongroup, CASE WHEN country IS NULL OR country = '' THEN 'nocountry' ELSE country END AS countrygroup, org_disambiguated_id FROM org WHERE org_disambiguated_id IS NOT NULL GROUP BY name, citygroup, regiongroup, countrygroup, org_disambiguated_id HAVING COUNT(*) > 1");
@@ -149,6 +158,7 @@ public class OrgDaoImpl extends GenericDaoImpl<OrgEntity, Long> implements OrgDa
 
     @SuppressWarnings("unchecked")
     @Override
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     public List<BigInteger> getOrgIdsForDuplicateOrgDetails(String name, String city, String region, String country, Long orgDisambiguatedId) {
         Query query = entityManager.createNativeQuery(
                 "SELECT id FROM org WHERE COALESCE(name, '') = :name AND COALESCE(city, '') = :city AND COALESCE(region, '') = :region AND COALESCE(country, '') = :country AND COALESCE(org_disambiguated_id, 0) = :orgDisambiguatedId");
@@ -213,6 +223,7 @@ public class OrgDaoImpl extends GenericDaoImpl<OrgEntity, Long> implements OrgDa
 
     @SuppressWarnings("unchecked")
     @Override
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     public List<BigInteger> getIdsOfOrgsReferencingClientProfiles(int max, List<String> clientProfileOrcidIds) {
         Query query = entityManager.createNativeQuery("SELECT id FROM org WHERE source_id IN :ids");
         query.setParameter("ids", clientProfileOrcidIds);
@@ -221,6 +232,7 @@ public class OrgDaoImpl extends GenericDaoImpl<OrgEntity, Long> implements OrgDa
     }
 
     @Override
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     public List<OrgEntity> findByOrgDisambiguatedId(Long orgDisambiguatedId) {
         TypedQuery<OrgEntity> query = entityManager.createQuery("from OrgEntity where orgDisambiguated.id = :orgDisambiguatedId", OrgEntity.class);
         query.setParameter("orgDisambiguatedId", orgDisambiguatedId);
@@ -231,7 +243,7 @@ public class OrgDaoImpl extends GenericDaoImpl<OrgEntity, Long> implements OrgDa
     @Transactional(propagation = Propagation.REQUIRED)
     public void updateOrgDisambiguatedId(long deletedOrgDisambiguatedId, long replacementOrgDisambiguatedId) {
         Query query = entityManager
-                .createQuery("update OrgEntity set orgDisambiguated.id = :replacementOrgDisambiguatedId where orgDisambiguated.id = :deletedOrgDisambiguatedId");
+                .createQuery("update OrgEntity o set o.orgDisambiguated.id = :replacementOrgDisambiguatedId where o.orgDisambiguated.id = :deletedOrgDisambiguatedId");
         query.setParameter("deletedOrgDisambiguatedId", deletedOrgDisambiguatedId);
         query.setParameter("replacementOrgDisambiguatedId", replacementOrgDisambiguatedId);
         query.executeUpdate();

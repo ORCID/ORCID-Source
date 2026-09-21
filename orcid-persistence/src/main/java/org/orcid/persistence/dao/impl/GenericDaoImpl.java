@@ -4,9 +4,9 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
-import javax.annotation.Resource;
-import javax.persistence.EntityManager;
-import javax.persistence.Query;
+import jakarta.annotation.Resource;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.Query;
 
 import org.orcid.persistence.dao.GenericDao;
 import org.orcid.persistence.jpa.entities.OrcidEntity;
@@ -34,12 +34,14 @@ public class GenericDaoImpl<E extends OrcidEntity<I>, I extends Serializable> im
     }
 
     @Override
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     public E find(I id) {
         return entityManager.find(clazz, id);
     }
 
     @SuppressWarnings("unchecked")
     @Override
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     public List<E> findLastModifiedBefore(Date latestDate, int maxResults) {
         Query query = entityManager.createQuery("from " + clazz.getSimpleName() + " where lastModified <= :latestDate");
         query.setParameter("latestDate", latestDate);
@@ -49,6 +51,7 @@ public class GenericDaoImpl<E extends OrcidEntity<I>, I extends Serializable> im
 
     @SuppressWarnings("unchecked")
     @Override
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     public List<E> getAll() {
         return entityManager.createQuery("from " + clazz.getSimpleName()).getResultList();
     }
@@ -79,6 +82,8 @@ public class GenericDaoImpl<E extends OrcidEntity<I>, I extends Serializable> im
     }
     
     @Override
+    @Deprecated
+    @Transactional(propagation = Propagation.REQUIRED)
     public void flushWithoutTransactional() {
         entityManager.flush();
     }
@@ -102,12 +107,13 @@ public class GenericDaoImpl<E extends OrcidEntity<I>, I extends Serializable> im
     }
 
     @Override
+    @Transactional(propagation = Propagation.REQUIRED)
     public void refresh(E e) {
         entityManager.refresh(e);
     }
 
     @Override
-    @Transactional(propagation = Propagation.REQUIRED)
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     public Long countAll() {
         return (Long) entityManager.createQuery("select count(e) from " + clazz.getSimpleName() + " e").getSingleResult();
     }

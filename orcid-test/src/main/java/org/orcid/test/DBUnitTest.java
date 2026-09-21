@@ -2,10 +2,11 @@ package org.orcid.test;
 
 import static org.junit.Assert.fail;
 
+import java.io.File;
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.List;
+import java.util.UUID;
 
 import org.dbunit.DatabaseUnitException;
 import org.dbunit.database.AmbiguousTableNameException;
@@ -22,8 +23,8 @@ import org.junit.Ignore;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.cache.jcache.JCacheCacheManager;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
-import org.springframework.jdbc.datasource.DriverManagerDataSource;
+import org.springframework.context.support.GenericXmlApplicationContext;
+import javax.sql.DataSource;
 import org.springframework.test.context.ActiveProfiles;
 
 /**
@@ -38,35 +39,44 @@ import org.springframework.test.context.ActiveProfiles;
 @ActiveProfiles("unitTests")
 public class DBUnitTest {
 
-    private static final String TEST_DB_CONTEXT = "classpath:test-db-context.xml";
     private static final String TEST_CORE_CONTEXT = "classpath:test-core-context.xml";
+    private static final String TEST_DB_CONTEXT = "classpath:test-db-context.xml";
 
     private static final String[] tables = new String[] { "profile", "orcid_social", "profile_event", "work", "researcher_url",
             "given_permission_to", "external_identifier", "email", "email_domain", "email_event", "biography", "record_name", "other_name", "profile_keyword", "profile_patent",
             "org_disambiguated", "org_disambiguated_external_identifier", "org", "org_affiliation_relation", "profile_funding", "funding_external_identifier", "address",
             "institution", "affiliation", "notification", "client_details", "client_secret", "oauth2_token_detail", "custom_email", "webhook", "granted_authority",
             "orcid_props", "peer_review", "peer_review_subject", "shibboleth_account", "group_id_record", "invalid_record_data_changes",
-            "research_resource","research_resource_item, spam", "backup_code", "profile_history_event", "event"};
+            "research_resource", "research_resource_item", "spam", "backup_code", "profile_history_event", "event"};
 
     private static ApplicationContext context;
 
-    static {        
+    static {
+        String ehcacheTestDir = System.getProperty("java.io.tmpdir") + File.separator + "ehcache-tests" + File.separator + UUID.randomUUID();
+        System.setProperty("org.orcid.ehcache.dir", ehcacheTestDir);
+        System.setProperty("spring.profiles.active", "unitTests");
+
         try {
-            context = new ClassPathXmlApplicationContext(TEST_CORE_CONTEXT);
-        } catch (Exception e) {            
+            context = loadContext(TEST_CORE_CONTEXT);
+        } catch (Exception e) {
             try {
-                context = new ClassPathXmlApplicationContext(TEST_DB_CONTEXT);
+                context = loadContext(TEST_DB_CONTEXT);
             } catch (Exception e2) {
-                System.out.println("Initial error: ");
+                System.out.println("Initial error loading " + TEST_CORE_CONTEXT + ": ");
                 e.printStackTrace();
-                System.out.println();
-                System.out.println();
-                System.out.println();
-                System.out.println("Second error: ");
+                System.out.println("\nSecond error loading " + TEST_DB_CONTEXT + ": ");
                 e2.printStackTrace();
-                fail();
+                fail("Failed to load Spring Application Context for DBUnitTest");
             }
-        }                      
+        }
+    }
+
+    private static ApplicationContext loadContext(String contextPath) {
+        GenericXmlApplicationContext ctx = new GenericXmlApplicationContext();
+        ctx.getEnvironment().setActiveProfiles("unitTests");
+        ctx.load(contextPath);
+        ctx.refresh();
+        return ctx;
     }
 
     public static void initDBUnitData(List<String> flatXMLDataFiles) throws Exception {
@@ -77,6 +87,9 @@ public class DBUnitTest {
         for (String flatXMLDataFile : flatXMLDataFiles) {
             DatabaseOperation.INSERT.execute(connection, getDataSet(flatXMLDataFile));
         }
+        if (!connection.getConnection().getAutoCommit()) {
+            connection.getConnection().commit();
+        }
         connection.close();
     }
 
@@ -84,6 +97,9 @@ public class DBUnitTest {
         IDatabaseConnection connection = getDBConnection();
         cleanClientSourcedProfiles(connection);
         cleanAll(connection);
+        if (!connection.getConnection().getAutoCommit()) {
+            connection.getConnection().commit();
+        }
         connection.close();
     }
 
@@ -103,21 +119,24 @@ public class DBUnitTest {
     }
 
     private static void clearCaches(JCacheCacheManager springCoreCacheManager) {
-        for(String cacheName: springCoreCacheManager.getCacheNames()) {
+        for (String cacheName: springCoreCacheManager.getCacheNames()) {
             org.springframework.cache.Cache cache = springCoreCacheManager.getCache(cacheName);
-            cache.clear();
+            if (cache != null) {
+                cache.clear();
+            }
         }
     }
 
     private static void clearCaches(CacheManager cacheManager) {
         cacheManager.getRuntimeConfiguration().getCacheConfigurations().forEach((alias, config) -> {
             Cache<?, ?> cache = cacheManager.getCache(alias, config.getKeyType(), config.getValueType());
-            cache.clear(); 
+            if (cache != null) {
+                cache.clear(); 
+            }
         });
     }
 
     private static void cleanClientSourcedProfiles(IDatabaseConnection connection) throws AmbiguousTableNameException, DatabaseUnitException, SQLException {
-        
         QueryDataSet grandChildTableSet = new QueryDataSet(connection);
         grandChildTableSet.addTable("research_resource_item_org");
         grandChildTableSet.addTable("client_secret");
@@ -173,7 +192,6 @@ public class DBUnitTest {
         theRest.addTable("client_secret");
         theRest.addTable("custom_email");
         DatabaseOperation.DELETE.execute(connection, theRest);
-        
     }
 
     private static void cleanAll(IDatabaseConnection connection) throws DatabaseUnitException, SQLException {
@@ -185,7 +203,8 @@ public class DBUnitTest {
     }
 
     public static IDatabaseConnection getDBConnection() throws Exception {
-        DriverManagerDataSource dataSource = (DriverManagerDataSource) context.getBean("simpleDataSource");
+        String dataSourceBeanName = context.getEnvironment().getProperty("org.orcid.persistence.db.dataSource", "pooledDataSource");
+        DataSource dataSource = (DataSource) context.getBean(dataSourceBeanName);
         Connection jdbcConnection = dataSource.getConnection();
         IDatabaseConnection connection = new DatabaseConnection(jdbcConnection);
         connection.getConfig().setProperty(DatabaseConfig.PROPERTY_DATATYPE_FACTORY, new CustomDataTypeFactory());

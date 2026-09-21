@@ -6,7 +6,7 @@ import org.orcid.core.manager.v3.read_only.ProfileInterstitialFlagManagerReadOnl
 import org.orcid.persistence.dao.ProfileInterstitialFlagDao;
 import org.orcid.persistence.jpa.entities.ProfileInterstitialFlagEntity;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 import java.util.ArrayList;
 import java.util.List;
 

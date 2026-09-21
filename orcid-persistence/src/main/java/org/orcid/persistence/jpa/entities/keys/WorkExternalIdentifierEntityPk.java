@@ -2,7 +2,7 @@ package org.orcid.persistence.jpa.entities.keys;
 
 import java.io.Serializable;
 
-import javax.persistence.Embeddable;
+import jakarta.persistence.Embeddable;
 
 /**
  * @author Declan Newman (declan) Date: 07/08/2012

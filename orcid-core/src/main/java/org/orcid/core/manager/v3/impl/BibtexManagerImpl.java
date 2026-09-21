@@ -3,8 +3,8 @@ package org.orcid.core.manager.v3.impl;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.annotation.Resource;
-import javax.persistence.NoResultException;
+import jakarta.annotation.Resource;
+import jakarta.persistence.NoResultException;
 
 import org.orcid.core.manager.DOIManager;
 import org.orcid.core.manager.v3.ActivitiesSummaryManager;
@@ -158,16 +158,20 @@ public class BibtexManagerImpl extends ManagerReadOnlyBaseImpl implements Bibtex
         //title
         out.append(",\ntitle={"+escapeStringForBibtex((work.getWorkTitle() != null) ? work.getWorkTitle().getTitle().getContent() : "No Title")+"}");        
         //journal title
-        if (work.getJournalTitle() != null) {
+        if (work.getJournalTitle() != null && work.getJournalTitle().getContent() != null && !work.getJournalTitle().getContent().trim().isEmpty()) {
             out.append(",\njournal={"+escapeStringForBibtex(work.getJournalTitle().getContent())+"}");
         }
         //name
         List<String> names = new ArrayList<String>();
-        names.add(creditName);
+        if (creditName != null) {
+            names.add(creditName.trim());
+        }
         if (work.getWorkContributors() != null && work.getWorkContributors().getContributor() != null) {
             for (Contributor c : work.getWorkContributors().getContributor()) {
                 if (c.getCreditName() != null && c.getCreditName().getContent() != null) {
-                    names.add(c.getCreditName().getContent());
+                    if(!names.contains(c.getCreditName().getContent().trim())) {
+                        names.add(c.getCreditName().getContent().trim());
+                    }
                 } else if (c.getContributorOrcid() != null && c.getContributorOrcid().getPath() != null) {
                     try {
                         String contributor = getCreditName(c.getContributorOrcid().getPath());

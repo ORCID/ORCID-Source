@@ -2,7 +2,7 @@ package org.orcid.scheduler.report;
 
 import java.time.LocalDate;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 
 import org.orcid.core.api.rate_limit.PapiRateLimitRedisClient;
 import org.orcid.core.togglz.Features;
@@ -96,7 +96,9 @@ public class PapiDailyLimitReport {
                 slackManager.sendAlert(SLACK_STATS_MSG, slackChannel, webhookUrl, webhookUrl);
             }
             catch (Exception ex) {
+                LOG.error("Exception when storing papi limit redis data to DB." , ex);
                 slackManager.sendAlert("!!!!! Exception when storing papi limit redis data to DB. Check the logs" + "\n" + ex.toString() , slackChannel, webhookUrl, webhookUrl);
+
             }
         }
 

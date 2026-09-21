@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 
 import org.apache.commons.lang.RandomStringUtils;
 import org.orcid.core.manager.BackupCodeManager;
@@ -59,6 +59,11 @@ public class BackupCodeManagerImpl implements BackupCodeManager {
     @Override
     public void removeUnusedBackupCodes(String orcid) {
         backupCodeDao.removedUsedBackupCodes(orcid);
+    }
+
+    @Override
+    public Date getBackupCodesCreationDate(String orcid) {
+        return backupCodeDao.getBackupCodesCreationDate(orcid);
     }
 
 

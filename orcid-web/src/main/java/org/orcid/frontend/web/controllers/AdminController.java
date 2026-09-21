@@ -1,38 +1,28 @@
 package org.orcid.frontend.web.controllers;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
-import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.StringTokenizer;
-
-import javax.annotation.Resource;
-import javax.persistence.NoResultException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.MediaType;
-
-import org.apache.commons.codec.binary.Base64;
+import jakarta.annotation.Resource;
+import jakarta.persistence.NoResultException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.core.MediaType;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.math3.util.Pair;
 import org.orcid.core.manager.AdminManager;
-import org.orcid.core.manager.EncryptionManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.TwoFactorAuthenticationManager;
-import org.orcid.core.manager.v3.*;
+import org.orcid.core.manager.v3.ClientDetailsManager;
+import org.orcid.core.manager.v3.ClientManager;
+import org.orcid.core.manager.v3.ProfileEntityManager;
+import org.orcid.core.manager.v3.SpamManager;
 import org.orcid.core.manager.v3.read_only.ClientManagerReadOnly;
 import org.orcid.core.manager.v3.read_only.RecordNameManagerReadOnly;
 import org.orcid.core.togglz.Features;
 import org.orcid.core.utils.VerifyEmailUtils;
+import org.orcid.core.utils.cache.redis.RedisClient;
 import org.orcid.frontend.email.RecordEmailSender;
 import org.orcid.frontend.web.util.PasswordConstants;
+import org.orcid.core.utils.cache.redis.PasswordResetTokenEntry;
 import org.orcid.jaxb.model.clientgroup.ClientType;
 import org.orcid.jaxb.model.clientgroup.MemberType;
 import org.orcid.jaxb.model.common.OrcidType;
@@ -43,18 +33,11 @@ import org.orcid.jaxb.model.v3.release.record.Name;
 import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
-import org.orcid.pojo.AdminChangePassword;
-import org.orcid.pojo.AdminDelegatesRequest;
-import org.orcid.pojo.AdminResetPasswordLink;
-import org.orcid.pojo.ConvertClient;
-import org.orcid.pojo.LockAccounts;
-import org.orcid.pojo.ProfileDeprecationRequest;
-import org.orcid.pojo.ProfileDetails;
-import org.orcid.pojo.RemoveEmailsResponse;
-import org.orcid.pojo.RemoveEmailsRequest;
+import org.orcid.pojo.*;
 import org.orcid.pojo.ajaxForm.Client;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.pojo.ajaxForm.RedirectUri;
+import org.orcid.utils.ExpiringLinkService;
 import org.orcid.utils.OrcidStringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -62,13 +45,15 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
+import com.nimbusds.jose.JOSEException;
+
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * @author Angel Montenegro
@@ -106,6 +91,15 @@ public class AdminController extends BaseController {
 
     @Resource
     private TwoFactorAuthenticationManager twoFactorAuthenticationManager;
+
+    @Resource
+    private ExpiringLinkService expiringLinkService;
+
+    @Resource
+    private RedisClient redisClient;
+
+    @Value("${org.orcid.utils.adminJwtExpirationInMinutes:1440}")
+    private long adminJwtExpirationInMinutes;
 
     @Value("${org.orcid.admin.registry.url:https://orcid.org}")
     private String registryUrl;
@@ -734,12 +728,22 @@ public class AdminController extends BaseController {
         }
 
         if (!PojoUtil.isEmpty(orcid) && profileEntityManager.orcidExists(orcid)) {
-            Pair<String, Date> resetLinkData = verifyEmailUtils.createResetLinkForAdmin(orcid, registryUrl);
-            LOGGER.debug("Reset link to be sent to the client: " + resetLinkData.getKey());
+            String token;
+            try {
+                token = expiringLinkService.generateExpiringToken(orcid, adminJwtExpirationInMinutes, ExpiringLinkService.ExpiringLinkType.PASSWORD_RESET);
+                redisClient.set(PasswordResetTokenEntry.redisKey(orcid), new PasswordResetTokenEntry(token, false).serialize(), (int) (adminJwtExpirationInMinutes * 60));
+            } catch (JOSEException e) {
+                LOGGER.error("Failed to generate password reset token for admin", e);
+                form.setError(getMessage("admin.errors.unable_to_fetch_info"));
+                return form;
+            }
 
-            form.setResetLink(resetLinkData.getKey());
-            form.setIssueDate(resetLinkData.getValue());
-            form.setDurationInHours(RESET_PASSWORD_LINK_DURATION);
+            String resetUrl = registryUrl + "/reset-password-email/" + token;
+            LOGGER.debug("Reset link to be sent to the client: " + resetUrl);
+
+            form.setResetLink(resetUrl);
+            form.setIssueDate(new Date());
+            form.setDurationInHours((int) (adminJwtExpirationInMinutes / 60));
 
         } else {
             form.setError(getMessage("admin.errors.unexisting_orcid"));
@@ -1355,31 +1359,68 @@ public class AdminController extends BaseController {
     public ResponseEntity<RemoveEmailsResponse> removeEmails(
             HttpServletRequest serverRequest,
             HttpServletResponse serverResponse,
-            @RequestBody RemoveEmailsRequest removeEmails
+            @RequestBody RemoveEmailsRequest removeEmailsRequest
     ) throws IllegalAccessException {
         isAdmin(serverRequest, serverResponse);
 
-        if (removeEmails == null || removeEmails.getEmailsToRemove() == null || removeEmails.getEmailsToRemove().isEmpty()) {
-            return ResponseEntity.badRequest().body(new RemoveEmailsResponse("emailsToRemove cannot be empty", null));
+        if (removeEmailsRequest == null
+                || StringUtils.isBlank(removeEmailsRequest.getOrcid())
+                || removeEmailsRequest.getEmailsToRemove() == null
+                || removeEmailsRequest.getEmailsToRemove().isEmpty()) {
+            return ResponseEntity.badRequest()
+                    .body(new RemoveEmailsResponse("orcid and emailsToRemove are required", null));
         }
 
+        String orcid = removeEmailsRequest.getOrcid();
+
         try {
-            List<String> remainingEmails = emailManager.removeEmails(
-                    removeEmails.getOrcid(),
-                    removeEmails.getEmailsToRemove()
-            );
+            Email oldPrimary = findPrimaryEmail(emailManager.getEmails(orcid));
+            List<Email> remainingEmails = emailManager.removeEmails(orcid, removeEmailsRequest.getEmailsToRemove());
+            Email newPrimary = findPrimaryEmail(remainingEmails);
+
+            if (oldPrimary != null
+                    && newPrimary != null
+                    && !StringUtils.equals(oldPrimary.getEmail(), newPrimary.getEmail())) {
+                recordEmailSender.sendVerificationEmail(orcid, newPrimary.getEmail(), true);
+            }
+
+            List<String> remainingEmailValues = remainingEmails.stream()
+                    .map(Email::getEmail)
+                    .collect(Collectors.toList());
 
             return ResponseEntity.ok(new RemoveEmailsResponse(
                     "Emails removed successfully.",
-                    remainingEmails
+                    remainingEmailValues
             ));
-
         } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest().body(new RemoveEmailsResponse(e.getMessage(), null));
-
+            return ResponseEntity.badRequest()
+                    .body(new RemoveEmailsResponse(e.getMessage(), null));
         } catch (Exception e) {
+            LOGGER.error("Error removing emails for orcid {}", orcid, e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(new RemoveEmailsResponse("Unexpected error: " + e.getMessage(), null));
+                    .body(new RemoveEmailsResponse("An unexpected error occurred", null));
         }
+    }
+
+    private Email findPrimaryEmail(Emails emails) {
+        if (emails == null || emails.getEmails() == null) {
+            return null;
+        }
+
+        return emails.getEmails().stream()
+                .filter(Email::isPrimary)
+                .findFirst()
+                .orElse(null);
+    }
+
+    private Email findPrimaryEmail(List<Email> emails) {
+        if (emails == null || emails.isEmpty()) {
+            return null;
+        }
+
+        return emails.stream()
+                .filter(Email::isPrimary)
+                .findFirst()
+                .orElse(null);
     }
 }

@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang3.StringUtils;
@@ -24,7 +24,6 @@ import org.orcid.jaxb.model.v3.release.record.Email;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.pojo.AdminDelegatesRequest;
 import org.orcid.pojo.ProfileDeprecationRequest;
-import org.springframework.transaction.annotation.Transactional;
 
 public class AdminManagerImpl implements AdminManager {
     public static final String AUTHORIZE_DELEGATION_ACTION = "/account/authorize-delegates";
@@ -54,13 +53,11 @@ public class AdminManagerImpl implements AdminManager {
     private ProfileEntityCacheManager profileEntityCacheManager;
     
     @Override    
-    @Transactional
     public boolean deprecateProfile(ProfileDeprecationRequest result, String deprecatedOrcid, String primaryOrcid, String adminUser) {        
         return deprecateProfile(result, deprecatedOrcid, primaryOrcid, ProfileEntity.ADMIN_DEPRECATION, adminUser);
     }
     
     @Override    
-    @Transactional
     public boolean autoDeprecateProfile(ProfileDeprecationRequest result, String deprecatedOrcid, String primaryOrcid) {        
         return deprecateProfile(result, deprecatedOrcid, primaryOrcid, ProfileEntity.AUTO_DEPRECATION, null);
     }
@@ -148,7 +145,6 @@ public class AdminManagerImpl implements AdminManager {
     }
 
     @Override
-    @Transactional
     public boolean updateDeprecation(ProfileDeprecationRequest result, String deprecatedOrcid, String primaryOrcid) {
         return handleDeprecation(result, deprecatedOrcid, primaryOrcid, null, null, false);
     }

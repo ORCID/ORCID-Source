@@ -224,9 +224,7 @@ public class ProfileEmailDomainManagerTest {
 
     @Test
     public void updateEmailDomains_removeDomain() {
-        org.orcid.pojo.ajaxForm.Emails emails = new org.orcid.pojo.ajaxForm.Emails();
-        emails.setEmailDomains(List.of(new ProfileEmailDomain()));
-        pedm.updateEmailDomains(ORCID, emails, new org.orcid.jaxb.model.v3.release.record.Emails());
+        pedm.updateEmailDomains(ORCID, null, new org.orcid.jaxb.model.v3.release.record.Emails());
         verify(profileEmailDomainDaoMock, never()).updateVisibility(anyString(), anyString(), anyString());
         verify(profileEmailDomainDaoMock, times(1)).removeEmailDomain(ORCID, EMAIL_DOMAIN);
         verify(profileEmailDomainDaoMock, times(1)).removeEmailDomain(ORCID, EMAIL_DOMAIN_TWO);

@@ -18,9 +18,9 @@ package org.orcid.activitiesindexer.listener;
 
 import java.util.Map;
 
-import javax.annotation.Resource;
-import javax.jms.Message;
-import javax.jms.MessageListener;
+import jakarta.annotation.Resource;
+import jakarta.jms.Message;
+import jakarta.jms.MessageListener;
 
 import org.orcid.utils.listener.LastModifiedMessage;
 import org.slf4j.Logger;

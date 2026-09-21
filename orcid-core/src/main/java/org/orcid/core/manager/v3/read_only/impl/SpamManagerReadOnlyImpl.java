@@ -1,6 +1,6 @@
 package org.orcid.core.manager.v3.read_only.impl;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 
 import org.orcid.core.adapter.v3.JpaJaxbSpamAdapter;
 import org.orcid.core.manager.v3.ProfileEntityManager;

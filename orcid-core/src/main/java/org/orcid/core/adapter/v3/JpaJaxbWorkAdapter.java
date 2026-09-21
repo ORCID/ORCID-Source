@@ -2,7 +2,9 @@ package org.orcid.core.adapter.v3;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
+import org.orcid.jaxb.model.v3.release.common.Source;
 import org.orcid.jaxb.model.v3.release.record.Work;
 import org.orcid.jaxb.model.v3.release.record.summary.WorkSummary;
 import org.orcid.persistence.jpa.entities.MinimizedExtendedWorkEntity;
@@ -33,6 +35,8 @@ public interface JpaJaxbWorkAdapter {
     List<WorkSummary> toWorkSummary(Collection<WorkEntity> workEntities);
     
     List<WorkSummary> toWorkSummaryFromMinimized(Collection<MinimizedWorkEntity> workEntities);
+
+    List<WorkSummary> toWorkSummaryFromMinimized(Collection<MinimizedWorkEntity> workEntities, Map<String, Source> sources);
 
     List<WorkSummaryExtended> toWorkSummaryExtendedFromMinimized(Collection<MinimizedExtendedWorkEntity> workEntities);
 

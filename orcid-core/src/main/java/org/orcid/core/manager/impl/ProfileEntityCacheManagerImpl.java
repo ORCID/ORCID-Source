@@ -1,12 +1,11 @@
 package org.orcid.core.manager.impl;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 
 import org.orcid.core.cache.GenericCacheManager;
 import org.orcid.core.cache.OrcidString;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
-import org.springframework.transaction.annotation.Transactional;
 
 public class ProfileEntityCacheManagerImpl implements ProfileEntityCacheManager {
 
@@ -14,7 +13,6 @@ public class ProfileEntityCacheManagerImpl implements ProfileEntityCacheManager 
     private GenericCacheManager<OrcidString, ProfileEntity> profileEntityGenericCacheManager;
     
     @Override
-    @Transactional
     public ProfileEntity retrieve(String orcid) throws IllegalArgumentException {
         ProfileEntity profileEntity = profileEntityGenericCacheManager.retrieve(new OrcidString(orcid));
         if (profileEntity == null) {

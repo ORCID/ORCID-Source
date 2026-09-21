@@ -35,7 +35,7 @@ import org.orcid.persistence.jpa.entities.EmailDomainEntity;
 
 import liquibase.repackaged.org.apache.commons.lang3.StringUtils;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 
 public class PersonDetailsManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements PersonDetailsManagerReadOnly {
 
@@ -156,7 +156,7 @@ public class PersonDetailsManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl im
         Person person = new Person();
 
         Name name = recordNameManager.getRecordName(orcid);
-        if (Visibility.PUBLIC.equals(name.getVisibility())) {
+        if (name != null && Visibility.PUBLIC.equals(name.getVisibility())) {
             person.setName(name);
         }
 

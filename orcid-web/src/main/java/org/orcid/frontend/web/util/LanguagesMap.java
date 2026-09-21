@@ -3,6 +3,7 @@ package org.orcid.frontend.web.util;
 import java.util.Locale;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.commons.lang.WordUtils;
 import org.apache.commons.lang3.LocaleUtils;
@@ -24,7 +25,7 @@ public class LanguagesMap {
      * "Language Variant (Country) and the key will look like "
      * language-code_country-code_variant_code"
      * */
-    private static Map<String, Map<String, String>> i18nLanguagesMap = new TreeMap<String, Map<String, String>>();
+    private static final Map<String, Map<String, String>> i18nLanguagesMap = new ConcurrentHashMap<String, Map<String, String>>();
 
     private static final Locale[] orcidLocales = getLanguages();
 
@@ -50,14 +51,10 @@ public class LanguagesMap {
     	if (locale == null)
             locale = Locale.US;
 
-        if (i18nLanguagesMap.containsKey(locale.toString()))
-            return i18nLanguagesMap.get(locale.toString());
-        else {
-            Map<String, String> newLanguageMap = buildLanguageMap(locale, true);
-            i18nLanguagesMap.put(locale.toString(), newLanguageMap);
-            return newLanguageMap;
-        }
-    }    
+        final Locale resolvedLocale = locale;
+        return i18nLanguagesMap.computeIfAbsent(resolvedLocale.toString(),
+                key -> buildLanguageMap(resolvedLocale, true));
+    }
     
     /**
      * Builds a map that contains the available languages for the given locale

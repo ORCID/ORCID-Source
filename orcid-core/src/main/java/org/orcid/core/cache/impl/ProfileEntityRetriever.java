@@ -16,7 +16,7 @@
  */
 package org.orcid.core.cache.impl;
 
-import javax.transaction.Transactional;
+import jakarta.transaction.Transactional;
 
 import org.orcid.core.cache.OrcidString;
 import org.orcid.core.cache.Retriever;

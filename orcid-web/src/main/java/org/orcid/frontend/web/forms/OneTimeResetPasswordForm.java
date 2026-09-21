@@ -2,30 +2,40 @@ package org.orcid.frontend.web.forms;
 
 import java.util.List;
 
-import org.orcid.pojo.ajaxForm.ErrorsInterface;
+import org.orcid.pojo.AuthChallenge;
 import org.orcid.pojo.ajaxForm.Text;
 
-public class OneTimeResetPasswordForm implements ErrorsInterface {
+public class OneTimeResetPasswordForm extends AuthChallenge {
 
-    private Text password;
+    private String orcid;
+
+    private Text newPassword;
 
     private Text retypedPassword;
 
-    private String encryptedEmail;
+    private String token;
     
     private String successRedirectLocation;
     
     private List<String> errors;
 
-    public Text getPassword() {
-        if (password == null) {
-            password = new Text();
+    public Text getNewPassword() {
+        if (newPassword == null) {
+            newPassword = new Text();
         }
-        return password;
+        return newPassword;
     }
 
-    public void setPassword(Text password) {
-        this.password = password;
+    public void setNewPassword(Text newPassword) {
+        this.newPassword = newPassword;
+    }
+
+    public String getOrcid() {
+        return orcid;
+    }
+
+    public void setOrcid(String orcid) {
+        this.orcid = orcid;
     }
 
     public Text getRetypedPassword() {
@@ -47,12 +57,12 @@ public class OneTimeResetPasswordForm implements ErrorsInterface {
         this.errors = errors;
     }
     
-    public String getEncryptedEmail() {
-        return encryptedEmail;
+    public String getToken() {
+        return token;
     }
 
-    public void setEncryptedEmail(String encryptedEmail) {
-        this.encryptedEmail = encryptedEmail;
+    public void setToken(String token) {
+        this.token = token;
     }
 
     public String getSuccessRedirectLocation() {

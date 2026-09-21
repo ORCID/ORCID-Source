@@ -1,13 +1,14 @@
 package org.orcid.api.common.filter;
 
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.container.ContainerRequestContext;
-import javax.ws.rs.container.ContainerRequestFilter;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.ext.Provider;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.ws.rs.container.ContainerRequestContext;
+import jakarta.ws.rs.container.ContainerRequestFilter;
+import jakarta.ws.rs.core.Context;
+import jakarta.ws.rs.ext.Provider;
 
 import org.orcid.core.exception.OrcidBadRequestException;
 import org.orcid.core.locale.LocaleManager;
@@ -30,7 +31,12 @@ public class ApiVersionCheckFilter implements ContainerRequestFilter{
 
     private static final String WEBHOOKS_PATH_PATTERN = OrcidStringUtils.ORCID_STRING + "/webhook/.+";
     
-    private static final String MEMBER_INFO_PATH = "member-info";
+    /**
+     * Paths served without a version prefix. They are allowed to use verbs other than GET without
+     * carrying a version in the URL.
+     */
+    private static final Set<String> UNVERSIONED_PATHS = Set.of("oauth/token", "member-info", "account-recovery/match",
+            "account-recovery/reset-link");
     
     public ApiVersionCheckFilter() {
     }
@@ -53,7 +59,7 @@ public class ApiVersionCheckFilter implements ContainerRequestFilter{
         if (matcher.lookingAt()) {
             version = matcher.group(1);
         }
-        if(PojoUtil.isEmpty(version) && !PojoUtil.isEmpty(method) && !"oauth/token".equals(path) && !MEMBER_INFO_PATH.equals(path) && !path.matches(WEBHOOKS_PATH_PATTERN)) {
+        if(PojoUtil.isEmpty(version) && !PojoUtil.isEmpty(method) && !UNVERSIONED_PATHS.contains(path) && !path.matches(WEBHOOKS_PATH_PATTERN)) {
             if(!RequestMethod.GET.name().equals(method)) {
                 Object params[] = {method};
                 throw new OrcidBadRequestException(localeManager.resolveMessage("apiError.badrequest_missing_version.exception", params));    

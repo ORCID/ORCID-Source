@@ -2,10 +2,11 @@ package org.orcid.persistence.dao.impl;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
-import javax.persistence.Query;
-import javax.persistence.TypedQuery;
+import jakarta.persistence.Query;
+import jakarta.persistence.TypedQuery;
 
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
@@ -31,6 +32,7 @@ public class OrgDisambiguatedDaoImpl extends GenericDaoImpl<OrgDisambiguatedEnti
     }
 
     @Override
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     public OrgDisambiguatedEntity findBySourceIdAndSourceType(String sourceId, String sourceType) {
         TypedQuery<OrgDisambiguatedEntity> query = entityManager.createQuery("from OrgDisambiguatedEntity where sourceId = :sourceId and sourceType = :sourceType",
                 OrgDisambiguatedEntity.class);
@@ -41,6 +43,7 @@ public class OrgDisambiguatedDaoImpl extends GenericDaoImpl<OrgDisambiguatedEnti
     }
     
     @Override
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     public List<OrgDisambiguatedEntity> findBySourceType(String sourceType, int firstResult, int maxResults){
         TypedQuery<OrgDisambiguatedEntity> query = entityManager.createQuery("from OrgDisambiguatedEntity where sourceType = :sourceType",
                 OrgDisambiguatedEntity.class);
@@ -51,6 +54,7 @@ public class OrgDisambiguatedDaoImpl extends GenericDaoImpl<OrgDisambiguatedEnti
     }
 
     @Override
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     public List<OrgDisambiguatedEntity> getChunk(int firstResult, int maxResults) {
         // Order by id so that we can page through in a predictable way
         TypedQuery<OrgDisambiguatedEntity> query = entityManager.createQuery("from OrgDisambiguatedEntity order by id", OrgDisambiguatedEntity.class);
@@ -60,6 +64,7 @@ public class OrgDisambiguatedDaoImpl extends GenericDaoImpl<OrgDisambiguatedEnti
     }
 
     @Override
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     public OrgDisambiguatedEntity findByNameCityRegionCountryAndSourceType(String name, String city, String region, String country, String sourceType) {
         TypedQuery<OrgDisambiguatedEntity> query = entityManager.createQuery(
                 "from OrgDisambiguatedEntity where name = :name and city = :city and (region = :region or (region is null and :region is null)) and country = :country and sourceType = :sourceType",
@@ -74,6 +79,7 @@ public class OrgDisambiguatedDaoImpl extends GenericDaoImpl<OrgDisambiguatedEnti
     }
 
     @Override
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     public List<OrgDisambiguatedEntity> findByName(String name) {
         TypedQuery<OrgDisambiguatedEntity> query = entityManager.createQuery("from OrgDisambiguatedEntity where lower(name) = lower(:name)",
                 OrgDisambiguatedEntity.class);
@@ -84,6 +90,7 @@ public class OrgDisambiguatedDaoImpl extends GenericDaoImpl<OrgDisambiguatedEnti
 
     @SuppressWarnings("unchecked")
     @Override
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     @Cacheable("orgs")
     public List<OrgDisambiguatedEntity> getOrgs(String searchTerm, int firstResult, int maxResults) {
         String qStr = "select od.*, COUNT(*) as countAll from org_disambiguated od left join org_affiliation_relation oa on od.id = oa.org_id"
@@ -100,6 +107,7 @@ public class OrgDisambiguatedDaoImpl extends GenericDaoImpl<OrgDisambiguatedEnti
 
     @SuppressWarnings("unchecked")
     @Override
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     public List<OrgDisambiguatedEntity> findOrgsToGroup(int firstResult, int maxResult) {
         Query query = entityManager.createNativeQuery(GROUPING_ORGS_QUERY, OrgDisambiguatedEntity.class);
         query.setFirstResult(firstResult);
@@ -108,6 +116,7 @@ public class OrgDisambiguatedDaoImpl extends GenericDaoImpl<OrgDisambiguatedEnti
     }
 
     @Override
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     public List<Long> findOrgsPendingIndexing(int maxResult) {
         TypedQuery<Long> query = entityManager.createQuery("select o.id from OrgDisambiguatedEntity o where indexingStatus not in ('DONE', 'IGNORE') order by dateCreated",
                 Long.class);
@@ -118,19 +127,23 @@ public class OrgDisambiguatedDaoImpl extends GenericDaoImpl<OrgDisambiguatedEnti
     @Override
     @Transactional
     public void updateIndexingStatus(Long orgDisambiguatedId, IndexingStatus indexingStatus) {
-        String queryString = null;
+        String queryString;
         if (IndexingStatus.DONE.equals(indexingStatus)) {
-            queryString = "update OrgDisambiguatedEntity set indexingStatus = :indexingStatus, lastIndexedDate = now() where id = :orgDisambiguatedId";
+            queryString = "update OrgDisambiguatedEntity set indexingStatus = :indexingStatus, lastIndexedDate = :lastIndexedDate where id = :orgDisambiguatedId";
         } else {
             queryString = "update OrgDisambiguatedEntity set indexingStatus = :indexingStatus where id = :orgDisambiguatedId";
         }
         Query query = entityManager.createQuery(queryString);
         query.setParameter("orgDisambiguatedId", orgDisambiguatedId);
         query.setParameter("indexingStatus", indexingStatus);
+        if (IndexingStatus.DONE.equals(indexingStatus)) {
+            query.setParameter("lastIndexedDate", new Date());
+        }
         query.executeUpdate();
     }
 
     @Override
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     public List<Pair<Long, Integer>> findDisambuguatedOrgsWithIncorrectPopularity(int maxResults) {
         Query query = entityManager.createNativeQuery("SELECT od1.id, actual.popularity FROM org_disambiguated od1 JOIN"
                 + " (SELECT od2.id id, COUNT(*) popularity FROM org_disambiguated od2 JOIN org o ON o.org_disambiguated_id = od2.id JOIN org_affiliation_relation oar ON oar.org_id = o.id GROUP BY od2.id)"
@@ -140,8 +153,8 @@ public class OrgDisambiguatedDaoImpl extends GenericDaoImpl<OrgDisambiguatedEnti
         List<Object[]> results = query.getResultList();
         List<Pair<Long, Integer>> pairs = new ArrayList<>();
         for (Object[] row : results) {
-            Long id = ((BigInteger) row[0]).longValue();
-            Integer popularity = ((BigInteger) row[1]).intValue();
+            Long id = ((Number) row[0]).longValue();
+            Integer popularity = ((Number) row[1]).intValue();
             Pair<Long, Integer> pair = new ImmutablePair<Long, Integer>(id, popularity);
             pairs.add(pair);
         }
@@ -151,7 +164,7 @@ public class OrgDisambiguatedDaoImpl extends GenericDaoImpl<OrgDisambiguatedEnti
     @Override
     @Transactional
     public void updatePopularity(Long orgDisambiguatedId, Integer popularity) {
-        Query query = entityManager.createQuery("update OrgDisambiguatedEntity set indexingStatus = 'PENDING', popularity = :popularity where id = :orgDisambiguatedId");
+        Query query = entityManager.createQuery("update OrgDisambiguatedEntity od set od.indexingStatus = 'PENDING', od.popularity = :popularity where od.id = :orgDisambiguatedId");
         query.setParameter("orgDisambiguatedId", orgDisambiguatedId);
         query.setParameter("popularity", popularity);
         query.executeUpdate();
@@ -173,6 +186,7 @@ public class OrgDisambiguatedDaoImpl extends GenericDaoImpl<OrgDisambiguatedEnti
     }
 
     @Override
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     public List<OrgDisambiguatedEntity> findDuplicates() {
         TypedQuery<OrgDisambiguatedEntity> query = entityManager.createNamedQuery(OrgDisambiguatedEntity.FIND_DUPLICATES, OrgDisambiguatedEntity.class);
         return query.getResultList();

@@ -25,11 +25,13 @@ the software.
     <description>The parent ORCID pom that all sub-projects reside under</description>
 
     <properties>
-        <spring.version>5.3.20</spring.version>
-        <security.version>5.6.2</security.version>
+        <java.version>21</java.version>
+        <spring.version>6.2.19</spring.version>
+        <security.version>6.5.11</security.version>
         <liquibase.version>4.9.1</liquibase.version>
-        <jersey.version>2.27</jersey.version>
-        <jackson.version>2.13.1</jackson.version>
+        <jersey.version>3.1.10</jersey.version>
+        <jackson.version>2.15.4</jackson.version>
+        <activemq.version>6.2.4</activemq.version>
         <swagger.version>2.1.1</swagger.version>
         <aspectj.version>1.9.6</aspectj.version>
         <jena.version>4.4.0</jena.version>
@@ -38,11 +40,17 @@ the software.
         <servlet.port>9437</servlet.port>
         <ajp.port>9438</ajp.port>
         <aws.version>1.12.261</aws.version>
+        <!-- AWS SDK v2, required for AWS End User Messaging Notify (pinpoint-sms-voice-v2 SendNotifyTextMessage).
+             Must be a release that includes Notify (GA March 2026). Verify against the artifacts available to the build. -->
+        <awssdk.version>2.46.21</awssdk.version>
+        <libphonenumber.version>9.0.30</libphonenumber.version>
+        <twilio.version>12.1.1</twilio.version>
         <solr.version>8.0.0</solr.version>
         <junit.version>4.13.2</junit.version>
         <main.basedir>${project.basedir}</main.basedir>
         <branchVersion>1.1.5-SNAPSHOT</branchVersion>
-        <togglz.version>3.3.3</togglz.version>
+        <togglz.version>4.4.0</togglz.version>
+        <slf4j.version>2.0.17</slf4j.version>
     </properties>
 
     <modules>    
@@ -87,7 +95,7 @@ the software.
                                     <version>3.6.3</version>
                                 </requireMavenVersion>
                                 <requireJavaVersion>
-                                    <version>11</version>
+                                    <version>${java.version}</version>
                                 </requireJavaVersion>
                             </rules>
                         </configuration>
@@ -123,8 +131,11 @@ the software.
                 <artifactId>maven-compiler-plugin</artifactId>
                 <inherited>true</inherited>
                 <configuration>
-                    <source>11</source>
-                    <target>11</target>
+                    <release>${java.version}</release>
+                    <parameters>true</parameters>
+                    <compilerArgs>
+                        <arg>-parameters</arg>
+                    </compilerArgs>
                 </configuration>
             </plugin>
             <plugin>
@@ -132,7 +143,7 @@ the software.
                 <artifactId>maven-surefire-plugin</artifactId>
                 <configuration>
                     <!-- argLine>-Duser.timezone=America/Los_Angeles</argLine -->
-                    <argLine>-Duser.timezone=GMT</argLine>
+                    <argLine>-Duser.timezone=GMT --add-opens java.base/java.lang=ALL-UNNAMED --add-opens java.base/java.nio=ALL-UNNAMED --add-opens java.base/java.util=ALL-UNNAMED</argLine>
                     <runOrder>alphabetical</runOrder>
                     <!-- we need to rewrite our unit test
                     to be runOrder random and take avantage 
@@ -180,6 +191,44 @@ the software.
                 <groupId>com.mycila.maven-license-plugin</groupId>
                 <artifactId>maven-license-plugin</artifactId>
             </plugin -->
+    <plugin>
+    <groupId>org.openrewrite.maven</groupId>
+    <artifactId>rewrite-maven-plugin</artifactId>
+    <version>5.43.0</version> 
+    <configuration>
+        <activeRecipes>
+        	<recipe>org.openrewrite.java.migrate.UpgradeToJava17</recipe>
+        	<recipe>org.openrewrite.java.migrate.jakarta.JavaxMigrationToJakarta</recipe>
+        	<recipe>org.openrewrite.java.spring.framework.UpgradeSpringFramework_6_0</recipe>
+            <recipe>org.openrewrite.hibernate.MigrateToHibernate62</recipe>
+            <recipe>org.openrewrite.apache.httpclient5.UpgradeApacheHttpClient_5</recipe>
+        </activeRecipes>
+    </configuration>
+    <dependencies>
+        <dependency>
+            <groupId>org.openrewrite.recipe</groupId>
+            <artifactId>rewrite-migrate-java</artifactId>
+            <version>2.20.0</version> 
+        </dependency>
+         <dependency>
+		            <groupId>org.openrewrite.recipe</groupId>
+		            <artifactId>rewrite-spring</artifactId> 
+		            <version>5.18.0</version> 
+		            <!--artifactId>rewrite-migrate-java</artifactId>
+            		<version>2.20.0</version-->
+            	   </dependency>
+        <dependency>
+            <groupId>org.openrewrite.recipe</groupId>
+            <artifactId>rewrite-hibernate</artifactId>
+            <version>2.19.1</version> 
+        </dependency>
+        <dependency>
+            <groupId>org.openrewrite.recipe</groupId>
+            <artifactId>rewrite-apache</artifactId>
+            <version>1.4.2</version> 
+        </dependency>
+    </dependencies>
+</plugin>
         </plugins>
 
         <pluginManagement>
@@ -302,6 +351,7 @@ the software.
                     <artifactId>build-helper-maven-plugin</artifactId>
                     <version>1.10</version>
                 </plugin>
+             
             </plugins>
         </pluginManagement>
     </build>
@@ -331,17 +381,17 @@ the software.
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>
             <artifactId>log4j-core</artifactId>
-            <version>2.17.1</version>
+            <version>2.25.5</version>
         </dependency>
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>
-            <artifactId>log4j-slf4j-impl</artifactId>
-            <version>2.17.1</version>
+            <artifactId>log4j-slf4j2-impl</artifactId>
+            <version>2.25.5</version>
         </dependency>
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>
-            <artifactId>log4j-1.2-api</artifactId>
-            <version>2.17.1</version>
+            <artifactId>log4j-api</artifactId>
+            <version>2.25.5</version>
         </dependency>                 
         <dependency>
             <groupId>commons-lang</groupId>
@@ -361,7 +411,6 @@ the software.
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
-            <version>${junit.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -384,6 +433,12 @@ the software.
 
     <dependencyManagement>
         <dependencies>
+            <!-- SLF4J API -->
+            <dependency>
+                <groupId>org.slf4j</groupId>
+                <artifactId>slf4j-api</artifactId>
+                <version>${slf4j.version}</version>
+            </dependency>
             <dependency>
                 <groupId>commons-lang</groupId>
                 <artifactId>commons-lang</artifactId>
@@ -393,7 +448,7 @@ the software.
             <dependency>
                 <groupId>commons-beanutils</groupId>
                 <artifactId>commons-beanutils</artifactId>
-                <version>1.9.4</version>
+                <version>1.11.0</version>
                 <scope>compile</scope>
             </dependency>
 
@@ -506,13 +561,6 @@ the software.
                         <groupId>org.springframework</groupId>
                     </exclusion>
                 </exclusions>
-            </dependency>
-            <!-- temporary patch repo until 2.0.6 is out -->
-            <dependency>
-                <groupId>org.springframework.security.oauth</groupId>
-                <artifactId>spring-security-oauth2</artifactId>
-                <version>2.5.2.RELEASE</version>
-                <scope>compile</scope>
             </dependency>
             <dependency>
                 <groupId>org.springframework.security</groupId>
@@ -635,13 +683,19 @@ the software.
             <dependency>
                 <groupId>org.freemarker</groupId>
                 <artifactId>freemarker</artifactId>
-                <version>2.3.25-incubating</version>
+                <version>2.3.34</version>
                 <scope>compile</scope>
             </dependency>
             <dependency>
-                <groupId>javax.servlet</groupId>
-                <artifactId>javax.servlet-api</artifactId>
-                <version>4.0.1</version>
+			    <groupId>jakarta.servlet</groupId>
+			    <artifactId>jakarta.servlet-api</artifactId>
+			    <version>6.0.0</version>
+			    <scope>compile</scope> 
+			</dependency>
+            <dependency>
+                <groupId>jakarta.annotation</groupId>
+                <artifactId>jakarta.annotation-api</artifactId>
+                <version>2.1.1</version>
                 <scope>compile</scope>
             </dependency>
             <dependency>
@@ -660,15 +714,15 @@ the software.
                 <version>${jackson.version}</version>
             </dependency>            
             <dependency>
-                <groupId>org.apache.httpcomponents</groupId>
-                <artifactId>httpclient</artifactId>
-                <version>4.5.13</version>
+                <groupId>org.apache.httpcomponents.client5</groupId>
+                <artifactId>httpclient5</artifactId>
+                <version>5.3.1</version>
                 <scope>compile</scope>
             </dependency>
             <dependency>
-                <groupId>org.apache.httpcomponents</groupId>
-                <artifactId>httpcore</artifactId>
-                <version>4.4.4</version>
+                <groupId>org.apache.httpcomponents.core5</groupId>
+                <artifactId>httpcore5</artifactId>
+                <version>5.3.6</version>
                 <scope>compile</scope>
             </dependency>
             <dependency>
@@ -685,9 +739,9 @@ the software.
             
             <!-- https://mvnrepository.com/artifact/javax.ws.rs/javax.ws.rs-api -->
 			<dependency>
-			    <groupId>javax.ws.rs</groupId>
-			    <artifactId>javax.ws.rs-api</artifactId>
-			    <version>2.1</version>
+			    <groupId>jakarta.ws.rs</groupId>
+                <artifactId>jakarta.ws.rs-api</artifactId>
+                <version>3.1.0</version>
 			</dependency>                    
 
             <!-- Database -->
@@ -696,21 +750,34 @@ the software.
                 <artifactId>postgresql</artifactId>
                 <version>42.7.2</version>
             </dependency>
+
+
+
             <dependency>
-              <groupId>org.hibernate</groupId>
-              <artifactId>hibernate-agroal</artifactId>
-              <version>5.4.27.Final</version>
+                <groupId>org.hibernate.orm</groupId>
+                <artifactId>hibernate-core</artifactId>
+                <version>6.4.4.Final</version>
             </dependency>
             <dependency>
-                <groupId>org.hibernate</groupId>
-                <artifactId>hibernate-c3p0</artifactId>
-                <version>5.3.6.Final</version>
+                <groupId>org.hibernate.orm</groupId>
+                <artifactId>hibernate-agroal</artifactId>
+                <version>6.4.4.Final</version>
             </dependency>
             <dependency>
-                <groupId>org.hibernate</groupId>
+                <groupId>org.hibernate.orm</groupId>
+                <artifactId>hibernate-hikaricp</artifactId>
+                <version>6.4.4.Final</version>
+            </dependency>
+            <dependency>
+                <groupId>org.hibernate.validator</groupId>
                 <artifactId>hibernate-validator</artifactId>
-                    <version>5.4.3.Final</version>
+                <version>8.0.1.Final</version>
             </dependency>
+            <dependency>
+    			<groupId>jakarta.persistence</groupId>
+    			<artifactId>jakarta.persistence-api</artifactId>
+    			<version>3.1.0</version>
+			</dependency>
             <dependency>
                 <groupId>org.liquibase</groupId>
                 <artifactId>liquibase-core</artifactId>
@@ -734,13 +801,38 @@ the software.
             <dependency>
                 <groupId>org.ehcache</groupId>
                 <artifactId>ehcache</artifactId>
-                <version>3.5.2</version>
+                <version>3.11.1</version>
+                <classifier>jakarta</classifier>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.glassfish.jaxb</groupId>
+                        <artifactId>jaxb-runtime</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.glassfish.jaxb</groupId>
+                        <artifactId>jaxb-core</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>javax.xml.bind</groupId>
+                        <artifactId>jaxb-api</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
             <dependency>
                 <groupId>javax.cache</groupId>
                 <artifactId>cache-api</artifactId>
-                    <version>1.0.0</version>
+                    <version>1.1.1</version>
             </dependency>            
+            <dependency>
+                <groupId>org.glassfish.jaxb</groupId>
+                <artifactId>jaxb-runtime</artifactId>
+                <version>2.3.8</version>
+            </dependency>
+            <dependency>
+                <groupId>javax.xml.bind</groupId>
+                <artifactId>jaxb-api</artifactId>
+                <version>2.3.1</version>
+            </dependency>
 
             <!-- AOP -->
             <dependency>
@@ -761,7 +853,7 @@ the software.
             <dependency>
                 <groupId>commons-io</groupId>
                 <artifactId>commons-io</artifactId>
-                <version>2.7</version>
+                <version>2.14.0</version>
                 <scope>compile</scope>
             </dependency>
             <dependency>
@@ -771,9 +863,9 @@ the software.
                 <scope>compile</scope>
             </dependency>
             <dependency>
-                <groupId>javax.validation</groupId>
-                <artifactId>validation-api</artifactId>
-                <version>2.0.1.Final</version>
+                <groupId>jakarta.validation</groupId>
+                <artifactId>jakarta.validation-api</artifactId>
+                <version>3.0.2</version> 
             </dependency>
             <dependency>
                 <groupId>args4j</groupId>
@@ -795,7 +887,7 @@ the software.
             <dependency>
                 <groupId>org.jbibtex</groupId>
                 <artifactId>jbibtex</artifactId>
-                <version>1.0.7</version>
+                <version>1.0.20</version>
             </dependency>
             <dependency>
                 <groupId>net.sf.opencsv</groupId>
@@ -806,11 +898,6 @@ the software.
                 <groupId>dnsjava</groupId>
                 <artifactId>dnsjava</artifactId>
                 <version>2.1.6</version>
-            </dependency>
-            <dependency>
-                <groupId>ma.glasnost.orika</groupId>
-                <artifactId>orika-core</artifactId>
-                <version>1.4.6</version>
             </dependency>
             <dependency>
                 <groupId>xml-apis</groupId>
@@ -880,7 +967,7 @@ the software.
         <dependency>
             <groupId>net.bytebuddy</groupId>
             <artifactId>byte-buddy</artifactId>
-            <version>1.10.5</version>
+            <version>1.14.12</version>
         </dependency>
             <dependency>
                 <groupId>org.hsqldb</groupId>
@@ -921,7 +1008,7 @@ the software.
             <dependency>
                <groupId>org.orcid</groupId>
                <artifactId>orcid-model</artifactId>
-               <version>3.3.9</version>
+               <version>4.0.1</version>
             </dependency>
             <dependency>
                <groupId>org.orcid</groupId>
@@ -934,6 +1021,21 @@ the software.
                 <groupId>com.amazonaws</groupId>
                 <artifactId>aws-java-sdk-s3</artifactId>
                 <version>${aws.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>software.amazon.awssdk</groupId>
+                <artifactId>pinpointsmsvoicev2</artifactId>
+                <version>${awssdk.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.googlecode.libphonenumber</groupId>
+                <artifactId>libphonenumber</artifactId>
+                <version>${libphonenumber.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.twilio.sdk</groupId>
+                <artifactId>twilio</artifactId>
+                <version>${twilio.version}</version>
             </dependency>
 		<!-- Togglz -->
 		<dependency>
@@ -988,25 +1090,6 @@ the software.
             <url>https://jcenter.bintray.com</url>
         </repository>
     </repositories>
-    <pluginRepositories>
-        <pluginRepository>
-            <id>m2.java.net</id>
-            <name>Java.net Maven 2 Repository</name>
-            <url>https://download.java.net/maven/2</url>
-            <layout>default</layout>
-        </pluginRepository>
-        <pluginRepository>
-            <id>mc-release</id>
-            <name>Local Maven repository of releases</name>
-            <url>https://mc-repo.googlecode.com/svn/maven2/releases</url>
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
-            <releases>
-                <enabled>true</enabled>
-            </releases>
-        </pluginRepository>
-    </pluginRepositories>
 
     <profiles>
         <!--  Localhost deployments -->

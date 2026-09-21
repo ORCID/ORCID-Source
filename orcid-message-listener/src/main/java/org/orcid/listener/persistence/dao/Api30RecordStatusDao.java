@@ -1,14 +1,13 @@
 package org.orcid.listener.persistence.dao;
 
-import java.math.BigInteger;
 import java.util.Date;
 import java.util.List;
 
-import javax.persistence.EntityExistsException;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
-import javax.persistence.TypedQuery;
+import jakarta.persistence.EntityExistsException;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.Query;
+import jakarta.persistence.TypedQuery;
 
 import org.orcid.listener.persistence.entities.Api30RecordStatusEntity;
 import org.orcid.listener.persistence.util.ActivityType;
@@ -20,17 +19,21 @@ public class Api30RecordStatusDao {
     @PersistenceContext
     protected EntityManager entityManager;
 
+    @Transactional(readOnly = true)
     public Api30RecordStatusEntity get(String orcid) {
         Query query = entityManager.createNativeQuery("SELECT * FROM api_3_0_record_status WHERE orcid = :orcid", Api30RecordStatusEntity.class);
         query.setParameter("orcid", orcid);
         return (Api30RecordStatusEntity) query.getSingleResult();
     }
 
+    @Transactional(readOnly = true)
     public boolean exists(String orcid) {
-        Query query = entityManager.createNativeQuery("SELECT count(*) FROM api_3_0_record_status WHERE orcid=:orcid");
-        query.setParameter("orcid", orcid);
-        Long result = ((BigInteger) query.getSingleResult()).longValue();
-        return (result != null && result > 0);
+        Long count = entityManager.createQuery(
+                        "SELECT COUNT(s) FROM Api30RecordStatusEntity s WHERE s.id = :orcid",
+                        Long.class)
+                .setParameter("orcid", orcid)
+                .getSingleResult();
+        return count > 0;
     }
 
     @Transactional
@@ -141,6 +144,7 @@ public class Api30RecordStatusDao {
         }
     }
 
+    @Transactional(readOnly = true)
     public List<Api30RecordStatusEntity> getFailedElements(int batchSize) {
         TypedQuery<Api30RecordStatusEntity> query = entityManager.createQuery(
                 "FROM Api30RecordStatusEntity WHERE summaryStatus > 0 OR distinctionsStatus > 0 OR educationsStatus > 0 OR employmentsStatus > 0 OR fundingsStatus > 0 OR invitedPositionsStatus > 0 OR membershipStatus > 0 OR peerReviewsStatus > 0 OR qualificationsStatus > 0 OR researchResourcesStatus > 0 OR servicesStatus > 0 OR worksStatus > 0 ORDER BY id",

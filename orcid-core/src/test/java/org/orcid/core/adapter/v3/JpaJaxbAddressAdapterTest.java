@@ -7,10 +7,10 @@ import static org.junit.Assert.assertNull;
 import java.io.InputStream;
 import java.util.Date;
 
-import javax.annotation.Resource;
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.Unmarshaller;
+import jakarta.annotation.Resource;
+import jakarta.xml.bind.JAXBContext;
+import jakarta.xml.bind.JAXBException;
+import jakarta.xml.bind.Unmarshaller;
 
 import org.junit.After;
 import org.junit.Before;
@@ -101,7 +101,7 @@ public class JpaJaxbAddressAdapterTest extends MockSourceNameCache {
         assertNotNull(addressEntity);
         assertNull(addressEntity.getDateCreated());
         assertNull(addressEntity.getLastModified());
-        assertEquals(org.orcid.jaxb.model.common_v2.Iso3166Country.US.name(), addressEntity.getIso2Country());
+        assertEquals(Iso3166Country.US.name(), addressEntity.getIso2Country());
         assertNull(addressEntity.getSourceId());
         assertNull(addressEntity.getClientSourceId());
         assertNull(addressEntity.getElementSourceId());

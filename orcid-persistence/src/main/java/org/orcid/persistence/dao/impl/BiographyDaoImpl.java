@@ -1,8 +1,6 @@
 package org.orcid.persistence.dao.impl;
 
-import java.math.BigInteger;
-
-import javax.persistence.Query;
+import jakarta.persistence.Query;
 
 import org.apache.commons.lang.StringUtils;
 import org.orcid.persistence.aop.UpdateProfileLastModifiedAndIndexingStatus;
@@ -22,6 +20,7 @@ public class BiographyDaoImpl extends GenericDaoImpl<BiographyEntity, Long> impl
     }
 
     @Override
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     @Cacheable(value = "biography", key = "#orcid.concat('-').concat(#lastModified)")
     public BiographyEntity getBiography(String orcid, long lastModified) {
         Query query = entityManager.createQuery("FROM BiographyEntity WHERE orcid = :orcid");
@@ -53,10 +52,11 @@ public class BiographyDaoImpl extends GenericDaoImpl<BiographyEntity, Long> impl
     }
 
     @Override
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     public boolean exists(String orcid) {
         Query query = entityManager.createNativeQuery("select count(*) from biography where orcid=:orcid");
         query.setParameter("orcid", orcid);
-        Long result = ((BigInteger)query.getSingleResult()).longValue();
+        Long result = ((Number) query.getSingleResult()).longValue();
         return (result != null && result > 0);
     }
 
@@ -64,7 +64,7 @@ public class BiographyDaoImpl extends GenericDaoImpl<BiographyEntity, Long> impl
     @Transactional
     @UpdateProfileLastModifiedAndIndexingStatus
     public boolean removeForId(String orcid) {
-        Query query = entityManager.createQuery("DELETE FROM BiographyEntity WHERE orcid = :orcid");
+        Query query = entityManager.createQuery("DELETE FROM BiographyEntity b WHERE b.orcid = :orcid");
         query.setParameter("orcid", orcid);
         return query.executeUpdate() > 0 ? true : false;
     }   

@@ -3,8 +3,9 @@ package org.orcid.persistence.dao.impl;
 import java.util.Date;
 import java.util.List;
 
-import javax.persistence.Query;
-import javax.transaction.Transactional;
+import jakarta.persistence.Query;
+
+import org.springframework.transaction.annotation.Transactional;
 
 import org.orcid.persistence.dao.ValidatedPublicProfileDao;
 import org.orcid.persistence.jpa.entities.ValidatedPublicProfileEntity;
@@ -16,6 +17,7 @@ public class ValidatedPublicProfileDaoImpl extends GenericDaoImpl<ValidatedPubli
     }
 
     @SuppressWarnings("unchecked")
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     public List<String> getNextRecordsToValidate(int batchSize) {
         Query query = entityManager
                 .createNativeQuery("SELECT p.orcid FROM profile p LEFT JOIN validated_public_profile v ON  p.orcid = v.orcid WHERE v IS NULL AND p.enabled IS TRUE AND p.deprecated_date IS NULL AND p.record_locked IS NOT TRUE and p.profile_deactivation_date IS NULL");
@@ -26,7 +28,7 @@ public class ValidatedPublicProfileDaoImpl extends GenericDaoImpl<ValidatedPubli
     @Override
     @Transactional
     public void removeOldRecords(Date maxAge) {
-        Query query = entityManager.createQuery("DELETE from ValidatedPublicProfileEntity where dateCreated < :maxAge");
+        Query query = entityManager.createQuery("DELETE from ValidatedPublicProfileEntity v where v.dateCreated < :maxAge");
         query.setParameter("maxAge", maxAge);
         query.executeUpdate();
     }

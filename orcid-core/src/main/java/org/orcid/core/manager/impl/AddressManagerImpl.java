@@ -4,8 +4,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.annotation.Resource;
-import javax.transaction.Transactional;
+import jakarta.annotation.Resource;
 
 import org.orcid.core.exception.ApplicationException;
 import org.orcid.core.exception.OrcidDuplicatedElementException;
@@ -34,10 +33,12 @@ public class AddressManagerImpl extends AddressManagerReadOnlyImpl implements Ad
     protected SourceManager sourceManager;
 
     @Resource
+    private SourceEntityUtils sourceEntityUtils;
+
+    @Resource
     private ProfileEntityCacheManager profileEntityCacheManager;
 
     @Override
-    @Transactional
     public Address updateAddress(String orcid, Long putCode, Address address, boolean isApiRequest) {
         SourceEntity sourceEntity = sourceManager.retrieveSourceEntity();
         AddressEntity updatedEntity = addressDao.getAddress(orcid, putCode);
@@ -113,17 +114,15 @@ public class AddressManagerImpl extends AddressManagerReadOnlyImpl implements Ad
     }
 
     @Override
-    @Transactional
     public boolean deleteAddress(String orcid, Long putCode) {
         AddressEntity entity = addressDao.getAddress(orcid, putCode);
         orcidSecurityManager.checkSource(entity);
 
         try {
-            addressDao.remove(entity);
+            return addressDao.deleteAddress(orcid, putCode);
         } catch (Exception e) {
             return false;
         }
-        return true;
     }
 
     private boolean isDuplicated(AddressEntity existing, Address address, SourceEntity source) {

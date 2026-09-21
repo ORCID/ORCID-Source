@@ -1,6 +1,6 @@
 package org.orcid.core.togglz;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 import javax.sql.DataSource;
 
 import org.orcid.core.security.OrcidRoles;

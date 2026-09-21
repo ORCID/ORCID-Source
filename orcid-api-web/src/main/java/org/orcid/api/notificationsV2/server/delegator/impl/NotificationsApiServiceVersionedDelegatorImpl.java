@@ -2,16 +2,15 @@ package org.orcid.api.notificationsV2.server.delegator.impl;
 
 import static org.orcid.core.api.OrcidApiConstants.STATUS_OK_MESSAGE;
 
-import javax.annotation.Resource;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.UriInfo;
+import jakarta.annotation.Resource;
+import jakarta.ws.rs.core.Response;
+import jakarta.ws.rs.core.UriInfo;
 
 import org.orcid.api.memberV2.server.delegator.MemberV2ApiServiceDelegator;
 import org.orcid.api.notificationsV2.server.delegator.NotificationsApiServiceDelegator;
 import org.orcid.core.exception.DeactivatedException;
 import org.orcid.core.exception.OrcidNotificationAlreadyReadException;
 import org.orcid.core.manager.OrcidSecurityManager;
-import org.orcid.core.security.visibility.aop.AccessControl;
 import org.orcid.core.version.V2Convertible;
 import org.orcid.core.version.V2VersionConverterChain;
 import org.orcid.jaxb.model.message.ScopePathType;
@@ -53,8 +52,8 @@ public class NotificationsApiServiceVersionedDelegatorImpl implements Notificati
     }
 
     @Override
-    @AccessControl(requiredScope = ScopePathType.PREMIUM_NOTIFICATION)
     public Response findPermissionNotifications(String orcid) {        
+        orcidSecurityManager.checkScopes(ScopePathType.PREMIUM_NOTIFICATION);
         checkProfileStatus(orcid, true);
         Response response = notificationsApiServiceDelegator.findPermissionNotifications(orcid);
         if(externalVersion.equals("2.1")) {
@@ -65,8 +64,8 @@ public class NotificationsApiServiceVersionedDelegatorImpl implements Notificati
     }
 
     @Override
-    @AccessControl(requiredScope = ScopePathType.PREMIUM_NOTIFICATION)
     public Response findPermissionNotification(String orcid, Long id) {
+        orcidSecurityManager.checkScopes(ScopePathType.PREMIUM_NOTIFICATION);
         checkProfileStatus(orcid, true);
         Response response = downgradeResponse(notificationsApiServiceDelegator.findPermissionNotification(orcid, id));
         if(externalVersion.equals("2.1")) {
@@ -77,15 +76,15 @@ public class NotificationsApiServiceVersionedDelegatorImpl implements Notificati
     }
 
     @Override
-    @AccessControl(requiredScope = ScopePathType.PREMIUM_NOTIFICATION)
     public Response flagNotificationAsArchived(String orcid, Long id) throws OrcidNotificationAlreadyReadException {
+        orcidSecurityManager.checkScopes(ScopePathType.PREMIUM_NOTIFICATION);
         checkProfileStatus(orcid, false);
         return downgradeResponse(notificationsApiServiceDelegator.flagNotificationAsArchived(orcid, id));
     }
 
     @Override
-    @AccessControl(requiredScope = ScopePathType.PREMIUM_NOTIFICATION)
     public Response addPermissionNotification(UriInfo uriInfo, String orcid, Object notification) {
+        orcidSecurityManager.checkScopes(ScopePathType.PREMIUM_NOTIFICATION);
         checkProfileStatus(orcid, false);
         return notificationsApiServiceDelegator.addPermissionNotification(uriInfo, orcid, upgradeObject(notification));
     }

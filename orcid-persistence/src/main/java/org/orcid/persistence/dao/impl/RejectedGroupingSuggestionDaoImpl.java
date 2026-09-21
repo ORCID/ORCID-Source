@@ -2,10 +2,11 @@ package org.orcid.persistence.dao.impl;
 
 import java.util.List;
 
-import javax.persistence.Query;
+import jakarta.persistence.Query;
 
 import org.orcid.persistence.dao.RejectedGroupingSuggestionDao;
 import org.orcid.persistence.jpa.entities.RejectedGroupingSuggestionEntity;
+import org.springframework.transaction.annotation.Transactional;
 
 public class RejectedGroupingSuggestionDaoImpl extends GenericDaoImpl<RejectedGroupingSuggestionEntity, String> implements RejectedGroupingSuggestionDao {
 
@@ -15,6 +16,7 @@ public class RejectedGroupingSuggestionDaoImpl extends GenericDaoImpl<RejectedGr
     
     @SuppressWarnings("unchecked")
     @Override
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     public RejectedGroupingSuggestionEntity findGroupingSuggestionIdAndOrcid(String orcid, String putCodes) {
         Query query = entityManager.createQuery("FROM RejectedGroupingSuggestionEntity WHERE orcid = :orcid AND id = :putCodes", RejectedGroupingSuggestionEntity.class);
         query.setParameter("orcid", orcid);

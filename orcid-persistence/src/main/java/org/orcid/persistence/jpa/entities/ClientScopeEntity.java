@@ -1,6 +1,6 @@
 package org.orcid.persistence.jpa.entities;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 
 import org.orcid.persistence.jpa.entities.keys.ClientScopePk;
 

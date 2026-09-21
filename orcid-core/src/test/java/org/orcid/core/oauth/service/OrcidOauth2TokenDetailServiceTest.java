@@ -11,30 +11,24 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
 
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
-import javax.annotation.Resource;
-import javax.persistence.NoResultException;
+import jakarta.annotation.Resource;
+import jakarta.persistence.NoResultException;
 
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.orcid.core.common.manager.EmailFrequencyManager;
 import org.orcid.core.constants.RevokeReason;
 import org.orcid.core.oauth.OrcidOauth2TokenDetailService;
-import org.orcid.core.utils.cache.redis.RedisClient;
 import org.orcid.persistence.dao.OrcidOauth2TokenDetailDao;
 import org.orcid.persistence.jpa.entities.OrcidOauth2TokenDetail;
-import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.test.DBUnitTest;
 import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.orcid.test.TargetProxyHelper;
@@ -59,9 +53,6 @@ public class OrcidOauth2TokenDetailServiceTest extends DBUnitTest {
     @Resource(name="orcidOauth2TokenDetailDao")
     private OrcidOauth2TokenDetailDao orcidOauth2TokenDetailDao;
     
-    @Mock
-    private RedisClient redisClientMock;
-    
     @BeforeClass
     public static void initDBUnitData() throws Exception {
         initDBUnitData(Arrays.asList("/data/SubjectEntityData.xml", "/data/SourceClientDetailsEntityData.xml",
@@ -73,7 +64,6 @@ public class OrcidOauth2TokenDetailServiceTest extends DBUnitTest {
         MockitoAnnotations.initMocks(this);
         // Enable the cache
         TargetProxyHelper.injectIntoProxy(orcidOauth2TokenDetailService, "isTokenCacheEnabled", true);
-        TargetProxyHelper.injectIntoProxy(orcidOauth2TokenDetailService, "redisClient", redisClientMock);
     }
     
     @AfterClass
@@ -249,11 +239,6 @@ public class OrcidOauth2TokenDetailServiceTest extends DBUnitTest {
         
         // Disable tokens with authCode and CLIENT_ID_1
         orcidOauth2TokenDetailService.disableAccessTokenByCodeAndClient(authCode, CLIENT_ID_1, RevokeReason.AUTH_CODE_REUSED);
-        
-        verify(redisClientMock, times(1)).remove("token-1");
-        verify(redisClientMock, times(1)).remove("token-2");
-        verify(redisClientMock, times(1)).remove("token-3");
-        verify(redisClientMock, times(1)).remove("token-4");
         
         // Tokens 1, 2, 3 and 4 should be revoked
         OrcidOauth2TokenDetail t1 = orcidOauth2TokenDetailService.findIgnoringDisabledByTokenValue("token-1");

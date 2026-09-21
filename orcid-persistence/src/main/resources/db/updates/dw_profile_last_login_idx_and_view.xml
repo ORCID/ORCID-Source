@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
+
+    <changeSet id="CREATE-PROFILE-LAST-LOGIN-INDEX" author="andrej romanov" dbms="postgresql" runInTransaction="false">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <indexExists indexName="profile_last_login_idx" tableName="profile"/>
+            </not>
+        </preConditions>
+        <sql>CREATE INDEX CONCURRENTLY IF NOT EXISTS profile_last_login_idx ON profile (last_login);</sql>
+        <rollback>
+            <sql>DROP INDEX CONCURRENTLY IF EXISTS profile_last_login_idx;</sql>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="CREATE-DW-PROFILE-VIEW-LAST-LOGIN" author="andrej romanov" dbms="postgresql">
+        <createView viewName="dw_profile" replaceIfExists="true">
+            SELECT 
+                profile.orcid,
+                profile.orcid_type,
+                profile.record_locked,
+                profile.group_type,
+                profile.salesforce_id,
+                profile.date_created,
+                profile.last_modified,
+                profile.profile_deactivation_date,
+                profile.enable_developer_tools,
+                profile.last_login,
+                profile.using_2fa,
+                profile.reason_locked,
+                profile.auto_lock_date,
+                profile.locale,
+                profile.reviewed,
+                profile.creation_method
+            FROM 
+                public.profile
+            WHERE 
+                profile.last_modified > date_trunc('day'::text, now() - '4 mons'::interval) 
+                OR profile.last_login > date_trunc('day'::text, now() - '4 mons'::interval)
+        </createView>
+    </changeSet>
+
+    <changeSet id="GRANT-READ-PERMISSIONS-TO-DW-USER-ON-DW-PROFILE-LAST-LOGIN" author="andrej romanov" dbms="postgresql">
+        <preConditions>
+            <sqlCheck expectedResult="1">SELECT 1 FROM pg_roles WHERE rolname='dw_user'</sqlCheck>
+        </preConditions>
+        <sql>GRANT SELECT ON TABLE dw_profile to dw_user;</sql>
+    </changeSet>
+
+</databaseChangeLog>

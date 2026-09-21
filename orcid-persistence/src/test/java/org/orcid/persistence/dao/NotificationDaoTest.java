@@ -16,7 +16,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 
 import org.apache.commons.lang3.reflect.FieldUtils;
 import org.hsqldb.types.NumberType;
@@ -542,7 +542,8 @@ public class NotificationDaoTest extends DBUnitTest {
         int count3 = 0;
         
         for(Object [] o : toDelete) {
-            BigInteger id = (BigInteger) o[0];
+            // Handle both Long and BigInteger for Hibernate 6 compatibility
+            Long id = (o[0] instanceof Long) ? (Long) o[0] : ((BigInteger) o[0]).longValue();
             String orcid = (String) o[1];
             
             if("0000-0000-0000-0003".equals(orcid)) {

@@ -17,8 +17,12 @@
     		</p>
 			<p style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #494A4C;">
 				<#list emailList as email>
-       				<a href="mailto:${email.getEmail()}">${email.getEmail()}</a>
+       				<a href="mailto:${email.getEmail()}">${email.getEmail()}</a><br />
  				</#list>
+			</p>
+			
+			<p style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #494A4C">
+                <strong><@emailMacros.msg "email.security.note.shared.1" /></strong><@emailMacros.space /><@emailMacros.msg "email.security.note.shared.2" /><@emailMacros.space />&mdash;<@emailMacros.space /><@emailMacros.msg "email.security.note.shared.3" /><@emailMacros.space /><strong></i><@emailMacros.msg "email.security.note.shared.4" /></i></strong><@emailMacros.space /><@emailMacros.msg "email.security.note.shared.5" /><@emailMacros.space /><@emailMacros.msg "email.security.deactivate.note.actions.1" /><@emailMacros.space /><strong><@emailMacros.msg "email.security.deactivate.note.actions.2" /></strong><@emailMacros.space /><@emailMacros.msg "email.security.deactivate.note.actions.3" /><@emailMacros.space /><a href="https://support.orcid.org/hc/en-us/requests/new" rel="noopener noreferrer" target="_blank"><@emailMacros.msg "email.security.note.shared.contact_support" /></a>
 			</p>
 			<#include "email_footer_security_html.ftl"/>
 		 </div>

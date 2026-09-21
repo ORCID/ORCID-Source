@@ -1,6 +1,6 @@
 package org.orcid.core.manager.impl;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 
 import org.ehcache.spi.loaderwriter.CacheLoaderWriter;
 import org.orcid.core.manager.IdentityProviderManager;

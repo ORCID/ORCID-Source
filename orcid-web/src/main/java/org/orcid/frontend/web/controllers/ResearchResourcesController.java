@@ -2,7 +2,7 @@ package org.orcid.frontend.web.controllers;
 
 import java.util.ArrayList;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 
 import org.orcid.core.manager.v3.ResearchResourceManager;
 import org.orcid.frontend.web.pagination.Page;

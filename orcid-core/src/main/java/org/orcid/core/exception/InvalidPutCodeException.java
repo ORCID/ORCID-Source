@@ -3,6 +3,7 @@ package org.orcid.core.exception;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.commons.lang3.StringUtils;
 import org.orcid.core.utils.SourceEntityUtils;
 import org.orcid.jaxb.model.v3.release.common.Source;
 
@@ -19,10 +20,10 @@ public class InvalidPutCodeException extends ApplicationException {
         super(params);
     }
 
-    public static InvalidPutCodeException forSource(Source activeSource) {
+    public static InvalidPutCodeException forSource(String sourceName) {
         Map<String, String> params = new HashMap<String, String>();
-        if (activeSource != null) {
-            params.put("clientName", SourceEntityUtils.getSourceName(activeSource));
+        if (StringUtils.isNoneBlank(sourceName)) {
+            params.put("clientName", sourceName);
         }
         return new InvalidPutCodeException(params);
     }

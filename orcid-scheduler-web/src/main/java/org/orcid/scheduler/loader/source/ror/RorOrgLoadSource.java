@@ -16,9 +16,9 @@ import java.util.StringJoiner;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
-import javax.annotation.Resource;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.HttpHeaders;
+import jakarta.annotation.Resource;
+import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.HttpHeaders;
 
 import org.apache.commons.lang.StringUtils;
 import org.orcid.core.manager.OrgDisambiguatedManager;

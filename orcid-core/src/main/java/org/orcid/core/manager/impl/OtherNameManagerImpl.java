@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 
 import org.orcid.core.exception.ApplicationException;
 import org.orcid.core.exception.OrcidDuplicatedElementException;
@@ -23,7 +23,6 @@ import org.orcid.persistence.jpa.entities.OtherNameEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.SourceEntity;
 import org.orcid.pojo.ajaxForm.PojoUtil;
-import org.springframework.transaction.annotation.Transactional;
 
 public class OtherNameManagerImpl extends OtherNameManagerReadOnlyImpl implements OtherNameManager {
 
@@ -37,7 +36,6 @@ public class OtherNameManagerImpl extends OtherNameManagerReadOnlyImpl implement
     private ProfileEntityCacheManager profileEntityCacheManager;
 
     @Override
-    @Transactional
     public boolean deleteOtherName(String orcid, Long putCode, boolean checkSource) {
         OtherNameEntity otherNameEntity = otherNameDao.getOtherName(orcid, putCode);
 
@@ -54,7 +52,6 @@ public class OtherNameManagerImpl extends OtherNameManagerReadOnlyImpl implement
     }
 
     @Override
-    @Transactional
     public OtherName createOtherName(String orcid, OtherName otherName, boolean isApiRequest) {
         SourceEntity sourceEntity = sourceManager.retrieveSourceEntity();
         PersonValidator.validateOtherName(otherName, sourceEntity, true, isApiRequest, null);
@@ -90,7 +87,6 @@ public class OtherNameManagerImpl extends OtherNameManagerReadOnlyImpl implement
     }
 
     @Override
-    @Transactional
     public OtherName updateOtherName(String orcid, Long putCode, OtherName otherName, boolean isApiRequest) {
         SourceEntity sourceEntity = sourceManager.retrieveSourceEntity();
         OtherNameEntity updatedOtherNameEntity = otherNameDao.getOtherName(orcid, putCode);
@@ -123,7 +119,6 @@ public class OtherNameManagerImpl extends OtherNameManagerReadOnlyImpl implement
     }
 
     @Override
-    @Transactional
     public OtherNames updateOtherNames(String orcid, OtherNames otherNames) {
         List<OtherNameEntity> existingOtherNamesEntityList = otherNameDao.getOtherNames(orcid, getLastModified(orcid));
         // Delete the deleted ones

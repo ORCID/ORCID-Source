@@ -18,10 +18,10 @@ import java.util.Map;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
 
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.ws.rs.core.UriBuilder;
+import jakarta.annotation.Resource;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.ws.rs.core.UriBuilder;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.StringEscapeUtils;
@@ -80,6 +80,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
+import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -206,7 +207,9 @@ public class BaseController {
     protected void logoutCurrentUser(HttpServletRequest request, HttpServletResponse response) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication != null && authentication.isAuthenticated()) {
-            new SecurityContextLogoutHandler().logout(request, response, authentication);
+            SecurityContextLogoutHandler handler = new SecurityContextLogoutHandler();
+            handler.setSecurityContextRepository(new HttpSessionSecurityContextRepository());
+            handler.logout(request, response, authentication);
         }        
     }
 
@@ -885,20 +888,12 @@ public class BaseController {
         }
         Map<String, String> countryNames = new HashMap<String, String>();
         if (publicAddresses != null && publicAddresses.getAddress() != null) {
-            Address publicAddress = null;
             // The primary address will be the one with the lowest display index
             for (Address address : publicAddresses.getAddress()) {
                 countryNames.put(address.getCountry().getValue().name(), getcountryName(address.getCountry().getValue().name()));
-                if (publicAddress == null) {
-                    publicAddress = address;
-                }
             }
-            if (publicAddress != null) {
-                publicRecordPersonDetails.setPublicAddress(publicAddress);
-                publicRecordPersonDetails.setCountryNames(countryNames);
-                Map<String, List<Address>> groupedAddresses = groupAddresses(publicAddresses);
-                publicRecordPersonDetails.setPublicGroupedAddresses(groupedAddresses);
-            }
+            publicRecordPersonDetails.setCountryNames(countryNames);
+            publicRecordPersonDetails.setPublicGroupedAddresses(groupAddresses(publicAddresses));
         }
 
         // Fill keywords

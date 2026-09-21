@@ -1,6 +1,9 @@
 package org.orcid.core.utils;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
+
+import java.util.Map;
+import java.util.Optional;
 
 import org.apache.commons.lang3.StringUtils;
 import org.orcid.core.manager.ClientDetailsEntityCacheManager;
@@ -16,46 +19,27 @@ import org.orcid.persistence.jpa.entities.OrcidAware;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.SourceAwareEntity;
 import org.orcid.persistence.jpa.entities.SourceEntity;
+import org.springframework.web.context.request.RequestAttributes;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
 public class SourceEntityUtils {
+
+    public static final String SOURCE_MAP = "sourceMap";
+
+    public static final String DO_NOT_POPULATE_SOURCES = "DO_NOT_POPULATE_SOURCES";
 
     @Resource(name = "recordNameManagerReadOnlyV3")
     private RecordNameManagerReadOnly recordNameManagerReadOnlyV3;
 
+    @Resource(name = "sourceNameCacheManager")
+    private SourceNameCacheManager sourceNameCacheManager;
+
+    @Resource
+    private ClientDetailsEntityCacheManager clientDetailsEntityCacheManager;
+
     @Resource
     private OrcidUrlManager orcidUrlManager;
-
-    public String getSourceName(SourceEntity sourceEntity) {
-        if (sourceEntity.getCachedSourceName() != null) {
-            return sourceEntity.getCachedSourceName();
-        }
-        if (sourceEntity.getSourceClient() != null) {
-            return sourceEntity.getSourceClient().getClientName();
-        }
-        if (sourceEntity.getSourceProfile() != null) {
-            String orcid = sourceEntity.getSourceProfile().getId();
-            // Set the source name
-            return recordNameManagerReadOnlyV3.fetchDisplayablePublicName(orcid);
-        }
-        return null;
-    }
-
-    /**
-     * Call this method before storing in cache to prevent a whole profile or
-     * client being serialized.
-     * 
-     * WARNING: The entity must be detached (using DAO) so that the source is
-     * not made null in DB.
-     */
-    public void prepareForCache(SourceEntity sourceEntity) {
-        if (!sourceEntity.isDetached()) {
-            throw new IllegalStateException("Must not prepare source entity for cache, unless it is detached");
-        }
-        sourceEntity.setCachedSourceId(getSourceId(sourceEntity));
-        sourceEntity.setCachedSourceName(getSourceName(sourceEntity));
-        sourceEntity.setSourceClient(null);
-        sourceEntity.setSourceProfile(null);
-    }
 
     public static String getSourceId(SourceEntity sourceEntity) {
         if (sourceEntity.getCachedSourceId() != null) {
@@ -70,6 +54,37 @@ public class SourceEntityUtils {
         return null;
     }
 
+    public static String getSourceName(Source activeSource) {
+        if (activeSource != null && activeSource.getSourceName() != null && !StringUtils.isEmpty(activeSource.getSourceName().getContent()))
+            return activeSource.getSourceName().getContent();
+        else
+            return null;
+    }
+
+    public static String getSourceKey(SourceAwareEntity<?> e) {
+        String sourceOrcid = Optional.ofNullable(e.getSourceId()).filter(StringUtils::isNotEmpty).orElse("-");
+        String clientSourceId = Optional.ofNullable(e.getClientSourceId()).filter(StringUtils::isNotEmpty).orElse("-");
+        String assertionOriginClientSourceId = Optional.ofNullable(e.getAssertionOriginClientSourceId()).filter(StringUtils::isNotEmpty).orElse("-");
+        return String.join("|", sourceOrcid, clientSourceId, assertionOriginClientSourceId);
+    }
+
+    public String getSourceName(SourceEntity sourceEntity) {
+        if (sourceEntity.getCachedSourceName() != null) {
+            return sourceEntity.getCachedSourceName();
+        }
+        if (sourceEntity.getSourceClient() != null) {
+            return sourceEntity.getSourceClient().getClientName();
+        }
+        if (sourceEntity.getSourceProfile() != null) {
+            String orcid = sourceEntity.getSourceProfile().getId();
+            // Set the source name - only if orcid is not null
+            if (orcid != null) {
+                return recordNameManagerReadOnlyV3.fetchDisplayablePublicName(orcid);
+            }
+        }
+        return null;
+    }
+
     /**
      * Utility method that copies from model to entity, as entity can't see
      * model and vis-versa.
@@ -78,7 +93,7 @@ public class SourceEntityUtils {
      * @param to
      */
     @SuppressWarnings("deprecation")
-    public static void populateSourceAwareEntityFromSource(Source from, SourceAwareEntity<?> to) {
+    public void populateSourceAwareEntityFromSource(Source from, SourceAwareEntity<?> to) {
         // Set the source
         if (from.getSourceOrcid() != null && from.getSourceOrcid().getPath() != null) {
             to.setSourceId(from.getSourceOrcid().getPath());
@@ -94,9 +109,12 @@ public class SourceEntityUtils {
 
     /**
      * Utility that copies source ids from entity into new Source model.
-     * 
      */
-    public static Source extractSourceFromEntity(SourceAwareEntity<?> e, ClientDetailsEntityCacheManager clientDetailsEntityCacheManager) {
+    public Source extractSourceFromEntity(SourceAwareEntity<?> e) {
+        return extractSourceFromEntity(e, null);
+    }
+
+    public Source extractSourceFromEntity(SourceAwareEntity<?> e, Map<String, ClientDetailsEntity> clientDetailsById) {
         Source source = new Source();
         // orcid
         if (!StringUtils.isEmpty(e.getSourceId())) {
@@ -107,12 +125,11 @@ public class SourceEntityUtils {
         if (!StringUtils.isEmpty(e.getClientSourceId())) {
             source.setSourceClientId(new SourceClientId(e.getClientSourceId()));
             if(e instanceof OrcidAware) {
-                ClientDetailsEntity clientSource = clientDetailsEntityCacheManager.retrieve(e.getClientSourceId());
-                if (clientSource.isUserOBOEnabled()) {
-                    String orcidId = null;
-                    if (e instanceof OrcidAware) {                        
-                        orcidId = ((OrcidAware) e).getOrcid();
-                    }
+                ClientDetailsEntity clientSource = (clientDetailsById != null && clientDetailsById.containsKey(e.getClientSourceId()))
+                        ? clientDetailsById.get(e.getClientSourceId())
+                        : clientDetailsEntityCacheManager.retrieve(e.getClientSourceId());
+                if (clientSource != null && clientSource.isUserOBOEnabled()) {
+                    String orcidId = ((OrcidAware) e).getOrcid();
                     source.setAssertionOriginOrcid(new SourceOrcid(orcidId));
                 }     
             }
@@ -126,7 +143,7 @@ public class SourceEntityUtils {
         return source;
     }
 
-    public static Source extractSourceFromProfileComplete(ProfileEntity profile, SourceNameCacheManager sourceNameCacheManager, OrcidUrlManager orcidUrlManager) {
+    public Source extractSourceFromProfileComplete(ProfileEntity profile) {
         Source source = new Source();
         SourceEntity entity = profile.getSource();
         if (entity.getSourceProfile() != null) {
@@ -135,23 +152,61 @@ public class SourceEntityUtils {
         if (entity.getSourceClient() != null) {
             source.setSourceClientId(new SourceClientId(entity.getSourceClient().getId()));
         }
-        populateSource(source, sourceNameCacheManager, orcidUrlManager);
+        populateSource(source);
         return source;
     }
 
-    public static Source extractSourceFromEntityComplete(SourceAwareEntity<?> b, SourceNameCacheManager sourceNameCacheManager, OrcidUrlManager orcidUrlManager,
-            ClientDetailsEntityCacheManager clientDetailsEntityCacheManager) {
-        Source s = extractSourceFromEntity(b, clientDetailsEntityCacheManager);
-        populateSource(s, sourceNameCacheManager, orcidUrlManager);
+    public Source extractSourceFromEntityComplete(SourceAwareEntity<?> b) {
+        return extractSourceFromEntityComplete(b, null);
+    }
+
+    public Source extractSourceFromEntityComplete(SourceAwareEntity<?> b, Map<String, ClientDetailsEntity> clientDetailsById) {
+        Source s = extractSourceFromEntity(b, clientDetailsById);
+        populateSource(s);
         return s;
     }
 
-    public static void populateSource(Source s, SourceNameCacheManager sourceNameCacheManager, OrcidUrlManager orcidUrlManager) {
+    /**
+     * Build a canonical Source for an entity by merging any provided source with
+     * entity-derived identifiers, then populating host/uri/source names.
+     */
+    public Source mergeAndPopulateSource(Source source, SourceAwareEntity<?> entity) {
+        if (source != null) {
+            return source;
+        }
+        Source fallback = extractSourceFromEntity(entity);
+        Source merged = source == null ? fallback : mergeMissingSourcePaths(source, fallback);
+        populateSource(merged);
+        return merged;
+    }
+
+    private Source mergeMissingSourcePaths(Source target, Source fallback) {
+        if (target == null || fallback == null) {
+            return target;
+        }
+
+        if (target.getSourceOrcid() == null || StringUtils.isBlank(target.getSourceOrcid().getPath())) {
+            target.setSourceOrcid(fallback.getSourceOrcid());
+        }
+        if (target.getSourceClientId() == null || StringUtils.isBlank(target.getSourceClientId().getPath())) {
+            target.setSourceClientId(fallback.getSourceClientId());
+        }
+        if (target.getAssertionOriginOrcid() == null || StringUtils.isBlank(target.getAssertionOriginOrcid().getPath())) {
+            target.setAssertionOriginOrcid(fallback.getAssertionOriginOrcid());
+        }
+        if (target.getAssertionOriginClientId() == null || StringUtils.isBlank(target.getAssertionOriginClientId().getPath())) {
+            target.setAssertionOriginClientId(fallback.getAssertionOriginClientId());
+        }
+
+        return target;
+    }
+
+    private void populateSource(Source s) {
         // Set the source
         if (s.getSourceOrcid() != null && s.getSourceOrcid().getPath() != null) {
             s.getSourceOrcid().setHost(orcidUrlManager.getBaseHost());
             s.getSourceOrcid().setUri(orcidUrlManager.getBaseUrl() + "/" + s.getSourceOrcid().getPath());
-            String sourceNameValue = sourceNameCacheManager.retrieve(s.getSourceOrcid().getPath());
+            String sourceNameValue = getSourceName(s.getSourceOrcid().getPath());
             if (sourceNameValue != null) {
                 s.setSourceName(new SourceName(sourceNameValue));
             }
@@ -159,7 +214,7 @@ public class SourceEntityUtils {
         if (s.getSourceClientId() != null && s.getSourceClientId().getPath() != null) {
             s.getSourceClientId().setHost(orcidUrlManager.getBaseHost());
             s.getSourceClientId().setUri(orcidUrlManager.getBaseUrl() + "/client/" + s.getSourceClientId().getPath());
-            String sourceNameValue = sourceNameCacheManager.retrieve(s.getSourceClientId().getPath());
+            String sourceNameValue = getSourceName(s.getSourceClientId().getPath());
             if (sourceNameValue != null) {
                 s.setSourceName(new SourceName(sourceNameValue));
             }
@@ -168,7 +223,7 @@ public class SourceEntityUtils {
         if (s.getAssertionOriginOrcid() != null && s.getAssertionOriginOrcid().getPath() != null) {
             s.getAssertionOriginOrcid().setHost(orcidUrlManager.getBaseHost());
             s.getAssertionOriginOrcid().setUri(orcidUrlManager.getBaseUrl() + "/" + s.getAssertionOriginOrcid().getPath());
-            String sourceNameValue = sourceNameCacheManager.retrieve(s.getAssertionOriginOrcid().getPath());
+            String sourceNameValue = getSourceName(s.getAssertionOriginOrcid().getPath());
             if (sourceNameValue != null) {
                 s.setAssertionOriginName(new SourceName(sourceNameValue));
             }
@@ -176,57 +231,33 @@ public class SourceEntityUtils {
         if (s.getAssertionOriginClientId() != null && s.getAssertionOriginClientId().getPath() != null) {
             s.getAssertionOriginClientId().setHost(orcidUrlManager.getBaseHost());
             s.getAssertionOriginClientId().setUri(orcidUrlManager.getBaseUrl() + "/client/" + s.getAssertionOriginClientId().getPath());
-            String sourceNameValue = sourceNameCacheManager.retrieve(s.getAssertionOriginClientId().getPath());
+            String sourceNameValue = getSourceName(s.getAssertionOriginClientId().getPath());
             if (sourceNameValue != null) {
                 s.setAssertionOriginName(new SourceName(sourceNameValue));
             }
         }
     }
 
+    private String getSourceName(String sourceId) {
+        ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
+        if (attributes != null) {
+            Object doNotPopulateSource = attributes.getAttribute(SourceEntityUtils.DO_NOT_POPULATE_SOURCES, RequestAttributes.SCOPE_REQUEST);
+            if(doNotPopulateSource != null) {
+                return null;
+            }
+        }
+        return sourceNameCacheManager.retrieve(sourceId);
+    }
+
     // =================================
     // utils to help refactoring for OBO
     // =================================
-
-    /**
-     * Used to check for duplicates adding via API.
-     * 
-     * @param active
-     * @param existing
-     * @return
-     */
-    public static boolean isTheSameForDuplicateChecking(Source activeSource, SourceAwareEntity<?> existingEntity,
-            ClientDetailsEntityCacheManager clientDetailsEntityCacheManager) {
-        Source existing = extractSourceFromEntity(existingEntity, clientDetailsEntityCacheManager);
-        return existing.equals(activeSource);
-    }
-
-    public static boolean isTheSameForDuplicateChecking(Source active, Source existing) {
+    public boolean isTheSameSource(Source active, Source existing) {
         return existing.equals(active);
     }
 
-    /**
-     * Used only for errors when validating I think...
-     * 
-     * @param activeSource
-     * @return
-     */
-    public static String getSourceName(Source activeSource) {
-        if (activeSource.getSourceName() != null && !StringUtils.isEmpty(activeSource.getSourceName().getContent()))
-            return activeSource.getSourceName().getContent();
-        else
-            return null;
-    }
-
-    /**
-     * Used to check if activeSource can update/delete an item.
-     * 
-     * @param activeSource
-     * @param existingEntity
-     * @return
-     */
-    public static boolean isTheSameForPermissionChecking(Source activeSource, SourceAwareEntity<?> existingEntity,
-            ClientDetailsEntityCacheManager clientDetailsEntityCacheManager) {
-        Source existing = extractSourceFromEntity(existingEntity, clientDetailsEntityCacheManager);
-        return existing.equals(activeSource);
+    public boolean isTheSameSource(Source active, SourceAwareEntity<?> existingEntity) {
+        Source existing = extractSourceFromEntity(existingEntity);
+        return existing.equals(active);
     }
 }

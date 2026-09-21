@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 
 import org.orcid.core.exception.ApplicationException;
 import org.orcid.core.exception.OrcidDuplicatedElementException;
@@ -24,7 +24,6 @@ import org.orcid.jaxb.model.v3.release.record.OtherNames;
 import org.orcid.persistence.jpa.entities.OtherNameEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.pojo.ajaxForm.PojoUtil;
-import org.springframework.transaction.annotation.Transactional;
 
 public class OtherNameManagerImpl extends OtherNameManagerReadOnlyImpl implements OtherNameManager {
 
@@ -40,8 +39,10 @@ public class OtherNameManagerImpl extends OtherNameManagerReadOnlyImpl implement
     @Resource
     private ClientDetailsEntityCacheManager clientDetailsEntityCacheManager;
 
+    @Resource
+    private SourceEntityUtils sourceEntityUtils;
+
     @Override
-    @Transactional
     public boolean deleteOtherName(String orcid, Long putCode, boolean checkSource) {
         OtherNameEntity otherNameEntity = otherNameDao.getOtherName(orcid, putCode);
 
@@ -58,7 +59,6 @@ public class OtherNameManagerImpl extends OtherNameManagerReadOnlyImpl implement
     }
 
     @Override
-    @Transactional
     public OtherName createOtherName(String orcid, OtherName otherName, boolean isApiRequest) {
         Source activeSource = sourceManager.retrieveActiveSource();
         // Validate the otherName
@@ -78,7 +78,7 @@ public class OtherNameManagerImpl extends OtherNameManagerReadOnlyImpl implement
         ProfileEntity profile = profileEntityCacheManager.retrieve(orcid);
         newEntity.setOrcid(orcid);
         // Set the source
-        SourceEntityUtils.populateSourceAwareEntityFromSource(activeSource, newEntity);
+        sourceEntityUtils.populateSourceAwareEntityFromSource(activeSource, newEntity);
 
         setIncomingPrivacy(newEntity, profile);
         DisplayIndexCalculatorHelper.setDisplayIndexOnNewEntity(newEntity, isApiRequest);
@@ -87,13 +87,12 @@ public class OtherNameManagerImpl extends OtherNameManagerReadOnlyImpl implement
     }
 
     @Override
-    @Transactional
     public OtherName updateOtherName(String orcid, Long putCode, OtherName otherName, boolean isApiRequest) {
         Source activeSource = sourceManager.retrieveActiveSource();
         OtherNameEntity updatedOtherNameEntity = otherNameDao.getOtherName(orcid, putCode);
         Visibility originalVisibility = Visibility.fromValue(updatedOtherNameEntity.getVisibility());
         // Save the original source
-        Source originalSource = SourceEntityUtils.extractSourceFromEntity(updatedOtherNameEntity, clientDetailsEntityCacheManager);
+        Source originalSource = sourceEntityUtils.extractSourceFromEntity(updatedOtherNameEntity);
         // Validate the other name
         PersonValidator.validateOtherName(otherName, activeSource, false, isApiRequest, originalVisibility);
 
@@ -111,14 +110,13 @@ public class OtherNameManagerImpl extends OtherNameManagerReadOnlyImpl implement
         orcidSecurityManager.checkSourceAndThrow(updatedOtherNameEntity);
         jpaJaxbOtherNameAdapter.toOtherNameEntity(otherName, updatedOtherNameEntity);
         // Be sure it doesn't overwrite the source
-        SourceEntityUtils.populateSourceAwareEntityFromSource(originalSource, updatedOtherNameEntity);
+        sourceEntityUtils.populateSourceAwareEntityFromSource(originalSource, updatedOtherNameEntity);
 
         otherNameDao.merge(updatedOtherNameEntity);
         return jpaJaxbOtherNameAdapter.toOtherName(updatedOtherNameEntity);
     }
 
     @Override
-    @Transactional
     public OtherNames updateOtherNames(String orcid, OtherNames otherNames) {
         List<OtherNameEntity> existingOtherNamesEntityList = otherNameDao.getOtherNames(orcid, getLastModified(orcid));
         // Delete the deleted ones
@@ -160,7 +158,7 @@ public class OtherNameManagerImpl extends OtherNameManagerReadOnlyImpl implement
                     Source activeSource = sourceManager.retrieveActiveSource();
                     newOtherName.setOrcid(orcid);
                     // Set the source
-                    SourceEntityUtils.populateSourceAwareEntityFromSource(activeSource, newOtherName);
+                    sourceEntityUtils.populateSourceAwareEntityFromSource(activeSource, newOtherName);
                     newOtherName.setVisibility(updatedOrNew.getVisibility().name());
                     newOtherName.setDisplayIndex(updatedOrNew.getDisplayIndex());
                     otherNameDao.persist(newOtherName);
@@ -173,7 +171,7 @@ public class OtherNameManagerImpl extends OtherNameManagerReadOnlyImpl implement
     private boolean isDuplicated(OtherNameEntity existing, OtherName otherName, Source activeSource) {
         if (!existing.getId().equals(otherName.getPutCode())) {
             String existingSourceId = existing.getElementSourceId();
-            if (!PojoUtil.isEmpty(existingSourceId) && SourceEntityUtils.isTheSameForDuplicateChecking(activeSource, existing, clientDetailsEntityCacheManager)) {
+            if (!PojoUtil.isEmpty(existingSourceId) && sourceEntityUtils.isTheSameSource(activeSource, existing)) {
                 if (existing.getDisplayName() != null && existing.getDisplayName().equals(otherName.getContent())) {
                     return true;
                 }

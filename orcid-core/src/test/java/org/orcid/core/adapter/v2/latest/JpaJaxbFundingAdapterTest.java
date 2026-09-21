@@ -8,10 +8,10 @@ import java.io.InputStream;
 import java.math.BigDecimal;
 import java.util.Date;
 
-import javax.annotation.Resource;
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.Unmarshaller;
+import jakarta.annotation.Resource;
+import jakarta.xml.bind.JAXBContext;
+import jakarta.xml.bind.JAXBException;
+import jakarta.xml.bind.Unmarshaller;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -43,7 +43,7 @@ public class JpaJaxbFundingAdapterTest {
     private JpaJaxbFundingAdapter jpaJaxbFundingAdapter;
 
     @Test
-    public void toFundingEntityTest() throws JAXBException {
+    public void fromFundingToFundingEntityTest() throws JAXBException {
         Funding f = getFunding(true);
         assertNotNull(f);
         assertNotNull(f.getCreatedDate().getValue());
@@ -133,6 +133,13 @@ public class JpaJaxbFundingAdapterTest {
         assertEquals("ES", funding.getTitle().getTranslatedTitle().getLanguageCode());
         assertEquals(FundingType.SALARY_AWARD, funding.getType());
         assertEquals(Visibility.PRIVATE, funding.getVisibility());
+        assertNull(funding.getOrganizationDefinedType());
+
+        // Verify JAXB marshalling succeeds without AccessorException
+        JAXBContext context = JAXBContext.newInstance(Funding.class);
+        java.io.StringWriter writer = new java.io.StringWriter();
+        context.createMarshaller().marshal(funding, writer);
+        assertNotNull(writer.toString());
     }
 
     @Test

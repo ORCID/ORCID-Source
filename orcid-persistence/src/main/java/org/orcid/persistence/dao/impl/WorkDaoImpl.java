@@ -2,16 +2,14 @@ package org.orcid.persistence.dao.impl;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import javax.persistence.Query;
-import javax.persistence.TypedQuery;
+import jakarta.persistence.Query;
+import jakarta.persistence.TypedQuery;
 
-import org.hibernate.type.BigIntegerType;
-import org.hibernate.type.IntegerType;
-import org.hibernate.type.StringType;
-import org.hibernate.type.TimestampType;
+import org.hibernate.type.StandardBasicTypes;
 import org.orcid.persistence.aop.UpdateProfileLastModified;
 import org.orcid.persistence.aop.UpdateProfileLastModifiedAndIndexingStatus;
 import org.orcid.persistence.dao.WorkDao;
@@ -41,6 +39,7 @@ public class WorkDaoImpl extends GenericDaoImpl<WorkEntity, Long> implements Wor
     }
     
     @Override
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     public MinimizedWorkEntity getMinimizedWorkEntity(Long id) {
         TypedQuery<MinimizedWorkEntity> query = entityManager
                 .createQuery("from MinimizedWorkEntity where id = :id", MinimizedWorkEntity.class);
@@ -49,6 +48,7 @@ public class WorkDaoImpl extends GenericDaoImpl<WorkEntity, Long> implements Wor
     }
     
     @Override
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     public List<MinimizedWorkEntity> getMinimizedWorkEntities(List<Long> ids) {
         // batch up list into sets of 'batchSize';
         List<MinimizedWorkEntity> list = new ArrayList<>();
@@ -61,6 +61,7 @@ public class WorkDaoImpl extends GenericDaoImpl<WorkEntity, Long> implements Wor
     }
 
     @Override
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     public List<MinimizedExtendedWorkEntity> getMinimizedExtendedWorkEntities(List<Long> ids) {
         // batch up list into sets of 50;
         List<MinimizedExtendedWorkEntity> list = new ArrayList<>();
@@ -73,6 +74,7 @@ public class WorkDaoImpl extends GenericDaoImpl<WorkEntity, Long> implements Wor
     }
 
     @Override
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     public List<WorkEntity> getWorkEntities(String orcid, List<Long> ids) {
         // batch up list into sets of 50;
         List<WorkEntity> list = new ArrayList<>();
@@ -86,6 +88,7 @@ public class WorkDaoImpl extends GenericDaoImpl<WorkEntity, Long> implements Wor
     }
     
     @Override
+    @Transactional
     public void detach(WorkBaseEntity workBaseEntity) {
         entityManager.detach(workBaseEntity);        
     }
@@ -103,10 +106,14 @@ public class WorkDaoImpl extends GenericDaoImpl<WorkEntity, Long> implements Wor
     @Transactional
     @UpdateProfileLastModifiedAndIndexingStatus
     public boolean updateVisibilities(String orcid, List<Long> workIds, String visibility) {
-        Query query = entityManager.createNativeQuery("UPDATE work SET visibility=:visibility, last_modified=now() WHERE work_id in (:workIds)");
+        Query query = entityManager
+                .createNativeQuery("UPDATE work SET visibility=:visibility, last_modified=now() WHERE work_id in (:workIds) and orcid = :orcid");
         query.setParameter("visibility", visibility);
         query.setParameter("workIds", workIds);
-        return query.executeUpdate() > 0;
+        query.setParameter("orcid", orcid);
+        // Anything the caller does not own is filtered out by the predicate, so a short count
+        // means the request was not fully applied and must not be reported as a success.
+        return query.executeUpdate() == new HashSet<Long>(workIds).size();
     }
     
     /**
@@ -123,9 +130,12 @@ public class WorkDaoImpl extends GenericDaoImpl<WorkEntity, Long> implements Wor
     @Transactional
     @UpdateProfileLastModifiedAndIndexingStatus
     public boolean removeWorks(String clientOrcid, List<Long> workIds) {
-        Query query = entityManager.createNativeQuery("DELETE FROM work WHERE work_id in (:workIds)");        
+        Query query = entityManager.createNativeQuery("DELETE FROM work WHERE work_id in (:workIds) and orcid = :clientOrcid");
         query.setParameter("workIds", workIds);
-        return query.executeUpdate() > 0;
+        query.setParameter("clientOrcid", clientOrcid);
+        // Anything the caller does not own is filtered out by the predicate, so a short count
+        // means the request was not fully applied and must not be reported as a success.
+        return query.executeUpdate() == new HashSet<Long>(workIds).size();
     }
         
     /**
@@ -147,7 +157,7 @@ public class WorkDaoImpl extends GenericDaoImpl<WorkEntity, Long> implements Wor
     @Override
     @Transactional
     public void removeWorks(String orcid) {
-        Query query = entityManager.createQuery("delete from WorkEntity where orcid = :orcid");
+        Query query = entityManager.createQuery("delete from WorkEntity w where w.orcid = :orcid");
         query.setParameter("orcid", orcid);
         query.executeUpdate();
     }
@@ -179,6 +189,7 @@ public class WorkDaoImpl extends GenericDaoImpl<WorkEntity, Long> implements Wor
      * @return a list of work ids    
      * */
     @Override
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     @SuppressWarnings("unchecked")    
     public List<BigInteger> getWorksWithNullRelationship() {
         Query query = entityManager.createNativeQuery("SELECT distinct(work_id) FROM (SELECT work_id, json_array_elements(json_extract_path(external_ids_json, 'workExternalIdentifier')) AS j FROM work where external_ids_json is not null) AS a WHERE (j->>'relationship') is null");                
@@ -198,6 +209,7 @@ public class WorkDaoImpl extends GenericDaoImpl<WorkEntity, Long> implements Wor
      * @return a list of work ids    
      * */
     @Override
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     @SuppressWarnings("unchecked")    
     public List<BigInteger> getWorksByWorkTypeAndExtIdType(String workType, String extIdType) {
         Query query = entityManager.createNativeQuery("SELECT distinct(work_id) FROM (SELECT work_id, json_array_elements(json_extract_path(external_ids_json, 'workExternalIdentifier')) AS j FROM work where work_type=:workType and external_ids_json is not null) AS a WHERE (j->>'workExternalIdentifierType') = :extIdType");
@@ -213,6 +225,7 @@ public class WorkDaoImpl extends GenericDaoImpl<WorkEntity, Long> implements Wor
      * @return the WorkEntity associated with the parameter id
      * */
     @Override
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     public WorkEntity getWork(String orcid, Long id) {
         TypedQuery<WorkEntity> query = entityManager.createQuery("FROM WorkEntity WHERE id = :workId and orcid = :orcid", WorkEntity.class);        
         query.setParameter("workId", id);
@@ -222,6 +235,7 @@ public class WorkDaoImpl extends GenericDaoImpl<WorkEntity, Long> implements Wor
 
     @SuppressWarnings("unchecked")
     @Override
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     public List<WorkLastModifiedEntity> getWorkLastModifiedList(String orcid) {
         Query query = entityManager.createQuery("from WorkLastModifiedEntity w where w.orcid=:orcid order by w.displayIndex desc, w.dateCreated asc");
         query.setParameter("orcid", orcid);
@@ -230,6 +244,7 @@ public class WorkDaoImpl extends GenericDaoImpl<WorkEntity, Long> implements Wor
     
     @SuppressWarnings("unchecked")
     @Override
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     public List<WorkLastModifiedEntity> getPublicWorkLastModifiedList(String orcid) {
         Query query = entityManager.createQuery("from WorkLastModifiedEntity w where w.visibility='PUBLIC' and w.orcid=:orcid order by w.displayIndex desc, w.dateCreated asc");
         query.setParameter("orcid", orcid);
@@ -238,6 +253,7 @@ public class WorkDaoImpl extends GenericDaoImpl<WorkEntity, Long> implements Wor
 
     @SuppressWarnings("unchecked")
     @Override
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     public List<WorkLastModifiedEntity> getWorkLastModifiedList(String orcid, List<Long> ids) {
         Query query = entityManager.createQuery("from WorkLastModifiedEntity w where w.orcid=:orcid and id in (:ids) order by w.displayIndex desc, w.dateCreated asc");
         query.setParameter("orcid", orcid);
@@ -254,6 +270,7 @@ public class WorkDaoImpl extends GenericDaoImpl<WorkEntity, Long> implements Wor
     }
 
     @Override
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     public List<WorkEntity> getWorksByOrcidId(String orcid) {
         List<WorkEntity> works = new ArrayList<>();
         List<WorkLastModifiedEntity> lastModifiedWorks = getWorkLastModifiedList(orcid);
@@ -267,24 +284,27 @@ public class WorkDaoImpl extends GenericDaoImpl<WorkEntity, Long> implements Wor
     }
 
     @Override
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     public boolean hasPublicWorks(String orcid) {
         Query query = entityManager.createNativeQuery("SELECT count(*) FROM work WHERE orcid=:orcid AND visibility='PUBLIC'");
         query.setParameter("orcid", orcid);
-        Long result = ((BigInteger)query.getSingleResult()).longValue();
+        Long result = ((Number)query.getSingleResult()).longValue();
         return (result != null && result > 0);
     }
 
     @Override
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     public boolean isPublic(String orcid, List<Long> ids) {
         Query query = entityManager.createNativeQuery("SELECT count(*) FROM work WHERE orcid=:orcid AND visibility='PUBLIC' AND work_id IN :ids");
         query.setParameter("orcid", orcid);
         query.setParameter("ids", ids);
-        Long result = ((BigInteger)query.getSingleResult()).longValue();
+        Long result = ((Number)query.getSingleResult()).longValue();
         return result.equals((long) ids.size());
     }
 
     @SuppressWarnings("unchecked")
     @Override
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     public List<BigInteger> getIdsForClientSourceCorrection(int limit, List<String> nonPublicClientIds) {
         Query query = entityManager.createNativeQuery("SELECT work_id FROM work WHERE client_source_id = source_id AND client_source_id IN :nonPublicClientIds");
         query.setParameter("nonPublicClientIds", nonPublicClientIds);
@@ -302,6 +322,7 @@ public class WorkDaoImpl extends GenericDaoImpl<WorkEntity, Long> implements Wor
 
     @SuppressWarnings("unchecked")
     @Override
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     public List<BigInteger> getIdsForUserSourceCorrection(int limit, List<String> publicClientIds) {
         Query query = entityManager.createNativeQuery("SELECT work_id FROM work WHERE client_source_id = source_id AND client_source_id IN :publicClientIds");
         query.setParameter("publicClientIds", publicClientIds);
@@ -319,6 +340,7 @@ public class WorkDaoImpl extends GenericDaoImpl<WorkEntity, Long> implements Wor
 
     @SuppressWarnings("unchecked")
     @Override
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     public List<BigInteger> getIdsForUserOBOUpdate(String clientDetailsId, int max) {
         Query query = entityManager.createNativeQuery("SELECT work_id FROM work WHERE client_source_id = :clientDetailsId AND assertion_origin_source_id IS NULL");
         query.setParameter("clientDetailsId", clientDetailsId);
@@ -336,6 +358,7 @@ public class WorkDaoImpl extends GenericDaoImpl<WorkEntity, Long> implements Wor
 
     @SuppressWarnings("unchecked")
     @Override
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     public List<BigInteger> getIdsForUserOBORecords(String clientDetailsId, int max) {
         Query query = entityManager.createNativeQuery("SELECT work_id FROM work WHERE client_source_id = :clientDetailsId AND assertion_origin_source_id IS NOT NULL");
         query.setParameter("clientDetailsId", clientDetailsId);
@@ -353,6 +376,7 @@ public class WorkDaoImpl extends GenericDaoImpl<WorkEntity, Long> implements Wor
 
     @SuppressWarnings("unchecked")
     @Override
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     public List<BigInteger> getIdsForUserOBORecords(int max) {
         Query query = entityManager.createNativeQuery("SELECT work_id FROM work WHERE assertion_origin_source_id IS NOT NULL");
         query.setMaxResults(max);
@@ -361,6 +385,7 @@ public class WorkDaoImpl extends GenericDaoImpl<WorkEntity, Long> implements Wor
 
     @SuppressWarnings("unchecked")
     @Override
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     public List<BigInteger> getIdsOfWorksReferencingClientProfiles(int max, List<String> clientProfileOrcidIds) {
         Query query = entityManager.createNativeQuery("SELECT work_id FROM work WHERE source_id IN :ids");
         query.setParameter("ids", clientProfileOrcidIds);
@@ -383,6 +408,7 @@ public class WorkDaoImpl extends GenericDaoImpl<WorkEntity, Long> implements Wor
     }
 
     @Override
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     public List<Object[]> getWorksByOrcid(String orcid, boolean featuredOnly) {
         String queryText = WORKS_BY_ORCID_WITH_CONTRIBUTORS;
         if (featuredOnly) {
@@ -391,28 +417,29 @@ public class WorkDaoImpl extends GenericDaoImpl<WorkEntity, Long> implements Wor
         Query query = entityManager.createNativeQuery(queryText);
         query.setParameter("orcid", orcid)
                 .unwrap(org.hibernate.query.NativeQuery.class)
-                .addScalar("work_id", BigIntegerType.INSTANCE)
-                .addScalar("work_type", StringType.INSTANCE)
-                .addScalar("title", StringType.INSTANCE)
-                .addScalar("journal_title", StringType.INSTANCE)
-                .addScalar("external_ids_json", StringType.INSTANCE)
-                .addScalar("publication_year", IntegerType.INSTANCE)
-                .addScalar("publication_month", IntegerType.INSTANCE)
-                .addScalar("publication_day", IntegerType.INSTANCE)
-                .addScalar("visibility", StringType.INSTANCE)
-                .addScalar("display_index", BigIntegerType.INSTANCE)
-                .addScalar("source_id", StringType.INSTANCE)
-                .addScalar("client_source_id", StringType.INSTANCE)
-                .addScalar("assertion_origin_source_id", StringType.INSTANCE)
-                .addScalar("assertion_origin_client_source_id", StringType.INSTANCE)
-                .addScalar("date_created", TimestampType.INSTANCE)
-                .addScalar("last_modified", TimestampType.INSTANCE)
-                .addScalar("contributors", StringType.INSTANCE)
-                .addScalar("featured_display_index", IntegerType.INSTANCE);
+                .addScalar("work_id", StandardBasicTypes.BIG_INTEGER)
+                .addScalar("work_type", StandardBasicTypes.STRING)
+                .addScalar("title", StandardBasicTypes.STRING)
+                .addScalar("journal_title", StandardBasicTypes.STRING)
+                .addScalar("external_ids_json", StandardBasicTypes.STRING)
+                .addScalar("publication_year", StandardBasicTypes.INTEGER)
+                .addScalar("publication_month", StandardBasicTypes.INTEGER)
+                .addScalar("publication_day", StandardBasicTypes.INTEGER)
+                .addScalar("visibility", StandardBasicTypes.STRING)
+                .addScalar("display_index", StandardBasicTypes.BIG_INTEGER)
+                .addScalar("source_id", StandardBasicTypes.STRING)
+                .addScalar("client_source_id", StandardBasicTypes.STRING)
+                .addScalar("assertion_origin_source_id", StandardBasicTypes.STRING)
+                .addScalar("assertion_origin_client_source_id", StandardBasicTypes.STRING)
+                .addScalar("date_created", StandardBasicTypes.TIMESTAMP)
+                .addScalar("last_modified", StandardBasicTypes.TIMESTAMP)
+                .addScalar("contributors", StandardBasicTypes.STRING)
+                .addScalar("featured_display_index", StandardBasicTypes.INTEGER);
         return query.getResultList();
     }
 
     @Override
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     public List<Object[]> getWorksStartingFromWorkId(Long workId, int numberOfWorks) {
         Query query = entityManager.createNativeQuery(
                 "SELECT " +
@@ -423,8 +450,8 @@ public class WorkDaoImpl extends GenericDaoImpl<WorkEntity, Long> implements Wor
         query.setParameter("workId", workId);
         query.setParameter("numberOfWorks", numberOfWorks)
                 .unwrap(org.hibernate.query.NativeQuery.class)
-                .addScalar("work_id", BigIntegerType.INSTANCE)
-                .addScalar("contributors_json", StringType.INSTANCE);
+                .addScalar("work_id", StandardBasicTypes.BIG_INTEGER)
+                .addScalar("contributors_json", StandardBasicTypes.STRING);
         return query.getResultList();
     }
 

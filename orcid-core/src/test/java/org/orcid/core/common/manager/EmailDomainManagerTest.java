@@ -1,6 +1,7 @@
 package org.orcid.core.common.manager;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
@@ -127,6 +128,36 @@ public class EmailDomainManagerTest {
         assertEquals("gmail.com", ede.get(0).getEmailDomain());
         assertEquals(DomainCategory.PERSONAL, ede.get(0).getCategory());
         }
+    }
+
+    @Test
+    public void findByEmailDomain_CaseSensitivityTest() {
+        // Query with uppercase domain
+        List<EmailDomain> results = edm.findByEmailDomain("GMAIL.COM");
+        
+        assertNotNull(results);
+        assertFalse(results.isEmpty());
+        assertEquals("gmail.com", results.get(0).getEmailDomain());
+    }
+
+    @Test
+    public void findByEmailDomain_SubdomainCaseSensitivityTest() {
+        EmailDomainEntity e1 = new EmailDomainEntity("domain.com", DomainCategory.PROFESSIONAL);
+        when(emailDomainDaoReadOnlyMock.findByEmailDomain("domain.com")).thenReturn(List.of(e1));
+
+        List<EmailDomain> results = edm.findByEmailDomain("SUB.DOMAIN.COM");
+        
+        assertNotNull(results);
+        assertFalse(results.isEmpty());
+        assertEquals("domain.com", results.get(0).getEmailDomain());
+    }
+
+    @Test
+    public void findByEmailDomain_CacheNormalizationTest() {
+        edm.findByEmailDomain("GMAIL.COM");
+        
+        // Verify it was put into cache with lowercase key
+        verify(emailDomainCacheMock).put(eq("gmail.com"), any());
     }
     
     @Test(expected = IllegalArgumentException.class)

@@ -2,16 +2,16 @@ package org.orcid.persistence.jpa.entities;
 
 import java.util.Date;
 
-import javax.persistence.Column;
-import javax.persistence.ColumnResult;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.IdClass;
-import javax.persistence.NamedNativeQueries;
-import javax.persistence.NamedNativeQuery;
-import javax.persistence.SqlResultSetMapping;
-import javax.persistence.Table;
-import javax.persistence.Transient;
+import jakarta.persistence.Column;
+import jakarta.persistence.ColumnResult;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.IdClass;
+import jakarta.persistence.NamedNativeQueries;
+import jakarta.persistence.NamedNativeQuery;
+import jakarta.persistence.SqlResultSetMapping;
+import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
 
 import org.orcid.persistence.jpa.entities.keys.WebhookEntityPk;
 
@@ -24,7 +24,7 @@ import org.orcid.persistence.jpa.entities.keys.WebhookEntityPk;
 @NamedNativeQueries( {
         @NamedNativeQuery(name = WebhookEntity.COUNT_WEBHOOKS_READY_TO_PROCESS, query = "SELECT COUNT(*) webhook_count "
                 + WebhookEntity.WEBHOOKS_READY_TO_PROCESS_FROM_CLAUSE, resultSetMapping = "countMapping"),
-        @NamedNativeQuery(name = WebhookEntity.FIND_WEBHOOKS_READY_TO_PROCESS, query = "SELECT *  " + WebhookEntity.WEBHOOKS_READY_TO_PROCESS_FROM_CLAUSE
+    @NamedNativeQuery(name = WebhookEntity.FIND_WEBHOOKS_READY_TO_PROCESS, query = "SELECT w.* " + WebhookEntity.WEBHOOKS_READY_TO_PROCESS_FROM_CLAUSE
                 + " ORDER BY w.profile_last_modified", resultClass = WebhookEntity.class) })
 @SqlResultSetMapping(name = "countMapping", columns = @ColumnResult(name = "webhook_count"))
 public class WebhookEntity extends BaseEntity<WebhookEntityPk>  {
@@ -44,7 +44,7 @@ public class WebhookEntity extends BaseEntity<WebhookEntityPk>  {
     public static final String FIND_WEBHOOKS_READY_TO_PROCESS = "findWebhooksReadyToProcess";
     public static final String COUNT_WEBHOOKS_READY_TO_PROCESS = "countWebhooksReadyToProcess";
     public static final String WEBHOOKS_READY_TO_PROCESS_FROM_CLAUSE = "FROM webhook w "
-            + "JOIN client_details c ON c.client_details_id = w.client_details_id AND c.deactivated_date is null AND c.webhooks_enabled = 'true'" 
+            + "JOIN client_details c ON c.client_details_id not in (:clientsToExclude) AND c.client_details_id = w.client_details_id AND c.deactivated_date is null AND c.webhooks_enabled = 'true'"
             + "   WHERE w.enabled = 'true' "
             + "   AND w.failed_attempt_count < :maxAttemptCount "
             + "   AND (w.profile_last_modified >= w.last_sent OR (w.last_sent IS NULL AND w.profile_last_modified >= w.date_created))"

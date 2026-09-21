@@ -1,41 +1,20 @@
 package org.orcid.pojo;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.orcid.persistence.jpa.entities.UserconnectionPK;
-import org.orcid.pojo.ajaxForm.ErrorsInterface;
 
 /**
  * @author Shobhit Tyagi
  */
-public class ManageSocialAccount implements ErrorsInterface {
+public class ManageSocialAccount extends AuthChallenge {
 
-    private List<String> errors = new ArrayList<String>();
-    private UserconnectionPK idToMange;
-    private String password;
+    private UserconnectionPK id;
 
-    public UserconnectionPK getIdToManage() {
-        return idToMange;
+    public UserconnectionPK getId() {
+        return id;
     }
 
-    public void setIdToManage(UserconnectionPK idToManage) {
-        this.idToMange = idToManage;
+    public void setId(UserconnectionPK idToManage) {
+        this.id = idToManage;
     }
 
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public List<String> getErrors() {
-        return errors;
-    }
-
-    public void setErrors(List<String> errors) {
-        this.errors = errors;
-    }
 }

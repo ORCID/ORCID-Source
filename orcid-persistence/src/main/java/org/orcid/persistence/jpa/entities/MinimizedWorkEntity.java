@@ -1,8 +1,8 @@
 package org.orcid.persistence.jpa.entities;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Table;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Table;
 
 /**
  * An object that will contain the minimum work information needed to display

@@ -59,10 +59,9 @@ public class ContributorsRolesAndSequences extends Contributor {
             }
             AtomicBoolean isDifferent = new AtomicBoolean(false);
             WorkContributorRoleConverter roleConverter = new WorkContributorRoleConverter();
-            ContributorUtils contributorUtils = new ContributorUtils(null);
             for (int i = 0; i < rolesAndSequences.size() ; i++) {
                 if (rolesAndSequences.get(i).getContributorRole() != null && other.rolesAndSequences.get(i).getContributorRole() != null) {
-                    if (!WorkForm.compareStrings(rolesAndSequences.get(i).getContributorRole(), contributorUtils.getCreditRole(roleConverter.toRoleValue(other.rolesAndSequences.get(i).getContributorRole())))) {
+                    if (!WorkForm.compareStrings(rolesAndSequences.get(i).getContributorRole(), ContributorUtils.getCreditRole(roleConverter.toRoleValue(other.rolesAndSequences.get(i).getContributorRole())))) {
                         isDifferent.set(true);
                         break;
                     }

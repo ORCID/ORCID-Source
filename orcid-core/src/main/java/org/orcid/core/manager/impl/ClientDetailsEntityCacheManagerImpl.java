@@ -1,24 +1,32 @@
 package org.orcid.core.manager.impl;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 
 import org.ehcache.Cache;
 import org.orcid.core.manager.ClientDetailsEntityCacheManager;
-import org.orcid.core.manager.ClientDetailsManager;
+import org.orcid.core.manager.read_only.ClientDetailsManagerReadOnly;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.core.utils.ReleaseNameUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.security.oauth2.common.exceptions.InvalidClientException;
 
 public class ClientDetailsEntityCacheManagerImpl implements ClientDetailsEntityCacheManager {
 
     private static final Logger LOG = LoggerFactory.getLogger(ClientDetailsEntityCacheManagerImpl.class);
 
-    @Resource
-    private ClientDetailsManager clientDetailsManager;
+    @Resource(name = "clientDetailsManagerReadOnly")
+    private ClientDetailsManagerReadOnly clientDetailsManager;
+
+    public void setClientDetailsManager(ClientDetailsManagerReadOnly clientDetailsManager) {
+        this.clientDetailsManager = clientDetailsManager;
+    }
 
     @Resource(name = "clientDetailsEntityCache")
     private Cache<Object, ClientDetailsEntity> clientDetailsCache;
@@ -26,24 +34,67 @@ public class ClientDetailsEntityCacheManagerImpl implements ClientDetailsEntityC
     @Resource(name = "clientDetailsEntityIdPCache")
     private Cache<Object, ClientDetailsEntity> clientDetailsIdPCache;
 
-    private String releaseName = ReleaseNameUtils.getReleaseName();
+    // Short-lived ehcache for the last-modified freshness check itself, to collapse bursts of
+    // repeated retrieve() calls for the same client (e.g. one per activity in a record/list response)
+    // into a single DB round-trip instead of one per call.
+    @Resource(name = "clientDetailsLastModifiedCache")
+    private Cache<String, Date> clientDetailsLastModifiedCache;
+
+    private final String releaseName = ReleaseNameUtils.getReleaseName();
 
     @Override
     public ClientDetailsEntity retrieve(String clientId) throws IllegalArgumentException {
         Object key = new ClientIdCacheKey(clientId, releaseName);
         Date dbDate = retrieveLastModifiedDate(clientId);
-        ;
         ClientDetailsEntity clientDetails = clientDetailsCache.get(key);
         if (needsFresh(dbDate, clientDetails)) {
             clientDetails = clientDetailsCache.get(key);
             if (needsFresh(dbDate, clientDetails)) {
                 clientDetails = clientDetailsManager.findByClientId(clientId);
                 if (clientDetails == null)
-                    throw new InvalidClientException("Client not found: " + clientId);
+                    throw new IllegalArgumentException("Client not found: " + clientId);
                 clientDetailsCache.put(key, clientDetails);
             }
         }
         return clientDetails;
+    }
+
+    @Override
+    public Map<String, ClientDetailsEntity> retrieveAll(Collection<String> clientIds) {
+        Map<String, ClientDetailsEntity> clientDetailsById = new HashMap<>();
+        if (clientIds == null || clientIds.isEmpty()) {
+            return clientDetailsById;
+        }
+
+        List<String> clientIdList = new ArrayList<>(clientIds);
+        Map<String, Date> lastModifiedByClientId = clientDetailsManager.getLastModifiedByClientIds(clientIdList);
+        if (lastModifiedByClientId == null) {
+            return clientDetailsById;
+        }
+        List<String> staleOrMissingClientIds = new ArrayList<>();
+
+        for (String clientId : clientIdList) {
+            Date dbDate = lastModifiedByClientId.get(clientId);
+            if (dbDate == null) {
+                continue;
+            }
+            Object key = new ClientIdCacheKey(clientId, releaseName);
+            ClientDetailsEntity clientDetails = clientDetailsCache.get(key);
+            if (needsFresh(dbDate, clientDetails)) {
+                staleOrMissingClientIds.add(clientId);
+            } else {
+                clientDetailsById.put(clientId, clientDetails);
+            }
+        }
+
+        if (!staleOrMissingClientIds.isEmpty()) {
+            for (ClientDetailsEntity clientDetails : clientDetailsManager.findByClientIds(staleOrMissingClientIds)) {
+                clientDetailsCache.put(new ClientIdCacheKey(clientDetails.getId(), releaseName), clientDetails);
+                clientDetailsById.put(clientDetails.getId(), clientDetails);
+            }
+        }
+
+        return clientDetailsById;
     }
 
     @Override
@@ -72,24 +123,35 @@ public class ClientDetailsEntityCacheManagerImpl implements ClientDetailsEntityC
     public void put(String clientId, ClientDetailsEntity client) {
         Object key = new ClientIdCacheKey(clientId, releaseName);
         clientDetailsCache.put(key, client);
+        clientDetailsLastModifiedCache.remove(clientId);
     }
 
     @Override
     public void removeAll() {
         clientDetailsCache.clear();
+        clientDetailsLastModifiedCache.clear();
     }
 
     @Override
     public void remove(String clientId) {
         clientDetailsCache.remove(new ClientIdCacheKey(clientId, releaseName));
+        clientDetailsLastModifiedCache.remove(clientId);
     }
 
     private Date retrieveLastModifiedDate(String clientId) {
+        Date cached = clientDetailsLastModifiedCache.get(clientId);
+        if (cached != null) {
+            return cached;
+        }
         Date date = null;
         try {
             date = clientDetailsManager.getLastModified(clientId);
-        } catch (javax.persistence.NoResultException e) {
+        } catch (jakarta.persistence.NoResultException e) {
             LOG.debug("Missing lastModifiedDate clientId:" + clientId);
+        }
+        // ehcache rejects null values, so only cache a real hit; unknown clients keep hitting the DB
+        if (date != null) {
+            clientDetailsLastModifiedCache.put(clientId, date);
         }
         return date;
     }
@@ -98,7 +160,7 @@ public class ClientDetailsEntityCacheManagerImpl implements ClientDetailsEntityC
         Date date = null;
         try {
             date = clientDetailsManager.getLastModifiedByIdp(idp);
-        } catch (javax.persistence.NoResultException e) {
+        } catch (jakarta.persistence.NoResultException e) {
             LOG.debug("Missing lastModifiedDate idp:" + idp);
         }
         return date;

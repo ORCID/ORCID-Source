@@ -8,9 +8,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.NoResultException;
-import javax.persistence.Query;
-import javax.persistence.TypedQuery;
+import jakarta.persistence.NoResultException;
+import jakarta.persistence.Query;
+import jakarta.persistence.TypedQuery;
 import java.util.List;
 
 public class ProfileEmailDomainDaoImpl extends GenericDaoImpl<ProfileEmailDomainEntity, Long> implements ProfileEmailDomainDao {
@@ -70,6 +70,7 @@ public class ProfileEmailDomainDaoImpl extends GenericDaoImpl<ProfileEmailDomain
     }
 
     @Override
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     public List<ProfileEmailDomainEntity> findByOrcid(String orcid) {
         TypedQuery<ProfileEmailDomainEntity> query = entityManager.createQuery("from ProfileEmailDomainEntity where orcid = :orcid", ProfileEmailDomainEntity.class);
         query.setParameter("orcid", orcid);
@@ -78,6 +79,7 @@ public class ProfileEmailDomainDaoImpl extends GenericDaoImpl<ProfileEmailDomain
     }
 
     @Override
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     public List<ProfileEmailDomainEntity> findPublicEmailDomains(String orcid) {
         TypedQuery<ProfileEmailDomainEntity> query = entityManager.createQuery("from ProfileEmailDomainEntity where orcid = :orcid and visibility = 'PUBLIC'",
                 ProfileEmailDomainEntity.class);
@@ -87,6 +89,7 @@ public class ProfileEmailDomainDaoImpl extends GenericDaoImpl<ProfileEmailDomain
     }
 
     @Override
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     public ProfileEmailDomainEntity findByEmailDomain(String orcid, String emailDomain) {
         TypedQuery<ProfileEmailDomainEntity> query = entityManager.createQuery("from ProfileEmailDomainEntity where orcid = :orcid and emailDomain = :emailDomain",
                 ProfileEmailDomainEntity.class);
@@ -116,6 +119,7 @@ public class ProfileEmailDomainDaoImpl extends GenericDaoImpl<ProfileEmailDomain
     }
 
     @Override
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     public List<ProfileEmailDomainEntity> findByEmailDomain(String emailDomain) {
         TypedQuery<ProfileEmailDomainEntity> query = entityManager.createQuery("from ProfileEmailDomainEntity where emailDomain = :emailDomain",
                 ProfileEmailDomainEntity.class);

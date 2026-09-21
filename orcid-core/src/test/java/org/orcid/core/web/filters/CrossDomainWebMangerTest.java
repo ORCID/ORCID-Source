@@ -6,7 +6,7 @@ import static org.junit.Assert.fail;
 
 import java.net.URISyntaxException;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;

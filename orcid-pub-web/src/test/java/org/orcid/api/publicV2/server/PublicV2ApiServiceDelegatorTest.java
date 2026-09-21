@@ -10,11 +10,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import javax.annotation.Resource;
-import javax.persistence.NoResultException;
-import javax.ws.rs.WebApplicationException;
-import javax.ws.rs.core.Response;
+import jakarta.annotation.Resource;
+import jakarta.persistence.NoResultException;
+import jakarta.ws.rs.WebApplicationException;
+import jakarta.ws.rs.core.Response;
 
+import org.apache.hc.core5.http.ParseException;
 import org.junit.*;
 import org.junit.runner.RunWith;
 import org.mockito.Matchers;
@@ -1178,7 +1179,7 @@ public class PublicV2ApiServiceDelegatorTest extends DBUnitTest {
     }
 
     @Test
-    public void testSearchByQuery() {
+    public void testSearchByQuery() throws ParseException {
         Search search = new Search();
         Result result = new Result();
         result.setOrcidIdentifier(new OrcidIdentifier("some-orcid-id"));
@@ -1203,7 +1204,7 @@ public class PublicV2ApiServiceDelegatorTest extends DBUnitTest {
     }
 
     @Test(expected = OrcidBadRequestException.class)
-    public void testSearchByQueryTooManyRows() {
+    public void testSearchByQueryTooManyRows() throws ParseException {
         Map<String, List<String>> params = new HashMap<>();
         params.put("rows", Arrays.asList(Integer.toString(OrcidSearchManager.MAX_SEARCH_ROWS + 20)));
 
@@ -1216,7 +1217,7 @@ public class PublicV2ApiServiceDelegatorTest extends DBUnitTest {
     }
 
     @Test(expected = SearchStartParameterLimitExceededException.class)
-    public void testSearchByQueryIllegalStart() {
+    public void testSearchByQueryIllegalStart() throws ParseException {
         Map<String, List<String>> params = new HashMap<>();
         params.put("start", Arrays.asList(Integer.toString(OrcidSearchManager.MAX_SEARCH_START + 20)));
 
@@ -1233,7 +1234,7 @@ public class PublicV2ApiServiceDelegatorTest extends DBUnitTest {
     }
 
     @Test
-    public void testSearchByQueryLegalStart() {
+    public void testSearchByQueryLegalStart() throws ParseException {
         Map<String, List<String>> params = new HashMap<>();
         params.put("start", Arrays.asList(Integer.toString(OrcidSearchManager.MAX_SEARCH_START)));
 
@@ -1261,7 +1262,7 @@ public class PublicV2ApiServiceDelegatorTest extends DBUnitTest {
     }
 
     @Test
-    public void testViewClient() {
+    public void testViewClient() throws ParseException {
         Response response = serviceDelegator.viewClient("APP-6666666666666666");
         assertNotNull(response.getEntity());
         assertTrue(response.getEntity() instanceof ClientSummary);

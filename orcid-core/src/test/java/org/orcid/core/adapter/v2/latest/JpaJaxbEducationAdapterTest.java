@@ -7,10 +7,10 @@ import static org.junit.Assert.assertNull;
 import java.io.InputStream;
 import java.util.Date;
 
-import javax.annotation.Resource;
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.Unmarshaller;
+import jakarta.annotation.Resource;
+import jakarta.xml.bind.JAXBContext;
+import jakarta.xml.bind.JAXBException;
+import jakarta.xml.bind.Unmarshaller;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -45,32 +45,35 @@ public class JpaJaxbEducationAdapterTest extends MockSourceNameCache {
     private JpaJaxbEducationAdapter jpaJaxbEducationAdapter;
 
     @Test
-    public void testToOrgAffiliationRelationEntity() throws JAXBException {
+    public void fromEducationToOrgAffiliationRelationEntityTest() throws JAXBException {
         Education e = getEducation(true);
         assertNotNull(e);
         assertNotNull(e.getCreatedDate());
         assertNotNull(e.getLastModifiedDate());
+
         OrgAffiliationRelationEntity oar = jpaJaxbEducationAdapter.toOrgAffiliationRelationEntity(e);
         assertNotNull(oar);
-        //General info
-        assertEquals(Long.valueOf(0), oar.getId());
+        // General info
         assertNull(oar.getDateCreated());
         assertNull(oar.getLastModified());
-        assertEquals(Visibility.PRIVATE.name(), oar.getVisibility());        
+        assertNull(oar.getUrl());
+        assertNull(oar.getExternalIdentifiersJson());
+        assertEquals(Long.valueOf(0), oar.getId());
+        assertEquals(Visibility.PRIVATE.name(), oar.getVisibility());
         assertEquals("education:department-name", oar.getDepartment());
         assertEquals("education:role-title", oar.getTitle());
-        
-        //Dates
-        assertEquals(Integer.valueOf(2), oar.getStartDate().getDay());        
+
+        // Dates
+        assertEquals(Integer.valueOf(2), oar.getStartDate().getDay());
         assertEquals(Integer.valueOf(2), oar.getStartDate().getMonth());
         assertEquals(Integer.valueOf(1948), oar.getStartDate().getYear());
         assertEquals(Integer.valueOf(2), oar.getEndDate().getDay());
         assertEquals(Integer.valueOf(2), oar.getEndDate().getMonth());
         assertEquals(Integer.valueOf(1948), oar.getEndDate().getYear());
-        
+
         // Source
-        assertNull(oar.getSourceId());        
-        assertNull(oar.getClientSourceId());        
+        assertNull(oar.getSourceId());
+        assertNull(oar.getClientSourceId());
         assertNull(oar.getElementSourceId());
     }
     

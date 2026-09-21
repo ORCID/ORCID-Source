@@ -11,8 +11,8 @@ import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import javax.annotation.Resource;
-import javax.ws.rs.core.Response;
+import jakarta.annotation.Resource;
+import jakarta.ws.rs.core.Response;
 
 import org.orcid.api.common.util.ActivityUtils;
 import org.orcid.api.common.util.ApiUtils;
@@ -104,6 +104,8 @@ import org.orcid.jaxb.model.search_v2.Search;
 import org.orcid.persistence.jpa.entities.EmailDomainEntity;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Component;
+
+import org.apache.hc.core5.http.ParseException;
 
 /**
  * <p/>
@@ -316,7 +318,8 @@ public class MemberV2ApiServiceDelegatorImpl implements
     public Response createWork(String orcid, Work work) {
         orcidSecurityManager.checkClientAccessAndScopes(orcid, ScopePathType.ORCID_WORKS_CREATE, ScopePathType.ORCID_WORKS_UPDATE);
         clearSource(work);
-        Work w = workManager.createWork(orcid, work, true);
+        List<Work> existingWorks = workManagerReadOnly.findWorks(orcid);
+        Work w = workManager.createWork(orcid, work, true, existingWorks);
         sourceUtils.setSourceName(w);
         return apiUtils.buildApiResponse(orcid, "work", String.valueOf(w.getPutCode()), "apiError.creatework_response.exception");
     }
@@ -331,7 +334,8 @@ public class MemberV2ApiServiceDelegatorImpl implements
             throw new MismatchedPutCodeException(params);
         }
         clearSource(work);
-        Work w = workManager.updateWork(orcid, work, true);
+        List<Work> existingWorks = workManagerReadOnly.findWorks(orcid);
+        Work w = workManager.updateWork(orcid, work, true, existingWorks);
         sourceUtils.setSourceName(w);
         return Response.ok(w).build();
     }
@@ -347,7 +351,8 @@ public class MemberV2ApiServiceDelegatorImpl implements
                 }
             }
         }
-        works = workManager.createWorks(orcid, works);
+        List<Work> existingWorks = workManagerReadOnly.findWorks(orcid);
+        works = workManager.createWorks(orcid, works, existingWorks);
         sourceUtils.setSourceName(works);
         return Response.ok(works).build();
     }
@@ -404,7 +409,7 @@ public class MemberV2ApiServiceDelegatorImpl implements
     public Response createFunding(String orcid, Funding funding) {
         orcidSecurityManager.checkClientAccessAndScopes(orcid, ScopePathType.FUNDING_CREATE, ScopePathType.FUNDING_UPDATE);
         clearSource(funding);
-        Funding f = profileFundingManager.createFunding(orcid, funding, true);
+        Funding f = profileFundingManager.createFunding(orcid, funding, true, profileFundingManagerReadOnly.getFundingList(orcid));
         sourceUtils.setSourceName(f);
         return apiUtils.buildApiResponse(orcid, "funding", String.valueOf(f.getPutCode()), "apiError.createfunding_response.exception");
     }
@@ -419,7 +424,7 @@ public class MemberV2ApiServiceDelegatorImpl implements
             throw new MismatchedPutCodeException(params);
         }
         clearSource(funding);
-        Funding f = profileFundingManager.updateFunding(orcid, funding, true);
+        Funding f = profileFundingManager.updateFunding(orcid, funding, true, profileFundingManagerReadOnly.getFundingList(orcid));
         sourceUtils.setSourceName(f);
         return Response.ok(f).build();
     }
@@ -1070,7 +1075,7 @@ public class MemberV2ApiServiceDelegatorImpl implements
     }
 
     @Override
-    public Response searchByQuery(Map<String, List<String>> solrParams) {
+    public Response searchByQuery(Map<String, List<String>> solrParams) throws ParseException {
         orcidSecurityManager.checkScopes(ScopePathType.READ_PUBLIC);
         validateSearchParams(solrParams);
         Search search = orcidSearchManager.findOrcidIds(solrParams);

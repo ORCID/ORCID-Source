@@ -2,8 +2,8 @@ package org.orcid.persistence.dao.impl;
 
 import java.util.List;
 
-import javax.persistence.Query;
-import javax.persistence.TypedQuery;
+import jakarta.persistence.Query;
+import jakarta.persistence.TypedQuery;
 
 import org.joda.time.DateTime;
 import org.orcid.persistence.dao.ClientSecretDao;
@@ -57,8 +57,9 @@ public class ClientSecretDaoImpl extends GenericDaoImpl<ClientSecretEntity, Clie
      * @return a list of all client secrets associated with a client
      * */
     @Override
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     public List<ClientSecretEntity> getClientSecretsByClientId(String clientId) {
-        TypedQuery<ClientSecretEntity> query = entityManager.createQuery("From ClientSecretEntity WHERE client_details_id=:clientId", ClientSecretEntity.class);
+        TypedQuery<ClientSecretEntity> query = entityManager.createQuery("From ClientSecretEntity WHERE clientId=:clientId", ClientSecretEntity.class);
         query.setParameter("clientId", clientId);
         return query.getResultList();
     }
@@ -94,7 +95,7 @@ public class ClientSecretDaoImpl extends GenericDaoImpl<ClientSecretEntity, Clie
     }
     
     @Override
-    @Transactional
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     @SuppressWarnings("unchecked")
     public List<ClientSecretEntity> getNonPrimaryKeys(Integer limit) {
         DateTime dt = DateTime.now().minusDays(1);

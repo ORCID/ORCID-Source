@@ -15,7 +15,6 @@ import org.orcid.utils.OrcidStringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
-import org.springframework.beans.factory.annotation.Required;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 public class EncryptionManagerImpl implements EncryptionManager,PasswordEncoder, InitializingBean  {
@@ -46,22 +45,18 @@ public class EncryptionManagerImpl implements EncryptionManager,PasswordEncoder,
         this.iterationCountForInternalEncyrption = iterationCountForInternalEncyrption;
     }
 
-    @Required
     public void setInternalEncryptor(PBEStringEncryptor internalEncryptor) {
         this.internalEncryptor = internalEncryptor;
     }
 
-    @Required
     public void setLegacyExternalEncryptor(PBEStringEncryptor legacyExternalEncryptor) {
         this.legacyExternalEncryptor = legacyExternalEncryptor;
     }
 
-    @Required
     public void setExternalEncryptor(PBEStringEncryptor externalEncryptor) {
         this.externalEncryptor = externalEncryptor;
     }
 
-    @Required
     public void setPasswordEncryptor(StringDigester passwordEncryptor) {
         this.passwordEncryptor = passwordEncryptor;
     }

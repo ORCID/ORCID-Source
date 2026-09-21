@@ -1,0 +1,10 @@
+# ignore from ripgrep any non greppable long line content
+.git/
+orcid-api-web/src/main/webapp/static/swagger2/
+orcid-api-web/src/main/webapp/static/swagger/
+orcid-pub-web/src/main/webapp/static/swagger2/
+orcid-pub-web/src/main/webapp/static/swagger/
+orcid-web/src/main/webapp/static/
+orcid-web/src/test/javascript/node_modules/
+orcid-web/src/main/webapp/static/css/
+*.svg

@@ -19,8 +19,8 @@ package org.orcid.activitiesindexer.listener;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.jms.JMSException;
-import javax.jms.Message;
+import jakarta.jms.JMSException;
+import jakarta.jms.Message;
 
 import org.apache.activemq.command.ActiveMQMapMessage;
 import org.fusesource.hawtbuf.UTF8Buffer;

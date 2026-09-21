@@ -7,10 +7,10 @@ import static org.junit.Assert.assertNull;
 import java.io.InputStream;
 import java.util.Date;
 
-import javax.annotation.Resource;
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.Unmarshaller;
+import jakarta.annotation.Resource;
+import jakarta.xml.bind.JAXBContext;
+import jakarta.xml.bind.JAXBException;
+import jakarta.xml.bind.Unmarshaller;
 
 import org.junit.After;
 import org.junit.Before;
@@ -91,7 +91,7 @@ public class JpaJaxbResearcherUrlAdapterTest extends MockSourceNameCache {
     }
     
     @Test
-    public void testToResearcherUrlEntity() throws JAXBException {
+    public void researcherUrlToResearcherUrlEntityTest() throws JAXBException {
         ResearcherUrls rUrls = getResearcherUrls();
         assertNotNull(rUrls);
         assertNotNull(rUrls.getResearcherUrls());
@@ -131,6 +131,16 @@ public class JpaJaxbResearcherUrlAdapterTest extends MockSourceNameCache {
         // no user obo
         assertNull(r.getSource().getAssertionOriginOrcid());
     }      
+
+    @Test
+    public void fromResearcherUrlEntityWithBlankUrlDoesNotCreateUrlWrapper() throws IllegalAccessException {
+        ResearcherUrlEntity entity = getResearcherUrlEntity();
+        entity.setUrl(" ");
+
+        ResearcherUrl researcherUrl = jpaJaxbResearcherUrlAdapter.toResearcherUrl(entity);
+
+        assertNull(researcherUrl.getUrl());
+    }
     
     @Test
     public void fromResearcherUrlEntityToUserOBOResearcherUrl() throws IllegalAccessException {

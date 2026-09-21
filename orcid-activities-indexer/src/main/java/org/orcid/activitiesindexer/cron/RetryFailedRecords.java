@@ -6,7 +6,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
+import jakarta.ws.rs.client.Client;
+import jakarta.ws.rs.client.ClientBuilder;
+import jakarta.ws.rs.client.Entity;
+import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response;
 
 import org.apache.commons.lang3.StringUtils;
 import org.orcid.activitiesindexer.persistence.entities.ActivitiesStatusEntity;
@@ -22,9 +27,6 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.sun.jersey.api.client.Client;
-import com.sun.jersey.api.client.ClientResponse;
-import com.sun.jersey.api.client.WebResource;
 
 @Configuration
 @EnableScheduling
@@ -50,7 +52,7 @@ public class RetryFailedRecords {
     private S3MessageProcessor s3Processor;
 
     public RetryFailedRecords() {
-        client = Client.create();
+        client = ClientBuilder.newClient();
         mapper = new ObjectMapper();
     }
 
@@ -156,11 +158,13 @@ public class RetryFailedRecords {
                 throw new RuntimeException(e);
             }
 
-            WebResource resource = client.resource(webhookUrl);
-            ClientResponse response = resource.entity(bodyJson).post(ClientResponse.class);
-            int status = response.getStatus();
-            if (status != 200) {
-                LOGGER.warn("Unable to send message to Slack, status={}, error={}, message={}", new Object[] { status, response.getEntity(String.class), message });
+            try (Response response = client.target(webhookUrl)
+                    .request()
+                    .post(Entity.entity(bodyJson, MediaType.APPLICATION_JSON_TYPE))) {
+                int status = response.getStatus();
+                if (status != 200) {
+                    LOGGER.warn("Unable to send message to Slack, status={}, error={}, message={}", new Object[] { status, response.readEntity(String.class), message });
+                }
             }
         }
     }

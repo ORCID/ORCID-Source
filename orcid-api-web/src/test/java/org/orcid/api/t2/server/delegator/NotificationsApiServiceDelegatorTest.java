@@ -7,7 +7,7 @@ import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
 
-import javax.ws.rs.core.Response;
+import jakarta.ws.rs.core.Response;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -19,6 +19,7 @@ import org.orcid.core.exception.OrcidNotificationNotFoundException;
 import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.NotificationManager;
 import org.orcid.core.manager.NotificationValidationManager;
+import org.orcid.core.manager.OrcidSecurityManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.core.manager.SourceManager;
@@ -50,6 +51,13 @@ public class NotificationsApiServiceDelegatorTest {
 
     @Mock
     private ProfileDao profileDao;
+
+    // The delegator checks the premium-notification scope before it does anything else, so this
+    // has to be injected or every method here fails on a null field. Mocked rather than stubbed:
+    // these tests are about what the delegator asks the managers for, and the scope check itself
+    // is covered by NotificationsApiServiceDelegatorScopeTest.
+    @Mock
+    private OrcidSecurityManager orcidSecurityManager;
 
     @InjectMocks
     private NotificationsApiServiceDelegatorImpl notificationsApiServiceDelegator;

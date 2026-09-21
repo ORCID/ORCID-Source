@@ -1,6 +1,6 @@
 package org.orcid.frontend.web.controllers;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 
 import org.apache.commons.lang3.StringUtils;
 import org.orcid.core.utils.v3.identifiers.PIDNormalizationService;

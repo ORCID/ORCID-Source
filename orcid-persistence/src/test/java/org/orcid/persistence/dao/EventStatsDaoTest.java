@@ -8,7 +8,7 @@ import org.orcid.persistence.jpa.entities.EventType;
 import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.springframework.test.context.ContextConfiguration;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;

@@ -8,7 +8,7 @@ import java.util.Arrays;
 import java.util.GregorianCalendar;
 import java.util.Random;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
 

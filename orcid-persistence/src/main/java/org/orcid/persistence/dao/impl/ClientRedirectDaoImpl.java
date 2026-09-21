@@ -2,7 +2,7 @@ package org.orcid.persistence.dao.impl;
 
 import java.util.List;
 
-import javax.persistence.Query;
+import jakarta.persistence.Query;
 
 import org.orcid.persistence.dao.ClientRedirectDao;
 import org.orcid.persistence.jpa.entities.ClientRedirectUriEntity;
@@ -21,6 +21,7 @@ public class ClientRedirectDaoImpl extends GenericDaoImpl<ClientRedirectUriEntit
     }
 
     @Override
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     public List<ClientRedirectUriEntity> findClientDetailsWithRedirectScope(String redirectUriType) {
         Query query = entityManager.createQuery("from ClientRedirectUriEntity as crue where crue.predefinedClientScope is not null and crue.redirectUriType = :rut");
         query.setParameter("rut", redirectUriType);

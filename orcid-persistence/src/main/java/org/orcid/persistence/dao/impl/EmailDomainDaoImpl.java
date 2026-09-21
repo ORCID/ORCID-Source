@@ -2,9 +2,9 @@ package org.orcid.persistence.dao.impl;
 
 import java.util.List;
 
-import javax.persistence.NoResultException;
-import javax.persistence.Query;
-import javax.persistence.TypedQuery;
+import jakarta.persistence.NoResultException;
+import jakarta.persistence.Query;
+import jakarta.persistence.TypedQuery;
 
 import org.orcid.persistence.dao.EmailDomainDao;
 import org.orcid.persistence.jpa.entities.EmailDomainEntity;
@@ -65,6 +65,7 @@ public class EmailDomainDaoImpl extends GenericDaoImpl<EmailDomainEntity, Long> 
     }
     
     @Override
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     public List<EmailDomainEntity>  findByEmailDomain(String emailDomain) {
         TypedQuery<EmailDomainEntity> query = entityManager.createQuery("from EmailDomainEntity where lower(trim(emailDomain)) = lower(trim(:emailDomain))", EmailDomainEntity.class);
         query.setParameter("emailDomain", emailDomain);
@@ -80,6 +81,7 @@ public class EmailDomainDaoImpl extends GenericDaoImpl<EmailDomainEntity, Long> 
     }
 
     @Override
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     public List<EmailDomainEntity> findByCategory(DomainCategory category) {
         TypedQuery<EmailDomainEntity> query = entityManager.createQuery("from EmailDomainEntity where category = :category", EmailDomainEntity.class);
         query.setParameter("category", category);

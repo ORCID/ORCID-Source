@@ -1,6 +1,9 @@
 package org.orcid.internal.server.delegator;
 
-import javax.ws.rs.core.Response;
+import jakarta.ws.rs.core.Response;
+
+import org.orcid.internal.util.AccountRecoveryMatchRequest;
+import org.orcid.internal.util.AccountRecoveryResetLinkRequest;
 
 /**
  * 
@@ -13,4 +16,6 @@ public interface InternalApiServiceDelegator {
     Response viewMemberInfo(String memberIdOrName);
     Response viewTogglz();
     Response findOrcidByEmail(String email);
+    Response accountRecoveryMatch(AccountRecoveryMatchRequest request);
+    Response accountRecoveryResetLink(AccountRecoveryResetLinkRequest request);
 }
