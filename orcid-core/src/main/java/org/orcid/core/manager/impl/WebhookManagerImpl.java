@@ -239,13 +239,11 @@ public class WebhookManagerImpl implements WebhookManager {
     @Override
     public void update(WebhookEntity webhook) {
         webhookDao.merge(webhook);
-        webhookDao.flush();
     }
 
     @Override
     public void delete(WebhookEntityPk webhookPk) {
         webhookDao.remove(webhookPk);
-        webhookDao.flush();
     }
 
     @Override

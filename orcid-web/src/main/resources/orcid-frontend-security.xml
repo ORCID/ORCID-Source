@@ -6,7 +6,9 @@
        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
 
-	<context:component-scan base-package="org.orcid"/>
+	<context:component-scan base-package="org.orcid">
+		<context:exclude-filter type="regex" expression=".*AdapterImplImpl" />
+	</context:component-scan>
 	<context:annotation-config />
 
 	<sec:global-method-security pre-post-annotations="enabled" />
@@ -251,6 +253,8 @@
 			access="IS_AUTHENTICATED_ANONYMOUSLY" />
 		<sec:intercept-url pattern="/signin(\?.*)?"
 			access="IS_AUTHENTICATED_ANONYMOUSLY" />
+		<sec:intercept-url pattern="/signin/recoveryPhone/.*"
+			access="IS_AUTHENTICATED_ANONYMOUSLY" />
 		<sec:intercept-url pattern="/signin/facebook(\?.*)?"
 			access="IS_AUTHENTICATED_ANONYMOUSLY" />
 		<sec:intercept-url pattern="/signin/google(\?.*)?"
@@ -338,6 +342,8 @@
 		<sec:intercept-url pattern="/sms-poc/send.json(\?.*)?"
 			access="ROLE_USER"/>
 		<sec:intercept-url pattern="/sms-poc/verify.json(\?.*)?"
+			access="ROLE_USER"/>
+		<sec:intercept-url pattern="/2FA/recoveryPhone/.*"
 			access="ROLE_USER"/>
 		<sec:intercept-url pattern="/eula/accept(\?.*)?"
 			method="POST" access="ROLE_USER" />

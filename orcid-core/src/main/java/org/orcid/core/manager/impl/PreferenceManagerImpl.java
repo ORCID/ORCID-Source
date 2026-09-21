@@ -8,7 +8,6 @@ import org.orcid.core.profile.history.ProfileHistoryEventType;
 import org.orcid.jaxb.model.common_v2.Visibility;
 import org.orcid.persistence.dao.ProfileDao;
 import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionTemplate;
 
@@ -25,7 +24,6 @@ public class PreferenceManagerImpl implements PreferenceManager {
 
     
     @Override
-    @Transactional
     public boolean updateDefaultVisibility(String orcid, Visibility newValue) {
         if (newValue == null) {
             throw new IllegalArgumentException();

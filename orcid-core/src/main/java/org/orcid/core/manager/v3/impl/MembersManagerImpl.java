@@ -50,7 +50,6 @@ import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.pojo.ajaxForm.Text;
 import org.orcid.utils.OrcidStringUtils;
 import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
 
@@ -145,7 +144,6 @@ public class MembersManagerImpl implements MembersManager {
                 newRecord.setAuthorities(authorities);
 
                 profileDao.persist(newRecord);
-                profileDao.flush();         
                 
                 // Set primary email
                 EmailEntity emailEntity = new EmailEntity();
@@ -242,7 +240,6 @@ public class MembersManagerImpl implements MembersManager {
     }
 
     @Override
-    @Transactional
     public Member getMember(String memberId) {
         Member member = new Member();
         String orcid = memberId;

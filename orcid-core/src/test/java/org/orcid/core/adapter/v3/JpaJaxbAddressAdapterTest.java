@@ -101,7 +101,7 @@ public class JpaJaxbAddressAdapterTest extends MockSourceNameCache {
         assertNotNull(addressEntity);
         assertNull(addressEntity.getDateCreated());
         assertNull(addressEntity.getLastModified());
-        assertEquals(org.orcid.jaxb.model.common_v2.Iso3166Country.US.name(), addressEntity.getIso2Country());
+        assertEquals(Iso3166Country.US.name(), addressEntity.getIso2Country());
         assertNull(addressEntity.getSourceId());
         assertNull(addressEntity.getClientSourceId());
         assertNull(addressEntity.getElementSourceId());

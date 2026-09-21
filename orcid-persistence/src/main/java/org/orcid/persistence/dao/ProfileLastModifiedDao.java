@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.List;
 
 import org.orcid.persistence.jpa.entities.IndexingStatus;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * DAO bean only for updating and retrieving profile last modified date and updating indexing status.
@@ -19,6 +20,7 @@ public interface ProfileLastModifiedDao {
     
     boolean updateIndexingStatus(List<String> orcidIds, IndexingStatus indexingStatus);
     
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     Date retrieveLastModifiedDate(String orcid);
     
     

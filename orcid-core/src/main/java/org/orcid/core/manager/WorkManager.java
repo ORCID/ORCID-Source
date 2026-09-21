@@ -60,7 +60,7 @@ public interface WorkManager extends WorkManagerReadOnly {
      *          Does the request comes from the API?
      * @return the work already persisted on database
      * */
-    Work createWork(String orcid, Work work, boolean isApiRequest);
+    Work createWork(String orcid, Work work, boolean isApiRequest, List<Work> existingWorks);
 
     /**
      * Add a list of works to the given profile
@@ -73,7 +73,7 @@ public interface WorkManager extends WorkManagerReadOnly {
      * @return the work bulk with the put codes of the new works or the error
      *         that indicates why a work can't be added
      */
-    WorkBulk createWorks(String orcid, WorkBulk work);
+    WorkBulk createWorks(String orcid, WorkBulk work, List<Work> existingWorks);
     
     /**
      * Edits an existing work
@@ -84,7 +84,7 @@ public interface WorkManager extends WorkManagerReadOnly {
      *          Does the request comes from the API? 
      * @return The updated entity
      * */
-    Work updateWork(String orcid, Work work, boolean isApiRequest); 
+    Work updateWork(String orcid, Work work, boolean isApiRequest, List<Work> existingWorks);
     
     boolean checkSourceAndRemoveWork(String orcid, Long workId);    
 }

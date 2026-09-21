@@ -88,6 +88,54 @@ public class WorkDaoTest extends DBUnitTest {
         assertEquals((initialNumber - elementThatBelogsToUser), finalNumberOfElements);
     }
 
+    /**
+     * Put-codes are sequential across the whole registry, so they identify a work but say
+     * nothing about who owns it. A delete asked for by somebody else must not happen.
+     */
+    @Test
+    public void crossAccountRemoveWorksLeavesTheWorkInPlaceTest() {
+        WorkEntity victimWork = dao.getWork(OTHER_USER_ORCID, 11L);
+        assertNotNull(victimWork);
+
+        boolean removed = dao.removeWorks(USER_ORCID, Arrays.asList(11L));
+
+        assertFalse("removing another record's work must not report success", removed);
+        dao.detach(victimWork);
+        assertNotNull("another record's work must survive", dao.getWork(OTHER_USER_ORCID, 11L));
+    }
+
+    /**
+     * Same defect on the visibility path: flipping somebody else's private work to public
+     * would publish it to the anonymous API.
+     */
+    @Test
+    public void crossAccountUpdateVisibilitiesLeavesVisibilityUnchangedTest() {
+        WorkEntity victimWork = dao.getWork(OTHER_USER_ORCID, 13L);
+        assertNotNull(victimWork);
+        String before = victimWork.getVisibility();
+        assertEquals("PRIVATE", before);
+
+        boolean updated = dao.updateVisibilities(USER_ORCID, Arrays.asList(13L), "PUBLIC");
+
+        assertFalse("re-visibilitying another record's work must not report success", updated);
+        dao.detach(victimWork);
+        assertEquals("visibility must be untouched", before, dao.getWork(OTHER_USER_ORCID, 13L).getVisibility());
+    }
+
+    /**
+     * Runs last: it mutates. A batch mixing owned and unowned put-codes now applies only the
+     * owned ones, so the caller must not be told the whole request succeeded.
+     */
+    @Test
+    public void zPartialBatchIsNotReportedAsSuccessTest() {
+        long absentPutCode = 999999L;
+        assertNotNull(dao.getWork(OTHER_USER_ORCID, 14L));
+
+        boolean updated = dao.updateVisibilities(OTHER_USER_ORCID, Arrays.asList(14L, absentPutCode), "PUBLIC");
+
+        assertFalse("a partially applied batch must not report success", updated);
+    }
+
     @Test
     public void testHasPublicWorks() {
         assertTrue(dao.hasPublicWorks("0000-0000-0000-0003"));

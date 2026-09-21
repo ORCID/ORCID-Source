@@ -5,43 +5,46 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-import jakarta.annotation.PostConstruct;
-import jakarta.annotation.Resource;
-
 import org.apache.commons.lang3.StringUtils;
 import org.orcid.core.manager.IdentifierTypeManager;
 import org.orcid.core.utils.v3.identifiers.PIDNormalizationService;
 import org.orcid.pojo.IdentifierType;
 import org.orcid.pojo.PIDResolutionResult;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
 @Component
 public class UnresolvableResolver implements LinkResolver{
 
-    @Resource
-    IdentifierTypeManager idman;
+    @Autowired
+    @Lazy
+    private IdentifierTypeManager idman;
 
-    @Resource
-    PIDNormalizationService normalizationService;
+    @Autowired
+    private PIDNormalizationService normalizationService;
     
-    @Resource Http200Resolver http200Resolver;
+    @Autowired
+    private Http200Resolver http200Resolver;
 
-    List<String> types;
-
-    @PostConstruct
-    public void init() {
-        Map<String, IdentifierType> idTypes = idman.fetchIdentifierTypesByAPITypeName(Locale.ENGLISH);
-        types = new ArrayList<String>(idTypes.keySet());
-        //have their own resolvers
-        types.remove("isbn");
-        types.remove("oclc");
-        types.remove("doi");
-        types.removeAll(http200Resolver.canHandle());
-    }
+    private List<String> types;
 
     @Override
     public List<String> canHandle() {
-        return types;
+        if (types == null && idman != null) {
+            Map<String, IdentifierType> idTypes = idman.fetchIdentifierTypesByAPITypeName(Locale.ENGLISH);
+            if (idTypes != null) {
+                types = new ArrayList<String>(idTypes.keySet());
+                //have their own resolvers
+                types.remove("isbn");
+                types.remove("oclc");
+                types.remove("doi");
+                if (http200Resolver != null && http200Resolver.canHandle() != null) {
+                    types.removeAll(http200Resolver.canHandle());
+                }
+            }
+        }
+        return types != null ? types : List.of();
     }
 
     /** Attempts to normalize value and generate a URL for consumption by the UI.

@@ -27,6 +27,7 @@ import org.orcid.persistence.jpa.entities.OrgAffiliationRelationEntity;
 import org.orcid.persistence.jpa.entities.OrgEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.SourceEntity;
+import org.springframework.transaction.annotation.Transactional;
 
 public class AffiliationsManagerImpl extends AffiliationsManagerReadOnlyImpl implements AffiliationsManager {
     @Resource
@@ -57,6 +58,7 @@ public class AffiliationsManagerImpl extends AffiliationsManagerReadOnlyImpl imp
      * @return the added education
      * */
     @Override
+    @Transactional
     public Education createEducationAffiliation(String orcid, Education education, boolean isApiRequest) {
         SourceEntity sourceEntity = sourceManager.retrieveSourceEntity();
         activityValidator.validateEducation(education, sourceEntity, true, isApiRequest, null);
@@ -81,7 +83,6 @@ public class AffiliationsManagerImpl extends AffiliationsManagerReadOnlyImpl imp
         setIncomingWorkPrivacy(educationEntity, profile);
         educationEntity.setAffiliationType(AffiliationType.EDUCATION.name());
         orgAffiliationRelationDao.persist(educationEntity);
-        orgAffiliationRelationDao.flush();
         notificationManager.sendAmendEmail(orcid, AmendedSection.EDUCATION, createItemList(educationEntity, ActionType.CREATE));
         return jpaJaxbEducationAdapter.toEducation(educationEntity);
     }
@@ -96,6 +97,7 @@ public class AffiliationsManagerImpl extends AffiliationsManagerReadOnlyImpl imp
      * @return the updated education
      * */
     @Override
+    @Transactional
     public Education updateEducationAffiliation(String orcid, Education education, boolean isApiRequest) {
         OrgAffiliationRelationEntity educationEntity = orgAffiliationRelationDao.getOrgAffiliationRelation(orcid, education.getPutCode());                
         SourceEntity sourceEntity = sourceManager.retrieveSourceEntity();
@@ -108,6 +110,10 @@ public class AffiliationsManagerImpl extends AffiliationsManagerReadOnlyImpl imp
 
         activityValidator.validateEducation(education, sourceEntity, false, isApiRequest, Visibility.valueOf(originalVisibility));
         
+        // Updates the give organization with the latest organization from
+        // database, or, create a new one
+        OrgEntity updatedOrganization = orgManager.getOrgEntity(education);
+
         jpaJaxbEducationAdapter.toOrgAffiliationRelationEntity(education, educationEntity);
         educationEntity.setVisibility(originalVisibility);
         
@@ -115,14 +121,10 @@ public class AffiliationsManagerImpl extends AffiliationsManagerReadOnlyImpl imp
         educationEntity.setSourceId(existingSourceId);
         educationEntity.setClientSourceId(existingClientSourceId);
 
-        // Updates the give organization with the latest organization from
-        // database, or, create a new one
-        OrgEntity updatedOrganization = orgManager.getOrgEntity(education);
         educationEntity.setOrg(updatedOrganization);
 
         educationEntity.setAffiliationType(AffiliationType.EDUCATION.name());
         educationEntity = orgAffiliationRelationDao.merge(educationEntity);
-        orgAffiliationRelationDao.flush();
         notificationManager.sendAmendEmail(orcid, AmendedSection.EDUCATION, createItemList(educationEntity, ActionType.UPDATE));
         return jpaJaxbEducationAdapter.toEducation(educationEntity);
     }
@@ -137,6 +139,7 @@ public class AffiliationsManagerImpl extends AffiliationsManagerReadOnlyImpl imp
      * @return the added employment
      * */
     @Override
+    @Transactional
     public Employment createEmploymentAffiliation(String orcid, Employment employment, boolean isApiRequest) {
         SourceEntity sourceEntity = sourceManager.retrieveSourceEntity();
         activityValidator.validateEmployment(employment, sourceEntity, true, isApiRequest, null);
@@ -161,7 +164,6 @@ public class AffiliationsManagerImpl extends AffiliationsManagerReadOnlyImpl imp
         setIncomingWorkPrivacy(employmentEntity, profile);
         employmentEntity.setAffiliationType(AffiliationType.EMPLOYMENT.name());
         orgAffiliationRelationDao.persist(employmentEntity);
-        orgAffiliationRelationDao.flush();
         notificationManager.sendAmendEmail(orcid, AmendedSection.EMPLOYMENT, createItemList(employmentEntity, ActionType.CREATE));
         return jpaJaxbEmploymentAdapter.toEmployment(employmentEntity);
     }
@@ -176,6 +178,7 @@ public class AffiliationsManagerImpl extends AffiliationsManagerReadOnlyImpl imp
      * @return the updated employment
      * */
     @Override
+    @Transactional
     public Employment updateEmploymentAffiliation(String orcid, Employment employment, boolean isApiRequest) {
         OrgAffiliationRelationEntity employmentEntity = orgAffiliationRelationDao.getOrgAffiliationRelation(orcid, employment.getPutCode());        
         String originalVisibility = employmentEntity.getVisibility();  
@@ -189,6 +192,10 @@ public class AffiliationsManagerImpl extends AffiliationsManagerReadOnlyImpl imp
 
         activityValidator.validateEmployment(employment, sourceEntity, false, isApiRequest, Visibility.valueOf(originalVisibility));
         
+        // Updates the give organization with the latest organization from
+        // database, or, create a new one
+        OrgEntity updatedOrganization = orgManager.getOrgEntity(employment);
+
         jpaJaxbEmploymentAdapter.toOrgAffiliationRelationEntity(employment, employmentEntity);
         employmentEntity.setVisibility(originalVisibility);
                 
@@ -196,14 +203,10 @@ public class AffiliationsManagerImpl extends AffiliationsManagerReadOnlyImpl imp
         employmentEntity.setSourceId(existingSourceId);
         employmentEntity.setClientSourceId(existingClientSourceId);
                 
-        // Updates the give organization with the latest organization from
-        // database, or, create a new one
-        OrgEntity updatedOrganization = orgManager.getOrgEntity(employment);
         employmentEntity.setOrg(updatedOrganization);
 
         employmentEntity.setAffiliationType(AffiliationType.EMPLOYMENT.name());
         employmentEntity = orgAffiliationRelationDao.merge(employmentEntity);
-        orgAffiliationRelationDao.flush();
         notificationManager.sendAmendEmail(orcid, AmendedSection.EMPLOYMENT, createItemList(employmentEntity, ActionType.UPDATE));
         return jpaJaxbEmploymentAdapter.toEmployment(employmentEntity);
     }
@@ -219,6 +222,7 @@ public class AffiliationsManagerImpl extends AffiliationsManagerReadOnlyImpl imp
      * @return true if the affiliation was deleted, false otherwise
      * */
     @Override
+    @Transactional
     public boolean checkSourceAndDelete(String orcid, Long affiliationId) {
         OrgAffiliationRelationEntity affiliationEntity = orgAffiliationRelationDao.getOrgAffiliationRelation(orcid, affiliationId);                
         orcidSecurityManager.checkSource(affiliationEntity);

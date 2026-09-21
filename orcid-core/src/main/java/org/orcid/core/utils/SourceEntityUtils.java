@@ -2,6 +2,7 @@ package org.orcid.core.utils;
 
 import jakarta.annotation.Resource;
 
+import java.util.Map;
 import java.util.Optional;
 
 import org.apache.commons.lang3.StringUtils;
@@ -110,6 +111,10 @@ public class SourceEntityUtils {
      * Utility that copies source ids from entity into new Source model.
      */
     public Source extractSourceFromEntity(SourceAwareEntity<?> e) {
+        return extractSourceFromEntity(e, null);
+    }
+
+    public Source extractSourceFromEntity(SourceAwareEntity<?> e, Map<String, ClientDetailsEntity> clientDetailsById) {
         Source source = new Source();
         // orcid
         if (!StringUtils.isEmpty(e.getSourceId())) {
@@ -120,7 +125,9 @@ public class SourceEntityUtils {
         if (!StringUtils.isEmpty(e.getClientSourceId())) {
             source.setSourceClientId(new SourceClientId(e.getClientSourceId()));
             if(e instanceof OrcidAware) {
-                ClientDetailsEntity clientSource = clientDetailsEntityCacheManager.retrieve(e.getClientSourceId());
+                ClientDetailsEntity clientSource = (clientDetailsById != null && clientDetailsById.containsKey(e.getClientSourceId()))
+                        ? clientDetailsById.get(e.getClientSourceId())
+                        : clientDetailsEntityCacheManager.retrieve(e.getClientSourceId());
                 if (clientSource != null && clientSource.isUserOBOEnabled()) {
                     String orcidId = ((OrcidAware) e).getOrcid();
                     source.setAssertionOriginOrcid(new SourceOrcid(orcidId));
@@ -150,7 +157,11 @@ public class SourceEntityUtils {
     }
 
     public Source extractSourceFromEntityComplete(SourceAwareEntity<?> b) {
-        Source s = extractSourceFromEntity(b);
+        return extractSourceFromEntityComplete(b, null);
+    }
+
+    public Source extractSourceFromEntityComplete(SourceAwareEntity<?> b, Map<String, ClientDetailsEntity> clientDetailsById) {
+        Source s = extractSourceFromEntity(b, clientDetailsById);
         populateSource(s);
         return s;
     }
@@ -160,6 +171,9 @@ public class SourceEntityUtils {
      * entity-derived identifiers, then populating host/uri/source names.
      */
     public Source mergeAndPopulateSource(Source source, SourceAwareEntity<?> entity) {
+        if (source != null) {
+            return source;
+        }
         Source fallback = extractSourceFromEntity(entity);
         Source merged = source == null ? fallback : mergeMissingSourcePaths(source, fallback);
         populateSource(merged);

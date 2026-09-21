@@ -2,6 +2,7 @@ package org.orcid.core.manager.v3;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
@@ -152,5 +153,12 @@ public class PersonDetailsManagerTest extends DBUnitTest {
         assertNotNull(person.getName().getGivenNames());
         assertEquals("Given Names", person.getName().getGivenNames().getContent());
         assertEquals(Visibility.PUBLIC, person.getName().getVisibility());
+    }
+
+    @Test
+    public void testGetPublicPersonDetailsWithoutName() {
+        Person person = personDetailsManager.getPublicPersonDetails("0000-0000-0000-0005");
+        assertNotNull(person);
+        assertNull(person.getName());
     }
 }

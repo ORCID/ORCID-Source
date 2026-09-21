@@ -700,6 +700,8 @@
     <bean id="twoFactorAuthenticationManager" class="org.orcid.core.manager.impl.TwoFactorAuthenticationManagerImpl" />
 
     <bean id="backupCodeManager" class="org.orcid.core.manager.impl.BackupCodeManagerImpl" />
+
+    <bean id="recoveryPhoneManager" class="org.orcid.core.manager.impl.RecoveryPhoneManagerImpl" />
     
     <bean id="mailGunManager" class="org.orcid.utils.email.MailGunManager" />
     <bean id="recordEmailSender" class="org.orcid.frontend.email.RecordEmailSender" />
@@ -881,7 +883,6 @@
     
     <!-- v3 adapters -->
 	<bean id="mapperFacadeFactoryV3" class="org.orcid.core.adapter.v3.impl.MapperFacadeFactory" depends-on="PIDNormalizationService">
-		<constructor-arg ref="sourceEntityUtils" />
 	</bean>
     <bean id="mapperFacadeV3" factory-bean="&amp;mapperFacadeFactoryV3" factory-method="getObject"/>
     <bean id="jpaJaxbNotificationAdapterV3" class="org.orcid.core.adapter.v3.impl.JpaJaxbNotificationAdapterImpl">
