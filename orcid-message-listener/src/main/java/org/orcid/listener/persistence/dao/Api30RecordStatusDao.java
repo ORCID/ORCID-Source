@@ -19,12 +19,14 @@ public class Api30RecordStatusDao {
     @PersistenceContext
     protected EntityManager entityManager;
 
+    @Transactional(readOnly = true)
     public Api30RecordStatusEntity get(String orcid) {
         Query query = entityManager.createNativeQuery("SELECT * FROM api_3_0_record_status WHERE orcid = :orcid", Api30RecordStatusEntity.class);
         query.setParameter("orcid", orcid);
         return (Api30RecordStatusEntity) query.getSingleResult();
     }
 
+    @Transactional(readOnly = true)
     public boolean exists(String orcid) {
         Long count = entityManager.createQuery(
                         "SELECT COUNT(s) FROM Api30RecordStatusEntity s WHERE s.id = :orcid",
@@ -142,6 +144,7 @@ public class Api30RecordStatusDao {
         }
     }
 
+    @Transactional(readOnly = true)
     public List<Api30RecordStatusEntity> getFailedElements(int batchSize) {
         TypedQuery<Api30RecordStatusEntity> query = entityManager.createQuery(
                 "FROM Api30RecordStatusEntity WHERE summaryStatus > 0 OR distinctionsStatus > 0 OR educationsStatus > 0 OR employmentsStatus > 0 OR fundingsStatus > 0 OR invitedPositionsStatus > 0 OR membershipStatus > 0 OR peerReviewsStatus > 0 OR qualificationsStatus > 0 OR researchResourcesStatus > 0 OR servicesStatus > 0 OR worksStatus > 0 ORDER BY id",

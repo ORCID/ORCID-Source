@@ -23,7 +23,9 @@
     <bean id="mvcHandlerMappingIntrospector" class="org.springframework.web.servlet.handler.HandlerMappingIntrospector" />
     
     <tx:annotation-driven />
-    <context:component-scan base-package="org.orcid"/>
+    <context:component-scan base-package="org.orcid">
+        <context:exclude-filter type="regex" expression=".*AdapterImplImpl" />
+    </context:component-scan>
     <mvc:annotation-driven ignore-default-model-on-redirect="true" />
 	<task:annotation-driven />
 
@@ -104,11 +106,6 @@
     <bean id="recordEmailSender" class="org.orcid.frontend.email.RecordEmailSender" />    
     
     <bean id="statisticsManager" class="org.orcid.core.stats.impl.StatisticsManagerImpl"/>
-    
-    <!-- Salesforce -->
-    <bean id="salesForceAdapter" class="org.orcid.frontend.salesforce.adapter.SalesForceAdapter" />
-    <bean id="salesForceMapperFacadeFactory" class="org.orcid.frontend.salesforce.adapter.SalesForceMapperFacadeFactory" />
-    <bean id="salesForceMemberMapperFacade" factory-bean="&amp;salesForceMapperFacadeFactory" factory-method="getMemberMapperFacade"/>
 
     <!-- Redis token cache -->
     <bean id="redisTokenCacheClient" class="org.orcid.core.utils.cache.redis.RedisClient">
@@ -117,6 +114,7 @@
         <constructor-arg index="2" value="${org.orcid.core.utils.cache.session.redis.password}" />
         <constructor-arg index="3" value="${org.orcid.core.utils.cache.session.redis.expiration_in_secs:600}" />
         <constructor-arg index="4" value="${org.orcid.core.utils.cache.session.redis.connection_timeout_millis:10000}" />
+        <constructor-arg index="5" value="${org.orcid.core.utils.cache.session.redis.ssl.enabled:true}" />
     </bean>
 
     <bean id="trustedPartiesService" class="org.orcid.frontend.service.TrustedPartiesServiceImpl" />

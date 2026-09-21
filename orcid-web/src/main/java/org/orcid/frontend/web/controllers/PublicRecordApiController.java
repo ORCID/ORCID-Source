@@ -21,9 +21,11 @@ import org.orcid.core.manager.v3.read_only.GroupIdRecordManagerReadOnly;
 import org.orcid.core.manager.v3.read_only.RecordManagerReadOnly;
 import org.orcid.core.utils.SourceEntityUtils;
 import org.orcid.jaxb.model.v3.release.groupid.GroupIdRecord;
+import org.orcid.jaxb.model.common.AvailableLocales;
 import org.orcid.jaxb.model.common.FundingType;
 import org.orcid.jaxb.model.common.PeerReviewType;
 import org.orcid.jaxb.model.common.Relationship;
+import org.orcid.jaxb.model.common.Role;
 import org.orcid.jaxb.model.common.WorkType;
 import org.orcid.jaxb.model.v3.release.common.DisambiguatedOrganization;
 import org.orcid.jaxb.model.v3.release.common.Organization;
@@ -149,6 +151,8 @@ public class PublicRecordApiController {
         mapper.addMixIn(PeerReviewType.class, EnumValueMixin.class);
         mapper.addMixIn(FundingType.class, EnumValueMixin.class);
         mapper.addMixIn(Visibility.class, VisibilityMixin.class);
+        mapper.addMixIn(Role.class, EnumValueMixin.class);
+        mapper.addMixIn(AvailableLocales.class, AvailableLocalesMixin.class);
         mapper.addMixIn(GivenNames.class, ValueMixin.class);
         mapper.addMixIn(FamilyName.class, ValueMixin.class);
         mapper.addMixIn(CreditName.class, ValueMixin.class);
@@ -527,6 +531,21 @@ public class PublicRecordApiController {
 
     @SuppressWarnings("unused")
     private abstract static class VisibilityMixin {
+        @JsonValue
+        public abstract String value();
+    }
+
+    /**
+     * AvailableLocales already carries @JsonValue on jsonValue(), which returns name().
+     * Adding @JsonValue to value() alone would leave two as-value properties on the type and
+     * Jackson would throw on the first record serialised, so the model's own accessor has to
+     * be switched off in the same mixin.
+     */
+    @SuppressWarnings("unused")
+    private abstract static class AvailableLocalesMixin {
+        @JsonValue(false)
+        public abstract String jsonValue();
+
         @JsonValue
         public abstract String value();
     }

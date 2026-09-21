@@ -10,6 +10,10 @@ public interface ProfileHistoryEventManager {
     void recordEvent(ProfileHistoryEventType eventType, String orcid);
     
     void recordEvent(ProfileHistoryEventType eventType, String orcid, String comments);
+
+    void recordResetPasswordEvent(String orcid, String ipAddress);
+
+    void recordEmailUpdateEvent(String orcid, String ipAddress, String comment);
     
     List<ProfileHistoryEventEntity> getProfileHistoryForOrcid(String orcid);
 

@@ -1,6 +1,7 @@
 package org.orcid.persistence.jpa.entities;
 
 import java.io.Serializable;
+import java.net.InetAddress;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -23,6 +24,8 @@ public class ProfileHistoryEventEntity extends BaseEntity<Long> implements Seria
     private String comment;
     
     private String orcid;
+
+    private InetAddress ip;
     
     @Override
     @Id
@@ -62,5 +65,13 @@ public class ProfileHistoryEventEntity extends BaseEntity<Long> implements Seria
     public void setOrcid(String orcid) {
         this.orcid = orcid;
     }
-    
+
+    @Column
+    public InetAddress getIp() {
+        return ip;
+    }
+
+    public void setIp(InetAddress ip) {
+        this.ip = ip;
+    }
 }

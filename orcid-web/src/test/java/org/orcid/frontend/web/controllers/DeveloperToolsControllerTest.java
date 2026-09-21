@@ -4,8 +4,11 @@ package org.orcid.frontend.web.controllers;
  * @author Angel Montenegro (amontenegro) Date: 29/08/2013
  */
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -21,6 +24,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
@@ -303,9 +307,79 @@ public class DeveloperToolsControllerTest {
         rUri2.setValue(Text.valueOf("http://test2.com"));
         redirectUris.add(rUri2);
         client.setRedirectUris(redirectUris);
+        client.setClientId(Text.valueOf(CLIENT_2));
+        SecurityContextTestUtils.setupSecurityContextForWebUser(USER_ORCID, "test@email.com");
         Client updatedClient = developerToolsController.updateClient(client);
         verify(mockClientManager, times(1)).edit(Matchers.any(org.orcid.jaxb.model.v3.release.client.Client.class), Matchers.eq(false));
         assertEquals(CLIENT_2, updatedClient.getClientId().getValue());
+    }
+
+    /**
+     * The client id is supplied by the caller, so a client owned by somebody else must be
+     * refused rather than edited - and the refusal must not hand back its secret.
+     */
+    @Test
+    public void updateClientDoesNotEditAClientOwnedBySomebodyElseTest() throws Exception {
+        String victimClientId = "APP-000000009";
+        String victimOrcid = "0000-0000-0000-0009";
+        when(mockClientManagerReadOnly.get(victimClientId)).thenAnswer(new Answer<org.orcid.jaxb.model.v3.release.client.Client>() {
+            @Override
+            public org.orcid.jaxb.model.v3.release.client.Client answer(InvocationOnMock invocation) throws Throwable {
+                org.orcid.jaxb.model.v3.release.client.Client victim = new org.orcid.jaxb.model.v3.release.client.Client();
+                victim.setId(victimClientId);
+                victim.setGroupProfileId(victimOrcid);
+                victim.setDecryptedSecret("victim-secret");
+                return victim;
+            }
+        });
+
+        Client client = new Client();
+        client.setClientId(Text.valueOf(victimClientId));
+        client.setDisplayName(Text.valueOf("Taken over"));
+        client.setShortDescription(Text.valueOf("Taken over"));
+        client.setWebsite(Text.valueOf("https://attacker.example"));
+        client.setType(Text.valueOf(ClientType.PUBLIC_CLIENT.value()));
+        List<RedirectUri> redirectUris = new ArrayList<RedirectUri>();
+        RedirectUri rUri = new RedirectUri();
+        rUri.setType(Text.valueOf(RedirectUriType.SSO_AUTHENTICATION.value()));
+        rUri.setValue(Text.valueOf("https://attacker.example/steal"));
+        redirectUris.add(rUri);
+        client.setRedirectUris(redirectUris);
+
+        SecurityContextTestUtils.setupSecurityContextForWebUser(USER_ORCID, "test@email.com");
+        Client result = developerToolsController.updateClient(client);
+
+        assertFalse("the edit should be refused", result.getErrors().isEmpty());
+        verify(mockClientManager, never()).edit(Matchers.any(org.orcid.jaxb.model.v3.release.client.Client.class), Matchers.anyBoolean());
+        assertNull("the refusal must not disclose the client secret", result.getClientSecret());
+    }
+
+    /**
+     * memberId arrives in the request body. It must never decide who owns the new client,
+     * or a caller could mint - or read back - a client belonging to another member.
+     */
+    @Test
+    public void createClientIgnoresTheMemberIdInTheRequestTest() throws Exception {
+        Client client = new Client();
+        client.setDisplayName(Text.valueOf("Client Name"));
+        client.setShortDescription(Text.valueOf("This is a test"));
+        client.setType(Text.valueOf(ClientType.PUBLIC_CLIENT.value()));
+        client.setWebsite(Text.valueOf("http://client.com"));
+        client.setMemberId(Text.valueOf("0000-0000-0000-0009"));
+        List<RedirectUri> redirectUris = new ArrayList<RedirectUri>();
+        RedirectUri rUri = new RedirectUri();
+        rUri.setType(Text.valueOf(RedirectUriType.SSO_AUTHENTICATION.value()));
+        rUri.setValue(Text.valueOf("https://orcid.org"));
+        redirectUris.add(rUri);
+        client.setRedirectUris(redirectUris);
+
+        SecurityContextTestUtils.setupSecurityContextForWebUser(USER_ORCID, "test@email.com");
+        developerToolsController.createClient(client);
+
+        ArgumentCaptor<org.orcid.jaxb.model.v3.release.client.Client> captor = ArgumentCaptor
+                .forClass(org.orcid.jaxb.model.v3.release.client.Client.class);
+        verify(mockClientManager, times(1)).createPublicClient(captor.capture());
+        assertEquals("the session, not the request body, decides the owner", USER_ORCID, captor.getValue().getGroupProfileId());
     }
 
     @Test

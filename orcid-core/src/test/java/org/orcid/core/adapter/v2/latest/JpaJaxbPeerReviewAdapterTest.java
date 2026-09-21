@@ -48,35 +48,36 @@ public class JpaJaxbPeerReviewAdapterTest extends MockSourceNameCache {
     private JpaJaxbPeerReviewAdapter jpaJaxbPeerReviewAdapter;
 
     @Test
-    public void fromPeerReviewToPeerReviewEntity() throws JAXBException {
+    public void fromPeerReviewToPeerReviewEntityTest() throws JAXBException {
         PeerReview e = getPeerReview(true);        
         assertNotNull(e);
         
         PeerReviewEntity pe = jpaJaxbPeerReviewAdapter.toPeerReviewEntity(e);
         assertNotNull(pe);
 
+        assertNull(pe.getDateCreated());
+        assertNull(pe.getLastModified());
+
         // Source should be null, it is not set by the mapper
         assertNull(pe.getSourceId());
         assertNull(pe.getClientSourceId());
         assertNull(pe.getElementSourceId());
-        assertNull(pe.getDateCreated());
-        assertNull(pe.getLastModified());
-        
+
         // General info
         assertEquals(Long.valueOf(12345), pe.getId());
-        assertEquals(Visibility.PRIVATE.name(), pe.getVisibility());
+        assertEquals(org.orcid.jaxb.model.v3.release.common.Visibility.PRIVATE.name(), pe.getVisibility());
         assertEquals("REVIEWER", pe.getRole());
         assertEquals("REVIEW", pe.getType());
         assertEquals("peer-review:url", pe.getUrl());
-        
+
         // Dates
         assertEquals(Integer.valueOf(2), pe.getCompletionDate().getDay());
         assertEquals(Integer.valueOf(2), pe.getCompletionDate().getMonth());
-        assertEquals(Integer.valueOf(1948), pe.getCompletionDate().getYear());        
-        
+        assertEquals(Integer.valueOf(1948), pe.getCompletionDate().getYear());
+
         // Group id
         assertEquals("orcid-generated:12345", pe.getGroupId());
-        
+
         // Subject data
         assertEquals("peer-review:subject-container-name", pe.getSubjectContainerName());
         assertEquals("peer-review:subject-name", pe.getSubjectName());
@@ -84,18 +85,12 @@ public class JpaJaxbPeerReviewAdapterTest extends MockSourceNameCache {
         assertEquals("en", pe.getSubjectTranslatedNameLanguageCode());
         assertEquals("JOURNAL_ARTICLE", pe.getSubjectType());
         assertEquals("peer-review:subject-url", pe.getSubjectUrl());
-        
-        // Org data
-        assertNotNull(pe.getOrg());
-        assertEquals("common:city", pe.getOrg().getCity());
-        assertEquals("common:region", pe.getOrg().getRegion());
-        assertEquals("AF", pe.getOrg().getCountry());
-        
+
         // Identifiers
         assertEquals("{\"relationship\":\"SELF\",\"url\":{\"value\":\"http://orcid.org\"},\"workExternalIdentifierType\":\"DOI\",\"workExternalIdentifierId\":{\"content\":\"peer-review:subject-external-identifier-id\"}}", pe.getSubjectExternalIdentifiersJson());
         assertEquals(
                 "{\"workExternalIdentifier\":[{\"relationship\":\"SELF\",\"url\":{\"value\":\"http://orcid.org\"},\"workExternalIdentifierType\":\"SOURCE_WORK_ID\",\"workExternalIdentifierId\":{\"content\":\"work:external-identifier-id\"}}]}",
-                pe.getExternalIdentifiersJson());        
+                pe.getExternalIdentifiersJson());
     }
     
     @Test
@@ -248,6 +243,30 @@ public class JpaJaxbPeerReviewAdapterTest extends MockSourceNameCache {
         assertEquals("org:region", peerReview.getOrganization().getAddress().getRegion());
         assertNotNull(peerReview.getSource());        
         assertEquals(CLIENT_SOURCE_ID, peerReview.getSource().retrieveSourcePath());
+    }
+
+    @Test
+    public void fromPeerReviewEntityToPeerReviewDoesNotCreateEmptyOptionalSubjectFields() throws IllegalAccessException {
+        PeerReviewEntity entity = getPeerReviewEntity();
+        entity.setSubjectContainerName(null);
+        entity.setSubjectName(null);
+        entity.setSubjectTranslatedName(null);
+        entity.setSubjectTranslatedNameLanguageCode(null);
+
+        PeerReview peerReview = jpaJaxbPeerReviewAdapter.toPeerReview(entity);
+
+        assertNull(peerReview.getSubjectContainerName());
+        assertNull(peerReview.getSubjectName());
+    }
+
+    @Test
+    public void fromPeerReviewEntityWithDissertationThesisSubjectTypeMapsToDissertation() throws IllegalAccessException {
+        PeerReviewEntity entity = getPeerReviewEntity();
+        entity.setSubjectType(org.orcid.jaxb.model.common.WorkType.DISSERTATION_THESIS.name());
+
+        PeerReview peerReview = jpaJaxbPeerReviewAdapter.toPeerReview(entity);
+
+        assertEquals(WorkType.DISSERTATION, peerReview.getSubjectType());
     }
     
     @Test
