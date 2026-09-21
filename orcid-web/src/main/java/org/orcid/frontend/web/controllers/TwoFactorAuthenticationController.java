@@ -46,8 +46,15 @@ public class TwoFactorAuthenticationController extends BaseController {
 
     private static final String RECOVERY_PHONE_ELEVATION_ATTRIBUTE = "RECOVERY_PHONE_ELEVATION_TS";
 
-    /** How long a passed authentication challenge lets the user keep working. */
-    private static final long RECOVERY_PHONE_ELEVATION_TTL_MILLIS = 15 * 60 * 1000L;
+    /**
+     * How long a passed authentication challenge, or the sign in the
+     * interstitial rides on, lets the user keep working.
+     *
+     * Package private so its own test can pin the number. The value is a
+     * product decision rather than an implementation detail, and the only
+     * thing that catches a change to it is a test that names it.
+     */
+    static final long RECOVERY_PHONE_ELEVATION_TTL_MILLIS = 8 * 60 * 1000L;
 
     /** Fixed length mask, so the mask does not leak how long the number is. */
     private static final String RECOVERY_PHONE_MASK = "***********";
@@ -348,7 +355,7 @@ public class TwoFactorAuthenticationController extends BaseController {
      * reach it, so a fresh login is the same proof a challenge would collect,
      * and an interstitial has nowhere to put a password challenge: it is a
      * dialog the user cannot dismiss, sitting between them and their record.
-     * The window is the same 15 minutes, so a session left open on the
+     * The window is the same eight minutes, so a session left open on the
      * interstitial goes cold exactly as an elevated session does (R6.3).
      *
      * The context is posted in the request body, so it is a claim about where
@@ -357,7 +364,7 @@ public class TwoFactorAuthenticationController extends BaseController {
      * here, server side. With all of them, the most a stolen session can do
      * without the password is add a first recovery number, and even that needs
      * the code texted to that number before anything is saved. What it does
-     * not close is a stolen session used inside the same fifteen minutes as
+     * not close is a stolen session used inside the same eight minutes as
      * the real user's sign in, which is the trade R6.3 makes deliberately.
      */
     private boolean interstitialIsElevatedByRecentLogin(String orcid, String context) {
