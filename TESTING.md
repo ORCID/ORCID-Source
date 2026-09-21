@@ -59,7 +59,7 @@ The JaCoCo agent costs about 12% of test time (measured on `orcid-persistence`:
 
 Run on 2026-09-05 against `4c802f0c13`, rebased on `origin/main` at `5c67777e9a`
 (v3.0.54). Unit stage 3,597 tests, database stage 763, both green from a clean
-tree.
+tree. Re-verified against v3.23.10 on 2026-09-21; see the section after the table.
 
 Parity with `main` is not a claim here, it is a table. Each row is a proof `main`
 holds by running a real delegator, manager and security manager over fixtures.
@@ -126,6 +126,51 @@ The two helper classes are compiled under the same flag for the same reason.
 One consequence for local work: the three web modules can no longer be tested alone
 against a local repository that predates this change. Run `mvn install --projects
 orcid-core` once, or add `-am`, before `mvn test --projects orcid-web`.
+
+### Re-verified against v3.23.10
+
+`main` moved 270 commits between the fork point and 2026-09-21, most of them the
+Java 21 transaction work: `@Transactional` on the DAOs, a pooled HSQLDB datasource
+with `autoCommit=false`, and an existing-activities list added to the work, funding
+and affiliation managers. Production moved under the proofs above, so they were
+re-run rather than assumed. Merged at `43b125bb2c` (v3.23.10):
+
+| Check | Result |
+| --- | --- |
+| Unit stage, clean tree | 3,937 green |
+| Database stage, clean tree | 734 green |
+| v3 work manager: delete the remove-path source guard | red on `v3.WorkManagerImplMockTest` |
+| v2 security manager: `checkSource` returns early | red on `OrcidSecurityManager_SourceTest` |
+| v3 delegator: move the profile guard below the manager call | red on `...ErrorsTest`, 5 delete cases |
+| v3 token check: invert the claimed predicate | red on `v3.OrcidSecurityManager_generalTest` |
+| v2 address manager: delete the delete-path source guard | red on `AddressManagerImplMockTest` |
+| Production restored after every mutation | byte-identical, working tree clean |
+| `actionlint`, reactor-graph drift, `db_tests` matrix drift | all clean |
+
+The unit stage is up 340 and the database stage down 29, and the two move together:
+`main` independently rewrote `EmailManagerTest`, `ProfileEntityManagerImplTest`,
+`PasswordResetControllerTest`, `FundingsControllerTest` and
+`PublicProfileControllerTest` onto Mockito while this branch was open. Its versions
+are supersets, so they are the ones kept, and the three that no longer need a
+database moved from the second count into the first. Four proofs those files held
+here but `main`'s versions did not were ported across: that deactivating or
+deprecating a record drops its user connections and its notifications, that a reset
+token whose redis entry has gone is refused, that a successful reset clears the
+sign-in lock, and that a refused funding edit does not fall through to a create.
+
+Two things `main` changed that are worth knowing:
+
+- **J21-005 tightened the client-credentials rule.** A client with
+  `ORCID_PROFILE_CREATE` may now act on an unclaimed record only if it is that
+  record's source. The positive test here was asserting the old rule, so its
+  fixture now gives the record a source. The new half of the predicate is proved
+  nowhere, on either side: `main` shipped `d089fb9d57` without a test, and its only
+  related coverage is the claimed refusal these tests already held. Worth a ticket.
+- **`PublicProfileControllerTest` lost a proof to mocking.** `main`'s version stubs
+  `getGroupedAffiliations(orcid, true)` with a public-only fixture, so the manager's
+  visibility filtering is asserted by nothing. The production method this branch's
+  version drove no longer exists, so there is nothing to port; the filtering belongs
+  in an `AffiliationsManagerReadOnly` database test. Worth a ticket.
 
 ## The database stage runs only what a change can have affected
 
