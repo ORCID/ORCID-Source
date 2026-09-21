@@ -108,7 +108,7 @@ assumed. Re-run on 2026-09-05 against `fd4dc071dd`:
 | `mockito-core` in all seven WARs | 592KB present in every one before, absent from every one after |
 | `orcid-core` test jar contents | the two helper classes, no test resources |
 | Release-path build, `-Dmaven.test.skip`, jar deleted first | green, jar reattached with both classes |
-| `actionlint`, reactor-graph drift | both clean |
+| `actionlint`, `db_tests` matrix drift | both clean |
 
 The three web modules read the helpers from a test jar that `orcid-core` now
 attaches. It carries those two classes and nothing else on purpose: `orcid-core`'s
@@ -145,7 +145,7 @@ re-run rather than assumed. Merged at `43b125bb2c` (v3.23.10):
 | v3 token check: invert the claimed predicate | red on `v3.OrcidSecurityManager_generalTest` |
 | v2 address manager: delete the delete-path source guard | red on `AddressManagerImplMockTest` |
 | Production restored after every mutation | byte-identical, working tree clean |
-| `actionlint`, reactor-graph drift, `db_tests` matrix drift | all clean |
+| `actionlint`, `db_tests` matrix drift | both clean |
 
 The unit stage is up 340 and the database stage down 29, and the two move together:
 `main` independently rewrote `EmailManagerTest`, `ProfileEntityManagerImplTest`,
@@ -172,42 +172,20 @@ Two things `main` changed that are worth knowing:
   version drove no longer exists, so there is nothing to port; the filtering belongs
   in an `AffiliationsManagerReadOnly` database test. Worth a ticket.
 
-## The database stage runs only what a change can have affected
+## The database stage
 
-Every leg of the database stage reports on every pull request, but a leg whose
-module the change cannot have reached finishes green in seconds instead of
-spending two minutes proving nothing moved. Nothing is skipped: a skipped job
-never reports its check, and a required check that never reports blocks the
-merge for ever.
+Both stages run in full on every push. The unit stage is eleven parallel jobs,
+one per module; the database stage is six, one per module that holds a test
+marked `@Category(DatabaseTest.class)`. The split exists so the unit stage can
+report in a couple of minutes without waiting on a database, not so that work
+can be skipped -- nothing selects which tests to run based on what changed.
 
-The decision is Maven's dependency graph, never a list of paths. A file belongs
-to the module it sits in; the legs that run are those modules plus every module
-that depends on them. So a change in `orcid-web` runs the web leg alone, a
-change in `orcid-persistence` runs persistence, core, web and api-web, and a
-change in `orcid-core` runs core, web and api-web but not persistence, because
-persistence does not depend on core.
-
-Everything runs when the change cannot be attributed: the root pom, anything
-under `.github`, `orcid-test`, a directory that is not a reactor module, or any
-event without a pull-request base to diff against. Over-running is the intended
-failure mode; a silently skipped test is not.
-
-Two things keep it honest. The graph is parsed from the poms by
-`.github/scripts/reactor_graph.py`, and `db_stage_drift` fails if that parse
-stops matching `reactor-graph.txt`, the snapshot taken from Maven's own
-`dependency:tree`. And the parse keys on artifact names rather than group ids,
-because `orcid-web` declares `orcid-core` through
-`<groupId>${project.parent.groupId}</groupId>` -- a parser that insists on the
-literal `org.orcid` drops the most important edge in the graph and concludes
-that a change in `orcid-core` cannot affect `orcid-web`.
-
-To see the decision for a change you have in hand:
-
-```
-git diff --name-only origin/main...HEAD | python3 .github/scripts/reactor_graph.py --plan
-```
-
-A `workflow_dispatch` run has no pull-request base, so it always runs every leg.
+The other five reactor modules are absent from the database matrix because they
+hold no database test, and each would pay about 100s of setup to run nothing.
+That is the one omission, and `db_stage_drift` guards it: it reads the matrix
+out of this workflow and the module list out of the root pom, and fails the
+build if a module gains its first database test without being added. It warns
+in the other direction, where a listed module no longer has any.
 
 ## Writing a unit test
 
