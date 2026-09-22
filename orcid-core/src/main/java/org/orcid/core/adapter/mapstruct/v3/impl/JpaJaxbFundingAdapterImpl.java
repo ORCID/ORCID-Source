@@ -12,14 +12,13 @@ import org.orcid.core.adapter.mapstruct.FuzzyDateMapperV3;
 import org.orcid.core.adapter.mapstruct.JSONFundingExternalIdentifiersMapperV3;
 import org.orcid.core.adapter.mapstruct.OrgMapperV3;
 import org.orcid.core.adapter.mapstruct.SourceMapperV3;
+import org.orcid.core.adapter.mapstruct.TitleMapperV3;
 import org.orcid.core.adapter.mapstruct.UrlMapperV3;
 import org.orcid.core.adapter.mapstruct.VisibilityMapperV3;
 import org.orcid.core.adapter.v3.JpaJaxbFundingAdapter;
-import org.orcid.jaxb.model.record_v2.Work;
 import org.orcid.jaxb.model.v3.release.record.Funding;
 import org.orcid.jaxb.model.v3.release.record.summary.FundingSummary;
 import org.orcid.persistence.jpa.entities.ProfileFundingEntity;
-import org.orcid.persistence.jpa.entities.WorkEntity;
 
 @Mapper(
     componentModel = "spring",
@@ -29,6 +28,7 @@ import org.orcid.persistence.jpa.entities.WorkEntity;
         OrgMapperV3.class,
         FuzzyDateMapperV3.class,
         UrlMapperV3.class,
+        TitleMapperV3.class,
         JSONFundingExternalIdentifiersMapperV3.class,
         FundingContributorsMapperV3.class
     }
@@ -38,7 +38,7 @@ public abstract class JpaJaxbFundingAdapterImpl implements JpaJaxbFundingAdapter
     @Override
     @Mapping(source = "putCode", target = "id")
     @Mapping(source = "organizationDefinedType.content", target = "organizationDefinedType")
-    @Mapping(source = "title.title.content", target = "title")
+    @Mapping(source = "title.title", target = "title")
     @Mapping(source = "title.translatedTitle.content", target = "translatedTitle")
     @Mapping(source = "title.translatedTitle.languageCode", target = "translatedTitleLanguageCode")
     @Mapping(source = "amount.content", target = "numericAmount", qualifiedByName = "amountContentToNumericAmount")
@@ -62,7 +62,7 @@ public abstract class JpaJaxbFundingAdapterImpl implements JpaJaxbFundingAdapter
     @Override
     @Mapping(source = "putCode", target = "id")
     @Mapping(source = "organizationDefinedType.content", target = "organizationDefinedType")
-    @Mapping(source = "title.title.content", target = "title")
+    @Mapping(source = "title.title", target = "title")
     @Mapping(source = "title.translatedTitle.content", target = "translatedTitle")
     @Mapping(source = "title.translatedTitle.languageCode", target = "translatedTitleLanguageCode")
     @Mapping(source = "amount.content", target = "numericAmount", qualifiedByName = "amountContentToNumericAmount")
@@ -80,7 +80,7 @@ public abstract class JpaJaxbFundingAdapterImpl implements JpaJaxbFundingAdapter
     @Override
     @Mapping(source = "id", target = "putCode")
     @Mapping(source = "organizationDefinedType", target = "organizationDefinedType.content")
-    @Mapping(source = "title", target = "title.title.content")
+    @Mapping(source = "title", target = "title.title")
     @Mapping(source = "translatedTitle", target = "title.translatedTitle.content")
     @Mapping(source = "translatedTitleLanguageCode", target = "title.translatedTitle.languageCode")
     @Mapping(source = "numericAmount", target = "amount.content")
@@ -98,8 +98,14 @@ public abstract class JpaJaxbFundingAdapterImpl implements JpaJaxbFundingAdapter
 
     @AfterMapping
     protected void afterToFunding(ProfileFundingEntity entity, @MappingTarget Funding funding) {
-        if (funding.getTitle() != null && funding.getTitle().getTranslatedTitle() != null && funding.getTitle().getTranslatedTitle().getContent() == null) {
-            funding.getTitle().setTranslatedTitle(null);
+        if (funding.getTitle() != null) {
+            if (funding.getTitle().getTranslatedTitle() != null && 
+                (funding.getTitle().getTranslatedTitle().getContent() == null || funding.getTitle().getTranslatedTitle().getContent().trim().isEmpty())) {
+                funding.getTitle().setTranslatedTitle(null);
+            }
+            if (funding.getTitle().getTitle() == null && funding.getTitle().getTranslatedTitle() == null) {
+                funding.setTitle(null);
+            }
         }
         if (funding.getOrganizationDefinedType() != null && (funding.getOrganizationDefinedType().getContent() == null || funding.getOrganizationDefinedType().getContent().trim().isEmpty())) {
             funding.setOrganizationDefinedType(null);
@@ -111,7 +117,7 @@ public abstract class JpaJaxbFundingAdapterImpl implements JpaJaxbFundingAdapter
 
     @Override
     @Mapping(source = "id", target = "putCode")
-    @Mapping(source = "title", target = "title.title.content")
+    @Mapping(source = "title", target = "title.title")
     @Mapping(source = "translatedTitle", target = "title.translatedTitle.content")
     @Mapping(source = "translatedTitleLanguageCode", target = "title.translatedTitle.languageCode")
     @Mapping(source = "url", target = "url")
@@ -126,8 +132,14 @@ public abstract class JpaJaxbFundingAdapterImpl implements JpaJaxbFundingAdapter
 
     @AfterMapping
     protected void afterToFundingSummary(ProfileFundingEntity entity, @MappingTarget FundingSummary fundingSummary) {
-        if (fundingSummary.getTitle() != null && fundingSummary.getTitle().getTranslatedTitle() != null && fundingSummary.getTitle().getTranslatedTitle().getContent() == null) {
-            fundingSummary.getTitle().setTranslatedTitle(null);
+        if (fundingSummary.getTitle() != null) {
+            if (fundingSummary.getTitle().getTranslatedTitle() != null && 
+                (fundingSummary.getTitle().getTranslatedTitle().getContent() == null || fundingSummary.getTitle().getTranslatedTitle().getContent().trim().isEmpty())) {
+                fundingSummary.getTitle().setTranslatedTitle(null);
+            }
+            if (fundingSummary.getTitle().getTitle() == null && fundingSummary.getTitle().getTranslatedTitle() == null) {
+                fundingSummary.setTitle(null);
+            }
         }
     }
 
