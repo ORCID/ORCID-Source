@@ -1,3 +1,9 @@
+## v3.23.15 - 2026-09-22
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.23.14...v3.23.15)
+
+- [#7726](https://github.com/ORCID/ORCID-Source/pull/7726): PD-13635 PD-13638 recovery phone send caps and elevation window
+
 ## v3.23.14 - 2026-09-22
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.23.13...v3.23.14)
