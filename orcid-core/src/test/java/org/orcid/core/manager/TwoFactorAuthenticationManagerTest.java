@@ -2,11 +2,14 @@ package org.orcid.core.manager;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -17,6 +20,7 @@ import org.jboss.aerogear.security.otp.Totp;
 import org.jboss.aerogear.security.otp.api.Base32;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
@@ -30,6 +34,7 @@ import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.dao.ProfileEventDao;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.ProfileEventEntity;
+import org.orcid.persistence.jpa.entities.ProfileEventType;
 import org.orcid.pojo.AuthChallenge;
 import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionTemplate;
@@ -47,6 +52,9 @@ public class TwoFactorAuthenticationManagerTest {
 
     @Mock
     private BackupCodeManager backupCodeManager;
+
+    @Mock
+    private RecoveryPhoneManager recoveryPhoneManager;
 
     @Mock
     private ProfileDao profileDao;
@@ -128,6 +136,35 @@ public class TwoFactorAuthenticationManagerTest {
         verify(profileDao).disable2FA(anyString());
         verify(profileEventDao).persist(any(ProfileEventEntity.class));
         verify(backupCodeManager).removeUnusedBackupCodes(anyString());
+        // turning 2FA off resets every 2FA backup option
+        verify(recoveryPhoneManager).removeRecoveryPhone(anyString());
+    }
+
+    @Test
+    public void testDisable2FAByRecoveryPhone() {
+        twoFactorAuthenticationManager.disable2FAByRecoveryPhone("orcid");
+
+        // the whole R3.5 transaction: 2FA off, unused backup codes invalidated, the recovery number consumed
+        verify(profileDao, times(1)).disable2FA(eq("orcid"));
+        verify(backupCodeManager, times(1)).removeUnusedBackupCodes(eq("orcid"));
+        verify(recoveryPhoneManager, times(1)).removeRecoveryPhone(eq("orcid"));
+
+        ArgumentCaptor<ProfileEventEntity> captor = ArgumentCaptor.forClass(ProfileEventEntity.class);
+        verify(profileEventDao, times(1)).persist(captor.capture());
+        assertEquals("orcid", captor.getValue().getOrcid());
+        assertEquals(ProfileEventType.PROFILE_2FA_DISABLED_BY_RECOVERY_PHONE, captor.getValue().getType());
+    }
+
+    @Test
+    public void testDisable2FAByRecoveryPhoneDoesNotRecordASelfServiceDisable() {
+        twoFactorAuthenticationManager.disable2FAByRecoveryPhone("orcid");
+
+        // support tells a recovery phone disable from a self service one by the event type alone, so exactly one
+        // event is recorded and it is not the self service or the admin one
+        ArgumentCaptor<ProfileEventEntity> captor = ArgumentCaptor.forClass(ProfileEventEntity.class);
+        verify(profileEventDao, times(1)).persist(captor.capture());
+        assertNotEquals(ProfileEventType.PROFILE_2FA_DISABLED, captor.getValue().getType());
+        assertNotEquals(ProfileEventType.PROFILE_2FA_DISABLED_BY_ADMIN, captor.getValue().getType());
     }
 
     @Test
@@ -136,6 +173,7 @@ public class TwoFactorAuthenticationManagerTest {
         verify(profileDao).disable2FA(anyString());
         verify(profileEventDao).persist(any(ProfileEventEntity.class));
         verify(backupCodeManager).removeUnusedBackupCodes(anyString());
+        verify(recoveryPhoneManager).removeRecoveryPhone(anyString());
     }
 
     @Test
