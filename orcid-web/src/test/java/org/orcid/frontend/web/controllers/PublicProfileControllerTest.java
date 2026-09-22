@@ -415,7 +415,7 @@ public class PublicProfileControllerTest {
         MockHttpServletResponse response = new MockHttpServletResponse();
         request.setMethod("GET");
         request.addHeader("If-Modified-Since", formatHttpDate(lastModifiedTime + 60_000L));
-        when(profileEntityManager.getLastModified(USER_ORCID)).thenReturn(lastModifiedTime);
+        when(profileEntityManager.getLastModifiedDate(USER_ORCID)).thenReturn(new Date(lastModifiedTime));
 
         publicProfileController.ifModifiedSinceCheckEndpoint(request, response, USER_ORCID);
 
@@ -429,7 +429,7 @@ public class PublicProfileControllerTest {
         MockHttpServletResponse response = new MockHttpServletResponse();
         request.setMethod("GET");
         request.addHeader("If-Modified-Since", formatHttpDate(lastModifiedTime - 86_400_000L));
-        when(profileEntityManager.getLastModified(USER_ORCID)).thenReturn(lastModifiedTime);
+        when(profileEntityManager.getLastModifiedDate(USER_ORCID)).thenReturn(new Date(lastModifiedTime));
 
         publicProfileController.ifModifiedSinceCheckEndpoint(request, response, USER_ORCID);
 
@@ -442,7 +442,7 @@ public class PublicProfileControllerTest {
         MockHttpServletRequest request = new MockHttpServletRequest();
         MockHttpServletResponse response = new MockHttpServletResponse();
         request.setMethod("GET");
-        when(profileEntityManager.getLastModified(USER_ORCID)).thenReturn(lastModifiedTime);
+        when(profileEntityManager.getLastModifiedDate(USER_ORCID)).thenReturn(new Date(lastModifiedTime));
 
         publicProfileController.ifModifiedSinceCheckEndpoint(request, response, USER_ORCID);
 
@@ -456,7 +456,7 @@ public class PublicProfileControllerTest {
         MockHttpServletResponse response = new MockHttpServletResponse();
         request.setMethod("GET");
         request.addHeader("If-Modified-Since", formatHttpDate(ifModifiedSince));
-        when(profileEntityManager.getLastModified(USER_ORCID)).thenReturn(0L);
+        when(profileEntityManager.getLastModifiedDate(USER_ORCID)).thenReturn(null);
 
         publicProfileController.ifModifiedSinceCheckEndpoint(request, response, USER_ORCID);
 
@@ -482,25 +482,25 @@ public class PublicProfileControllerTest {
         MockHttpServletResponse firstResponse = new MockHttpServletResponse();
         publicProfileController.ifModifiedSinceCheckEndpoint(request, firstResponse, a);
         assertTrue(firstResponse.containsHeader("Location"));
-        assertEquals(HttpServletResponse.SC_SERVICE_UNAVAILABLE, firstResponse.getStatus());
+        assertEquals(HttpServletResponse.SC_TEMPORARY_REDIRECT, firstResponse.getStatus());
         assertEquals(BASE_URL + "/404", firstResponse.getHeader("Location"));
 
         MockHttpServletResponse secondResponse = new MockHttpServletResponse();
         publicProfileController.ifModifiedSinceCheckEndpoint(request, secondResponse, b);
         assertTrue(secondResponse.containsHeader("Location"));
-        assertEquals(HttpServletResponse.SC_SERVICE_UNAVAILABLE, secondResponse.getStatus());
+        assertEquals(HttpServletResponse.SC_TEMPORARY_REDIRECT, secondResponse.getStatus());
         assertEquals(BASE_URL + "/404", secondResponse.getHeader("Location"));
 
         MockHttpServletResponse thirdResponse = new MockHttpServletResponse();
         publicProfileController.ifModifiedSinceCheckEndpoint(request, thirdResponse, c);
         assertTrue(thirdResponse.containsHeader("Location"));
-        assertEquals(HttpServletResponse.SC_SERVICE_UNAVAILABLE, thirdResponse.getStatus());
+        assertEquals(HttpServletResponse.SC_TEMPORARY_REDIRECT, thirdResponse.getStatus());
         assertEquals(BASE_URL + "/404", thirdResponse.getHeader("Location"));
 
         MockHttpServletResponse fourthResponse = new MockHttpServletResponse();
         publicProfileController.ifModifiedSinceCheckEndpoint(request, fourthResponse, d);
         assertTrue(fourthResponse.containsHeader("Location"));
-        assertEquals(HttpServletResponse.SC_SERVICE_UNAVAILABLE, fourthResponse.getStatus());
+        assertEquals(HttpServletResponse.SC_TEMPORARY_REDIRECT, fourthResponse.getStatus());
         assertEquals(BASE_URL + "/404", fourthResponse.getHeader("Location"));
     }
 
