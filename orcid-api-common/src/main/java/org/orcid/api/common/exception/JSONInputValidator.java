@@ -23,11 +23,11 @@ import org.xml.sax.SAXException;
 public class JSONInputValidator {
 
     private static final Map<Class<?>, String> SCHEMA_LOCATIONS;
-    private static final Map<Class<?>, Validator> VALIDATORS;
+    private static final Map<Class<?>, Schema> SCHEMAS;
     private static final Map<Class<?>, JAXBContext> CONTEXTS;
     
     private static final Map<Class<?>, String> SCHEMA_LOCATIONS_2_1_API;
-    private static final Map<Class<?>, Validator> VALIDATORS_2_1_API;
+    private static final Map<Class<?>, Schema> SCHEMAS_2_1_API;
     private static final Map<Class<?>, JAXBContext> CONTEXTS_2_1_API;
     private static final Logger LOGGER = LoggerFactory.getLogger(JSONInputValidator.class);
     
@@ -68,12 +68,12 @@ public class JSONInputValidator {
         SCHEMA_LOCATIONS.put(org.orcid.jaxb.model.record_v2.Keyword.class, "/record_2.0/keyword-2.0.xsd");
         SCHEMA_LOCATIONS.put(org.orcid.jaxb.model.record_v2.Address.class, "/record_2.0/address-2.0.xsd");
        
-        VALIDATORS = new HashMap<Class<?>, Validator>();
+        SCHEMAS = new HashMap<Class<?>, Schema>();
         CONTEXTS = new HashMap<Class<?>, JAXBContext>();
-        SchemaFactory sf = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
         
         for (Class<?> c : SCHEMA_LOCATIONS.keySet()){
             try {
+                SchemaFactory sf = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
                 String schemaPath = SCHEMA_LOCATIONS.get(c);
                 
                 // Strategy 1: Ask the model's classloader directly (most reliable for external JARs)
@@ -96,8 +96,7 @@ public class JSONInputValidator {
                 
                 // systemId is required so relative xsd:import schemaLocations resolve correctly
                 Schema schema = sf.newSchema(new StreamSource(url.toExternalForm()));
-                Validator validator = schema.newValidator();            
-                VALIDATORS.put(c, validator);
+                SCHEMAS.put(c, schema);
                 CONTEXTS.put(c, JAXBContext.newInstance(c));
             } catch (JAXBException | SAXException e) {
                 throw new ApplicationException(e);
@@ -119,11 +118,12 @@ public class JSONInputValidator {
         SCHEMA_LOCATIONS_2_1_API.put(org.orcid.jaxb.model.record_v2.Keyword.class, "/record_2.1/keyword-2.1.xsd");
         SCHEMA_LOCATIONS_2_1_API.put(org.orcid.jaxb.model.record_v2.Address.class, "/record_2.1/address-2.1.xsd");
         
-        VALIDATORS_2_1_API = new HashMap<Class<?>, Validator>();
+        SCHEMAS_2_1_API = new HashMap<Class<?>, Schema>();
         CONTEXTS_2_1_API = new HashMap<Class<?>, JAXBContext>();
         
         for(Class<?> c : SCHEMA_LOCATIONS_2_1_API.keySet()) {
             try {
+                SchemaFactory sf = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
                 String schemaPath = SCHEMA_LOCATIONS_2_1_API.get(c);
                 
                 // Strategy 1: Ask the model's classloader directly
@@ -146,14 +146,15 @@ public class JSONInputValidator {
                 
                 // systemId is required so relative xsd:import schemaLocations resolve correctly
                 Schema schema = sf.newSchema(new StreamSource(url.toExternalForm()));
-                Validator validator = schema.newValidator();            
-                VALIDATORS_2_1_API.put(c, validator);
+                SCHEMAS_2_1_API.put(c, schema);
                 CONTEXTS_2_1_API.put(c, JAXBContext.newInstance(c));
             } catch (JAXBException | SAXException e) {
                 throw new ApplicationException(e);
             }
         }
     }
+    
+    private static final Object LOCK = new Object();
     
     public void validateJSONInput(Object obj) {
         Class<?> clazz = obj.getClass();
@@ -165,12 +166,15 @@ public class JSONInputValidator {
         }
         
         try {
-            source = new JAXBSource(CONTEXTS.get(clazz), obj);
-            Validator validator = VALIDATORS.get(clazz);
-            if(validator != null) {
-                validator.validate(source);
-            } else {
-                throw new InvalidJSONException("Unable to find validator for class " + clazz.getName());
+            synchronized (LOCK) {
+                source = new JAXBSource(CONTEXTS.get(clazz), obj);
+                Schema schema = SCHEMAS.get(clazz);
+                if(schema != null) {
+                    Validator validator = schema.newValidator();
+                    validator.validate(source);
+                } else {
+                    throw new InvalidJSONException("Unable to find validator for class " + clazz.getName());
+                }
             }
         } catch (SAXException e) {
             Map<String, String> params = new HashMap<>();
@@ -208,8 +212,16 @@ public class JSONInputValidator {
         }
         
         try {
-            source = new JAXBSource(CONTEXTS_2_1_API.get(clazz), obj);
-            VALIDATORS_2_1_API.get(clazz).validate(source);
+            synchronized (LOCK) {
+                source = new JAXBSource(CONTEXTS_2_1_API.get(clazz), obj);
+                Schema schema = SCHEMAS_2_1_API.get(clazz);
+                if(schema != null) {
+                    Validator validator = schema.newValidator();
+                    validator.validate(source);
+                } else {
+                    throw new InvalidJSONException("Unable to find validator for class " + clazz.getName());
+                }
+            }
         } catch (SAXException e) {
             Map<String, String> params = new HashMap<>();
             Throwable rootCause = ExceptionUtils.getRootCause(e);
