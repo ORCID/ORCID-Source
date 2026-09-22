@@ -1,3 +1,9 @@
+## v3.23.12 - 2026-09-22
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.23.11...v3.23.12)
+
+- [#7725](https://github.com/ORCID/ORCID-Source/pull/7725): Fixed org.glassfish.jaxb.runtime.api.AccessorException
+
 ## v3.23.11 - 2026-09-22
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.23.10...v3.23.11)
