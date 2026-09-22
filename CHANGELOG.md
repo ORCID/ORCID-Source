@@ -1,3 +1,9 @@
+## v3.23.11 - 2026-09-22
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.23.10...v3.23.11)
+
+- [#7727](https://github.com/ORCID/ORCID-Source/pull/7727): Fixed thread-safety race conditions in JSONInputValidator where concurrent API requests caused Xerces NullPointerException and ArrayIndexOutOfBoundsException errors due to shared stateful validator components.
+
 ## v3.23.10 - 2026-09-18
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.23.9...v3.23.10)
