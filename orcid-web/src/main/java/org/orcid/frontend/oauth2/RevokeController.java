@@ -6,6 +6,7 @@ import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 
 import org.apache.commons.lang.StringUtils;
+import org.orcid.core.oauth.authorizationServer.AuthorizationServerConnectionException;
 import org.orcid.api.common.T2OrcidApiService;
 import org.orcid.core.oauth.authorizationServer.AuthorizationServerUtil;
 import org.orcid.core.togglz.Features;
@@ -37,13 +38,19 @@ public class RevokeController {
             throw new IllegalArgumentException("Please provide the token to be param");
         }
 
-        // Forward the request to the authorization server
-        if (StringUtils.isNotBlank(authorization)) {
-            r = authorizationServerUtil.forwardTokenRevocationRequest(authorization, tokenToRevoke);
-        } else {
-            String clientId = resolveClientId(request);
-            String clientSecret = request.getParameter("client_secret");
-            r = authorizationServerUtil.forwardTokenRevocationRequest(clientId, clientSecret, tokenToRevoke);
+        try {
+            // Forward the request to the authorization server
+            if (StringUtils.isNotBlank(authorization)) {
+                r = authorizationServerUtil.forwardTokenRevocationRequest(authorization, tokenToRevoke);
+            } else {
+                String clientId = resolveClientId(request);
+                String clientSecret = request.getParameter("client_secret");
+                r = authorizationServerUtil.forwardTokenRevocationRequest(clientId, clientSecret, tokenToRevoke);
+            }
+        } catch (AuthorizationServerConnectionException e) {
+            HttpHeaders timeoutHeaders = new HttpHeaders();
+            timeoutHeaders.set(Features.OAUTH_TOKEN_VALIDATION.name(), "ON");
+            return ResponseEntity.status(504).headers(timeoutHeaders).body(e.getMessage());
         }
         HttpHeaders responseHeaders = new HttpHeaders();
         responseHeaders.set(Features.OAUTH_TOKEN_VALIDATION.name(), "ON");

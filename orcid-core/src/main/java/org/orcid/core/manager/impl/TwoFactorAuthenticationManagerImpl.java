@@ -10,6 +10,7 @@ import org.orcid.core.exception.UserAlreadyUsing2FAException;
 import org.orcid.core.manager.BackupCodeManager;
 import org.orcid.core.manager.EncryptionManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
+import org.orcid.core.manager.RecoveryPhoneManager;
 import org.orcid.core.manager.TwoFactorAuthenticationManager;
 import org.orcid.core.manager.read_only.EmailManagerReadOnly;
 import org.orcid.jaxb.model.record_v2.Email;
@@ -42,6 +43,9 @@ public class TwoFactorAuthenticationManagerImpl implements TwoFactorAuthenticati
 
     @Resource
     private BackupCodeManager backupCodeManager;
+
+    @Resource
+    private RecoveryPhoneManager recoveryPhoneManager;
 
     @Resource
     private ProfileEventDao profileEventDao;
@@ -98,7 +102,26 @@ public class TwoFactorAuthenticationManagerImpl implements TwoFactorAuthenticati
             public Boolean doInTransaction(TransactionStatus status) {
                 profileDao.disable2FA(orcid);
                 backupCodeManager.removeUnusedBackupCodes(orcid);
+                recoveryPhoneManager.removeRecoveryPhone(orcid);
                 profileEventDao.persist(new ProfileEventEntity(orcid, ProfileEventType.PROFILE_2FA_DISABLED));
+                return true;
+            }
+        });
+    }
+
+    @Override
+    public void disable2FAByRecoveryPhone(String orcid) {
+        // {}, not %s: slf4j takes its placeholder that way. The line above uses %s and has therefore
+        // been printing the literal characters instead of the iD for as long as it has existed; that one
+        // is not this ticket's to change, but there is no reason to copy it.
+        LOG.warn("2FA disabled by recovery phone for {}", orcid);
+        transactionTemplate.execute(new TransactionCallback<Boolean>() {
+            @Override
+            public Boolean doInTransaction(TransactionStatus status) {
+                profileDao.disable2FA(orcid);
+                backupCodeManager.removeUnusedBackupCodes(orcid);
+                recoveryPhoneManager.removeRecoveryPhone(orcid);
+                profileEventDao.persist(new ProfileEventEntity(orcid, ProfileEventType.PROFILE_2FA_DISABLED_BY_RECOVERY_PHONE));
                 return true;
             }
         });
@@ -113,6 +136,7 @@ public class TwoFactorAuthenticationManagerImpl implements TwoFactorAuthenticati
             public Boolean doInTransaction(TransactionStatus status) {
                 profileDao.disable2FA(orcid);
                 backupCodeManager.removeUnusedBackupCodes(orcid);
+                recoveryPhoneManager.removeRecoveryPhone(orcid);
                 profileEventDao.persist(new ProfileEventEntity(orcid, ProfileEventType.PROFILE_2FA_DISABLED_BY_ADMIN, message));
                 return true;
             }

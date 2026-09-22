@@ -1,3 +1,65 @@
+## v3.23.10 - 2026-09-18
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.23.9...v3.23.10)
+
+- [#7655](https://github.com/ORCID/ORCID-Source/pull/7655): PD-6046 PD-6045 PD-6045 PD-6046 PD-6044 PD-6042 PD-6043 PD-5850  add 2FA recovery phone number
+
+## v3.23.9 - 2026-09-18
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.23.8...v3.23.9)
+
+- [#7660](https://github.com/ORCID/ORCID-Source/pull/7660): PD-5941 Store email event when password is reset and email is added or removed
+
+## v3.23.8 - 2026-09-18
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.23.7...v3.23.8)
+
+## v3.23.7 - 2026-09-18
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.23.6...v3.23.7)
+
+- [#7687](https://github.com/ORCID/ORCID-Source/pull/7687): Bump js-yaml from 3.14.1 to 3.15.2 in /orcid-web/src/main/webapp/static/javascript/ng1Orcid
+- [#7680](https://github.com/ORCID/ORCID-Source/pull/7680): Amontenegro/pd 6059 if modified since
+
+## v3.23.6 - 2026-09-18
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.23.5...v3.23.6)
+
+- [#7724](https://github.com/ORCID/ORCID-Source/pull/7724): Revert "PD-0000 pin Apache HttpClient 4.x to 4.5.14"
+
+## v3.23.5 - 2026-09-18
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.23.4...v3.23.5)
+
+- [#7659](https://github.com/ORCID/ORCID-Source/pull/7659): PD-6175 allow RRID as an identifier type for funded-by relationships
+
+## v3.23.4 - 2026-09-18
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.23.3...v3.23.4)
+
+## v3.23.3 - 2026-09-18
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.23.2...v3.23.3)
+
+- [#7686](https://github.com/ORCID/ORCID-Source/pull/7686): PD-0000 pin Apache HttpClient 4.x to 4.5.14
+- [#7663](https://github.com/ORCID/ORCID-Source/pull/7663): PD-7614 account recovery endpoints
+
+## v3.23.2 - 2026-09-18
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.23.1...v3.23.2)
+
+- [#7716](https://github.com/ORCID/ORCID-Source/pull/7716): Revert "Revert "PD-6176 Index version-of and funded-by external identifiers in Solr""
+
+## v3.23.1 - 2026-09-18
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.23.0...v3.23.1)
+
+- [#7666](https://github.com/ORCID/ORCID-Source/pull/7666): PD-6120 Retry requests that times out, if the retry fails, return a 504
+
+## v3.23.0 - 2026-09-18
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.0.94...v3.23.0)
+
 ## v3.0.94 - 2026-09-16
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.0.93...v3.0.94)

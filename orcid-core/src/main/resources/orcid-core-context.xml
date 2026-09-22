@@ -729,6 +729,8 @@
     <bean id="twoFactorAuthenticationManager" class="org.orcid.core.manager.impl.TwoFactorAuthenticationManagerImpl" />
 
     <bean id="backupCodeManager" class="org.orcid.core.manager.impl.BackupCodeManagerImpl" />
+
+    <bean id="recoveryPhoneManager" class="org.orcid.core.manager.impl.RecoveryPhoneManagerImpl" />
     
 	<bean id="messageSource" primary="true"
 		class="org.springframework.context.support.ReloadableResourceBundleMessageSource">
@@ -1039,6 +1041,7 @@
 		<constructor-arg index="2" value="${org.orcid.core.utils.cache.redis.password}" />
 		<constructor-arg index="3" value="${org.orcid.core.utils.cache.redis.expiration_in_secs:600}" />
 		<constructor-arg index="4" value="${org.orcid.core.utils.cache.redis.connection_timeout_millis:10000}" />
+		<constructor-arg index="5" value="${org.orcid.core.utils.cache.redis.ssl.enabled:true}" />
 	</bean>
 
     <!-- Redis rate limit cache -->
@@ -1048,6 +1051,7 @@
 		<constructor-arg index="2" value="${org.orcid.core.utils.cache.papi.redis.password}" />
 		<constructor-arg index="3" value="${org.orcid.core.utils.cache.papi.redis.expiration_in_secs:600}" />
 		<constructor-arg index="4" value="${org.orcid.core.utils.cache.papi.redis.connection_timeout_millis:10000}" />
+		<constructor-arg index="5" value="${org.orcid.core.utils.cache.papi.redis.ssl.enabled:true}" />
 	</bean>
 	
 	<bean id="papiRateLimitRedisClient" class="org.orcid.core.api.rate_limit.PapiRateLimitRedisClient"/>
