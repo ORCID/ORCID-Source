@@ -13,6 +13,8 @@ public interface ProfileHistoryEventManager {
 
     void recordResetPasswordEvent(String orcid, String ipAddress);
 
+    void recordPasswordResetEmailGeneratedByAdmin(String adminId, String orcid, String ipAddress);
+
     void recordEmailUpdateEvent(String orcid, String ipAddress, String comment);
     
     List<ProfileHistoryEventEntity> getProfileHistoryForOrcid(String orcid);

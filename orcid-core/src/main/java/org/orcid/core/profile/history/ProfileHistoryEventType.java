@@ -13,7 +13,7 @@ public enum ProfileHistoryEventType {
     UPDATE_AMEND_NOTIF_FREQ("send_change_notifications"),
     UPDATE_ADMINISTRATIVE_NOTIF_FREQ("send_administrative_change_notifications"),
     UPDATE_MEMBER_PERMISSION_NOTIF_FREQ("send_member_update_requests"),
-    RESET_PASSWORD("reset_password"),
+    RESET_PASSWORD("Reset password"),
     EMAIL_CHANGED("email_changed");
 
     
