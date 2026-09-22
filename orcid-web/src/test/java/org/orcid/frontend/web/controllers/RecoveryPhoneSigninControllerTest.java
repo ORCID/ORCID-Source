@@ -283,6 +283,20 @@ public class RecoveryPhoneSigninControllerTest {
         assertEquals("***********7890", response.getMaskedRecoveryPhoneNumber());
     }
 
+    @Test
+    public void testSendCodePassesThroughTheDailySendLimit() {
+        togglzRule.enable(Features.TWO_FACTOR_RECOVERY_PHONE);
+        passwordIsCorrectAnd2FAIsOn();
+        aRecoveryPhoneIsStored();
+        when(recoveryPhoneVerificationService.sendCode(eq(ORCID), any(RecoveryPhoneSendCodeRequest.class)))
+                .thenReturn(RecoveryPhoneSendCodeResponse.failure(RecoveryPhoneVerificationService.SEND_LIMIT_REACHED));
+
+        RecoveryPhoneSigninSendCodeResponse response = controller.sendCode(request, sendCodeRequest(ORCID));
+
+        assertFalse(response.isSuccess());
+        assertEquals(RecoveryPhoneVerificationService.SEND_LIMIT_REACHED, response.getErrorCode());
+    }
+
     /** An email address is as good a username here as an iD is. */
     @Test
     public void testAnEmailAddressResolvesToTheRecord() {

@@ -12,8 +12,9 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 /**
- * Holds the pending recovery phone verification code for a record, keyed by
- * ORCID iD so one record can never consume or interfere with another's code.
+ * Holds the recovery phone verification state for a record, keyed by ORCID iD so
+ * one record can never consume or interfere with another's: the single pending
+ * code, and the history of the texts that have actually been sent.
  *
  * Redis is the real store: the registry runs on several nodes and the request
  * that verifies a code is not necessarily the one that sent it. When Redis is
@@ -41,24 +42,51 @@ public class RecoveryPhoneCodeStore {
      * @return true when the code was stored and can be confirmed later
      */
     public boolean save(String orcid, RecoveryPhoneCodeEntry entry, int ttlSeconds) {
-        String key = RecoveryPhoneCodeEntry.redisKey(orcid);
-        if (redisClient.set(key, entry.serialize(), ttlSeconds)) {
-            return true;
-        }
-        if (allowInMemoryStore) {
-            LOG.warn("Redis unavailable, storing the recovery phone code in memory. This is only valid for local development.");
-            inMemoryEntries.put(key, new InMemoryEntry(entry.serialize(), System.currentTimeMillis() + (ttlSeconds * 1000L)));
-            return true;
-        }
-        LOG.error("Unable to store the recovery phone verification code, Redis is unavailable");
-        return false;
+        return put(RecoveryPhoneCodeEntry.redisKey(orcid), entry.serialize(), ttlSeconds, "verification code");
     }
 
     public RecoveryPhoneCodeEntry get(String orcid) {
-        String key = RecoveryPhoneCodeEntry.redisKey(orcid);
-        RecoveryPhoneCodeEntry entry = RecoveryPhoneCodeEntry.parse(redisClient.get(key));
-        if (entry != null) {
-            return entry;
+        return RecoveryPhoneCodeEntry.parse(read(RecoveryPhoneCodeEntry.redisKey(orcid)));
+    }
+
+    public void remove(String orcid) {
+        delete(RecoveryPhoneCodeEntry.redisKey(orcid));
+    }
+
+    /**
+     * @return true when the history was stored, so the record's texts can still
+     *         be counted after this one
+     */
+    public boolean saveSendHistory(String orcid, RecoveryPhoneSendHistory history, int ttlSeconds) {
+        return put(RecoveryPhoneSendHistory.redisKey(orcid), history.serialize(), ttlSeconds, "send history");
+    }
+
+    /**
+     * @return the record's send history, an empty one when it has none, and null
+     *         when something is stored that cannot be read - which the caller
+     *         must treat as a reason to refuse rather than as no history
+     */
+    public RecoveryPhoneSendHistory getSendHistory(String orcid) {
+        return RecoveryPhoneSendHistory.parse(read(RecoveryPhoneSendHistory.redisKey(orcid)));
+    }
+
+    private boolean put(String key, String value, int ttlSeconds, String what) {
+        if (redisClient.set(key, value, ttlSeconds)) {
+            return true;
+        }
+        if (allowInMemoryStore) {
+            LOG.warn("Redis unavailable, storing the recovery phone {} in memory. This is only valid for local development.", what);
+            inMemoryEntries.put(key, new InMemoryEntry(value, System.currentTimeMillis() + (ttlSeconds * 1000L)));
+            return true;
+        }
+        LOG.error("Unable to store the recovery phone {}, Redis is unavailable", what);
+        return false;
+    }
+
+    private String read(String key) {
+        String value = redisClient.get(key);
+        if (value != null) {
+            return value;
         }
         if (allowInMemoryStore) {
             InMemoryEntry inMemory = inMemoryEntries.get(key);
@@ -67,14 +95,13 @@ public class RecoveryPhoneCodeStore {
                     inMemoryEntries.remove(key);
                     return null;
                 }
-                return RecoveryPhoneCodeEntry.parse(inMemory.getValue());
+                return inMemory.getValue();
             }
         }
         return null;
     }
 
-    public void remove(String orcid) {
-        String key = RecoveryPhoneCodeEntry.redisKey(orcid);
+    private void delete(String key) {
         redisClient.remove(key);
         if (allowInMemoryStore) {
             inMemoryEntries.remove(key);
