@@ -1,3 +1,9 @@
+## v3.23.13 - 2026-09-22
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.23.12...v3.23.13)
+
+- [#7723](https://github.com/ORCID/ORCID-Source/pull/7723): Force password reset
+
 ## v3.23.12 - 2026-09-22
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.23.11...v3.23.12)
