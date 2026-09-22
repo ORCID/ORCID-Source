@@ -1156,6 +1156,7 @@
 	<dynamicField name="*-self" type="string" indexed="true" stored="false" multiValued="true"/>
 	<dynamicField name="*-part-of" type="string" indexed="true" stored="false" multiValued="true"/>
 	<dynamicField name="*-version-of" type="string" indexed="true" stored="false" multiValued="true"/>
+	<dynamicField name="*-funded-by" type="string" indexed="true" stored="false" multiValued="true"/>
 	
 	<!-- org names and org ids -->
 	<dynamicField name="*-org-id" type="string" indexed="true" stored="false" multiValued="true"/>

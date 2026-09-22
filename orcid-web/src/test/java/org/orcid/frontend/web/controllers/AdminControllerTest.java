@@ -18,7 +18,7 @@ import org.orcid.core.togglz.Features;
 import org.orcid.core.utils.VerifyEmailUtils;
 import org.orcid.core.utils.cache.redis.RedisClient;
 import org.orcid.frontend.email.RecordEmailSender;
-import org.orcid.frontend.web.util.PasswordResetTokenEntry;
+import org.orcid.core.utils.cache.redis.PasswordResetTokenEntry;
 import org.orcid.jaxb.model.clientgroup.ClientType;
 import org.orcid.jaxb.model.clientgroup.MemberType;
 import org.orcid.jaxb.model.common.OrcidType;
