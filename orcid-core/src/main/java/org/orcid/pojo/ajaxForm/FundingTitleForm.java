@@ -37,11 +37,13 @@ public class FundingTitleForm implements ErrorsInterface, Serializable {
 
     public FundingTitle toFundingTitle() {
         FundingTitle gt = new FundingTitle();
-        if (this.getTitle() != null)
+        if (this.getTitle() != null && org.apache.commons.lang3.StringUtils.isNotBlank(this.getTitle().getValue()))
         	gt.setTitle(new Title(this.getTitle().getValue()));       
         if(this.getTranslatedTitle() != null)
         	gt.setTranslatedTitle(this.getTranslatedTitle().toTranslatedTitle());
-                
+        if (gt.getTitle() == null && gt.getTranslatedTitle() == null) {
+            return null;
+        }
         return gt;
     }
     

@@ -1,3 +1,27 @@
+## v3.23.14 - 2026-09-22
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.23.13...v3.23.14)
+
+- [#7729](https://github.com/ORCID/ORCID-Source/pull/7729): Fix feedback
+
+## v3.23.13 - 2026-09-22
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.23.12...v3.23.13)
+
+- [#7723](https://github.com/ORCID/ORCID-Source/pull/7723): Force password reset
+
+## v3.23.12 - 2026-09-22
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.23.11...v3.23.12)
+
+- [#7725](https://github.com/ORCID/ORCID-Source/pull/7725): Fixed org.glassfish.jaxb.runtime.api.AccessorException
+
+## v3.23.11 - 2026-09-22
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.23.10...v3.23.11)
+
+- [#7727](https://github.com/ORCID/ORCID-Source/pull/7727): Fixed thread-safety race conditions in JSONInputValidator where concurrent API requests caused Xerces NullPointerException and ArrayIndexOutOfBoundsException errors due to shared stateful validator components.
+
 ## v3.23.10 - 2026-09-18
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.23.9...v3.23.10)

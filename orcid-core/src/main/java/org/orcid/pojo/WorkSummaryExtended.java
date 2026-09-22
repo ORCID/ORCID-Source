@@ -1,5 +1,6 @@
 package org.orcid.pojo;
 
+import org.apache.commons.lang3.StringUtils;
 import org.orcid.jaxb.model.common.WorkType;
 import org.orcid.jaxb.model.v3.release.common.Contributor;
 import org.orcid.jaxb.model.v3.release.common.CreatedDate;
@@ -41,10 +42,14 @@ public class WorkSummaryExtended extends WorkSummary {
         super.setPutCode(builder.putCode.longValue());
         if (builder.workType != null) {
             super.setType(WorkType.valueOf(builder.workType));
-            WorkTitle wt = new WorkTitle();
-            wt.setTitle(new Title(builder.title));
-            super.setTitle(wt);
-            super.setJournalTitle(new Title(builder.journalTitle));
+            if (StringUtils.isNotBlank(builder.title)) {
+                WorkTitle wt = new WorkTitle();
+                wt.setTitle(new Title(builder.title));
+                super.setTitle(wt);
+            }
+            if (StringUtils.isNotBlank(builder.journalTitle)) {
+                super.setJournalTitle(new Title(builder.journalTitle));
+            }
             super.setExternalIdentifiers(builder.externalIdsJson);
             PublicationDate pd = null;
             if (builder.publicationYear != null) {
