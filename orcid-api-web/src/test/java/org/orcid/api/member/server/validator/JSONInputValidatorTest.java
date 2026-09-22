@@ -4,6 +4,13 @@ import java.io.IOException;
 
 import jakarta.xml.bind.JAXBException;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+
 import org.junit.Test;
 import org.orcid.api.common.exception.JSONInputValidator;
 import org.orcid.core.exception.ApplicationException;
@@ -130,6 +137,42 @@ public class JSONInputValidatorTest {
                 new org.orcid.jaxb.model.common_v2.Month(1), new org.orcid.jaxb.model.common_v2.Day(1)));
         peerReview.setRole(null);
         validator.validateJSONInput(peerReview);
+    }
+
+    @Test
+    public void testConcurrentValidation() throws Exception {
+        int threads = 10;
+        int iterationsPerThread = 50;
+        ExecutorService executor = Executors.newFixedThreadPool(threads);
+        List<Future<Void>> futures = new ArrayList<>();
+
+        for (int i = 0; i < threads; i++) {
+            futures.add(executor.submit(new Callable<Void>() {
+                @Override
+                public Void call() throws Exception {
+                    for (int j = 0; j < iterationsPerThread; j++) {
+                        Work work = org.orcid.test.helper.v3.Utils.getWork("title-" + j);
+                        validator.validateJSONInput(work);
+
+                        Education education = (Education) Utils.getAffiliation(AffiliationType.EDUCATION);
+                        validator.validateJSONInput(education);
+
+                        Employment employment = (Employment) Utils.getAffiliation(AffiliationType.EMPLOYMENT);
+                        validator.validateJSONInput(employment);
+
+                        PeerReview peerReview = org.orcid.test.helper.v3.Utils.getPeerReview();
+                        peerReview.setCompletionDate(new FuzzyDate(new Year(2017), new Month(1), new Day(1)));
+                        validator.validateJSONInput(peerReview);
+                    }
+                    return null;
+                }
+            }));
+        }
+
+        for (Future<Void> future : futures) {
+            future.get();
+        }
+        executor.shutdown();
     }
 
 }
