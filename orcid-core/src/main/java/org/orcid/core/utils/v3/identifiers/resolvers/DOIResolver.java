@@ -187,14 +187,22 @@ public class DOIResolver implements LinkResolver, MetadataResolver {
 
         WorkTitle workTitle = new WorkTitle();
         if (json.has("title")) {
-            workTitle.setTitle(new Title(removeSquareBrackets(json.getString("title"))));
+            String titleStr = removeSquareBrackets(json.getString("title"));
+            if (StringUtils.isNotBlank(titleStr)) {
+                workTitle.setTitle(new Title(titleStr));
+            }
         }
 
         if (json.has("subtitle")) {
-            workTitle.setSubtitle(new Subtitle(removeSquareBrackets(json.getString("subtitle"))));
+            String subtitleStr = removeSquareBrackets(json.getString("subtitle"));
+            if (StringUtils.isNotBlank(subtitleStr)) {
+                workTitle.setSubtitle(new Subtitle(subtitleStr));
+            }
         }
 
-        result.setWorkTitle(workTitle);
+        if (workTitle.getTitle() != null || workTitle.getSubtitle() != null) {
+            result.setWorkTitle(workTitle);
+        }
 
         if (json.has("URL")) {
             result.setUrl(new Url(json.getString("URL")));
@@ -265,16 +273,20 @@ public class DOIResolver implements LinkResolver, MetadataResolver {
             result.setShortDescription(removeSquareBrackets(json.getString("abstract")));
         }
         
+        String journalTitleStr = null;
         if (result.getWorkType() == WorkType.BOOK) {
             if (json.has("publisher")) {
-                result.setJournalTitle(new Title(removeSquareBrackets(json.getString("publisher"))));
+                journalTitleStr = removeSquareBrackets(json.getString("publisher"));
             }
         } else if (json.has("journal-title")) {
-            result.setJournalTitle(new Title(removeSquareBrackets(json.getString("journal-title"))));
+            journalTitleStr = removeSquareBrackets(json.getString("journal-title"));
         } else if (json.has("container-title")) {
-            result.setJournalTitle(new Title(removeSquareBrackets(json.getString("container-title"))));
+            journalTitleStr = removeSquareBrackets(json.getString("container-title"));
         } else if (json.has("container-title-short")) {
-            result.setJournalTitle(new Title(removeSquareBrackets(json.getString("container-title-short"))));
+            journalTitleStr = removeSquareBrackets(json.getString("container-title-short"));
+        }
+        if (StringUtils.isNotBlank(journalTitleStr)) {
+            result.setJournalTitle(new Title(journalTitleStr));
         }
 
         JSONObject publicationDateJson = null;

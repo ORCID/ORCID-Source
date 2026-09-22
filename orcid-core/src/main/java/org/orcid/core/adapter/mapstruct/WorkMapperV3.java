@@ -1,5 +1,6 @@
 package org.orcid.core.adapter.mapstruct;
 
+import org.apache.commons.lang3.StringUtils;
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
 import org.orcid.jaxb.model.common.WorkType;
@@ -37,7 +38,7 @@ public interface WorkMapperV3 {
         if (entity.getWorkType() != null) {
             work.setWorkType(resolveWorkType(entity.getWorkType()));
         }
-        work.setJournalTitle(entity.getJournalTitle() != null && !entity.getJournalTitle().isEmpty() ? new Title(entity.getJournalTitle()) : null);
+        work.setJournalTitle(StringUtils.isNotBlank(entity.getJournalTitle()) ? new Title(entity.getJournalTitle()) : null);
     }
 
     default void mapWorkSummaryAtoB(WorkSummary summary, WorkEntity entity) {
@@ -51,7 +52,7 @@ public interface WorkMapperV3 {
         if (entity.getWorkType() != null) {
             summary.setType(resolveWorkType(entity.getWorkType()));
         }
-        summary.setJournalTitle(entity.getJournalTitle() != null && !entity.getJournalTitle().isEmpty() ? new Title(entity.getJournalTitle()) : null);
+        summary.setJournalTitle(StringUtils.isNotBlank(entity.getJournalTitle()) ? new Title(entity.getJournalTitle()) : null);
     }
 
     default void mapWorkSummaryMinimizedAtoB(WorkSummary summary, MinimizedWorkEntity entity) {
@@ -65,7 +66,7 @@ public interface WorkMapperV3 {
         if (entity.getWorkType() != null) {
             summary.setType(resolveWorkType(entity.getWorkType()));
         }
-        summary.setJournalTitle(entity.getJournalTitle() != null && !entity.getJournalTitle().isEmpty() ? new Title(entity.getJournalTitle()) : null);
+        summary.setJournalTitle(StringUtils.isNotBlank(entity.getJournalTitle()) ? new Title(entity.getJournalTitle()) : null);
     }
 
     default void mapWorkSummaryExtendedMinimizedAtoB(WorkSummaryExtended summary, MinimizedExtendedWorkEntity entity) {
@@ -79,7 +80,7 @@ public interface WorkMapperV3 {
         if (entity.getWorkType() != null) {
             summary.setType(resolveWorkType(entity.getWorkType()));
         }
-        summary.setJournalTitle(entity.getJournalTitle() != null && !entity.getJournalTitle().isEmpty() ? new Title(entity.getJournalTitle()) : null);
+        summary.setJournalTitle(StringUtils.isNotBlank(entity.getJournalTitle()) ? new Title(entity.getJournalTitle()) : null);
     }
 
     default void mapMinimizedWorkAtoB(Work work, MinimizedWorkEntity entity) {
@@ -93,7 +94,7 @@ public interface WorkMapperV3 {
         if (entity.getWorkType() != null) {
             work.setWorkType(resolveWorkType(entity.getWorkType()));
         }
-        work.setJournalTitle(entity.getJournalTitle() != null && !entity.getJournalTitle().isEmpty() ? new Title(entity.getJournalTitle()) : null);
+        work.setJournalTitle(StringUtils.isNotBlank(entity.getJournalTitle()) ? new Title(entity.getJournalTitle()) : null);
     }
 
     default void mapWorkExtendedAtoB(WorkExtended work, WorkEntity entity) {
@@ -116,7 +117,7 @@ public interface WorkMapperV3 {
         if (entity.getWorkType() != null) {
             work.setWorkType(resolveWorkType(entity.getWorkType()));
         }
-        work.setJournalTitle(entity.getJournalTitle() != null && !entity.getJournalTitle().isEmpty() ? new Title(entity.getJournalTitle()) : null);
+        work.setJournalTitle(StringUtils.isNotBlank(entity.getJournalTitle()) ? new Title(entity.getJournalTitle()) : null);
 
         if (!PojoUtil.isEmpty(entity.getTopContributorsJson())) {
             work.setContributorsGroupedByOrcid(contributorsConverter.getContributorsRolesAndSequencesList(entity.getTopContributorsJson()));

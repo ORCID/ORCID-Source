@@ -208,9 +208,12 @@ public class PubMedResolver implements LinkResolver, MetadataResolver {
                 JSONObject workMetadata = results.getJSONObject(0);
 
                 if (workMetadata.has("title")) {
-                    WorkTitle w = new WorkTitle();
-                    w.setTitle(new Title(workMetadata.getString("title")));
-                    work.setWorkTitle(w);
+                    String titleStr = workMetadata.getString("title");
+                    if (StringUtils.isNotBlank(titleStr)) {
+                        WorkTitle w = new WorkTitle();
+                        w.setTitle(new Title(titleStr));
+                        work.setWorkTitle(w);
+                    }
                 }
 
                 if (workMetadata.has("abstractText")) {
@@ -242,7 +245,10 @@ public class PubMedResolver implements LinkResolver, MetadataResolver {
                     if (journalInfoMetadata.has("journal")) {
                         JSONObject journalMetadata = journalInfoMetadata.getJSONObject("journal");
                         if (journalMetadata.has("title")) {
-                            work.setJournalTitle(new Title(journalMetadata.getString("title")));
+                            String journalTitleStr = journalMetadata.getString("title");
+                            if (StringUtils.isNotBlank(journalTitleStr)) {
+                                work.setJournalTitle(new Title(journalTitleStr));
+                            }
                         }
                     }
                 }

@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.orcid.core.adapter.JpaJaxbWorkAdapter;
 import org.orcid.core.adapter.mapstruct.JSONWorkExternalIdentifiersMapperV2;
 import org.orcid.core.adapter.mapstruct.SourceMapperV2;
+import org.orcid.core.adapter.mapstruct.TitleMapperV2;
 import org.orcid.core.adapter.mapstruct.UrlMapperV2;
 import org.orcid.core.adapter.mapstruct.VisibilityMapperV2;
 import org.orcid.core.adapter.mapstruct.WorkContributorsMapperV2;
@@ -41,6 +42,7 @@ import org.orcid.persistence.jpa.entities.WorkEntity;
         SourceMapperV2.class,
         VisibilityMapperV2.class,
         UrlMapperV2.class,
+        TitleMapperV2.class,
         JSONWorkExternalIdentifiersMapperV2.class,
         WorkContributorsMapperV2.class
     }
@@ -53,8 +55,8 @@ public abstract class JpaJaxbWorkAdapterImpl implements JpaJaxbWorkAdapter {
     // Work <-> WorkEntity
     @Override
     @Mapping(source = "putCode", target = "id")
-    @Mapping(source = "journalTitle.content", target = "journalTitle")
-    @Mapping(source = "workTitle.title.content", target = "title")
+    @Mapping(source = "journalTitle", target = "journalTitle")
+    @Mapping(source = "workTitle.title", target = "title")
     @Mapping(source = "workTitle.translatedTitle.content", target = "translatedTitle")
     @Mapping(source = "workTitle.translatedTitle.languageCode", target = "translatedTitleLanguageCode")
     @Mapping(source = "workTitle.subtitle", target = "subtitle")
@@ -80,8 +82,8 @@ public abstract class JpaJaxbWorkAdapterImpl implements JpaJaxbWorkAdapter {
 
     @Override
     @Mapping(source = "putCode", target = "id")
-    @Mapping(source = "journalTitle.content", target = "journalTitle")
-    @Mapping(source = "workTitle.title.content", target = "title")
+    @Mapping(source = "journalTitle", target = "journalTitle")
+    @Mapping(source = "workTitle.title", target = "title")
     @Mapping(source = "workTitle.translatedTitle.content", target = "translatedTitle")
     @Mapping(source = "workTitle.translatedTitle.languageCode", target = "translatedTitleLanguageCode")
     @Mapping(source = "workTitle.subtitle", target = "subtitle")
@@ -108,8 +110,8 @@ public abstract class JpaJaxbWorkAdapterImpl implements JpaJaxbWorkAdapter {
     @Mapping(source = "id", target = "putCode")
     @Mapping(source = "dateCreated", target = "createdDate.value")
     @Mapping(source = "lastModified", target = "lastModifiedDate.value")
-    @Mapping(source = "journalTitle", target = "journalTitle.content")
-    @Mapping(source = "title", target = "workTitle.title.content")
+    @Mapping(source = "journalTitle", target = "journalTitle")
+    @Mapping(source = "title", target = "workTitle.title")
     @Mapping(source = "translatedTitle", target = "workTitle.translatedTitle.content")
     @Mapping(source = "translatedTitleLanguageCode", target = "workTitle.translatedTitle.languageCode")
     @Mapping(source = "subtitle", target = "workTitle.subtitle")
@@ -138,16 +140,15 @@ public abstract class JpaJaxbWorkAdapterImpl implements JpaJaxbWorkAdapter {
         if (work.getWorkTitle() == null) {
             return;
         }
-        if (work.getWorkTitle().getSubtitle() != null && work.getWorkTitle().getSubtitle().getContent() == null) {
+        if (work.getWorkTitle().getSubtitle() != null && (work.getWorkTitle().getSubtitle().getContent() == null || work.getWorkTitle().getSubtitle().getContent().trim().isEmpty())) {
             work.getWorkTitle().setSubtitle(null);
         }
         if (work.getWorkTitle().getTranslatedTitle() != null
-                && work.getWorkTitle().getTranslatedTitle().getContent() == null
-                && work.getWorkTitle().getTranslatedTitle().getLanguageCode() == null) {
+                && (work.getWorkTitle().getTranslatedTitle().getContent() == null || work.getWorkTitle().getTranslatedTitle().getContent().trim().isEmpty())) {
             work.getWorkTitle().setTranslatedTitle(null);
         }
-        if(work.getJournalTitle() != null && work.getJournalTitle().getContent() == null) {
-            work.setJournalTitle(null);
+        if (work.getWorkTitle().getTitle() == null && work.getWorkTitle().getSubtitle() == null && work.getWorkTitle().getTranslatedTitle() == null) {
+            work.setWorkTitle(null);
         }
     }
 
@@ -179,7 +180,7 @@ public abstract class JpaJaxbWorkAdapterImpl implements JpaJaxbWorkAdapter {
     @Mapping(source = "id", target = "putCode")
     @Mapping(source = "dateCreated", target = "createdDate.value")
     @Mapping(source = "lastModified", target = "lastModifiedDate.value")
-    @Mapping(source = "title", target = "title.title.content")
+    @Mapping(source = "title", target = "title.title")
     @Mapping(source = "translatedTitle", target = "title.translatedTitle.content")
     @Mapping(source = "translatedTitleLanguageCode", target = "title.translatedTitle.languageCode")
     @Mapping(source = "publicationDate", target = "publicationDate")
@@ -191,14 +192,15 @@ public abstract class JpaJaxbWorkAdapterImpl implements JpaJaxbWorkAdapter {
     @AfterMapping
     protected void afterToWorkSummary(WorkEntity entity, @MappingTarget WorkSummary summary) {
         workMapperV2.mapWorkSummaryBtoA(entity, summary);
+        cleanWorkSummary(summary);
     }
 
     // MinimizedWorkEntity -> Work
     @Mapping(source = "id", target = "putCode")
     @Mapping(source = "dateCreated", target = "createdDate.value")
     @Mapping(source = "lastModified", target = "lastModifiedDate.value")
-    @Mapping(source = "journalTitle", target = "journalTitle.content")
-    @Mapping(source = "title", target = "workTitle.title.content")
+    @Mapping(source = "journalTitle", target = "journalTitle")
+    @Mapping(source = "title", target = "workTitle.title")
     @Mapping(source = "translatedTitle", target = "workTitle.translatedTitle.content")
     @Mapping(source = "translatedTitleLanguageCode", target = "workTitle.translatedTitle.languageCode")
     @Mapping(source = "subtitle", target = "workTitle.subtitle")
@@ -219,7 +221,7 @@ public abstract class JpaJaxbWorkAdapterImpl implements JpaJaxbWorkAdapter {
     @Mapping(source = "id", target = "putCode")
     @Mapping(source = "dateCreated", target = "createdDate.value")
     @Mapping(source = "lastModified", target = "lastModifiedDate.value")
-    @Mapping(source = "title", target = "title.title.content")
+    @Mapping(source = "title", target = "title.title")
     @Mapping(source = "translatedTitle", target = "title.translatedTitle.content")
     @Mapping(source = "translatedTitleLanguageCode", target = "title.translatedTitle.languageCode")
     @Mapping(target = "publicationDate", expression = "java( mapPublicationDate(entity.getPublicationDate()) )")
@@ -231,6 +233,22 @@ public abstract class JpaJaxbWorkAdapterImpl implements JpaJaxbWorkAdapter {
     @AfterMapping
     protected void afterToWorkSummaryFromMinimized(MinimizedWorkEntity entity, @MappingTarget WorkSummary summary) {
         workMapperV2.mapWorkSummaryToMinimizedBtoA(entity, summary);
+        cleanWorkSummary(summary);
+    }
+
+    private void cleanWorkSummary(WorkSummary summary) {
+        if (summary.getTitle() != null) {
+            if (summary.getTitle().getSubtitle() != null && (summary.getTitle().getSubtitle().getContent() == null || summary.getTitle().getSubtitle().getContent().trim().isEmpty())) {
+                summary.getTitle().setSubtitle(null);
+            }
+            if (summary.getTitle().getTranslatedTitle() != null
+                    && (summary.getTitle().getTranslatedTitle().getContent() == null || summary.getTitle().getTranslatedTitle().getContent().trim().isEmpty())) {
+                summary.getTitle().setTranslatedTitle(null);
+            }
+            if (summary.getTitle().getTitle() == null && summary.getTitle().getSubtitle() == null && summary.getTitle().getTranslatedTitle() == null) {
+                summary.setTitle(null);
+            }
+        }
     }
 
     // Collection Mappings

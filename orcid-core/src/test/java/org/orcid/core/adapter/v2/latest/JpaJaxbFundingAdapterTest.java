@@ -43,6 +43,75 @@ public class JpaJaxbFundingAdapterTest {
     private JpaJaxbFundingAdapter jpaJaxbFundingAdapter;
 
     @Test
+    public void fromProfileFundingEntityToFundingWithEmptyAndBlankTitleFields() throws IllegalAccessException {
+        ProfileFundingEntity entity = getProfileFundingEntity();
+        entity.setTitle("   ");
+        entity.setTranslatedTitle("   ");
+        entity.setTranslatedTitleLanguageCode("en");
+        entity.setOrganizationDefinedType("   ");
+
+        Funding funding = jpaJaxbFundingAdapter.toFunding(entity);
+        assertNull(funding.getTitle());
+        assertNull(funding.getOrganizationDefinedType());
+
+        FundingSummary fundingSummary = jpaJaxbFundingAdapter.toFundingSummary(entity);
+        assertNull(fundingSummary.getTitle());
+
+        entity.setTitle("");
+        entity.setTranslatedTitle("");
+        entity.setOrganizationDefinedType("");
+
+        funding = jpaJaxbFundingAdapter.toFunding(entity);
+        assertNull(funding.getTitle());
+        assertNull(funding.getOrganizationDefinedType());
+
+        fundingSummary = jpaJaxbFundingAdapter.toFundingSummary(entity);
+        assertNull(fundingSummary.getTitle());
+    }
+
+    @Test
+    public void fromProfileFundingEntityToFundingWithOnlyTitleAndBlankTranslatedTitle() throws IllegalAccessException {
+        ProfileFundingEntity entity = getProfileFundingEntity();
+        entity.setTitle("Funding Title");
+        entity.setTranslatedTitle("   ");
+        entity.setTranslatedTitleLanguageCode("en");
+
+        Funding funding = jpaJaxbFundingAdapter.toFunding(entity);
+        assertNotNull(funding.getTitle());
+        assertNotNull(funding.getTitle().getTitle());
+        assertEquals("Funding Title", funding.getTitle().getTitle().getContent());
+        assertNull(funding.getTitle().getTranslatedTitle());
+
+        FundingSummary fundingSummary = jpaJaxbFundingAdapter.toFundingSummary(entity);
+        assertNotNull(fundingSummary.getTitle());
+        assertNotNull(fundingSummary.getTitle().getTitle());
+        assertEquals("Funding Title", fundingSummary.getTitle().getTitle().getContent());
+        assertNull(fundingSummary.getTitle().getTranslatedTitle());
+    }
+
+    @Test
+    public void fromProfileFundingEntityToFundingWithOnlyTranslatedTitleAndBlankTitle() throws IllegalAccessException {
+        ProfileFundingEntity entity = getProfileFundingEntity();
+        entity.setTitle("   ");
+        entity.setTranslatedTitle("Translated Funding Title");
+        entity.setTranslatedTitleLanguageCode("es");
+
+        Funding funding = jpaJaxbFundingAdapter.toFunding(entity);
+        assertNotNull(funding.getTitle());
+        assertNull(funding.getTitle().getTitle());
+        assertNotNull(funding.getTitle().getTranslatedTitle());
+        assertEquals("Translated Funding Title", funding.getTitle().getTranslatedTitle().getContent());
+        assertEquals("es", funding.getTitle().getTranslatedTitle().getLanguageCode());
+
+        FundingSummary fundingSummary = jpaJaxbFundingAdapter.toFundingSummary(entity);
+        assertNotNull(fundingSummary.getTitle());
+        assertNull(fundingSummary.getTitle().getTitle());
+        assertNotNull(fundingSummary.getTitle().getTranslatedTitle());
+        assertEquals("Translated Funding Title", fundingSummary.getTitle().getTranslatedTitle().getContent());
+        assertEquals("es", fundingSummary.getTitle().getTranslatedTitle().getLanguageCode());
+    }
+
+    @Test
     public void fromFundingToFundingEntityTest() throws JAXBException {
         Funding f = getFunding(true);
         assertNotNull(f);
