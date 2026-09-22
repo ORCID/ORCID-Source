@@ -27,10 +27,6 @@ public class OrcidRequestUtil {
             ipAddress = request.getRemoteAddr();
         }
         if(LOGGER.isTraceEnabled()) {
-            if(request.getRequestURL() != null) {
-                LOGGER.trace("Request URL: {}", request.getRequestURL().toString());
-            }
-            LOGGER.trace("Query String: {}", request.getQueryString());
             LOGGER.trace("IP Address: {}", ipAddress);
         }
         return ipAddress;
