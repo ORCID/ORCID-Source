@@ -39,6 +39,7 @@ public class ProfileHistoryEventManagerImpl implements ProfileHistoryEventManage
     @Override
     public void recordResetPasswordEvent(String orcid, String ipAddress) {
         try {
+            LOGGER.trace("Recording reset password event for orcid {} with ip address {}", orcid, ipAddress);
             ProfileHistoryEventEntity profileHistoryEvent = new ProfileHistoryEventEntity();
             profileHistoryEvent.setEventType(ProfileHistoryEventType.RESET_PASSWORD.getLabel());
             profileHistoryEvent.setOrcid(orcid);
