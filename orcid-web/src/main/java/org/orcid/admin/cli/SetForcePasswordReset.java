@@ -25,6 +25,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.core.io.DefaultResourceLoader;
 import org.springframework.core.io.Resource;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.springframework.core.io.FileSystemResource;
 import org.springframework.data.redis.connection.RedisStandaloneConfiguration;
 import org.springframework.data.redis.connection.jedis.JedisClientConfiguration;
 import org.springframework.data.redis.connection.jedis.JedisConnectionFactory;
@@ -202,7 +203,7 @@ public class SetForcePasswordReset {
     }
 
     private Properties loadSessionRedisProperties() {
-        String configFilePath = (String) context.getEnvironment().getSystemEnvironment().get(CONFIG_FILE_KEY);
+        String configFilePath = resolveConfigFilePath();
         if (StringUtils.isBlank(configFilePath)) {
             throw new IllegalStateException("Missing required system property: " + CONFIG_FILE_KEY);
         }
@@ -220,7 +221,9 @@ public class SetForcePasswordReset {
                 continue;
             }
 
-            Resource resource = resourceLoader.getResource(trimmedConfigFile);
+            Resource resource = StringUtils.startsWithIgnoreCase(trimmedConfigFile, "file:")
+                    ? new FileSystemResource(normalizeConfigFilePath(trimmedConfigFile))
+                    : resourceLoader.getResource(trimmedConfigFile);
             if (!resource.exists()) {
                 throw new IllegalStateException("Could not load config file resource: " + trimmedConfigFile);
             }
@@ -233,6 +236,20 @@ public class SetForcePasswordReset {
         }
 
         return properties;
+    }
+
+    private String resolveConfigFilePath() {
+        Object systemEnvironmentValue = context.getEnvironment().getSystemEnvironment().get(CONFIG_FILE_KEY);
+        String configFilePath = systemEnvironmentValue == null ? null : systemEnvironmentValue.toString();
+        if (StringUtils.isNotBlank(configFilePath)) {
+            return configFilePath;
+        }
+        return context.getEnvironment().getProperty(CONFIG_FILE_KEY);
+    }
+
+    private String normalizeConfigFilePath(String configFilePath) {
+        String trimmedConfigFilePath = StringUtils.trimToEmpty(configFilePath);
+        return StringUtils.removeStart(trimmedConfigFilePath, "file:");
     }
 
     private RedisSerializer<Object> createRedisSerializer() {

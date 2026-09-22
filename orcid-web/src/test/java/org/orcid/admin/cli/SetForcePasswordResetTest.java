@@ -8,10 +8,16 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Properties;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -21,17 +27,23 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.orcid.frontend.spring.session.redis.OrcidRedisIndexedSessionRepository;
 import org.orcid.persistence.dao.ProfileDao;
+import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.session.FindByIndexNameSessionRepository;
 import org.springframework.test.util.ReflectionTestUtils;
 
 @RunWith(MockitoJUnitRunner.class)
 public class SetForcePasswordResetTest {
 
+    private static final String CONFIG_FILE_KEY = "org.orcid.config.file";
+
     @Mock
     private ProfileDao profileDao;
 
     @Mock
     private OrcidRedisIndexedSessionRepository sessionRepository;
+
+    @Mock
+    private ConfigurableEnvironment environment;
 
     private SetForcePasswordReset setForcePasswordReset;
 
@@ -40,6 +52,26 @@ public class SetForcePasswordResetTest {
         setForcePasswordReset = new SetForcePasswordReset();
         ReflectionTestUtils.setField(setForcePasswordReset, "profileDao", profileDao);
         ReflectionTestUtils.setField(setForcePasswordReset, "sessionRepository", sessionRepository);
+    }
+
+    @Test
+    public void loadSessionRedisPropertiesShouldReadSystemEnvironmentValueAndStripFilePrefix() throws IOException {
+        File propertiesFile = createTempPropertiesFile("redis.host=localhost");
+        setContextWithConfigFilePath("file:" + propertiesFile.getAbsolutePath(), null);
+
+        Properties properties = ReflectionTestUtils.invokeMethod(setForcePasswordReset, "loadSessionRedisProperties");
+
+        assertEquals("localhost", properties.getProperty("redis.host"));
+    }
+
+    @Test
+    public void loadSessionRedisPropertiesShouldFallbackToEnvironmentPropertyAndStripFilePrefix() throws IOException {
+        File propertiesFile = createTempPropertiesFile("redis.host=localhost");
+        setContextWithConfigFilePath(null, "file:" + propertiesFile.getAbsolutePath());
+
+        Properties properties = ReflectionTestUtils.invokeMethod(setForcePasswordReset, "loadSessionRedisProperties");
+
+        assertEquals("localhost", properties.getProperty("redis.host"));
     }
 
     @Test
@@ -66,5 +98,24 @@ public class SetForcePasswordResetTest {
         assertEquals(10000, batches.get(0).size());
         assertEquals(10000, batches.get(1).size());
         assertEquals(5001, batches.get(2).size());
+    }
+
+    private void setContextWithConfigFilePath(String systemEnvironmentValue, String propertyValue) {
+        org.springframework.context.support.ClassPathXmlApplicationContext context = org.mockito.Mockito.mock(org.springframework.context.support.ClassPathXmlApplicationContext.class);
+        when(context.getEnvironment()).thenReturn(environment);
+        HashMap<String, Object> systemEnvironment = new HashMap<>();
+        if (systemEnvironmentValue != null) {
+            systemEnvironment.put(CONFIG_FILE_KEY, systemEnvironmentValue);
+        }
+        when(environment.getSystemEnvironment()).thenReturn(systemEnvironment);
+        when(environment.getProperty(CONFIG_FILE_KEY)).thenReturn(propertyValue);
+        ReflectionTestUtils.setField(setForcePasswordReset, "context", context);
+    }
+
+    private File createTempPropertiesFile(String content) throws IOException {
+        File file = File.createTempFile("set-force-password-reset", ".properties");
+        file.deleteOnExit();
+        Files.write(file.toPath(), Collections.singletonList(content), StandardCharsets.UTF_8);
+        return file;
     }
 }
