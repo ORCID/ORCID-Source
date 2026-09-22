@@ -332,7 +332,7 @@ public class EmailManagerImpl extends EmailManagerReadOnlyImpl implements EmailM
     }
 
     @Override
-    public List<Email> removeEmails(String orcid, List<String> emailsToRemove) {
+    public List<Email> removeEmails(String adminId, String orcid, List<String> emailsToRemove) {
         if (!orcidSecurityManager.isAdmin()) {
             throw new AccessDeniedException("Admin privileges required to remove emails");
         }
@@ -345,6 +345,8 @@ public class EmailManagerImpl extends EmailManagerReadOnlyImpl implements EmailM
 
         List<EmailEntity> remainingEmails = transactionTemplate.execute(status -> {
             emailsToRemove.forEach(email -> emailDao.removeEmail(orcid, email));
+            String comment = "Admin " + adminId + " removed emails: " + emailsToRemove + " from user " + orcid;
+            profileHistoryEventManager.recordEmailUpdateEvent(orcid, OrcidRequestUtil.getIpAddress(OrcidRequestUtil.getCurrentRequest()), comment);
             List<EmailEntity> remaining = emailDao.findByOrcid(orcid, System.currentTimeMillis());
             ensurePrimaryEmail(orcid, remaining);
             return remaining;

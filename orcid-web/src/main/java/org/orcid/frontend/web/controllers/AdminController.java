@@ -112,6 +112,9 @@ public class AdminController extends BaseController {
     @Resource(name = "profileDaoReadOnly")
     private ProfileDao profileDaoReadOnly;
 
+    @Resource(name = "profileHistoryEventManagerV3")
+    private ProfileHistoryEventManager profileHistoryEventManager;
+
     private static final String CLAIMED = "(claimed)";
     private static final String DEACTIVATED = "(deactivated)";
     private static final String DEPRECATED = "(deprecated)";
@@ -129,8 +132,6 @@ public class AdminController extends BaseController {
     private static final String OUT_NEW_LINE = "\n";
 
     private static final int RESET_PASSWORD_LINK_DURATION = 24;
-    @Autowired
-    private ProfileHistoryEventManager profileHistoryEventManager;
 
     private void isAdmin(HttpServletRequest serverRequest, HttpServletResponse response) throws IllegalAccessException {
         if (!orcidSecurityManager.isAdmin()) {
@@ -622,7 +623,6 @@ public class AdminController extends BaseController {
 
         } else {
             try {
-
                 profileDetails.setErrors(new ArrayList<String>());
                 Email emailEntity = new Email();
                 emailEntity.setEmail(email);
@@ -630,7 +630,8 @@ public class AdminController extends BaseController {
                 emailEntity.setVerified(false);
                 emailEntity.setVisibility(Visibility.PRIVATE);
                 emailManager.addEmail(orcid, emailEntity);
-                profileHistoryEventManager.
+                String comment = "Admin with id " + getCurrentUserOrcid() + " added email " + email + " to " + orcid + " record";
+                profileHistoryEventManager.recordEmailUpdateEvent(orcid, OrcidRequestUtil.getIpAddress(serverRequest), comment);
             } catch (NoResultException nre) {
                 // Don't do nothing, the email doesn't exists
                 LOGGER.error("Couldnt add email address to " + orcid);
@@ -1315,7 +1316,8 @@ public class AdminController extends BaseController {
 
         try {
             Email oldPrimary = findPrimaryEmail(emailManager.getEmails(orcid));
-            List<Email> remainingEmails = emailManager.removeEmails(orcid, removeEmailsRequest.getEmailsToRemove());
+            String adminId = getCurrentUserOrcid();
+            List<Email> remainingEmails = emailManager.removeEmails(adminId, orcid, removeEmailsRequest.getEmailsToRemove());
             Email newPrimary = findPrimaryEmail(remainingEmails);
 
             if (oldPrimary != null
