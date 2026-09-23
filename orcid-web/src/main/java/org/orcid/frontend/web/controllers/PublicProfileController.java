@@ -176,11 +176,6 @@ public class PublicProfileController extends BaseWorkspaceController {
             if(logger.isTraceEnabled()) {
                 logger.trace("If-Modified-Since: {}", request.getHeader("If-Modified-Since"));
             }
-            if(request.getHeader("If-Modified-Since") == null || request.getHeader("If-Modified-Since").length() == 0) {
-                // If the header is not present, return a 200 so the record is fetched
-                response.setStatus(HttpServletResponse.SC_OK);
-                return;
-            }
             Date lastModified = profileEntityManager.getLastModifiedDate(orcid);
 
             // If the user is found, proceed to the preview
@@ -188,16 +183,18 @@ public class PublicProfileController extends BaseWorkspaceController {
                 long lastModifiedTime = lastModified.getTime();
                 ServletWebRequest webRequest = new ServletWebRequest(request, response);
                 if (webRequest.checkNotModified(lastModifiedTime)) {
-                    // Record not modified, return 304.
+                    // Record isn't modified, return 304.
                     response.setStatus(HttpServletResponse.SC_NOT_MODIFIED);
                 } else {
                     // Record modified, proceed to the preview using the proxy
                     response.setStatus(HttpServletResponse.SC_OK);
-                    String lastModifiedStringValue = lastModified.toInstant()
-                            .atZone(ZoneId.of("GMT"))
-                            .format(DateTimeFormatter.RFC_1123_DATE_TIME);
-                    response.setHeader("Last-Modified", lastModifiedStringValue);
+
                 }
+                // Set the last modified date in GMT format.
+                String lastModifiedStringValue = lastModified.toInstant()
+                        .atZone(ZoneId.of("GMT"))
+                        .format(DateTimeFormatter.RFC_1123_DATE_TIME);
+                response.setHeader("Last-Modified", lastModifiedStringValue);
             } else {
                 // TODO: If the record is not found, return the 404 and make nginx render the angular 404 page.
                 response.setStatus(HttpServletResponse.SC_TEMPORARY_REDIRECT);
