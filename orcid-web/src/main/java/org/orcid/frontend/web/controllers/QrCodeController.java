@@ -1,6 +1,7 @@
 package org.orcid.frontend.web.controllers;
 
 import org.springframework.http.MediaType;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -20,13 +21,21 @@ public class QrCodeController extends BaseController {
 
     @RequestMapping(value = "/qr-code.png", method = RequestMethod.GET, produces = MediaType.IMAGE_PNG_VALUE)
     public @ResponseBody byte[] generateQrCode() {
-        String orcid = getCurrentUser().getUsername();
+        UserDetails currentUser = getCurrentUser();
+        if (currentUser == null) {
+            return new byte[0];
+        }
+        String orcid = currentUser.getUsername();
         return QRCode.from(getBaseUri() + "/" + orcid).stream().toByteArray();
     }
     
     @RequestMapping(value = "/ORCID.png", method = RequestMethod.GET, produces = MediaType.IMAGE_PNG_VALUE)
     public @ResponseBody byte[] qrCodeForDownload() {
-        String orcid = getCurrentUser().getUsername();
+        UserDetails currentUser = getCurrentUser();
+        if (currentUser == null) {
+            return new byte[0];
+        }
+        String orcid = currentUser.getUsername();
         return QRCode.from(getBaseUri() + "/" + orcid).withSize(500, 500).stream().toByteArray();
     }
 
