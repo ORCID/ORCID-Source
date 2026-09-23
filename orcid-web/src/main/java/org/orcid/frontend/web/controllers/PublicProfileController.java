@@ -4,11 +4,9 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.text.NumberFormat;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
+import java.util.*;
 import java.util.stream.IntStream;
 
 import jakarta.annotation.Resource;
@@ -183,9 +181,11 @@ public class PublicProfileController extends BaseWorkspaceController {
                 response.setStatus(HttpServletResponse.SC_OK);
                 return;
             }
-            long lastModifiedTime = getLastModifiedTime(orcid);
+            Date lastModified = profileEntityManager.getLastModifiedDate(orcid);
+
             // If the user is found, proceed to the preview
-            if (lastModifiedTime > 0) {
+            if (lastModified != null) {
+                long lastModifiedTime = lastModified.getTime();
                 ServletWebRequest webRequest = new ServletWebRequest(request, response);
                 if (webRequest.checkNotModified(lastModifiedTime)) {
                     // Record not modified, return 304.
@@ -193,6 +193,10 @@ public class PublicProfileController extends BaseWorkspaceController {
                 } else {
                     // Record modified, proceed to the preview using the proxy
                     response.setStatus(HttpServletResponse.SC_OK);
+                    String lastModifiedStringValue = lastModified.toInstant()
+                            .atZone(ZoneId.of("GMT"))
+                            .format(DateTimeFormatter.RFC_1123_DATE_TIME);
+                    response.setHeader("Last-Modified", lastModifiedStringValue);
                 }
             } else {
                 // TODO: If the record is not found, return the 404 and make nginx render the angular 404 page.
@@ -201,7 +205,7 @@ public class PublicProfileController extends BaseWorkspaceController {
             }
         } catch (Exception e) {
             logger.warn("Error checking if-modified-since header for orcid " + orcid, e);
-            response.setStatus(HttpServletResponse.SC_SERVICE_UNAVAILABLE);
+            response.setStatus(HttpServletResponse.SC_NOT_FOUND);
             response.setHeader("Location", orcidUrlManager.getBaseUrl() + "/404");
         }
     }

@@ -1,3 +1,9 @@
+## v3.23.14 - 2026-09-22
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.23.13...v3.23.14)
+
+- [#7729](https://github.com/ORCID/ORCID-Source/pull/7729): Fix feedback
+
 ## v3.23.13 - 2026-09-22
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.23.12...v3.23.13)
