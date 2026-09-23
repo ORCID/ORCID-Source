@@ -631,7 +631,7 @@ public class AdminController extends BaseController {
                 emailEntity.setVisibility(Visibility.PRIVATE);
                 emailManager.addEmail(orcid, emailEntity);
                 String comment = "Admin with id " + getCurrentUserOrcid() + " added email " + email + " to " + orcid + " record";
-                profileHistoryEventManager.recordEmailUpdateEvent(orcid, OrcidRequestUtil.getIpAddress(serverRequest), comment);
+                profileHistoryEventManager.recordAdminEmailUpdateEvent(orcid, OrcidRequestUtil.getIpAddress(serverRequest), comment);
             } catch (NoResultException nre) {
                 // Don't do nothing, the email doesn't exists
                 LOGGER.error("Couldnt add email address to " + orcid);

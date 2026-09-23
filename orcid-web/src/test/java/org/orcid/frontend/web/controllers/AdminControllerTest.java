@@ -132,6 +132,9 @@ public class AdminControllerTest {
     @Mock
     private ExternalIdentifierManagerReadOnly externalIdentifierManagerReadOnlyMock;
 
+    @Mock
+    private ProfileHistoryEventManager profileHistoryEventManagerMock;
+
     @InjectMocks
     private AdminController adminController = new AdminController() {
         @Override
@@ -163,6 +166,7 @@ public class AdminControllerTest {
         MockitoAnnotations.initMocks(this);
         org.orcid.test.TargetProxyHelper.injectIntoProxy(adminController, "expiringLinkService", expiringLinkServiceMock);
         org.orcid.test.TargetProxyHelper.injectIntoProxy(adminController, "redisClient", redisClientMock);
+        org.orcid.test.TargetProxyHelper.injectIntoProxy(adminController, "profileHistoryEventManager", profileHistoryEventManagerMock);
         org.orcid.test.TargetProxyHelper.injectIntoProxy(adminController, "adminJwtExpirationInMinutes", 1440L);
         when(profileDaoReadOnlyMock.getGroupType(eq(INVALID_ID))).thenReturn(null);
         when(profileDaoReadOnlyMock.getGroupType(eq(MEMBER_ID))).thenReturn("PREMIUM_INSTITUTION");

@@ -15,7 +15,8 @@ public enum ProfileHistoryEventType {
     UPDATE_MEMBER_PERMISSION_NOTIF_FREQ("send_member_update_requests"),
     RESET_PASSWORD("Reset password"),
     ADMIN_RESET_PASSWORD_LINK("admin_reset_password_link"),
-    EMAIL_CHANGED("email_changed");
+    EMAIL_CHANGED("email_changed"),
+    ADMIN_EMAIL_CHANGED("email_changed");
 
     
     String label;
