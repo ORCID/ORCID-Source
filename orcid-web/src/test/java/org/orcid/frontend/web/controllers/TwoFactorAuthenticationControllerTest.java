@@ -428,13 +428,50 @@ public class TwoFactorAuthenticationControllerTest {
         verify(recoveryPhoneVerificationService, never()).sendCode(anyString(), any(RecoveryPhoneSendCodeRequest.class));
     }
 
+    // The window is eight minutes (PD-13638). The three tests below hard code
+    // that number rather than deriving it from the constant, deliberately: a
+    // test that computes its boundary from the value it is checking moves
+    // whenever the value does, which is the one thing a pin must not do.
+
+    @Test
+    public void testTheElevationWindowIsEightMinutes() {
+        assertEquals(8 * 60 * 1000L, TwoFactorAuthenticationController.RECOVERY_PHONE_ELEVATION_TTL_MILLIS);
+    }
+
+    @Test
+    public void testSendCodeAcceptsAChallengeInsideTheWindow() {
+        enableRecoveryPhoneFeature();
+        session.setAttribute("RECOVERY_PHONE_ELEVATION_TS", System.currentTimeMillis() - (7 * 60 * 1000L));
+        when(recoveryPhoneVerificationService.sendCode(eq(ORCID), any(RecoveryPhoneSendCodeRequest.class)))
+                .thenReturn(RecoveryPhoneSendCodeResponse.success(30));
+
+        assertTrue(controller.sendRecoveryPhoneCode(request, sendCodeRequest()).isSuccess());
+    }
+
     @Test
     public void testSendCodeRefusesAnExpiredChallenge() {
         enableRecoveryPhoneFeature();
-        session.setAttribute("RECOVERY_PHONE_ELEVATION_TS", System.currentTimeMillis() - (16 * 60 * 1000L));
+        session.setAttribute("RECOVERY_PHONE_ELEVATION_TS", System.currentTimeMillis() - (9 * 60 * 1000L));
 
         assertEquals(TwoFactorAuthenticationController.CHALLENGE_REQUIRED,
                 controller.sendRecoveryPhoneCode(request, sendCodeRequest()).getErrorCode());
+        verify(recoveryPhoneVerificationService, never()).sendCode(anyString(), any(RecoveryPhoneSendCodeRequest.class));
+    }
+
+    /**
+     * The save is guarded by the same window as the send, and is the half that
+     * matters: a send whose elevation has gone costs a text, a save whose
+     * elevation has gone would store a number.
+     */
+    @Test
+    public void testSaveRefusesAnExpiredChallenge() {
+        enableRecoveryPhoneFeature();
+        session.setAttribute("RECOVERY_PHONE_ELEVATION_TS", System.currentTimeMillis() - (9 * 60 * 1000L));
+
+        assertEquals(TwoFactorAuthenticationController.CHALLENGE_REQUIRED,
+                controller.saveRecoveryPhone(request, saveRequest()).getErrorCode());
+        verify(recoveryPhoneVerificationService, never()).verifyCode(anyString(), anyString(), anyString());
+        verify(recoveryPhoneManager, never()).saveRecoveryPhone(anyString(), anyString());
     }
 
     @Test
@@ -467,6 +504,19 @@ public class TwoFactorAuthenticationControllerTest {
 
         assertTrue(response.isSuccess());
         assertEquals(30, response.getResendAfterSeconds());
+    }
+
+    @Test
+    public void testSendCodePassesThroughTheDailySendLimit() {
+        enableRecoveryPhoneFeature();
+        elevateSession();
+        when(recoveryPhoneVerificationService.sendCode(eq(ORCID), any(RecoveryPhoneSendCodeRequest.class)))
+                .thenReturn(RecoveryPhoneSendCodeResponse.failure(RecoveryPhoneVerificationService.SEND_LIMIT_REACHED));
+
+        RecoveryPhoneSendCodeResponse response = controller.sendRecoveryPhoneCode(request, sendCodeRequest());
+
+        assertFalse(response.isSuccess());
+        assertEquals(RecoveryPhoneVerificationService.SEND_LIMIT_REACHED, response.getErrorCode());
     }
 
     @Test
@@ -588,9 +638,21 @@ public class TwoFactorAuthenticationControllerTest {
     }
 
     @Test
+    public void testSendCodeAcceptsALastLoginInsideTheWindowFromTheInterstitial() {
+        enableInterstitialFeature();
+        profileWithLastLogin(7 * 60 * 1000L);
+        when(recoveryPhoneVerificationService.sendCode(eq(ORCID), any(RecoveryPhoneSendCodeRequest.class)))
+                .thenReturn(RecoveryPhoneSendCodeResponse.success(30));
+        RecoveryPhoneSendCodeRequest form = sendCodeRequest();
+        form.setContext(TwoFactorAuthenticationController.CONTEXT_INTERSTITIAL);
+
+        assertTrue(controller.sendRecoveryPhoneCode(request, form).isSuccess());
+    }
+
+    @Test
     public void testSendCodeRefusesAStaleLastLoginFromTheInterstitial() {
         enableInterstitialFeature();
-        profileWithLastLogin(16 * 60 * 1000L);
+        profileWithLastLogin(9 * 60 * 1000L);
         RecoveryPhoneSendCodeRequest form = sendCodeRequest();
         form.setContext(TwoFactorAuthenticationController.CONTEXT_INTERSTITIAL);
 
@@ -736,6 +798,23 @@ public class TwoFactorAuthenticationControllerTest {
         assertEquals("+441234567890", sentRequest.getValue().getPhoneNumber());
         // The locale is the server's, not something the client can set here
         assertEquals("en", sentRequest.getValue().getLocale());
+    }
+
+    @Test
+    public void testChallengeSendCodePassesThroughTheDailySendLimit() {
+        enableRecoveryPhoneFeature();
+        java.util.Date now = new java.util.Date();
+        when(recoveryPhoneManager.getRecoveryPhone(ORCID)).thenReturn(storedRecoveryPhone("7890", now, now));
+        when(recoveryPhoneManager.getDecryptedPhoneNumber(ORCID)).thenReturn("+441234567890");
+        when(recoveryPhoneVerificationService.sendCode(eq(ORCID), any(RecoveryPhoneSendCodeRequest.class)))
+                .thenReturn(RecoveryPhoneSendCodeResponse.failure(RecoveryPhoneVerificationService.SEND_LIMIT_REACHED));
+
+        RecoveryPhoneChallengeSendCodeResponse response = controller.sendRecoveryPhoneChallengeCode();
+
+        assertFalse(response.isSuccess());
+        assertEquals(RecoveryPhoneVerificationService.SEND_LIMIT_REACHED, response.getErrorCode());
+        // the mask still comes back: the user is looking at a number they own
+        assertEquals("***********7890", response.getMaskedRecoveryPhoneNumber());
     }
 
     @Test
