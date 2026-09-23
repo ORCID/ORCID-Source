@@ -1,11 +1,8 @@
 package org.orcid.frontend.web.controllers;
 
-import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.text.NumberFormat;
-import java.time.ZoneId;
-import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.IntStream;
 
@@ -88,7 +85,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.context.request.ServletWebRequest;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.RedirectView;
 
@@ -170,41 +166,47 @@ public class PublicProfileController extends BaseWorkspaceController {
         return new ModelAndView(new RedirectView(orcidUrlManager.getBaseUrl() + "/" + orcid.toUpperCase()));
     }
 
-    @RequestMapping(value = { "/{orcid:(?:\\d{4}-){3,}\\d{3}[\\dX]}", "/{orcid:(?:\\d{4}-){3,}\\d{3}[\\dX]}/print" })
-    public void ifModifiedSinceCheckEndpoint(HttpServletRequest request, HttpServletResponse response, @PathVariable("orcid") String orcid) throws IOException {
+    /**
+     * Floor for the public record page validator, truncated to seconds like HTTP dates. The page body is
+     * the static Angular shell, and every war deploy restarts Tomcat, so a shell cached before start-up
+     * must be fetched again even when the record itself did not change.
+     */
+    static final long STARTUP_TIME = System.currentTimeMillis() / 1000L * 1000L;
+
+    // Package-private so the unit test can move the floor; production code never writes it
+    long startupTime = STARTUP_TIME;
+
+    /**
+     * PD-6059: called by the nginx auth_request subrequest in front of the public record page. nginx
+     * serves the Angular shell itself and forwards our Last-Modified, so the contract is strictly
+     * 200 = serve the shell, 304 = the client's copy is fresh. An unknown iD or a failed lookup is a
+     * 200 without Last-Modified: nginx serves the shell and Angular renders its own 404 page.
+     */
+    @RequestMapping(value = { "/{orcid:(?:\\d{4}-){3,}\\d{3}[\\dX]}", "/{orcid:(?:\\d{4}-){3,}\\d{3}[\\dX]}/" })
+    public void ifModifiedSinceCheckEndpoint(HttpServletRequest request, HttpServletResponse response, @PathVariable("orcid") String orcid) {
+        long validator = -1L;
         try {
-            if(logger.isTraceEnabled()) {
-                logger.trace("If-Modified-Since: {}", request.getHeader("If-Modified-Since"));
-            }
             Date lastModified = profileEntityManager.getLastModifiedDate(orcid);
-
-            // If the user is found, proceed to the preview
             if (lastModified != null) {
-                long lastModifiedTime = lastModified.getTime();
-                ServletWebRequest webRequest = new ServletWebRequest(request, response);
-                if (webRequest.checkNotModified(lastModifiedTime)) {
-                    // Record isn't modified, return 304.
-                    response.setStatus(HttpServletResponse.SC_NOT_MODIFIED);
-                } else {
-                    // Record modified, proceed to the preview using the proxy
-                    response.setStatus(HttpServletResponse.SC_OK);
-
-                }
-                // Set the last modified date in GMT format.
-                String lastModifiedStringValue = lastModified.toInstant()
-                        .atZone(ZoneId.of("GMT"))
-                        .format(DateTimeFormatter.RFC_1123_DATE_TIME);
-                response.setHeader("Last-Modified", lastModifiedStringValue);
-            } else {
-                // TODO: If the record is not found, return the 404 and make nginx render the angular 404 page.
-                response.setStatus(HttpServletResponse.SC_TEMPORARY_REDIRECT);
-                response.setHeader("Location", orcidUrlManager.getBaseUrl() + "/404");
+                validator = Math.max(lastModified.getTime(), startupTime) / 1000L * 1000L;
             }
         } catch (Exception e) {
-            logger.warn("Error checking if-modified-since header for orcid " + orcid, e);
-            response.setStatus(HttpServletResponse.SC_NOT_FOUND);
-            response.setHeader("Location", orcidUrlManager.getBaseUrl() + "/404");
+            logger.warn("Unable to read the last modified date of " + orcid + ", serving the record page unconditionally", e);
         }
+        if (validator < 0) {
+            response.setStatus(HttpServletResponse.SC_OK);
+            return;
+        }
+        // Compared by hand: ServletWebRequest.checkNotModified ignores If-Modified-Since whenever an
+        // If-None-Match header is present, and this page has no ETag
+        long ifModifiedSince;
+        try {
+            ifModifiedSince = request.getDateHeader("If-Modified-Since"); // -1 when absent
+        } catch (IllegalArgumentException e) {
+            ifModifiedSince = -1L; // malformed date: treat the request as unconditional
+        }
+        response.setDateHeader("Last-Modified", validator);
+        response.setStatus(ifModifiedSince >= validator ? HttpServletResponse.SC_NOT_MODIFIED : HttpServletResponse.SC_OK);
     }
 
     @RequestMapping(value = "/{orcid:(?:\\d{4}-){3,}\\d{3}[\\dX]}/userInfo.json", method = RequestMethod.GET)
