@@ -53,7 +53,8 @@ CREATE TABLE public.togglz (
     feature_name character varying(100) NOT NULL,
     feature_enabled integer,
     strategy_id character varying(200),
-    strategy_params character varying(2000)
+    strategy_params character varying(2000),
+    last_modified timestamp with time zone
 );
 
 
@@ -181,6 +182,22 @@ RUM	0	\N	\N
 ALTER TABLE ONLY public.togglz
     ADD CONSTRAINT togglz_pkey PRIMARY KEY (feature_name);
 
+-- Backfill last_modified for initial data
+UPDATE public.togglz SET last_modified = NOW() WHERE last_modified IS NULL;
+
+-- Trigger to track last modification date on enable/disable
+CREATE OR REPLACE FUNCTION update_togglz_last_modified()
+RETURNS TRIGGER AS $$
+BEGIN
+  NEW.last_modified = NOW();
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER togglz_last_modified_trigger
+BEFORE INSERT OR UPDATE ON public.togglz
+FOR EACH ROW
+EXECUTE FUNCTION update_togglz_last_modified();
 
 --
 -- Name: SCHEMA public; Type: ACL; Schema: -; Owner: postgres
