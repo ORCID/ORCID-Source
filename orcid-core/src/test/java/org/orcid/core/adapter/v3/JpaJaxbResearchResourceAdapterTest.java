@@ -55,6 +55,71 @@ public class JpaJaxbResearchResourceAdapterTest {
     private Date createdDate = DateUtils.convertToDate("2015-06-05T10:15:20");
 
     @Test
+    public void fromResearchResourceEntityToModelWithEmptyAndBlankTitleFields() throws IllegalAccessException {
+        ResearchResourceEntity entity = getResearchResourceEntity();
+        entity.setTitle("   ");
+        entity.setTranslatedTitle("   ");
+        entity.setTranslatedTitleLanguageCode("en");
+
+        ResearchResource model = jpaJaxbResearchResourceAdapter.toModel(entity);
+        assertNull(model.getProposal().getTitle());
+
+        ResearchResourceSummary summary = jpaJaxbResearchResourceAdapter.toSummary(entity);
+        assertNull(summary.getProposal().getTitle());
+
+        entity.setTitle("");
+        entity.setTranslatedTitle("");
+
+        model = jpaJaxbResearchResourceAdapter.toModel(entity);
+        assertNull(model.getProposal().getTitle());
+
+        summary = jpaJaxbResearchResourceAdapter.toSummary(entity);
+        assertNull(summary.getProposal().getTitle());
+    }
+
+    @Test
+    public void fromResearchResourceEntityToModelWithOnlyTitleAndBlankTranslatedTitle() throws IllegalAccessException {
+        ResearchResourceEntity entity = getResearchResourceEntity();
+        entity.setTitle("Research Resource Title");
+        entity.setTranslatedTitle("   ");
+        entity.setTranslatedTitleLanguageCode("en");
+
+        ResearchResource model = jpaJaxbResearchResourceAdapter.toModel(entity);
+        assertNotNull(model.getProposal().getTitle());
+        assertNotNull(model.getProposal().getTitle().getTitle());
+        assertEquals("Research Resource Title", model.getProposal().getTitle().getTitle().getContent());
+        assertNull(model.getProposal().getTitle().getTranslatedTitle());
+
+        ResearchResourceSummary summary = jpaJaxbResearchResourceAdapter.toSummary(entity);
+        assertNotNull(summary.getProposal().getTitle());
+        assertNotNull(summary.getProposal().getTitle().getTitle());
+        assertEquals("Research Resource Title", summary.getProposal().getTitle().getTitle().getContent());
+        assertNull(summary.getProposal().getTitle().getTranslatedTitle());
+    }
+
+    @Test
+    public void fromResearchResourceEntityToModelWithOnlyTranslatedTitleAndBlankTitle() throws IllegalAccessException {
+        ResearchResourceEntity entity = getResearchResourceEntity();
+        entity.setTitle("   ");
+        entity.setTranslatedTitle("Translated Resource Title");
+        entity.setTranslatedTitleLanguageCode("es");
+
+        ResearchResource model = jpaJaxbResearchResourceAdapter.toModel(entity);
+        assertNotNull(model.getProposal().getTitle());
+        assertNull(model.getProposal().getTitle().getTitle());
+        assertNotNull(model.getProposal().getTitle().getTranslatedTitle());
+        assertEquals("Translated Resource Title", model.getProposal().getTitle().getTranslatedTitle().getContent());
+        assertEquals("es", model.getProposal().getTitle().getTranslatedTitle().getLanguageCode());
+
+        ResearchResourceSummary summary = jpaJaxbResearchResourceAdapter.toSummary(entity);
+        assertNotNull(summary.getProposal().getTitle());
+        assertNull(summary.getProposal().getTitle().getTitle());
+        assertNotNull(summary.getProposal().getTitle().getTranslatedTitle());
+        assertEquals("Translated Resource Title", summary.getProposal().getTitle().getTranslatedTitle().getContent());
+        assertEquals("es", summary.getProposal().getTitle().getTranslatedTitle().getLanguageCode());
+    }
+
+    @Test
     public void fromResearchResourceEntityToModelTest() throws JAXBException, IllegalAccessException {
         ResearchResourceEntity e = getResearchResourceEntity();
         ResearchResource m = jpaJaxbResearchResourceAdapter.toModel(e);

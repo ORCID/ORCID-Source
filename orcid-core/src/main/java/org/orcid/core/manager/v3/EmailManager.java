@@ -88,5 +88,5 @@ public interface EmailManager extends EmailManagerReadOnly {
 
     void removeUnclaimedEmail(String orcid, String emailAddress);
 
-    List<Email> removeEmails(String orcid, List<String> emailsToRemove);
+    List<Email> removeEmails(String adminId, String orcid, List<String> emailsToRemove);
 }

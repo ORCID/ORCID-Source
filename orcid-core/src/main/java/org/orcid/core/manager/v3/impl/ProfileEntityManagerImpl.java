@@ -11,6 +11,7 @@ import java.util.Set;
 
 import jakarta.annotation.Resource;
 
+import jakarta.servlet.http.HttpServletRequest;
 import org.apache.commons.lang.StringUtils;
 import org.orcid.core.common.manager.EmailFrequencyManager;
 import org.orcid.core.constants.RevokeReason;
@@ -24,6 +25,7 @@ import org.orcid.core.manager.v3.*;
 import org.orcid.core.manager.v3.read_only.RecordNameManagerReadOnly;
 import org.orcid.core.manager.v3.read_only.impl.ProfileEntityManagerReadOnlyImpl;
 import org.orcid.core.profile.history.ProfileHistoryEventType;
+import org.orcid.core.utils.OrcidRequestUtil;
 import org.orcid.core.utils.cache.redis.RedisClient;
 import org.orcid.jaxb.model.clientgroup.MemberType;
 import org.orcid.jaxb.model.common.AvailableLocales;
@@ -51,6 +53,7 @@ import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionTemplate;
+import org.springframework.web.context.request.RequestContextHolder;
 
 /**
  * @author Declan Newman (declan) Date: 10/02/2012
@@ -145,9 +148,6 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
 
     @Resource(name="orcidOauth2TokenDetailDao")
     private OrcidOauth2TokenDetailDao orcidOauth2TokenDetailDao;
-
-    @Resource
-    private RedisClient redisClient;
 
     @Override
     public boolean orcidExists(String orcid) {
@@ -527,15 +527,18 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
     }
 
     @Override
+    @Transactional
     public void updatePassword(String orcid, String password) {
-        transactionTemplate.execute(new TransactionCallback<Boolean>() {
-            @Override
-            public Boolean doInTransaction(TransactionStatus status) {
-                String encryptedPassword = encryptionManager.hashForInternalUse(password);
-                profileDao.changeEncryptedPassword(orcid, encryptedPassword);
-                return true;
-            }
-        });
+        // Change the password
+        String encryptedPassword = encryptionManager.hashForInternalUse(password);
+        profileDao.changeEncryptedPassword(orcid, encryptedPassword);
+        // Store reset password event
+        HttpServletRequest request = OrcidRequestUtil.getCurrentRequest();
+        if(request == null) {
+            LOGGER.error("Unable to record reset password event, no request available");
+            throw new RuntimeException("Unable to record reset password event, no request available");
+        }
+        profileHistoryEventManager.recordResetPasswordEvent(orcid, OrcidRequestUtil.getIpAddress(request));
     }
 
     @Override

@@ -4,11 +4,9 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.text.NumberFormat;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
+import java.util.*;
 import java.util.stream.IntStream;
 
 import jakarta.annotation.Resource;
@@ -178,22 +176,25 @@ public class PublicProfileController extends BaseWorkspaceController {
             if(logger.isTraceEnabled()) {
                 logger.trace("If-Modified-Since: {}", request.getHeader("If-Modified-Since"));
             }
-            if(request.getHeader("If-Modified-Since") == null || request.getHeader("If-Modified-Since").length() == 0) {
-                // If the header is not present, return a 200 so the record is fetched
-                response.setStatus(HttpServletResponse.SC_OK);
-                return;
-            }
-            long lastModifiedTime = getLastModifiedTime(orcid);
+            Date lastModified = profileEntityManager.getLastModifiedDate(orcid);
+
             // If the user is found, proceed to the preview
-            if (lastModifiedTime > 0) {
+            if (lastModified != null) {
+                long lastModifiedTime = lastModified.getTime();
                 ServletWebRequest webRequest = new ServletWebRequest(request, response);
                 if (webRequest.checkNotModified(lastModifiedTime)) {
-                    // Record not modified, return 304.
+                    // Record isn't modified, return 304.
                     response.setStatus(HttpServletResponse.SC_NOT_MODIFIED);
                 } else {
                     // Record modified, proceed to the preview using the proxy
                     response.setStatus(HttpServletResponse.SC_OK);
+
                 }
+                // Set the last modified date in GMT format.
+                String lastModifiedStringValue = lastModified.toInstant()
+                        .atZone(ZoneId.of("GMT"))
+                        .format(DateTimeFormatter.RFC_1123_DATE_TIME);
+                response.setHeader("Last-Modified", lastModifiedStringValue);
             } else {
                 // TODO: If the record is not found, return the 404 and make nginx render the angular 404 page.
                 response.setStatus(HttpServletResponse.SC_TEMPORARY_REDIRECT);
@@ -201,7 +202,7 @@ public class PublicProfileController extends BaseWorkspaceController {
             }
         } catch (Exception e) {
             logger.warn("Error checking if-modified-since header for orcid " + orcid, e);
-            response.setStatus(HttpServletResponse.SC_SERVICE_UNAVAILABLE);
+            response.setStatus(HttpServletResponse.SC_NOT_FOUND);
             response.setHeader("Location", orcidUrlManager.getBaseUrl() + "/404");
         }
     }

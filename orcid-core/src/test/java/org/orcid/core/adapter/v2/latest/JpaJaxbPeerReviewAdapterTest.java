@@ -277,6 +277,60 @@ public class JpaJaxbPeerReviewAdapterTest {
     }
 
     @Test
+    public void fromPeerReviewEntityToPeerReviewWithEmptyAndBlankSubjectFields() throws IllegalAccessException {
+        PeerReviewEntity entity = getPeerReviewEntity();
+        entity.setSubjectContainerName("   ");
+        entity.setSubjectName("   ");
+        entity.setSubjectTranslatedName("   ");
+        entity.setSubjectTranslatedNameLanguageCode("en");
+
+        PeerReview peerReview = jpaJaxbPeerReviewAdapter.toPeerReview(entity);
+
+        assertNull(peerReview.getSubjectContainerName());
+        assertNull(peerReview.getSubjectName());
+
+        entity.setSubjectContainerName("");
+        entity.setSubjectName("");
+        entity.setSubjectTranslatedName("");
+
+        peerReview = jpaJaxbPeerReviewAdapter.toPeerReview(entity);
+
+        assertNull(peerReview.getSubjectContainerName());
+        assertNull(peerReview.getSubjectName());
+    }
+
+    @Test
+    public void fromPeerReviewEntityToPeerReviewWithOnlySubjectNameAndBlankTranslatedName() throws IllegalAccessException {
+        PeerReviewEntity entity = getPeerReviewEntity();
+        entity.setSubjectName("Subject Title");
+        entity.setSubjectTranslatedName("   ");
+        entity.setSubjectTranslatedNameLanguageCode("en");
+
+        PeerReview peerReview = jpaJaxbPeerReviewAdapter.toPeerReview(entity);
+
+        assertNotNull(peerReview.getSubjectName());
+        assertNotNull(peerReview.getSubjectName().getTitle());
+        assertEquals("Subject Title", peerReview.getSubjectName().getTitle().getContent());
+        assertNull(peerReview.getSubjectName().getTranslatedTitle());
+    }
+
+    @Test
+    public void fromPeerReviewEntityToPeerReviewWithOnlySubjectTranslatedNameAndBlankSubjectName() throws IllegalAccessException {
+        PeerReviewEntity entity = getPeerReviewEntity();
+        entity.setSubjectName("   ");
+        entity.setSubjectTranslatedName("Translated Subject Title");
+        entity.setSubjectTranslatedNameLanguageCode("es");
+
+        PeerReview peerReview = jpaJaxbPeerReviewAdapter.toPeerReview(entity);
+
+        assertNotNull(peerReview.getSubjectName());
+        assertNull(peerReview.getSubjectName().getTitle());
+        assertNotNull(peerReview.getSubjectName().getTranslatedTitle());
+        assertEquals("Translated Subject Title", peerReview.getSubjectName().getTranslatedTitle().getContent());
+        assertEquals("es", peerReview.getSubjectName().getTranslatedTitle().getLanguageCode());
+    }
+
+    @Test
     public void fromPeerReviewEntityWithDissertationThesisSubjectTypeMapsToDissertation() throws IllegalAccessException {
         PeerReviewEntity entity = getPeerReviewEntity();
         entity.setSubjectType(org.orcid.jaxb.model.common.WorkType.DISSERTATION_THESIS.name());

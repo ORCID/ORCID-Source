@@ -91,6 +91,7 @@ public class ProfileEntity extends BaseEntity<String> implements UserDetails, Se
     private Boolean isSelectableSponsor;
     private Collection<OrcidGrantedAuthority> authorities;
     private String locale = DEFAULT_LOCALE;
+    private Date forcePasswordReset;
     
     private IndexingStatus indexingStatus = IndexingStatus.PENDING;
     private boolean enableDeveloperTools;
@@ -709,5 +710,14 @@ public class ProfileEntity extends BaseEntity<String> implements UserDetails, Se
      */
     public void setSigninLockCount(Integer signinLockCount) {
         this.signinLockCount = signinLockCount;
+    }
+
+    @Column(name = "force_password_reset")
+    public Date getForcePasswordReset() {
+        return forcePasswordReset;
+    }
+
+    public void setForcePasswordReset(Date forcePasswordReset) {
+        this.forcePasswordReset = forcePasswordReset;
     }
 }

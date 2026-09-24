@@ -39,7 +39,6 @@ import org.orcid.core.manager.TwoFactorAuthenticationManager;
 import org.orcid.core.manager.impl.OrcidUrlManager;
 import org.orcid.core.manager.v3.EmailManager;
 import org.orcid.core.manager.v3.ProfileEntityManager;
-import org.orcid.core.manager.v3.ProfileHistoryEventManager;
 import org.orcid.core.manager.v3.read_only.EmailManagerReadOnly;
 import org.orcid.core.utils.cache.redis.RedisClient;
 import org.orcid.frontend.email.RecordEmailSender;
@@ -96,8 +95,6 @@ public class PasswordResetControllerTest {
     @Mock
     private RedisClient redisClient;
     @Mock
-    private ProfileHistoryEventManager profileHistoryEventManager;
-    @Mock
     private EmailManager emailManager;
     @Mock
     private OrcidUrlManager orcidUrlManager;
@@ -119,7 +116,6 @@ public class PasswordResetControllerTest {
         inject(PasswordResetController.class, "recordEmailSender", recordEmailSender);
         inject(PasswordResetController.class, "expiringLinkService", expiringLinkService);
         inject(PasswordResetController.class, "redisClient", redisClient);
-        inject(PasswordResetController.class, "profileHistoryEventManager", profileHistoryEventManager);
 
         inject(BaseController.class, "emailManager", emailManager);
         inject(BaseController.class, "emailManagerReadOnly", emailManagerReadOnly);
@@ -498,7 +494,6 @@ public class PasswordResetControllerTest {
         assertTrue(result.getErrors().isEmpty());
         assertEquals(BASE_URL + "/my-orcid", result.getSuccessRedirectLocation());
         verify(profileEntityManager).updatePassword(ORCID, "Password#123");
-        verify(profileHistoryEventManager).recordResetPasswordEvent(ORCID, "127.0.0.1");
         verify(redisClient).set(eq("password-reset-token-" + ORCID), eq(new PasswordResetTokenEntry(token, true).serialize()), anyInt());
         // A successful reset also clears the sign-in lock. Nothing else proves the reset path
         // calls it, so a lockout surviving a password reset would otherwise go unnoticed.
@@ -516,7 +511,6 @@ public class PasswordResetControllerTest {
 
         assertEquals("alreadyUsedPasswordResetToken", result.getErrors().get(0));
         verify(profileEntityManager, never()).updatePassword(anyString(), anyString());
-        verify(profileHistoryEventManager, never()).recordResetPasswordEvent(anyString(), anyString());
     }
 
     @Test
@@ -594,7 +588,6 @@ public class PasswordResetControllerTest {
         OneTimeResetPasswordForm result = controller.submitPasswordResetV2(newRequest(), new MockHttpServletResponse(), form);
 
         assertTrue(result.getErrors().isEmpty());
-        verify(profileHistoryEventManager).recordResetPasswordEvent(ORCID, "127.0.0.1");
     }
 
     @Test
@@ -629,7 +622,6 @@ public class PasswordResetControllerTest {
         OneTimeResetPasswordForm result = controller.submitPasswordResetV2(newRequest(), new MockHttpServletResponse(), form);
 
         assertTrue(result.getErrors().isEmpty());
-        verify(profileHistoryEventManager).recordResetPasswordEvent(ORCID, "127.0.0.1");
     }
 
     @Test
@@ -673,7 +665,6 @@ public class PasswordResetControllerTest {
         OneTimeResetPasswordForm result = controller.submitPasswordResetV2(newRequest(), new MockHttpServletResponse(), form);
 
         assertTrue(result.getErrors().isEmpty());
-        verify(profileHistoryEventManager).recordResetPasswordEvent(legacyOrcid, "127.0.0.1");
         verify(redisClient, never()).set(anyString(), anyString(), anyInt());
     }
 

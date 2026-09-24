@@ -66,7 +66,6 @@ import org.orcid.core.manager.v3.read_only.RecordNameManagerReadOnly;
 import org.orcid.core.manager.v3.read_only.impl.ManagerReadOnlyBaseImpl;
 import org.orcid.core.manager.v3.read_only.impl.ProfileEntityManagerReadOnlyImpl;
 import org.orcid.core.profile.history.ProfileHistoryEventType;
-import org.orcid.core.utils.cache.redis.RedisClient;
 import org.orcid.jaxb.model.clientgroup.MemberType;
 import org.orcid.jaxb.model.common.AvailableLocales;
 import org.orcid.jaxb.model.message.ScopePathType;
@@ -99,9 +98,12 @@ import org.orcid.pojo.ajaxForm.Checkbox;
 import org.orcid.pojo.ajaxForm.Claim;
 import org.orcid.pojo.ajaxForm.Reactivation;
 import org.orcid.pojo.ajaxForm.Text;
+import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.context.NoSuchMessageException;
 import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionTemplate;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ProfileEntityManagerImplTest {
@@ -179,8 +181,6 @@ public class ProfileEntityManagerImplTest {
     @Mock
     private ResearcherUrlManager researcherUrlManager;
     @Mock
-    private RedisClient redisClient;
-    @Mock
     private RecoveryPhoneManager recoveryPhoneManager;
 
     @Before
@@ -219,7 +219,6 @@ public class ProfileEntityManagerImplTest {
         inject(ProfileEntityManagerImpl.class, "recordNameManagerReadOnlyV3", recordNameManagerReadOnlyV3);
         inject(ProfileEntityManagerImpl.class, "biographyManager", biographyManager);
         inject(ProfileEntityManagerImpl.class, "emailFrequencyManager", emailFrequencyManager);
-        inject(ProfileEntityManagerImpl.class, "redisClient", redisClient);
         inject(ProfileEntityManagerImpl.class, "recoveryPhoneManager", recoveryPhoneManager);
 
         doAnswer(invocation -> {
@@ -643,11 +642,18 @@ public class ProfileEntityManagerImplTest {
     @Test
     public void updatePasswordHashesAndPersists() {
         when(encryptionManager.hashForInternalUse("password")).thenReturn("encrypted");
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        request.setRemoteAddr("127.0.0.1");
+        RequestContextHolder.setRequestAttributes(new ServletRequestAttributes(request));
 
-        manager.updatePassword("orcid", "password");
+        try {
+            manager.updatePassword("orcid", "password");
+        } finally {
+            RequestContextHolder.resetRequestAttributes();
+        }
 
         verify(profileDao).changeEncryptedPassword("orcid", "encrypted");
-        verify(profileHistoryEventManager, never()).recordEvent(any(ProfileHistoryEventType.class), anyString(), anyString());
+        verify(profileHistoryEventManager).recordResetPasswordEvent("orcid", "127.0.0.1");
     }
 
     @Test

@@ -41,9 +41,12 @@ public class TranslatedTitleForm implements ErrorsInterface, Required, Serializa
     }
     
     public TranslatedTitle toTranslatedTitle(){
+        if (StringUtils.isBlank(content) && StringUtils.isBlank(languageCode)) {
+            return null;
+        }
         TranslatedTitle result = new TranslatedTitle();
-        result.setContent(StringUtils.isEmpty(content) ? null : content);
-        result.setLanguageCode(StringUtils.isEmpty(languageCode) ? null : languageCode);        
+        result.setContent(StringUtils.isBlank(content) ? null : content);
+        result.setLanguageCode(StringUtils.isBlank(languageCode) ? null : languageCode);        
         return result;
     }
 

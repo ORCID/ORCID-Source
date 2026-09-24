@@ -67,6 +67,106 @@ public class JpaJaxbWorkAdapterTest {
     }
 
     @Test
+    public void fromWorkEntityToWorkWithEmptyAndBlankTitleFields() throws IllegalAccessException {
+        WorkEntity entity = getWorkEntity();
+        entity.setTitle("   ");
+        entity.setSubtitle("   ");
+        entity.setTranslatedTitle("   ");
+        entity.setTranslatedTitleLanguageCode("en");
+        entity.setJournalTitle("   ");
+
+        Work work = jpaJaxbWorkAdapter.toWork(entity);
+        assertNull(work.getWorkTitle());
+        assertNull(work.getJournalTitle());
+
+        WorkSummary summary = jpaJaxbWorkAdapter.toWorkSummary(entity);
+        assertNull(summary.getTitle());
+
+        entity.setTitle("");
+        entity.setSubtitle("");
+        entity.setTranslatedTitle("");
+        entity.setJournalTitle("");
+
+        work = jpaJaxbWorkAdapter.toWork(entity);
+        assertNull(work.getWorkTitle());
+        assertNull(work.getJournalTitle());
+
+        summary = jpaJaxbWorkAdapter.toWorkSummary(entity);
+        assertNull(summary.getTitle());
+    }
+
+    @Test
+    public void fromWorkEntityToWorkWithOnlyTitleAndBlankTranslatedTitleAndSubtitle() throws IllegalAccessException {
+        WorkEntity entity = getWorkEntity();
+        entity.setTitle("Work Title");
+        entity.setSubtitle("   ");
+        entity.setTranslatedTitle("   ");
+        entity.setTranslatedTitleLanguageCode("en");
+
+        Work work = jpaJaxbWorkAdapter.toWork(entity);
+        assertNotNull(work.getWorkTitle());
+        assertNotNull(work.getWorkTitle().getTitle());
+        assertEquals("Work Title", work.getWorkTitle().getTitle().getContent());
+        assertNull(work.getWorkTitle().getSubtitle());
+        assertNull(work.getWorkTitle().getTranslatedTitle());
+
+        WorkSummary summary = jpaJaxbWorkAdapter.toWorkSummary(entity);
+        assertNotNull(summary.getTitle());
+        assertNotNull(summary.getTitle().getTitle());
+        assertEquals("Work Title", summary.getTitle().getTitle().getContent());
+        assertNull(summary.getTitle().getSubtitle());
+        assertNull(summary.getTitle().getTranslatedTitle());
+    }
+
+    @Test
+    public void fromWorkEntityToWorkWithOnlyTranslatedTitleAndBlankTitleAndSubtitle() throws IllegalAccessException {
+        WorkEntity entity = getWorkEntity();
+        entity.setTitle("   ");
+        entity.setSubtitle("   ");
+        entity.setTranslatedTitle("Translated Work Title");
+        entity.setTranslatedTitleLanguageCode("es");
+
+        Work work = jpaJaxbWorkAdapter.toWork(entity);
+        assertNotNull(work.getWorkTitle());
+        assertNull(work.getWorkTitle().getTitle());
+        assertNull(work.getWorkTitle().getSubtitle());
+        assertNotNull(work.getWorkTitle().getTranslatedTitle());
+        assertEquals("Translated Work Title", work.getWorkTitle().getTranslatedTitle().getContent());
+        assertEquals("es", work.getWorkTitle().getTranslatedTitle().getLanguageCode());
+
+        WorkSummary summary = jpaJaxbWorkAdapter.toWorkSummary(entity);
+        assertNotNull(summary.getTitle());
+        assertNull(summary.getTitle().getTitle());
+        assertNull(summary.getTitle().getSubtitle());
+        assertNotNull(summary.getTitle().getTranslatedTitle());
+        assertEquals("Translated Work Title", summary.getTitle().getTranslatedTitle().getContent());
+        assertEquals("es", summary.getTitle().getTranslatedTitle().getLanguageCode());
+    }
+
+    @Test
+    public void fromWorkEntityToWorkWithOnlySubtitleAndBlankTitleAndTranslatedTitle() throws IllegalAccessException {
+        WorkEntity entity = getWorkEntity();
+        entity.setTitle("   ");
+        entity.setSubtitle("Work Subtitle");
+        entity.setTranslatedTitle("   ");
+        entity.setTranslatedTitleLanguageCode("en");
+
+        Work work = jpaJaxbWorkAdapter.toWork(entity);
+        assertNotNull(work.getWorkTitle());
+        assertNull(work.getWorkTitle().getTitle());
+        assertNotNull(work.getWorkTitle().getSubtitle());
+        assertEquals("Work Subtitle", work.getWorkTitle().getSubtitle().getContent());
+        assertNull(work.getWorkTitle().getTranslatedTitle());
+
+        WorkSummary summary = jpaJaxbWorkAdapter.toWorkSummary(entity);
+        assertNotNull(summary.getTitle());
+        assertNull(summary.getTitle().getTitle());
+        assertNotNull(summary.getTitle().getSubtitle());
+        assertEquals("Work Subtitle", summary.getTitle().getSubtitle().getContent());
+        assertNull(summary.getTitle().getTranslatedTitle());
+    }
+
+    @Test
     public void fromWorkToToWorkEntityTest() throws JAXBException {
         Work work = getWork(true);
         assertNotNull(work);

@@ -93,7 +93,9 @@ public class OrcidBearerTokenFilter implements Filter {
             return;
         } catch (AuthorizationServerConnectionException e) {
             logger.warn("Authorization server connection exception for token=" + tokenFingerprint(tokenValue), e);
-            response.sendError(HttpServletResponse.SC_GATEWAY_TIMEOUT, e.getMessage());
+            response.setStatus(HttpServletResponse.SC_GATEWAY_TIMEOUT);
+            response.setContentType("text/html; charset=UTF-8");
+            response.getWriter().write("<!doctype html>\n<html lang=\"en\">\n<head>\n  <title>504 Gateway Timeout</title>\n</head>\n<body>\n  <h1>Gateway timeout</h1>\n  <p>The server did not respond in time. Please try again later.</p>\n  <p>If this problem persists, please <a href=\"https://support.orcid.org/hc/en-us\">contact support</a>.</p>\n</body>\n</html>");
             return;
         } catch (IOException | URISyntaxException | InterruptedException | JSONException e) {
             //TODO: Define error message and add exception type to it
