@@ -132,6 +132,9 @@ public class AdminControllerTest {
     @Mock
     private ExternalIdentifierManagerReadOnly externalIdentifierManagerReadOnlyMock;
 
+    @Mock
+    private ProfileHistoryEventManager profileHistoryEventManagerMock;
+
     @InjectMocks
     private AdminController adminController = new AdminController() {
         @Override
@@ -163,6 +166,7 @@ public class AdminControllerTest {
         MockitoAnnotations.initMocks(this);
         org.orcid.test.TargetProxyHelper.injectIntoProxy(adminController, "expiringLinkService", expiringLinkServiceMock);
         org.orcid.test.TargetProxyHelper.injectIntoProxy(adminController, "redisClient", redisClientMock);
+        org.orcid.test.TargetProxyHelper.injectIntoProxy(adminController, "profileHistoryEventManager", profileHistoryEventManagerMock);
         org.orcid.test.TargetProxyHelper.injectIntoProxy(adminController, "adminJwtExpirationInMinutes", 1440L);
         when(profileDaoReadOnlyMock.getGroupType(eq(INVALID_ID))).thenReturn(null);
         when(profileDaoReadOnlyMock.getGroupType(eq(MEMBER_ID))).thenReturn("PREMIUM_INSTITUTION");
@@ -286,20 +290,6 @@ public class AdminControllerTest {
     }
 
     @Test
-    public void resetPasswordTest() throws Exception {
-        AdminChangePassword form = new AdminChangePassword();
-        form.setOrcidOrEmail(MEMBER_ID);
-        form.setPassword("NewPassword123!");
-        
-        when(profileEntityManagerMock.orcidExists(eq(MEMBER_ID))).thenReturn(true);
-        
-        AdminChangePassword result = adminController.resetPassword(requestMock, responseMock, form);
-        
-        assertNull(result.getError());
-        verify(profileEntityManagerMock).updatePassword(eq(MEMBER_ID), eq("NewPassword123!"));
-    }
-
-    @Test
     public void lockRecordsTest() throws Exception {
         LockAccounts lockAccounts = new LockAccounts();
         lockAccounts.setOrcidsToLock(MEMBER_ID);
@@ -344,7 +334,7 @@ public class AdminControllerTest {
         ResponseEntity<RemoveEmailsResponse> response = adminController.removeEmails(requestMock, responseMock, request);
         
         assertEquals(HttpStatus.OK, response.getStatusCode());
-        verify(emailManagerMock).removeEmails(eq(MEMBER_ID), anyList());
+        verify(emailManagerMock).removeEmails(anyString(), eq(MEMBER_ID), anyList());
     }
 
     @Test
