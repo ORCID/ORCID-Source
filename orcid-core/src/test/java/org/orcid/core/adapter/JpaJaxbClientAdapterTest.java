@@ -13,8 +13,6 @@ import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
-import jakarta.annotation.Resource;
-
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.orcid.jaxb.model.client_v2.Client;
@@ -31,20 +29,28 @@ import org.orcid.persistence.jpa.entities.ClientScopeEntity;
 import org.orcid.persistence.jpa.entities.CustomEmailEntity;
 import org.orcid.persistence.jpa.entities.EmailType;
 import org.orcid.persistence.jpa.entities.keys.*;
-import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.orcid.core.utils.DateFieldsOnBaseEntityUtils;
-import org.springframework.test.context.ContextConfiguration;
+import org.junit.Before;
+import org.mockito.junit.MockitoJUnitRunner;
+import org.orcid.core.adapter.mapstruct.impl.JpaJaxbClientAdapterImpl;
 
-@RunWith(OrcidJUnit4ClassRunner.class)
-@ContextConfiguration(locations = { "classpath:test-orcid-core-context.xml" })
+@RunWith(MockitoJUnitRunner.Silent.class)
 public class JpaJaxbClientAdapterTest {
-    @Resource
+
+    private final MockedMapStructAdapters adapters = new MockedMapStructAdapters();
     private JpaJaxbClientAdapter adapter;
+
+    @Before
+    public void setUpAdapter() throws Exception {
+        // REAL MapStruct mapper: the whole behaviour under test is the mapping configuration,
+        // so a mocked mapper would make every assertion below an assertion about a mock.
+        adapter = adapters.get(JpaJaxbClientAdapterImpl.class);
+    }
 
     @Test
     public void toClientTest() throws IllegalAccessException {
         ClientDetailsEntity entity = getClientDetailsEntity();
-        Client client = adapter.toClient(entity);        
+        Client client = adapter.toClient(entity);
         assertEquals(getClient(), client);
     }
 
@@ -72,18 +78,18 @@ public class JpaJaxbClientAdapterTest {
         Client client = getClient();
         ClientDetailsEntity entity = adapter.toEntity(client);
         ClientDetailsEntity toCompare = getClientDetailsEntity();
-        
+
         // Configuration values should be the default
         assertFalse(entity.isPersistentTokensEnabled());
         assertNull(entity.getAuthenticationProviderId());
-        
+
         assertEquals(toCompare.getClientDescription(), entity.getClientDescription());
         assertEquals(toCompare.getClientId(), entity.getClientId());
         assertEquals(toCompare.getClientName(), entity.getClientName());
-        assertEquals(toCompare.getClientRegisteredRedirectUris(), entity.getClientRegisteredRedirectUris());        
+        assertEquals(toCompare.getClientRegisteredRedirectUris(), entity.getClientRegisteredRedirectUris());
         assertEquals(toCompare.getClientWebsite(), entity.getClientWebsite());
         assertEquals(toCompare.isAllowAutoDeprecate(), entity.isAllowAutoDeprecate());
-       
+
         assertNull(entity.getClientType());
         assertNull(entity.getEmailAccessReason());
         assertNull(entity.getGroupProfileId());
@@ -97,7 +103,7 @@ public class JpaJaxbClientAdapterTest {
     @Test
     public void toEntity_withExistingEntityTest() throws IllegalAccessException {
         Client client = getClient();
-        ClientDetailsEntity existingEntity = getClientDetailsEntity();        
+        ClientDetailsEntity existingEntity = getClientDetailsEntity();
         existingEntity = adapter.toEntity(client, existingEntity);
         assertEquals(getClientDetailsEntity(), existingEntity);
     }
@@ -142,7 +148,7 @@ public class JpaJaxbClientAdapterTest {
         clientRedirectUris.add(rUri1);
         clientRedirectUris.add(rUri2);
         clientRedirectUris.add(rUri3);
-        client.setClientRedirectUris(clientRedirectUris);        
+        client.setClientRedirectUris(clientRedirectUris);
         return client;
     }
 
@@ -156,7 +162,7 @@ public class JpaJaxbClientAdapterTest {
     private ClientDetailsEntity getClientDetailsEntity() throws IllegalAccessException {
         Date now = new Date();
         ClientDetailsEntity entity = new ClientDetailsEntity();
-        DateFieldsOnBaseEntityUtils.setDateFields(entity, now); 
+        DateFieldsOnBaseEntityUtils.setDateFields(entity, now);
         entity.setAllowAutoDeprecate(true);
         entity.setAuthenticationProviderId("authentication-provider-id");
         entity.setClientDescription("description");
@@ -199,7 +205,7 @@ public class JpaJaxbClientAdapterTest {
         DateFieldsOnBaseEntityUtils.setDateFields(cga2, now);
         cga2.setClientId("id");
         cga2.setAuthority("authority-2");
-        
+
         ClientGrantedAuthorityEntity cga3 = new ClientGrantedAuthorityEntity();
         DateFieldsOnBaseEntityUtils.setDateFields(cga3, now);
         cga3.setClientId("id");
@@ -218,7 +224,7 @@ public class JpaJaxbClientAdapterTest {
         rUri1.setPredefinedClientScope(ScopePathType.ACTIVITIES_READ_LIMITED.value());
         rUri1.setUriActType("uri-act-type-1");
         rUri1.setUriGeoArea("uri-geo-area-1");
-        
+
         ClientRedirectUriEntity rUri2 = new ClientRedirectUriEntity();
         DateFieldsOnBaseEntityUtils.setDateFields(rUri2, now);
         rUri2.setClientId("id");
@@ -227,7 +233,7 @@ public class JpaJaxbClientAdapterTest {
         rUri2.setPredefinedClientScope(ScopePathType.ACTIVITIES_UPDATE.value());
         rUri2.setUriActType("uri-act-type-2");
         rUri2.setUriGeoArea("uri-geo-area-2");
-        
+
         ClientRedirectUriEntity rUri3 = new ClientRedirectUriEntity();
         DateFieldsOnBaseEntityUtils.setDateFields(rUri3, now);
         rUri3.setClientId("id");

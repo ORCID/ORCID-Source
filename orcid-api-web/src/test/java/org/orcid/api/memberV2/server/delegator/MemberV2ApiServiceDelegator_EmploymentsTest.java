@@ -2,302 +2,234 @@ package org.orcid.api.memberV2.server.delegator;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertNotSame;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.fail;
-import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyBoolean;
+import static org.mockito.ArgumentMatchers.anyList;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
-import org.orcid.test.DBUnitTest;
-import org.orcid.test.helper.Utils;
-
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
-import jakarta.annotation.Resource;
 import jakarta.persistence.NoResultException;
 import jakarta.ws.rs.core.Response;
 
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
-import org.orcid.core.common.manager.EmailFrequencyManager;
+import org.mockito.ArgumentCaptor;
 import org.orcid.core.exception.OrcidAccessControlException;
 import org.orcid.core.exception.OrcidUnauthorizedException;
 import org.orcid.core.exception.OrcidVisibilityException;
 import org.orcid.core.exception.VisibilityMismatchException;
 import org.orcid.core.exception.WrongSourceException;
-import org.orcid.core.manager.NotificationManager;
-import org.orcid.core.utils.SecurityContextTestUtils;
-import org.orcid.jaxb.model.common_v2.LastModifiedDate;
+import org.orcid.jaxb.model.common_v2.Source;
 import org.orcid.jaxb.model.common_v2.Visibility;
-import org.orcid.jaxb.model.groupid_v2.GroupIdRecord;
 import org.orcid.jaxb.model.message.ScopePathType;
-import org.orcid.jaxb.model.record.summary_v2.ActivitiesSummary;
 import org.orcid.jaxb.model.record.summary_v2.EmploymentSummary;
 import org.orcid.jaxb.model.record.summary_v2.Employments;
-import org.orcid.jaxb.model.record_v2.Address;
-import org.orcid.jaxb.model.record_v2.Education;
 import org.orcid.jaxb.model.record_v2.Employment;
-import org.orcid.jaxb.model.record_v2.Funding;
-import org.orcid.jaxb.model.record_v2.Keyword;
-import org.orcid.jaxb.model.record_v2.OtherName;
-import org.orcid.jaxb.model.record_v2.PeerReview;
-import org.orcid.jaxb.model.record_v2.PersonExternalIdentifier;
-import org.orcid.jaxb.model.record_v2.ResearcherUrl;
-import org.orcid.jaxb.model.record_v2.Work;
-import org.orcid.jaxb.model.record_v2.WorkBulk;
-import org.orcid.test.OrcidJUnit4ClassRunner;
-import org.orcid.test.TargetProxyHelper;
-import org.springframework.test.context.ContextConfiguration;
+import org.orcid.test.helper.Utils;
 
-@RunWith(OrcidJUnit4ClassRunner.class)
-@ContextConfiguration(locations = { "classpath:test-orcid-api-web-context.xml" })
-public class MemberV2ApiServiceDelegator_EmploymentsTest extends DBUnitTest {
-    protected static final List<String> DATA_FILES = Arrays.asList("/data/EmptyEntityData.xml",
-            "/data/SourceClientDetailsEntityData.xml", "/data/ProfileEntityData.xml", "/data/WorksEntityData.xml", "/data/ClientDetailsEntityData.xml",
-            "/data/Oauth2TokenDetailsData.xml", "/data/OrgsEntityData.xml", "/data/ProfileFundingEntityData.xml", "/data/OrgAffiliationEntityData.xml",
-            "/data/PeerReviewEntityData.xml", "/data/GroupIdRecordEntityData.xml", "/data/RecordNameEntityData.xml", "/data/BiographyEntityData.xml");
+/**
+ * The employment endpoints of the member v2 delegator, on mocks.
+ *
+ * <p>
+ * The delegator's own behaviour with an employment is: fetch it, guard it, set its
+ * path, clean the empty organization fields, resolve its source name. That is
+ * what is asserted here. Visibility filtering is
+ * {@code OrcidSecurityManager_generalTest}'s, the source-ownership rule is
+ * {@code AffiliationsManagerImpl}'s, and "an affiliation of another record is not
+ * readable or deletable" is a predicate in {@code OrgAffiliationRelationDaoImpl}'s
+ * SQL.
+ */
+public class MemberV2ApiServiceDelegator_EmploymentsTest extends MemberV2ApiServiceDelegatorMockBase {
 
-    // Now on, for any new test, PLAESE USER THIS ORCID ID
-    protected final String ORCID = "0000-0000-0000-0003";
-
-    @Resource(name = "memberV2ApiServiceDelegator")
-    protected MemberV2ApiServiceDelegator<Education, Employment, PersonExternalIdentifier, Funding, GroupIdRecord, OtherName, PeerReview, ResearcherUrl, Work, WorkBulk, Address, Keyword> serviceDelegator;
-
-    @Resource
-    protected EmailFrequencyManager emailFrequencyManager;
-    
-    @Mock
-    protected EmailFrequencyManager mockEmailFrequencyManager;
-        
-    @Resource(name = "notificationManager")
-    private NotificationManager notificationManager;
-    
-    @Before
-    public void before() {
-        MockitoAnnotations.initMocks(this);
-        Map<String, String> map = new HashMap<String, String>();
-        map.put(EmailFrequencyManager.ADMINISTRATIVE_CHANGE_NOTIFICATIONS, String.valueOf(Float.MAX_VALUE));
-        map.put(EmailFrequencyManager.CHANGE_NOTIFICATIONS, String.valueOf(Float.MAX_VALUE));
-        map.put(EmailFrequencyManager.MEMBER_UPDATE_REQUESTS, String.valueOf(Float.MAX_VALUE));
-        map.put(EmailFrequencyManager.QUARTERLY_TIPS, String.valueOf(true));
-        
-        when(mockEmailFrequencyManager.getEmailFrequency(anyString())).thenReturn(map);
-        TargetProxyHelper.injectIntoProxy(notificationManager, "emailFrequencyManager", mockEmailFrequencyManager); 
-    }
-    
-    @After
-    public void after() {
-        TargetProxyHelper.injectIntoProxy(notificationManager, "emailFrequencyManager", emailFrequencyManager);         
-    }
-    
-    @BeforeClass
-    public static void initDBUnitData() throws Exception {
-        initDBUnitData(DATA_FILES);
-    }
-
-    @AfterClass
-    public static void removeDBUnitData() throws Exception {
-        Collections.reverse(DATA_FILES);
-        removeDBUnitData(DATA_FILES);
-    }
+    private static final String OTHER_ORCID = "4444-4444-4444-4443";
+    private static final String MY_ORCID = "4444-4444-4444-4442";
 
     @Test(expected = OrcidUnauthorizedException.class)
     public void testViewEmploymentsWrongToken() {
-        SecurityContextTestUtils.setUpSecurityContext("some-other-user", ScopePathType.READ_LIMITED);
-        serviceDelegator.viewEmployments(ORCID);
+        when(affiliationsManagerReadOnly.getEmploymentSummaryList(ORCID)).thenReturn(new ArrayList<>(Arrays.asList(employmentSummary(20L, Visibility.PUBLIC))));
+        doThrow(new OrcidUnauthorizedException("Access token is for a different record")).when(orcidSecurityManager).checkAndFilter(eq(ORCID), anyList(),
+                eq(ScopePathType.AFFILIATIONS_READ_LIMITED));
+
+        try {
+            serviceDelegator.viewEmployments(ORCID);
+        } finally {
+            verifyNoInteractions(sourceNameCacheManager);
+        }
     }
 
     @Test(expected = OrcidUnauthorizedException.class)
     public void testViewEmploymentWrongToken() {
-        SecurityContextTestUtils.setUpSecurityContext("some-other-user", ScopePathType.READ_LIMITED);
-        serviceDelegator.viewEmployment(ORCID, 17L);
-    }
+        Employment employment = employment(20L, Visibility.PUBLIC, clientSource(CLIENT_1));
+        when(affiliationsManagerReadOnly.getEmploymentAffiliation(ORCID, 20L)).thenReturn(employment);
+        doThrow(new OrcidUnauthorizedException("Access token is for a different record")).when(orcidSecurityManager).checkAndFilter(ORCID, employment,
+                ScopePathType.AFFILIATIONS_READ_LIMITED);
 
-    @Test(expected = OrcidUnauthorizedException.class)
-    public void testViewEmploymentSummaryWrongToken() {
-        SecurityContextTestUtils.setUpSecurityContext("some-other-user", ScopePathType.READ_LIMITED);
-        serviceDelegator.viewEmploymentSummary(ORCID, 17L);
-    }
-
-    @Test
-    public void testViewEmploymentsReadPublic() {
-        SecurityContextTestUtils.setUpSecurityContextForClientOnly("APP-5555555555555555", ScopePathType.READ_PUBLIC);
-        Response r = serviceDelegator.viewEmployments(ORCID);
-        Employments element = (Employments) r.getEntity();
-        assertNotNull(element);
-        assertEquals("/0000-0000-0000-0003/employments", element.getPath());
-        Utils.assertIsPublicOrSource(element, "APP-5555555555555555");
+        try {
+            serviceDelegator.viewEmployment(ORCID, 20L);
+        } finally {
+            assertNull("the element must not be decorated once the guard has refused", employment.getPath());
+        }
     }
 
     @Test
     public void testViewEmploymentReadPublic() {
-        SecurityContextTestUtils.setUpSecurityContextForClientOnly("APP-5555555555555555", ScopePathType.READ_PUBLIC);
-        Response r = serviceDelegator.viewEmployment(ORCID, 17L);
+        Employment employment = employment(20L, Visibility.PUBLIC, clientSource(CLIENT_1));
+        when(affiliationsManagerReadOnly.getEmploymentAffiliation(ORCID, 20L)).thenReturn(employment);
+
+        Response r = serviceDelegator.viewEmployment(ORCID, 20L);
+
         Employment element = (Employment) r.getEntity();
         assertNotNull(element);
-        assertEquals("/0000-0000-0000-0003/employment/17", element.getPath());
-        Utils.assertIsPublicOrSource(element, "APP-5555555555555555");
+        assertEquals("/0000-0000-0000-0003/employment/20", element.getPath());
+        assertEquals(CLIENT_1_NAME, element.getSource().getSourceName().getContent());
+        verify(orcidSecurityManager).checkAndFilter(ORCID, employment, ScopePathType.AFFILIATIONS_READ_LIMITED);
+    }
+
+    @Test(expected = OrcidUnauthorizedException.class)
+    public void testViewEmploymentSummaryWrongToken() {
+        EmploymentSummary summary = employmentSummary(20L, Visibility.PUBLIC);
+        when(affiliationsManagerReadOnly.getEmploymentSummary(ORCID, 20L)).thenReturn(summary);
+        doThrow(new OrcidUnauthorizedException("Access token is for a different record")).when(orcidSecurityManager).checkAndFilter(ORCID, summary,
+                ScopePathType.AFFILIATIONS_READ_LIMITED);
+
+        try {
+            serviceDelegator.viewEmploymentSummary(ORCID, 20L);
+        } finally {
+            assertNull("the element must not be decorated once the guard has refused", summary.getPath());
+        }
+    }
+
+    @Test
+    public void testViewEmploymentsReadPublic() {
+        List<EmploymentSummary> stored = new ArrayList<>(Arrays.asList(employmentSummary(20L, Visibility.PUBLIC)));
+        when(affiliationsManagerReadOnly.getEmploymentSummaryList(ORCID)).thenReturn(stored);
+
+        Response r = serviceDelegator.viewEmployments(ORCID);
+
+        Employments element = (Employments) r.getEntity();
+        assertNotNull(element);
+        assertEquals("/0000-0000-0000-0003/employments", element.getPath());
+        assertEquals("/0000-0000-0000-0003/employment/20", element.getSummaries().get(0).getPath());
+        // the cached list must be copied before it is handed to a filter that
+        // edits in place
+        ArgumentCaptor<List<EmploymentSummary>> filtered = summaryListCaptor();
+        verify(orcidSecurityManager).checkAndFilter(eq(ORCID), filtered.capture(), eq(ScopePathType.AFFILIATIONS_READ_LIMITED));
+        assertNotSame(stored, filtered.getValue());
     }
 
     @Test
     public void testViewEmploymentSummaryReadPublic() {
-        SecurityContextTestUtils.setUpSecurityContextForClientOnly("APP-5555555555555555", ScopePathType.READ_PUBLIC);
-        Response r = serviceDelegator.viewEmploymentSummary(ORCID, 17L);
+        EmploymentSummary summary = employmentSummary(20L, Visibility.PUBLIC);
+        when(affiliationsManagerReadOnly.getEmploymentSummary(ORCID, 20L)).thenReturn(summary);
+
+        Response r = serviceDelegator.viewEmploymentSummary(ORCID, 20L);
+
         EmploymentSummary element = (EmploymentSummary) r.getEntity();
         assertNotNull(element);
-        assertEquals("/0000-0000-0000-0003/employment/17", element.getPath());
-        Utils.assertIsPublicOrSource(element, "APP-5555555555555555");
+        assertEquals("/0000-0000-0000-0003/employment/20", element.getPath());
+        verify(orcidSecurityManager).checkAndFilter(ORCID, summary, ScopePathType.AFFILIATIONS_READ_LIMITED);
     }
 
     @Test
     public void testViewEmployment() {
-        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4446", ScopePathType.READ_LIMITED);
-        Response response = serviceDelegator.viewEmployment("4444-4444-4444-4446", 5L);
-        assertNotNull(response);
-        Employment employment = (Employment) response.getEntity();
-        assertNotNull(employment);
-        Utils.verifyLastModified(employment.getLastModifiedDate());
-        assertEquals(Long.valueOf(5L), employment.getPutCode());
-        assertEquals("/4444-4444-4444-4446/employment/5", employment.getPath());
-        assertEquals("Employment Dept # 1", employment.getDepartmentName());
-        assertEquals(Visibility.PRIVATE.value(), employment.getVisibility().value());
+        assertViewEmploymentDecorated(20L, Visibility.PUBLIC, clientSource(CLIENT_1));
     }
 
     @Test
     public void testViewLimitedEmployment() {
-        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4446", ScopePathType.READ_LIMITED);
-        Response response = serviceDelegator.viewEmployment("4444-4444-4444-4446", 11L);
-        assertNotNull(response);
-        Employment employment = (Employment) response.getEntity();
-        assertNotNull(employment);
-        Utils.verifyLastModified(employment.getLastModifiedDate());
-        assertEquals(Long.valueOf(11L), employment.getPutCode());
-        assertEquals("/4444-4444-4444-4446/employment/11", employment.getPath());
-        assertEquals("Employment Dept # 4", employment.getDepartmentName());
-        assertEquals(Visibility.LIMITED.value(), employment.getVisibility().value());
+        assertViewEmploymentDecorated(21L, Visibility.LIMITED, clientSource(CLIENT_1));
     }
 
     @Test
     public void testViewPrivateEmployment() {
-        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4446", ScopePathType.READ_LIMITED);
-        Response response = serviceDelegator.viewEmployment("4444-4444-4444-4446", 5L);
-        assertNotNull(response);
-        Employment employment = (Employment) response.getEntity();
-        assertNotNull(employment);
-        Utils.verifyLastModified(employment.getLastModifiedDate());
-        assertEquals(Long.valueOf(5L), employment.getPutCode());
-        assertEquals("/4444-4444-4444-4446/employment/5", employment.getPath());
-        assertEquals("Employment Dept # 1", employment.getDepartmentName());
-        assertEquals(Visibility.PRIVATE.value(), employment.getVisibility().value());
+        assertViewEmploymentDecorated(22L, Visibility.PRIVATE, clientSource(CLIENT_1));
     }
 
     @Test(expected = OrcidVisibilityException.class)
     public void testViewPrivateEmploymentWhereYouAreNotTheSource() {
-        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4446", ScopePathType.READ_LIMITED);
-        serviceDelegator.viewEmployment("4444-4444-4444-4446", 10L);
+        Employment employment = employment(23L, Visibility.PRIVATE, clientSource(CLIENT_2));
+        when(affiliationsManagerReadOnly.getEmploymentAffiliation(OTHER_ORCID, 23L)).thenReturn(employment);
+        doThrow(new OrcidVisibilityException()).when(orcidSecurityManager).checkAndFilter(OTHER_ORCID, employment, ScopePathType.AFFILIATIONS_READ_LIMITED);
+
+        serviceDelegator.viewEmployment(OTHER_ORCID, 23L);
         fail();
     }
 
     @Test(expected = NoResultException.class)
     public void testViewEmploymentThatDontBelongToTheUser() {
-        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4446", ScopePathType.READ_LIMITED);
-        serviceDelegator.viewEmployment("4444-4444-4444-4446", 4L);
-        fail();
+        // The (orcid, id) predicate is in OrgAffiliationRelationDaoImpl's query.
+        when(affiliationsManagerReadOnly.getEmploymentAffiliation(OTHER_ORCID, 1L)).thenThrow(new NoResultException());
+
+        try {
+            serviceDelegator.viewEmployment(OTHER_ORCID, 1L);
+            fail();
+        } finally {
+            verifyNoInteractions(orcidSecurityManager);
+        }
     }
 
     @Test
     public void testViewEmployments() {
-        SecurityContextTestUtils.setUpSecurityContext(ORCID, ScopePathType.READ_LIMITED);
-        Response r = serviceDelegator.viewEmployments(ORCID);
-        assertNotNull(r);
-        Employments employments = (Employments) r.getEntity();
+        List<EmploymentSummary> stored = new ArrayList<>(
+                Arrays.asList(employmentSummary(20L, Visibility.PUBLIC), employmentSummary(21L, Visibility.LIMITED), employmentSummary(22L, Visibility.PRIVATE)));
+        when(affiliationsManagerReadOnly.getEmploymentSummaryList(ORCID)).thenReturn(stored);
+
+        Response response = serviceDelegator.viewEmployments(ORCID);
+
+        assertNotNull(response);
+        Employments employments = (Employments) response.getEntity();
         assertNotNull(employments);
         assertEquals("/0000-0000-0000-0003/employments", employments.getPath());
         Utils.verifyLastModified(employments.getLastModifiedDate());
-        assertNotNull(employments.getSummaries());
-        assertEquals(4, employments.getSummaries().size());
-        boolean found1 = false, found2 = false, found3 = false, found4 = false;
+        assertEquals(3, employments.getSummaries().size());
         for (EmploymentSummary summary : employments.getSummaries()) {
             Utils.verifyLastModified(summary.getLastModifiedDate());
-            if (Long.valueOf(17).equals(summary.getPutCode())) {
-                assertEquals("PUBLIC Department", summary.getDepartmentName());
-                found1 = true;
-            } else if (Long.valueOf(18).equals(summary.getPutCode())) {
-                assertEquals("LIMITED Department", summary.getDepartmentName());
-                found2 = true;
-            } else if (Long.valueOf(19).equals(summary.getPutCode())) {
-                assertEquals("PRIVATE Department", summary.getDepartmentName());
-                found3 = true;
-            } else if (Long.valueOf(23).equals(summary.getPutCode())) {
-                assertEquals("SELF LIMITED Department", summary.getDepartmentName());
-                found4 = true;
-            } else {
-                fail("Invalid education found: " + summary.getPutCode());
-            }
+            assertEquals("/0000-0000-0000-0003/employment/" + summary.getPutCode(), summary.getPath());
+            assertEquals(CLIENT_1_NAME, summary.getSource().getSourceName().getContent());
         }
-        assertTrue(found1);
-        assertTrue(found2);
-        assertTrue(found3);
-        assertTrue(found4);
+        verify(orcidSecurityManager).checkAndFilter(eq(ORCID), anyList(), eq(ScopePathType.AFFILIATIONS_READ_LIMITED));
     }
 
     @Test
     public void testReadPublicScope_Employments() {
-        SecurityContextTestUtils.setUpSecurityContext(ORCID, ScopePathType.READ_PUBLIC);
-        Response r = serviceDelegator.viewEmployment(ORCID, 17L);
+        // Refused per element, never with a blanket matcher: a matcher that
+        // refused everything would also refuse 20 and 21, and the positive half
+        // of this test would prove nothing.
+        Employment twenty = employment(20L, Visibility.PUBLIC, clientSource(CLIENT_1));
+        Employment twentyOne = employment(21L, Visibility.LIMITED, clientSource(CLIENT_1));
+        Employment twentyTwo = employment(22L, Visibility.PRIVATE, clientSource(CLIENT_2));
+        when(affiliationsManagerReadOnly.getEmploymentAffiliation(ORCID, 20L)).thenReturn(twenty);
+        when(affiliationsManagerReadOnly.getEmploymentAffiliation(ORCID, 21L)).thenReturn(twentyOne);
+        when(affiliationsManagerReadOnly.getEmploymentAffiliation(ORCID, 22L)).thenReturn(twentyTwo);
+        when(affiliationsManagerReadOnly.getEmploymentSummaryList(ORCID))
+                .thenReturn(new ArrayList<>(Arrays.asList(employmentSummary(20L, Visibility.PUBLIC), employmentSummary(21L, Visibility.LIMITED))));
+        doThrow(new OrcidAccessControlException()).when(orcidSecurityManager).checkAndFilter(ORCID, twentyTwo, ScopePathType.AFFILIATIONS_READ_LIMITED);
+
+        Response r = serviceDelegator.viewEmployments(ORCID);
+        assertNotNull(r);
+        assertEquals(Employments.class.getName(), r.getEntity().getClass().getName());
+        assertEquals(2, ((Employments) r.getEntity()).getSummaries().size());
+
+        r = serviceDelegator.viewEmployment(ORCID, 20L);
         assertNotNull(r);
         assertEquals(Employment.class.getName(), r.getEntity().getClass().getName());
 
-        r = serviceDelegator.viewEmploymentSummary(ORCID, 17L);
-        assertNotNull(r);
-        assertEquals(EmploymentSummary.class.getName(), r.getEntity().getClass().getName());
-
-        // Limited that am the source of should work
-        serviceDelegator.viewEmployment(ORCID, 18L);
-        serviceDelegator.viewEmploymentSummary(ORCID, 18L);
-        // Limited that am not the source of should fail
-        try {
-            serviceDelegator.viewEmployment(ORCID, 23L);
-            fail();
-        } catch (OrcidAccessControlException e) {
-
-        } catch (Exception e) {
-            fail();
-        }
+        // Limited where am the source should work
+        serviceDelegator.viewEmployment(ORCID, 21L);
 
         try {
-            serviceDelegator.viewEmploymentSummary(ORCID, 23L);
-            fail();
-        } catch (OrcidAccessControlException e) {
-
-        } catch (Exception e) {
-            fail();
-        }
-
-        // Private that am the source of should work
-        serviceDelegator.viewEmployment(ORCID, 19L);
-        serviceDelegator.viewEmploymentSummary(ORCID, 19L);
-        // Private that am not the source of should fail
-        try {
-            serviceDelegator.viewEmployment(ORCID, 24L);
-            fail();
-        } catch (OrcidAccessControlException e) {
-
-        } catch (Exception e) {
-            fail();
-        }
-
-        try {
-            serviceDelegator.viewEmploymentSummary(ORCID, 24L);
+            // Private am not the source should fail
+            serviceDelegator.viewEmployment(ORCID, 22L);
             fail();
         } catch (OrcidAccessControlException e) {
 
@@ -308,153 +240,156 @@ public class MemberV2ApiServiceDelegator_EmploymentsTest extends DBUnitTest {
 
     @Test
     public void testAddEmployment() {
-        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4447", ScopePathType.READ_LIMITED, ScopePathType.ACTIVITIES_UPDATE);
-        Response response = serviceDelegator.viewActivities("4444-4444-4444-4447");
-        assertNotNull(response);
-        ActivitiesSummary summary = (ActivitiesSummary) response.getEntity();
-        assertNotNull(summary);
-        assertNotNull(summary.getEmployments());
-        assertNotNull(summary.getEmployments().getSummaries());
-        assertNotNull(summary.getEmployments().getSummaries().get(0));
-        assertEquals(Long.valueOf(13), summary.getEmployments().getSummaries().get(0).getPutCode());
+        Employment created = employment(100L, Visibility.LIMITED, clientSource(CLIENT_1));
+        created.setDepartmentName("My department name");
+        when(affiliationsManager.createEmploymentAffiliation(eq(MY_ORCID), any(Employment.class), anyBoolean())).thenReturn(created);
 
-        response = serviceDelegator.createEmployment("4444-4444-4444-4447", Utils.getEmployment());
+        Response response = serviceDelegator.createEmployment(MY_ORCID, Utils.getEmployment());
+
         assertNotNull(response);
         assertEquals(Response.Status.CREATED.getStatusCode(), response.getStatus());
-        Long putCode = Utils.getPutCode(response);
-
-        response = serviceDelegator.viewActivities("4444-4444-4444-4447");
-        assertNotNull(response);
-        summary = (ActivitiesSummary) response.getEntity();
-        assertNotNull(summary);
-        Utils.verifyLastModified(summary.getLastModifiedDate());
-        assertNotNull(summary.getEmployments());
-        Utils.verifyLastModified(summary.getEmployments().getLastModifiedDate());
-        assertNotNull(summary.getEmployments().getSummaries());
-
-        boolean haveOld = false;
-        boolean haveNew = false;
-
-        for (EmploymentSummary eSummary : summary.getEmployments().getSummaries()) {
-            assertNotNull(eSummary.getPutCode());
-            Utils.verifyLastModified(eSummary.getLastModifiedDate());
-            if (eSummary.getPutCode() == 13L) {
-                assertEquals("Employment Dept # 1", eSummary.getDepartmentName());
-                haveOld = true;
-            } else {
-                assertEquals(putCode, eSummary.getPutCode());
-                assertEquals("My department name", eSummary.getDepartmentName());
-                haveNew = true;
-            }
-        }
-
-        assertTrue(haveOld);
-        assertTrue(haveNew);
+        assertEquals(Long.valueOf(100), Utils.getPutCode(response));
+        verify(orcidSecurityManager).checkClientAccessAndScopes(MY_ORCID, ScopePathType.AFFILIATIONS_CREATE, ScopePathType.AFFILIATIONS_UPDATE);
+        ArgumentCaptor<Employment> submitted = ArgumentCaptor.forClass(Employment.class);
+        verify(affiliationsManager).createEmploymentAffiliation(eq(MY_ORCID), submitted.capture(), eq(true));
+        assertNull("a client may not choose its own source", submitted.getValue().getSource());
+        assertEquals("My department name", submitted.getValue().getDepartmentName());
     }
 
     @Test
     public void testUpdateEmployment() {
-        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4446", ScopePathType.READ_LIMITED, ScopePathType.ACTIVITIES_UPDATE);
-        Response response = serviceDelegator.viewEmployment("4444-4444-4444-4446", 5L);
-        assertNotNull(response);
-        Employment employment = (Employment) response.getEntity();
-        assertNotNull(employment);
-        assertEquals("Employment Dept # 1", employment.getDepartmentName());
-        assertEquals("Researcher", employment.getRoleTitle());
-        Utils.verifyLastModified(employment.getLastModifiedDate());
-        LastModifiedDate before = employment.getLastModifiedDate();
-
+        Employment employment = employment(3L, Visibility.PUBLIC, clientSource(CLIENT_1));
         employment.setDepartmentName("Updated department name");
         employment.setRoleTitle("The updated role title");
+        Employment updated = employment(3L, Visibility.PUBLIC, clientSource(CLIENT_1));
+        updated.setDepartmentName("Updated department name");
+        updated.setRoleTitle("The updated role title");
+        when(affiliationsManager.updateEmploymentAffiliation(eq(OTHER_ORCID), any(Employment.class), anyBoolean())).thenReturn(updated);
 
-        response = serviceDelegator.updateEmployment("4444-4444-4444-4446", 5L, employment);
+        Response response = serviceDelegator.updateEmployment(OTHER_ORCID, 3L, employment);
+
         assertNotNull(response);
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
-
-        response = serviceDelegator.viewEmployment("4444-4444-4444-4446", 5L);
-        assertNotNull(response);
-        employment = (Employment) response.getEntity();
-        assertNotNull(employment);
-        Utils.verifyLastModified(employment.getLastModifiedDate());
-        assertTrue(employment.getLastModifiedDate().after(before));
-        assertEquals("Updated department name", employment.getDepartmentName());
-        assertEquals("The updated role title", employment.getRoleTitle());
-
-        // Rollback changes
-        employment.setDepartmentName("Employment Dept # 1");
-        employment.setRoleTitle("Researcher");
-
-        response = serviceDelegator.updateEmployment("4444-4444-4444-4446", 5L, employment);
-        assertNotNull(response);
-        assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
+        Employment returned = (Employment) response.getEntity();
+        assertEquals("Updated department name", returned.getDepartmentName());
+        assertEquals("The updated role title", returned.getRoleTitle());
+        verify(orcidSecurityManager).checkClientAccessAndScopes(OTHER_ORCID, ScopePathType.AFFILIATIONS_UPDATE);
+        ArgumentCaptor<Employment> submitted = ArgumentCaptor.forClass(Employment.class);
+        verify(affiliationsManager).updateEmploymentAffiliation(eq(OTHER_ORCID), submitted.capture(), eq(true));
+        assertNull(submitted.getValue().getSource());
     }
 
     @Test(expected = WrongSourceException.class)
     public void testUpdateEmploymentYouAreNotTheSourceOf() {
-        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4446", ScopePathType.READ_LIMITED, ScopePathType.ACTIVITIES_UPDATE);
-        Response response = serviceDelegator.viewEmployment("4444-4444-4444-4446", 11L);
-        assertNotNull(response);
-        Employment employment = (Employment) response.getEntity();
-        assertNotNull(employment);
-        employment.setDepartmentName("Updated department name");
-        employment.setRoleTitle("The updated role title");
-        serviceDelegator.updateEmployment("4444-4444-4444-4446", 11L, employment);
+        // AffiliationsManagerImpl calls orcidSecurityManager.checkSource on the
+        // stored entity; the rule belongs to that manager's tests.
+        Employment employment = employment(1L, Visibility.PUBLIC, clientSource(CLIENT_2));
+        doThrow(new WrongSourceException(Collections.singletonMap("activity", "employment"))).when(affiliationsManager)
+                .updateEmploymentAffiliation(eq(MY_ORCID), any(Employment.class), anyBoolean());
+
+        serviceDelegator.updateEmployment(MY_ORCID, 1L, employment);
         fail();
     }
 
     @Test(expected = VisibilityMismatchException.class)
     public void testUpdateEmploymentChangingVisibilityTest() {
-        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4446", ScopePathType.READ_LIMITED, ScopePathType.ACTIVITIES_UPDATE);
-        Response response = serviceDelegator.viewEmployment("4444-4444-4444-4446", 5L);
-        assertNotNull(response);
-        Employment employment = (Employment) response.getEntity();
-        assertNotNull(employment);
-        assertEquals(Visibility.PRIVATE, employment.getVisibility());
+        Employment employment = employment(3L, Visibility.PRIVATE, clientSource(CLIENT_1));
+        doThrow(new VisibilityMismatchException()).when(affiliationsManager).updateEmploymentAffiliation(eq(OTHER_ORCID), any(Employment.class), anyBoolean());
 
-        employment.setVisibility(Visibility.LIMITED);
-
-        response = serviceDelegator.updateEmployment("4444-4444-4444-4446", 5L, employment);
+        serviceDelegator.updateEmployment(OTHER_ORCID, 3L, employment);
         fail();
     }
 
     @Test
     public void testUpdateEmploymentLeavingVisibilityNullTest() {
-        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4446", ScopePathType.READ_LIMITED, ScopePathType.ACTIVITIES_UPDATE);
-        Response response = serviceDelegator.viewEmployment("4444-4444-4444-4446", 5L);
-        assertNotNull(response);
-        Employment employment = (Employment) response.getEntity();
-        assertNotNull(employment);
-        assertEquals(Visibility.PRIVATE, employment.getVisibility());
+        Employment employment = employment(3L, null, clientSource(CLIENT_1));
+        Employment updated = employment(3L, Visibility.PUBLIC, clientSource(CLIENT_1));
+        when(affiliationsManager.updateEmploymentAffiliation(eq(OTHER_ORCID), any(Employment.class), anyBoolean())).thenReturn(updated);
 
-        employment.setVisibility(null);
+        Response response = serviceDelegator.updateEmployment(OTHER_ORCID, 3L, employment);
 
-        response = serviceDelegator.updateEmployment("4444-4444-4444-4446", 5L, employment);
         assertNotNull(response);
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
-        employment = (Employment) response.getEntity();
-        assertNotNull(employment);
-        assertEquals(Visibility.PRIVATE, employment.getVisibility());
+        assertEquals(Visibility.PUBLIC, ((Employment) response.getEntity()).getVisibility());
+        ArgumentCaptor<Employment> submitted = ArgumentCaptor.forClass(Employment.class);
+        verify(affiliationsManager).updateEmploymentAffiliation(eq(OTHER_ORCID), submitted.capture(), eq(true));
+        assertNull("keeping the stored visibility is the manager's job, not the delegator's", submitted.getValue().getVisibility());
     }
 
     @Test(expected = NoResultException.class)
     public void testDeleteEmployment() {
-        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4444", ScopePathType.READ_LIMITED, ScopePathType.ACTIVITIES_UPDATE);
-        Response response = serviceDelegator.viewEmployment("4444-4444-4444-4444", 14L);
+        String orcid = "4444-4444-4444-4447";
+        when(affiliationsManagerReadOnly.getEmploymentAffiliation(orcid, 12L)).thenReturn(employment(12L, Visibility.PUBLIC, clientSource(CLIENT_1)))
+                .thenThrow(new NoResultException());
+
+        Response response = serviceDelegator.viewEmployment(orcid, 12L);
         assertNotNull(response);
         Employment employment = (Employment) response.getEntity();
         assertNotNull(employment);
 
-        response = serviceDelegator.deleteAffiliation("4444-4444-4444-4444", 14L);
+        response = serviceDelegator.deleteAffiliation(orcid, 12L);
         assertNotNull(response);
         assertEquals(Response.Status.NO_CONTENT.getStatusCode(), response.getStatus());
+        verify(orcidSecurityManager).checkClientAccessAndScopes(orcid, ScopePathType.AFFILIATIONS_UPDATE);
+        verify(affiliationsManager).checkSourceAndDelete(orcid, 12L);
 
-        serviceDelegator.viewEmployment("4444-4444-4444-4444", 14L);
+        serviceDelegator.viewEmployment(orcid, 12L);
     }
 
     @Test(expected = WrongSourceException.class)
     public void testDeleteEmploymentYouAreNotTheSourceOf() {
-        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4446", ScopePathType.READ_LIMITED, ScopePathType.ACTIVITIES_UPDATE);
-        serviceDelegator.deleteAffiliation("4444-4444-4444-4446", 11L);
+        doThrow(new WrongSourceException(Collections.singletonMap("activity", "employment"))).when(affiliationsManager)
+                .checkSourceAndDelete("4444-4444-4444-4446", 9L);
+
+        serviceDelegator.deleteAffiliation("4444-4444-4444-4446", 9L);
         fail();
+    }
+
+    // ------------------------------------------------------------- helpers
+
+    private void assertViewEmploymentDecorated(long putCode, Visibility visibility, Source source) {
+        Employment employment = employment(putCode, visibility, source);
+        when(affiliationsManagerReadOnly.getEmploymentAffiliation(ORCID, putCode)).thenReturn(employment);
+
+        Response response = serviceDelegator.viewEmployment(ORCID, putCode);
+
+        assertNotNull(response);
+        Employment returned = (Employment) response.getEntity();
+        assertNotNull(returned);
+        assertEquals("/0000-0000-0000-0003/employment/" + putCode, returned.getPath());
+        Utils.verifyLastModified(returned.getLastModifiedDate());
+        assertEquals(visibility, returned.getVisibility());
+        verify(orcidSecurityManager).checkAndFilter(ORCID, employment, ScopePathType.AFFILIATIONS_READ_LIMITED);
+    }
+
+    @SuppressWarnings("unchecked")
+    private ArgumentCaptor<List<EmploymentSummary>> summaryListCaptor() {
+        return ArgumentCaptor.forClass(List.class);
+    }
+
+    private Employment employment(Long putCode, Visibility visibility, Source source) {
+        Employment employment = new Employment();
+        employment.setPutCode(putCode);
+        employment.setDepartmentName("A Department");
+        employment.setRoleTitle("Employee");
+        employment.setOrganization(organization());
+        employment.setVisibility(visibility);
+        employment.setSource(source);
+        employment.setCreatedDate(createdDate());
+        employment.setLastModifiedDate(lastModified());
+        return employment;
+    }
+
+    private EmploymentSummary employmentSummary(Long putCode, Visibility visibility) {
+        EmploymentSummary summary = new EmploymentSummary();
+        summary.setPutCode(putCode);
+        summary.setDepartmentName("A Department");
+        summary.setRoleTitle("Employee");
+        summary.setOrganization(organization());
+        summary.setVisibility(visibility);
+        summary.setSource(clientSource(CLIENT_1));
+        summary.setCreatedDate(createdDate());
+        summary.setLastModifiedDate(lastModified());
+        return summary;
     }
 }

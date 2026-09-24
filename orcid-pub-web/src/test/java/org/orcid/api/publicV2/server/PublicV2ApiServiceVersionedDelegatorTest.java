@@ -2,113 +2,143 @@ package org.orcid.api.publicV2.server;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
+import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import jakarta.annotation.Resource;
 import jakarta.persistence.NoResultException;
 import jakarta.ws.rs.core.Response;
 
-import org.apache.commons.lang.time.DateUtils;
 import org.apache.hc.core5.http.ParseException;
-import org.junit.AfterClass;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Matchers;
+import org.mockito.ArgumentMatchers;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
 import org.orcid.api.publicV2.server.delegator.PublicV2ApiServiceDelegator;
+import org.orcid.api.publicV2.server.delegator.impl.PublicV2ApiServiceVersionedDelegatorImpl;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.orcid.core.exception.DeactivatedException;
 import org.orcid.core.exception.LockedException;
 import org.orcid.core.exception.OrcidDeprecatedException;
 import org.orcid.core.exception.OrcidNoBioException;
 import org.orcid.core.exception.OrcidNoResultException;
 import org.orcid.core.exception.OrcidNotClaimedException;
-import org.orcid.core.utils.SecurityContextTestUtils;
+import org.orcid.core.manager.OrcidSecurityManager;
+import org.orcid.core.version.V2Convertible;
 import org.orcid.core.version.V2VersionConverterChain;
 import org.orcid.jaxb.model.client_v2.ClientSummary;
 import org.orcid.jaxb.model.common_v2.OrcidIdentifier;
 import org.orcid.jaxb.model.error_v2.OrcidError;
-import org.orcid.jaxb.model.message.ScopePathType;
+import org.orcid.jaxb.model.record.bulk.BulkElement;
 import org.orcid.jaxb.model.record_v2.Work;
 import org.orcid.jaxb.model.record_v2.WorkBulk;
 import org.orcid.jaxb.model.search_v2.Result;
 import org.orcid.jaxb.model.search_v2.Search;
-import org.orcid.persistence.dao.ProfileDao;
-import org.orcid.persistence.jpa.entities.ProfileEntity;
-import org.orcid.test.DBUnitTest;
-import org.orcid.test.OrcidJUnit4ClassRunner;
-import org.orcid.test.TargetProxyHelper;
-import org.springframework.security.authentication.AnonymousAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.transaction.PlatformTransactionManager;
-import org.springframework.transaction.support.TransactionTemplate;
 
-@RunWith(OrcidJUnit4ClassRunner.class)
-@ContextConfiguration(locations = { "classpath:test-orcid-t1-web-context.xml" })
-public class PublicV2ApiServiceVersionedDelegatorTest extends DBUnitTest {
-    private static final List<String> DATA_FILES = Arrays.asList("/data/EmptyEntityData.xml",
-            "/data/SourceClientDetailsEntityData.xml", "/data/ProfileEntityData.xml", "/data/WorksEntityData.xml", "/data/ClientDetailsEntityData.xml",
-            "/data/Oauth2TokenDetailsData.xml", "/data/OrgsEntityData.xml", "/data/ProfileFundingEntityData.xml", "/data/OrgAffiliationEntityData.xml",
-            "/data/BiographyEntityData.xml", "/data/RecordNameEntityData.xml");
-    
-    @Resource(name = "publicV2ApiServiceDelegatorV2")
-    PublicV2ApiServiceDelegator<?, ?, ?, ?, ?, ?, ?, ?, ?> serviceDelegator;
+/**
+ * The versioned delegator owns exactly two behaviours: it calls
+ * {@code orcidSecurityManager.checkProfile} before forwarding a record scoped
+ * request to the wrapped delegator, and it routes the wrapped response through
+ * one of the two version converter chains depending on the external version it
+ * was configured with. Everything else - what an endpoint reads, and what is
+ * public - belongs to the wrapped delegator and to
+ * {@code PublicAPISecurityManagerV2}, both of which are mocks here.
+ *
+ * The profile state that used to come from ProfileEntityData.xml (non existing,
+ * locked, deprecated, unclaimed, deactivated) is now a {@code doThrow} on the
+ * security manager. The rule that decides which of those five a real record
+ * hits lives in {@code OrcidSecurityManagerImpl.checkProfile} and is proved by
+ * org.orcid.core.manager.OrcidSecurityManagerTest, which is already mock based.
+ * What is proved here, and was never proved by the database version, is that
+ * the guard runs BEFORE the delegation: every guard test below asserts the
+ * wrapped delegator was not touched at all.
+ */
+@RunWith(MockitoJUnitRunner.Silent.class)
+public class PublicV2ApiServiceVersionedDelegatorTest {
 
-    @Resource(name = "publicV2ApiServiceDelegator")
-    PublicV2ApiServiceDelegator<?, ?, ?, ?, ?, ?, ?, ?, ?> serviceDelegatorNonVersioned;
+    /**
+     * Declared as the implementation rather than the interface because
+     * {@code @InjectMocks} needs a concrete type.
+     */
+    @InjectMocks
+    private PublicV2ApiServiceVersionedDelegatorImpl serviceDelegator = new PublicV2ApiServiceVersionedDelegatorImpl();
+
+    /**
+     * The wrapped, non versioned delegator. The nine Object type arguments
+     * match the field on the class under test exactly; without them
+     * {@code @InjectMocks} has nothing to bind.
+     */
+    @Mock
+    private PublicV2ApiServiceDelegator<Object, Object, Object, Object, Object, Object, Object, Object, Object> publicV2ApiServiceDelegator;
+
+    /*
+     * Two mocks of the same type. @InjectMocks disambiguates them by field
+     * name, so these two names have to stay exactly as they are on
+     * PublicV2ApiServiceVersionedDelegatorImpl.
+     */
+    @Mock
+    private V2VersionConverterChain v2VersionConverterChain;
 
     @Mock
-    PublicV2ApiServiceDelegator<?, ?, ?, ?, ?, ?, ?, ?, ?> mockServiceDelegatorNonVersioned;
-    
-    @Resource
-    private ProfileDao profileDao;
+    private V2VersionConverterChain v2_1VersionConverterChain;
 
-    @Resource
-    private PlatformTransactionManager transactionManager;
+    @Mock
+    private OrcidSecurityManager orcidSecurityManager;
 
-    @Resource    
-    private V2VersionConverterChain v2VersionConverterChain;
-    
-    private String nonExistingUser = "0000-0000-0000-000X";
-    private String unclaimedUserOrcid = "0000-0000-0000-0001";
-    private String deprecatedUserOrcid = "0000-0000-0000-0004";
-    private String lockedUserOrcid = "0000-0000-0000-0006";
-    private String userWithNoBio = "1000-0000-0000-0001";
-    private String deactivatedUserOrcid = "0000-0000-0000-0007";
-
-    @BeforeClass
-    public static void initDBUnitData() throws Exception {
-        initDBUnitData(DATA_FILES);
-    }
+    private final String nonExistingUser = "0000-0000-0000-000X";
+    private final String unclaimedUserOrcid = "0000-0000-0000-0001";
+    private final String deprecatedUserOrcid = "0000-0000-0000-0004";
+    private final String lockedUserOrcid = "0000-0000-0000-0006";
+    private final String userWithNoBio = "1000-0000-0000-0001";
+    private final String deactivatedUserOrcid = "0000-0000-0000-0007";
 
     @Before
     public void before() {
-        ArrayList<GrantedAuthority> roles = new ArrayList<GrantedAuthority>();
-        roles.add(new SimpleGrantedAuthority("ROLE_ANONYMOUS"));
-        Authentication auth = new AnonymousAuthenticationToken("anonymous", "anonymous", roles);
-        SecurityContextHolder.getContext().setAuthentication(auth);
+        // externalVersion is a plain String wired from XML in production, not a
+        // bean, so @InjectMocks leaves it null and processReponse() would NPE.
+        serviceDelegator.setExternalVersion("2.0");
     }
 
-    @AfterClass
-    public static void removeDBUnitData() throws Exception {
-        Collections.reverse(DATA_FILES);
-        removeDBUnitData(DATA_FILES);
+    /**
+     * Asserts the profile guard both refuses the call and refuses it early.
+     * Checking only that the exception escaped would pass equally well if the
+     * delegation had already happened, so the wrapped delegator is checked to
+     * be untouched.
+     */
+    private void assertGuardStopsCall(String orcid, RuntimeException refusal, Runnable call) {
+        doThrow(refusal).when(orcidSecurityManager).checkProfile(orcid);
+        try {
+            call.run();
+            fail("expected " + refusal.getClass().getSimpleName());
+        } catch (RuntimeException actual) {
+            assertSame(refusal, actual);
+        }
+        verify(orcidSecurityManager).checkProfile(orcid);
+        verifyNoInteractions(publicV2ApiServiceDelegator);
+    }
+
+    /**
+     * Makes the converter chain a pass through, so a test can assert on the
+     * entity the wrapped delegator produced. A bare mock returns null here and
+     * processReponse() would NPE on getObjectToConvert().
+     */
+    private void passThroughDowngrade() {
+        when(v2VersionConverterChain.downgrade(any(V2Convertible.class), eq("2.0"))).thenAnswer(invocation -> invocation.getArgument(0));
     }
 
     /**
@@ -117,848 +147,767 @@ public class PublicV2ApiServiceVersionedDelegatorTest extends DBUnitTest {
 
     /**
      * 404 for invalid orcids
-     * */
-    @Test(expected = NoResultException.class)
+     */
+    @Test
     public void test00ViewRecord() {
-        serviceDelegator.viewRecord(nonExistingUser);
-        fail();
+        assertGuardStopsCall(nonExistingUser, new NoResultException(), () -> serviceDelegator.viewRecord(nonExistingUser));
     }
 
-    @Test(expected = NoResultException.class)
+    @Test
     public void test00ViewActivities() {
-        serviceDelegator.viewActivities(nonExistingUser);
-        fail();
+        assertGuardStopsCall(nonExistingUser, new NoResultException(), () -> serviceDelegator.viewActivities(nonExistingUser));
     }
 
-    @Test(expected = NoResultException.class)
+    @Test
     public void test00ViewWork() {
-        serviceDelegator.viewWork(nonExistingUser, 0L);
-        fail();
+        assertGuardStopsCall(nonExistingUser, new NoResultException(), () -> serviceDelegator.viewWork(nonExistingUser, 0L));
     }
 
-    @Test(expected = NoResultException.class)
+    @Test
     public void test00ViewWorkSummary() {
-        serviceDelegator.viewWorkSummary(nonExistingUser, 0L);
-        fail();
+        assertGuardStopsCall(nonExistingUser, new NoResultException(), () -> serviceDelegator.viewWorkSummary(nonExistingUser, 0L));
     }
 
-    @Test(expected = NoResultException.class)
+    @Test
     public void test00ViewFunding() {
-        serviceDelegator.viewFunding(nonExistingUser, 0L);
-        fail();
+        assertGuardStopsCall(nonExistingUser, new NoResultException(), () -> serviceDelegator.viewFunding(nonExistingUser, 0L));
     }
 
-    @Test(expected = NoResultException.class)
+    @Test
     public void test00ViewFundingSummary() {
-        serviceDelegator.viewFundingSummary(nonExistingUser, 0L);
-        fail();
+        assertGuardStopsCall(nonExistingUser, new NoResultException(), () -> serviceDelegator.viewFundingSummary(nonExistingUser, 0L));
     }
 
-    @Test(expected = NoResultException.class)
+    @Test
     public void test00ViewEducation() {
-        serviceDelegator.viewEducation(nonExistingUser, 0L);
-        fail();
+        assertGuardStopsCall(nonExistingUser, new NoResultException(), () -> serviceDelegator.viewEducation(nonExistingUser, 0L));
     }
 
-    @Test(expected = NoResultException.class)
+    @Test
     public void test00ViewEducationSummary() {
-        serviceDelegator.viewEducationSummary(nonExistingUser, 0L);
-        fail();
+        assertGuardStopsCall(nonExistingUser, new NoResultException(), () -> serviceDelegator.viewEducationSummary(nonExistingUser, 0L));
     }
 
-    @Test(expected = NoResultException.class)
+    @Test
     public void test00ViewEmployment() {
-        serviceDelegator.viewEmployment(nonExistingUser, 0L);
-        fail();
+        assertGuardStopsCall(nonExistingUser, new NoResultException(), () -> serviceDelegator.viewEmployment(nonExistingUser, 0L));
     }
 
-    @Test(expected = NoResultException.class)
+    @Test
     public void test00ViewEmploymentSummary() {
-        serviceDelegator.viewEmploymentSummary(nonExistingUser, 0L);
-        fail();
+        assertGuardStopsCall(nonExistingUser, new NoResultException(), () -> serviceDelegator.viewEmploymentSummary(nonExistingUser, 0L));
     }
 
-    @Test(expected = NoResultException.class)
+    @Test
     public void test00ViewPeerReview() {
-        serviceDelegator.viewPeerReview(nonExistingUser, 0L);
-        fail();
+        assertGuardStopsCall(nonExistingUser, new NoResultException(), () -> serviceDelegator.viewPeerReview(nonExistingUser, 0L));
     }
 
-    @Test(expected = NoResultException.class)
+    @Test
     public void test00ViewPeerReviewSummary() {
-        serviceDelegator.viewPeerReviewSummary(nonExistingUser, 0L);
-        fail();
+        assertGuardStopsCall(nonExistingUser, new NoResultException(), () -> serviceDelegator.viewPeerReviewSummary(nonExistingUser, 0L));
     }
 
-    @Test(expected = NoResultException.class)
+    @Test
     public void test00ViewResearcherUrls() {
-        serviceDelegator.viewResearcherUrls(nonExistingUser);
-        fail();
+        assertGuardStopsCall(nonExistingUser, new NoResultException(), () -> serviceDelegator.viewResearcherUrls(nonExistingUser));
     }
 
-    @Test(expected = NoResultException.class)
+    @Test
     public void test00ViewResearcherUrl() {
-        serviceDelegator.viewResearcherUrl(nonExistingUser, 0L);
-        fail();
+        assertGuardStopsCall(nonExistingUser, new NoResultException(), () -> serviceDelegator.viewResearcherUrl(nonExistingUser, 0L));
     }
 
-    @Test(expected = NoResultException.class)
+    @Test
     public void test00ViewEmails() {
-        serviceDelegator.viewEmails(nonExistingUser);
-        fail();
+        assertGuardStopsCall(nonExistingUser, new NoResultException(), () -> serviceDelegator.viewEmails(nonExistingUser));
     }
 
-    @Test(expected = NoResultException.class)
+    @Test
     public void test00ViewOtherNames() {
-        serviceDelegator.viewOtherNames(nonExistingUser);
-        fail();
+        assertGuardStopsCall(nonExistingUser, new NoResultException(), () -> serviceDelegator.viewOtherNames(nonExistingUser));
     }
 
-    @Test(expected = NoResultException.class)
+    @Test
     public void test00ViewOtherName() {
-        serviceDelegator.viewOtherName(nonExistingUser, 0L);
-        fail();
+        assertGuardStopsCall(nonExistingUser, new NoResultException(), () -> serviceDelegator.viewOtherName(nonExistingUser, 0L));
     }
 
-    @Test(expected = NoResultException.class)
+    @Test
     public void test00ViewPersonalDetails() {
-        serviceDelegator.viewPersonalDetails(nonExistingUser);
-        fail();
+        assertGuardStopsCall(nonExistingUser, new NoResultException(), () -> serviceDelegator.viewPersonalDetails(nonExistingUser));
     }
 
-    @Test(expected = NoResultException.class)
+    @Test
     public void test00ViewExternalIdentifiers() {
-        serviceDelegator.viewExternalIdentifiers(nonExistingUser);
-        fail();
+        assertGuardStopsCall(nonExistingUser, new NoResultException(), () -> serviceDelegator.viewExternalIdentifiers(nonExistingUser));
     }
 
-    @Test(expected = NoResultException.class)
+    @Test
     public void test00ViewExternalIdentifier() {
-        serviceDelegator.viewExternalIdentifier(nonExistingUser, 0L);
-        fail();
+        assertGuardStopsCall(nonExistingUser, new NoResultException(), () -> serviceDelegator.viewExternalIdentifier(nonExistingUser, 0L));
     }
 
-    @Test(expected = NoResultException.class)
+    @Test
     public void test00ViewBiography() {
-        serviceDelegator.viewBiography(nonExistingUser);
-        fail();
+        assertGuardStopsCall(nonExistingUser, new NoResultException(), () -> serviceDelegator.viewBiography(nonExistingUser));
     }
 
-    @Test(expected = NoResultException.class)
+    @Test
     public void test00ViewKeywords() {
-        serviceDelegator.viewKeywords(nonExistingUser);
-        fail();
+        assertGuardStopsCall(nonExistingUser, new NoResultException(), () -> serviceDelegator.viewKeywords(nonExistingUser));
     }
 
-    @Test(expected = NoResultException.class)
+    @Test
     public void test00ViewKeyword() {
-        serviceDelegator.viewKeyword(nonExistingUser, 0L);
-        fail();
+        assertGuardStopsCall(nonExistingUser, new NoResultException(), () -> serviceDelegator.viewKeyword(nonExistingUser, 0L));
     }
 
-    @Test(expected = NoResultException.class)
+    @Test
     public void test00ViewAddresses() {
-        serviceDelegator.viewAddresses(nonExistingUser);
-        fail();
+        assertGuardStopsCall(nonExistingUser, new NoResultException(), () -> serviceDelegator.viewAddresses(nonExistingUser));
     }
 
-    @Test(expected = NoResultException.class)
+    @Test
     public void test00ViewAddress() {
-        serviceDelegator.viewAddress(nonExistingUser, 0L);
-        fail();
+        assertGuardStopsCall(nonExistingUser, new NoResultException(), () -> serviceDelegator.viewAddress(nonExistingUser, 0L));
     }
 
-    @Test(expected = NoResultException.class)
+    @Test
     public void test00ViewPerson() {
-        serviceDelegator.viewPerson(nonExistingUser);
-        fail();
+        assertGuardStopsCall(nonExistingUser, new NoResultException(), () -> serviceDelegator.viewPerson(nonExistingUser));
     }
 
     /**
-     * Locked account throws an exception
+     * Locked accounts
      */
-    @Test(expected = LockedException.class)
+    @Test
     public void test01ViewRecord() {
-        serviceDelegator.viewRecord(lockedUserOrcid);
-        fail();
+        assertGuardStopsCall(lockedUserOrcid, new LockedException(), () -> serviceDelegator.viewRecord(lockedUserOrcid));
     }
 
-    @Test(expected = LockedException.class)
+    @Test
     public void test01ViewActivities() {
-        serviceDelegator.viewActivities(lockedUserOrcid);
-        fail();
+        assertGuardStopsCall(lockedUserOrcid, new LockedException(), () -> serviceDelegator.viewActivities(lockedUserOrcid));
     }
 
-    @Test(expected = LockedException.class)
+    @Test
     public void test01ViewWork() {
-        serviceDelegator.viewWork(lockedUserOrcid, 0L);
-        fail();
+        assertGuardStopsCall(lockedUserOrcid, new LockedException(), () -> serviceDelegator.viewWork(lockedUserOrcid, 0L));
     }
 
-    @Test(expected = LockedException.class)
+    @Test
     public void test01ViewWorkSummary() {
-        serviceDelegator.viewWorkSummary(lockedUserOrcid, 0L);
-        fail();
+        assertGuardStopsCall(lockedUserOrcid, new LockedException(), () -> serviceDelegator.viewWorkSummary(lockedUserOrcid, 0L));
     }
 
-    @Test(expected = LockedException.class)
+    @Test
     public void test01ViewFunding() {
-        serviceDelegator.viewFunding(lockedUserOrcid, 0L);
-        fail();
+        assertGuardStopsCall(lockedUserOrcid, new LockedException(), () -> serviceDelegator.viewFunding(lockedUserOrcid, 0L));
     }
 
-    @Test(expected = LockedException.class)
+    @Test
     public void test01ViewFundingSummary() {
-        serviceDelegator.viewFundingSummary(lockedUserOrcid, 0L);
-        fail();
+        assertGuardStopsCall(lockedUserOrcid, new LockedException(), () -> serviceDelegator.viewFundingSummary(lockedUserOrcid, 0L));
     }
 
-    @Test(expected = LockedException.class)
+    @Test
     public void test01ViewEducation() {
-        serviceDelegator.viewEducation(lockedUserOrcid, 0L);
-        fail();
+        assertGuardStopsCall(lockedUserOrcid, new LockedException(), () -> serviceDelegator.viewEducation(lockedUserOrcid, 0L));
     }
 
-    @Test(expected = LockedException.class)
+    @Test
     public void test01ViewEducationSummary() {
-        serviceDelegator.viewEducationSummary(lockedUserOrcid, 0L);
-        fail();
+        assertGuardStopsCall(lockedUserOrcid, new LockedException(), () -> serviceDelegator.viewEducationSummary(lockedUserOrcid, 0L));
     }
 
-    @Test(expected = LockedException.class)
+    @Test
     public void test01ViewEmployment() {
-        serviceDelegator.viewEmployment(lockedUserOrcid, 0L);
-        fail();
+        assertGuardStopsCall(lockedUserOrcid, new LockedException(), () -> serviceDelegator.viewEmployment(lockedUserOrcid, 0L));
     }
 
-    @Test(expected = LockedException.class)
+    @Test
     public void test01ViewEmploymentSummary() {
-        serviceDelegator.viewEmploymentSummary(lockedUserOrcid, 0L);
-        fail();
+        assertGuardStopsCall(lockedUserOrcid, new LockedException(), () -> serviceDelegator.viewEmploymentSummary(lockedUserOrcid, 0L));
     }
 
-    @Test(expected = LockedException.class)
+    @Test
     public void test01ViewPeerReview() {
-        serviceDelegator.viewPeerReview(lockedUserOrcid, 0L);
-        fail();
+        assertGuardStopsCall(lockedUserOrcid, new LockedException(), () -> serviceDelegator.viewPeerReview(lockedUserOrcid, 0L));
     }
 
-    @Test(expected = LockedException.class)
+    @Test
     public void test01ViewPeerReviewSummary() {
-        serviceDelegator.viewPeerReviewSummary(lockedUserOrcid, 0L);
-        fail();
+        assertGuardStopsCall(lockedUserOrcid, new LockedException(), () -> serviceDelegator.viewPeerReviewSummary(lockedUserOrcid, 0L));
     }
 
-    @Test(expected = LockedException.class)
+    @Test
     public void test01ViewResearcherUrls() {
-        serviceDelegator.viewResearcherUrls(lockedUserOrcid);
-        fail();
+        assertGuardStopsCall(lockedUserOrcid, new LockedException(), () -> serviceDelegator.viewResearcherUrls(lockedUserOrcid));
     }
 
-    @Test(expected = LockedException.class)
+    @Test
     public void test01ViewResearcherUrl() {
-        serviceDelegator.viewResearcherUrl(lockedUserOrcid, 0L);
-        fail();
+        assertGuardStopsCall(lockedUserOrcid, new LockedException(), () -> serviceDelegator.viewResearcherUrl(lockedUserOrcid, 0L));
     }
 
-    @Test(expected = LockedException.class)
+    @Test
     public void test01ViewEmails() {
-        serviceDelegator.viewEmails(lockedUserOrcid);
-        fail();
+        assertGuardStopsCall(lockedUserOrcid, new LockedException(), () -> serviceDelegator.viewEmails(lockedUserOrcid));
     }
 
-    @Test(expected = LockedException.class)
+    @Test
     public void test01ViewOtherNames() {
-        serviceDelegator.viewOtherNames(lockedUserOrcid);
-        fail();
+        assertGuardStopsCall(lockedUserOrcid, new LockedException(), () -> serviceDelegator.viewOtherNames(lockedUserOrcid));
     }
 
-    @Test(expected = LockedException.class)
+    @Test
     public void test01ViewOtherName() {
-        serviceDelegator.viewOtherName(lockedUserOrcid, 0L);
-        fail();
+        assertGuardStopsCall(lockedUserOrcid, new LockedException(), () -> serviceDelegator.viewOtherName(lockedUserOrcid, 0L));
     }
 
-    @Test(expected = LockedException.class)
+    @Test
     public void test01ViewPersonalDetails() {
-        serviceDelegator.viewPersonalDetails(lockedUserOrcid);
-        fail();
+        assertGuardStopsCall(lockedUserOrcid, new LockedException(), () -> serviceDelegator.viewPersonalDetails(lockedUserOrcid));
     }
 
-    @Test(expected = LockedException.class)
+    @Test
     public void test01ViewExternalIdentifiers() {
-        serviceDelegator.viewExternalIdentifiers(lockedUserOrcid);
-        fail();
+        assertGuardStopsCall(lockedUserOrcid, new LockedException(), () -> serviceDelegator.viewExternalIdentifiers(lockedUserOrcid));
     }
 
-    @Test(expected = LockedException.class)
+    @Test
     public void test01ViewExternalIdentifier() {
-        serviceDelegator.viewExternalIdentifier(lockedUserOrcid, 0L);
-        fail();
+        assertGuardStopsCall(lockedUserOrcid, new LockedException(), () -> serviceDelegator.viewExternalIdentifier(lockedUserOrcid, 0L));
     }
 
-    @Test(expected = LockedException.class)
+    @Test
     public void test01ViewBiography() {
-        serviceDelegator.viewBiography(lockedUserOrcid);
-        fail();
+        assertGuardStopsCall(lockedUserOrcid, new LockedException(), () -> serviceDelegator.viewBiography(lockedUserOrcid));
     }
 
-    @Test(expected = LockedException.class)
+    @Test
     public void test01ViewKeywords() {
-        serviceDelegator.viewKeywords(lockedUserOrcid);
-        fail();
+        assertGuardStopsCall(lockedUserOrcid, new LockedException(), () -> serviceDelegator.viewKeywords(lockedUserOrcid));
     }
 
-    @Test(expected = LockedException.class)
+    @Test
     public void test01ViewKeyword() {
-        serviceDelegator.viewKeyword(lockedUserOrcid, 0L);
-        fail();
+        assertGuardStopsCall(lockedUserOrcid, new LockedException(), () -> serviceDelegator.viewKeyword(lockedUserOrcid, 0L));
     }
 
-    @Test(expected = LockedException.class)
+    @Test
     public void test01ViewAddresses() {
-        serviceDelegator.viewAddresses(lockedUserOrcid);
-        fail();
+        assertGuardStopsCall(lockedUserOrcid, new LockedException(), () -> serviceDelegator.viewAddresses(lockedUserOrcid));
     }
 
-    @Test(expected = LockedException.class)
+    @Test
     public void test01ViewAddress() {
-        serviceDelegator.viewAddress(lockedUserOrcid, 0L);
-        fail();
+        assertGuardStopsCall(lockedUserOrcid, new LockedException(), () -> serviceDelegator.viewAddress(lockedUserOrcid, 0L));
     }
 
-    @Test(expected = LockedException.class)
+    @Test
     public void test01ViewPerson() {
-        serviceDelegator.viewPerson(lockedUserOrcid);
-        fail();
+        assertGuardStopsCall(lockedUserOrcid, new LockedException(), () -> serviceDelegator.viewPerson(lockedUserOrcid));
     }
 
     /**
-     * Deprecated account throws an exception
+     * Deprecated accounts
      */
-    @Test(expected = OrcidDeprecatedException.class)
+    @Test
     public void test02ViewRecord() {
-        serviceDelegator.viewRecord(deprecatedUserOrcid);
-        fail();
+        assertGuardStopsCall(deprecatedUserOrcid, new OrcidDeprecatedException(), () -> serviceDelegator.viewRecord(deprecatedUserOrcid));
     }
 
-    @Test(expected = OrcidDeprecatedException.class)
+    @Test
     public void test0102ViewActivities() {
-        serviceDelegator.viewActivities(deprecatedUserOrcid);
-        fail();
+        assertGuardStopsCall(deprecatedUserOrcid, new OrcidDeprecatedException(), () -> serviceDelegator.viewActivities(deprecatedUserOrcid));
     }
 
-    @Test(expected = OrcidDeprecatedException.class)
+    @Test
     public void test02ViewWork() {
-        serviceDelegator.viewWork(deprecatedUserOrcid, 0L);
-        fail();
+        assertGuardStopsCall(deprecatedUserOrcid, new OrcidDeprecatedException(), () -> serviceDelegator.viewWork(deprecatedUserOrcid, 0L));
     }
 
-    @Test(expected = OrcidDeprecatedException.class)
+    @Test
     public void test02ViewWorkSummary() {
-        serviceDelegator.viewWorkSummary(deprecatedUserOrcid, 0L);
-        fail();
+        assertGuardStopsCall(deprecatedUserOrcid, new OrcidDeprecatedException(), () -> serviceDelegator.viewWorkSummary(deprecatedUserOrcid, 0L));
     }
 
-    @Test(expected = OrcidDeprecatedException.class)
+    @Test
     public void test02ViewFunding() {
-        serviceDelegator.viewFunding(deprecatedUserOrcid, 0L);
-        fail();
+        assertGuardStopsCall(deprecatedUserOrcid, new OrcidDeprecatedException(), () -> serviceDelegator.viewFunding(deprecatedUserOrcid, 0L));
     }
 
-    @Test(expected = OrcidDeprecatedException.class)
+    @Test
     public void test02ViewFundingSummary() {
-        serviceDelegator.viewFundingSummary(deprecatedUserOrcid, 0L);
-        fail();
+        assertGuardStopsCall(deprecatedUserOrcid, new OrcidDeprecatedException(), () -> serviceDelegator.viewFundingSummary(deprecatedUserOrcid, 0L));
     }
 
-    @Test(expected = OrcidDeprecatedException.class)
+    @Test
     public void test02ViewEducation() {
-        serviceDelegator.viewEducation(deprecatedUserOrcid, 0L);
-        fail();
+        assertGuardStopsCall(deprecatedUserOrcid, new OrcidDeprecatedException(), () -> serviceDelegator.viewEducation(deprecatedUserOrcid, 0L));
     }
 
-    @Test(expected = OrcidDeprecatedException.class)
+    @Test
     public void test02ViewEducationSummary() {
-        serviceDelegator.viewEducationSummary(deprecatedUserOrcid, 0L);
-        fail();
+        assertGuardStopsCall(deprecatedUserOrcid, new OrcidDeprecatedException(), () -> serviceDelegator.viewEducationSummary(deprecatedUserOrcid, 0L));
     }
 
-    @Test(expected = OrcidDeprecatedException.class)
+    @Test
     public void test02ViewEmployment() {
-        serviceDelegator.viewEmployment(deprecatedUserOrcid, 0L);
-        fail();
+        assertGuardStopsCall(deprecatedUserOrcid, new OrcidDeprecatedException(), () -> serviceDelegator.viewEmployment(deprecatedUserOrcid, 0L));
     }
 
-    @Test(expected = OrcidDeprecatedException.class)
+    @Test
     public void test02ViewEmploymentSummary() {
-        serviceDelegator.viewEmploymentSummary(deprecatedUserOrcid, 0L);
-        fail();
+        assertGuardStopsCall(deprecatedUserOrcid, new OrcidDeprecatedException(), () -> serviceDelegator.viewEmploymentSummary(deprecatedUserOrcid, 0L));
     }
 
-    @Test(expected = OrcidDeprecatedException.class)
+    @Test
     public void test02ViewPeerReview() {
-        serviceDelegator.viewPeerReview(deprecatedUserOrcid, 0L);
-        fail();
+        assertGuardStopsCall(deprecatedUserOrcid, new OrcidDeprecatedException(), () -> serviceDelegator.viewPeerReview(deprecatedUserOrcid, 0L));
     }
 
-    @Test(expected = OrcidDeprecatedException.class)
+    @Test
     public void test02ViewPeerReviewSummary() {
-        serviceDelegator.viewPeerReviewSummary(deprecatedUserOrcid, 0L);
-        fail();
+        assertGuardStopsCall(deprecatedUserOrcid, new OrcidDeprecatedException(), () -> serviceDelegator.viewPeerReviewSummary(deprecatedUserOrcid, 0L));
     }
 
-    @Test(expected = OrcidDeprecatedException.class)
+    @Test
     public void test02ViewResearcherUrls() {
-        serviceDelegator.viewResearcherUrls(deprecatedUserOrcid);
-        fail();
+        assertGuardStopsCall(deprecatedUserOrcid, new OrcidDeprecatedException(), () -> serviceDelegator.viewResearcherUrls(deprecatedUserOrcid));
     }
 
-    @Test(expected = OrcidDeprecatedException.class)
+    @Test
     public void test02ViewResearcherUrl() {
-        serviceDelegator.viewResearcherUrl(deprecatedUserOrcid, 0L);
-        fail();
+        assertGuardStopsCall(deprecatedUserOrcid, new OrcidDeprecatedException(), () -> serviceDelegator.viewResearcherUrl(deprecatedUserOrcid, 0L));
     }
 
-    @Test(expected = OrcidDeprecatedException.class)
+    @Test
     public void test02ViewEmails() {
-        serviceDelegator.viewEmails(deprecatedUserOrcid);
-        fail();
+        assertGuardStopsCall(deprecatedUserOrcid, new OrcidDeprecatedException(), () -> serviceDelegator.viewEmails(deprecatedUserOrcid));
     }
 
-    @Test(expected = OrcidDeprecatedException.class)
+    @Test
     public void test02ViewOtherNames() {
-        serviceDelegator.viewOtherNames(deprecatedUserOrcid);
-        fail();
+        assertGuardStopsCall(deprecatedUserOrcid, new OrcidDeprecatedException(), () -> serviceDelegator.viewOtherNames(deprecatedUserOrcid));
     }
 
-    @Test(expected = OrcidDeprecatedException.class)
+    @Test
     public void test02ViewOtherName() {
-        serviceDelegator.viewOtherName(deprecatedUserOrcid, 0L);
-        fail();
+        assertGuardStopsCall(deprecatedUserOrcid, new OrcidDeprecatedException(), () -> serviceDelegator.viewOtherName(deprecatedUserOrcid, 0L));
     }
 
-    @Test(expected = OrcidDeprecatedException.class)
+    @Test
     public void test02ViewPersonalDetails() {
-        serviceDelegator.viewPersonalDetails(deprecatedUserOrcid);
-        fail();
+        assertGuardStopsCall(deprecatedUserOrcid, new OrcidDeprecatedException(), () -> serviceDelegator.viewPersonalDetails(deprecatedUserOrcid));
     }
 
-    @Test(expected = OrcidDeprecatedException.class)
+    @Test
     public void test02ViewExternalIdentifiers() {
-        serviceDelegator.viewExternalIdentifiers(deprecatedUserOrcid);
-        fail();
+        assertGuardStopsCall(deprecatedUserOrcid, new OrcidDeprecatedException(), () -> serviceDelegator.viewExternalIdentifiers(deprecatedUserOrcid));
     }
 
-    @Test(expected = OrcidDeprecatedException.class)
+    @Test
     public void test02ViewExternalIdentifier() {
-        serviceDelegator.viewExternalIdentifier(deprecatedUserOrcid, 0L);
-        fail();
+        assertGuardStopsCall(deprecatedUserOrcid, new OrcidDeprecatedException(), () -> serviceDelegator.viewExternalIdentifier(deprecatedUserOrcid, 0L));
     }
 
-    @Test(expected = OrcidDeprecatedException.class)
+    @Test
     public void test02ViewBiography() {
-        serviceDelegator.viewBiography(deprecatedUserOrcid);
-        fail();
+        assertGuardStopsCall(deprecatedUserOrcid, new OrcidDeprecatedException(), () -> serviceDelegator.viewBiography(deprecatedUserOrcid));
     }
 
-    @Test(expected = OrcidDeprecatedException.class)
+    @Test
     public void test02ViewKeywords() {
-        serviceDelegator.viewKeywords(deprecatedUserOrcid);
-        fail();
+        assertGuardStopsCall(deprecatedUserOrcid, new OrcidDeprecatedException(), () -> serviceDelegator.viewKeywords(deprecatedUserOrcid));
     }
 
-    @Test(expected = OrcidDeprecatedException.class)
+    @Test
     public void test02ViewKeyword() {
-        serviceDelegator.viewKeyword(deprecatedUserOrcid, 0L);
-        fail();
+        assertGuardStopsCall(deprecatedUserOrcid, new OrcidDeprecatedException(), () -> serviceDelegator.viewKeyword(deprecatedUserOrcid, 0L));
     }
 
-    @Test(expected = OrcidDeprecatedException.class)
+    @Test
     public void test02ViewAddresses() {
-        serviceDelegator.viewAddresses(deprecatedUserOrcid);
-        fail();
+        assertGuardStopsCall(deprecatedUserOrcid, new OrcidDeprecatedException(), () -> serviceDelegator.viewAddresses(deprecatedUserOrcid));
     }
 
-    @Test(expected = OrcidDeprecatedException.class)
+    @Test
     public void test02ViewAddress() {
-        serviceDelegator.viewAddress(deprecatedUserOrcid, 0L);
-        fail();
+        assertGuardStopsCall(deprecatedUserOrcid, new OrcidDeprecatedException(), () -> serviceDelegator.viewAddress(deprecatedUserOrcid, 0L));
     }
 
-    @Test(expected = OrcidDeprecatedException.class)
+    @Test
     public void test02ViewPerson() {
-        serviceDelegator.viewPerson(deprecatedUserOrcid);
-        fail();
+        assertGuardStopsCall(deprecatedUserOrcid, new OrcidDeprecatedException(), () -> serviceDelegator.viewPerson(deprecatedUserOrcid));
     }
 
     /**
      * Unclaimed account throws an exception before the claim period ends
      */
-    @Test(expected = OrcidNotClaimedException.class)
+    @Test
     public void test03ViewRecord() {
-        updateProfileSubmissionDate(unclaimedUserOrcid, 0);
-        serviceDelegator.viewRecord(unclaimedUserOrcid);
-        fail();
+        assertGuardStopsCall(unclaimedUserOrcid, new OrcidNotClaimedException(), () -> serviceDelegator.viewRecord(unclaimedUserOrcid));
     }
 
-    @Test(expected = OrcidNotClaimedException.class)
+    @Test
     public void test0103ViewActivities() {
-        updateProfileSubmissionDate(unclaimedUserOrcid, 0);
-        serviceDelegator.viewActivities(unclaimedUserOrcid);
-        fail();
+        assertGuardStopsCall(unclaimedUserOrcid, new OrcidNotClaimedException(), () -> serviceDelegator.viewActivities(unclaimedUserOrcid));
     }
 
-    @Test(expected = OrcidNotClaimedException.class)
+    @Test
     public void test03ViewWork() {
-        updateProfileSubmissionDate(unclaimedUserOrcid, 0);
-        serviceDelegator.viewWork(unclaimedUserOrcid, 0L);
-        fail();
+        assertGuardStopsCall(unclaimedUserOrcid, new OrcidNotClaimedException(), () -> serviceDelegator.viewWork(unclaimedUserOrcid, 0L));
     }
 
-    @Test(expected = OrcidNotClaimedException.class)
+    @Test
     public void test03ViewWorkSummary() {
-        updateProfileSubmissionDate(unclaimedUserOrcid, 0);
-        serviceDelegator.viewWorkSummary(unclaimedUserOrcid, 0L);
-        fail();
+        assertGuardStopsCall(unclaimedUserOrcid, new OrcidNotClaimedException(), () -> serviceDelegator.viewWorkSummary(unclaimedUserOrcid, 0L));
     }
 
-    @Test(expected = OrcidNotClaimedException.class)
+    @Test
     public void test03ViewFunding() {
-        updateProfileSubmissionDate(unclaimedUserOrcid, 0);
-        serviceDelegator.viewFunding(unclaimedUserOrcid, 0L);
-        fail();
+        assertGuardStopsCall(unclaimedUserOrcid, new OrcidNotClaimedException(), () -> serviceDelegator.viewFunding(unclaimedUserOrcid, 0L));
     }
 
-    @Test(expected = OrcidNotClaimedException.class)
+    @Test
     public void test03ViewFundingSummary() {
-        updateProfileSubmissionDate(unclaimedUserOrcid, 0);
-        serviceDelegator.viewFundingSummary(unclaimedUserOrcid, 0L);
-        fail();
+        assertGuardStopsCall(unclaimedUserOrcid, new OrcidNotClaimedException(), () -> serviceDelegator.viewFundingSummary(unclaimedUserOrcid, 0L));
     }
 
-    @Test(expected = OrcidNotClaimedException.class)
+    @Test
     public void test03ViewEducation() {
-        updateProfileSubmissionDate(unclaimedUserOrcid, 0);
-        serviceDelegator.viewEducation(unclaimedUserOrcid, 0L);
-        fail();
+        assertGuardStopsCall(unclaimedUserOrcid, new OrcidNotClaimedException(), () -> serviceDelegator.viewEducation(unclaimedUserOrcid, 0L));
     }
 
-    @Test(expected = OrcidNotClaimedException.class)
+    @Test
     public void test03ViewEducationSummary() {
-        updateProfileSubmissionDate(unclaimedUserOrcid, 0);
-        serviceDelegator.viewEducationSummary(unclaimedUserOrcid, 0L);
-        fail();
+        assertGuardStopsCall(unclaimedUserOrcid, new OrcidNotClaimedException(), () -> serviceDelegator.viewEducationSummary(unclaimedUserOrcid, 0L));
     }
 
-    @Test(expected = OrcidNotClaimedException.class)
+    @Test
     public void test03ViewEmployment() {
-        updateProfileSubmissionDate(unclaimedUserOrcid, 0);
-        serviceDelegator.viewEmployment(unclaimedUserOrcid, 0L);
-        fail();
+        assertGuardStopsCall(unclaimedUserOrcid, new OrcidNotClaimedException(), () -> serviceDelegator.viewEmployment(unclaimedUserOrcid, 0L));
     }
 
-    @Test(expected = OrcidNotClaimedException.class)
+    @Test
     public void test03ViewEmploymentSummary() {
-        updateProfileSubmissionDate(unclaimedUserOrcid, 0);
-        serviceDelegator.viewEmploymentSummary(unclaimedUserOrcid, 0L);
-        fail();
+        assertGuardStopsCall(unclaimedUserOrcid, new OrcidNotClaimedException(), () -> serviceDelegator.viewEmploymentSummary(unclaimedUserOrcid, 0L));
     }
 
-    @Test(expected = OrcidNotClaimedException.class)
+    @Test
     public void test03ViewPeerReview() {
-        updateProfileSubmissionDate(unclaimedUserOrcid, 0);
-        serviceDelegator.viewPeerReview(unclaimedUserOrcid, 0L);
-        fail();
+        assertGuardStopsCall(unclaimedUserOrcid, new OrcidNotClaimedException(), () -> serviceDelegator.viewPeerReview(unclaimedUserOrcid, 0L));
     }
 
-    @Test(expected = OrcidNotClaimedException.class)
+    @Test
     public void test03ViewPeerReviewSummary() {
-        updateProfileSubmissionDate(unclaimedUserOrcid, 0);
-        serviceDelegator.viewPeerReviewSummary(unclaimedUserOrcid, 0L);
-        fail();
+        assertGuardStopsCall(unclaimedUserOrcid, new OrcidNotClaimedException(), () -> serviceDelegator.viewPeerReviewSummary(unclaimedUserOrcid, 0L));
     }
 
-    @Test(expected = OrcidNotClaimedException.class)
+    @Test
     public void test03ViewResearcherUrls() {
-        updateProfileSubmissionDate(unclaimedUserOrcid, 0);
-        serviceDelegator.viewResearcherUrls(unclaimedUserOrcid);
-        fail();
+        assertGuardStopsCall(unclaimedUserOrcid, new OrcidNotClaimedException(), () -> serviceDelegator.viewResearcherUrls(unclaimedUserOrcid));
     }
 
-    @Test(expected = OrcidNotClaimedException.class)
+    @Test
     public void test03ViewResearcherUrl() {
-        updateProfileSubmissionDate(unclaimedUserOrcid, 0);
-        serviceDelegator.viewResearcherUrl(unclaimedUserOrcid, 0L);
-        fail();
+        assertGuardStopsCall(unclaimedUserOrcid, new OrcidNotClaimedException(), () -> serviceDelegator.viewResearcherUrl(unclaimedUserOrcid, 0L));
     }
 
-    @Test(expected = OrcidNotClaimedException.class)
+    @Test
     public void test03ViewEmails() {
-        updateProfileSubmissionDate(unclaimedUserOrcid, 0);
-        serviceDelegator.viewEmails(unclaimedUserOrcid);
-        fail();
+        assertGuardStopsCall(unclaimedUserOrcid, new OrcidNotClaimedException(), () -> serviceDelegator.viewEmails(unclaimedUserOrcid));
     }
 
-    @Test(expected = OrcidNotClaimedException.class)
+    @Test
     public void test03ViewOtherNames() {
-        updateProfileSubmissionDate(unclaimedUserOrcid, 0);
-        serviceDelegator.viewOtherNames(unclaimedUserOrcid);
-        fail();
+        assertGuardStopsCall(unclaimedUserOrcid, new OrcidNotClaimedException(), () -> serviceDelegator.viewOtherNames(unclaimedUserOrcid));
     }
 
-    @Test(expected = OrcidNotClaimedException.class)
+    @Test
     public void test03ViewOtherName() {
-        updateProfileSubmissionDate(unclaimedUserOrcid, 0);
-        serviceDelegator.viewOtherName(unclaimedUserOrcid, 0L);
-        fail();
+        assertGuardStopsCall(unclaimedUserOrcid, new OrcidNotClaimedException(), () -> serviceDelegator.viewOtherName(unclaimedUserOrcid, 0L));
     }
 
-    @Test(expected = OrcidNotClaimedException.class)
+    @Test
     public void test03ViewPersonalDetails() {
-        updateProfileSubmissionDate(unclaimedUserOrcid, 0);
-        serviceDelegator.viewPersonalDetails(unclaimedUserOrcid);
-        fail();
+        assertGuardStopsCall(unclaimedUserOrcid, new OrcidNotClaimedException(), () -> serviceDelegator.viewPersonalDetails(unclaimedUserOrcid));
     }
 
-    @Test(expected = OrcidNotClaimedException.class)
+    @Test
     public void test03ViewExternalIdentifiers() {
-        updateProfileSubmissionDate(unclaimedUserOrcid, 0);
-        serviceDelegator.viewExternalIdentifiers(unclaimedUserOrcid);
-        fail();
+        assertGuardStopsCall(unclaimedUserOrcid, new OrcidNotClaimedException(), () -> serviceDelegator.viewExternalIdentifiers(unclaimedUserOrcid));
     }
 
-    @Test(expected = OrcidNotClaimedException.class)
+    @Test
     public void test03ViewExternalIdentifier() {
-        updateProfileSubmissionDate(unclaimedUserOrcid, 0);
-        serviceDelegator.viewExternalIdentifier(unclaimedUserOrcid, 0L);
-        fail();
+        assertGuardStopsCall(unclaimedUserOrcid, new OrcidNotClaimedException(), () -> serviceDelegator.viewExternalIdentifier(unclaimedUserOrcid, 0L));
     }
 
-    @Test(expected = OrcidNotClaimedException.class)
+    @Test
     public void test03ViewBiography() {
-        updateProfileSubmissionDate(unclaimedUserOrcid, 0);
-        serviceDelegator.viewBiography(unclaimedUserOrcid);
-        fail();
+        assertGuardStopsCall(unclaimedUserOrcid, new OrcidNotClaimedException(), () -> serviceDelegator.viewBiography(unclaimedUserOrcid));
     }
 
+    /**
+     * A record with no biography row makes the wrapped delegator's
+     * PublicAPISecurityManagerV2.checkIsPublic(Biography) throw. Here that is a
+     * stub; the rule itself is proved by
+     * PublicAPISecurityManagerV2Test.checkIsPublicBiography_NullTest.
+     */
     @Test(expected = OrcidNoBioException.class)
     public void testViewBiographyWhereBiographyIsNull() {
+        when(publicV2ApiServiceDelegator.viewBiography(userWithNoBio)).thenThrow(new OrcidNoBioException());
         serviceDelegator.viewBiography(userWithNoBio);
         fail();
     }
 
-    @Test(expected = OrcidNotClaimedException.class)
+    @Test
     public void test03ViewKeywords() {
-        updateProfileSubmissionDate(unclaimedUserOrcid, 0);
-        serviceDelegator.viewKeywords(unclaimedUserOrcid);
-        fail();
+        assertGuardStopsCall(unclaimedUserOrcid, new OrcidNotClaimedException(), () -> serviceDelegator.viewKeywords(unclaimedUserOrcid));
     }
 
-    @Test(expected = OrcidNotClaimedException.class)
+    @Test
     public void test03ViewKeyword() {
-        updateProfileSubmissionDate(unclaimedUserOrcid, 0);
-        serviceDelegator.viewKeyword(unclaimedUserOrcid, 0L);
-        fail();
+        assertGuardStopsCall(unclaimedUserOrcid, new OrcidNotClaimedException(), () -> serviceDelegator.viewKeyword(unclaimedUserOrcid, 0L));
     }
 
-    @Test(expected = OrcidNotClaimedException.class)
+    @Test
     public void test03ViewAddresses() {
-        updateProfileSubmissionDate(unclaimedUserOrcid, 0);
-        serviceDelegator.viewAddresses(unclaimedUserOrcid);
-        fail();
+        assertGuardStopsCall(unclaimedUserOrcid, new OrcidNotClaimedException(), () -> serviceDelegator.viewAddresses(unclaimedUserOrcid));
     }
 
-    @Test(expected = OrcidNotClaimedException.class)
+    @Test
     public void test03ViewAddress() {
-        updateProfileSubmissionDate(unclaimedUserOrcid, 0);
-        serviceDelegator.viewAddress(unclaimedUserOrcid, 0L);
-        fail();
+        assertGuardStopsCall(unclaimedUserOrcid, new OrcidNotClaimedException(), () -> serviceDelegator.viewAddress(unclaimedUserOrcid, 0L));
     }
 
-    @Test(expected = OrcidNotClaimedException.class)
+    @Test
     public void test03ViewPerson() {
-        updateProfileSubmissionDate(unclaimedUserOrcid, 0);
-        serviceDelegator.viewPerson(unclaimedUserOrcid);
-        fail();
+        assertGuardStopsCall(unclaimedUserOrcid, new OrcidNotClaimedException(), () -> serviceDelegator.viewPerson(unclaimedUserOrcid));
     }
-    
+
     @Test
     public void testSearchByQuery() throws ParseException {
-        MockitoAnnotations.initMocks(this);
         Search search = new Search();
         Result result = new Result();
         result.setOrcidIdentifier(new OrcidIdentifier("some-orcid-id"));
         search.getResults().add(result);
-        Response searchResponse = Response.ok(search).build();        
-        Mockito.when(mockServiceDelegatorNonVersioned.searchByQuery(Matchers.<Map<String, List<String>>>any())).thenReturn(searchResponse);
-        TargetProxyHelper.injectIntoProxy(serviceDelegator, "publicV2ApiServiceDelegator", mockServiceDelegatorNonVersioned);
-        Response response = serviceDelegator.searchByQuery(new HashMap<String, List<String>>());
-        
-        // just testing MemberV2ApiServiceDelegatorImpl's response is returned 
+        when(publicV2ApiServiceDelegator.searchByQuery(ArgumentMatchers.<Map<String, List<String>>> any())).thenReturn(Response.ok(search).build());
+        passThroughDowngrade();
+
+        Map<String, List<String>> params = new HashMap<String, List<String>>();
+        Response response = serviceDelegator.searchByQuery(params);
+
+        // just testing the wrapped delegator's response is returned
         assertNotNull(response);
         assertNotNull(response.getEntity());
         assertTrue(response.getEntity() instanceof Search);
         assertEquals(1, ((Search) response.getEntity()).getResults().size());
         assertEquals("some-orcid-id", ((Search) response.getEntity()).getResults().get(0).getOrcidIdentifier().getPath());
-        
-        TargetProxyHelper.injectIntoProxy(serviceDelegator, "publicV2ApiServiceDelegator", serviceDelegatorNonVersioned);        
+        verify(publicV2ApiServiceDelegator).searchByQuery(params);
+        // search is not record scoped, so there is no profile to check
+        verify(orcidSecurityManager, never()).checkProfile(ArgumentMatchers.anyString());
     }
 
+    /**
+     * An unknown client id produces no row. That is the client manager's
+     * behaviour, not the delegator's; all this asserts is that the versioned
+     * delegator lets it through rather than swallowing it.
+     */
     @Test(expected = NoResultException.class)
     public void testViewClientNonExistent() {
+        when(publicV2ApiServiceDelegator.viewClient("some-client-that-doesn't-exist")).thenThrow(new NoResultException());
         serviceDelegator.viewClient("some-client-that-doesn't-exist");
         fail();
     }
 
     @Test
     public void testViewClient() throws ParseException {
+        ClientSummary summary = new ClientSummary();
+        summary.setName("Source Client 2");
+        summary.setDescription("A test source client");
+        when(publicV2ApiServiceDelegator.viewClient("APP-6666666666666666")).thenReturn(Response.ok(summary).build());
+
         Response response = serviceDelegator.viewClient("APP-6666666666666666");
+
         assertNotNull(response.getEntity());
         assertTrue(response.getEntity() instanceof ClientSummary);
-
         ClientSummary client = (ClientSummary) response.getEntity();
         assertEquals("Source Client 2", client.getName());
         assertEquals("A test source client", client.getDescription());
+        // viewClient is a bare forward: no profile guard and no version chain
+        verify(publicV2ApiServiceDelegator).viewClient("APP-6666666666666666");
+        verifyNoInteractions(v2VersionConverterChain, v2_1VersionConverterChain);
     }
-    
+
+    /**
+     * Which of the requested works come back as works and which as OrcidErrors
+     * is decided by PublicAPISecurityManagerV2.filter(WorkBulk), below the
+     * wrapped delegator; asserting it here against a mock would only restate
+     * the stub. That rule is proved by
+     * PublicAPISecurityManagerV2Test.filterWorkBulkTest. What is left for this
+     * layer is that the request is forwarded verbatim and the bulk comes back
+     * through the version chain unchanged.
+     */
     @Test
     public void testViewBulkWorks() {
+        WorkBulk stubbed = new WorkBulk();
+        stubbed.setBulk(new ArrayList<BulkElement>(Arrays.asList(new Work(), new OrcidError(), new OrcidError(), new OrcidError())));
+        when(publicV2ApiServiceDelegator.viewBulkWorks("0000-0000-0000-0003", "11,12,13,16")).thenReturn(Response.ok(stubbed).build());
+        passThroughDowngrade();
+
         Response response = serviceDelegator.viewBulkWorks("0000-0000-0000-0003", "11,12,13,16");
+
         WorkBulk workBulk = (WorkBulk) response.getEntity();
         assertNotNull(workBulk);
+        assertSame(stubbed, workBulk);
         assertNotNull(workBulk.getBulk());
         assertEquals(4, workBulk.getBulk().size());
-        assertTrue(workBulk.getBulk().get(0) instanceof Work);
-        assertTrue(workBulk.getBulk().get(1) instanceof OrcidError);
-        assertTrue(workBulk.getBulk().get(2) instanceof OrcidError);
-        assertTrue(workBulk.getBulk().get(3) instanceof OrcidError);
+        verify(publicV2ApiServiceDelegator).viewBulkWorks("0000-0000-0000-0003", "11,12,13,16");
     }
-    
+
+    /**
+     * The no-such-profile check is the wrapped delegator's own code
+     * (profileEntityManagerReadOnly.findByOrcid returning null); it is proved
+     * in PublicV2ApiServiceDelegatorTest.testViewBulkWorksNonExistentUser. Here
+     * it only has to propagate.
+     */
     @Test(expected = OrcidNoResultException.class)
     public void testViewBulkWorksNonExistentUser() {
+        when(publicV2ApiServiceDelegator.viewBulkWorks(nonExistingUser, "11,12,13,16")).thenThrow(new OrcidNoResultException());
         serviceDelegator.viewBulkWorks(nonExistingUser, "11,12,13,16");
         fail();
     }
-    
-    private void updateProfileSubmissionDate(String orcid, int increment) {
-        TransactionTemplate transactionTemplate = new TransactionTemplate(transactionManager);
-        transactionTemplate.execute(status -> {
-            // Update the submission date so it is long enough
-            ProfileEntity profileEntity = profileDao.find(orcid);
-            profileEntity.setSubmissionDate(DateUtils.addDays(new Date(), increment));
-            profileDao.merge(profileEntity);
-            profileDao.flush();
-            return null;
-        });
-    }
-    
+
     /**
      * Deactivated elements tests
-     */    
-    @Test(expected = DeactivatedException.class)
+     */
+    @Test
     public void testDeactivatedRecordViewActivities() {
-        SecurityContextTestUtils.setUpSecurityContext("0000-0000-0000-0007", ScopePathType.READ_LIMITED);
-        serviceDelegator.viewActivities(deactivatedUserOrcid);
-        fail();
-    }
-    
-    @Test(expected = DeactivatedException.class)
-    public void testDeactivatedRecordViewRecord() {
-        SecurityContextTestUtils.setUpSecurityContext("0000-0000-0000-0007", ScopePathType.READ_LIMITED);
-        serviceDelegator.viewRecord(deactivatedUserOrcid);
-        fail();
-    }
-    
-    @Test(expected = DeactivatedException.class)
-    public void testDeactivatedRecordViewPerson() {
-        SecurityContextTestUtils.setUpSecurityContext("0000-0000-0000-0007", ScopePathType.READ_LIMITED);
-        serviceDelegator.viewPerson(deactivatedUserOrcid);
-        fail();
-    }
-    
-    @Test(expected = DeactivatedException.class)
-    public void testDeactivatedRecordViewAddresses() {
-        SecurityContextTestUtils.setUpSecurityContext("0000-0000-0000-0007", ScopePathType.READ_LIMITED);
-        serviceDelegator.viewAddresses(deactivatedUserOrcid);
-        fail();
-    }
-    
-    @Test(expected = DeactivatedException.class)
-    public void testDeactivatedRecordViewEducations() {
-        SecurityContextTestUtils.setUpSecurityContext("0000-0000-0000-0007", ScopePathType.READ_LIMITED);
-        serviceDelegator.viewEducations(deactivatedUserOrcid);
-        fail();
-    }
-    
-    @Test(expected = DeactivatedException.class)
-    public void testDeactivatedRecordViewEmails() {
-        SecurityContextTestUtils.setUpSecurityContext("0000-0000-0000-0007", ScopePathType.READ_LIMITED);
-        serviceDelegator.viewEmails(deactivatedUserOrcid);
-        fail();
-    }
-    
-    @Test(expected = DeactivatedException.class)
-    public void testDeactivatedRecordViewEmployments() {
-        SecurityContextTestUtils.setUpSecurityContext("0000-0000-0000-0007", ScopePathType.READ_LIMITED);
-        serviceDelegator.viewEmployments(deactivatedUserOrcid);
-        fail();
-    }
-    
-    @Test(expected = DeactivatedException.class)
-    public void testDeactivatedRecordViewExternalIdentifiers() {
-        SecurityContextTestUtils.setUpSecurityContext("0000-0000-0000-0007", ScopePathType.READ_LIMITED);
-        serviceDelegator.viewExternalIdentifiers(deactivatedUserOrcid);
-        fail();
-    }
-    
-    @Test(expected = DeactivatedException.class)
-    public void testDeactivatedRecordViewFundings() {
-        SecurityContextTestUtils.setUpSecurityContext("0000-0000-0000-0007", ScopePathType.READ_LIMITED);
-        serviceDelegator.viewFundings(deactivatedUserOrcid);
-        fail();
-    }
-    
-    @Test(expected = DeactivatedException.class)
-    public void testDeactivatedRecordViewKeywords() {
-        SecurityContextTestUtils.setUpSecurityContext("0000-0000-0000-0007", ScopePathType.READ_LIMITED);
-        serviceDelegator.viewKeywords(deactivatedUserOrcid);
-        fail();
-    }
-    
-    @Test(expected = DeactivatedException.class)
-    public void testDeactivatedRecordViewOtherNames() {
-        SecurityContextTestUtils.setUpSecurityContext("0000-0000-0000-0007", ScopePathType.READ_LIMITED);
-        serviceDelegator.viewOtherNames(deactivatedUserOrcid);
-        fail();
-    }
-    
-    @Test(expected = DeactivatedException.class)
-    public void testDeactivatedRecordViewPeerReviews() {
-        SecurityContextTestUtils.setUpSecurityContext("0000-0000-0000-0007", ScopePathType.READ_LIMITED);
-        serviceDelegator.viewPeerReviews(deactivatedUserOrcid);
-        fail();
-    }
-    
-    @Test(expected = DeactivatedException.class)
-    public void testDeactivatedRecordViewPersonalDetails() {
-        SecurityContextTestUtils.setUpSecurityContext("0000-0000-0000-0007", ScopePathType.READ_LIMITED);
-        serviceDelegator.viewPersonalDetails(deactivatedUserOrcid);
-        fail();
-    }
-    
-    @Test(expected = DeactivatedException.class)
-    public void testDeactivatedRecordViewResearcherUrls() {
-        SecurityContextTestUtils.setUpSecurityContext("0000-0000-0000-0007", ScopePathType.READ_LIMITED);
-        serviceDelegator.viewResearcherUrls(deactivatedUserOrcid);
-        fail();
-    }   
-    
-    @Test(expected = DeactivatedException.class)
-    public void testDeactivatedRecordViewWorks() {
-        SecurityContextTestUtils.setUpSecurityContext("0000-0000-0000-0007", ScopePathType.READ_LIMITED);
-        serviceDelegator.viewWorks(deactivatedUserOrcid);
-        fail();
+        assertGuardStopsCall(deactivatedUserOrcid, new DeactivatedException(), () -> serviceDelegator.viewActivities(deactivatedUserOrcid));
     }
 
+    @Test
+    public void testDeactivatedRecordViewRecord() {
+        assertGuardStopsCall(deactivatedUserOrcid, new DeactivatedException(), () -> serviceDelegator.viewRecord(deactivatedUserOrcid));
+    }
+
+    @Test
+    public void testDeactivatedRecordViewPerson() {
+        assertGuardStopsCall(deactivatedUserOrcid, new DeactivatedException(), () -> serviceDelegator.viewPerson(deactivatedUserOrcid));
+    }
+
+    @Test
+    public void testDeactivatedRecordViewAddresses() {
+        assertGuardStopsCall(deactivatedUserOrcid, new DeactivatedException(), () -> serviceDelegator.viewAddresses(deactivatedUserOrcid));
+    }
+
+    @Test
+    public void testDeactivatedRecordViewEducations() {
+        assertGuardStopsCall(deactivatedUserOrcid, new DeactivatedException(), () -> serviceDelegator.viewEducations(deactivatedUserOrcid));
+    }
+
+    @Test
+    public void testDeactivatedRecordViewEmails() {
+        assertGuardStopsCall(deactivatedUserOrcid, new DeactivatedException(), () -> serviceDelegator.viewEmails(deactivatedUserOrcid));
+    }
+
+    @Test
+    public void testDeactivatedRecordViewEmployments() {
+        assertGuardStopsCall(deactivatedUserOrcid, new DeactivatedException(), () -> serviceDelegator.viewEmployments(deactivatedUserOrcid));
+    }
+
+    @Test
+    public void testDeactivatedRecordViewExternalIdentifiers() {
+        assertGuardStopsCall(deactivatedUserOrcid, new DeactivatedException(), () -> serviceDelegator.viewExternalIdentifiers(deactivatedUserOrcid));
+    }
+
+    @Test
+    public void testDeactivatedRecordViewFundings() {
+        assertGuardStopsCall(deactivatedUserOrcid, new DeactivatedException(), () -> serviceDelegator.viewFundings(deactivatedUserOrcid));
+    }
+
+    @Test
+    public void testDeactivatedRecordViewKeywords() {
+        assertGuardStopsCall(deactivatedUserOrcid, new DeactivatedException(), () -> serviceDelegator.viewKeywords(deactivatedUserOrcid));
+    }
+
+    @Test
+    public void testDeactivatedRecordViewOtherNames() {
+        assertGuardStopsCall(deactivatedUserOrcid, new DeactivatedException(), () -> serviceDelegator.viewOtherNames(deactivatedUserOrcid));
+    }
+
+    @Test
+    public void testDeactivatedRecordViewPeerReviews() {
+        assertGuardStopsCall(deactivatedUserOrcid, new DeactivatedException(), () -> serviceDelegator.viewPeerReviews(deactivatedUserOrcid));
+    }
+
+    @Test
+    public void testDeactivatedRecordViewPersonalDetails() {
+        assertGuardStopsCall(deactivatedUserOrcid, new DeactivatedException(), () -> serviceDelegator.viewPersonalDetails(deactivatedUserOrcid));
+    }
+
+    @Test
+    public void testDeactivatedRecordViewResearcherUrls() {
+        assertGuardStopsCall(deactivatedUserOrcid, new DeactivatedException(), () -> serviceDelegator.viewResearcherUrls(deactivatedUserOrcid));
+    }
+
+    @Test
+    public void testDeactivatedRecordViewWorks() {
+        assertGuardStopsCall(deactivatedUserOrcid, new DeactivatedException(), () -> serviceDelegator.viewWorks(deactivatedUserOrcid));
+    }
+
+    /**
+     * The version routing is the versioned delegator's only real logic and had
+     * no test at all. At 2.1 the response has to go up the 2.1 chain; at
+     * anything else it has to go down the 2.0 chain. Getting this backwards
+     * would hand a 2.0 client a 2.1 document.
+     */
+    @Test
+    public void testResponseIsUpgradedWhenExternalVersionIs2_1() {
+        serviceDelegator.setExternalVersion("2.1");
+        Search entity = new Search();
+        Search upgraded = new Search();
+        when(publicV2ApiServiceDelegator.viewRecord("0000-0000-0000-0003")).thenReturn(Response.ok(entity).build());
+        when(v2_1VersionConverterChain.upgrade(any(V2Convertible.class), eq("2.1"))).thenReturn(new V2Convertible(upgraded, "2.1"));
+
+        Response response = serviceDelegator.viewRecord("0000-0000-0000-0003");
+
+        assertSame(upgraded, response.getEntity());
+        verify(v2_1VersionConverterChain).upgrade(any(V2Convertible.class), eq("2.1"));
+        verifyNoInteractions(v2VersionConverterChain);
+    }
+
+    @Test
+    public void testResponseIsDowngradedWhenExternalVersionIsNot2_1() {
+        Search entity = new Search();
+        Search downgraded = new Search();
+        when(publicV2ApiServiceDelegator.viewRecord("0000-0000-0000-0003")).thenReturn(Response.ok(entity).build());
+        when(v2VersionConverterChain.downgrade(any(V2Convertible.class), eq("2.0"))).thenReturn(new V2Convertible(downgraded, "2.0"));
+
+        Response response = serviceDelegator.viewRecord("0000-0000-0000-0003");
+
+        assertSame(downgraded, response.getEntity());
+        verify(v2VersionConverterChain).downgrade(any(V2Convertible.class), eq("2.0"));
+        verifyNoInteractions(v2_1VersionConverterChain);
+    }
+
+    /**
+     * A null entity has nothing to convert, so the response has to come back
+     * untouched rather than through the chain.
+     */
+    @Test
+    public void testResponseWithNoEntityIsNotConverted() {
+        Response empty = Response.noContent().build();
+        when(publicV2ApiServiceDelegator.viewRecord("0000-0000-0000-0003")).thenReturn(empty);
+
+        Response response = serviceDelegator.viewRecord("0000-0000-0000-0003");
+
+        assertSame(empty, response);
+        verifyNoInteractions(v2VersionConverterChain, v2_1VersionConverterChain);
+    }
 }

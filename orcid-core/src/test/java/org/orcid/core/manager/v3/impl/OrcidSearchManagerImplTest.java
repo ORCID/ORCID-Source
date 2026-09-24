@@ -28,7 +28,10 @@ import org.orcid.jaxb.model.v3.release.search.expanded.ExpandedSearch;
 import org.orcid.test.TargetProxyHelper;
 import org.orcid.core.solr.OrcidSolrResult;
 import org.orcid.core.solr.OrcidSolrResults;
+import org.junit.experimental.categories.Category;
+import org.orcid.test.DatabaseTest;
 
+@Category(DatabaseTest.class)
 public class OrcidSearchManagerImplTest extends BaseTest {
 
     @Resource(name = "orcidSearchManagerV3")

@@ -3,6 +3,7 @@ package org.orcid.frontend.web.controllers;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.fail;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -26,6 +27,7 @@ import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
+import org.orcid.core.exception.WrongSourceException;
 import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.OrgDisambiguatedManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
@@ -465,6 +467,33 @@ public class FundingsControllerTest {
 
         FundingForm funding = fundingController.getFundingJson(Long.valueOf("3"));
         fundingController.postFunding(funding);
+    }
+
+    /**
+     * The refusal is the security manager's, reached through the manager. What this boundary owes
+     * is that it lets the refusal through and does nothing else -- in particular that it does not
+     * fall through to createFunding and leave a duplicate behind. Asserting the exception alone
+     * would pass even if it did, which is why the never() is the half that matters.
+     */
+    @Test
+    public void testEditOtherSourceRefusalDoesNotCreateInstead() throws Exception {
+        when(profileFundingManagerReadOnly.getFunding(eq(ORCID), eq(3L))).thenReturn(createFundingRecord("3", OTHER_ORCID_1, "Grant # 3", "2500",
+                "USD", "London", "GB", "salary-award"));
+        Map<String, String> params = new HashMap<String, String>();
+        params.put("activity", "funding");
+        doThrow(new WrongSourceException(params)).when(profileFundingManager).updateFunding(eq(ORCID), any(Funding.class));
+
+        FundingForm funding = fundingController.getFundingJson(Long.valueOf("3"));
+        assertEquals(OTHER_ORCID_1, funding.getSource());
+
+        try {
+            fundingController.postFunding(funding);
+            fail("a client must not be able to edit a funding another client is the source of");
+        } catch (WrongSourceException expected) {
+            assertEquals("funding", expected.getParams().get("activity"));
+        }
+
+        verify(profileFundingManager, never()).createFunding(anyString(), any(Funding.class));
     }
 
     private void assertBigDecimals(String[] amounts, BigDecimal expected) {

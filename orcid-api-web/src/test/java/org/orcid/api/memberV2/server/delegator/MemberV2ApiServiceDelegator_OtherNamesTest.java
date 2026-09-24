@@ -1,350 +1,294 @@
 package org.orcid.api.memberV2.server.delegator;
 
-import static org.hamcrest.core.AnyOf.anyOf;
-import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertNotSame;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.fail;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyBoolean;
+import static org.mockito.ArgumentMatchers.anyList;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
+import static org.mockito.Mockito.when;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 
-import jakarta.annotation.Resource;
 import jakarta.persistence.NoResultException;
 import jakarta.ws.rs.core.Response;
-import org.orcid.test.DBUnitTest;
-import org.orcid.test.helper.Utils;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
+
 import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.mockito.ArgumentCaptor;
 import org.orcid.core.exception.OrcidAccessControlException;
 import org.orcid.core.exception.OrcidUnauthorizedException;
 import org.orcid.core.exception.OrcidVisibilityException;
 import org.orcid.core.exception.VisibilityMismatchException;
 import org.orcid.core.exception.WrongSourceException;
-import org.orcid.core.utils.SecurityContextTestUtils;
-import org.orcid.jaxb.model.common_v2.LastModifiedDate;
+import org.orcid.jaxb.model.common_v2.Source;
 import org.orcid.jaxb.model.common_v2.Visibility;
-import org.orcid.jaxb.model.groupid_v2.GroupIdRecord;
 import org.orcid.jaxb.model.message.ScopePathType;
-import org.orcid.jaxb.model.record_v2.Address;
-import org.orcid.jaxb.model.record_v2.Education;
-import org.orcid.jaxb.model.record_v2.Employment;
-import org.orcid.jaxb.model.record_v2.Funding;
-import org.orcid.jaxb.model.record_v2.Keyword;
 import org.orcid.jaxb.model.record_v2.OtherName;
 import org.orcid.jaxb.model.record_v2.OtherNames;
-import org.orcid.jaxb.model.record_v2.PeerReview;
-import org.orcid.jaxb.model.record_v2.PersonExternalIdentifier;
-import org.orcid.jaxb.model.record_v2.ResearcherUrl;
-import org.orcid.jaxb.model.record_v2.Work;
-import org.orcid.jaxb.model.record_v2.WorkBulk;
-import org.orcid.test.OrcidJUnit4ClassRunner;
-import org.springframework.test.context.ContextConfiguration;
+import org.orcid.test.helper.Utils;
 
-@RunWith(OrcidJUnit4ClassRunner.class)
-@ContextConfiguration(locations = { "classpath:test-orcid-api-web-context.xml" })
-public class MemberV2ApiServiceDelegator_OtherNamesTest extends DBUnitTest {
-    protected static final List<String> DATA_FILES = Arrays.asList("/data/EmptyEntityData.xml",
-            "/data/SourceClientDetailsEntityData.xml", "/data/ProfileEntityData.xml", "/data/ClientDetailsEntityData.xml", "/data/RecordNameEntityData.xml",
-            "/data/BiographyEntityData.xml");
+/**
+ * The other-name endpoints of the member v2 delegator, on mocks.
+ *
+ * <p>
+ * See {@link MemberV2ApiServiceDelegatorMockBase} for why no assertion here
+ * depends on {@code checkAndFilter} having filtered anything.
+ */
+public class MemberV2ApiServiceDelegator_OtherNamesTest extends MemberV2ApiServiceDelegatorMockBase {
 
-    // Now on, for any new test, PLAESE USER THIS ORCID ID
-    protected final String ORCID = "0000-0000-0000-0003";
-
-    @Resource(name = "memberV2ApiServiceDelegator")
-    protected MemberV2ApiServiceDelegator<Education, Employment, PersonExternalIdentifier, Funding, GroupIdRecord, OtherName, PeerReview, ResearcherUrl, Work, WorkBulk, Address, Keyword> serviceDelegator;
-
-    @BeforeClass
-    public static void initDBUnitData() throws Exception {
-        initDBUnitData(DATA_FILES);
-    }
-
-    @AfterClass
-    public static void removeDBUnitData() throws Exception {
-        Collections.reverse(DATA_FILES);
-        removeDBUnitData(DATA_FILES);
-    }
+    private static final String OTHER_ORCID = "4444-4444-4444-4446";
+    private static final String MY_ORCID = "4444-4444-4444-4441";
 
     @Test(expected = OrcidUnauthorizedException.class)
     public void testViewOtherNamesWrongToken() {
-        SecurityContextTestUtils.setUpSecurityContext("some-other-user", ScopePathType.READ_LIMITED);
-        serviceDelegator.viewOtherNames(ORCID);
+        when(otherNameManagerReadOnly.getOtherNames(ORCID)).thenReturn(otherNames(otherName(9L, Visibility.PUBLIC, clientSource(CLIENT_1))));
+        doThrow(new OrcidUnauthorizedException("Access token is for a different record")).when(orcidSecurityManager).checkAndFilter(eq(ORCID), anyList(),
+                eq(ScopePathType.ORCID_BIO_READ_LIMITED));
+
+        try {
+            serviceDelegator.viewOtherNames(ORCID);
+        } finally {
+            verifyNoInteractions(sourceNameCacheManager);
+        }
     }
 
     @Test(expected = OrcidUnauthorizedException.class)
     public void testViewOtherNameWrongToken() {
-        SecurityContextTestUtils.setUpSecurityContext("some-other-user", ScopePathType.READ_LIMITED);
-        serviceDelegator.viewOtherName(ORCID, 13L);
-    }
+        OtherName otherName = otherName(9L, Visibility.PUBLIC, clientSource(CLIENT_1));
+        when(otherNameManagerReadOnly.getOtherName(ORCID, 9L)).thenReturn(otherName);
+        doThrow(new OrcidUnauthorizedException("Access token is for a different record")).when(orcidSecurityManager).checkAndFilter(ORCID, otherName,
+                ScopePathType.ORCID_BIO_READ_LIMITED);
 
-    @Test
-    public void testViewOtherNameReadPublic() {
-        SecurityContextTestUtils.setUpSecurityContextForClientOnly("APP-5555555555555555", ScopePathType.READ_PUBLIC);
-        Response r = serviceDelegator.viewOtherName(ORCID, 13L);
-        OtherName element = (OtherName) r.getEntity();
-        assertNotNull(element);
-        assertEquals("/0000-0000-0000-0003/other-names/13", element.getPath());
-        Utils.assertIsPublicOrSource(element, "APP-5555555555555555");
-    }
-
-    @Test
-    public void testViewOtherNamesReadPublic() {
-        SecurityContextTestUtils.setUpSecurityContextForClientOnly("APP-5555555555555555", ScopePathType.READ_PUBLIC);
-        Response r = serviceDelegator.viewOtherNames(ORCID);
-        OtherNames element = (OtherNames) r.getEntity();
-        assertNotNull(element);
-        assertEquals("/0000-0000-0000-0003/other-names", element.getPath());
-        Utils.assertIsPublicOrSource(element, "APP-5555555555555555");
-    }
-
-    @Test
-    public void testViewOtherNames() {
-        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4446", ScopePathType.PERSON_READ_LIMITED);
-        Response response = serviceDelegator.viewOtherNames("4444-4444-4444-4446");
-        assertNotNull(response);
-        OtherNames otherNames = (OtherNames) response.getEntity();
-        assertNotNull(otherNames);
-        assertEquals("/4444-4444-4444-4446/other-names", otherNames.getPath());
-        Utils.verifyLastModified(otherNames.getLastModifiedDate());
-        assertNotNull(otherNames.getOtherNames());
-        assertEquals(3, otherNames.getOtherNames().size());
-        for (OtherName otherName : otherNames.getOtherNames()) {
-            Utils.verifyLastModified(otherName.getLastModifiedDate());
-            assertThat(otherName.getPutCode(), anyOf(is(5L), is(6L), is(8L)));
-            assertThat(otherName.getContent(), anyOf(is("Other Name # 1"), is("Other Name # 2"), is("Other Name # 4")));
-            if (otherName.getPutCode() == 5L) {
-                assertEquals(Visibility.PUBLIC, otherName.getVisibility());
-                assertEquals("APP-5555555555555555", otherName.getSource().retrieveSourcePath());
-            } else if (otherName.getPutCode() == 6L) {
-                assertEquals(Visibility.LIMITED, otherName.getVisibility());
-                assertEquals("4444-4444-4444-4446", otherName.getSource().retrieveSourcePath());
-            } else {
-                assertEquals(Visibility.PRIVATE, otherName.getVisibility());
-                assertEquals("APP-5555555555555555", otherName.getSource().retrieveSourcePath());
-            }
+        try {
+            serviceDelegator.viewOtherName(ORCID, 9L);
+        } finally {
+            assertNull("the element must not be decorated once the guard has refused", otherName.getPath());
         }
     }
 
     @Test
-    public void testViewPublicOtherName() {
-        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4446", ScopePathType.PERSON_READ_LIMITED);
-        Response response = serviceDelegator.viewOtherName("4444-4444-4444-4446", 5L);
+    public void testViewOtherNameReadPublic() {
+        OtherName otherName = otherName(9L, Visibility.PUBLIC, clientSource(CLIENT_1));
+        when(otherNameManagerReadOnly.getOtherName(ORCID, 9L)).thenReturn(otherName);
+
+        Response r = serviceDelegator.viewOtherName(ORCID, 9L);
+
+        OtherName element = (OtherName) r.getEntity();
+        assertNotNull(element);
+        assertEquals("/0000-0000-0000-0003/other-names/9", element.getPath());
+        assertEquals(CLIENT_1_NAME, element.getSource().getSourceName().getContent());
+        verify(orcidSecurityManager).checkAndFilter(ORCID, otherName, ScopePathType.ORCID_BIO_READ_LIMITED);
+    }
+
+    @Test
+    public void testViewOtherNamesReadPublic() {
+        when(otherNameManagerReadOnly.getOtherNames(ORCID)).thenReturn(otherNames(otherName(9L, Visibility.PUBLIC, clientSource(CLIENT_1))));
+
+        Response r = serviceDelegator.viewOtherNames(ORCID);
+
+        OtherNames element = (OtherNames) r.getEntity();
+        assertNotNull(element);
+        assertEquals("/0000-0000-0000-0003/other-names", element.getPath());
+        assertEquals("/0000-0000-0000-0003/other-names/9", element.getOtherNames().get(0).getPath());
+        verify(orcidSecurityManager).checkAndFilter(eq(ORCID), anyList(), eq(ScopePathType.ORCID_BIO_READ_LIMITED));
+    }
+
+    @Test
+    public void testViewOtherNames() {
+        OtherNames stored = otherNames(otherName(1L, Visibility.PUBLIC, userSource(OTHER_ORCID)), otherName(2L, Visibility.LIMITED, clientSource(CLIENT_1)),
+                otherName(4L, Visibility.PRIVATE, clientSource(CLIENT_1)));
+        when(otherNameManagerReadOnly.getOtherNames(OTHER_ORCID)).thenReturn(stored);
+
+        Response response = serviceDelegator.viewOtherNames(OTHER_ORCID);
+
         assertNotNull(response);
-        OtherName otherName = (OtherName) response.getEntity();
-        assertNotNull(otherName);
-        assertEquals("/4444-4444-4444-4446/other-names/5", otherName.getPath());
-        Utils.verifyLastModified(otherName.getLastModifiedDate());
-        assertEquals("Other Name # 1", otherName.getContent());
-        assertEquals(Visibility.PUBLIC, otherName.getVisibility());
-        assertEquals("APP-5555555555555555", otherName.getSource().retrieveSourcePath());
+        OtherNames returned = (OtherNames) response.getEntity();
+        assertNotNull(returned);
+        assertEquals("/4444-4444-4444-4446/other-names", returned.getPath());
+        Utils.verifyLastModified(returned.getLastModifiedDate());
+        assertEquals(3, returned.getOtherNames().size());
+        for (OtherName otherName : returned.getOtherNames()) {
+            Utils.verifyLastModified(otherName.getLastModifiedDate());
+            assertEquals("/4444-4444-4444-4446/other-names/" + otherName.getPutCode(), otherName.getPath());
+        }
+        assertEquals(CLIENT_1_NAME, returned.getOtherNames().get(1).getSource().getSourceName().getContent());
+
+        // checkAndFilter edits in place, so the cached list must be copied first
+        ArgumentCaptor<List<OtherName>> filtered = otherNameListCaptor();
+        verify(orcidSecurityManager).checkAndFilter(eq(OTHER_ORCID), filtered.capture(), eq(ScopePathType.ORCID_BIO_READ_LIMITED));
+        assertNotSame(stored.getOtherNames(), filtered.getValue());
+    }
+
+    @Test
+    public void testViewPublicOtherName() {
+        assertViewOtherNameDecorated(5L, Visibility.PUBLIC, userSource(OTHER_ORCID));
     }
 
     @Test
     public void testViewLimitedOtherName() {
-        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4446", ScopePathType.PERSON_READ_LIMITED);
-        Response response = serviceDelegator.viewOtherName("4444-4444-4444-4446", 6L);
-        assertNotNull(response);
-        OtherName otherName = (OtherName) response.getEntity();
-        assertNotNull(otherName);
-        assertEquals("/4444-4444-4444-4446/other-names/6", otherName.getPath());
-        Utils.verifyLastModified(otherName.getLastModifiedDate());
-        assertEquals("Other Name # 2", otherName.getContent());
-        assertEquals(Visibility.LIMITED, otherName.getVisibility());
-        assertEquals("4444-4444-4444-4446", otherName.getSource().retrieveSourcePath());
+        assertViewOtherNameDecorated(6L, Visibility.LIMITED, clientSource(CLIENT_1));
     }
 
     @Test
     public void testViewPrivateOtherName() {
-        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4446", ScopePathType.PERSON_READ_LIMITED);
-        Response response = serviceDelegator.viewOtherName("4444-4444-4444-4446", 8L);
-        assertNotNull(response);
-        OtherName otherName = (OtherName) response.getEntity();
-        assertNotNull(otherName);
-        assertEquals("/4444-4444-4444-4446/other-names/8", otherName.getPath());
-        Utils.verifyLastModified(otherName.getLastModifiedDate());
-        assertEquals("Other Name # 4", otherName.getContent());
-        assertEquals(Visibility.PRIVATE, otherName.getVisibility());
-        assertEquals("APP-5555555555555555", otherName.getSource().retrieveSourcePath());
+        assertViewOtherNameDecorated(8L, Visibility.PRIVATE, clientSource(CLIENT_1));
     }
 
     @Test(expected = OrcidVisibilityException.class)
     public void testViewPrivateOtherNameWhereYouAreNotTheSource() {
-        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4446", ScopePathType.PERSON_READ_LIMITED);
-        serviceDelegator.viewOtherName("4444-4444-4444-4446", 7L);
+        OtherName otherName = otherName(7L, Visibility.PRIVATE, clientSource(CLIENT_2));
+        when(otherNameManagerReadOnly.getOtherName(OTHER_ORCID, 7L)).thenReturn(otherName);
+        doThrow(new OrcidVisibilityException()).when(orcidSecurityManager).checkAndFilter(OTHER_ORCID, otherName, ScopePathType.ORCID_BIO_READ_LIMITED);
+
+        serviceDelegator.viewOtherName(OTHER_ORCID, 7L);
         fail();
     }
 
     @Test(expected = NoResultException.class)
     public void testViewOtherNameThatDontBelongToTheUser() {
-        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4446", ScopePathType.PERSON_READ_LIMITED);
-        serviceDelegator.viewOtherName("4444-4444-4444-4446", 1L);
-        fail();
+        // The (orcid, id) predicate is in OtherNameDaoImpl's query. What is
+        // the delegator's is that it lets the miss out and never asks the guard
+        // about an element it did not get.
+        when(otherNameManagerReadOnly.getOtherName(OTHER_ORCID, 1L)).thenThrow(new NoResultException());
+
+        try {
+            serviceDelegator.viewOtherName(OTHER_ORCID, 1L);
+            fail();
+        } finally {
+            verifyNoInteractions(orcidSecurityManager);
+        }
     }
 
     @Test
     public void testAddOtherName() {
-        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4441", ScopePathType.PERSON_READ_LIMITED, ScopePathType.PERSON_UPDATE);
-        Response response = serviceDelegator.createOtherName("4444-4444-4444-4441", Utils.getOtherName());
+        OtherName created = otherName(100L, Visibility.LIMITED, clientSource(CLIENT_1));
+        when(otherNameManager.createOtherName(eq(MY_ORCID), any(OtherName.class), anyBoolean())).thenReturn(created);
+
+        Response response = serviceDelegator.createOtherName(MY_ORCID, Utils.getOtherName());
+
         assertNotNull(response);
         assertEquals(Response.Status.CREATED.getStatusCode(), response.getStatus());
-        Long putCode = Utils.getPutCode(response);
-
-        response = serviceDelegator.viewOtherName("4444-4444-4444-4441", putCode);
-        assertNotNull(response);
-        assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
-        OtherName newOtherName = (OtherName) response.getEntity();
-        assertNotNull(newOtherName);
-        Utils.verifyLastModified(newOtherName.getLastModifiedDate());
-        assertEquals("New Other Name", newOtherName.getContent());
-        assertEquals(Visibility.PUBLIC, newOtherName.getVisibility());
-        assertNotNull(newOtherName.getSource());
-        assertEquals("APP-5555555555555555", newOtherName.getSource().retrieveSourcePath());
-        assertNotNull(newOtherName.getCreatedDate());
-        Utils.verifyLastModified(newOtherName.getLastModifiedDate());
+        assertEquals(Long.valueOf(100), Utils.getPutCode(response));
+        verify(orcidSecurityManager).checkClientAccessAndScopes(MY_ORCID, ScopePathType.ORCID_BIO_UPDATE);
+        ArgumentCaptor<OtherName> submitted = ArgumentCaptor.forClass(OtherName.class);
+        verify(otherNameManager).createOtherName(eq(MY_ORCID), submitted.capture(), eq(true));
+        assertNull("a client may not choose its own source", submitted.getValue().getSource());
+        assertEquals(CLIENT_1_NAME, created.getSource().getSourceName().getContent());
     }
 
     @Test
     public void testUpdateOtherName() {
-        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4443", ScopePathType.PERSON_READ_LIMITED, ScopePathType.PERSON_UPDATE);
-        Response response = serviceDelegator.viewOtherName("4444-4444-4444-4443", 1L);
-        assertNotNull(response);
-        OtherName otherName = (OtherName) response.getEntity();
-        assertNotNull(otherName);
-        Utils.verifyLastModified(otherName.getLastModifiedDate());
-        LastModifiedDate before = otherName.getLastModifiedDate();
-        assertEquals("Slibberdy Slabinah", otherName.getContent());
-        assertEquals(Visibility.PUBLIC, otherName.getVisibility());
+        OtherName otherName = otherName(6L, Visibility.PUBLIC, clientSource(CLIENT_1));
+        otherName.setContent("Updated other name");
+        OtherName updated = otherName(6L, Visibility.PUBLIC, clientSource(CLIENT_1));
+        updated.setContent("Updated other name");
+        when(otherNameManager.updateOtherName(eq(MY_ORCID), eq(6L), any(OtherName.class), anyBoolean())).thenReturn(updated);
 
-        otherName.setContent("Updated Other Name");
+        Response response = serviceDelegator.updateOtherName(MY_ORCID, 6L, otherName);
 
-        response = serviceDelegator.updateOtherName("4444-4444-4444-4443", 1L, otherName);
         assertNotNull(response);
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
-
-        response = serviceDelegator.viewOtherName("4444-4444-4444-4443", 1L);
-        assertNotNull(response);
-        OtherName updatedOtherName = (OtherName) response.getEntity();
-        assertNotNull(updatedOtherName);
-        Utils.verifyLastModified(updatedOtherName.getLastModifiedDate());
-        assertTrue(updatedOtherName.getLastModifiedDate().after(before));
-        assertEquals("Updated Other Name", updatedOtherName.getContent());
-        assertEquals(Visibility.PUBLIC, updatedOtherName.getVisibility());
+        OtherName returned = (OtherName) response.getEntity();
+        assertEquals("Updated other name", returned.getContent());
+        assertEquals("/4444-4444-4444-4441/other-names/6", returned.getPath());
+        verify(orcidSecurityManager).checkClientAccessAndScopes(MY_ORCID, ScopePathType.ORCID_BIO_UPDATE);
+        ArgumentCaptor<OtherName> submitted = ArgumentCaptor.forClass(OtherName.class);
+        verify(otherNameManager).updateOtherName(eq(MY_ORCID), eq(6L), submitted.capture(), eq(true));
+        assertNull(submitted.getValue().getSource());
     }
 
     @Test(expected = WrongSourceException.class)
     public void testUpdateOtherNameYouAreNotTheSourceOf() {
-        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4443", ScopePathType.PERSON_READ_LIMITED, ScopePathType.PERSON_UPDATE);
-        Response response = serviceDelegator.viewOtherName("4444-4444-4444-4443", 2L);
-        assertNotNull(response);
-        OtherName otherName = (OtherName) response.getEntity();
-        assertNotNull(otherName);
-        assertEquals("Flibberdy Flabinah", otherName.getContent());
-        assertEquals(Visibility.PUBLIC, otherName.getVisibility());
+        // OtherNameManagerImpl calls orcidSecurityManager.checkSource on the
+        // stored entity; the rule belongs to that manager's tests.
+        OtherName otherName = otherName(2L, Visibility.LIMITED, clientSource(CLIENT_2));
+        doThrow(new WrongSourceException(Collections.singletonMap("activity", "other-name"))).when(otherNameManager).updateOtherName(eq(OTHER_ORCID), eq(2L),
+                any(OtherName.class), anyBoolean());
 
-        otherName.setContent("Updated Other Name " + System.currentTimeMillis());
-
-        serviceDelegator.updateOtherName("4444-4444-4444-4443", 2L, otherName);
+        serviceDelegator.updateOtherName(OTHER_ORCID, 2L, otherName);
         fail();
     }
 
     @Test(expected = VisibilityMismatchException.class)
     public void testUpdateOtherNameChangingVisibilityTest() {
-        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4443", ScopePathType.PERSON_READ_LIMITED, ScopePathType.PERSON_UPDATE);
-        Response response = serviceDelegator.viewOtherName("4444-4444-4444-4443", 1L);
-        assertNotNull(response);
-        OtherName otherName = (OtherName) response.getEntity();
-        assertNotNull(otherName);
-        assertEquals(Visibility.PUBLIC, otherName.getVisibility());
+        OtherName otherName = otherName(6L, Visibility.PRIVATE, clientSource(CLIENT_1));
+        doThrow(new VisibilityMismatchException()).when(otherNameManager).updateOtherName(eq(MY_ORCID), eq(6L), any(OtherName.class), anyBoolean());
 
-        otherName.setVisibility(Visibility.PRIVATE);
-
-        response = serviceDelegator.updateOtherName("4444-4444-4444-4443", 1L, otherName);
+        serviceDelegator.updateOtherName(MY_ORCID, 6L, otherName);
         fail();
     }
 
     @Test
     public void testUpdateOtherNameLeavingVisibilityNullTest() {
-        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4443", ScopePathType.PERSON_READ_LIMITED, ScopePathType.PERSON_UPDATE);
-        Response response = serviceDelegator.viewOtherName("4444-4444-4444-4443", 1L);
-        assertNotNull(response);
-        OtherName otherName = (OtherName) response.getEntity();
-        assertNotNull(otherName);
-        assertEquals(Visibility.PUBLIC, otherName.getVisibility());
+        OtherName otherName = otherName(6L, null, clientSource(CLIENT_1));
+        OtherName updated = otherName(6L, Visibility.PUBLIC, clientSource(CLIENT_1));
+        when(otherNameManager.updateOtherName(eq(MY_ORCID), eq(6L), any(OtherName.class), anyBoolean())).thenReturn(updated);
 
-        otherName.setVisibility(null);
+        Response response = serviceDelegator.updateOtherName(MY_ORCID, 6L, otherName);
 
-        response = serviceDelegator.updateOtherName("4444-4444-4444-4443", 1L, otherName);
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
-        otherName = (OtherName) response.getEntity();
-        assertNotNull(otherName);
-        assertEquals(Visibility.PUBLIC, otherName.getVisibility());
+        assertEquals(Visibility.PUBLIC, ((OtherName) response.getEntity()).getVisibility());
+        ArgumentCaptor<OtherName> submitted = ArgumentCaptor.forClass(OtherName.class);
+        verify(otherNameManager).updateOtherName(eq(MY_ORCID), eq(6L), submitted.capture(), eq(true));
+        assertNull("keeping the stored visibility is the manager's job, not the delegator's", submitted.getValue().getVisibility());
     }
 
     @Test
     public void testDeleteOtherName() {
-        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4447", ScopePathType.PERSON_READ_LIMITED, ScopePathType.PERSON_UPDATE);
-        Response response = serviceDelegator.viewOtherNames("4444-4444-4444-4447");
-        assertNotNull(response);
-        OtherNames otherNames = (OtherNames) response.getEntity();
-        assertNotNull(otherNames);
-        assertNotNull(otherNames.getOtherNames());
-        assertEquals(1, otherNames.getOtherNames().size());
-        response = serviceDelegator.deleteOtherName("4444-4444-4444-4447", 9L);
+        Response response = serviceDelegator.deleteOtherName("4444-4444-4444-4499", 8L);
+
         assertNotNull(response);
         assertEquals(Response.Status.NO_CONTENT.getStatusCode(), response.getStatus());
-        response = serviceDelegator.viewOtherNames("4444-4444-4444-4447");
-        assertNotNull(response);
-        otherNames = (OtherNames) response.getEntity();
-        assertNotNull(otherNames);
-        assertNotNull(otherNames.getOtherNames());
-        assertTrue(otherNames.getOtherNames().isEmpty());
+        verify(orcidSecurityManager).checkClientAccessAndScopes("4444-4444-4444-4499", ScopePathType.ORCID_BIO_UPDATE);
+        verify(otherNameManager).deleteOtherName("4444-4444-4444-4499", 8L, true);
     }
 
     @Test
     public void testReadPublicScope_OtherNames() {
-        SecurityContextTestUtils.setUpSecurityContext(ORCID, ScopePathType.READ_PUBLIC);
-        // Public works
+        // Stubbed per element rather than with a blanket matcher: refusing
+        // everything would also refuse 9, 10 and 11 and make the positive half of
+        // this test meaningless.
+        OtherName nine = otherName(9L, Visibility.PUBLIC, clientSource(CLIENT_1));
+        OtherName ten = otherName(10L, Visibility.LIMITED, clientSource(CLIENT_1));
+        OtherName eleven = otherName(11L, Visibility.PRIVATE, clientSource(CLIENT_1));
+        OtherName twelve = otherName(12L, Visibility.LIMITED, clientSource(CLIENT_2));
+        OtherName thirteen = otherName(13L, Visibility.PRIVATE, clientSource(CLIENT_2));
+        when(otherNameManagerReadOnly.getOtherName(ORCID, 9L)).thenReturn(nine);
+        when(otherNameManagerReadOnly.getOtherName(ORCID, 10L)).thenReturn(ten);
+        when(otherNameManagerReadOnly.getOtherName(ORCID, 11L)).thenReturn(eleven);
+        when(otherNameManagerReadOnly.getOtherName(ORCID, 12L)).thenReturn(twelve);
+        when(otherNameManagerReadOnly.getOtherName(ORCID, 13L)).thenReturn(thirteen);
+        when(otherNameManagerReadOnly.getOtherNames(ORCID)).thenReturn(otherNames(nine, ten, eleven));
+        doThrow(new OrcidAccessControlException()).when(orcidSecurityManager).checkAndFilter(ORCID, twelve, ScopePathType.ORCID_BIO_READ_LIMITED);
+        doThrow(new OrcidAccessControlException()).when(orcidSecurityManager).checkAndFilter(ORCID, thirteen, ScopePathType.ORCID_BIO_READ_LIMITED);
+
         Response r = serviceDelegator.viewOtherNames(ORCID);
         assertNotNull(r);
         assertEquals(OtherNames.class.getName(), r.getEntity().getClass().getName());
-        OtherNames o = (OtherNames) r.getEntity();
-        assertNotNull(o);
-        Utils.verifyLastModified(o.getLastModifiedDate());
-        assertEquals(3, o.getOtherNames().size());
-        boolean found1 = false, found2 = false, found3 = false;
-        for (OtherName element : o.getOtherNames()) {
-            Utils.verifyLastModified(element.getLastModifiedDate());
-            if (element.getPutCode() == 13) {
-                found1 = true;
-            } else if (element.getPutCode() == 14) {
-                found2 = true;
-            } else if (element.getPutCode() == 15) {
-                found3 = true;
-            } else {
-                fail("Invalid put code " + element.getPutCode());
-            }
+        OtherNames k = (OtherNames) r.getEntity();
+        assertEquals("/0000-0000-0000-0003/other-names", k.getPath());
+        Utils.verifyLastModified(k.getLastModifiedDate());
+        assertEquals(3, k.getOtherNames().size());
 
-        }
-        assertTrue(found1);
-        assertTrue(found2);
-        assertTrue(found3);
-
-        r = serviceDelegator.viewOtherName(ORCID, 13L);
+        r = serviceDelegator.viewOtherName(ORCID, 9L);
         assertNotNull(r);
         assertEquals(OtherName.class.getName(), r.getEntity().getClass().getName());
 
         // Limited where am the source should work
-        serviceDelegator.viewOtherName(ORCID, 14L);
+        serviceDelegator.viewOtherName(ORCID, 10L);
 
-        // Limited where am not the source of should fail
         try {
-            serviceDelegator.viewOtherName(ORCID, 16L);
+            // Limited am not the source should fail
+            serviceDelegator.viewOtherName(ORCID, 12L);
             fail();
         } catch (OrcidAccessControlException e) {
 
@@ -353,10 +297,10 @@ public class MemberV2ApiServiceDelegator_OtherNamesTest extends DBUnitTest {
         }
 
         // Private where am the source should work
-        serviceDelegator.viewOtherName(ORCID, 15L);
-        // Private where am not the source should work
+        serviceDelegator.viewOtherName(ORCID, 11L);
         try {
-            serviceDelegator.viewOtherName(ORCID, 17L);
+            // Private am not the source should fail
+            serviceDelegator.viewOtherName(ORCID, 13L);
             fail();
         } catch (OrcidAccessControlException e) {
 
@@ -367,8 +311,49 @@ public class MemberV2ApiServiceDelegator_OtherNamesTest extends DBUnitTest {
 
     @Test(expected = WrongSourceException.class)
     public void testDeleteOtherNameYouAreNotTheSourceOf() {
-        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4446", ScopePathType.PERSON_UPDATE, ScopePathType.PERSON_UPDATE);
-        serviceDelegator.deleteOtherName("4444-4444-4444-4446", 6L);
+        doThrow(new WrongSourceException(Collections.singletonMap("activity", "other-name"))).when(otherNameManager).deleteOtherName(OTHER_ORCID, 3L, true);
+
+        serviceDelegator.deleteOtherName(OTHER_ORCID, 3L);
         fail();
+    }
+
+    // ------------------------------------------------------------- helpers
+
+    private void assertViewOtherNameDecorated(long putCode, Visibility visibility, Source source) {
+        OtherName otherName = otherName(putCode, visibility, source);
+        when(otherNameManagerReadOnly.getOtherName(OTHER_ORCID, putCode)).thenReturn(otherName);
+
+        Response response = serviceDelegator.viewOtherName(OTHER_ORCID, putCode);
+
+        assertNotNull(response);
+        OtherName returned = (OtherName) response.getEntity();
+        assertNotNull(returned);
+        assertEquals("/4444-4444-4444-4446/other-names/" + putCode, returned.getPath());
+        Utils.verifyLastModified(returned.getLastModifiedDate());
+        assertEquals(visibility, returned.getVisibility());
+        verify(orcidSecurityManager).checkAndFilter(OTHER_ORCID, otherName, ScopePathType.ORCID_BIO_READ_LIMITED);
+    }
+
+    @SuppressWarnings("unchecked")
+    private ArgumentCaptor<List<OtherName>> otherNameListCaptor() {
+        return ArgumentCaptor.forClass(List.class);
+    }
+
+    private OtherName otherName(Long putCode, Visibility visibility, Source source) {
+        OtherName otherName = new OtherName();
+        otherName.setPutCode(putCode);
+        otherName.setContent("Other name " + putCode);
+        otherName.setVisibility(visibility);
+        otherName.setSource(source);
+        otherName.setCreatedDate(createdDate());
+        otherName.setLastModifiedDate(lastModified());
+        return otherName;
+    }
+
+    private OtherNames otherNames(OtherName... elements) {
+        OtherNames otherNames = new OtherNames();
+        otherNames.setOtherNames(new ArrayList<>(Arrays.asList(elements)));
+        otherNames.setLastModifiedDate(lastModified());
+        return otherNames;
     }
 }

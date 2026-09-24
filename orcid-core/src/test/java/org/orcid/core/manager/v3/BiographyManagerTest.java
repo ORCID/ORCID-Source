@@ -17,7 +17,10 @@ import org.junit.Test;
 import org.orcid.core.BaseTest;
 import org.orcid.jaxb.model.v3.release.common.Visibility;
 import org.orcid.jaxb.model.v3.release.record.Biography;
+import org.junit.experimental.categories.Category;
+import org.orcid.test.DatabaseTest;
 
+@Category(DatabaseTest.class)
 public class BiographyManagerTest extends BaseTest {
     @Resource(name = "biographyManagerV3")
     private BiographyManager biographyManager;

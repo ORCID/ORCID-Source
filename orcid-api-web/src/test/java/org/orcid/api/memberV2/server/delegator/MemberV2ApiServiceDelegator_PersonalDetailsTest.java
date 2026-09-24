@@ -5,83 +5,83 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
+import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
 
-import jakarta.annotation.Resource;
 import jakarta.ws.rs.core.Response;
 
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.orcid.core.exception.OrcidUnauthorizedException;
-import org.orcid.core.utils.SecurityContextTestUtils;
+import org.orcid.jaxb.model.common_v2.CreditName;
+import org.orcid.jaxb.model.common_v2.Source;
 import org.orcid.jaxb.model.common_v2.Visibility;
-import org.orcid.jaxb.model.groupid_v2.GroupIdRecord;
 import org.orcid.jaxb.model.message.ScopePathType;
-import org.orcid.jaxb.model.record_v2.Address;
-import org.orcid.jaxb.model.record_v2.Education;
-import org.orcid.jaxb.model.record_v2.Employment;
-import org.orcid.jaxb.model.record_v2.Funding;
-import org.orcid.jaxb.model.record_v2.Keyword;
+import org.orcid.jaxb.model.record_v2.Biography;
+import org.orcid.jaxb.model.record_v2.FamilyName;
+import org.orcid.jaxb.model.record_v2.GivenNames;
+import org.orcid.jaxb.model.record_v2.Name;
 import org.orcid.jaxb.model.record_v2.OtherName;
-import org.orcid.jaxb.model.record_v2.PeerReview;
-import org.orcid.jaxb.model.record_v2.PersonExternalIdentifier;
+import org.orcid.jaxb.model.record_v2.OtherNames;
 import org.orcid.jaxb.model.record_v2.PersonalDetails;
-import org.orcid.jaxb.model.record_v2.ResearcherUrl;
-import org.orcid.jaxb.model.record_v2.Work;
-import org.orcid.jaxb.model.record_v2.WorkBulk;
-import org.orcid.test.DBUnitTest;
-import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.orcid.test.helper.Utils;
-import org.springframework.test.context.ContextConfiguration;
 
-@RunWith(OrcidJUnit4ClassRunner.class)
-@ContextConfiguration(locations = { "classpath:test-orcid-api-web-context.xml" })
-public class MemberV2ApiServiceDelegator_PersonalDetailsTest extends DBUnitTest {
-    protected static final List<String> DATA_FILES = Arrays.asList("/data/EmptyEntityData.xml",
-            "/data/SourceClientDetailsEntityData.xml", "/data/ProfileEntityData.xml", "/data/ClientDetailsEntityData.xml", "/data/Oauth2TokenDetailsData.xml",
-            "/data/RecordNameEntityData.xml", "/data/BiographyEntityData.xml");
-
-    // Now on, for any new test, PLAESE USER THIS ORCID ID
-    protected final String ORCID = "0000-0000-0000-0003";
-
-    @Resource(name = "memberV2ApiServiceDelegator")
-    protected MemberV2ApiServiceDelegator<Education, Employment, PersonExternalIdentifier, Funding, GroupIdRecord, OtherName, PeerReview, ResearcherUrl, Work, WorkBulk, Address, Keyword> serviceDelegator;
-
-    @BeforeClass
-    public static void initDBUnitData() throws Exception {
-        initDBUnitData(DATA_FILES);
-    }
-
-    @AfterClass
-    public static void removeDBUnitData() throws Exception {
-        Collections.reverse(DATA_FILES);
-        removeDBUnitData(DATA_FILES);
-    }
+/**
+ * The personal-details endpoint of the member v2 delegator, on mocks.
+ *
+ * <p>
+ * {@code viewPersonalDetails} composes a name, a biography and the other names,
+ * hands the lot to {@code checkAndFilter(String, PersonalDetails)}, then sets the
+ * paths and recomputes the last-modified dates. Which of the three parts survive
+ * the filter is decided in {@code OrcidSecurityManager_PersonTest}; that
+ * overload is void and edits the object in place, so it cannot be demonstrated
+ * against a mock.
+ */
+public class MemberV2ApiServiceDelegator_PersonalDetailsTest extends MemberV2ApiServiceDelegatorMockBase {
 
     @Test
     public void testViewPersonalDetailsReadPublic() {
-        SecurityContextTestUtils.setUpSecurityContextForClientOnly("APP-5555555555555555", ScopePathType.READ_PUBLIC);
+        PersonalDetails personalDetails = personalDetails();
+        when(personalDetailsManagerReadOnly.getPersonalDetails(ORCID)).thenReturn(personalDetails);
+
         Response r = serviceDelegator.viewPersonalDetails(ORCID);
+
         PersonalDetails element = (PersonalDetails) r.getEntity();
         assertNotNull(element);
         assertEquals("/0000-0000-0000-0003/personal-details", element.getPath());
-        Utils.assertIsPublicOrSource(element, "APP-5555555555555555");
+        verify(orcidSecurityManager).checkAndFilter(ORCID, personalDetails);
     }
 
     @Test(expected = OrcidUnauthorizedException.class)
     public void testViewPersonalDetailsWrongToken() {
-        SecurityContextTestUtils.setUpSecurityContext("some-other-user", ScopePathType.READ_LIMITED);
-        serviceDelegator.viewPersonalDetails(ORCID);
+        PersonalDetails personalDetails = personalDetails();
+        when(personalDetailsManagerReadOnly.getPersonalDetails(ORCID)).thenReturn(personalDetails);
+        doThrow(new OrcidUnauthorizedException("Access token is for a different record")).when(orcidSecurityManager).checkAndFilter(ORCID, personalDetails);
+
+        try {
+            serviceDelegator.viewPersonalDetails(ORCID);
+        } finally {
+            assertNull("nothing must be decorated once the guard has refused", personalDetails.getPath());
+        }
     }
 
     @Test
     public void testReadPublicScope_PersonalDetails() {
-        SecurityContextTestUtils.setUpSecurityContext(ORCID, ScopePathType.READ_PUBLIC);
+        PersonalDetails mine = personalDetails();
+        when(personalDetailsManagerReadOnly.getPersonalDetails(ORCID)).thenReturn(mine);
+        // A read-public token on another record: checkAndFilter strips the
+        // non-public parts in place. Modelled here as the object the security
+        // manager would have left behind, because a mock filters nothing --
+        // see OrcidSecurityManager_PersonTest for the filtering itself.
+        String otherOrcid = "0000-0000-0000-0002";
+        PersonalDetails stripped = new PersonalDetails();
+        stripped.setOtherNames(new OtherNames());
+        stripped.getOtherNames().setOtherNames(new ArrayList<>());
+        when(personalDetailsManagerReadOnly.getPersonalDetails(otherOrcid)).thenReturn(stripped);
+
         Response r = serviceDelegator.viewPersonalDetails(ORCID);
         assertNotNull(r);
         assertEquals(PersonalDetails.class.getName(), r.getEntity().getClass().getName());
@@ -114,8 +114,6 @@ public class MemberV2ApiServiceDelegator_PersonalDetailsTest extends DBUnitTest 
         assertTrue(found14);
         assertTrue(found15);
 
-        String otherOrcid = "0000-0000-0000-0002";
-        SecurityContextTestUtils.setUpSecurityContext(otherOrcid, ScopePathType.READ_PUBLIC);
         r = serviceDelegator.viewPersonalDetails(otherOrcid);
         assertNotNull(r);
         assertEquals(PersonalDetails.class.getName(), r.getEntity().getClass().getName());
@@ -124,34 +122,41 @@ public class MemberV2ApiServiceDelegator_PersonalDetailsTest extends DBUnitTest 
         assertNull(p.getName());
         assertNotNull(p.getOtherNames());
         assertTrue(p.getOtherNames().getOtherNames().isEmpty());
+        // the delegator still decorates whatever survived the filter
+        assertEquals("/0000-0000-0000-0002/personal-details", p.getPath());
+        assertEquals("/0000-0000-0000-0002/other-names", p.getOtherNames().getPath());
     }
 
     @Test
     public void testViewPersonalDetails() {
-        SecurityContextTestUtils.setUpSecurityContext(ORCID, ScopePathType.PERSON_READ_LIMITED);
-        Response response = serviceDelegator.viewPersonalDetails(ORCID);
-        assertNotNull(response);
-        PersonalDetails personalDetails = (PersonalDetails) response.getEntity();
-        assertNotNull(personalDetails);
-        assertEquals("/0000-0000-0000-0003/personal-details", personalDetails.getPath());
-        Utils.verifyLastModified(personalDetails.getLastModifiedDate());
-        assertNotNull(personalDetails.getBiography());
-        Utils.verifyLastModified(personalDetails.getBiography().getLastModifiedDate());
-        assertEquals("Biography for 0000-0000-0000-0003", personalDetails.getBiography().getContent());
-        assertEquals(Visibility.PUBLIC.value(), personalDetails.getBiography().getVisibility().value());
-        assertEquals("/0000-0000-0000-0003/biography", personalDetails.getBiography().getPath());
-        assertNotNull(personalDetails.getName());
-        Utils.verifyLastModified(personalDetails.getName().getLastModifiedDate());
-        assertNotNull(personalDetails.getName().getCreatedDate().getValue());
-        assertEquals("Credit Name", personalDetails.getName().getCreditName().getContent());
-        assertEquals("Family Name", personalDetails.getName().getFamilyName().getContent());
-        assertEquals("Given Names", personalDetails.getName().getGivenNames().getContent());
-        assertEquals(Visibility.PUBLIC.value(), personalDetails.getName().getVisibility().value());
-        assertNotNull(personalDetails.getOtherNames());
-        Utils.verifyLastModified(personalDetails.getOtherNames().getLastModifiedDate());
-        assertEquals(4, personalDetails.getOtherNames().getOtherNames().size());
+        PersonalDetails personalDetails = personalDetails();
+        personalDetails.getOtherNames().getOtherNames().add(otherName(16L, "Other Name SELF LIMITED", 3L, Visibility.LIMITED, userSource(ORCID)));
+        when(personalDetailsManagerReadOnly.getPersonalDetails(ORCID)).thenReturn(personalDetails);
 
-        for (OtherName otherName : personalDetails.getOtherNames().getOtherNames()) {
+        Response response = serviceDelegator.viewPersonalDetails(ORCID);
+
+        assertNotNull(response);
+        PersonalDetails returned = (PersonalDetails) response.getEntity();
+        assertNotNull(returned);
+        assertEquals("/0000-0000-0000-0003/personal-details", returned.getPath());
+        Utils.verifyLastModified(returned.getLastModifiedDate());
+        assertNotNull(returned.getBiography());
+        Utils.verifyLastModified(returned.getBiography().getLastModifiedDate());
+        assertEquals("Biography for 0000-0000-0000-0003", returned.getBiography().getContent());
+        assertEquals(Visibility.PUBLIC.value(), returned.getBiography().getVisibility().value());
+        assertEquals("/0000-0000-0000-0003/biography", returned.getBiography().getPath());
+        assertNotNull(returned.getName());
+        Utils.verifyLastModified(returned.getName().getLastModifiedDate());
+        assertNotNull(returned.getName().getCreatedDate().getValue());
+        assertEquals("Credit Name", returned.getName().getCreditName().getContent());
+        assertEquals("Family Name", returned.getName().getFamilyName().getContent());
+        assertEquals("Given Names", returned.getName().getGivenNames().getContent());
+        assertEquals(Visibility.PUBLIC.value(), returned.getName().getVisibility().value());
+        assertNotNull(returned.getOtherNames());
+        Utils.verifyLastModified(returned.getOtherNames().getLastModifiedDate());
+        assertEquals(4, returned.getOtherNames().getOtherNames().size());
+
+        for (OtherName otherName : returned.getOtherNames().getOtherNames()) {
             Utils.verifyLastModified(otherName.getLastModifiedDate());
             if (otherName.getPutCode().equals(Long.valueOf(13))) {
                 assertEquals("Other Name PUBLIC", otherName.getContent());
@@ -182,7 +187,51 @@ public class MemberV2ApiServiceDelegator_PersonalDetailsTest extends DBUnitTest 
             }
         }
 
-        assertEquals("/0000-0000-0000-0003/other-names", personalDetails.getOtherNames().getPath());
-        assertEquals("/0000-0000-0000-0003/personal-details", personalDetails.getPath());
+        assertEquals("/0000-0000-0000-0003/other-names", returned.getOtherNames().getPath());
+        assertEquals("/0000-0000-0000-0003/personal-details", returned.getPath());
+        verify(orcidSecurityManager).checkAndFilter(ORCID, personalDetails);
+    }
+
+    // ------------------------------------------------------------- fixtures
+
+    private PersonalDetails personalDetails() {
+        PersonalDetails personalDetails = new PersonalDetails();
+
+        Biography biography = new Biography();
+        biography.setContent("Biography for 0000-0000-0000-0003");
+        biography.setVisibility(Visibility.PUBLIC);
+        biography.setCreatedDate(createdDate());
+        biography.setLastModifiedDate(lastModified());
+        personalDetails.setBiography(biography);
+
+        Name name = new Name();
+        name.setCreditName(new CreditName("Credit Name"));
+        name.setGivenNames(new GivenNames("Given Names"));
+        name.setFamilyName(new FamilyName("Family Name"));
+        name.setVisibility(Visibility.PUBLIC);
+        name.setCreatedDate(createdDate());
+        name.setLastModifiedDate(lastModified());
+        personalDetails.setName(name);
+
+        OtherNames otherNames = new OtherNames();
+        otherNames.setOtherNames(new ArrayList<>(Arrays.asList(otherName(13L, "Other Name PUBLIC", 0L, Visibility.PUBLIC, clientSource(CLIENT_1)),
+                otherName(14L, "Other Name LIMITED", 1L, Visibility.LIMITED, clientSource(CLIENT_1)),
+                otherName(15L, "Other Name PRIVATE", 2L, Visibility.PRIVATE, clientSource(CLIENT_1)))));
+        otherNames.setLastModifiedDate(lastModified());
+        personalDetails.setOtherNames(otherNames);
+
+        return personalDetails;
+    }
+
+    private OtherName otherName(Long putCode, String content, Long displayIndex, Visibility visibility, Source source) {
+        OtherName otherName = new OtherName();
+        otherName.setPutCode(putCode);
+        otherName.setContent(content);
+        otherName.setDisplayIndex(displayIndex);
+        otherName.setVisibility(visibility);
+        otherName.setSource(source);
+        otherName.setCreatedDate(createdDate());
+        otherName.setLastModifiedDate(lastModified());
+        return otherName;
     }
 }

@@ -1,98 +1,58 @@
 package org.orcid.frontend.web.controllers;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+import static org.mockito.Mockito.when;
 
-import java.util.Arrays;
-import java.util.List;
-
-import jakarta.annotation.Resource;
-import jakarta.servlet.http.HttpServletRequest;
-
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.orcid.core.manager.v3.read_only.ProfileEntityManagerReadOnly;
-import org.orcid.core.security.OrcidRoles;
-import org.orcid.frontend.web.util.BaseControllerTest;
-import org.orcid.persistence.jpa.entities.ProfileEntity;
+import org.mockito.junit.MockitoJUnitRunner;
+import org.orcid.core.manager.OrgDisambiguatedManager;
+import org.orcid.core.manager.v3.OrgManager;
 import org.orcid.pojo.OrgDisambiguated;
-import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.web.WebAppConfiguration;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
 
-import com.google.common.collect.Lists;
+@RunWith(MockitoJUnitRunner.Silent.class)
+public class OrgControllerTest {
 
-@RunWith(OrcidJUnit4ClassRunner.class)
-@WebAppConfiguration
-@ContextConfiguration(locations = { "classpath:test-frontend-web-servlet.xml" })
-@Transactional(propagation = Propagation.REQUIRES_NEW)
-public class OrgControllerTest extends BaseControllerTest {
-    
-        private static final List<String> DATA_FILES = Arrays.asList("/data/EmptyEntityData.xml",
-                "/data/SourceClientDetailsEntityData.xml", "/data/ProfileEntityData.xml", "/data/ClientDetailsEntityData.xml",
-                "/data/Oauth2TokenDetailsData.xml", "/data/OrgsEntityData.xml", "/data/OrgAffiliationEntityData.xml", "/data/RecordNameEntityData.xml");
+    @Mock
+    private OrgDisambiguatedManager orgDisambiguatedManager;
 
-        @Mock
-        private HttpServletRequest servletRequest;
-        
-        @Resource
-        private OrgController orgController;
-        
-        @Resource(name = "profileEntityManagerReadOnlyV3")
-        private ProfileEntityManagerReadOnly profileEntityManagerReadOnly;
-        
-        @Override
-        protected Authentication getAuthentication() {
-            String orcid = "4444-4444-4444-4443";
-            ProfileEntity p = profileEntityManagerReadOnly.findByOrcid(orcid);
-            List<GrantedAuthority> roles = Arrays.asList(new SimpleGrantedAuthority(OrcidRoles.ROLE_USER.name()));
-            UserDetails details = new User(orcid,
-                    "password", roles);
-            UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(orcid, p.getPassword(), roles);
-            auth.setDetails(details);
-            return auth;
-        }
+    /** Declared on the controller but not reached by the endpoint under test. */
+    @Mock
+    private OrgManager orgManager;
 
-        @Before
-        public void initMocks() {
-            
-        }
-        
-        @BeforeClass
-        public static void beforeClass() throws Exception {
-            initDBUnitData(DATA_FILES);
-        }
+    @InjectMocks
+    private OrgController orgController = new OrgController();
 
-        @AfterClass
-        public static void afterClass() throws Exception {
-            removeDBUnitData(Lists.reverse(DATA_FILES));
-        }
-        
-        @Test
-        public void testFindBySourceTypeAndSourceId(){
-            ResponseEntity<OrgDisambiguated> o = orgController.getDisambiguatedOrg("WDB", "abc456");
-            
-            assertEquals("abc456",o.getBody().getSourceId());
-            assertEquals("WDB",o.getBody().getSourceType());
-            assertEquals("London",o.getBody().getCity());
-            assertEquals("An Institution",o.getBody().getValue());
-            assertEquals("GB",o.getBody().getCountry());
-            assertEquals(200,o.getStatusCodeValue());
-            
-            ResponseEntity<OrgDisambiguated> o2 = orgController.getDisambiguatedOrg("no","no");
-            assertEquals(404,o2.getStatusCodeValue());
+    @Test
+    public void testFindBySourceTypeAndSourceId() {
+        when(orgDisambiguatedManager.findInDB("abc456", "WDB")).thenReturn(orgDisambiguated());
+        when(orgDisambiguatedManager.findInDB("no", "no")).thenReturn(null);
 
-        }
+        ResponseEntity<OrgDisambiguated> o = orgController.getDisambiguatedOrg("WDB", "abc456");
+
+        assertEquals("abc456", o.getBody().getSourceId());
+        assertEquals("WDB", o.getBody().getSourceType());
+        assertEquals("London", o.getBody().getCity());
+        assertEquals("An Institution", o.getBody().getValue());
+        assertEquals("GB", o.getBody().getCountry());
+        assertEquals(200, o.getStatusCodeValue());
+
+        ResponseEntity<OrgDisambiguated> o2 = orgController.getDisambiguatedOrg("no", "no");
+        assertEquals(404, o2.getStatusCodeValue());
+        assertNull(o2.getBody());
+    }
+
+    private OrgDisambiguated orgDisambiguated() {
+        OrgDisambiguated org = new OrgDisambiguated();
+        org.setSourceId("abc456");
+        org.setSourceType("WDB");
+        org.setCity("London");
+        org.setValue("An Institution");
+        org.setCountry("GB");
+        return org;
+    }
 }

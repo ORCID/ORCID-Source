@@ -5,7 +5,6 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.orcid.core.exception.InvalidPutCodeException;
 import org.orcid.core.exception.OrcidValidationException;
 import org.orcid.core.exception.PutCodeRequiredException;
@@ -15,11 +14,7 @@ import org.orcid.jaxb.model.common_v2.Visibility;
 import org.orcid.jaxb.model.record_v2.PersonExternalIdentifier;
 import org.orcid.jaxb.model.record_v2.Relationship;
 import org.orcid.persistence.jpa.entities.SourceEntity;
-import org.orcid.test.OrcidJUnit4ClassRunner;
-import org.springframework.test.context.ContextConfiguration;
 
-@RunWith(OrcidJUnit4ClassRunner.class)
-@ContextConfiguration(locations = { "classpath:test-orcid-core-context.xml" })
 public class PersonValidatorTest {
 
     @Test

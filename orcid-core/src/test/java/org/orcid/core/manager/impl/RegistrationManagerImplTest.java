@@ -57,9 +57,12 @@ import org.orcid.utils.OrcidStringUtils;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.support.TransactionTemplate;
+import org.junit.experimental.categories.Category;
+import org.orcid.test.DatabaseTest;
 
 @RunWith(OrcidJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:test-orcid-core-context.xml" })
+@Category(DatabaseTest.class)
 public class RegistrationManagerImplTest extends DBUnitTest {
 
     private static final String CLIENT_1_ID = "4444-4444-4444-4498";

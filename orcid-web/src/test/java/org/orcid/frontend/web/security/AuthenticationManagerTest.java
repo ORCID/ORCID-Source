@@ -27,6 +27,8 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
+import org.junit.experimental.categories.Category;
+import org.orcid.test.DatabaseTest;
 
 /**
  * @author Declan Newman (declan) Date: 13/02/2012
@@ -34,6 +36,7 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 @RunWith(OrcidJUnit4ClassRunner.class)
 @WebAppConfiguration
 @ContextConfiguration(locations = { "classpath:test-frontend-web-servlet.xml" })
+@Category(DatabaseTest.class)
 public class AuthenticationManagerTest extends DBUnitTest {
 
     @Resource

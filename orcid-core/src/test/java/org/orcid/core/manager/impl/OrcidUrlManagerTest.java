@@ -17,12 +17,15 @@ import org.orcid.core.BaseTest;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.security.web.savedrequest.HttpSessionRequestCache;
+import org.junit.experimental.categories.Category;
+import org.orcid.test.DatabaseTest;
 
 /**
  * 
  * @author Will Simpson
  *
  */
+@Category(DatabaseTest.class)
 public class OrcidUrlManagerTest extends BaseTest {
 
     @Resource

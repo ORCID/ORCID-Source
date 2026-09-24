@@ -22,9 +22,12 @@ import org.orcid.persistence.jpa.entities.SpamEntity;
 import org.orcid.test.DBUnitTest;
 import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.springframework.test.context.ContextConfiguration;
+import org.junit.experimental.categories.Category;
+import org.orcid.test.DatabaseTest;
 
 @RunWith(OrcidJUnit4ClassRunner.class)
 @ContextConfiguration(inheritInitializers = false, inheritLocations = false, locations = {"classpath:test-orcid-persistence-context.xml"})
+@Category(DatabaseTest.class)
 public class SpamDaoTest extends DBUnitTest {
 
     private static String USER_ORCID = "4444-4444-4444-4497";

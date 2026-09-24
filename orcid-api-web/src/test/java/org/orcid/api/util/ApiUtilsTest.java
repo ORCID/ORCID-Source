@@ -8,27 +8,54 @@ import static org.junit.Assert.assertTrue;
 import java.util.List;
 import java.util.Map;
 
-import jakarta.annotation.Resource;
 import jakarta.ws.rs.core.Response;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.orcid.api.common.filter.ApiVersionFilter;
 import org.orcid.api.common.util.ApiUtils;
-import org.orcid.test.OrcidJUnit4ClassRunner;
+import org.orcid.core.locale.LocaleManager;
+import org.orcid.core.manager.impl.OrcidUrlManager;
 import org.springframework.mock.web.MockHttpServletRequest;
-import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
-@RunWith(OrcidJUnit4ClassRunner.class)
-@ContextConfiguration(locations = { "classpath:test-orcid-api-web-context.xml" })
+/**
+ * {@link ApiUtils} composes a Location URI out of the API base URL, the version
+ * stamped on the current request by {@link ApiVersionFilter}, and the orcid,
+ * target and put code it is handed. That is string work over a thread-local, so
+ * this runs on mocks; the api-web context it used to boot supplied only the
+ * bean.
+ *
+ * <p>
+ * {@link OrcidUrlManager} is a real instance rather than a mock because
+ * {@code getApiBaseUrl()} is a plain getter -- stubbing it would replace one
+ * line of production code with an equivalent line of test code and gain
+ * nothing. It is given the {@code org.orcid.core.apiBaseUri} that
+ * {@code orcid-test/.../test-core.properties} carries, which is the value the
+ * expected URLs below were written against.
+ *
+ * <p>
+ * The version is read from {@link RequestContextHolder}, which is a static
+ * thread-local: it is cleared before and after each test so a version set by
+ * one method cannot decide the outcome of another, here or in any test class
+ * sharing the JVM.
+ */
+@RunWith(MockitoJUnitRunner.class)
 public class ApiUtilsTest {
 
-    @Resource(name = "apiUtils")
-    private ApiUtils apiUtils;
+    @Mock
+    private LocaleManager localeManager;
+
+    @InjectMocks
+    private ApiUtils apiUtils = new ApiUtils();
 
     private String getLocationFromResponse(Response response) {
         Map<?, ?> map = response.getMetadata();
@@ -40,6 +67,15 @@ public class ApiUtilsTest {
     
     @Before
     public void before() {
+        RequestContextHolder.resetRequestAttributes();
+
+        OrcidUrlManager orcidUrlManager = new OrcidUrlManager();
+        orcidUrlManager.setApiBaseUrl("https://localhost:8443/orcid-api-web");
+        ReflectionTestUtils.setField(apiUtils, "orcidUrlManager", orcidUrlManager);
+    }
+
+    @After
+    public void after() {
         RequestContextHolder.resetRequestAttributes();
     }
 

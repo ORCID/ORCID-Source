@@ -4,23 +4,29 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.mockito.ArgumentMatchers.any;
 
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.orcid.core.manager.v3.impl.ProfileHistoryEventManagerImpl;
 import org.orcid.core.profile.history.ProfileHistoryEventType;
 import org.orcid.persistence.dao.ProfileHistoryEventDao;
 import org.orcid.persistence.jpa.entities.ProfileHistoryEventEntity;
-import org.orcid.test.OrcidJUnit4ClassRunner;
-import org.springframework.test.context.ContextConfiguration;
 
-@RunWith(OrcidJUnit4ClassRunner.class)
-@ContextConfiguration(locations = { "classpath:test-orcid-core-context.xml" })
+/**
+ * ProfileHistoryEventManagerImpl has one collaborator, a DAO, and this test already drove it
+ * entirely through Mockito -- the Spring context it loaded was never read from. The context
+ * boot is gone; the mock set is unchanged.
+ *
+ * <p>
+ * The field on the implementation is called {@code profileHistoryDao}, not
+ * {@code profileHistoryEventDao}; @InjectMocks matches it by type, which is unambiguous because
+ * it is the only ProfileHistoryEventDao in play.
+ */
+@RunWith(MockitoJUnitRunner.class)
 public class ProfileHistoryEventManagerTest {
 
     @Mock
@@ -28,11 +34,6 @@ public class ProfileHistoryEventManagerTest {
 
     @InjectMocks
     private ProfileHistoryEventManagerImpl profileHistoryEventManager;
-
-    @Before
-    public void init() {
-        MockitoAnnotations.initMocks(this);
-    }
 
     @Test
     public void testRecordEvent() {

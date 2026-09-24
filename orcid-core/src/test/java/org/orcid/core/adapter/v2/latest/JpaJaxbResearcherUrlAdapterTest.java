@@ -7,7 +7,6 @@ import static org.junit.Assert.assertNull;
 import java.io.InputStream;
 import java.util.Date;
 
-import jakarta.annotation.Resource;
 import jakarta.xml.bind.JAXBContext;
 import jakarta.xml.bind.JAXBException;
 import jakarta.xml.bind.Unmarshaller;
@@ -15,27 +14,37 @@ import jakarta.xml.bind.Unmarshaller;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.orcid.core.adapter.JpaJaxbResearcherUrlAdapter;
-import org.orcid.core.adapter.MockSourceNameCache;
 import org.orcid.jaxb.model.common_v2.Visibility;
 import org.orcid.jaxb.model.record_v2.ResearcherUrl;
 import org.orcid.jaxb.model.record_v2.ResearcherUrls;
 import org.orcid.persistence.jpa.entities.ResearcherUrlEntity;
-import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.orcid.core.utils.DateFieldsOnBaseEntityUtils;
 import org.orcid.utils.DateUtils;
-import org.springframework.test.context.ContextConfiguration;
+import org.junit.Before;
+import org.mockito.junit.MockitoJUnitRunner;
+import org.orcid.core.adapter.mapstruct.impl.JpaJaxbResearcherUrlAdapterImpl;
+import org.orcid.core.adapter.MockedMapStructAdapters;
 
 /**
- * 
+ *
  * @author Angel Montenegro
- * 
+ *
  */
-@RunWith(OrcidJUnit4ClassRunner.class)
-@ContextConfiguration(locations = { "classpath:test-orcid-core-context.xml" })
-public class JpaJaxbResearcherUrlAdapterTest extends MockSourceNameCache {
+@RunWith(MockitoJUnitRunner.Silent.class)
+public class JpaJaxbResearcherUrlAdapterTest {
 
-    @Resource
+    private static final String CLIENT_SOURCE_ID = MockedMapStructAdapters.CLIENT_SOURCE_ID;
+
+    private final MockedMapStructAdapters adapters = new MockedMapStructAdapters();
+
     private JpaJaxbResearcherUrlAdapter jpaJaxbResearcherUrlAdapter;
+
+    @Before
+    public void setUpAdapter() throws Exception {
+        // REAL MapStruct mapper: the whole behaviour under test is the mapping configuration,
+        // so a mocked mapper would make every assertion below an assertion about a mock.
+        jpaJaxbResearcherUrlAdapter = adapters.get(JpaJaxbResearcherUrlAdapterImpl.class);
+    }
 
     @Test
     public void testToResearcherUrlEntity() throws JAXBException {
@@ -49,12 +58,12 @@ public class JpaJaxbResearcherUrlAdapterTest extends MockSourceNameCache {
         assertNotNull(entity);
         //General info
         assertEquals(Long.valueOf(1248), entity.getId());
-        assertEquals(Visibility.PUBLIC.name(), entity.getVisibility());        
+        assertEquals(Visibility.PUBLIC.name(), entity.getVisibility());
         assertEquals("http://site1.com/", entity.getUrl());
-        assertEquals("Site # 1", entity.getUrlName());                
+        assertEquals("Site # 1", entity.getUrlName());
         // Source
-        assertNull(entity.getSourceId());        
-        assertNull(entity.getClientSourceId());        
+        assertNull(entity.getSourceId());
+        assertNull(entity.getClientSourceId());
         assertNull(entity.getElementSourceId());
         // Dates are null
         assertNull(entity.getDateCreated());
@@ -75,7 +84,7 @@ public class JpaJaxbResearcherUrlAdapterTest extends MockSourceNameCache {
         assertEquals(DateUtils.convertToDate("2015-06-05T10:15:20"), DateUtils.convertToDate(r.getCreatedDate().getValue()));
         assertNotNull(r.getLastModifiedDate());
         assertEquals(DateUtils.convertToDate("2015-06-05T10:15:20"), DateUtils.convertToDate(r.getLastModifiedDate().getValue()));
-        
+
         //Source
         assertEquals(CLIENT_SOURCE_ID, r.getSource().retrieveSourcePath());
     }      
@@ -89,15 +98,15 @@ public class JpaJaxbResearcherUrlAdapterTest extends MockSourceNameCache {
 
         assertNull(researcherUrl.getUrl());
     }
-    
+
     private ResearcherUrls getResearcherUrls() throws JAXBException {
         JAXBContext context = JAXBContext.newInstance(new Class[] { ResearcherUrls.class });
         Unmarshaller unmarshaller = context.createUnmarshaller();
-        String name = "/record_2.0/samples/read_samples/researcher-urls-2.0.xml";             
+        String name = "/record_2.0/samples/read_samples/researcher-urls-2.0.xml";
         InputStream inputStream = getClass().getResourceAsStream(name);
         return (ResearcherUrls) unmarshaller.unmarshal(inputStream);
     }
-    
+
     private ResearcherUrlEntity getResearcherUrlEntity() throws IllegalAccessException {
         Date date = DateUtils.convertToDate("2015-06-05T10:15:20");
         ResearcherUrlEntity entity = new ResearcherUrlEntity();

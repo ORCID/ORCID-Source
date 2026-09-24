@@ -16,23 +16,32 @@ import static org.mockito.Mockito.when;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
 import org.mockito.invocation.InvocationOnMock;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.mockito.stubbing.Answer;
 import org.orcid.core.manager.impl.BackupCodeManagerImpl;
 import org.orcid.persistence.dao.BackupCodeDao;
 import org.orcid.persistence.jpa.entities.BackupCodeEntity;
-import org.orcid.test.OrcidJUnit4ClassRunner;
-import org.springframework.test.context.ContextConfiguration;
 
-@RunWith(OrcidJUnit4ClassRunner.class)
-@ContextConfiguration(locations = { "classpath:test-orcid-core-context.xml" })
+/**
+ * BackupCodeManagerImpl holds a DAO and an EncryptionManager and nothing else, and this
+ * test already drove it entirely through Mockito -- the Spring context it loaded was
+ * never read from. The context boot is gone; the mock set is unchanged.
+ *
+ * <p>
+ * The two Answer stubs are kept rather than replaced by constant returns. hashForInternalUse
+ * echoes its argument so that the codes handed back to the caller can be compared against the
+ * hashes handed to the DAO; a constant would make every entity carry the same hash and the
+ * "each returned code was persisted" loop would pass on any implementation. hashMatches
+ * compares its two arguments for the same reason: with a constant true, verify() would report
+ * success for the three codes the test expects it to reject.
+ */
+@RunWith(MockitoJUnitRunner.class)
 public class BackupCodeManagerTest {
 
     @Mock
@@ -43,11 +52,6 @@ public class BackupCodeManagerTest {
 
     @InjectMocks
     private BackupCodeManagerImpl backupCodeManager;
-
-    @Before
-    public void init() {
-        MockitoAnnotations.initMocks(this);
-    }
 
     @Test
     public void testCreateBackupCodes() {

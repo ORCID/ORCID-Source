@@ -18,6 +18,7 @@ import jakarta.servlet.http.HttpSession;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
@@ -28,6 +29,7 @@ import org.orcid.frontend.web.pagination.ResearchResourcePaginator;
 import org.orcid.frontend.web.util.BaseControllerTest;
 import org.orcid.jaxb.model.v3.release.common.Visibility;
 import org.orcid.pojo.ResearchResourceGroupPojo;
+import org.orcid.test.DatabaseTest;
 import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.web.WebAppConfiguration;
@@ -37,6 +39,18 @@ import com.google.common.collect.Lists;
 @RunWith(OrcidJUnit4ClassRunner.class)
 @WebAppConfiguration
 @ContextConfiguration(locations = { "classpath:test-frontend-web-servlet.xml" })
+/*
+ * Kept as a database test. Every assertion in this file is DAO behaviour, not
+ * controller behaviour: the paginator's grouping and title/date ordering, the
+ * display_index that decides the default resource inside a group, the
+ * visibility update, and above all testDeleteOne, whose whole point is that
+ * ResearchResourceDaoImpl.removeResearchResource is scoped
+ * "where r.orcid=:userOrcid and r.id=:researchResourceId". A mocked
+ * ResearchResourceManager would return whatever the test told it to and prove
+ * none of that. The delegation the controller does own is covered by mocks in
+ * ResearchResourcesControllerTest.
+ */
+@Category(DatabaseTest.class)
 public class ResearchResourceControllerTest extends BaseControllerTest {
 
     private static final List<String> DATA_FILES = Arrays.asList("/data/SourceClientDetailsEntityData.xml",

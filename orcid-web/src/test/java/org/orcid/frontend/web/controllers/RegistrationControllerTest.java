@@ -5,6 +5,8 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.mock;
@@ -12,32 +14,38 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
+import java.util.Properties;
 
-import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 
 import org.apache.commons.codec.binary.Base64;
 import org.jasypt.exceptions.EncryptionOperationNotPossibleException;
-import org.junit.AfterClass;
+import org.junit.After;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
+import org.orcid.core.common.manager.EventManager;
+import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.EncryptionManager;
+import org.orcid.core.manager.impl.OrcidUrlManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.RegistrationManager;
 import org.orcid.core.manager.v3.EmailManager;
@@ -49,6 +57,7 @@ import org.orcid.core.security.OrcidRoles;
 import org.orcid.core.togglz.Features;
 import org.orcid.core.utils.SecurityContextTestUtils;
 import org.orcid.frontend.email.RecordEmailSender;
+import org.orcid.frontend.web.util.RecaptchaVerifier;
 import org.orcid.jaxb.model.common.AvailableLocales;
 import org.orcid.jaxb.model.message.CreationMethod;
 import org.orcid.jaxb.model.v3.release.common.Visibility;
@@ -57,31 +66,31 @@ import org.orcid.pojo.Redirect;
 import org.orcid.pojo.ajaxForm.Checkbox;
 import org.orcid.pojo.ajaxForm.Registration;
 import org.orcid.pojo.ajaxForm.Text;
-import org.orcid.test.DBUnitTest;
-import org.orcid.test.OrcidJUnit4ClassRunner;
-import org.orcid.test.TargetProxyHelper;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.web.WebAppConfiguration;
+import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributesModelMap;
 import org.togglz.junit.TogglzRule;
 
-import com.google.common.collect.Lists;
 
-@RunWith(OrcidJUnit4ClassRunner.class)
-@WebAppConfiguration
-@ContextConfiguration(locations = { "classpath:test-frontend-web-servlet.xml" })
-public class RegistrationControllerTest extends DBUnitTest {
+/**
+ * Nothing in this file read the DBUnit rows; every collaborator it asserts on
+ * was already a mock. The ones the context used to supply silently are explicit
+ * now: orcidUrlManager (behind every calculateRedirectUrl assertion),
+ * recaptchaVerifier and eventManager (declared on the controller, off the tested
+ * paths), and localeManager, which is answered from the real
+ * i18n/messages_en.properties so the two assertions on translated text --
+ * "Please choose a default visibility setting." and "Additional email cannot
+ * match another email" -- keep meaning what they meant.
+ */
+@RunWith(MockitoJUnitRunner.Silent.class)
+public class RegistrationControllerTest {
 
-    private static final List<String> DATA_FILES = Arrays.asList("/data/EmptyEntityData.xml",
-            "/data/SourceClientDetailsEntityData.xml", "/data/ProfileEntityData.xml", "/data/ClientDetailsEntityData.xml", "/data/RecordNameEntityData.xml", "/data/BiographyEntityData.xml");
-    
-    @Resource(name = "registrationController")
     RegistrationController registrationController;
 
     @Mock
@@ -112,33 +121,55 @@ public class RegistrationControllerTest extends DBUnitTest {
     private EmailManagerReadOnly emailManagerReadOnlyMock;
     
     @Mock
-    private AuthenticationManager authenticationManagerMock; 
-    
+    private AuthenticationManager authenticationManagerMock;
+
+    @Mock
+    private LocaleManager localeManager;
+
+    @Mock
+    private OrcidUrlManager orcidUrlManager;
+
+    @Mock
+    private RecaptchaVerifier recaptchaVerifier;
+
+    @Mock
+    private EventManager eventManager;
+
     @Rule
     public TogglzRule togglzRule = TogglzRule.allDisabled(Features.class);
-    
-    @BeforeClass
-    public static void beforeClass() throws Exception {
-        initDBUnitData(DATA_FILES);
-    }
-    
-    @AfterClass
-    public static void afterClass() throws Exception {
-        removeDBUnitData(Lists.reverse(DATA_FILES));
-    }
-    
+
     @Before
     public void before() {
-        MockitoAnnotations.initMocks(this);        
-        TargetProxyHelper.injectIntoProxy(registrationController, "registrationManager", registrationManager);        
-        TargetProxyHelper.injectIntoProxy(registrationController, "emailManager", emailManager); 
-        TargetProxyHelper.injectIntoProxy(registrationController, "profileEntityManager", profileEntityManager);        
-        TargetProxyHelper.injectIntoProxy(registrationController, "encryptionManager", encryptionManagerMock);
-        TargetProxyHelper.injectIntoProxy(registrationController, "emailManagerReadOnly", emailManagerReadOnlyMock);
-        TargetProxyHelper.injectIntoProxy(registrationController, "authenticationManager", authenticationManagerMock); 
-        TargetProxyHelper.injectIntoProxy(registrationController, "profileHistoryEventManager", profileHistoryEventManager); 
-        TargetProxyHelper.injectIntoProxy(registrationController, "recordEmailSender", recordEmailSender);         
-        
+        registrationController = new RegistrationController();
+
+        ReflectionTestUtils.setField(registrationController, "registrationManager", registrationManager);
+        ReflectionTestUtils.setField(registrationController, "encryptionManager", encryptionManagerMock);
+        ReflectionTestUtils.setField(registrationController, "authenticationManager", authenticationManagerMock);
+        ReflectionTestUtils.setField(registrationController, "profileHistoryEventManager", profileHistoryEventManager);
+        ReflectionTestUtils.setField(registrationController, "recordEmailSender", recordEmailSender);
+        ReflectionTestUtils.setField(registrationController, "recaptchaVerifier", recaptchaVerifier);
+        ReflectionTestUtils.setField(registrationController, "eventManager", eventManager);
+
+        // emailManager, profileEntityManager, localeManager and orcidUrlManager
+        // are declared on BaseController.
+        ReflectionTestUtils.setField(registrationController, BaseController.class, "emailManager", emailManager, EmailManager.class);
+        ReflectionTestUtils.setField(registrationController, BaseController.class, "profileEntityManager", profileEntityManager, ProfileEntityManager.class);
+        ReflectionTestUtils.setField(registrationController, BaseController.class, "localeManager", localeManager, LocaleManager.class);
+        ReflectionTestUtils.setField(registrationController, BaseController.class, "orcidUrlManager", orcidUrlManager, OrcidUrlManager.class);
+
+        // RegistrationController re-declares emailManagerReadOnly (line 116)
+        // over BaseController's copy; Spring's @Resource fills both, and
+        // BaseController.isEmailOkForCurrentUser() reads its own.
+        ReflectionTestUtils.setField(registrationController, RegistrationController.class, "emailManagerReadOnly", emailManagerReadOnlyMock,
+                EmailManagerReadOnly.class);
+        ReflectionTestUtils.setField(registrationController, BaseController.class, "emailManagerReadOnly", emailManagerReadOnlyMock,
+                EmailManagerReadOnly.class);
+
+        when(localeManager.resolveMessage(anyString(), any())).thenAnswer(invocation -> resolveFromEnglishBundle(invocation.getArguments()));
+        // The value the test properties carried, which every redirect assertion
+        // below is written against.
+        when(orcidUrlManager.getBaseUrl()).thenReturn("https://testserver.orcid.org");
+
         when(servletRequest.getLocale()).thenReturn(Locale.ENGLISH);
         
         HttpSession session = mock(HttpSession.class);
@@ -155,6 +186,49 @@ public class RegistrationControllerTest extends DBUnitTest {
         
         doNothing().when(profileHistoryEventManager).recordEvent(Mockito.any(ProfileHistoryEventType.class), Mockito.anyString());
         doNothing().when(recordEmailSender).sendWelcomeEmail(Mockito.anyString(), Mockito.anyString());        
+    }
+
+    @After
+    public void after() {
+        // SecurityContextHolder is static process state and several tests below
+        // put a user in it; without this it leaks into the next test class in
+        // the same JVM.
+        SecurityContextHolder.clearContext();
+    }
+
+    /**
+     * Answers resolveMessage from the shipped English bundle, so the two
+     * assertions on translated text keep testing the same thing they did when a
+     * real LocaleManager came out of the Spring context. Codes that are not in
+     * the bundle come back unchanged, which is what the assertions on raw error
+     * codes expect.
+     */
+    private static final Properties ENGLISH_MESSAGES = loadEnglishMessages();
+
+    private static Properties loadEnglishMessages() {
+        Properties properties = new Properties();
+        try (InputStream in = RegistrationControllerTest.class.getResourceAsStream("/i18n/messages_en.properties")) {
+            if (in != null) {
+                properties.load(new InputStreamReader(in, StandardCharsets.UTF_8));
+            }
+        } catch (Exception e) {
+            throw new RuntimeException("Unable to read /i18n/messages_en.properties", e);
+        }
+        return properties;
+    }
+
+    private static String resolveFromEnglishBundle(Object[] arguments) {
+        String code = (String) arguments[0];
+        String pattern = ENGLISH_MESSAGES.getProperty(code);
+        if (pattern == null) {
+            return code;
+        }
+        if (arguments.length < 2) {
+            return pattern;
+        }
+        Object[] params = new Object[arguments.length - 1];
+        System.arraycopy(arguments, 1, params, 0, params.length);
+        return MessageFormat.format(pattern, params);
     }
     
     @Test

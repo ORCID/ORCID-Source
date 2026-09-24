@@ -2,33 +2,26 @@ package org.orcid.api.memberV3.server.delegator;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
-import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyList;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
-import jakarta.annotation.Resource;
 import jakarta.persistence.NoResultException;
 import jakarta.ws.rs.core.Response;
 
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
-import org.mockito.invocation.InvocationOnMock;
-import org.mockito.stubbing.Answer;
-import org.orcid.core.common.manager.EmailFrequencyManager;
+import org.mockito.ArgumentCaptor;
 import org.orcid.core.exception.ActivityIdentifierValidationException;
 import org.orcid.core.exception.OrcidAccessControlException;
 import org.orcid.core.exception.OrcidDuplicatedActivityException;
@@ -36,163 +29,188 @@ import org.orcid.core.exception.OrcidUnauthorizedException;
 import org.orcid.core.exception.OrcidVisibilityException;
 import org.orcid.core.exception.VisibilityMismatchException;
 import org.orcid.core.exception.WrongSourceException;
-import org.orcid.core.groupIds.issn.IssnClient;
-import org.orcid.core.groupIds.issn.IssnData;
-import org.orcid.core.groupIds.issn.IssnValidator;
-import org.orcid.core.manager.v3.GroupIdRecordManager;
-import org.orcid.core.manager.v3.NotificationManager;
-import org.orcid.core.orgs.OrgDisambiguatedSourceType;
-import org.orcid.core.utils.SecurityContextTestUtils;
 import org.orcid.jaxb.model.common.PeerReviewSubjectType;
 import org.orcid.jaxb.model.common.PeerReviewType;
 import org.orcid.jaxb.model.common.Relationship;
 import org.orcid.jaxb.model.common.Role;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.message.WorkExternalIdentifierType;
-import org.orcid.jaxb.model.v3.release.common.DisambiguatedOrganization;
-import org.orcid.jaxb.model.v3.release.common.LastModifiedDate;
+import org.orcid.jaxb.model.v3.release.common.FuzzyDate;
+import org.orcid.jaxb.model.v3.release.common.Source;
 import org.orcid.jaxb.model.v3.release.common.Title;
+import org.orcid.jaxb.model.v3.release.common.TranslatedTitle;
 import org.orcid.jaxb.model.v3.release.common.Url;
 import org.orcid.jaxb.model.v3.release.common.Visibility;
-import org.orcid.jaxb.model.v3.release.groupid.GroupIdRecord;
-import org.orcid.jaxb.model.v3.release.record.Address;
-import org.orcid.jaxb.model.v3.release.record.Distinction;
-import org.orcid.jaxb.model.v3.release.record.Education;
-import org.orcid.jaxb.model.v3.release.record.Employment;
 import org.orcid.jaxb.model.v3.release.record.ExternalID;
 import org.orcid.jaxb.model.v3.release.record.ExternalIDs;
-import org.orcid.jaxb.model.v3.release.record.Funding;
-import org.orcid.jaxb.model.v3.release.record.InvitedPosition;
-import org.orcid.jaxb.model.v3.release.record.Keyword;
-import org.orcid.jaxb.model.v3.release.record.Membership;
-import org.orcid.jaxb.model.v3.release.record.OtherName;
 import org.orcid.jaxb.model.v3.release.record.PeerReview;
-import org.orcid.jaxb.model.v3.release.record.PersonExternalIdentifier;
-import org.orcid.jaxb.model.v3.release.record.Qualification;
-import org.orcid.jaxb.model.v3.release.record.ResearchResource;
-import org.orcid.jaxb.model.v3.release.record.ResearcherUrl;
-import org.orcid.jaxb.model.v3.release.record.Service;
 import org.orcid.jaxb.model.v3.release.record.SubjectName;
-import org.orcid.jaxb.model.v3.release.record.Work;
-import org.orcid.jaxb.model.v3.release.record.WorkBulk;
 import org.orcid.jaxb.model.v3.release.record.summary.ActivitiesSummary;
+import org.orcid.jaxb.model.v3.release.record.summary.PeerReviewDuplicateGroup;
 import org.orcid.jaxb.model.v3.release.record.summary.PeerReviewGroup;
 import org.orcid.jaxb.model.v3.release.record.summary.PeerReviewSummary;
 import org.orcid.jaxb.model.v3.release.record.summary.PeerReviews;
-import org.orcid.test.DBUnitTest;
-import org.orcid.test.OrcidJUnit4ClassRunner;
-import org.orcid.test.TargetProxyHelper;
 import org.orcid.test.helper.v3.Utils;
-import org.springframework.test.context.ContextConfiguration;
 
-@RunWith(OrcidJUnit4ClassRunner.class)
-@ContextConfiguration(locations = { "classpath:test-orcid-api-web-context.xml" })
-public class MemberV3ApiServiceDelegator_PeerReviewsTest extends DBUnitTest {
-    protected static final List<String> DATA_FILES = Arrays.asList("/data/EmptyEntityData.xml",
-            "/data/SourceClientDetailsEntityData.xml", "/data/ProfileEntityData.xml", "/data/ClientDetailsEntityData.xml", "/data/Oauth2TokenDetailsData.xml",
-            "/data/OrgsEntityData.xml", "/data/PeerReviewEntityData.xml", "/data/GroupIdRecordEntityData.xml", "/data/RecordNameEntityData.xml",
-            "/data/BiographyEntityData.xml");
+/**
+ * Mocked boundary tests for the peer-review endpoints of the member V3 API.
+ *
+ * <p>
+ * {@code checkAndFilter} is void and filters in place, so a mocked security
+ * manager filters nothing and any "only the public reviews came back" assertion
+ * would hold vacuously; those tables are proved in orcid-core by
+ * {@code OrcidSecurityManager_generalTest}. The ISSN group-id plumbing the old
+ * fixture reached through {@code TargetProxyHelper} belongs to
+ * {@code GroupIdRecordManager} and is exercised in
+ * MemberV3ApiServiceDelegator_GroupIdTest, so it is gone from here along with
+ * the Spring context.
+ */
+public class MemberV3ApiServiceDelegator_PeerReviewsTest extends MemberV3ApiServiceDelegatorMockTestBase {
 
-    // Now on, for any new test, PLAESE USER THIS ORCID ID
-    protected final String ORCID = "0000-0000-0000-0003";
+    private static final ScopePathType SCOPE = ScopePathType.PEER_REVIEW_READ_LIMITED;
 
-    @Resource(name = "memberV3ApiServiceDelegator")
-    protected MemberV3ApiServiceDelegator<Distinction, Education, Employment, PersonExternalIdentifier, InvitedPosition, Funding, GroupIdRecord, Membership, OtherName, PeerReview, Qualification, ResearcherUrl, Service, Work, WorkBulk, Address, Keyword, ResearchResource> serviceDelegator;
-        
-    @Resource(name = "notificationManagerV3")
-    private NotificationManager notificationManager;
-    
-    @Resource(name = "groupIdRecordManagerV3")
-    private GroupIdRecordManager groupIdRecordManager;
-    
-    @Resource
-    private IssnValidator issnValidator;
-    
-    @Resource
-    private IssnClient issnClient;
-    
-    @Before
-    public void before() throws Exception {
-        MockitoAnnotations.initMocks(this);
+    private static final String USER_4443 = "4444-4444-4444-4443";
+    private static final String USER_4444 = "4444-4444-4444-4444";
+    private static final String USER_4446 = "4444-4444-4444-4446";
+    private static final String USER_4447 = "4444-4444-4444-4447";
+    private static final String USER_4499 = "4444-4444-4444-4499";
 
-        IssnValidator mockIssnValidator = Mockito.mock(IssnValidator.class);
-        when(mockIssnValidator.issnValid(Mockito.anyString())).thenReturn(true);
-        TargetProxyHelper.injectIntoProxy(groupIdRecordManager, "issnValidator", mockIssnValidator); 
-        
-        IssnClient mockIssnClient = Mockito.mock(IssnClient.class);
-       
-        
-        Answer<IssnData> issnDataAnswer = new Answer<IssnData>() {
-
-            @Override
-            public IssnData answer(InvocationOnMock invocation) throws Throwable {
-                String issn = (String) invocation.getArguments()[0];
-                IssnData mockData = new IssnData();
-                mockData.setIssn(issn);
-                mockData.setMainTitle("test");
-                return mockData;
-            }
-            
-        };
-        
-        when(mockIssnClient.getIssnData(Mockito.anyString())).thenAnswer(issnDataAnswer);
-        TargetProxyHelper.injectIntoProxy(groupIdRecordManager, "issnClient", mockIssnClient); 
-        TargetProxyHelper.injectIntoProxy(groupIdRecordManager, "orcidSourceClientDetailsId", "APP-1234567898765432");
-    }
-    
-    @After
-    public void after() {
-        TargetProxyHelper.injectIntoProxy(groupIdRecordManager, "issnValidator", issnValidator);
-        TargetProxyHelper.injectIntoProxy(groupIdRecordManager, "issnClient", issnClient);
-    }
-    
-    @BeforeClass
-    public static void initDBUnitData() throws Exception {
-        initDBUnitData(DATA_FILES);
+    private PeerReview peerReview(long putCode, String groupId, String extIdValue, Visibility visibility, Source source) {
+        PeerReview element = new PeerReview();
+        element.setPutCode(putCode);
+        element.setGroupId(groupId);
+        element.setExternalIdentifiers(externalIds(extIdValue));
+        element.setSubjectExternalIdentifier(subjectExternalIdentifier());
+        element.setCompletionDate(FuzzyDate.valueOf(2015, 1, 1));
+        element.setOrganization(Utils.getOrganization());
+        element.setRole(Role.REVIEWER);
+        element.setType(PeerReviewType.REVIEW);
+        element.setUrl(new Url("http://peer_review.com"));
+        element.setSubjectContainerName(new Title("Peer Review # " + putCode + " container name"));
+        element.setSubjectType(PeerReviewSubjectType.ARTISTIC_PERFORMANCE);
+        element.setSubjectUrl(new Url("http://work.com"));
+        SubjectName subjectName = new SubjectName();
+        subjectName.setTitle(new Title("Peer Review # " + putCode));
+        subjectName.setTranslatedTitle(new TranslatedTitle("titulo", "es"));
+        element.setSubjectName(subjectName);
+        element.setVisibility(visibility);
+        element.setSource(source);
+        element.setLastModifiedDate(lastModified());
+        return element;
     }
 
-    @AfterClass
-    public static void removeDBUnitData() throws Exception {
-        Collections.reverse(DATA_FILES);
-        removeDBUnitData(DATA_FILES);
+    private PeerReviewSummary summary(long putCode, String groupId, String extIdValue, Visibility visibility, Source source) {
+        PeerReviewSummary element = new PeerReviewSummary();
+        element.setPutCode(putCode);
+        element.setGroupId(groupId);
+        element.setExternalIdentifiers(externalIds(extIdValue));
+        element.setCompletionDate(FuzzyDate.valueOf(2015, 1, 1));
+        element.setOrganization(Utils.getOrganization());
+        element.setRole(Role.REVIEWER);
+        element.setType(PeerReviewType.REVIEW);
+        element.setVisibility(visibility);
+        element.setSource(source);
+        element.setLastModifiedDate(lastModified());
+        return element;
+    }
+
+    private ExternalIDs externalIds(String value) {
+        ExternalID extId = new ExternalID();
+        extId.setRelationship(Relationship.SELF);
+        extId.setType(WorkExternalIdentifierType.DOI.value());
+        extId.setUrl(new Url("http://myUrl.com"));
+        extId.setValue(value);
+        ExternalIDs extIds = new ExternalIDs();
+        extIds.getExternalIdentifier().add(extId);
+        return extIds;
+    }
+
+    private ExternalID subjectExternalIdentifier() {
+        ExternalID extId = new ExternalID();
+        extId.setRelationship(Relationship.SELF);
+        extId.setType("agr");
+        extId.setUrl(new Url("http://myUrl.com"));
+        extId.setValue("peer-review:subject-external-identifier-id#1");
+        return extId;
+    }
+
+    private PeerReviewGroup group(String groupIdentifier, PeerReviewSummary summary) {
+        PeerReviewGroup group = new PeerReviewGroup();
+        ExternalID extId = new ExternalID();
+        extId.setRelationship(Relationship.SELF);
+        extId.setType("peer-review");
+        extId.setValue(groupIdentifier);
+        group.getIdentifiers().getExternalIdentifier().add(extId);
+        PeerReviewDuplicateGroup duplicateGroup = new PeerReviewDuplicateGroup();
+        duplicateGroup.getPeerReviewSummary().add(summary);
+        group.getPeerReviewGroup().add(duplicateGroup);
+        return group;
+    }
+
+    private PeerReviews peerReviews(PeerReviewGroup... groups) {
+        PeerReviews container = new PeerReviews();
+        container.getPeerReviewGroup().addAll(Arrays.asList(groups));
+        return container;
+    }
+
+    private ActivitiesSummary activitiesWithPeerReviews(PeerReviews peerReviews) {
+        ActivitiesSummary activities = emptyActivitiesSummary();
+        activities.setPeerReviews(peerReviews);
+        return activities;
     }
 
     @Test(expected = OrcidUnauthorizedException.class)
     public void testViewPeerReviewWrongToken() {
-        SecurityContextTestUtils.setUpSecurityContext("some-other-user", ScopePathType.READ_LIMITED);
-        serviceDelegator.viewPeerReview("4444-4444-4444-4447", 2L);
+        when(peerReviewManagerReadOnly.getPeerReview(USER_4447, 2L))
+                .thenReturn(peerReview(2L, "issn:0000-0002", "work:external-identifier-id#2", Visibility.PUBLIC, clientSource(CLIENT_2)));
+        doThrow(new OrcidUnauthorizedException("Access token is for a different record"))
+                .when(orcidSecurityManager).checkAndFilter(eq(USER_4447), any(PeerReview.class), eq(SCOPE));
+
+        serviceDelegator.viewPeerReview(USER_4447, 2L);
     }
 
     @Test(expected = OrcidUnauthorizedException.class)
     public void testViewPeerReviewSummaryWrongToken() {
-        SecurityContextTestUtils.setUpSecurityContext("some-other-user", ScopePathType.READ_LIMITED);
-        serviceDelegator.viewPeerReviewSummary("4444-4444-4444-4446", Long.valueOf(1));
+        when(peerReviewManagerReadOnly.getPeerReviewSummary(USER_4446, Long.valueOf(1)))
+                .thenReturn(summary(1L, "issn:0000-0001", "work:external-identifier-id#1", Visibility.PUBLIC, clientSource(CLIENT_1)));
+        doThrow(new OrcidUnauthorizedException("Access token is for a different record"))
+                .when(orcidSecurityManager).checkAndFilter(eq(USER_4446), any(PeerReviewSummary.class), eq(SCOPE));
+
+        serviceDelegator.viewPeerReviewSummary(USER_4446, Long.valueOf(1));
     }
 
     @Test
     public void testViewPeerReviewReadPublic() {
-        SecurityContextTestUtils.setUpSecurityContextForClientOnly("APP-5555555555555555", ScopePathType.READ_PUBLIC);
-        Response r = serviceDelegator.viewPeerReview("4444-4444-4444-4447", 2L);
+        PeerReview stored = peerReview(2L, "issn:0000-0002", "work:external-identifier-id#2", Visibility.PUBLIC, clientSource(CLIENT_1));
+        when(peerReviewManagerReadOnly.getPeerReview(USER_4447, 2L)).thenReturn(stored);
+
+        Response r = serviceDelegator.viewPeerReview(USER_4447, 2L);
         PeerReview element = (PeerReview) r.getEntity();
         assertNotNull(element);
         assertEquals("/4444-4444-4444-4447/peer-review/2", element.getPath());
-        Utils.assertIsPublicOrSource(element, "APP-5555555555555555");
+        assertEquals(CLIENT_1_NAME, element.getSource().getSourceName().getContent());
+        verify(orcidSecurityManager).checkAndFilter(USER_4447, element, SCOPE);
     }
 
     @Test
     public void testViewPeerReviewSummaryReadPublic() {
-        SecurityContextTestUtils.setUpSecurityContextForClientOnly("APP-5555555555555555", ScopePathType.READ_PUBLIC);
-        Response r = serviceDelegator.viewPeerReviewSummary("4444-4444-4444-4446", Long.valueOf(1));
+        PeerReviewSummary stored = summary(1L, "issn:0000-0001", "work:external-identifier-id#1", Visibility.PUBLIC, clientSource(CLIENT_1));
+        when(peerReviewManagerReadOnly.getPeerReviewSummary(USER_4446, Long.valueOf(1))).thenReturn(stored);
+
+        Response r = serviceDelegator.viewPeerReviewSummary(USER_4446, Long.valueOf(1));
         PeerReviewSummary element = (PeerReviewSummary) r.getEntity();
         assertNotNull(element);
         assertEquals("/4444-4444-4444-4446/peer-review/1", element.getPath());
-        Utils.assertIsPublicOrSource(element, "APP-5555555555555555");
+        assertEquals(CLIENT_1_NAME, element.getSource().getSourceName().getContent());
+        verify(orcidSecurityManager).checkAndFilter(USER_4446, element, SCOPE);
     }
 
     @Test
     public void testViewPublicPeerReview() {
-        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4446", ScopePathType.READ_LIMITED);
-        Response response = serviceDelegator.viewPeerReview("4444-4444-4444-4446", 1L);
+        when(peerReviewManagerReadOnly.getPeerReview(USER_4446, 1L))
+                .thenReturn(peerReview(1L, "issn:0000-0001", "work:external-identifier-id#1", Visibility.PUBLIC, clientSource(CLIENT_1)));
+
+        Response response = serviceDelegator.viewPeerReview(USER_4446, 1L);
         assertNotNull(response);
         PeerReview peerReview = (PeerReview) response.getEntity();
         assertNotNull(peerReview);
@@ -205,7 +223,7 @@ public class MemberV3ApiServiceDelegator_PeerReviewsTest extends DBUnitTest {
         assertEquals("2015", peerReview.getCompletionDate().getYear().getValue());
         assertEquals("work:external-identifier-id#1", peerReview.getExternalIdentifiers().getExternalIdentifier().get(0).getValue());
         assertEquals("reviewer", peerReview.getRole().value());
-        assertEquals("APP-5555555555555555", peerReview.getSource().retrieveSourcePath());
+        assertEquals(CLIENT_1, peerReview.getSource().retrieveSourcePath());
         assertEquals("public", peerReview.getVisibility().value());
         assertEquals("review", peerReview.getType().value());
         assertEquals("http://peer_review.com", peerReview.getUrl().getValue());
@@ -217,12 +235,15 @@ public class MemberV3ApiServiceDelegator_PeerReviewsTest extends DBUnitTest {
         assertEquals("peer-review:subject-external-identifier-id#1", peerReview.getSubjectExternalIdentifier().getValue());
         assertEquals("agr", peerReview.getSubjectExternalIdentifier().getType());
         assertEquals("issn:0000-0001", peerReview.getGroupId());
+        verify(orcidSecurityManager).checkAndFilter(USER_4446, peerReview, SCOPE);
     }
 
     @Test
     public void testViewLimitedPeerReview() {
-        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4446", ScopePathType.READ_LIMITED);
-        Response response = serviceDelegator.viewPeerReview("4444-4444-4444-4446", 3L);
+        when(peerReviewManagerReadOnly.getPeerReview(USER_4446, 3L))
+                .thenReturn(peerReview(3L, "issn:0000-0002", "work:external-identifier-id#2", Visibility.LIMITED, clientSource(CLIENT_1)));
+
+        Response response = serviceDelegator.viewPeerReview(USER_4446, 3L);
         assertNotNull(response);
         PeerReview peerReview = (PeerReview) response.getEntity();
         assertNotNull(peerReview);
@@ -236,12 +257,15 @@ public class MemberV3ApiServiceDelegator_PeerReviewsTest extends DBUnitTest {
         assertEquals("work:external-identifier-id#2", peerReview.getExternalIdentifiers().getExternalIdentifier().get(0).getValue());
         assertEquals("limited", peerReview.getVisibility().value());
         assertEquals("issn:0000-0002", peerReview.getGroupId());
+        verify(orcidSecurityManager).checkAndFilter(USER_4446, peerReview, SCOPE);
     }
 
     @Test
     public void testViewPrivatePeerReview() {
-        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4446", ScopePathType.READ_LIMITED);
-        Response response = serviceDelegator.viewPeerReview("4444-4444-4444-4446", 4L);
+        when(peerReviewManagerReadOnly.getPeerReview(USER_4446, 4L))
+                .thenReturn(peerReview(4L, "issn:0000-0003", "work:external-identifier-id#3", Visibility.PRIVATE, clientSource(CLIENT_1)));
+
+        Response response = serviceDelegator.viewPeerReview(USER_4446, 4L);
         assertNotNull(response);
         PeerReview peerReview = (PeerReview) response.getEntity();
         assertNotNull(peerReview);
@@ -255,26 +279,40 @@ public class MemberV3ApiServiceDelegator_PeerReviewsTest extends DBUnitTest {
         assertEquals("work:external-identifier-id#3", peerReview.getExternalIdentifiers().getExternalIdentifier().get(0).getValue());
         assertEquals("private", peerReview.getVisibility().value());
         assertEquals("issn:0000-0003", peerReview.getGroupId());
+        verify(orcidSecurityManager).checkAndFilter(USER_4446, peerReview, SCOPE);
     }
 
     @Test(expected = OrcidVisibilityException.class)
     public void testViewPrivatePeerReviewWhereYouAreNotTheSource() {
-        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4446", ScopePathType.READ_LIMITED);
-        serviceDelegator.viewPeerReview("4444-4444-4444-4446", 5L);
+        PeerReview stored = peerReview(5L, "issn:0000-0004", "work:external-identifier-id#4", Visibility.PRIVATE, clientSource(CLIENT_2));
+        when(peerReviewManagerReadOnly.getPeerReview(USER_4446, 5L)).thenReturn(stored);
+        doThrow(new OrcidVisibilityException()).when(orcidSecurityManager).checkAndFilter(USER_4446, stored, SCOPE);
+
+        serviceDelegator.viewPeerReview(USER_4446, 5L);
         fail();
     }
 
+    /**
+     * The rule this proves -- that peer review 2 cannot be read through record
+     * 4446 -- lives in a SQL WHERE clause
+     * ({@code PeerReviewDaoImpl.getPeerReview}), so with a mocked manager only
+     * the pass-through survives here. The predicate itself is proved by
+     * MemberV3ApiServiceDelegatorDatabaseRulesTest in the db-tests stage.
+     */
     @Test(expected = NoResultException.class)
     public void testViewPeerReviewThatDontBelongToTheUser() {
-        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4446", ScopePathType.READ_LIMITED);
-        serviceDelegator.viewPeerReview("4444-4444-4444-4446", 2L);
+        when(peerReviewManagerReadOnly.getPeerReview(USER_4446, 2L)).thenThrow(new NoResultException());
+
+        serviceDelegator.viewPeerReview(USER_4446, 2L);
         fail();
     }
 
     @Test
     public void testViewPeerReviewSummary() {
-        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4446", ScopePathType.READ_LIMITED);
-        Response response = serviceDelegator.viewPeerReviewSummary("4444-4444-4444-4446", Long.valueOf(1));
+        when(peerReviewManagerReadOnly.getPeerReviewSummary(USER_4446, Long.valueOf(1)))
+                .thenReturn(summary(1L, "issn:0000-0001", "work:external-identifier-id#1", Visibility.PUBLIC, clientSource(CLIENT_1)));
+
+        Response response = serviceDelegator.viewPeerReviewSummary(USER_4446, Long.valueOf(1));
         assertNotNull(response);
         PeerReviewSummary peerReview = (PeerReviewSummary) response.getEntity();
         assertNotNull(peerReview);
@@ -286,13 +324,22 @@ public class MemberV3ApiServiceDelegator_PeerReviewsTest extends DBUnitTest {
         assertEquals("01", peerReview.getCompletionDate().getMonth().getValue());
         assertEquals("2015", peerReview.getCompletionDate().getYear().getValue());
         assertEquals("work:external-identifier-id#1", peerReview.getExternalIdentifiers().getExternalIdentifier().get(0).getValue());
-        assertEquals("APP-5555555555555555", peerReview.getSource().retrieveSourcePath());
+        assertEquals(CLIENT_1, peerReview.getSource().retrieveSourcePath());
         assertEquals("public", peerReview.getVisibility().value());
+        verify(orcidSecurityManager).checkAndFilter(USER_4446, peerReview, SCOPE);
     }
 
     @Test
     public void testViewPeerReviews() {
-        SecurityContextTestUtils.setUpSecurityContext(ORCID, ScopePathType.READ_LIMITED);
+        PeerReviewSummary s9 = summary(9L, "issn:0000-0009", "ext-9", Visibility.PUBLIC, clientSource(CLIENT_1));
+        PeerReviewSummary s10 = summary(10L, "issn:0000-0010", "ext-10", Visibility.LIMITED, clientSource(CLIENT_1));
+        PeerReviewSummary s11 = summary(11L, "issn:0000-0011", "ext-11", Visibility.PRIVATE, clientSource(CLIENT_1));
+        PeerReviewSummary s12 = summary(12L, "issn:0000-0012", "ext-12", Visibility.LIMITED, userSource(ORCID));
+        List<PeerReviewSummary> summaries = Arrays.asList(s9, s10, s11, s12);
+        when(peerReviewManagerReadOnly.getPeerReviewSummaryList(ORCID)).thenReturn(summaries);
+        when(peerReviewManager.groupPeerReviews(summaries, false)).thenReturn(
+                peerReviews(group("issn:0000-0009", s9), group("issn:0000-0010", s10), group("issn:0000-0011", s11), group("issn:0000-0012", s12)));
+
         Response r = serviceDelegator.viewPeerReviews(ORCID);
         assertNotNull(r);
         PeerReviews peerReviews = (PeerReviews) r.getEntity();
@@ -315,6 +362,7 @@ public class MemberV3ApiServiceDelegator_PeerReviewsTest extends DBUnitTest {
             case "issn:0000-0009":
                 assertEquals("issn:0000-0009", summary.getGroupId());
                 assertEquals(Long.valueOf(9), summary.getPutCode());
+                assertEquals("/0000-0000-0000-0003/peer-review/9", summary.getPath());
                 found1 = true;
                 break;
             case "issn:0000-0010":
@@ -341,59 +389,78 @@ public class MemberV3ApiServiceDelegator_PeerReviewsTest extends DBUnitTest {
         assertTrue(found2);
         assertTrue(found3);
         assertTrue(found4);
+        verify(orcidSecurityManager).checkAndFilter(eq(ORCID), anyList(), eq(SCOPE));
     }
 
     @Test
     public void testReadPublicScope_PeerReview() {
-        SecurityContextTestUtils.setUpSecurityContext(ORCID, ScopePathType.READ_PUBLIC);
-        // Public works
+        when(peerReviewManagerReadOnly.getPeerReview(ORCID, 9L))
+                .thenReturn(peerReview(9L, "issn:0000-0009", "ext-9", Visibility.PUBLIC, clientSource(CLIENT_1)));
+        when(peerReviewManagerReadOnly.getPeerReviewSummary(ORCID, 9L))
+                .thenReturn(summary(9L, "issn:0000-0009", "ext-9", Visibility.PUBLIC, clientSource(CLIENT_1)));
+        when(peerReviewManagerReadOnly.getPeerReview(ORCID, 10L))
+                .thenReturn(peerReview(10L, "issn:0000-0010", "ext-10", Visibility.LIMITED, clientSource(CLIENT_1)));
+        when(peerReviewManagerReadOnly.getPeerReviewSummary(ORCID, 10L))
+                .thenReturn(summary(10L, "issn:0000-0010", "ext-10", Visibility.LIMITED, clientSource(CLIENT_1)));
+        when(peerReviewManagerReadOnly.getPeerReview(ORCID, 11L))
+                .thenReturn(peerReview(11L, "issn:0000-0011", "ext-11", Visibility.PRIVATE, clientSource(CLIENT_1)));
+        when(peerReviewManagerReadOnly.getPeerReviewSummary(ORCID, 11L))
+                .thenReturn(summary(11L, "issn:0000-0011", "ext-11", Visibility.PRIVATE, clientSource(CLIENT_1)));
+
+        PeerReview limitedOtherSource = peerReview(12L, "issn:0000-0012", "ext-12", Visibility.LIMITED, userSource(ORCID));
+        PeerReviewSummary limitedOtherSourceSummary = summary(12L, "issn:0000-0012", "ext-12", Visibility.LIMITED, userSource(ORCID));
+        PeerReview privateOtherSource = peerReview(13L, "issn:0000-0013", "ext-13", Visibility.PRIVATE, userSource(ORCID));
+        PeerReviewSummary privateOtherSourceSummary = summary(13L, "issn:0000-0013", "ext-13", Visibility.PRIVATE, userSource(ORCID));
+        when(peerReviewManagerReadOnly.getPeerReview(ORCID, 12L)).thenReturn(limitedOtherSource);
+        when(peerReviewManagerReadOnly.getPeerReviewSummary(ORCID, 12L)).thenReturn(limitedOtherSourceSummary);
+        when(peerReviewManagerReadOnly.getPeerReview(ORCID, 13L)).thenReturn(privateOtherSource);
+        when(peerReviewManagerReadOnly.getPeerReviewSummary(ORCID, 13L)).thenReturn(privateOtherSourceSummary);
+        doThrow(new OrcidAccessControlException()).when(orcidSecurityManager).checkAndFilter(ORCID, limitedOtherSource, SCOPE);
+        doThrow(new OrcidAccessControlException()).when(orcidSecurityManager).checkAndFilter(ORCID, limitedOtherSourceSummary, SCOPE);
+        doThrow(new OrcidAccessControlException()).when(orcidSecurityManager).checkAndFilter(ORCID, privateOtherSource, SCOPE);
+        doThrow(new OrcidAccessControlException()).when(orcidSecurityManager).checkAndFilter(ORCID, privateOtherSourceSummary, SCOPE);
+
         Response r = serviceDelegator.viewPeerReview(ORCID, 9L);
         assertNotNull(r);
         assertEquals(PeerReview.class.getName(), r.getEntity().getClass().getName());
-
         r = serviceDelegator.viewPeerReviewSummary(ORCID, 9L);
         assertNotNull(r);
         assertEquals(PeerReviewSummary.class.getName(), r.getEntity().getClass().getName());
-        // Limited where am the source of should work
+
+        // Limited that am the source of should work
         serviceDelegator.viewPeerReview(ORCID, 10L);
         serviceDelegator.viewPeerReviewSummary(ORCID, 10L);
-        // Limited where am not the source of should fail
+        // Limited that am not the source of should fail
         try {
             serviceDelegator.viewPeerReview(ORCID, 12L);
             fail();
         } catch (OrcidAccessControlException e) {
-
         } catch (Exception e) {
             fail();
         }
-
         try {
             serviceDelegator.viewPeerReviewSummary(ORCID, 12L);
             fail();
         } catch (OrcidAccessControlException e) {
-
         } catch (Exception e) {
             fail();
         }
 
-        // Limited where am the source of should work
+        // Private that am the source of should work
         serviceDelegator.viewPeerReview(ORCID, 11L);
         serviceDelegator.viewPeerReviewSummary(ORCID, 11L);
-        // Limited where am not the source of should fail
+        // Private that am not the source of should fail
         try {
             serviceDelegator.viewPeerReview(ORCID, 13L);
             fail();
         } catch (OrcidAccessControlException e) {
-
         } catch (Exception e) {
             fail();
         }
-
         try {
             serviceDelegator.viewPeerReviewSummary(ORCID, 13L);
             fail();
         } catch (OrcidAccessControlException e) {
-
         } catch (Exception e) {
             fail();
         }
@@ -401,35 +468,53 @@ public class MemberV3ApiServiceDelegator_PeerReviewsTest extends DBUnitTest {
 
     @Test
     public void testUpdatePeerReview() {
-        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4447", ScopePathType.ACTIVITIES_UPDATE);
-        Response response = serviceDelegator.viewPeerReview("4444-4444-4444-4447", 6L);
+        PeerReview stored = peerReview(6L, "issn:0000-0006", "ext-6", Visibility.PUBLIC, clientSource(CLIENT_1));
+        PeerReview updated = peerReview(6L, "issn:0000-0006", "ext-6", Visibility.PUBLIC, clientSource(CLIENT_1));
+        updated.setUrl(new Url("http://updated.com/url"));
+        updated.getSubjectName().getTitle().setContent("Updated Title");
+        when(peerReviewManagerReadOnly.getPeerReview(USER_4447, 6L)).thenReturn(stored).thenReturn(updated);
+        when(peerReviewManager.updatePeerReview(eq(USER_4447), any(PeerReview.class), eq(true))).thenReturn(updated);
+
+        Response response = serviceDelegator.viewPeerReview(USER_4447, 6L);
         assertNotNull(response);
         PeerReview peerReview = (PeerReview) response.getEntity();
         assertNotNull(peerReview);
         Utils.verifyLastModified(peerReview.getLastModifiedDate());
 
-        LastModifiedDate before = peerReview.getLastModifiedDate();
-
         peerReview.setUrl(new Url("http://updated.com/url"));
         peerReview.getSubjectName().getTitle().setContent("Updated Title");
-        
-        response = serviceDelegator.updatePeerReview("4444-4444-4444-4447", 6L, peerReview);
+
+        response = serviceDelegator.updatePeerReview(USER_4447, 6L, peerReview);
         assertNotNull(response);
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
+        verify(orcidSecurityManager).checkClientAccessAndScopes(USER_4447, ScopePathType.PEER_REVIEW_UPDATE);
+        // A client supplied source must never reach the manager.
+        ArgumentCaptor<PeerReview> captor = ArgumentCaptor.forClass(PeerReview.class);
+        verify(peerReviewManager).updatePeerReview(eq(USER_4447), captor.capture(), eq(true));
+        assertNull(captor.getValue().getSource());
 
-        response = serviceDelegator.viewPeerReview("4444-4444-4444-4447", 6L);
+        response = serviceDelegator.viewPeerReview(USER_4447, 6L);
         PeerReview updatedPeerReview = (PeerReview) response.getEntity();
         assertNotNull(updatedPeerReview);
         Utils.verifyLastModified(updatedPeerReview.getLastModifiedDate());
-        assertTrue(updatedPeerReview.getLastModifiedDate().after(before));
         assertEquals("http://updated.com/url", updatedPeerReview.getUrl().getValue());
         assertEquals("Updated Title", updatedPeerReview.getSubjectName().getTitle().getContent());
     }
 
     @Test
     public void testUpdatePeerReviewWhenYouAreNotTheSourceOf() {
-        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4447", ScopePathType.READ_LIMITED, ScopePathType.ACTIVITIES_UPDATE);
-        Response response = serviceDelegator.viewPeerReview("4444-4444-4444-4447", 2L);
+        // A fresh instance per call: the delegator clears the source on the
+        // object it is handed, and a mock that returned the same instance twice
+        // would show that mutation back as if it had been persisted.
+        when(peerReviewManagerReadOnly.getPeerReview(USER_4447, 2L)).thenAnswer(invocation -> {
+            PeerReview element = peerReview(2L, "issn:0000-0002", "work:external-identifier-id#2", Visibility.PUBLIC, clientSource("APP-6666666666666666"));
+            element.setUrl(new Url("http://peer_review.com/2"));
+            return element;
+        });
+        doThrow(new WrongSourceException(new HashMap<String, String>()))
+                .when(peerReviewManager).updatePeerReview(eq(USER_4447), any(PeerReview.class), eq(true));
+
+        Response response = serviceDelegator.viewPeerReview(USER_4447, 2L);
         assertNotNull(response);
         PeerReview peerReview = (PeerReview) response.getEntity();
         assertNotNull(peerReview);
@@ -441,29 +526,28 @@ public class MemberV3ApiServiceDelegator_PeerReviewsTest extends DBUnitTest {
         peerReview.getSubjectName().getTitle().setContent("Updated Title");
         peerReview.getExternalIdentifiers().getExternalIdentifier().iterator().next().setValue("different");
 
-        // disambiguated org is required in API v3
-        DisambiguatedOrganization disambiguatedOrg = new DisambiguatedOrganization();
-        disambiguatedOrg.setDisambiguatedOrganizationIdentifier("some-org");
-        disambiguatedOrg.setDisambiguationSource(OrgDisambiguatedSourceType.FUNDREF.name());
-        peerReview.getOrganization().setDisambiguatedOrganization(disambiguatedOrg);
-        
         try {
-            response = serviceDelegator.updatePeerReview("4444-4444-4444-4447", 2L, peerReview);
+            serviceDelegator.updatePeerReview(USER_4447, 2L, peerReview);
             fail();
         } catch (WrongSourceException wse) {
 
         }
-        response = serviceDelegator.viewPeerReview("4444-4444-4444-4447", Long.valueOf(2));
+
+        // A subsequent read still shows the original source: the failed update
+        // changed nothing.
+        response = serviceDelegator.viewPeerReview(USER_4447, Long.valueOf(2));
         peerReview = (PeerReview) response.getEntity();
         assertNotNull(peerReview);
-        assertEquals("http://peer_review.com/2", peerReview.getUrl().getValue());
         assertEquals("APP-6666666666666666", peerReview.getSource().retrieveSourcePath());
     }
 
     @Test(expected = VisibilityMismatchException.class)
     public void testUpdatePeerReviewChangingVisibilityTest() {
-        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4447", ScopePathType.ACTIVITIES_UPDATE);
-        Response response = serviceDelegator.viewPeerReview("4444-4444-4444-4447", 6L);
+        when(peerReviewManagerReadOnly.getPeerReview(USER_4447, 6L))
+                .thenReturn(peerReview(6L, "issn:0000-0006", "ext-6", Visibility.PUBLIC, clientSource(CLIENT_1)));
+        doThrow(new VisibilityMismatchException()).when(peerReviewManager).updatePeerReview(eq(USER_4447), any(PeerReview.class), eq(true));
+
+        Response response = serviceDelegator.viewPeerReview(USER_4447, 6L);
         assertNotNull(response);
         PeerReview peerReview = (PeerReview) response.getEntity();
         assertNotNull(peerReview);
@@ -471,14 +555,20 @@ public class MemberV3ApiServiceDelegator_PeerReviewsTest extends DBUnitTest {
 
         peerReview.setVisibility(Visibility.PRIVATE);
 
-        response = serviceDelegator.updatePeerReview("4444-4444-4444-4447", 6L, peerReview);
+        serviceDelegator.updatePeerReview(USER_4447, 6L, peerReview);
         fail();
     }
 
     @Test
     public void testUpdatePeerReviewLeavingVisibilityNullTest() {
-        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4447", ScopePathType.ACTIVITIES_UPDATE);
-        Response response = serviceDelegator.viewPeerReview("4444-4444-4444-4447", 6L);
+        when(peerReviewManagerReadOnly.getPeerReview(USER_4447, 6L))
+                .thenReturn(peerReview(6L, "issn:0000-0006", "ext-6", Visibility.PUBLIC, clientSource(CLIENT_1)));
+        // Restoring the stored visibility is the manager's job and is proved
+        // there; here the delegator must simply return what it produced.
+        when(peerReviewManager.updatePeerReview(eq(USER_4447), any(PeerReview.class), eq(true)))
+                .thenReturn(peerReview(6L, "issn:0000-0006", "ext-6", Visibility.PUBLIC, clientSource(CLIENT_1)));
+
+        Response response = serviceDelegator.viewPeerReview(USER_4447, 6L);
         assertNotNull(response);
         PeerReview peerReview = (PeerReview) response.getEntity();
         assertNotNull(peerReview);
@@ -486,42 +576,53 @@ public class MemberV3ApiServiceDelegator_PeerReviewsTest extends DBUnitTest {
 
         peerReview.setVisibility(null);
 
-        response = serviceDelegator.updatePeerReview("4444-4444-4444-4447", 6L, peerReview);
+        response = serviceDelegator.updatePeerReview(USER_4447, 6L, peerReview);
+        assertNotNull(response);
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
         peerReview = (PeerReview) response.getEntity();
-        assertNotNull(peerReview);
         assertEquals(Visibility.PUBLIC, peerReview.getVisibility());
+        // Catches a delegator that sets a visibility on the element before handing it to
+        // the manager: what is submitted must still carry the null the request arrived with.
+        ArgumentCaptor<PeerReview> submitted = ArgumentCaptor.forClass(PeerReview.class);
+        verify(peerReviewManager).updatePeerReview(eq(USER_4447), submitted.capture(), eq(true));
+        assertNull("keeping the stored visibility is the manager's job, not the delegator's", submitted.getValue().getVisibility());
     }
 
     @Test
     public void testAddPeerReview() {
-        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4444", ScopePathType.READ_LIMITED, ScopePathType.ACTIVITIES_UPDATE);
-        Response response = serviceDelegator.viewActivities("4444-4444-4444-4444");
+        PeerReviewSummary existing = summary(1L, "issn:0000-0001", "ext-1", Visibility.PUBLIC, clientSource(CLIENT_1));
+        PeerReviewSummary added = summary(1000L, "issn:0000-0003", "ext-1000", Visibility.PUBLIC, clientSource(CLIENT_1));
+        when(activitiesSummaryManagerReadOnly.getActivitiesSummary(eq(USER_4444), eq(false)))
+                .thenReturn(activitiesWithPeerReviews(peerReviews(group("issn:0000-0001", existing))))
+                .thenReturn(activitiesWithPeerReviews(peerReviews(group("issn:0000-0001", existing), group("issn:0000-0003", added))));
+        when(peerReviewManager.createPeerReview(eq(USER_4444), any(PeerReview.class), eq(true)))
+                .thenReturn(peerReview(1000L, "issn:0000-0003", "ext-1000", Visibility.PUBLIC, clientSource(CLIENT_1)));
+
+        Response response = serviceDelegator.viewActivities(USER_4444);
         assertNotNull(response);
         ActivitiesSummary summary = (ActivitiesSummary) response.getEntity();
         assertNotNull(summary);
         assertNotNull(summary.getPeerReviews());
         assertNotNull(summary.getPeerReviews().getPeerReviewGroup());
         assertEquals(1, summary.getPeerReviews().getPeerReviewGroup().size());
-        assertNotNull(summary.getPeerReviews().getPeerReviewGroup().get(0));
-        assertNotNull(summary.getPeerReviews().getPeerReviewGroup().get(0).getPeerReviewGroup().get(0).getPeerReviewSummary());
-        assertNotNull(summary.getPeerReviews().getPeerReviewGroup().get(0).getPeerReviewGroup().get(0).getPeerReviewSummary().get(0));
-        assertEquals("issn:0000-0001", summary.getPeerReviews().getPeerReviewGroup().get(0).getPeerReviewGroup().get(0).getPeerReviewSummary().get(0).getGroupId());
+        assertEquals("issn:0000-0001",
+                summary.getPeerReviews().getPeerReviewGroup().get(0).getPeerReviewGroup().get(0).getPeerReviewSummary().get(0).getGroupId());
 
         PeerReview peerReview = Utils.getPeerReview();
 
-        response = serviceDelegator.createPeerReview("4444-4444-4444-4444", peerReview);
+        response = serviceDelegator.createPeerReview(USER_4444, peerReview);
         assertNotNull(response);
         assertEquals(Response.Status.CREATED.getStatusCode(), response.getStatus());
         Long putCode = Utils.getPutCode(response);
+        assertEquals(Long.valueOf(1000L), putCode);
+        verify(orcidSecurityManager).checkClientAccessAndScopes(USER_4444, ScopePathType.PEER_REVIEW_CREATE, ScopePathType.PEER_REVIEW_UPDATE);
 
-        response = serviceDelegator.viewActivities("4444-4444-4444-4444");
+        response = serviceDelegator.viewActivities(USER_4444);
         assertNotNull(response);
         summary = (ActivitiesSummary) response.getEntity();
         assertNotNull(summary);
         Utils.verifyLastModified(summary.getLastModifiedDate());
         assertNotNull(summary.getPeerReviews());
-        Utils.verifyLastModified(summary.getLastModifiedDate());
         assertNotNull(summary.getPeerReviews().getPeerReviewGroup());
         assertEquals(2, summary.getPeerReviews().getPeerReviewGroup().size());
 
@@ -542,33 +643,34 @@ public class MemberV3ApiServiceDelegator_PeerReviewsTest extends DBUnitTest {
         assertTrue(haveNew);
 
         // Delete the new so it doesn't affect other tests
-        serviceDelegator.deletePeerReview("4444-4444-4444-4444", putCode);
+        serviceDelegator.deletePeerReview(USER_4444, putCode);
+        verify(peerReviewManager).checkSourceAndDelete(USER_4444, 1000L);
     }
 
     @Test(expected = OrcidDuplicatedActivityException.class)
     public void testAddPeerReviewDuplicateFails() {
-        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4447", ScopePathType.READ_LIMITED, ScopePathType.ACTIVITIES_UPDATE);
-        Response response = serviceDelegator.viewPeerReview("4444-4444-4444-4447", 6L);
+        when(peerReviewManagerReadOnly.getPeerReview(USER_4447, 6L))
+                .thenReturn(peerReview(6L, "issn:0000-0006", "ext-6", Visibility.PUBLIC, clientSource(CLIENT_1)));
+        doThrow(new OrcidDuplicatedActivityException(new HashMap<String, String>()))
+                .when(peerReviewManager).createPeerReview(eq(USER_4447), any(PeerReview.class), eq(true));
+
+        Response response = serviceDelegator.viewPeerReview(USER_4447, 6L);
         assertNotNull(response);
         PeerReview peerReview = (PeerReview) response.getEntity();
         assertNotNull(peerReview);
         peerReview.setUrl(new Url("http://updated.com/url"));
         peerReview.getSubjectName().getTitle().setContent("Updated Title");
-
-        // disambiguated org is required in API v3
-        DisambiguatedOrganization disambiguatedOrg = new DisambiguatedOrganization();
-        disambiguatedOrg.setDisambiguatedOrganizationIdentifier("some-org");
-        disambiguatedOrg.setDisambiguationSource(OrgDisambiguatedSourceType.FUNDREF.name());
-        peerReview.getOrganization().setDisambiguatedOrganization(disambiguatedOrg);
-        
         peerReview.setPutCode(null);
 
-        response = serviceDelegator.createPeerReview("4444-4444-4444-4447", peerReview);
+        serviceDelegator.createPeerReview(USER_4447, peerReview);
     }
 
     @Test
     public void testAddPeerReviewWithSameExtIdValueButDifferentExtIdType() {
-        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4444", ScopePathType.READ_LIMITED, ScopePathType.ACTIVITIES_UPDATE);
+        PeerReview created1 = peerReview(1001L, "issn:0000-0003", "same_but_different_type", Visibility.PUBLIC, clientSource(CLIENT_1));
+        PeerReview created2 = peerReview(1002L, "issn:0000-0003", "same_but_different_type", Visibility.PUBLIC, clientSource(CLIENT_1));
+        when(peerReviewManager.createPeerReview(eq(USER_4444), any(PeerReview.class), eq(true))).thenReturn(created1).thenReturn(created2);
+
         PeerReview peerReview1 = new PeerReview();
         ExternalIDs weis1 = new ExternalIDs();
         ExternalID wei1 = new ExternalID();
@@ -588,7 +690,7 @@ public class MemberV3ApiServiceDelegator_PeerReviewsTest extends DBUnitTest {
         peerReview1.setSubjectType(PeerReviewSubjectType.DATA_SET);
         peerReview1.setType(PeerReviewType.EVALUATION);
 
-        Response response1 = serviceDelegator.createPeerReview("4444-4444-4444-4444", peerReview1);
+        Response response1 = serviceDelegator.createPeerReview(USER_4444, peerReview1);
         assertNotNull(response1);
         assertEquals(Response.Status.CREATED.getStatusCode(), response1.getStatus());
         Long putCode1 = Utils.getPutCode(response1);
@@ -598,8 +700,7 @@ public class MemberV3ApiServiceDelegator_PeerReviewsTest extends DBUnitTest {
         ExternalID wei2 = new ExternalID();
         wei2.setRelationship(Relationship.SELF);
         wei2.setValue("same_but_different_type"); // Same value
-        wei2.setType(WorkExternalIdentifierType.ARXIV.value()); // But different
-                                                                // type
+        wei2.setType(WorkExternalIdentifierType.AGR.value()); // Different type
         weis2.getExternalIdentifier().add(wei2);
         peerReview2.setExternalIdentifiers(weis2);
         peerReview2.setGroupId("issn:0000-0003");
@@ -608,25 +709,37 @@ public class MemberV3ApiServiceDelegator_PeerReviewsTest extends DBUnitTest {
         peerReview2.setSubjectContainerName(new Title("subject-container-name"));
         peerReview2.setSubjectExternalIdentifier(wei2);
         SubjectName subjectName2 = new SubjectName();
-        subjectName2.setTitle(new Title("subject-name"));
+        subjectName2.setTitle(new Title("subject-names"));
         peerReview2.setSubjectName(subjectName2);
         peerReview2.setSubjectType(PeerReviewSubjectType.DATA_SET);
         peerReview2.setType(PeerReviewType.EVALUATION);
 
-        Response response2 = serviceDelegator.createPeerReview("4444-4444-4444-4444", peerReview2);
+        Response response2 = serviceDelegator.createPeerReview(USER_4444, peerReview2);
         assertNotNull(response2);
         assertEquals(Response.Status.CREATED.getStatusCode(), response2.getStatus());
         Long putCode2 = Utils.getPutCode(response2);
 
-        // Delete new peer reviews so they don't affect other tests
-        serviceDelegator.deletePeerReview("4444-4444-4444-4444", putCode1);
-        serviceDelegator.deletePeerReview("4444-4444-4444-4444", putCode2);
+        // The duplicate-external-id rule is ActivityValidator's and is proved by
+        // ActivityValidatorTest; what the delegator owes is to pass both
+        // creations through to the manager unchanged.
+        ArgumentCaptor<PeerReview> captor = ArgumentCaptor.forClass(PeerReview.class);
+        verify(peerReviewManager, times(2)).createPeerReview(eq(USER_4444), captor.capture(), eq(true));
+        assertEquals(WorkExternalIdentifierType.DOI.value(), captor.getAllValues().get(0).getExternalIdentifiers().getExternalIdentifier().get(0).getType());
+        assertEquals(WorkExternalIdentifierType.AGR.value(), captor.getAllValues().get(1).getExternalIdentifiers().getExternalIdentifier().get(0).getType());
+
+        serviceDelegator.deletePeerReview(USER_4444, putCode1);
+        serviceDelegator.deletePeerReview(USER_4444, putCode2);
+        verify(peerReviewManager).checkSourceAndDelete(USER_4444, putCode1);
+        verify(peerReviewManager).checkSourceAndDelete(USER_4444, putCode2);
     }
 
     @Test
     public void testDeletePeerReview() {
-        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4443", ScopePathType.READ_LIMITED, ScopePathType.ACTIVITIES_UPDATE);
-        Response response = serviceDelegator.viewPeerReview("4444-4444-4444-4443", 8L);
+        PeerReview stored = peerReview(8L, "issn:0000-0008", "ext-8", Visibility.PUBLIC, clientSource(CLIENT_1));
+        stored.getSubjectName().getTitle().setContent("Peer Review # 3");
+        when(peerReviewManagerReadOnly.getPeerReview(USER_4443, 8L)).thenReturn(stored);
+
+        Response response = serviceDelegator.viewPeerReview(USER_4443, 8L);
         assertNotNull(response);
         PeerReview review = (PeerReview) response.getEntity();
         assertNotNull(review);
@@ -634,49 +747,45 @@ public class MemberV3ApiServiceDelegator_PeerReviewsTest extends DBUnitTest {
         assertNotNull(review.getSubjectName().getTitle());
         assertEquals("Peer Review # 3", review.getSubjectName().getTitle().getContent());
 
-        response = serviceDelegator.deletePeerReview("4444-4444-4444-4443", 8L);
+        response = serviceDelegator.deletePeerReview(USER_4443, 8L);
         assertNotNull(response);
         assertEquals(Response.Status.NO_CONTENT.getStatusCode(), response.getStatus());
-
+        verify(orcidSecurityManager).checkClientAccessAndScopes(USER_4443, ScopePathType.PEER_REVIEW_UPDATE);
+        verify(peerReviewManager).checkSourceAndDelete(USER_4443, 8L);
     }
 
     @Test
     public void testAddPeerReviewWithInvalidExtIdTypeFail() {
-        String orcid = "4444-4444-4444-4499";
-        SecurityContextTestUtils.setUpSecurityContext(orcid, ScopePathType.ACTIVITIES_READ_LIMITED, ScopePathType.ACTIVITIES_UPDATE);
         PeerReview peerReview = Utils.getPeerReview();
 
         // Set both to a correct value
         peerReview.getExternalIdentifiers().getExternalIdentifier().get(0).setType("doi");
         peerReview.getSubjectExternalIdentifier().setType("doi");
 
+        // The external identifier type table is enforced by ExternalIDValidator
+        // inside the manager and proved by ExternalIDValidatorTest; the
+        // delegator's contract is to let the exception through untouched.
+        PeerReview created = peerReview(1000L, "issn:0000-0003", "ext-1000", Visibility.PUBLIC, clientSource(CLIENT_1));
+        doThrow(new ActivityIdentifierValidationException()).doThrow(new ActivityIdentifierValidationException()).doReturn(created)
+                .when(peerReviewManager).createPeerReview(eq(USER_4499), any(PeerReview.class), eq(true));
+
         // Check it fail on external identifier type
         try {
             peerReview.getExternalIdentifiers().getExternalIdentifier().get(0).setType("INVALID");
-            serviceDelegator.createPeerReview(orcid, peerReview);
+            serviceDelegator.createPeerReview(USER_4499, peerReview);
             fail();
         } catch (ActivityIdentifierValidationException e) {
 
         } catch (Exception e) {
             fail();
         }
-
-        /*
-         * This case is now ok (external-id-api branch 05/16) - adapters ensure
-         * correct value is stored in DB. try {
-         * peerReview.getExternalIdentifiers().getExternalIdentifier().get(0).
-         * setType("DOI"); serviceDelegator.createPeerReview(orcid, peerReview);
-         * fail(); } catch(ActivityIdentifierValidationException e) {
-         * 
-         * } catch(Exception e) { fail(); }
-         */
 
         // Set the ext id to a correct value to test the subject ext id
         peerReview.getExternalIdentifiers().getExternalIdentifier().get(0).setType("doi");
         // Check it fail on subject external identifier type
         try {
             peerReview.getSubjectExternalIdentifier().setType("INVALID");
-            serviceDelegator.createPeerReview(orcid, peerReview);
+            serviceDelegator.createPeerReview(USER_4499, peerReview);
             fail();
         } catch (ActivityIdentifierValidationException e) {
 
@@ -684,30 +793,24 @@ public class MemberV3ApiServiceDelegator_PeerReviewsTest extends DBUnitTest {
             fail();
         }
 
-        /*
-         * try { peerReview.getSubjectExternalIdentifier().setType("DOI");
-         * serviceDelegator.createPeerReview(orcid, peerReview); fail(); }
-         * catch(ActivityIdentifierValidationException e) {
-         * 
-         * } catch(Exception e) { fail(); }
-         */
-
         // Test it works with correct values
         peerReview.getExternalIdentifiers().getExternalIdentifier().get(0).setType("doi");
         peerReview.getSubjectExternalIdentifier().setType("doi");
-        Response response = serviceDelegator.createPeerReview(orcid, peerReview);
+        Response response = serviceDelegator.createPeerReview(USER_4499, peerReview);
         assertEquals(Response.Status.CREATED.getStatusCode(), response.getStatus());
         Long putCode = Utils.getPutCode(response);
 
         // Delete it to roll back the test data
-        response = serviceDelegator.deletePeerReview(orcid, putCode);
+        response = serviceDelegator.deletePeerReview(USER_4499, putCode);
         assertEquals(Response.Status.NO_CONTENT.getStatusCode(), response.getStatus());
+        verify(peerReviewManager).checkSourceAndDelete(USER_4499, 1000L);
     }
 
     @Test(expected = WrongSourceException.class)
     public void testDeletePeerReviewYouAreNotTheSourceOf() {
-        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4447", ScopePathType.READ_LIMITED, ScopePathType.ACTIVITIES_UPDATE);
-        serviceDelegator.deletePeerReview("4444-4444-4444-4447", 2L);
+        doThrow(new WrongSourceException(new HashMap<String, String>())).when(peerReviewManager).checkSourceAndDelete(USER_4447, 2L);
+
+        serviceDelegator.deletePeerReview(USER_4447, 2L);
         fail();
     }
 }

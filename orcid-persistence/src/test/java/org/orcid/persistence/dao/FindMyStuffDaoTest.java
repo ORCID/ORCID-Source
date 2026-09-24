@@ -17,9 +17,12 @@ import org.orcid.persistence.jpa.entities.keys.FindMyStuffHistoryEntityPk;
 import org.orcid.test.DBUnitTest;
 import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.springframework.test.context.ContextConfiguration;
+import org.junit.experimental.categories.Category;
+import org.orcid.test.DatabaseTest;
 
 @RunWith(OrcidJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:test-orcid-persistence-context.xml" })
+@Category(DatabaseTest.class)
 public class FindMyStuffDaoTest extends DBUnitTest{
     private static String USER_ORCID = "0000-0000-0000-0003";
     private static String OTHER_USER_ORCID = "0000-0000-0000-0001";

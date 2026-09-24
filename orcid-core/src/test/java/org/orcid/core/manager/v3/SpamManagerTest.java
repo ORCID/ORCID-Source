@@ -15,7 +15,10 @@ import org.junit.Test;
 import org.orcid.core.BaseTest;
 import org.orcid.jaxb.model.v3.release.record.SourceType;
 import org.orcid.jaxb.model.v3.release.record.Spam;
+import org.junit.experimental.categories.Category;
+import org.orcid.test.DatabaseTest;
 
+@Category(DatabaseTest.class)
 public class SpamManagerTest extends BaseTest {
       
     private static String USER_ORCID = "4444-4444-4444-4497";

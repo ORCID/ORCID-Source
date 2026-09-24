@@ -4,17 +4,33 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 
-import java.io.InputStream;
-import java.util.Date;
+import static org.mockito.Mockito.when;
 
-import jakarta.annotation.Resource;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+
 import jakarta.xml.bind.JAXBContext;
 import jakarta.xml.bind.JAXBException;
 import jakarta.xml.bind.Unmarshaller;
 
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.orcid.core.adapter.mapstruct.JSONWorkExternalIdentifiersMapperV3;
+import org.mapstruct.factory.Mappers;
+import org.mockito.Mock;
+import org.mockito.junit.MockitoJUnitRunner;
+import org.orcid.core.locale.LocaleManager;
+import org.orcid.core.manager.IdentifierTypeManager;
+import org.orcid.core.utils.v3.identifiers.PIDNormalizationService;
+import org.orcid.core.utils.v3.identifiers.PIDResolverService;
+import org.orcid.core.utils.v3.identifiers.normalizers.CaseSensitiveNormalizer;
+import org.orcid.core.utils.v3.identifiers.normalizers.DOINormalizer;
+import org.orcid.core.utils.v3.identifiers.normalizers.Normalizer;
 import org.orcid.jaxb.model.common.Relationship;
 import org.orcid.jaxb.model.v3.release.common.Url;
 import org.orcid.jaxb.model.v3.release.record.ExternalID;
@@ -22,17 +38,75 @@ import org.orcid.jaxb.model.v3.release.record.ExternalIDs;
 import org.orcid.jaxb.model.v3.release.record.Work;
 import org.orcid.persistence.jpa.entities.PublicationDateEntity;
 import org.orcid.persistence.jpa.entities.WorkEntity;
-import org.orcid.test.OrcidJUnit4ClassRunner;
+import org.orcid.pojo.IdentifierType;
 import org.orcid.core.utils.DateFieldsOnBaseEntityUtils;
 import org.orcid.utils.DateUtils;
-import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.util.ReflectionTestUtils;
 
-@RunWith(OrcidJUnit4ClassRunner.class)
-@ContextConfiguration(locations = { "classpath:test-orcid-core-context.xml" })
+@RunWith(MockitoJUnitRunner.Silent.class)
 public class JSONWorkExternalIdentifiersMapperV3Test {
 
-    @Resource
+    /**
+     * This test asserts on normalised values, so the normalisation chain must be REAL - a mocked
+     * PIDNormalizationService would make every assertion below an assertion about the mock. Only its
+     * two leaves are faked: the identifier_type reference data (which lives in the database and is
+     * asserted by org.orcid.core.manager.IdentifierTypeManagerTest) and the message bundle. The values
+     * used here mirror the shipped data: DOI carries the resolution prefix set by the Liquibase change
+     * set identifier-types/update-doi-https.xml, and the two messages are the ones in
+     * orcid-core/src/main/resources/i18n/api_en.properties.
+     *
+     * The mapper is the production MapStruct bean, built without Spring the way main's own
+     * SourceMapperV2Test does it, with its four @Autowired collaborators set directly. Its @PostConstruct
+     * init() is what resolves the two error messages, so it must be called by hand here.
+     */
+    @Mock
+    private IdentifierTypeManager identifierTypeManager;
+
+    @Mock
+    private LocaleManager localeManager;
+
+    @Mock
+    private PIDResolverService resolver;
+
+    private final PIDNormalizationService norm = new PIDNormalizationService();
+
     private JSONWorkExternalIdentifiersMapperV3 converter;
+
+    @Before
+    public void initMocks() throws Exception {
+        Map<String, IdentifierType> types = new HashMap<String, IdentifierType>();
+        types.put("doi", identifierType("doi", "https://doi.org/"));
+        types.put("agr", identifierType("agr", null));
+        when(identifierTypeManager.fetchIdentifierTypesByAPITypeName(Locale.ENGLISH)).thenReturn(types);
+
+        when(localeManager.resolveMessage("transientError.normalization_failed.code")).thenReturn("8001");
+        when(localeManager.resolveMessage("transientError.normalization_failed.message")).thenReturn("Cannot normalize identifier value {0}:{1}");
+
+        CaseSensitiveNormalizer caseSensitiveNormalizer = new CaseSensitiveNormalizer();
+        ReflectionTestUtils.setField(caseSensitiveNormalizer, "idman", identifierTypeManager);
+
+        List<Normalizer> normalizers = new ArrayList<Normalizer>();
+        normalizers.add(caseSensitiveNormalizer);
+        normalizers.add(new DOINormalizer());
+        ReflectionTestUtils.setField(norm, "normalizers", normalizers);
+        ReflectionTestUtils.setField(norm, "idman", identifierTypeManager);
+        norm.init();
+
+        converter = Mappers.getMapper(JSONWorkExternalIdentifiersMapperV3.class);
+        ReflectionTestUtils.setField(converter, "typeMapper", ExternalIdentifierTypeMapper.INSTANCE);
+        ReflectionTestUtils.setField(converter, "norm", norm);
+        ReflectionTestUtils.setField(converter, "resolverService", resolver);
+        ReflectionTestUtils.setField(converter, "localeManager", localeManager);
+        converter.init();
+    }
+
+    private IdentifierType identifierType(String name, String resolutionPrefix) {
+        IdentifierType type = new IdentifierType();
+        type.setName(name);
+        type.setCaseSensitive(Boolean.FALSE);
+        type.setResolutionPrefix(resolutionPrefix);
+        return type;
+    }
 
     @Test
     public void testConvertTo() throws JAXBException {

@@ -32,8 +32,11 @@ import org.orcid.pojo.IdentifierType;
 import org.orcid.test.TargetProxyHelper;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
+import org.junit.experimental.categories.Category;
+import org.orcid.test.DatabaseTest;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
+@Category(DatabaseTest.class)
 public class IdentifierTypeManagerTest extends BaseTest {
 
     private static final String CLIENT_1_ID = "APP-6666666666666666";

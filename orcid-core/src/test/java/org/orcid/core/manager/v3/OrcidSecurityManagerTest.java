@@ -5,53 +5,53 @@ import static org.mockito.Mockito.when;
 import java.util.Calendar;
 import java.util.Date;
 
-import jakarta.annotation.Resource;
 import jakarta.persistence.NoResultException;
 
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.orcid.core.exception.DeactivatedException;
 import org.orcid.core.exception.LockedException;
 import org.orcid.core.exception.OrcidDeprecatedException;
 import org.orcid.core.exception.OrcidNotClaimedException;
 import org.orcid.core.manager.ProfileEntityCacheManager;
-import org.orcid.core.manager.v3.SourceManager;
+import org.orcid.core.manager.v3.impl.OrcidSecurityManagerImpl;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.SourceEntity;
-import org.orcid.test.OrcidJUnit4ClassRunner;
-import org.orcid.test.TargetProxyHelper;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.util.ReflectionTestUtils;
 
 /**
  * 
  * @author Will Simpson
  *
  */
-@RunWith(OrcidJUnit4ClassRunner.class)
-@ContextConfiguration(locations = { "classpath:test-orcid-core-context.xml" })
+@RunWith(MockitoJUnitRunner.class)
 public class OrcidSecurityManagerTest {
     
     private static final String ORCID = "0000-0000-0000-0000";
     private static final String CLIENT_ID = "APP-0000000000000001";
 
-    @Resource(name = "orcidSecurityManagerV3")
-    protected OrcidSecurityManager orcidSecurityManager;
+    /**
+     * A second member client, so that "the profile was created by someone
+     * else" can be modelled without reusing the acting client's id.
+     */
+    private static final String OTHER_CLIENT_ID = "APP-0000000000000002";
 
-    @Value("${org.orcid.core.claimWaitPeriodDays:10}")
-    private int claimWaitPeriodDays;
-    
-    @Resource(name = "sourceManagerV3")
-    private SourceManager sourceManager;
-    
-    @Resource 
-    private ProfileEntityCacheManager profileEntityCacheManager;
-    
+    /**
+     * Matches the @Value default on OrcidSecurityManagerImpl. It has to be
+     * non-zero, or DateUtils.olderThan(justCreatedDate, 0) is already true a
+     * millisecond later and checkProfile_NotClaimed_NotOldEnough_NotSourceTest
+     * stops throwing.
+     */
+    private static final int CLAIM_WAIT_PERIOD_DAYS = 10;
+
+    @InjectMocks
+    protected OrcidSecurityManagerImpl orcidSecurityManager = new OrcidSecurityManagerImpl();
+
     @Mock
     protected ProfileEntityCacheManager profileEntityCacheManagerMock;
 
@@ -60,21 +60,14 @@ public class OrcidSecurityManagerTest {
     
     @Before
     public void before() {
-        MockitoAnnotations.initMocks(this);
-        TargetProxyHelper.injectIntoProxy(orcidSecurityManager, "profileEntityCacheManager", profileEntityCacheManagerMock);
-        TargetProxyHelper.injectIntoProxy(orcidSecurityManager, "sourceManager", sourceManagerMock);
+        // @InjectMocks does not resolve @Value fields, so they are set here.
+        ReflectionTestUtils.setField(orcidSecurityManager, "claimWaitPeriodDays", CLAIM_WAIT_PERIOD_DAYS);
+        ReflectionTestUtils.setField(orcidSecurityManager, "baseUrl", "https://testserver.orcid.org");
         SourceEntity source = new SourceEntity();
         source.setSourceClient(new ClientDetailsEntity(CLIENT_ID));
         when(sourceManagerMock.retrieveActiveSourceEntity()).thenReturn(source);        
     }
    
-    @After
-    public void after() {
-        //Restore the original beans
-        TargetProxyHelper.injectIntoProxy(orcidSecurityManager, "profileEntityCacheManager", profileEntityCacheManager);
-        TargetProxyHelper.injectIntoProxy(orcidSecurityManager, "sourceManager", sourceManager);
-    }
-    
     @Test(expected = NoResultException.class)
     public void checkProfile_InvalidOrcidTest() {
         when(profileEntityCacheManagerMock.retrieve(ORCID)).thenThrow(NoResultException.class);
@@ -143,9 +136,32 @@ public class OrcidSecurityManagerTest {
         entity.setClaimed(false);
         Calendar cal = Calendar.getInstance();
         cal.setTime(new Date());
-        cal.add(Calendar.DAY_OF_YEAR, -(claimWaitPeriodDays + 1));
+        cal.add(Calendar.DAY_OF_YEAR, -(CLAIM_WAIT_PERIOD_DAYS + 1));
         entity.setSubmissionDate(cal.getTime());
         when(profileEntityCacheManagerMock.retrieve(ORCID)).thenReturn(entity);
         orcidSecurityManager.checkProfile(ORCID);
     }  
+
+    @Test(expected = OrcidNotClaimedException.class)
+    public void checkProfile_NotClaimed_NotOldEnough_DifferentSourceTest() {
+        // Catches: replacing !Objects.equals(profileSource, currentSource)
+        // with false in OrcidSecurityManagerImpl.checkProfile. The creator
+        // only exemption would then admit any client to somebody else's
+        // unclaimed record. checkProfile_NotClaimed_NotOldEnough_NotSourceTest
+        // covers only the profileSource == null half of that condition and
+        // stays green under the mutation, and
+        // checkProfile_NotClaimed_NotOldEnough_SourceTest covers only the
+        // matching source case, which the mutation also leaves passing.
+        ProfileEntity entity = new ProfileEntity();
+        entity.setClaimed(false);
+        entity.setSubmissionDate(new Date());
+        SourceEntity createdByAnotherClient = new SourceEntity();
+        createdByAnotherClient.setSourceClient(new ClientDetailsEntity(OTHER_CLIENT_ID));
+        entity.setSource(createdByAnotherClient);
+        when(profileEntityCacheManagerMock.retrieve(ORCID)).thenReturn(entity);
+
+        // The active source stubbed in before() is CLIENT_ID, not
+        // OTHER_CLIENT_ID, so this is the source mismatch half of the rule.
+        orcidSecurityManager.checkProfile(ORCID);
+    }
 }

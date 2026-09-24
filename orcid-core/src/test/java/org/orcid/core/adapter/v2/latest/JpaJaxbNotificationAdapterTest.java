@@ -8,8 +8,6 @@ import static org.junit.Assert.assertTrue;
 import java.util.Date;
 import java.util.Set;
 
-import jakarta.annotation.Resource;
-
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.orcid.core.adapter.JpaJaxbNotificationAdapter;
@@ -32,23 +30,33 @@ import org.orcid.persistence.jpa.entities.NotificationAmendedEntity;
 import org.orcid.persistence.jpa.entities.NotificationCustomEntity;
 import org.orcid.persistence.jpa.entities.NotificationEntity;
 import org.orcid.persistence.jpa.entities.NotificationItemEntity;
-import org.orcid.test.OrcidJUnit4ClassRunner;
-import org.orcid.core.adapter.MockSourceNameCache;
 import org.orcid.core.utils.DateFieldsOnBaseEntityUtils;
 import org.orcid.utils.DateUtils;
-import org.springframework.test.context.ContextConfiguration;
+import org.junit.Before;
+import org.mockito.junit.MockitoJUnitRunner;
+import org.orcid.core.adapter.mapstruct.impl.JpaJaxbNotificationAdapterImpl;
+import org.orcid.core.adapter.MockedMapStructAdapters;
 
 /**
- * 
+ *
  * @author Will Simpson
- * 
+ *
  */
-@RunWith(OrcidJUnit4ClassRunner.class)
-@ContextConfiguration(locations = { "classpath:test-orcid-core-context.xml" })
-public class JpaJaxbNotificationAdapterTest extends MockSourceNameCache {
+@RunWith(MockitoJUnitRunner.Silent.class)
+public class JpaJaxbNotificationAdapterTest {
 
-    @Resource
+    private static final String CLIENT_SOURCE_ID = MockedMapStructAdapters.CLIENT_SOURCE_ID;
+
+    private final MockedMapStructAdapters adapters = new MockedMapStructAdapters();
+
     private JpaJaxbNotificationAdapter jpaJaxbNotificationAdapter;
+
+    @Before
+    public void setUpAdapter() throws Exception {
+        // REAL MapStruct mapper: the whole behaviour under test is the mapping configuration,
+        // so a mocked mapper would make every assertion below an assertion about a mock.
+        jpaJaxbNotificationAdapter = adapters.get(JpaJaxbNotificationAdapterImpl.class);
+    }
 
     @Test
     public void testToNotificationCustomEntity() {
@@ -56,7 +64,7 @@ public class JpaJaxbNotificationAdapterTest extends MockSourceNameCache {
         notification.setNotificationType(NotificationType.CUSTOM);
         notification.setSubject("Test subject");
         notification.setCreatedDate(DateUtils.convertToXMLGregorianCalendar(new Date()));
-        
+
         NotificationEntity notificationEntity = jpaJaxbNotificationAdapter.toNotificationEntity(notification);
 
         assertNotNull(notificationEntity);
@@ -72,7 +80,7 @@ public class JpaJaxbNotificationAdapterTest extends MockSourceNameCache {
         DateFieldsOnBaseEntityUtils.setDateFields(notificationEntity, date);
         notificationEntity.setId(123L);
         notificationEntity.setNotificationType(NotificationType.CUSTOM.name());
-        notificationEntity.setSubject("Test subject");        
+        notificationEntity.setSubject("Test subject");
         notificationEntity.setReadDate(DateUtils.convertToDate("2014-03-04T17:43:06"));
 
         Notification notification = jpaJaxbNotificationAdapter.toNotification(notificationEntity);
@@ -148,7 +156,7 @@ public class JpaJaxbNotificationAdapterTest extends MockSourceNameCache {
     @Test
     public void testToNotificationPermissionEntity() {
         NotificationPermission notification = new NotificationPermission();
-        notification.setCreatedDate(DateUtils.convertToXMLGregorianCalendar(new Date()));        
+        notification.setCreatedDate(DateUtils.convertToXMLGregorianCalendar(new Date()));
         notification.setNotificationType(NotificationType.PERMISSION);
         String authorizationUrlString = "https://orcid.org/oauth/authorize?client_id=APP-U4UKCNSSIM1OCVQY&amp;response_type=code&amp;scope=/orcid-works/create&amp;redirect_uri=http://somethirdparty.com";
         AuthorizationUrl url = new AuthorizationUrl();
@@ -176,7 +184,7 @@ public class JpaJaxbNotificationAdapterTest extends MockSourceNameCache {
 
         assertTrue(notificationEntity instanceof NotificationAddItemsEntity);
         NotificationAddItemsEntity addActivitiesEntity = (NotificationAddItemsEntity) notificationEntity;
-        
+
         assertNotNull(notificationEntity);
         assertNull(notificationEntity.getDateCreated());
         assertNull(notificationEntity.getLastModified());
@@ -185,8 +193,8 @@ public class JpaJaxbNotificationAdapterTest extends MockSourceNameCache {
         assertEquals(notification.getNotificationIntro(), notificationEntity.getNotificationIntro());
         assertEquals(notification.getNotificationSubject(),notificationEntity.getNotificationSubject());
         // Source
-        assertNull(notificationEntity.getSourceId());        
-        assertNull(notificationEntity.getClientSourceId());        
+        assertNull(notificationEntity.getSourceId());
+        assertNull(notificationEntity.getClientSourceId());
         assertNull(notificationEntity.getElementSourceId());
 
         Set<NotificationItemEntity> activityEntities = addActivitiesEntity.getNotificationItems();
@@ -196,7 +204,7 @@ public class JpaJaxbNotificationAdapterTest extends MockSourceNameCache {
         assertEquals(ItemType.WORK.name(), activityEntity.getItemType());
         assertEquals("Latest Research Article", activityEntity.getItemName());
         assertEquals("DOI", activityEntity.getExternalIdType());
-        assertEquals("1234/abc123", activityEntity.getExternalIdValue());        
+        assertEquals("1234/abc123", activityEntity.getExternalIdValue());
     }
 
     @Test
@@ -225,11 +233,11 @@ public class JpaJaxbNotificationAdapterTest extends MockSourceNameCache {
         NotificationAmendedEntity notificationAmendedEntity = (NotificationAmendedEntity) notificationEntity;
 
         assertNotNull(notificationEntity);
-        assertEquals(NotificationType.AMENDED.name(), notificationEntity.getNotificationType());   
-        
+        assertEquals(NotificationType.AMENDED.name(), notificationEntity.getNotificationType());
+
         // Source
-        assertNull(notificationAmendedEntity.getSourceId());        
-        assertNull(notificationAmendedEntity.getClientSourceId());        
-        assertNull(notificationAmendedEntity.getElementSourceId());        
+        assertNull(notificationAmendedEntity.getSourceId());
+        assertNull(notificationAmendedEntity.getClientSourceId());
+        assertNull(notificationAmendedEntity.getElementSourceId());
     }
 }

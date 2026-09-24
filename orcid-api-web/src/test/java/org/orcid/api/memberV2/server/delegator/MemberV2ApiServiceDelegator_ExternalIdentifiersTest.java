@@ -1,441 +1,310 @@
 package org.orcid.api.memberV2.server.delegator;
 
-import static org.hamcrest.core.AnyOf.anyOf;
-import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertNotSame;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.fail;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyBoolean;
+import static org.mockito.ArgumentMatchers.anyList;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
+import static org.mockito.Mockito.when;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import jakarta.annotation.Resource;
 import jakarta.persistence.NoResultException;
 import jakarta.ws.rs.core.Response;
 
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
 import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.mockito.ArgumentCaptor;
 import org.orcid.core.exception.OrcidAccessControlException;
 import org.orcid.core.exception.OrcidUnauthorizedException;
 import org.orcid.core.exception.OrcidVisibilityException;
 import org.orcid.core.exception.VisibilityMismatchException;
 import org.orcid.core.exception.WrongSourceException;
-import org.orcid.core.utils.SecurityContextTestUtils;
-import org.orcid.jaxb.model.common_v2.LastModifiedDate;
+import org.orcid.jaxb.model.common_v2.Source;
 import org.orcid.jaxb.model.common_v2.Url;
 import org.orcid.jaxb.model.common_v2.Visibility;
-import org.orcid.jaxb.model.groupid_v2.GroupIdRecord;
 import org.orcid.jaxb.model.message.ScopePathType;
-import org.orcid.jaxb.model.record_v2.Address;
-import org.orcid.jaxb.model.record_v2.Education;
-import org.orcid.jaxb.model.record_v2.Employment;
-import org.orcid.jaxb.model.record_v2.Funding;
-import org.orcid.jaxb.model.record_v2.Keyword;
-import org.orcid.jaxb.model.record_v2.OtherName;
-import org.orcid.jaxb.model.record_v2.PeerReview;
 import org.orcid.jaxb.model.record_v2.PersonExternalIdentifier;
 import org.orcid.jaxb.model.record_v2.PersonExternalIdentifiers;
-import org.orcid.jaxb.model.record_v2.ResearcherUrl;
-import org.orcid.jaxb.model.record_v2.Work;
-import org.orcid.jaxb.model.record_v2.WorkBulk;
-import org.orcid.test.DBUnitTest;
-import org.orcid.test.OrcidJUnit4ClassRunner;
+import org.orcid.jaxb.model.record_v2.Relationship;
 import org.orcid.test.helper.Utils;
-import org.springframework.test.context.ContextConfiguration;
 
-@RunWith(OrcidJUnit4ClassRunner.class)
-@ContextConfiguration(locations = { "classpath:test-orcid-api-web-context.xml" })
-public class MemberV2ApiServiceDelegator_ExternalIdentifiersTest extends DBUnitTest {
-    protected static final List<String> DATA_FILES = Arrays.asList("/data/EmptyEntityData.xml",
-            "/data/SourceClientDetailsEntityData.xml", "/data/ProfileEntityData.xml", "/data/WorksEntityData.xml", "/data/ClientDetailsEntityData.xml",
-            "/data/Oauth2TokenDetailsData.xml", "/data/OrgsEntityData.xml", "/data/ProfileFundingEntityData.xml", "/data/OrgAffiliationEntityData.xml",
-            "/data/PeerReviewEntityData.xml", "/data/GroupIdRecordEntityData.xml", "/data/RecordNameEntityData.xml", "/data/BiographyEntityData.xml");
+/**
+ * The person external identifier endpoints of the member v2 delegator, on mocks.
+ *
+ * <p>
+ * See {@link MemberV2ApiServiceDelegatorMockBase} for why no assertion here
+ * depends on {@code checkAndFilter} having filtered anything.
+ *
+ * <p>
+ * Note the scope asymmetry that the delegator actually implements: creating and
+ * updating an external identifier is guarded by
+ * {@code ORCID_BIO_EXTERNAL_IDENTIFIERS_CREATE}, while deleting one is guarded
+ * by the broader {@code ORCID_BIO_UPDATE}.
+ */
+public class MemberV2ApiServiceDelegator_ExternalIdentifiersTest extends MemberV2ApiServiceDelegatorMockBase {
 
-    // Now on, for any new test, PLAESE USER THIS ORCID ID
-    protected final String ORCID = "0000-0000-0000-0003";
-
-    @Resource(name = "memberV2ApiServiceDelegator")
-    protected MemberV2ApiServiceDelegator<Education, Employment, PersonExternalIdentifier, Funding, GroupIdRecord, OtherName, PeerReview, ResearcherUrl, Work, WorkBulk, Address, Keyword> serviceDelegator;
-
-    @BeforeClass
-    public static void initDBUnitData() throws Exception {
-        initDBUnitData(DATA_FILES);
-    }
-
-    @AfterClass
-    public static void removeDBUnitData() throws Exception {
-        Collections.reverse(DATA_FILES);
-        removeDBUnitData(DATA_FILES);
-    }
+    private static final String OTHER_ORCID = "4444-4444-4444-4442";
+    private static final String MY_ORCID = "4444-4444-4444-4443";
 
     @Test(expected = OrcidUnauthorizedException.class)
     public void testViewExternalIdentifiersWrongToken() {
-        SecurityContextTestUtils.setUpSecurityContext("some-other-user", ScopePathType.READ_LIMITED);
-        serviceDelegator.viewExternalIdentifiers(ORCID);
+        when(externalIdentifierManagerReadOnly.getExternalIdentifiers(ORCID)).thenReturn(extIds(extId(13L, Visibility.PUBLIC, clientSource(CLIENT_1))));
+        doThrow(new OrcidUnauthorizedException("Access token is for a different record")).when(orcidSecurityManager).checkAndFilter(eq(ORCID), anyList(),
+                eq(ScopePathType.ORCID_BIO_READ_LIMITED));
+
+        try {
+            serviceDelegator.viewExternalIdentifiers(ORCID);
+        } finally {
+            verifyNoInteractions(sourceNameCacheManager);
+        }
     }
 
     @Test(expected = OrcidUnauthorizedException.class)
     public void testViewExternalIdentifierWrongToken() {
-        SecurityContextTestUtils.setUpSecurityContext("some-other-user", ScopePathType.READ_LIMITED);
-        serviceDelegator.viewExternalIdentifier(ORCID, 13L);
-    }
+        PersonExternalIdentifier extId = extId(13L, Visibility.PUBLIC, clientSource(CLIENT_1));
+        when(externalIdentifierManagerReadOnly.getExternalIdentifier(ORCID, 13L)).thenReturn(extId);
+        doThrow(new OrcidUnauthorizedException("Access token is for a different record")).when(orcidSecurityManager).checkAndFilter(ORCID, extId,
+                ScopePathType.ORCID_BIO_READ_LIMITED);
 
-    @Test
-    public void testViewExternalIdentifierReadPublic() {
-        SecurityContextTestUtils.setUpSecurityContextForClientOnly("APP-5555555555555555", ScopePathType.READ_PUBLIC);
-        Response r = serviceDelegator.viewExternalIdentifier(ORCID, 13L);
-        PersonExternalIdentifier element = (PersonExternalIdentifier) r.getEntity();
-        assertNotNull(element);
-        assertEquals("/0000-0000-0000-0003/external-identifiers/13", element.getPath());
-        Utils.assertIsPublicOrSource(element, "APP-5555555555555555");
-    }
-
-    @Test
-    public void testViewExternalIdentifiersReadPublic() {
-        SecurityContextTestUtils.setUpSecurityContextForClientOnly("APP-5555555555555555", ScopePathType.READ_PUBLIC);
-        Response r = serviceDelegator.viewExternalIdentifiers(ORCID);
-        PersonExternalIdentifiers element = (PersonExternalIdentifiers) r.getEntity();
-        assertNotNull(element);
-        assertEquals("/0000-0000-0000-0003/external-identifiers", element.getPath());
-        Utils.assertIsPublicOrSource(element, "APP-5555555555555555");
-    }
-
-    @Test
-    public void testViewExternalIdentifiers() {
-        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4442", ScopePathType.PERSON_READ_LIMITED);
-        Response response = serviceDelegator.viewExternalIdentifiers("4444-4444-4444-4442");
-        assertNotNull(response);
-        PersonExternalIdentifiers extIds = (PersonExternalIdentifiers) response.getEntity();
-        assertNotNull(extIds);
-        assertEquals("/4444-4444-4444-4442/external-identifiers", extIds.getPath());
-        Utils.verifyLastModified(extIds.getLastModifiedDate());
-        List<PersonExternalIdentifier> extIdsList = extIds.getExternalIdentifiers();
-        assertNotNull(extIdsList);
-        assertEquals(3, extIdsList.size());
-
-        for (PersonExternalIdentifier extId : extIdsList) {
-            Utils.verifyLastModified(extId.getLastModifiedDate());
-            assertThat(extId.getPutCode(), anyOf(is(2L), is(3L), is(5L)));
-            assertThat(extId.getValue(), anyOf(is("abc123"), is("abc456"), is("abc012")));
-            assertNotNull(extId.getUrl());
-            assertThat(extId.getUrl().getValue(),
-                    anyOf(is("http://www.facebook.com/abc123"), is("http://www.facebook.com/abc456"), is("http://www.facebook.com/abc012")));
-            assertEquals("Facebook", extId.getType());
-            assertNotNull(extId.getSource());
-            if (extId.getPutCode().equals(2L)) {
-                assertEquals(Visibility.PUBLIC, extId.getVisibility());
-                assertEquals("APP-5555555555555555", extId.getSource().retrieveSourcePath());
-            } else if (extId.getPutCode().equals(3L)) {
-                assertEquals(Visibility.LIMITED, extId.getVisibility());
-                assertEquals("4444-4444-4444-4442", extId.getSource().retrieveSourcePath());
-            } else {
-                assertEquals(Visibility.PRIVATE, extId.getVisibility());
-                assertEquals("APP-5555555555555555", extId.getSource().retrieveSourcePath());
-            }
+        try {
+            serviceDelegator.viewExternalIdentifier(ORCID, 13L);
+        } finally {
+            assertNull("the element must not be decorated once the guard has refused", extId.getPath());
         }
     }
 
     @Test
-    public void testViewPublicExternalIdentifier() {
-        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4442", ScopePathType.PERSON_READ_LIMITED);
-        Response response = serviceDelegator.viewExternalIdentifier("4444-4444-4444-4442", 2L);
+    public void testViewExternalIdentifierReadPublic() {
+        PersonExternalIdentifier extId = extId(13L, Visibility.PUBLIC, clientSource(CLIENT_1));
+        when(externalIdentifierManagerReadOnly.getExternalIdentifier(ORCID, 13L)).thenReturn(extId);
+
+        Response r = serviceDelegator.viewExternalIdentifier(ORCID, 13L);
+
+        PersonExternalIdentifier element = (PersonExternalIdentifier) r.getEntity();
+        assertNotNull(element);
+        assertEquals("/0000-0000-0000-0003/external-identifiers/13", element.getPath());
+        assertEquals(CLIENT_1_NAME, element.getSource().getSourceName().getContent());
+        verify(orcidSecurityManager).checkAndFilter(ORCID, extId, ScopePathType.ORCID_BIO_READ_LIMITED);
+    }
+
+    @Test
+    public void testViewExternalIdentifiersReadPublic() {
+        when(externalIdentifierManagerReadOnly.getExternalIdentifiers(ORCID)).thenReturn(extIds(extId(13L, Visibility.PUBLIC, clientSource(CLIENT_1))));
+
+        Response r = serviceDelegator.viewExternalIdentifiers(ORCID);
+
+        PersonExternalIdentifiers element = (PersonExternalIdentifiers) r.getEntity();
+        assertNotNull(element);
+        assertEquals("/0000-0000-0000-0003/external-identifiers", element.getPath());
+        assertEquals("/0000-0000-0000-0003/external-identifiers/13", element.getExternalIdentifiers().get(0).getPath());
+        verify(orcidSecurityManager).checkAndFilter(eq(ORCID), anyList(), eq(ScopePathType.ORCID_BIO_READ_LIMITED));
+    }
+
+    @Test
+    public void testViewExternalIdentifiers() {
+        PersonExternalIdentifiers stored = extIds(extId(2L, Visibility.PUBLIC, userSource(OTHER_ORCID)), extId(3L, Visibility.LIMITED, clientSource(CLIENT_1)),
+                extId(5L, Visibility.PRIVATE, clientSource(CLIENT_1)));
+        when(externalIdentifierManagerReadOnly.getExternalIdentifiers(OTHER_ORCID)).thenReturn(stored);
+
+        Response response = serviceDelegator.viewExternalIdentifiers(OTHER_ORCID);
+
         assertNotNull(response);
-        PersonExternalIdentifier extId = (PersonExternalIdentifier) response.getEntity();
-        assertNotNull(extId);
-        assertEquals("/4444-4444-4444-4442/external-identifiers/2", extId.getPath());
-        Utils.verifyLastModified(extId.getLastModifiedDate());
-        assertEquals("Facebook", extId.getType());
-        assertEquals(Long.valueOf(2), extId.getPutCode());
-        assertEquals("abc123", extId.getValue());
-        assertNotNull(extId.getUrl());
-        assertEquals("http://www.facebook.com/abc123", extId.getUrl().getValue());
-        assertEquals(Visibility.PUBLIC, extId.getVisibility());
-        assertNotNull(extId.getSource());
-        assertEquals("APP-5555555555555555", extId.getSource().retrieveSourcePath());
-        assertNotNull(extId.getCreatedDate());
-        Utils.verifyLastModified(extId.getLastModifiedDate());
+        PersonExternalIdentifiers returned = (PersonExternalIdentifiers) response.getEntity();
+        assertNotNull(returned);
+        assertEquals("/4444-4444-4444-4442/external-identifiers", returned.getPath());
+        Utils.verifyLastModified(returned.getLastModifiedDate());
+        assertEquals(3, returned.getExternalIdentifiers().size());
+        for (PersonExternalIdentifier extId : returned.getExternalIdentifiers()) {
+            Utils.verifyLastModified(extId.getLastModifiedDate());
+            assertEquals("/4444-4444-4444-4442/external-identifiers/" + extId.getPutCode(), extId.getPath());
+        }
+        assertEquals(CLIENT_1_NAME, returned.getExternalIdentifiers().get(1).getSource().getSourceName().getContent());
+
+        // checkAndFilter edits in place, so the cached list must be copied first
+        ArgumentCaptor<List<PersonExternalIdentifier>> filtered = extIdListCaptor();
+        verify(orcidSecurityManager).checkAndFilter(eq(OTHER_ORCID), filtered.capture(), eq(ScopePathType.ORCID_BIO_READ_LIMITED));
+        assertNotSame(stored.getExternalIdentifiers(), filtered.getValue());
+    }
+
+    @Test
+    public void testViewPublicExternalIdentifier() {
+        assertViewExternalIdentifierDecorated(2L, Visibility.PUBLIC, userSource(OTHER_ORCID));
     }
 
     @Test
     public void testViewLimitedExternalIdentifier() {
-        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4442", ScopePathType.PERSON_READ_LIMITED);
-        Response response = serviceDelegator.viewExternalIdentifier("4444-4444-4444-4442", 3L);
-        assertNotNull(response);
-        PersonExternalIdentifier extId = (PersonExternalIdentifier) response.getEntity();
-        assertNotNull(extId);
-        assertEquals("/4444-4444-4444-4442/external-identifiers/3", extId.getPath());
-        Utils.verifyLastModified(extId.getLastModifiedDate());
-        assertEquals("Facebook", extId.getType());
-        assertEquals(Long.valueOf(3), extId.getPutCode());
-        assertEquals("abc456", extId.getValue());
-        assertNotNull(extId.getUrl());
-        assertEquals("http://www.facebook.com/abc456", extId.getUrl().getValue());
-        assertEquals(Visibility.LIMITED, extId.getVisibility());
-        assertNotNull(extId.getSource());
-        assertEquals("4444-4444-4444-4442", extId.getSource().retrieveSourcePath());
-        assertNotNull(extId.getCreatedDate());
-        Utils.verifyLastModified(extId.getLastModifiedDate());
+        assertViewExternalIdentifierDecorated(3L, Visibility.LIMITED, clientSource(CLIENT_1));
     }
 
     @Test
     public void testViewPrivateExternalIdentifier() {
-        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4442", ScopePathType.PERSON_READ_LIMITED);
-        Response response = serviceDelegator.viewExternalIdentifier("4444-4444-4444-4442", 5L);
-        assertNotNull(response);
-        PersonExternalIdentifier extId = (PersonExternalIdentifier) response.getEntity();
-        assertNotNull(extId);
-        assertEquals("/4444-4444-4444-4442/external-identifiers/5", extId.getPath());
-        Utils.verifyLastModified(extId.getLastModifiedDate());
-        assertEquals("Facebook", extId.getType());
-        assertEquals(Long.valueOf(5), extId.getPutCode());
-        assertEquals("abc012", extId.getValue());
-        assertNotNull(extId.getUrl());
-        assertEquals("http://www.facebook.com/abc012", extId.getUrl().getValue());
-        assertEquals(Visibility.PRIVATE, extId.getVisibility());
-        assertNotNull(extId.getSource());
-        assertEquals("APP-5555555555555555", extId.getSource().retrieveSourcePath());
-        assertNotNull(extId.getCreatedDate());
-        Utils.verifyLastModified(extId.getLastModifiedDate());
+        assertViewExternalIdentifierDecorated(5L, Visibility.PRIVATE, clientSource(CLIENT_1));
     }
 
     @Test(expected = OrcidVisibilityException.class)
     public void testViewPrivateExternalIdentifierWhereYouAreNotTheSource() {
-        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4442", ScopePathType.PERSON_READ_LIMITED);
-        serviceDelegator.viewExternalIdentifier("4444-4444-4444-4442", 4L);
+        PersonExternalIdentifier extId = extId(4L, Visibility.PRIVATE, clientSource(CLIENT_2));
+        when(externalIdentifierManagerReadOnly.getExternalIdentifier(OTHER_ORCID, 4L)).thenReturn(extId);
+        doThrow(new OrcidVisibilityException()).when(orcidSecurityManager).checkAndFilter(OTHER_ORCID, extId, ScopePathType.ORCID_BIO_READ_LIMITED);
+
+        serviceDelegator.viewExternalIdentifier(OTHER_ORCID, 4L);
         fail();
     }
 
     @Test(expected = NoResultException.class)
     public void testViewExternalIdentifierThatDontBelongToTheUser() {
-        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4442", ScopePathType.PERSON_READ_LIMITED);
-        serviceDelegator.viewExternalIdentifier("4444-4444-4444-4442", 1L);
-        fail();
-    }
+        // The (orcid, id) predicate is in ExternalIdentifierDaoImpl's query. What
+        // is the delegator's is that it lets the miss out and never asks the
+        // guard about an element it did not get.
+        when(externalIdentifierManagerReadOnly.getExternalIdentifier(OTHER_ORCID, 1L)).thenThrow(new NoResultException());
 
-    @Test
-    public void testAddExternalIdentifier() {
-        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4443", ScopePathType.PERSON_READ_LIMITED, ScopePathType.PERSON_UPDATE);
-        Response response = serviceDelegator.viewExternalIdentifiers("4444-4444-4444-4443");
-        assertNotNull(response);
-        PersonExternalIdentifiers extIds = (PersonExternalIdentifiers) response.getEntity();
-        assertNotNull(extIds);
-        assertNotNull(extIds.getExternalIdentifiers());
-        assertEquals(1, extIds.getExternalIdentifiers().size());
-        assertEquals(Long.valueOf(1), extIds.getExternalIdentifiers().get(0).getPutCode());
-        assertNotNull(extIds.getExternalIdentifiers().get(0).getUrl());
-        assertEquals("http://www.facebook.com/d3clan", extIds.getExternalIdentifiers().get(0).getUrl().getValue());
-        assertEquals("d3clan", extIds.getExternalIdentifiers().get(0).getValue());
-        assertEquals(Visibility.PUBLIC, extIds.getExternalIdentifiers().get(0).getVisibility());
-
-        response = serviceDelegator.createExternalIdentifier("4444-4444-4444-4443", Utils.getPersonExternalIdentifier());
-        assertNotNull(response);
-        assertEquals(Response.Status.CREATED.getStatusCode(), response.getStatus());
-
-        Long putCode = Utils.getPutCode(response);
-
-        response = serviceDelegator.viewExternalIdentifiers("4444-4444-4444-4443");
-        assertNotNull(response);
-        extIds = (PersonExternalIdentifiers) response.getEntity();
-        assertNotNull(extIds);
-        Utils.verifyLastModified(extIds.getLastModifiedDate());
-        assertNotNull(extIds.getExternalIdentifiers());
-        assertEquals(2, extIds.getExternalIdentifiers().size());
-
-        for (PersonExternalIdentifier extId : extIds.getExternalIdentifiers()) {
-            Utils.verifyLastModified(extId.getLastModifiedDate());
-            assertNotNull(extId.getUrl());
-            if (extId.getPutCode() != 1L) {
-                assertEquals(Visibility.PUBLIC, extId.getVisibility());
-                assertEquals("new-common-name", extId.getType());
-                assertEquals("new-reference", extId.getValue());
-                assertEquals("http://newUrl.com", extId.getUrl().getValue());
-                assertEquals(putCode, extId.getPutCode());
-            } else {
-                assertEquals(Visibility.PUBLIC, extId.getVisibility());
-                assertEquals("Facebook", extId.getType());
-                assertEquals("d3clan", extId.getValue());
-                assertEquals("http://www.facebook.com/d3clan", extId.getUrl().getValue());
-            }
+        try {
+            serviceDelegator.viewExternalIdentifier(OTHER_ORCID, 1L);
+            fail();
+        } finally {
+            verifyNoInteractions(orcidSecurityManager);
         }
     }
 
     @Test
+    public void testAddExternalIdentifier() {
+        PersonExternalIdentifier created = extId(100L, Visibility.LIMITED, clientSource(CLIENT_1));
+        when(externalIdentifierManager.createExternalIdentifier(eq(MY_ORCID), any(PersonExternalIdentifier.class), anyBoolean())).thenReturn(created);
+
+        Response response = serviceDelegator.createExternalIdentifier(MY_ORCID, Utils.getPersonExternalIdentifier());
+
+        assertNotNull(response);
+        assertEquals(Response.Status.CREATED.getStatusCode(), response.getStatus());
+        assertEquals(Long.valueOf(100), Utils.getPutCode(response));
+        verify(orcidSecurityManager).checkClientAccessAndScopes(MY_ORCID, ScopePathType.ORCID_BIO_EXTERNAL_IDENTIFIERS_CREATE);
+        ArgumentCaptor<PersonExternalIdentifier> submitted = ArgumentCaptor.forClass(PersonExternalIdentifier.class);
+        verify(externalIdentifierManager).createExternalIdentifier(eq(MY_ORCID), submitted.capture(), eq(true));
+        assertNull("a client may not choose its own source", submitted.getValue().getSource());
+    }
+
+    @Test
     public void testUpdateExternalIdentifier() {
-        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4442", ScopePathType.PERSON_READ_LIMITED, ScopePathType.PERSON_UPDATE);
-        Response response = serviceDelegator.viewExternalIdentifier("4444-4444-4444-4442", 2L);
-        assertNotNull(response);
-        PersonExternalIdentifier extId = (PersonExternalIdentifier) response.getEntity();
-        assertNotNull(extId);
-        Utils.verifyLastModified(extId.getLastModifiedDate());
-        LastModifiedDate before = extId.getLastModifiedDate();
-        assertEquals("Facebook", extId.getType());
-        assertEquals("abc123", extId.getValue());
-        assertNotNull(extId.getUrl());
-        assertEquals("http://www.facebook.com/abc123", extId.getUrl().getValue());
-        extId.setType("updated-common-name");
-        extId.setValue("updated-reference");
-        extId.setUrl(new Url("http://updatedUrl.com"));
-        response = serviceDelegator.updateExternalIdentifier("4444-4444-4444-4442", 2L, extId);
+        PersonExternalIdentifier extId = extId(2L, Visibility.PUBLIC, clientSource(CLIENT_1));
+        extId.setValue("updated-value");
+        PersonExternalIdentifier updated = extId(2L, Visibility.PUBLIC, clientSource(CLIENT_1));
+        updated.setValue("updated-value");
+        when(externalIdentifierManager.updateExternalIdentifier(eq(OTHER_ORCID), any(PersonExternalIdentifier.class), anyBoolean())).thenReturn(updated);
+
+        Response response = serviceDelegator.updateExternalIdentifier(OTHER_ORCID, 2L, extId);
+
         assertNotNull(response);
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
-        response = serviceDelegator.viewExternalIdentifier("4444-4444-4444-4442", 2L);
-        assertNotNull(response);
-        PersonExternalIdentifier updatedExtId = (PersonExternalIdentifier) response.getEntity();
-        assertNotNull(updatedExtId);
-        Utils.verifyLastModified(updatedExtId.getLastModifiedDate());
-        assertTrue(updatedExtId.getLastModifiedDate().after(before));
-        assertEquals("updated-common-name", updatedExtId.getType());
-        assertEquals("updated-reference", updatedExtId.getValue());
-        assertNotNull(updatedExtId.getUrl());
-        assertEquals("http://updatedUrl.com", updatedExtId.getUrl().getValue());
-        // Revert changes so other tests still works
-        extId.setType("Facebook");
-        extId.setValue("abc123");
-        extId.setUrl(new Url("http://www.facebook.com/abc123"));
-        response = serviceDelegator.updateExternalIdentifier("4444-4444-4444-4442", 2L, extId);
-        assertNotNull(response);
-        assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
+        PersonExternalIdentifier returned = (PersonExternalIdentifier) response.getEntity();
+        assertEquals("updated-value", returned.getValue());
+        assertEquals("/4444-4444-4444-4442/external-identifiers/2", returned.getPath());
+        verify(orcidSecurityManager).checkClientAccessAndScopes(OTHER_ORCID, ScopePathType.ORCID_BIO_EXTERNAL_IDENTIFIERS_CREATE);
+        ArgumentCaptor<PersonExternalIdentifier> submitted = ArgumentCaptor.forClass(PersonExternalIdentifier.class);
+        verify(externalIdentifierManager).updateExternalIdentifier(eq(OTHER_ORCID), submitted.capture(), eq(true));
+        assertNull(submitted.getValue().getSource());
     }
 
     @Test(expected = WrongSourceException.class)
     public void testUpdateExaternalIdentifierYouAreNotTheSourceOf() {
-        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4442", ScopePathType.PERSON_READ_LIMITED, ScopePathType.PERSON_UPDATE);
-        Response response = serviceDelegator.viewExternalIdentifier("4444-4444-4444-4442", 3L);
-        assertNotNull(response);
-        PersonExternalIdentifier extId = (PersonExternalIdentifier) response.getEntity();
-        assertNotNull(extId);
-        assertEquals("Facebook", extId.getType());
-        assertEquals("abc456", extId.getValue());
-        assertNotNull(extId.getUrl());
-        assertEquals("http://www.facebook.com/abc456", extId.getUrl().getValue());
-        extId.setType("other-common-name");
-        extId.setValue("other-reference");
-        extId.setUrl(new Url("http://otherUrl.com"));
-        serviceDelegator.updateExternalIdentifier("4444-4444-4444-4442", 3L, extId);
+        // ExternalIdentifierManagerImpl calls orcidSecurityManager.checkSource on
+        // the stored entity; the rule belongs to that manager's tests.
+        PersonExternalIdentifier extId = extId(3L, Visibility.LIMITED, clientSource(CLIENT_2));
+        doThrow(new WrongSourceException(Collections.singletonMap("activity", "external-identifier"))).when(externalIdentifierManager)
+                .updateExternalIdentifier(eq(OTHER_ORCID), any(PersonExternalIdentifier.class), anyBoolean());
+
+        serviceDelegator.updateExternalIdentifier(OTHER_ORCID, 3L, extId);
         fail();
     }
 
     @Test(expected = VisibilityMismatchException.class)
     public void testUpdateExternalIdentifierChangingVisibilityTest() {
-        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4442", ScopePathType.PERSON_READ_LIMITED, ScopePathType.PERSON_UPDATE);
-        Response response = serviceDelegator.viewExternalIdentifier("4444-4444-4444-4442", 2L);
-        assertNotNull(response);
-        PersonExternalIdentifier extId = (PersonExternalIdentifier) response.getEntity();
-        assertNotNull(extId);
-        assertEquals(Visibility.PUBLIC, extId.getVisibility());
+        PersonExternalIdentifier extId = extId(2L, Visibility.PRIVATE, clientSource(CLIENT_1));
+        doThrow(new VisibilityMismatchException()).when(externalIdentifierManager).updateExternalIdentifier(eq(OTHER_ORCID),
+                any(PersonExternalIdentifier.class), anyBoolean());
 
-        extId.setVisibility(Visibility.PRIVATE);
-
-        response = serviceDelegator.updateExternalIdentifier("4444-4444-4444-4442", 2L, extId);
+        serviceDelegator.updateExternalIdentifier(OTHER_ORCID, 2L, extId);
         fail();
     }
 
     @Test
     public void testUpdateExternalIdentifierLeavingVisibilityNullTest() {
-        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4442", ScopePathType.PERSON_READ_LIMITED, ScopePathType.PERSON_UPDATE);
-        Response response = serviceDelegator.viewExternalIdentifier("4444-4444-4444-4442", 2L);
-        assertNotNull(response);
-        PersonExternalIdentifier extId = (PersonExternalIdentifier) response.getEntity();
-        assertNotNull(extId);
-        assertEquals(Visibility.PUBLIC, extId.getVisibility());
+        PersonExternalIdentifier extId = extId(2L, null, clientSource(CLIENT_1));
+        PersonExternalIdentifier updated = extId(2L, Visibility.PUBLIC, clientSource(CLIENT_1));
+        when(externalIdentifierManager.updateExternalIdentifier(eq(OTHER_ORCID), any(PersonExternalIdentifier.class), anyBoolean())).thenReturn(updated);
 
-        extId.setVisibility(null);
+        Response response = serviceDelegator.updateExternalIdentifier(OTHER_ORCID, 2L, extId);
 
-        response = serviceDelegator.updateExternalIdentifier("4444-4444-4444-4442", 2L, extId);
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
-        extId = (PersonExternalIdentifier) response.getEntity();
-        assertNotNull(extId);
-        assertEquals(Visibility.PUBLIC, extId.getVisibility());
+        assertEquals(Visibility.PUBLIC, ((PersonExternalIdentifier) response.getEntity()).getVisibility());
+        ArgumentCaptor<PersonExternalIdentifier> submitted = ArgumentCaptor.forClass(PersonExternalIdentifier.class);
+        verify(externalIdentifierManager).updateExternalIdentifier(eq(OTHER_ORCID), submitted.capture(), eq(true));
+        assertNull("keeping the stored visibility is the manager's job, not the delegator's", submitted.getValue().getVisibility());
     }
 
     @Test
     public void testDeleteExternalIdentifier() {
-        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4444", ScopePathType.PERSON_READ_LIMITED, ScopePathType.PERSON_UPDATE);
-        Response response = serviceDelegator.viewExternalIdentifiers("4444-4444-4444-4444");
-        assertNotNull(response);
-        PersonExternalIdentifiers extIds = (PersonExternalIdentifiers) response.getEntity();
-        assertNotNull(extIds);
-        assertNotNull(extIds.getExternalIdentifiers());
-        assertEquals(1, extIds.getExternalIdentifiers().size());
-        assertEquals(Long.valueOf(6), extIds.getExternalIdentifiers().get(0).getPutCode());
+        Response response = serviceDelegator.deleteExternalIdentifier("4444-4444-4444-4444", 6L);
 
-        response = serviceDelegator.deleteExternalIdentifier("4444-4444-4444-4444", 6L);
         assertNotNull(response);
         assertEquals(Response.Status.NO_CONTENT.getStatusCode(), response.getStatus());
-
-        response = serviceDelegator.viewExternalIdentifiers("4444-4444-4444-4444");
-        assertNotNull(response);
-        extIds = (PersonExternalIdentifiers) response.getEntity();
-        assertNotNull(extIds);
-        assertNotNull(extIds.getExternalIdentifiers());
-        assertTrue(extIds.getExternalIdentifiers().isEmpty());
+        verify(orcidSecurityManager).checkClientAccessAndScopes("4444-4444-4444-4444", ScopePathType.ORCID_BIO_UPDATE);
+        verify(externalIdentifierManager).deleteExternalIdentifier("4444-4444-4444-4444", 6L, true);
     }
 
     @Test(expected = WrongSourceException.class)
     public void testDeleteExternalIdentifierYouAreNotTheSourceOf() {
-        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4442", ScopePathType.PERSON_READ_LIMITED, ScopePathType.PERSON_UPDATE);
-        Response response = serviceDelegator.viewExternalIdentifier("4444-4444-4444-4442", 3L);
-        assertNotNull(response);
-        PersonExternalIdentifier extId = (PersonExternalIdentifier) response.getEntity();
-        assertNotNull(extId);
-        assertEquals("Facebook", extId.getType());
-        assertEquals("abc456", extId.getValue());
-        assertNotNull(extId.getUrl());
-        assertEquals("http://www.facebook.com/abc456", extId.getUrl().getValue());
+        doThrow(new WrongSourceException(Collections.singletonMap("activity", "external-identifier"))).when(externalIdentifierManager)
+                .deleteExternalIdentifier(OTHER_ORCID, 3L, true);
 
-        serviceDelegator.deleteExternalIdentifier("4444-4444-4444-4442", 3L);
+        serviceDelegator.deleteExternalIdentifier(OTHER_ORCID, 3L);
         fail();
     }
 
     @Test
     public void testReadPublicScope_ExternalIdentifiers() {
-        SecurityContextTestUtils.setUpSecurityContext(ORCID, ScopePathType.READ_PUBLIC);
-        // Public works
+        // Stubbed per element rather than with a blanket matcher: refusing
+        // everything would also refuse 13, 14 and 15 and make the positive half
+        // of this test meaningless.
+        PersonExternalIdentifier thirteen = extId(13L, Visibility.PUBLIC, clientSource(CLIENT_1));
+        PersonExternalIdentifier fourteen = extId(14L, Visibility.LIMITED, clientSource(CLIENT_1));
+        PersonExternalIdentifier fifteen = extId(15L, Visibility.PRIVATE, clientSource(CLIENT_1));
+        PersonExternalIdentifier sixteen = extId(16L, Visibility.LIMITED, clientSource(CLIENT_2));
+        PersonExternalIdentifier seventeen = extId(17L, Visibility.PRIVATE, clientSource(CLIENT_2));
+        when(externalIdentifierManagerReadOnly.getExternalIdentifier(ORCID, 13L)).thenReturn(thirteen);
+        when(externalIdentifierManagerReadOnly.getExternalIdentifier(ORCID, 14L)).thenReturn(fourteen);
+        when(externalIdentifierManagerReadOnly.getExternalIdentifier(ORCID, 15L)).thenReturn(fifteen);
+        when(externalIdentifierManagerReadOnly.getExternalIdentifier(ORCID, 16L)).thenReturn(sixteen);
+        when(externalIdentifierManagerReadOnly.getExternalIdentifier(ORCID, 17L)).thenReturn(seventeen);
+        when(externalIdentifierManagerReadOnly.getExternalIdentifiers(ORCID)).thenReturn(extIds(thirteen, fourteen, fifteen));
+        doThrow(new OrcidAccessControlException()).when(orcidSecurityManager).checkAndFilter(ORCID, sixteen, ScopePathType.ORCID_BIO_READ_LIMITED);
+        doThrow(new OrcidAccessControlException()).when(orcidSecurityManager).checkAndFilter(ORCID, seventeen, ScopePathType.ORCID_BIO_READ_LIMITED);
+
         Response r = serviceDelegator.viewExternalIdentifiers(ORCID);
         assertNotNull(r);
         assertEquals(PersonExternalIdentifiers.class.getName(), r.getEntity().getClass().getName());
-        PersonExternalIdentifiers p = (PersonExternalIdentifiers) r.getEntity();
-        assertNotNull(p);
-        assertEquals("/0000-0000-0000-0003/external-identifiers", p.getPath());
-        Utils.verifyLastModified(p.getLastModifiedDate());
-        assertEquals(5, p.getExternalIdentifiers().size());
-        boolean found13 = false, found14 = false, found15 = false, found18 = false, found19 = false;
-        for (PersonExternalIdentifier element : p.getExternalIdentifiers()) {
-            if (element.getPutCode() == 13) {
-                found13 = true;
-            } else if (element.getPutCode() == 14) {
-                found14 = true;
-            } else if (element.getPutCode() == 15) {
-                found15 = true;
-            } else if (element.getPutCode() == 18) {
-                found18 = true;
-            } else if (element.getPutCode() == 19) {
-                found19 = true;
-            } else {
-                fail("Invalid put code " + element.getPutCode());
-            }
-
-        }
-        assertTrue(found13);
-        assertTrue(found14);
-        assertTrue(found15);
-        assertTrue(found18);
-        assertTrue(found19);
+        PersonExternalIdentifiers extIds = (PersonExternalIdentifiers) r.getEntity();
+        assertEquals("/0000-0000-0000-0003/external-identifiers", extIds.getPath());
+        Utils.verifyLastModified(extIds.getLastModifiedDate());
+        assertEquals(3, extIds.getExternalIdentifiers().size());
 
         r = serviceDelegator.viewExternalIdentifier(ORCID, 13L);
         assertNotNull(r);
         assertEquals(PersonExternalIdentifier.class.getName(), r.getEntity().getClass().getName());
 
-        // Limited am the source of should work
+        // Limited where am the source should work
         serviceDelegator.viewExternalIdentifier(ORCID, 14L);
 
-        // Limited fail
         try {
+            // Limited am not the source should fail
             serviceDelegator.viewExternalIdentifier(ORCID, 16L);
             fail();
         } catch (OrcidAccessControlException e) {
@@ -444,10 +313,10 @@ public class MemberV2ApiServiceDelegator_ExternalIdentifiersTest extends DBUnitT
             fail();
         }
 
-        // Private am the source of should work
+        // Private where am the source should work
         serviceDelegator.viewExternalIdentifier(ORCID, 15L);
-        // Private fail
         try {
+            // Private am not the source should fail
             serviceDelegator.viewExternalIdentifier(ORCID, 17L);
             fail();
         } catch (OrcidAccessControlException e) {
@@ -455,5 +324,48 @@ public class MemberV2ApiServiceDelegator_ExternalIdentifiersTest extends DBUnitT
         } catch (Exception e) {
             fail();
         }
+    }
+
+    // ------------------------------------------------------------- helpers
+
+    private void assertViewExternalIdentifierDecorated(long putCode, Visibility visibility, Source source) {
+        PersonExternalIdentifier extId = extId(putCode, visibility, source);
+        when(externalIdentifierManagerReadOnly.getExternalIdentifier(OTHER_ORCID, putCode)).thenReturn(extId);
+
+        Response response = serviceDelegator.viewExternalIdentifier(OTHER_ORCID, putCode);
+
+        assertNotNull(response);
+        PersonExternalIdentifier returned = (PersonExternalIdentifier) response.getEntity();
+        assertNotNull(returned);
+        assertEquals("/4444-4444-4444-4442/external-identifiers/" + putCode, returned.getPath());
+        Utils.verifyLastModified(returned.getLastModifiedDate());
+        assertEquals(visibility, returned.getVisibility());
+        verify(orcidSecurityManager).checkAndFilter(OTHER_ORCID, extId, ScopePathType.ORCID_BIO_READ_LIMITED);
+    }
+
+    @SuppressWarnings("unchecked")
+    private ArgumentCaptor<List<PersonExternalIdentifier>> extIdListCaptor() {
+        return ArgumentCaptor.forClass(List.class);
+    }
+
+    private PersonExternalIdentifier extId(Long putCode, Visibility visibility, Source source) {
+        PersonExternalIdentifier extId = new PersonExternalIdentifier();
+        extId.setPutCode(putCode);
+        extId.setType("type-" + putCode);
+        extId.setValue("value-" + putCode);
+        extId.setUrl(new Url("http://extId.com/" + putCode));
+        extId.setRelationship(Relationship.SELF);
+        extId.setVisibility(visibility);
+        extId.setSource(source);
+        extId.setCreatedDate(createdDate());
+        extId.setLastModifiedDate(lastModified());
+        return extId;
+    }
+
+    private PersonExternalIdentifiers extIds(PersonExternalIdentifier... elements) {
+        PersonExternalIdentifiers extIds = new PersonExternalIdentifiers();
+        extIds.setExternalIdentifiers(new ArrayList<>(Arrays.asList(elements)));
+        extIds.setLastModifiedDate(lastModified());
+        return extIds;
     }
 }

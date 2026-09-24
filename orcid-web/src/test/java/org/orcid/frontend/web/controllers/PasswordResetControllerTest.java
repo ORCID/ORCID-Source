@@ -350,6 +350,24 @@ public class PasswordResetControllerTest {
         assertNotNull(result.getNewPassword().getErrors());
     }
 
+    /**
+     * The empty-string case above never reaches the null branches. An unpopulated form, and a form
+     * with one of the two password fields null, must both be handled rather than throw.
+     */
+    @Test
+    public void resetPasswordConfirmValidateHandlesNullFields() {
+        controller.resetPasswordConfirmValidate(new OneTimeResetPasswordForm());
+
+        OneTimeResetPasswordForm form = new OneTimeResetPasswordForm();
+        form.setNewPassword(Text.valueOf(""));
+        form.setRetypedPassword(null);
+        controller.resetPasswordConfirmValidate(form);
+
+        form.setPassword(null);
+        form.setRetypedPassword(Text.valueOf(""));
+        controller.resetPasswordConfirmValidate(form);
+    }
+
     @Test
     public void getResetPasswordReturnsForm() {
         OneTimeResetPasswordForm form = controller.getResetPassword();
@@ -390,6 +408,24 @@ public class PasswordResetControllerTest {
         String token = "superseded.jwt";
         mockValidJwt(token, ORCID);
         when(redisClient.get("password-reset-token-" + ORCID)).thenReturn(new PasswordResetTokenEntry("another.jwt", false).serialize());
+        OneTimeResetPasswordForm form = new OneTimeResetPasswordForm();
+        form.setToken(token);
+
+        OneTimeResetPasswordForm result = controller.submitPasswordEmailValidatePassword(newRequest(), new MockHttpServletResponse(), form);
+
+        assertEquals("expiredPasswordResetToken", result.getErrors().get(0));
+    }
+
+    /**
+     * The guard is {@code entry == null || !token.equals(entry.getToken())}. The test above covers
+     * the right-hand side; this covers the left. A cryptographically valid, unexpired token whose
+     * entry has gone from redis must still be refused rather than accepted or thrown on.
+     */
+    @Test
+    public void submitPasswordEmailValidatePasswordMissingRedisEntryReturnsExpiredError() {
+        String token = "missing.entry.jwt";
+        mockValidJwt(token, ORCID);
+        when(redisClient.get("password-reset-token-" + ORCID)).thenReturn(null);
         OneTimeResetPasswordForm form = new OneTimeResetPasswordForm();
         form.setToken(token);
 
@@ -459,6 +495,9 @@ public class PasswordResetControllerTest {
         assertEquals(BASE_URL + "/my-orcid", result.getSuccessRedirectLocation());
         verify(profileEntityManager).updatePassword(ORCID, "Password#123");
         verify(redisClient).set(eq("password-reset-token-" + ORCID), eq(new PasswordResetTokenEntry(token, true).serialize()), anyInt());
+        // A successful reset also clears the sign-in lock. Nothing else proves the reset path
+        // calls it, so a lockout surviving a password reset would otherwise go unnoticed.
+        verify(profileEntityManager).resetSigninLock(ORCID);
     }
 
     @Test

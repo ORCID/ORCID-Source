@@ -15,11 +15,8 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.orcid.persistence.jpa.entities.IdentityProviderEntity;
 import org.orcid.persistence.jpa.entities.IdentityProviderNameEntity;
-import org.orcid.test.OrcidJUnit4ClassRunner;
-import org.springframework.test.context.ContextConfiguration;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.xml.sax.SAXException;
@@ -29,8 +26,6 @@ import org.xml.sax.SAXException;
  * @author Will Simpson
  *
  */
-@RunWith(OrcidJUnit4ClassRunner.class)
-@ContextConfiguration(locations = { "classpath:test-orcid-scheduler-context.xml" })
 public class IdentityProviderManagerTest {
 
     private IdentityProviderLoaderImpl identityProviderLoaderImpl = new IdentityProviderLoaderImpl();
