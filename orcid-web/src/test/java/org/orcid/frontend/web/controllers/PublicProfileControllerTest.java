@@ -153,7 +153,6 @@ public class PublicProfileControllerTest {
     public void before() {
         MockitoAnnotations.initMocks(this);
         publicProfileController = new PublicProfileController();
-        publicProfileController.startupTime = 0L;
 
         inject(BaseController.class, "localeManager", localeManager);
         inject(BaseController.class, "orcidUrlManager", orcidUrlManager);
@@ -512,16 +511,16 @@ public class PublicProfileControllerTest {
     }
 
     @Test
-    public void ifModifiedSinceCheckEndpoint_isFlooredAtStartupTime() {
-        long startup = RECORD_LAST_MODIFIED + 3_600_000L;
-        publicProfileController.startupTime = startup;
-        stubRecordLastModified(RECORD_LAST_MODIFIED);
-        // A copy cached before the restart no longer validates, even though the record did not change
-        MockHttpServletResponse stale = checkRecord(USER_ORCID, "GET", "If-Modified-Since", formatHttpDate(RECORD_LAST_MODIFIED + 60_000L));
-        assertEquals(HttpServletResponse.SC_OK, stale.getStatus());
-        assertEquals(formatHttpDate(startup), stale.getHeader("Last-Modified"));
-        // The new date then validates
-        assertEquals(HttpServletResponse.SC_NOT_MODIFIED, checkRecord(USER_ORCID, "GET", "If-Modified-Since", formatHttpDate(startup)).getStatus());
+    public void ifModifiedSinceCheckEndpoint_keepsTheRecordDateAcrossReleases() {
+        // A record last changed years ago keeps that date after any number of releases and restarts,
+        // so crawlers are only told about changes to the record itself
+        long recordDate = 1577836800000L; // Wed, 01 Jan 2020 00:00:00 GMT
+        stubRecordLastModified(recordDate);
+        MockHttpServletResponse first = checkRecord(USER_ORCID, "GET");
+        assertEquals(HttpServletResponse.SC_OK, first.getStatus());
+        assertEquals("Wed, 01 Jan 2020 00:00:00 GMT", first.getHeader("Last-Modified"));
+        MockHttpServletResponse replay = checkRecord(USER_ORCID, "GET", "If-Modified-Since", first.getHeader("Last-Modified"));
+        assertEquals(HttpServletResponse.SC_NOT_MODIFIED, replay.getStatus());
     }
 
     @Test

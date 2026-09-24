@@ -167,20 +167,14 @@ public class PublicProfileController extends BaseWorkspaceController {
     }
 
     /**
-     * Floor for the public record page validator, truncated to seconds like HTTP dates. The page body is
-     * the static Angular shell, and every war deploy restarts Tomcat, so a shell cached before start-up
-     * must be fetched again even when the record itself did not change.
-     */
-    static final long STARTUP_TIME = System.currentTimeMillis() / 1000L * 1000L;
-
-    // Package-private so the unit test can move the floor; production code never writes it
-    long startupTime = STARTUP_TIME;
-
-    /**
      * PD-6059: called by the nginx auth_request subrequest in front of the public record page. nginx
      * serves the Angular shell itself and forwards our Last-Modified, so the contract is strictly
      * 200 = serve the shell, 304 = the client's copy is fresh. An unknown iD or a failed lookup is a
      * 200 without Last-Modified: nginx serves the shell and Angular renders its own 404 page.
+     *
+     * The date is the record's alone, so a release does not tell crawlers that every record changed.
+     * Browsers never revalidate the page: nginx sends Cache-Control: no-store, which Google's crawlers
+     * ignore, so they keep revalidating with this date while browsers always load the current shell.
      */
     @RequestMapping(value = { "/{orcid:(?:\\d{4}-){3,}\\d{3}[\\dX]}", "/{orcid:(?:\\d{4}-){3,}\\d{3}[\\dX]}/" })
     public void ifModifiedSinceCheckEndpoint(HttpServletRequest request, HttpServletResponse response, @PathVariable("orcid") String orcid) {
@@ -188,7 +182,7 @@ public class PublicProfileController extends BaseWorkspaceController {
         try {
             Date lastModified = profileEntityManager.getLastModifiedDate(orcid);
             if (lastModified != null) {
-                validator = Math.max(lastModified.getTime(), startupTime) / 1000L * 1000L;
+                validator = lastModified.getTime() / 1000L * 1000L; // HTTP dates carry whole seconds
             }
         } catch (Exception e) {
             logger.warn("Unable to read the last modified date of " + orcid + ", serving the record page unconditionally", e);
