@@ -1,3 +1,9 @@
+## v3.23.19 - 2026-09-24
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.23.18...v3.23.19)
+
+- [#7734](https://github.com/ORCID/ORCID-Source/pull/7734): Add missing body to the 504 response
+
 ## v3.23.18 - 2026-09-24
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.23.17...v3.23.18)
