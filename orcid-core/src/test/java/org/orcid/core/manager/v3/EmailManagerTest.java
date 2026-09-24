@@ -462,7 +462,7 @@ public class EmailManagerTest {
     public void removeEmailsRejectsNonAdmin() {
         when(orcidSecurityManager.isAdmin()).thenReturn(false);
 
-        assertThrows(AccessDeniedException.class, () -> emailManager.removeEmails("orcid", singletonStrings("remove@x.com")));
+        assertThrows(AccessDeniedException.class, () -> emailManager.removeEmails("adminId", "orcid", singletonStrings("remove@x.com")));
     }
 
     @Test
@@ -471,7 +471,7 @@ public class EmailManagerTest {
         when(emailDao.findByOrcid(eq("orcid"), anyLong())).thenReturn(twoEmailEntities("a@x.com", "b@x.com"));
 
         IllegalArgumentException ex = assertThrows(IllegalArgumentException.class,
-                () -> emailManager.removeEmails("orcid", twoStrings("a@x.com", "b@x.com")));
+                () -> emailManager.removeEmails("adminId", "orcid", twoStrings("a@x.com", "b@x.com")));
         assertEquals("Can't mark all user's as deleted", ex.getMessage());
     }
 
@@ -484,7 +484,7 @@ public class EmailManagerTest {
         List<EmailEntity> after = singletonEmailEntities(keepPrimary);
         when(emailDao.findByOrcid(eq("orcid"), anyLong())).thenReturn(before).thenReturn(after);
 
-        List<Email> result = emailManager.removeEmails("orcid", singletonStrings("remove@x.com"));
+        List<Email> result = emailManager.removeEmails("adminId", "orcid", singletonStrings("remove@x.com"));
 
         assertEquals(1, result.size());
         assertEquals("keep@x.com", result.get(0).getEmail());
@@ -502,7 +502,7 @@ public class EmailManagerTest {
         List<EmailEntity> after = singletonEmailEntities(keep);
         when(emailDao.findByOrcid(eq("orcid"), anyLong())).thenReturn(before).thenReturn(after);
 
-        List<Email> result = emailManager.removeEmails("orcid", singletonStrings("old@x.com"));
+        List<Email> result = emailManager.removeEmails("adminId", "orcid", singletonStrings("old@x.com"));
 
         assertEquals(1, result.size());
         assertEquals("keep@x.com", result.get(0).getEmail());
@@ -519,7 +519,7 @@ public class EmailManagerTest {
         List<EmailEntity> after = singletonEmailEntities(keep);
         when(emailDao.findByOrcid(eq("orcid"), anyLong())).thenReturn(before).thenReturn(after);
 
-        emailManager.removeEmails("orcid", singletonStrings("remove@x.com"));
+        emailManager.removeEmails("adminId", "orcid", singletonStrings("remove@x.com"));
 
         ArgumentCaptor<Emails> captor = ArgumentCaptor.forClass(Emails.class);
         verify(profileEmailDomainManager).updateEmailDomains(eq("orcid"), isNull(), captor.capture());

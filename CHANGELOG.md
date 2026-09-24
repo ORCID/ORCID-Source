@@ -1,3 +1,9 @@
+## v3.23.17 - 2026-09-24
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.23.16...v3.23.17)
+
+- [#7728](https://github.com/ORCID/ORCID-Source/pull/7728): Fix the problem with signed in reset passwords and add more logs to f…
+
 ## v3.23.16 - 2026-09-23
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.23.15...v3.23.16)

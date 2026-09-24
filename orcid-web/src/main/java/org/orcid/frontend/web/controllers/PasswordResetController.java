@@ -107,9 +107,6 @@ public class PasswordResetController extends BaseController {
     @Resource
     private RedisClient redisClient;
 
-    @Resource
-    private ProfileHistoryEventManager profileHistoryEventManager;
-
     private static final List<String> RESET_PASSWORD_PARAMS_WHITELIST = Arrays.asList("_");
 
     @RequestMapping(value = "/reset-password.json", method = RequestMethod.GET)
@@ -340,9 +337,6 @@ public class PasswordResetController extends BaseController {
         profileEntityCacheManager.remove(orcid);
 
         markResetTokenAsUsed(orcid, token, verificationResult);
-
-        // Store reset password event
-        profileHistoryEventManager.recordResetPasswordEvent(orcid, OrcidRequestUtil.getIpAddress(request));
 
         String redirectUrl = calculateRedirectUrl(request, response, false);
         oneTimeResetPasswordForm.setSuccessRedirectLocation(redirectUrl);
