@@ -16,7 +16,7 @@ public enum ProfileHistoryEventType {
     RESET_PASSWORD("Reset password"),
     ADMIN_RESET_PASSWORD_LINK("admin_reset_password_link"),
     EMAIL_CHANGED("email_changed"),
-    ADMIN_EMAIL_CHANGED("email_changed");
+    ADMIN_EMAIL_CHANGED("admin_email_changed");
 
     
     String label;
