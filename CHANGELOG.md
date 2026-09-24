@@ -1,3 +1,9 @@
+## v3.23.18 - 2026-09-24
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.23.17...v3.23.18)
+
+- [#7732](https://github.com/ORCID/ORCID-Source/pull/7732): PD-14286 Added check for null before getUsername()  and explicit ROLE_USER intercept rules in orcid-frontend-security.xml so anonymous requests are redirected to /signin for QR endpoints
+
 ## v3.23.17 - 2026-09-24
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.23.16...v3.23.17)
