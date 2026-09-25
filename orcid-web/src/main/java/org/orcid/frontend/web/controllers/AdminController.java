@@ -11,13 +11,11 @@ import org.apache.commons.math3.util.Pair;
 import org.orcid.core.manager.AdminManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.TwoFactorAuthenticationManager;
-import org.orcid.core.manager.v3.ClientDetailsManager;
-import org.orcid.core.manager.v3.ClientManager;
-import org.orcid.core.manager.v3.ProfileEntityManager;
-import org.orcid.core.manager.v3.SpamManager;
+import org.orcid.core.manager.v3.*;
 import org.orcid.core.manager.v3.read_only.ClientManagerReadOnly;
 import org.orcid.core.manager.v3.read_only.RecordNameManagerReadOnly;
 import org.orcid.core.togglz.Features;
+import org.orcid.core.utils.OrcidRequestUtil;
 import org.orcid.core.utils.VerifyEmailUtils;
 import org.orcid.core.utils.cache.redis.RedisClient;
 import org.orcid.frontend.email.RecordEmailSender;
@@ -41,6 +39,7 @@ import org.orcid.utils.ExpiringLinkService;
 import org.orcid.utils.OrcidStringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -112,6 +111,9 @@ public class AdminController extends BaseController {
 
     @Resource(name = "profileDaoReadOnly")
     private ProfileDao profileDaoReadOnly;
+
+    @Resource(name = "profileHistoryEventManagerV3")
+    private ProfileHistoryEventManager profileHistoryEventManager;
 
     private static final String CLAIMED = "(claimed)";
     private static final String DEACTIVATED = "(deactivated)";
@@ -621,7 +623,6 @@ public class AdminController extends BaseController {
 
         } else {
             try {
-
                 profileDetails.setErrors(new ArrayList<String>());
                 Email emailEntity = new Email();
                 emailEntity.setEmail(email);
@@ -629,6 +630,8 @@ public class AdminController extends BaseController {
                 emailEntity.setVerified(false);
                 emailEntity.setVisibility(Visibility.PRIVATE);
                 emailManager.addEmail(orcid, emailEntity);
+                String comment = "Admin with id " + getCurrentUserOrcid() + " added email " + email + " to " + orcid + " record";
+                profileHistoryEventManager.recordAdminEmailUpdateEvent(orcid, OrcidRequestUtil.getIpAddress(serverRequest), comment);
             } catch (NoResultException nre) {
                 // Don't do nothing, the email doesn't exists
                 LOGGER.error("Couldnt add email address to " + orcid);
@@ -636,69 +639,6 @@ public class AdminController extends BaseController {
         }
 
         return profileDetails;
-    }
-
-    /**
-     * Reset password
-     * 
-     * @throws IllegalAccessException
-     * @throws UnsupportedEncodingException
-     */
-    @RequestMapping(value = "/reset-password.json", method = RequestMethod.POST)
-    public @ResponseBody AdminChangePassword resetPassword(HttpServletRequest serverRequest, HttpServletResponse response, @RequestBody AdminChangePassword form)
-            throws IllegalAccessException, UnsupportedEncodingException {
-        isAdmin(serverRequest, response);
-        form.setError(null);
-        String orcidOrEmail = URLDecoder.decode(form.getOrcidOrEmail(), "UTF-8").trim();
-        String password = form.getPassword().trim();
-        if (StringUtils.isNotBlank(password) && password.matches(PasswordConstants.ORCID_PASSWORD_REGEX)) {
-            String orcid = getOrcidFromParam(orcidOrEmail);
-            if (orcid != null) {
-                if (profileEntityManager.orcidExists(orcid)) {
-                    profileEntityManager.updatePassword(orcid, password);
-                    
-                    //send the security notification email on change password
-                    if(Features.SEND_EMAIL_ON_RESET_PASSWORD.isActive()) {
-                    	recordEmailSender.sendOrcidSecurityResetPasswordEmail(orcid);
-            		}
-                    // reset the lock fields
-                    profileEntityManager.resetSigninLock(orcid);
-                    profileEntityCacheManager.remove(orcid);
-
-                } else {
-                    form.setError(getMessage("admin.errors.unexisting_orcid"));
-                }
-            } else {
-                form.setError(getMessage("admin.errors.unable_to_fetch_info"));
-            }
-        } else {
-            form.setError(getMessage("admin.reset_password.error.password_invalid"));
-        }
-
-        return form;
-    }
-
-    /**
-     * Reset password validate
-     * 
-     * @throws IllegalAccessException
-     * @throws UnsupportedEncodingException
-     */
-    @RequestMapping(value = "/reset-password/validate", method = RequestMethod.POST)
-    public @ResponseBody AdminChangePassword resetPasswordValidateId(HttpServletRequest serverRequest, HttpServletResponse response,
-            @RequestBody AdminChangePassword form) throws IllegalAccessException, UnsupportedEncodingException {
-        isAdmin(serverRequest, response);
-        form.setError(null);
-        String orcidOrEmail = URLDecoder.decode(form.getOrcidOrEmail(), "UTF-8").trim();
-        String orcid = getOrcidFromParam(form.getOrcidOrEmail().trim());
-        if (orcid != null || orcidOrEmail.contains("@")) {
-            if (!profileEntityManager.orcidExists(orcid)) {
-                form.setError(getMessage("admin.errors.unexisting_orcid"));
-            }
-        } else {
-            form.setError(getMessage("admin.errors.unable_to_fetch_info"));
-        }
-        return form;
     }
 
     /**
@@ -731,6 +671,7 @@ public class AdminController extends BaseController {
             String token;
             try {
                 token = expiringLinkService.generateExpiringToken(orcid, adminJwtExpirationInMinutes, ExpiringLinkService.ExpiringLinkType.PASSWORD_RESET);
+                profileHistoryEventManager.recordPasswordResetEmailGeneratedByAdmin(getCurrentUserOrcid(), orcid, OrcidRequestUtil.getIpAddress(serverRequest));
                 redisClient.set(PasswordResetTokenEntry.redisKey(orcid), new PasswordResetTokenEntry(token, false).serialize(), (int) (adminJwtExpirationInMinutes * 60));
             } catch (JOSEException e) {
                 LOGGER.error("Failed to generate password reset token for admin", e);
@@ -1375,7 +1316,8 @@ public class AdminController extends BaseController {
 
         try {
             Email oldPrimary = findPrimaryEmail(emailManager.getEmails(orcid));
-            List<Email> remainingEmails = emailManager.removeEmails(orcid, removeEmailsRequest.getEmailsToRemove());
+            String adminId = getCurrentUserOrcid();
+            List<Email> remainingEmails = emailManager.removeEmails(adminId, orcid, removeEmailsRequest.getEmailsToRemove());
             Email newPrimary = findPrimaryEmail(remainingEmails);
 
             if (oldPrimary != null
