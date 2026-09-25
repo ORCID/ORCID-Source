@@ -1,5 +1,6 @@
 package org.orcid.frontend.web.controllers;
 
+import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
@@ -13,7 +14,6 @@ import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 
-import java.io.IOException;
 import java.lang.reflect.Field;
 import java.util.Collections;
 import java.util.HashMap;
@@ -24,6 +24,7 @@ import java.util.TimeZone;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 import org.junit.Before;
@@ -88,6 +89,7 @@ import org.orcid.pojo.ajaxForm.AffiliationGroupContainer;
 import org.orcid.pojo.ajaxForm.AffiliationGroupForm;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.server.MethodNotAllowedException;
 
 public class PublicProfileControllerTest {
@@ -408,100 +410,139 @@ public class PublicProfileControllerTest {
         assertFalse(map1.containsKey("PRIMARY_RECORD"));
     }
 
-    @Test
-    public void ifModifiedSinceCheckEndpoint_returns304WhenRecordNotModified() throws IOException {
-        long lastModifiedTime = 1735689600000L;
-        MockHttpServletRequest request = new MockHttpServletRequest();
+    // Wed, 01 Jan 2025 00:00:00 GMT
+    private static final long RECORD_LAST_MODIFIED = 1735689600000L;
+
+    private MockHttpServletResponse checkRecord(String orcid, String method, String... headers) {
+        MockHttpServletRequest request = new MockHttpServletRequest(method, "/" + orcid);
+        for (int i = 0; i < headers.length; i += 2) {
+            request.addHeader(headers[i], headers[i + 1]);
+        }
         MockHttpServletResponse response = new MockHttpServletResponse();
-        request.setMethod("GET");
-        request.addHeader("If-Modified-Since", formatHttpDate(lastModifiedTime + 60_000L));
-        when(profileEntityManager.getLastModifiedDate(USER_ORCID)).thenReturn(new Date(lastModifiedTime));
+        publicProfileController.ifModifiedSinceCheckEndpoint(request, response, orcid);
+        return response;
+    }
 
-        publicProfileController.ifModifiedSinceCheckEndpoint(request, response, USER_ORCID);
+    private void stubRecordLastModified(long lastModified) {
+        when(profileEntityManager.getLastModifiedDate(USER_ORCID)).thenReturn(new Date(lastModified));
+    }
 
+    @Test
+    public void ifModifiedSinceCheckEndpoint_returns304WhenRecordNotModified() {
+        stubRecordLastModified(RECORD_LAST_MODIFIED);
+        MockHttpServletResponse response = checkRecord(USER_ORCID, "GET", "If-Modified-Since", formatHttpDate(RECORD_LAST_MODIFIED + 60_000L));
+        assertEquals(HttpServletResponse.SC_NOT_MODIFIED, response.getStatus());
+        assertEquals(formatHttpDate(RECORD_LAST_MODIFIED), response.getHeader("Last-Modified"));
+        assertFalse(response.containsHeader("ETag"));
+    }
+
+    @Test
+    public void ifModifiedSinceCheckEndpoint_returns304WhenLastModifiedIsReplayed() {
+        stubRecordLastModified(RECORD_LAST_MODIFIED);
+        MockHttpServletResponse response = checkRecord(USER_ORCID, "GET", "If-Modified-Since", formatHttpDate(RECORD_LAST_MODIFIED));
+        assertEquals(HttpServletResponse.SC_NOT_MODIFIED, response.getStatus());
+        assertEquals(formatHttpDate(RECORD_LAST_MODIFIED), response.getHeader("Last-Modified"));
+    }
+
+    @Test
+    public void ifModifiedSinceCheckEndpoint_returns200WhenRecordWasModified() {
+        stubRecordLastModified(RECORD_LAST_MODIFIED);
+        MockHttpServletResponse response = checkRecord(USER_ORCID, "GET", "If-Modified-Since", formatHttpDate(RECORD_LAST_MODIFIED - 86_400_000L));
+        assertEquals(HttpServletResponse.SC_OK, response.getStatus());
+        assertEquals(formatHttpDate(RECORD_LAST_MODIFIED), response.getHeader("Last-Modified"));
+        assertFalse(response.containsHeader("ETag"));
+    }
+
+    @Test
+    public void ifModifiedSinceCheckEndpoint_returns200WithLastModifiedWhenHeaderIsMissing() {
+        stubRecordLastModified(RECORD_LAST_MODIFIED);
+        MockHttpServletResponse response = checkRecord(USER_ORCID, "GET");
+        assertEquals(HttpServletResponse.SC_OK, response.getStatus());
+        assertEquals(formatHttpDate(RECORD_LAST_MODIFIED), response.getHeader("Last-Modified"));
+    }
+
+    @Test
+    public void ifModifiedSinceCheckEndpoint_returns200WithoutLastModifiedWhenRecordIsUnknown() {
+        when(profileEntityManager.getLastModifiedDate(USER_ORCID)).thenReturn(null);
+        for (String[] headers : new String[][] { {}, { "If-Modified-Since", formatHttpDate(RECORD_LAST_MODIFIED) } }) {
+            MockHttpServletResponse response = checkRecord(USER_ORCID, "GET", headers);
+            assertEquals(HttpServletResponse.SC_OK, response.getStatus());
+            assertFalse(response.containsHeader("Last-Modified"));
+            assertFalse(response.containsHeader("Location"));
+        }
+    }
+
+    @Test
+    public void ifModifiedSinceCheckEndpoint_returns200WithoutLastModifiedWhenLookupFails() {
+        for (String orcid : new String[] { "0000-0000-0000-0000", "0000-0000-0000-0000-0000", " 0000-0000-0000-0000", "0000-0000-0000-0000 " }) {
+            when(profileEntityManager.getLastModifiedDate(orcid)).thenThrow(new IllegalArgumentException());
+            MockHttpServletResponse response = checkRecord(orcid, "GET", "If-Modified-Since", formatHttpDate(RECORD_LAST_MODIFIED));
+            assertEquals(HttpServletResponse.SC_OK, response.getStatus());
+            assertFalse(response.containsHeader("Last-Modified"));
+            assertFalse(response.containsHeader("Location"));
+        }
+    }
+
+    @Test
+    public void ifModifiedSinceCheckEndpoint_headBehavesLikeGet() {
+        stubRecordLastModified(RECORD_LAST_MODIFIED);
+        MockHttpServletResponse notModified = checkRecord(USER_ORCID, "HEAD", "If-Modified-Since", formatHttpDate(RECORD_LAST_MODIFIED + 60_000L));
+        assertEquals(HttpServletResponse.SC_NOT_MODIFIED, notModified.getStatus());
+        assertEquals(formatHttpDate(RECORD_LAST_MODIFIED), notModified.getHeader("Last-Modified"));
+        assertEquals(0, notModified.getContentAsByteArray().length);
+        assertEquals(HttpServletResponse.SC_OK, checkRecord(USER_ORCID, "HEAD").getStatus());
+    }
+
+    @Test
+    public void ifModifiedSinceCheckEndpoint_returns200WhenIfModifiedSinceIsMalformed() {
+        stubRecordLastModified(RECORD_LAST_MODIFIED);
+        MockHttpServletResponse response = checkRecord(USER_ORCID, "GET", "If-Modified-Since", "yesterday");
+        assertEquals(HttpServletResponse.SC_OK, response.getStatus());
+        assertEquals(formatHttpDate(RECORD_LAST_MODIFIED), response.getHeader("Last-Modified"));
+    }
+
+    @Test
+    public void ifModifiedSinceCheckEndpoint_ignoresIfNoneMatch() {
+        // Spring's checkNotModified would answer 200 here: a present If-None-Match suppresses the date check
+        stubRecordLastModified(RECORD_LAST_MODIFIED);
+        MockHttpServletResponse response = checkRecord(USER_ORCID, "GET", "If-None-Match", "W/\"65793-1790019626000\"", "If-Modified-Since",
+                formatHttpDate(RECORD_LAST_MODIFIED + 60_000L));
         assertEquals(HttpServletResponse.SC_NOT_MODIFIED, response.getStatus());
     }
 
     @Test
-    public void ifModifiedSinceCheckEndpoint_returns200WhenRecordWasModified() throws IOException {
-        long lastModifiedTime = 1735689600000L;
-        MockHttpServletRequest request = new MockHttpServletRequest();
-        MockHttpServletResponse response = new MockHttpServletResponse();
-        request.setMethod("GET");
-        request.addHeader("If-Modified-Since", formatHttpDate(lastModifiedTime - 86_400_000L));
-        when(profileEntityManager.getLastModifiedDate(USER_ORCID)).thenReturn(new Date(lastModifiedTime));
-
-        publicProfileController.ifModifiedSinceCheckEndpoint(request, response, USER_ORCID);
-
-        assertEquals(HttpServletResponse.SC_OK, response.getStatus());
+    public void ifModifiedSinceCheckEndpoint_keepsTheRecordDateAcrossReleases() {
+        // A record last changed years ago keeps that date after any number of releases and restarts,
+        // so crawlers are only told about changes to the record itself
+        long recordDate = 1577836800000L; // Wed, 01 Jan 2020 00:00:00 GMT
+        stubRecordLastModified(recordDate);
+        MockHttpServletResponse first = checkRecord(USER_ORCID, "GET");
+        assertEquals(HttpServletResponse.SC_OK, first.getStatus());
+        assertEquals("Wed, 01 Jan 2020 00:00:00 GMT", first.getHeader("Last-Modified"));
+        MockHttpServletResponse replay = checkRecord(USER_ORCID, "GET", "If-Modified-Since", first.getHeader("Last-Modified"));
+        assertEquals(HttpServletResponse.SC_NOT_MODIFIED, replay.getStatus());
     }
 
     @Test
-    public void ifModifiedSinceCheckEndpoint_returns200WhenHeaderIsMissing() throws IOException {
-        long lastModifiedTime = 1735689600000L;
-        MockHttpServletRequest request = new MockHttpServletRequest();
-        MockHttpServletResponse response = new MockHttpServletResponse();
-        request.setMethod("GET");
-        when(profileEntityManager.getLastModifiedDate(USER_ORCID)).thenReturn(new Date(lastModifiedTime));
-
-        publicProfileController.ifModifiedSinceCheckEndpoint(request, response, USER_ORCID);
-
-        assertEquals(HttpServletResponse.SC_OK, response.getStatus());
+    public void ifModifiedSinceCheckEndpoint_comparesAtSecondPrecision() {
+        // The database keeps milliseconds, HTTP dates do not: replaying the sent date must still be a 304
+        stubRecordLastModified(RECORD_LAST_MODIFIED + 999L);
+        MockHttpServletResponse response = checkRecord(USER_ORCID, "GET", "If-Modified-Since", formatHttpDate(RECORD_LAST_MODIFIED));
+        assertEquals(HttpServletResponse.SC_NOT_MODIFIED, response.getStatus());
+        assertEquals(formatHttpDate(RECORD_LAST_MODIFIED), response.getHeader("Last-Modified"));
     }
 
     @Test
-    public void ifModifiedSinceCheckEndpoint_returns307WhenRecordIsMissing() throws IOException {
-        long ifModifiedSince = 1735689600000L;
-        MockHttpServletRequest request = new MockHttpServletRequest();
-        MockHttpServletResponse response = new MockHttpServletResponse();
-        request.setMethod("GET");
-        request.addHeader("If-Modified-Since", formatHttpDate(ifModifiedSince));
-        when(profileEntityManager.getLastModifiedDate(USER_ORCID)).thenReturn(null);
-
-        publicProfileController.ifModifiedSinceCheckEndpoint(request, response, USER_ORCID);
-
-        assertEquals(HttpServletResponse.SC_TEMPORARY_REDIRECT, response.getStatus());
-        assertEquals(BASE_URL + "/404", response.getHeader("Location"));
+    public void ifModifiedSinceCheckEndpoint_sendsZeroPaddedHttpDate() {
+        stubRecordLastModified(RECORD_LAST_MODIFIED);
+        assertEquals("Wed, 01 Jan 2025 00:00:00 GMT", checkRecord(USER_ORCID, "GET").getHeader("Last-Modified"));
     }
 
     @Test
-    public void publicPreview_getInvalidRecordReturnsServiceUnavailableTest() throws IOException {
-        String a = "0000-0000-0000-0000";
-        String b = "0000-0000-0000-0000-0000";
-        String c = " 0000-0000-0000-0000";
-        String d = "0000-0000-0000-0000 ";
-        MockHttpServletRequest request = new MockHttpServletRequest();
-        request.setMethod("GET");
-        request.addHeader("If-Modified-Since", formatHttpDate(1735689600000L));
-
-        when(profileEntityManager.getLastModified(a)).thenThrow(new IllegalArgumentException());
-        when(profileEntityManager.getLastModified(b)).thenThrow(new IllegalArgumentException());
-        when(profileEntityManager.getLastModified(c)).thenThrow(new IllegalArgumentException());
-        when(profileEntityManager.getLastModified(d)).thenThrow(new IllegalArgumentException());
-
-        MockHttpServletResponse firstResponse = new MockHttpServletResponse();
-        publicProfileController.ifModifiedSinceCheckEndpoint(request, firstResponse, a);
-        assertTrue(firstResponse.containsHeader("Location"));
-        assertEquals(HttpServletResponse.SC_TEMPORARY_REDIRECT, firstResponse.getStatus());
-        assertEquals(BASE_URL + "/404", firstResponse.getHeader("Location"));
-
-        MockHttpServletResponse secondResponse = new MockHttpServletResponse();
-        publicProfileController.ifModifiedSinceCheckEndpoint(request, secondResponse, b);
-        assertTrue(secondResponse.containsHeader("Location"));
-        assertEquals(HttpServletResponse.SC_TEMPORARY_REDIRECT, secondResponse.getStatus());
-        assertEquals(BASE_URL + "/404", secondResponse.getHeader("Location"));
-
-        MockHttpServletResponse thirdResponse = new MockHttpServletResponse();
-        publicProfileController.ifModifiedSinceCheckEndpoint(request, thirdResponse, c);
-        assertTrue(thirdResponse.containsHeader("Location"));
-        assertEquals(HttpServletResponse.SC_TEMPORARY_REDIRECT, thirdResponse.getStatus());
-        assertEquals(BASE_URL + "/404", thirdResponse.getHeader("Location"));
-
-        MockHttpServletResponse fourthResponse = new MockHttpServletResponse();
-        publicProfileController.ifModifiedSinceCheckEndpoint(request, fourthResponse, d);
-        assertTrue(fourthResponse.containsHeader("Location"));
-        assertEquals(HttpServletResponse.SC_TEMPORARY_REDIRECT, fourthResponse.getStatus());
-        assertEquals(BASE_URL + "/404", fourthResponse.getHeader("Location"));
+    public void ifModifiedSinceCheckEndpoint_mapsBareAndTrailingSlashPathsOnly() throws NoSuchMethodException {
+        RequestMapping mapping = PublicProfileController.class
+                .getMethod("ifModifiedSinceCheckEndpoint", HttpServletRequest.class, HttpServletResponse.class, String.class).getAnnotation(RequestMapping.class);
+        assertArrayEquals(new String[] { "/{orcid:(?:\\d{4}-){3,}\\d{3}[\\dX]}", "/{orcid:(?:\\d{4}-){3,}\\d{3}[\\dX]}/" }, mapping.value());
     }
 
     private void setupUserInfoMocks() {
