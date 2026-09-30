@@ -8,8 +8,11 @@ import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.jaxb.model.common_v2.Contributor;
 import org.orcid.jaxb.model.common_v2.ContributorAttributes;
 import org.orcid.jaxb.model.common_v2.CreditName;
+import org.orcid.jaxb.model.record.bulk.BulkElement;
 import org.orcid.jaxb.model.record_v2.Funding;
 import org.orcid.jaxb.model.record_v2.FundingContributor;
+import org.orcid.jaxb.model.record_v2.Work;
+import org.orcid.jaxb.model.record_v2.WorkBulk;
 import org.orcid.persistence.dao.RecordNameDao;
 import org.orcid.pojo.ContributorsRolesAndSequencesV2;
 import org.orcid.pojo.ajaxForm.PojoUtil;
@@ -50,6 +53,29 @@ public class ContributorUtils {
                         CreditName creditName = new CreditName(publicContributorCreditName != null ? publicContributorCreditName : "");
                         contributor.setCreditName(creditName);
                     }
+                }
+            }
+        }
+    }
+
+    /**
+     * The contributor email is write-only (work-3.0.xsd): it is never returned
+     * when reading a work. Unlike the Funding overload, credit names are left
+     * as deposited.
+     */
+    public void filterContributorPrivateData(Work work) {
+        if (work != null && work.getWorkContributors() != null && work.getWorkContributors().getContributor() != null) {
+            for (Contributor contributor : work.getWorkContributors().getContributor()) {
+                contributor.setContributorEmail(null);
+            }
+        }
+    }
+
+    public void filterContributorPrivateData(WorkBulk works) {
+        if (works != null && works.getBulk() != null) {
+            for (BulkElement element : works.getBulk()) {
+                if (element instanceof Work) {
+                    filterContributorPrivateData((Work) element);
                 }
             }
         }

@@ -2,6 +2,7 @@ package org.orcid.api.publicV2.server;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
@@ -988,6 +989,25 @@ public class PublicV2ApiServiceVersionedDelegatorTest extends DBUnitTest {
 
         Record record = (Record) serviceDelegatorV2_1.viewRecord(userWithPublicEmails).getEntity();
         assertEmailFlags(record.getPerson().getEmails().getEmails());
+    }
+
+    /**
+     * The contributor email is write-only. The versioned beans run every work through the
+     * 2.0 <-> 2.1 converter, which copies every bean property, so check it stays out on both.
+     */
+    @Test
+    public void testViewWorkOmitsContributorEmailOnV2_0AndV2_1() {
+        assertNoContributorEmail((Work) serviceDelegator.viewWork(userWithPublicEmails, 11L).getEntity());
+        assertNoContributorEmail((Work) serviceDelegatorV2_1.viewWork(userWithPublicEmails, 11L).getEntity());
+        assertNoContributorEmail((Work) ((WorkBulk) serviceDelegator.viewBulkWorks(userWithPublicEmails, "11").getEntity()).getBulk().get(0));
+        assertNoContributorEmail((Work) ((WorkBulk) serviceDelegatorV2_1.viewBulkWorks(userWithPublicEmails, "11").getEntity()).getBulk().get(0));
+    }
+
+    private void assertNoContributorEmail(Work work) {
+        assertEquals(Long.valueOf(11), work.getPutCode());
+        assertEquals(1, work.getWorkContributors().getContributor().size());
+        assertEquals("0000-0000-0000-0000", work.getWorkContributors().getContributor().get(0).getContributorOrcid().getPath());
+        assertNull(work.getWorkContributors().getContributor().get(0).getContributorEmail());
     }
 
     /**
