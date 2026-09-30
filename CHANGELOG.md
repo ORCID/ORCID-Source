@@ -1,3 +1,10 @@
+## v3.23.20 - 2026-09-30
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.23.19...v3.23.20)
+
+- [#7738](https://github.com/ORCID/ORCID-Source/pull/7738): PD-13512 bump orcid-model to 4.0.2 for v2 email flags
+- [#7739](https://github.com/ORCID/ORCID-Source/pull/7739): PD-14414 build the AWS SMS client without httpclient5
+
 ## v3.23.19 - 2026-09-24
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.23.18...v3.23.19)
