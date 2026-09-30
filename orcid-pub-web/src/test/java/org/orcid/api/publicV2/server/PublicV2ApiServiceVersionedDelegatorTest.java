@@ -41,6 +41,10 @@ import org.orcid.jaxb.model.client_v2.ClientSummary;
 import org.orcid.jaxb.model.common_v2.OrcidIdentifier;
 import org.orcid.jaxb.model.error_v2.OrcidError;
 import org.orcid.jaxb.model.message.ScopePathType;
+import org.orcid.jaxb.model.record_v2.Email;
+import org.orcid.jaxb.model.record_v2.Emails;
+import org.orcid.jaxb.model.record_v2.Person;
+import org.orcid.jaxb.model.record_v2.Record;
 import org.orcid.jaxb.model.record_v2.Work;
 import org.orcid.jaxb.model.record_v2.WorkBulk;
 import org.orcid.jaxb.model.search_v2.Result;
@@ -70,6 +74,9 @@ public class PublicV2ApiServiceVersionedDelegatorTest extends DBUnitTest {
     @Resource(name = "publicV2ApiServiceDelegatorV2")
     PublicV2ApiServiceDelegator<?, ?, ?, ?, ?, ?, ?, ?, ?> serviceDelegator;
 
+    @Resource(name = "publicV2ApiServiceDelegatorV2_1")
+    PublicV2ApiServiceDelegator<?, ?, ?, ?, ?, ?, ?, ?, ?> serviceDelegatorV2_1;
+
     @Resource(name = "publicV2ApiServiceDelegator")
     PublicV2ApiServiceDelegator<?, ?, ?, ?, ?, ?, ?, ?, ?> serviceDelegatorNonVersioned;
 
@@ -91,6 +98,7 @@ public class PublicV2ApiServiceVersionedDelegatorTest extends DBUnitTest {
     private String lockedUserOrcid = "0000-0000-0000-0006";
     private String userWithNoBio = "1000-0000-0000-0001";
     private String deactivatedUserOrcid = "0000-0000-0000-0007";
+    private String userWithPublicEmails = "0000-0000-0000-0003";
 
     @BeforeClass
     public static void initDBUnitData() throws Exception {
@@ -959,6 +967,43 @@ public class PublicV2ApiServiceVersionedDelegatorTest extends DBUnitTest {
         SecurityContextTestUtils.setUpSecurityContext("0000-0000-0000-0007", ScopePathType.READ_LIMITED);
         serviceDelegator.viewWorks(deactivatedUserOrcid);
         fail();
+    }
+
+    /**
+     * The versioned beans serve /v2.0 and /v2.1, and both run every response through the
+     * 2.0 <-> 2.1 converter, which can only copy a property that has a bean read method.
+     * PublicV2ApiServiceDelegatorTest.testViewEmails asserts the same values on the
+     * non-versioned bean, which never converts, so it passes even when the flags are dropped.
+     */
+    @Test
+    public void testViewEmailsKeepsVerifiedAndPrimaryOnV2_0AndV2_1() {
+        assertEmailFlags(((Emails) serviceDelegator.viewEmails(userWithPublicEmails).getEntity()).getEmails());
+        assertEmailFlags(((Emails) serviceDelegatorV2_1.viewEmails(userWithPublicEmails).getEntity()).getEmails());
+    }
+
+    @Test
+    public void testViewPersonAndRecordKeepVerifiedAndPrimaryOnV2_1() {
+        Person person = (Person) serviceDelegatorV2_1.viewPerson(userWithPublicEmails).getEntity();
+        assertEmailFlags(person.getEmails().getEmails());
+
+        Record record = (Record) serviceDelegatorV2_1.viewRecord(userWithPublicEmails).getEntity();
+        assertEmailFlags(record.getPerson().getEmails().getEmails());
+    }
+
+    /**
+     * Compares values rather than asserting true: a dropped flag is null, and false has to stay
+     * false rather than collapse to null.
+     */
+    private void assertEmailFlags(List<Email> emails) {
+        assertEquals(2, emails.size());
+        Email primary = emails.get(0);
+        Email secondary = emails.get(1);
+        assertEquals("public_0000-0000-0000-0003@test.orcid.org", primary.getEmail());
+        assertEquals(Boolean.TRUE, primary.isVerified());
+        assertEquals(Boolean.TRUE, primary.isPrimary());
+        assertEquals("public_0000-0000-0000-0003@orcid.org", secondary.getEmail());
+        assertEquals(Boolean.TRUE, secondary.isVerified());
+        assertEquals(Boolean.FALSE, secondary.isPrimary());
     }
 
 }
