@@ -26,6 +26,7 @@ import org.orcid.frontend.recoveryphone.RecoveryPhoneSigninSendCodeResponse;
 import org.orcid.frontend.recoveryphone.RecoveryPhoneSigninVerifyRequest;
 import org.orcid.frontend.recoveryphone.RecoveryPhoneSigninVerifyResponse;
 import org.orcid.frontend.recoveryphone.RecoveryPhoneVerificationService;
+import org.orcid.frontend.web.exception.PasswordResetRequiredException;
 import org.orcid.frontend.web.exception.VerificationCodeFor2FARequiredException;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -194,6 +195,39 @@ public class RecoveryPhoneSigninControllerTest {
         assertNull(details.getVerificationCode());
         assertNull(details.getRecoveryCode());
         assertEquals(REMOTE_ADDRESS, details.getRemoteAddress());
+    }
+
+    /**
+     * A record flagged for a mandatory password reset is refused by the provider
+     * before its 2FA check. The recovery still has to work for a 2FA account,
+     * because the password reset that clears the flag asks for a 2FA code too.
+     */
+    @Test
+    public void testSendCodeStillServesAFlagged2FAAccount() {
+        togglzRule.enable(Features.TWO_FACTOR_RECOVERY_PHONE);
+        when(authenticationProvider.authenticate(any(Authentication.class))).thenThrow(new PasswordResetRequiredException());
+        when(twoFactorAuthenticationManager.userUsing2FA(ORCID)).thenReturn(true);
+        aRecoveryPhoneIsStored();
+        when(recoveryPhoneVerificationService.sendCode(eq(ORCID), any(RecoveryPhoneSendCodeRequest.class)))
+                .thenReturn(RecoveryPhoneSendCodeResponse.success(30));
+
+        RecoveryPhoneSigninSendCodeResponse response = controller.sendCode(request, sendCodeRequest(ORCID));
+
+        assertTrue(response.isSuccess());
+        verify(recoveryPhoneVerificationService).sendCode(eq(ORCID), any(RecoveryPhoneSendCodeRequest.class));
+    }
+
+    @Test
+    public void testSendCodeRefusesAFlaggedAccountThatIsNotUsing2FA() {
+        togglzRule.enable(Features.TWO_FACTOR_RECOVERY_PHONE);
+        when(authenticationProvider.authenticate(any(Authentication.class))).thenThrow(new PasswordResetRequiredException());
+        when(twoFactorAuthenticationManager.userUsing2FA(ORCID)).thenReturn(false);
+
+        RecoveryPhoneSigninSendCodeResponse response = controller.sendCode(request, sendCodeRequest(ORCID));
+
+        assertFalse(response.isSuccess());
+        assertEquals(RecoveryPhoneSigninController.TWO_FACTOR_DISABLED, response.getErrorCode());
+        verify(recoveryPhoneVerificationService, never()).sendCode(anyString(), any(RecoveryPhoneSendCodeRequest.class));
     }
 
     @Test

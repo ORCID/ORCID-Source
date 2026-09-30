@@ -26,6 +26,7 @@ import jakarta.servlet.http.HttpServletResponse;
 
 import org.jasypt.exceptions.EncryptionOperationNotPossibleException;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -40,6 +41,7 @@ import org.orcid.core.manager.impl.OrcidUrlManager;
 import org.orcid.core.manager.v3.EmailManager;
 import org.orcid.core.manager.v3.ProfileEntityManager;
 import org.orcid.core.manager.v3.read_only.EmailManagerReadOnly;
+import org.orcid.core.togglz.Features;
 import org.orcid.core.utils.cache.redis.RedisClient;
 import org.orcid.frontend.email.RecordEmailSender;
 import org.orcid.frontend.web.forms.OneTimeResetPasswordForm;
@@ -63,6 +65,8 @@ import org.springframework.mock.web.MockHttpSession;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import org.togglz.junit.TogglzRule;
+
 import com.nimbusds.jwt.JWTClaimsSet;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -73,6 +77,9 @@ public class PasswordResetControllerTest {
     private static final String BASE_URL = "https://testserver.orcid.org";
 
     private PasswordResetController controller;
+
+    @Rule
+    public TogglzRule togglzRule = TogglzRule.allDisabled(Features.class);
 
     @Mock
     private RegistrationManager registrationManager;
@@ -604,6 +611,127 @@ public class PasswordResetControllerTest {
     }
 
     @Test
+    public void submitPasswordResetV2RejectsTheCurrentPasswordAndKeepsTheLinkUsable() {
+        String token = "valid.jwt";
+        mockValidJwt(token, ORCID);
+        when(redisClient.get("password-reset-token-" + ORCID)).thenReturn(new PasswordResetTokenEntry(token, false).serialize());
+        when(emailManager.getEmails(ORCID)).thenReturn(new Emails());
+        when(twoFactorAuthenticationManager.userUsing2FA(ORCID)).thenReturn(false);
+        currentPasswordIs("Password#123");
+
+        OneTimeResetPasswordForm result = controller.submitPasswordResetV2(newRequest(), new MockHttpServletResponse(), strongForm(token));
+
+        assertTrue(result.getNewPassword().getErrors().contains("Pattern.registrationForm.password.previouslyUsed"));
+        assertNull(result.getSuccessRedirectLocation());
+        verify(profileEntityManager, never()).updatePassword(anyString(), anyString());
+        verify(redisClient, never()).set(anyString(), anyString(), anyInt());
+    }
+
+    @Test
+    public void submitPasswordResetV2DoesNotCompareWithTheCurrentPasswordBeforeTheSecondFactor() {
+        String token = "valid.jwt";
+        mockValidJwt(token, ORCID);
+        when(redisClient.get("password-reset-token-" + ORCID)).thenReturn(new PasswordResetTokenEntry(token, false).serialize());
+        when(emailManager.getEmails(ORCID)).thenReturn(new Emails());
+        when(twoFactorAuthenticationManager.userUsing2FA(ORCID)).thenReturn(true);
+        currentPasswordIs("Password#123");
+
+        OneTimeResetPasswordForm result = controller.submitPasswordResetV2(newRequest(), new MockHttpServletResponse(), strongForm(token));
+
+        assertTrue(result.isTwoFactorEnabled());
+        assertTrue(result.getNewPassword().getErrors().isEmpty());
+        verify(encryptionManager, never()).hashMatches(anyString(), anyString());
+    }
+
+    @Test
+    public void submitPasswordResetV2RejectsTheCurrentPasswordAfterAValidCode() {
+        String token = "valid.jwt";
+        mockValidJwt(token, ORCID);
+        when(redisClient.get("password-reset-token-" + ORCID)).thenReturn(new PasswordResetTokenEntry(token, false).serialize());
+        when(emailManager.getEmails(ORCID)).thenReturn(new Emails());
+        when(twoFactorAuthenticationManager.userUsing2FA(ORCID)).thenReturn(true);
+        when(twoFactorAuthenticationManager.verificationCodeIsValid("123456", ORCID)).thenReturn(true);
+        currentPasswordIs("Password#123");
+
+        OneTimeResetPasswordForm form = strongForm(token);
+        form.setTwoFactorCode("123456");
+        OneTimeResetPasswordForm result = controller.submitPasswordResetV2(newRequest(), new MockHttpServletResponse(), form);
+
+        assertTrue(result.getNewPassword().getErrors().contains("Pattern.registrationForm.password.previouslyUsed"));
+        verify(profileEntityManager, never()).updatePassword(anyString(), anyString());
+    }
+
+    @Test
+    public void submitPasswordResetV2AcceptsAPasswordThatIsNotTheCurrentOne() {
+        String token = "valid.jwt";
+        mockValidJwt(token, ORCID);
+        when(redisClient.get("password-reset-token-" + ORCID)).thenReturn(new PasswordResetTokenEntry(token, false).serialize());
+        when(emailManager.getEmails(ORCID)).thenReturn(new Emails());
+        when(twoFactorAuthenticationManager.userUsing2FA(ORCID)).thenReturn(false);
+        currentPasswordIs("Another#456");
+
+        OneTimeResetPasswordForm result = controller.submitPasswordResetV2(newRequest(), new MockHttpServletResponse(), strongForm(token));
+
+        assertTrue(result.getNewPassword() == null || result.getNewPassword().getErrors().isEmpty());
+        verify(profileEntityManager).updatePassword(ORCID, "Password#123");
+    }
+
+    @Test
+    public void issuePasswordResetRequestWithAFlaggedOrcidIdSendsToThePrimaryAddressWithoutNamingIt() {
+        togglzRule.enable(Features.FORCE_PASSWORD_RESET);
+        when(profileEntityManager.isPasswordResetRequired(ORCID)).thenReturn(true);
+        Email primary = new Email();
+        primary.setEmail(EMAIL);
+        when(emailManagerReadOnly.findPrimaryEmail(ORCID)).thenReturn(primary);
+
+        ResponseEntity<EmailRequest> response = controller.issuePasswordResetRequest(newRequest(), orcidIdRequest());
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        verify(recordEmailSender).sendPasswordResetEmail(EMAIL, ORCID);
+        assertTrue(response.getBody().getErrors().isEmpty());
+        assertTrue(response.getBody().getSuccessMessage().endsWith(ORCID));
+        assertFalse(response.getBody().getSuccessMessage().contains(EMAIL));
+        verify(emailManager, never()).emailExists(anyString());
+    }
+
+    @Test
+    public void issuePasswordResetRequestWithAnOrcidIdThatIsNotFlaggedSendsNothing() {
+        togglzRule.enable(Features.FORCE_PASSWORD_RESET);
+        when(profileEntityManager.isPasswordResetRequired(ORCID)).thenReturn(false);
+
+        ResponseEntity<EmailRequest> response = controller.issuePasswordResetRequest(newRequest(), orcidIdRequest());
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertTrue(response.getBody().getSuccessMessage().endsWith(ORCID));
+        verifyNoInteractions(recordEmailSender);
+        verify(emailManagerReadOnly, never()).findPrimaryEmail(anyString());
+    }
+
+    @Test
+    public void issuePasswordResetRequestWithAnOrcidIdSendsNothingWhileTheFeatureIsOff() {
+        // Flagged, but never asked: the feature switch is checked first
+        lenient().when(profileEntityManager.isPasswordResetRequired(ORCID)).thenReturn(true);
+
+        ResponseEntity<EmailRequest> response = controller.issuePasswordResetRequest(newRequest(), orcidIdRequest());
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        verifyNoInteractions(recordEmailSender);
+        verify(profileEntityManager, never()).isPasswordResetRequired(anyString());
+    }
+
+    @Test
+    public void issuePasswordResetRequestWithAFlaggedOrcidIdAndNoPrimaryAddressSendsNothing() {
+        togglzRule.enable(Features.FORCE_PASSWORD_RESET);
+        when(profileEntityManager.isPasswordResetRequired(ORCID)).thenReturn(true);
+        when(emailManagerReadOnly.findPrimaryEmail(ORCID)).thenThrow(new NoResultException());
+
+        ResponseEntity<EmailRequest> response = controller.issuePasswordResetRequest(newRequest(), orcidIdRequest());
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        verifyNoInteractions(recordEmailSender);
+    }
+
+    @Test
     public void submitPasswordResetV2LegacyTokenWithInvalidOrcidFails() {
         when(encryptionManager.decryptForExternalUse(anyString())).thenReturn("email=0000-0000-0000-9999&issueDate=2070-05-29T17:04:27");
         when(profileEntityManager.orcidExists("0000-0000-0000-9999")).thenReturn(false);
@@ -822,6 +950,19 @@ public class PasswordResetControllerTest {
         when(emailManager.findOrcidIdByEmail("any@orcid.org")).thenReturn(ORCID);
         when(profileEntityManager.reactivate(eq(ORCID), eq("any@orcid.org"), eq(reg))).thenReturn(new ArrayList<String>());
         return reg;
+    }
+
+    private void currentPasswordIs(String currentPassword) {
+        ProfileEntity profile = new ProfileEntity(ORCID);
+        profile.setEncryptedPassword("current-hash");
+        when(profileEntityManager.findByOrcid(ORCID)).thenReturn(profile);
+        when(encryptionManager.hashMatches(anyString(), eq("current-hash"))).thenAnswer(invocation -> currentPassword.equals(invocation.getArgument(0)));
+    }
+
+    private EmailRequest orcidIdRequest() {
+        EmailRequest body = new EmailRequest();
+        body.setEmail(" " + ORCID + " ");
+        return body;
     }
 
     private MockHttpServletRequest newRequest() {

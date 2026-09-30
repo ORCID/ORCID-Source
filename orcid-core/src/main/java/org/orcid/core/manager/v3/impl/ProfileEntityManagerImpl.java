@@ -394,6 +394,8 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
         profile.setClaimed(true);
         profile.setCompletedDate(new Date());
         profile.setEncryptedPassword(encryptionManager.hashForInternalUse(claim.getPassword().getValue()));
+        // A new password satisfies a mandatory password reset
+        profile.setForcePasswordReset(null);
         if (locale != null) {
             profile.setLocale(locale.name());
         }
@@ -505,6 +507,8 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
                 profileEntity.setIndexingStatus(IndexingStatus.PENDING);
                 if (reactivation != null) {
                     profileEntity.setEncryptedPassword(encryptionManager.hashForInternalUse(reactivation.getPassword().getValue()));
+                    // A new password satisfies a mandatory password reset
+                    profileEntity.setForcePasswordReset(null);
                     profileEntity.setActivitiesVisibilityDefault(reactivation.getActivitiesVisibilityDefault().getVisibility().name());                    
                 }
                 profileDao.merge(profileEntity);
