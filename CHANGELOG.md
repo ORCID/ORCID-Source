@@ -1,3 +1,9 @@
+## v3.23.21 - 2026-09-30
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.23.20...v3.23.21)
+
+- [#7736](https://github.com/ORCID/ORCID-Source/pull/7736): PD-6059 gate fixes
+
 ## v3.23.20 - 2026-09-30
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.23.19...v3.23.20)
