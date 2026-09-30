@@ -151,6 +151,18 @@
         <dependency>
             <groupId>software.amazon.awssdk</groupId>
             <artifactId>pinpointsmsvoicev2</artifactId>
+            <exclusions>
+                <!-- Needs httpclient5 5.4 or later, and the build pins 5.3.1: the client
+                     cannot be built with it. The sender uses url-connection-client instead -->
+                <exclusion>
+                    <groupId>software.amazon.awssdk</groupId>
+                    <artifactId>apache5-client</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>software.amazon.awssdk</groupId>
+            <artifactId>url-connection-client</artifactId>
         </dependency>
         <dependency>
             <groupId>com.googlecode.libphonenumber</groupId>
