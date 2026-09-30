@@ -19,12 +19,15 @@ import org.orcid.core.BaseTest;
 import org.orcid.jaxb.model.common_v2.Visibility;
 import org.orcid.jaxb.model.record_v2.OtherName;
 import org.orcid.jaxb.model.record_v2.PersonalDetails;
+import org.junit.experimental.categories.Category;
+import org.orcid.test.DatabaseTest;
 
 /**
 * 
 * @author Angel Montenegro
 * 
 */
+@Category(DatabaseTest.class)
 public class PersonalDetailsManagerTest extends BaseTest {
 
     private static final List<String> DATA_FILES = Arrays.asList(

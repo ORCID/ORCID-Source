@@ -11,7 +11,6 @@ import java.util.Locale;
 
 import jakarta.annotation.Resource;
 
-import org.apache.commons.collections4.iterators.LazyIteratorChain;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -57,12 +56,15 @@ import org.orcid.pojo.ajaxForm.Registration;
 import org.orcid.pojo.ajaxForm.Text;
 import org.orcid.test.TargetProxyHelper;
 import org.springframework.transaction.annotation.Transactional;
+import org.junit.experimental.categories.Category;
+import org.orcid.test.DatabaseTest;
 
 /**
  * 
  * @author Angel Montenegro
  * 
  */
+@Category(DatabaseTest.class)
 public class SourceInActivitiesTest extends BaseTest {
 
     private static final String CLIENT_1_ID = "APP-5555555555555555";

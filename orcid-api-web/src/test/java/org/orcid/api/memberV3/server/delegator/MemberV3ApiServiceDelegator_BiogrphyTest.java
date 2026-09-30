@@ -3,100 +3,99 @@ package org.orcid.api.memberV3.server.delegator;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-
-import jakarta.annotation.Resource;
 import jakarta.ws.rs.core.Response;
 
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
 import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.orcid.core.exception.OrcidNoBioException;
 import org.orcid.core.exception.OrcidUnauthorizedException;
-import org.orcid.core.utils.SecurityContextTestUtils;
-import org.orcid.jaxb.model.groupid_v2.GroupIdRecord;
 import org.orcid.jaxb.model.message.ScopePathType;
-import org.orcid.jaxb.model.v3.release.record.Address;
+import org.orcid.jaxb.model.v3.release.common.Visibility;
 import org.orcid.jaxb.model.v3.release.record.Biography;
-import org.orcid.jaxb.model.v3.release.record.Distinction;
-import org.orcid.jaxb.model.v3.release.record.Education;
-import org.orcid.jaxb.model.v3.release.record.Employment;
-import org.orcid.jaxb.model.v3.release.record.Funding;
-import org.orcid.jaxb.model.v3.release.record.InvitedPosition;
-import org.orcid.jaxb.model.v3.release.record.Keyword;
-import org.orcid.jaxb.model.v3.release.record.Membership;
-import org.orcid.jaxb.model.v3.release.record.OtherName;
-import org.orcid.jaxb.model.v3.release.record.PeerReview;
-import org.orcid.jaxb.model.v3.release.record.PersonExternalIdentifier;
-import org.orcid.jaxb.model.v3.release.record.Qualification;
-import org.orcid.jaxb.model.v3.release.record.ResearchResource;
-import org.orcid.jaxb.model.v3.release.record.ResearcherUrl;
-import org.orcid.jaxb.model.v3.release.record.Service;
-import org.orcid.jaxb.model.v3.release.record.Work;
-import org.orcid.jaxb.model.v3.release.record.WorkBulk;
-import org.orcid.test.DBUnitTest;
-import org.orcid.test.OrcidJUnit4ClassRunner;
-import org.orcid.test.helper.v3.Utils;
-import org.springframework.test.context.ContextConfiguration;
 
-@RunWith(OrcidJUnit4ClassRunner.class)
-@ContextConfiguration(locations = { "classpath:test-orcid-api-web-context.xml" })
-public class MemberV3ApiServiceDelegator_BiogrphyTest extends DBUnitTest {
-    protected static final List<String> DATA_FILES = Arrays.asList("/data/EmptyEntityData.xml",
-            "/data/SourceClientDetailsEntityData.xml", "/data/ProfileEntityData.xml", "/data/WorksEntityData.xml", "/data/ClientDetailsEntityData.xml",
-            "/data/Oauth2TokenDetailsData.xml", "/data/OrgsEntityData.xml", "/data/ProfileFundingEntityData.xml", "/data/OrgAffiliationEntityData.xml",
-            "/data/PeerReviewEntityData.xml", "/data/GroupIdRecordEntityData.xml", "/data/RecordNameEntityData.xml", "/data/BiographyEntityData.xml");
+/**
+ * Mocked boundary tests for the biography endpoint of the member V3 API.
+ *
+ * <p>
+ * Whether a caller may see a limited biography is the security manager's
+ * decision and is proved by orcid-core's {@code OrcidSecurityManager_PersonTest};
+ * what the delegator owes is to look the biography up, refuse with
+ * {@code OrcidNoBioException} when there is none, hand it to the security
+ * manager with {@code ORCID_BIO_READ_LIMITED}, stamp the path and return it.
+ */
+public class MemberV3ApiServiceDelegator_BiogrphyTest extends MemberV3ApiServiceDelegatorMockTestBase {
 
-    // Now on, for any new test, PLAESE USER THIS ORCID ID
-    protected final String ORCID = "0000-0000-0000-0003";
+    private static final String OTHER_ORCID = "0000-0000-0000-0002";
 
-    @Resource(name = "memberV3ApiServiceDelegator")
-    protected MemberV3ApiServiceDelegator<Distinction, Education, Employment, PersonExternalIdentifier, InvitedPosition, Funding, GroupIdRecord, Membership, OtherName, PeerReview, Qualification, ResearcherUrl, Service, Work, WorkBulk, Address, Keyword, ResearchResource> serviceDelegator;
-
-    @BeforeClass
-    public static void initDBUnitData() throws Exception {
-        initDBUnitData(DATA_FILES);
-    }
-
-    @AfterClass
-    public static void removeDBUnitData() throws Exception {
-        Collections.reverse(DATA_FILES);
-        removeDBUnitData(DATA_FILES);
+    private Biography biography(String content, Visibility visibility) {
+        Biography biography = new Biography();
+        biography.setContent(content);
+        biography.setVisibility(visibility);
+        biography.setLastModifiedDate(lastModified());
+        biography.setCreatedDate(created());
+        return biography;
     }
 
     @Test(expected = OrcidUnauthorizedException.class)
     public void testViewBiographyWrongToken() {
-        SecurityContextTestUtils.setUpSecurityContext("some-other-user", ScopePathType.READ_LIMITED);
+        when(biographyManagerReadOnly.getBiography(ORCID)).thenReturn(biography("Biography for 0000-0000-0000-0003", Visibility.PUBLIC));
+        doThrow(new OrcidUnauthorizedException("Access token is for a different record")).when(orcidSecurityManager).checkAndFilter(eq(ORCID),
+                any(Biography.class), eq(ScopePathType.ORCID_BIO_READ_LIMITED));
+
         serviceDelegator.viewBiography(ORCID);
     }
 
     @Test
     public void testViewBiographyReadPublic() {
-        SecurityContextTestUtils.setUpSecurityContextForClientOnly("APP-5555555555555555", ScopePathType.READ_PUBLIC);
+        Biography stored = biography("Biography for 0000-0000-0000-0003", Visibility.PUBLIC);
+        when(biographyManagerReadOnly.getBiography(ORCID)).thenReturn(stored);
+
         Response r = serviceDelegator.viewBiography(ORCID);
         Biography element = (Biography) r.getEntity();
         assertNotNull(element);
         assertEquals("/0000-0000-0000-0003/biography", element.getPath());
-        Utils.assertIsPublicOrSource(element, "APP-5555555555555555");
+        assertEquals("Biography for 0000-0000-0000-0003", element.getContent());
+        assertEquals(Visibility.PUBLIC, element.getVisibility());
+        verify(orcidSecurityManager).checkAndFilter(ORCID, element, ScopePathType.ORCID_BIO_READ_LIMITED);
     }
 
     @Test
     public void testReadPublicScope_Biography() {
-        SecurityContextTestUtils.setUpSecurityContext(ORCID, ScopePathType.READ_PUBLIC);
+        when(biographyManagerReadOnly.getBiography(ORCID)).thenReturn(biography("Biography for 0000-0000-0000-0003", Visibility.PUBLIC));
+        // The other record's biography is limited, so the security manager
+        // refuses; the delegator must let that out unwrapped.
+        Biography limited = biography("Biography for 0000-0000-0000-0002", Visibility.LIMITED);
+        when(biographyManagerReadOnly.getBiography(OTHER_ORCID)).thenReturn(limited);
+        doThrow(new OrcidUnauthorizedException("The client application is not authorized")).when(orcidSecurityManager).checkAndFilter(OTHER_ORCID, limited,
+                ScopePathType.ORCID_BIO_READ_LIMITED);
+
         Response r = serviceDelegator.viewBiography(ORCID);
         assertNotNull(r);
         assertEquals(Biography.class.getName(), r.getEntity().getClass().getName());
 
         try {
             // Bio for 0000-0000-0000-0002 should be limited
-            String otherOrcid = "0000-0000-0000-0002";
-            r = serviceDelegator.viewBiography(otherOrcid);
+            r = serviceDelegator.viewBiography(OTHER_ORCID);
             fail();
         } catch (OrcidUnauthorizedException e) {
 
         }
+    }
+
+    /**
+     * Added with the conversion: a record with no biography must be refused
+     * before the security manager is asked, which is the one branch of
+     * {@code viewBiography} the delegator owns outright.
+     */
+    @Test(expected = OrcidNoBioException.class)
+    public void testViewBiographyNoBiography() {
+        when(biographyManagerReadOnly.getBiography(ORCID)).thenReturn(null);
+
+        serviceDelegator.viewBiography(ORCID);
     }
 }

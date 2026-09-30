@@ -35,10 +35,13 @@ import org.orcid.test.DBUnitTest;
 import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.transaction.annotation.Transactional;
+import org.junit.experimental.categories.Category;
+import org.orcid.test.DatabaseTest;
 
 @RunWith(OrcidJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:test-orcid-persistence-context.xml" })
 @Transactional
+@Category(DatabaseTest.class)
 public class NotificationDaoTest extends DBUnitTest {
 
     private static final float FREQUENCY_IMMEDIATELY = 0.0f;

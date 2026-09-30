@@ -8,12 +8,15 @@ import java.util.List;
 import org.junit.Test;
 import org.orcid.core.BaseTest;
 import org.orcid.core.version.impl.V2VersionConverterChainImpl;
+import org.junit.experimental.categories.Category;
+import org.orcid.test.DatabaseTest;
 
 /**
  * 
  * @author Will Simpson
  *
  */
+@Category(DatabaseTest.class)
 public class V2VersionConverterChainTest extends BaseTest {
 
     @Test

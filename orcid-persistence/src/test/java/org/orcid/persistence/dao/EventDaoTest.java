@@ -21,9 +21,12 @@ import org.orcid.persistence.jpa.entities.EventType;
 import org.orcid.test.DBUnitTest;
 import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.springframework.test.context.ContextConfiguration;
+import org.junit.experimental.categories.Category;
+import org.orcid.test.DatabaseTest;
 
 @RunWith(OrcidJUnit4ClassRunner.class)
 @ContextConfiguration(inheritInitializers = false, inheritLocations = false, locations = {"classpath:test-orcid-persistence-context.xml"})
+@Category(DatabaseTest.class)
 public class EventDaoTest extends DBUnitTest {
 
     private static String CLIENT_ID = "APP-5555555555555555";

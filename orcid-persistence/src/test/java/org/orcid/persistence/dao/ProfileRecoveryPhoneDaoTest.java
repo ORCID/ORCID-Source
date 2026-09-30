@@ -15,9 +15,11 @@ import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 import org.orcid.persistence.dao.ProfileRecoveryPhoneDao.UpsertResult;
 import org.orcid.persistence.jpa.entities.ProfileRecoveryPhoneEntity;
+import org.orcid.test.DatabaseTest;
 import org.orcid.test.DBUnitTest;
 import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.springframework.test.context.ContextConfiguration;
@@ -30,6 +32,7 @@ import org.springframework.transaction.support.TransactionTemplate;
  */
 @RunWith(OrcidJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:test-orcid-persistence-context.xml" })
+@Category(DatabaseTest.class)
 public class ProfileRecoveryPhoneDaoTest extends DBUnitTest {
 
     private static final String ORCID = "4444-4444-4444-4441";

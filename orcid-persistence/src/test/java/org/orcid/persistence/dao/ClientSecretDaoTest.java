@@ -21,10 +21,13 @@ import org.orcid.test.DBUnitTest;
 import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.transaction.annotation.Transactional;
+import org.junit.experimental.categories.Category;
+import org.orcid.test.DatabaseTest;
 
 @RunWith(OrcidJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:test-orcid-persistence-context.xml" })
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
+@Category(DatabaseTest.class)
 public class ClientSecretDaoTest extends DBUnitTest {
     private static String CLIENT_ID = "APP-5555555555555557";
     private static String CLIENT_ID_TWO = "APP-5555555555555558";

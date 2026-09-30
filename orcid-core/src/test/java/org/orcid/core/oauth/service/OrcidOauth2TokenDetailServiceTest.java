@@ -33,6 +33,8 @@ import org.orcid.test.DBUnitTest;
 import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.orcid.test.TargetProxyHelper;
 import org.springframework.test.context.ContextConfiguration;
+import org.junit.experimental.categories.Category;
+import org.orcid.test.DatabaseTest;
 
 /**
  * 
@@ -40,6 +42,7 @@ import org.springframework.test.context.ContextConfiguration;
  */
 @RunWith(OrcidJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:test-orcid-core-context.xml" })
+@Category(DatabaseTest.class)
 public class OrcidOauth2TokenDetailServiceTest extends DBUnitTest {
     private static final String CLIENT_ID_1 = "APP-5555555555555555";
     private static final String CLIENT_ID_2 = "APP-5555555555555556";

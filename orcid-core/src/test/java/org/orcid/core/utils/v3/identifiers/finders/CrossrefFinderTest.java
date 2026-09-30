@@ -1,48 +1,73 @@
 package org.orcid.core.utils.v3.identifiers.finders;
 
 import static org.junit.Assert.assertEquals;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 
 import java.io.IOException;
 import java.io.InputStream;
 
-import jakarta.annotation.Resource;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
 import org.mockito.invocation.InvocationOnMock;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.mockito.stubbing.Answer;
 import org.orcid.core.utils.v3.identifiers.PIDResolverCache;
+import org.orcid.core.utils.v3.identifiers.normalizers.DOINormalizer;
 import org.orcid.jaxb.model.v3.release.common.TransientNonEmptyString;
 import org.orcid.jaxb.model.v3.release.record.ExternalID;
 import org.orcid.jaxb.model.v3.release.record.ExternalIDs;
 import org.orcid.pojo.FindMyStuffResult;
-import org.orcid.test.OrcidJUnit4ClassRunner;
-import org.orcid.test.TargetProxyHelper;
-import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.util.ReflectionTestUtils;
 
-@RunWith(OrcidJUnit4ClassRunner.class)
-@ContextConfiguration(locations = { "classpath:test-orcid-core-context.xml" })
+/**
+ * As with {@link DataciteFinderTest}, the network was already faked at the
+ * {@link PIDResolverCache} boundary and the Spring context was booted only to
+ * obtain the bean, so the finder is now built directly. The Crossref search
+ * JSON ({@code /examples/works/finder/crossref.json}, in orcid-test) is still
+ * parsed by the real Jackson mapper inside the production class.
+ *
+ * <p>
+ * The {@link DOINormalizer} is a real instance, not a mock, and unlike in
+ * DataciteFinderTest it is load-bearing. CrossrefFinder deduplicates with
+ * {@code CrossrefItem.getExternalID(norm)}: the normalizer produces the
+ * normalized form of each DOI in the response, and it is that form -- not the
+ * raw value -- which decides whether the item counts as one the record already
+ * holds. {@code testAlreadyHaveAll} depends on it: two of the three existing
+ * identifiers it passes in carry {@code https://doi.org/...} and
+ * {@code http://dx.doi.org/...} values whose normalized forms are the bare
+ * DOIs, and they match the three bare DOIs in the fixture only because both
+ * sides are compared normalized. A mock would leave the candidate side
+ * unnormalized and the expected count of zero would be settled by the stub
+ * rather than by the finder.
+ *
+ * <p>
+ * The {@code cache.isHttp200} stub in the old setup is gone: {@code find} never
+ * calls it.
+ */
+@RunWith(MockitoJUnitRunner.class)
 public class CrossrefFinderTest {
 
+    private static final String ENDPOINT = "https://api.crossref.org/works?filter=orcid:";
+
+    private static final String ORCID = "0000-0003-1419-2405";
+
     @Mock
-    PIDResolverCache cache;
-    
-    @Resource
-    CrossrefFinder finder;
-    
+    private PIDResolverCache cache;
+
+    @InjectMocks
+    private CrossrefFinder finder = new CrossrefFinder();
+
     @Before
     public void setUp() throws IOException {
-        MockitoAnnotations.initMocks(this);
-        TargetProxyHelper.injectIntoProxy(finder, "cache", cache);
+        ReflectionTestUtils.setField(finder, "norm", new DOINormalizer());
+        ReflectionTestUtils.setField(finder, "isEnabled", Boolean.TRUE);
+        ReflectionTestUtils.setField(finder, "clientId", "APP-9999999999999901");
+        ReflectionTestUtils.setField(finder, "metadataEndpoint", ENDPOINT);
 
-        when(cache.isHttp200(anyString())).thenReturn(true);
-
-        when(cache.get("https://api.crossref.org/works?filter=orcid:0000-0003-1419-2405", "application/json")).thenAnswer(new Answer<InputStream>() {
+        when(cache.get(ENDPOINT + ORCID, "application/json")).thenAnswer(new Answer<InputStream>() {
 
             @Override
             public InputStream answer(InvocationOnMock invocation) throws Throwable {

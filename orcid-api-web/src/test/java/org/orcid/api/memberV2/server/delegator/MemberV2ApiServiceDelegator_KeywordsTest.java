@@ -1,351 +1,293 @@
 package org.orcid.api.memberV2.server.delegator;
 
-import static org.hamcrest.core.AnyOf.anyOf;
-import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertNotSame;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.fail;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyBoolean;
+import static org.mockito.ArgumentMatchers.anyList;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
+import static org.mockito.Mockito.when;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import jakarta.annotation.Resource;
 import jakarta.persistence.NoResultException;
 import jakarta.ws.rs.core.Response;
 
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
 import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.mockito.ArgumentCaptor;
 import org.orcid.core.exception.OrcidAccessControlException;
 import org.orcid.core.exception.OrcidUnauthorizedException;
 import org.orcid.core.exception.OrcidVisibilityException;
 import org.orcid.core.exception.VisibilityMismatchException;
 import org.orcid.core.exception.WrongSourceException;
-import org.orcid.core.utils.SecurityContextTestUtils;
-import org.orcid.jaxb.model.common_v2.LastModifiedDate;
+import org.orcid.jaxb.model.common_v2.Source;
 import org.orcid.jaxb.model.common_v2.Visibility;
-import org.orcid.jaxb.model.groupid_v2.GroupIdRecord;
 import org.orcid.jaxb.model.message.ScopePathType;
-import org.orcid.jaxb.model.record_v2.Address;
-import org.orcid.jaxb.model.record_v2.Education;
-import org.orcid.jaxb.model.record_v2.Employment;
-import org.orcid.jaxb.model.record_v2.Funding;
 import org.orcid.jaxb.model.record_v2.Keyword;
 import org.orcid.jaxb.model.record_v2.Keywords;
-import org.orcid.jaxb.model.record_v2.OtherName;
-import org.orcid.jaxb.model.record_v2.PeerReview;
-import org.orcid.jaxb.model.record_v2.PersonExternalIdentifier;
-import org.orcid.jaxb.model.record_v2.ResearcherUrl;
-import org.orcid.jaxb.model.record_v2.Work;
-import org.orcid.jaxb.model.record_v2.WorkBulk;
-import org.orcid.test.DBUnitTest;
-import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.orcid.test.helper.Utils;
-import org.springframework.test.context.ContextConfiguration;
 
-@RunWith(OrcidJUnit4ClassRunner.class)
-@ContextConfiguration(locations = { "classpath:test-orcid-api-web-context.xml" })
-public class MemberV2ApiServiceDelegator_KeywordsTest extends DBUnitTest {
-    protected static final List<String> DATA_FILES = Arrays.asList("/data/EmptyEntityData.xml",
-            "/data/SourceClientDetailsEntityData.xml", "/data/ProfileEntityData.xml", "/data/ClientDetailsEntityData.xml", "/data/RecordNameEntityData.xml",
-            "/data/BiographyEntityData.xml");
+/**
+ * The keyword endpoints of the member v2 delegator, on mocks.
+ *
+ * <p>
+ * See {@link MemberV2ApiServiceDelegatorMockBase} for why no assertion here
+ * depends on {@code checkAndFilter} having filtered anything.
+ */
+public class MemberV2ApiServiceDelegator_KeywordsTest extends MemberV2ApiServiceDelegatorMockBase {
 
-    // Now on, for any new test, PLAESE USER THIS ORCID ID
-    protected final String ORCID = "0000-0000-0000-0003";
-
-    @Resource(name = "memberV2ApiServiceDelegator")
-    protected MemberV2ApiServiceDelegator<Education, Employment, PersonExternalIdentifier, Funding, GroupIdRecord, OtherName, PeerReview, ResearcherUrl, Work, WorkBulk, Address, Keyword> serviceDelegator;
-
-    @BeforeClass
-    public static void initDBUnitData() throws Exception {
-        initDBUnitData(DATA_FILES);
-    }
-
-    @AfterClass
-    public static void removeDBUnitData() throws Exception {
-        Collections.reverse(DATA_FILES);
-        removeDBUnitData(DATA_FILES);
-    }
+    private static final String OTHER_ORCID = "4444-4444-4444-4443";
+    private static final String MY_ORCID = "4444-4444-4444-4441";
 
     @Test(expected = OrcidUnauthorizedException.class)
     public void testViewKeywordsWrongToken() {
-        SecurityContextTestUtils.setUpSecurityContext("some-other-user", ScopePathType.READ_LIMITED);
-        serviceDelegator.viewKeywords(ORCID);
+        when(profileKeywordManagerReadOnly.getKeywords(ORCID)).thenReturn(keywords(keyword(9L, Visibility.PUBLIC, clientSource(CLIENT_1))));
+        doThrow(new OrcidUnauthorizedException("Access token is for a different record")).when(orcidSecurityManager).checkAndFilter(eq(ORCID), anyList(),
+                eq(ScopePathType.ORCID_BIO_READ_LIMITED));
+
+        try {
+            serviceDelegator.viewKeywords(ORCID);
+        } finally {
+            verifyNoInteractions(sourceNameCacheManager);
+        }
     }
 
     @Test(expected = OrcidUnauthorizedException.class)
     public void testViewKeywordWrongToken() {
-        SecurityContextTestUtils.setUpSecurityContext("some-other-user", ScopePathType.READ_LIMITED);
-        serviceDelegator.viewKeyword(ORCID, 9L);
-    }
+        Keyword keyword = keyword(9L, Visibility.PUBLIC, clientSource(CLIENT_1));
+        when(profileKeywordManagerReadOnly.getKeyword(ORCID, 9L)).thenReturn(keyword);
+        doThrow(new OrcidUnauthorizedException("Access token is for a different record")).when(orcidSecurityManager).checkAndFilter(ORCID, keyword,
+                ScopePathType.ORCID_BIO_READ_LIMITED);
 
-    @Test
-    public void testViewKeywordReadPublic() {
-        SecurityContextTestUtils.setUpSecurityContextForClientOnly("APP-5555555555555555", ScopePathType.READ_PUBLIC);
-        Response r = serviceDelegator.viewKeyword(ORCID, 9L);
-        Keyword element = (Keyword) r.getEntity();
-        assertNotNull(element);
-        assertEquals("/0000-0000-0000-0003/keywords/9", element.getPath());
-        Utils.assertIsPublicOrSource(element, "APP-5555555555555555");
-    }
-
-    @Test
-    public void testViewKeywordsReadPublic() {
-        SecurityContextTestUtils.setUpSecurityContextForClientOnly("APP-5555555555555555", ScopePathType.READ_PUBLIC);
-        Response r = serviceDelegator.viewKeywords(ORCID);
-        Keywords element = (Keywords) r.getEntity();
-        assertNotNull(element);
-        assertEquals("/0000-0000-0000-0003/keywords", element.getPath());
-        Utils.assertIsPublicOrSource(element, "APP-5555555555555555");
-    }
-
-    @Test
-    public void testViewKeywords() {
-        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4443", ScopePathType.PERSON_READ_LIMITED);
-        Response response = serviceDelegator.viewKeywords("4444-4444-4444-4443");
-        assertNotNull(response);
-        Keywords keywords = (Keywords) response.getEntity();
-        assertNotNull(keywords);
-        assertEquals("/4444-4444-4444-4443/keywords", keywords.getPath());
-        Utils.verifyLastModified(keywords.getLastModifiedDate());
-        assertNotNull(keywords.getKeywords());
-        assertEquals(3, keywords.getKeywords().size());
-
-        for (Keyword keyword : keywords.getKeywords()) {
-            Utils.verifyLastModified(keyword.getLastModifiedDate());
-            assertThat(keyword.getPutCode(), anyOf(is(1L), is(2L), is(4L)));
-            assertThat(keyword.getContent(), anyOf(is("tea making"), is("coffee making"), is("what else can we make?")));
-            if (keyword.getPutCode() == 1L) {
-                assertEquals(Visibility.PUBLIC, keyword.getVisibility());
-                assertEquals("APP-5555555555555555", keyword.getSource().retrieveSourcePath());
-            } else if (keyword.getPutCode() == 2L) {
-                assertEquals(Visibility.LIMITED, keyword.getVisibility());
-                assertEquals("4444-4444-4444-4443", keyword.getSource().retrieveSourcePath());
-            } else {
-                assertEquals(Visibility.PRIVATE, keyword.getVisibility());
-                assertEquals("APP-5555555555555555", keyword.getSource().retrieveSourcePath());
-            }
+        try {
+            serviceDelegator.viewKeyword(ORCID, 9L);
+        } finally {
+            assertNull("the element must not be decorated once the guard has refused", keyword.getPath());
         }
     }
 
     @Test
-    public void testViewPublicKeyword() {
-        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4443", ScopePathType.PERSON_READ_LIMITED);
-        Response response = serviceDelegator.viewKeyword("4444-4444-4444-4443", 1L);
+    public void testViewKeywordReadPublic() {
+        Keyword keyword = keyword(9L, Visibility.PUBLIC, clientSource(CLIENT_1));
+        when(profileKeywordManagerReadOnly.getKeyword(ORCID, 9L)).thenReturn(keyword);
+
+        Response r = serviceDelegator.viewKeyword(ORCID, 9L);
+
+        Keyword element = (Keyword) r.getEntity();
+        assertNotNull(element);
+        assertEquals("/0000-0000-0000-0003/keywords/9", element.getPath());
+        assertEquals(CLIENT_1_NAME, element.getSource().getSourceName().getContent());
+        verify(orcidSecurityManager).checkAndFilter(ORCID, keyword, ScopePathType.ORCID_BIO_READ_LIMITED);
+    }
+
+    @Test
+    public void testViewKeywordsReadPublic() {
+        when(profileKeywordManagerReadOnly.getKeywords(ORCID)).thenReturn(keywords(keyword(9L, Visibility.PUBLIC, clientSource(CLIENT_1))));
+
+        Response r = serviceDelegator.viewKeywords(ORCID);
+
+        Keywords element = (Keywords) r.getEntity();
+        assertNotNull(element);
+        assertEquals("/0000-0000-0000-0003/keywords", element.getPath());
+        assertEquals("/0000-0000-0000-0003/keywords/9", element.getKeywords().get(0).getPath());
+        verify(orcidSecurityManager).checkAndFilter(eq(ORCID), anyList(), eq(ScopePathType.ORCID_BIO_READ_LIMITED));
+    }
+
+    @Test
+    public void testViewKeywords() {
+        Keywords stored = keywords(keyword(1L, Visibility.PUBLIC, userSource(OTHER_ORCID)), keyword(2L, Visibility.LIMITED, clientSource(CLIENT_1)),
+                keyword(4L, Visibility.PRIVATE, clientSource(CLIENT_1)));
+        when(profileKeywordManagerReadOnly.getKeywords(OTHER_ORCID)).thenReturn(stored);
+
+        Response response = serviceDelegator.viewKeywords(OTHER_ORCID);
+
         assertNotNull(response);
-        Keyword keyword = (Keyword) response.getEntity();
-        assertNotNull(keyword);
-        assertEquals("/4444-4444-4444-4443/keywords/1", keyword.getPath());
-        Utils.verifyLastModified(keyword.getLastModifiedDate());
-        assertEquals("tea making", keyword.getContent());
-        assertEquals(Visibility.PUBLIC, keyword.getVisibility());
-        assertEquals("APP-5555555555555555", keyword.getSource().retrieveSourcePath());
+        Keywords returned = (Keywords) response.getEntity();
+        assertNotNull(returned);
+        assertEquals("/4444-4444-4444-4443/keywords", returned.getPath());
+        Utils.verifyLastModified(returned.getLastModifiedDate());
+        assertEquals(3, returned.getKeywords().size());
+        for (Keyword keyword : returned.getKeywords()) {
+            Utils.verifyLastModified(keyword.getLastModifiedDate());
+            assertEquals("/4444-4444-4444-4443/keywords/" + keyword.getPutCode(), keyword.getPath());
+        }
+        assertEquals(CLIENT_1_NAME, returned.getKeywords().get(1).getSource().getSourceName().getContent());
+
+        // checkAndFilter edits in place, so the cached list must be copied first
+        ArgumentCaptor<List<Keyword>> filtered = keywordListCaptor();
+        verify(orcidSecurityManager).checkAndFilter(eq(OTHER_ORCID), filtered.capture(), eq(ScopePathType.ORCID_BIO_READ_LIMITED));
+        assertNotSame(stored.getKeywords(), filtered.getValue());
+    }
+
+    @Test
+    public void testViewPublicKeyword() {
+        assertViewKeywordDecorated(1L, Visibility.PUBLIC, userSource(OTHER_ORCID));
     }
 
     @Test
     public void testViewLimitedKeyword() {
-        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4443", ScopePathType.PERSON_READ_LIMITED);
-        Response response = serviceDelegator.viewKeyword("4444-4444-4444-4443", 2L);
-        assertNotNull(response);
-        Keyword keyword = (Keyword) response.getEntity();
-        assertNotNull(keyword);
-        assertEquals("/4444-4444-4444-4443/keywords/2", keyword.getPath());
-        Utils.verifyLastModified(keyword.getLastModifiedDate());
-        assertEquals("coffee making", keyword.getContent());
-        assertEquals(Visibility.LIMITED, keyword.getVisibility());
-        assertEquals("4444-4444-4444-4443", keyword.getSource().retrieveSourcePath());
+        assertViewKeywordDecorated(2L, Visibility.LIMITED, clientSource(CLIENT_1));
     }
 
     @Test
     public void testViewPrivateKeyword() {
-        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4443", ScopePathType.PERSON_READ_LIMITED);
-        Response response = serviceDelegator.viewKeyword("4444-4444-4444-4443", 4L);
-        assertNotNull(response);
-        Keyword keyword = (Keyword) response.getEntity();
-        assertNotNull(keyword);
-        assertEquals("/4444-4444-4444-4443/keywords/4", keyword.getPath());
-        Utils.verifyLastModified(keyword.getLastModifiedDate());
-        assertEquals("what else can we make?", keyword.getContent());
-        assertEquals(Visibility.PRIVATE, keyword.getVisibility());
-        assertEquals("APP-5555555555555555", keyword.getSource().retrieveSourcePath());
+        assertViewKeywordDecorated(4L, Visibility.PRIVATE, clientSource(CLIENT_1));
     }
 
     @Test(expected = OrcidVisibilityException.class)
     public void testViewPrivateKeywordWhereYouAreNotTheSource() {
-        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4443", ScopePathType.PERSON_READ_LIMITED);
-        serviceDelegator.viewKeyword("4444-4444-4444-4443", 3L);
+        Keyword keyword = keyword(3L, Visibility.PRIVATE, clientSource(CLIENT_2));
+        when(profileKeywordManagerReadOnly.getKeyword(OTHER_ORCID, 3L)).thenReturn(keyword);
+        doThrow(new OrcidVisibilityException()).when(orcidSecurityManager).checkAndFilter(OTHER_ORCID, keyword, ScopePathType.ORCID_BIO_READ_LIMITED);
+
+        serviceDelegator.viewKeyword(OTHER_ORCID, 3L);
         fail();
     }
 
     @Test(expected = NoResultException.class)
     public void testViewKeywordThatDontBelongToTheUser() {
-        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4443", ScopePathType.PERSON_READ_LIMITED);
-        serviceDelegator.viewOtherName("4444-4444-4444-4443", 5L);
-        fail();
+        // The (orcid, id) predicate is in ProfileKeywordDaoImpl's query. What is
+        // the delegator's is that it lets the miss out and never asks the guard
+        // about an element it did not get.
+        when(otherNameManagerReadOnly.getOtherName(OTHER_ORCID, 5L)).thenThrow(new NoResultException());
+
+        try {
+            serviceDelegator.viewOtherName(OTHER_ORCID, 5L);
+            fail();
+        } finally {
+            verifyNoInteractions(orcidSecurityManager);
+        }
     }
 
     @Test
     public void testAddKeyword() {
-        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4441", ScopePathType.PERSON_READ_LIMITED, ScopePathType.PERSON_UPDATE);
-        Response response = serviceDelegator.createKeyword("4444-4444-4444-4441", Utils.getKeyword());
+        Keyword created = keyword(100L, Visibility.LIMITED, clientSource(CLIENT_1));
+        when(profileKeywordManager.createKeyword(eq(MY_ORCID), any(Keyword.class), anyBoolean())).thenReturn(created);
+
+        Response response = serviceDelegator.createKeyword(MY_ORCID, Utils.getKeyword());
+
         assertNotNull(response);
         assertEquals(Response.Status.CREATED.getStatusCode(), response.getStatus());
-        Long putCode = Utils.getPutCode(response);
-
-        response = serviceDelegator.viewKeyword("4444-4444-4444-4441", putCode);
-        assertNotNull(response);
-        assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
-        Keyword newKeyword = (Keyword) response.getEntity();
-        assertNotNull(newKeyword);
-        Utils.verifyLastModified(newKeyword.getLastModifiedDate());
-        assertEquals("New keyword", newKeyword.getContent());
-        assertEquals(Visibility.PUBLIC, newKeyword.getVisibility());
-        assertNotNull(newKeyword.getSource());
-        assertEquals("APP-5555555555555555", newKeyword.getSource().retrieveSourcePath());
-        assertNotNull(newKeyword.getCreatedDate());
-        Utils.verifyLastModified(newKeyword.getLastModifiedDate());
+        assertEquals(Long.valueOf(100), Utils.getPutCode(response));
+        verify(orcidSecurityManager).checkClientAccessAndScopes(MY_ORCID, ScopePathType.ORCID_BIO_UPDATE);
+        ArgumentCaptor<Keyword> submitted = ArgumentCaptor.forClass(Keyword.class);
+        verify(profileKeywordManager).createKeyword(eq(MY_ORCID), submitted.capture(), eq(true));
+        assertNull("a client may not choose its own source", submitted.getValue().getSource());
+        assertEquals(CLIENT_1_NAME, created.getSource().getSourceName().getContent());
     }
 
     @Test
     public void testUpdateKeyword() {
-        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4441", ScopePathType.PERSON_READ_LIMITED, ScopePathType.PERSON_UPDATE);
-        Response response = serviceDelegator.viewKeyword("4444-4444-4444-4441", 6L);
-        assertNotNull(response);
-        Keyword keyword = (Keyword) response.getEntity();
-        assertNotNull(keyword);
-        Utils.verifyLastModified(keyword.getLastModifiedDate());
-        LastModifiedDate before = keyword.getLastModifiedDate();
-        assertEquals("keyword-2", keyword.getContent());
-        assertEquals(Visibility.PUBLIC, keyword.getVisibility());
-
+        Keyword keyword = keyword(6L, Visibility.PUBLIC, clientSource(CLIENT_1));
         keyword.setContent("Updated keyword");
+        Keyword updated = keyword(6L, Visibility.PUBLIC, clientSource(CLIENT_1));
+        updated.setContent("Updated keyword");
+        when(profileKeywordManager.updateKeyword(eq(MY_ORCID), eq(6L), any(Keyword.class), anyBoolean())).thenReturn(updated);
 
-        response = serviceDelegator.updateKeyword("4444-4444-4444-4441", 6L, keyword);
+        Response response = serviceDelegator.updateKeyword(MY_ORCID, 6L, keyword);
+
         assertNotNull(response);
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
-
-        response = serviceDelegator.viewKeyword("4444-4444-4444-4441", 6L);
-        assertNotNull(response);
-        keyword = (Keyword) response.getEntity();
-        assertNotNull(keyword);
-        Utils.verifyLastModified(keyword.getLastModifiedDate());
-        assertTrue(keyword.getLastModifiedDate().after(before));
-        assertEquals("Updated keyword", keyword.getContent());
-        assertEquals(Visibility.PUBLIC, keyword.getVisibility());
+        Keyword returned = (Keyword) response.getEntity();
+        assertEquals("Updated keyword", returned.getContent());
+        assertEquals("/4444-4444-4444-4441/keywords/6", returned.getPath());
+        verify(orcidSecurityManager).checkClientAccessAndScopes(MY_ORCID, ScopePathType.ORCID_BIO_UPDATE);
+        ArgumentCaptor<Keyword> submitted = ArgumentCaptor.forClass(Keyword.class);
+        verify(profileKeywordManager).updateKeyword(eq(MY_ORCID), eq(6L), submitted.capture(), eq(true));
+        assertNull(submitted.getValue().getSource());
     }
 
     @Test(expected = WrongSourceException.class)
     public void testUpdateKeywordYouAreNotTheSourceOf() {
-        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4443", ScopePathType.PERSON_READ_LIMITED, ScopePathType.PERSON_UPDATE);
-        Response response = serviceDelegator.viewKeyword("4444-4444-4444-4443", 2L);
-        assertNotNull(response);
-        Keyword keyword = (Keyword) response.getEntity();
-        assertNotNull(keyword);
-        assertEquals("coffee making", keyword.getContent());
-        assertEquals(Visibility.LIMITED, keyword.getVisibility());
-        assertNotNull(keyword.getSource());
-        assertEquals("4444-4444-4444-4443", keyword.getSource().retrieveSourcePath());
+        // ProfileKeywordManagerImpl calls orcidSecurityManager.checkSource on the
+        // stored entity; the rule belongs to that manager's tests.
+        Keyword keyword = keyword(2L, Visibility.LIMITED, clientSource(CLIENT_2));
+        doThrow(new WrongSourceException(Collections.singletonMap("activity", "keyword"))).when(profileKeywordManager).updateKeyword(eq(OTHER_ORCID), eq(2L),
+                any(Keyword.class), anyBoolean());
 
-        keyword.setContent("Updated Keyword " + System.currentTimeMillis());
-
-        serviceDelegator.updateKeyword("4444-4444-4444-4443", 2L, keyword);
+        serviceDelegator.updateKeyword(OTHER_ORCID, 2L, keyword);
         fail();
     }
 
     @Test(expected = VisibilityMismatchException.class)
     public void testUpdateKeywordChangingVisibilityTest() {
-        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4441", ScopePathType.PERSON_READ_LIMITED, ScopePathType.PERSON_UPDATE);
-        Response response = serviceDelegator.viewKeyword("4444-4444-4444-4441", 6L);
-        assertNotNull(response);
-        Keyword keyword = (Keyword) response.getEntity();
-        assertNotNull(keyword);
-        assertEquals(Visibility.PUBLIC, keyword.getVisibility());
+        Keyword keyword = keyword(6L, Visibility.PRIVATE, clientSource(CLIENT_1));
+        doThrow(new VisibilityMismatchException()).when(profileKeywordManager).updateKeyword(eq(MY_ORCID), eq(6L), any(Keyword.class), anyBoolean());
 
-        keyword.setVisibility(Visibility.PRIVATE);
-
-        response = serviceDelegator.updateKeyword("4444-4444-4444-4441", 6L, keyword);
+        serviceDelegator.updateKeyword(MY_ORCID, 6L, keyword);
         fail();
     }
 
     @Test
     public void testUpdateKeywordLeavingVisibilityNullTest() {
-        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4441", ScopePathType.PERSON_READ_LIMITED, ScopePathType.PERSON_UPDATE);
-        Response response = serviceDelegator.viewKeyword("4444-4444-4444-4441", 6L);
-        assertNotNull(response);
-        Keyword keyword = (Keyword) response.getEntity();
-        assertNotNull(keyword);
-        assertEquals(Visibility.PUBLIC, keyword.getVisibility());
+        Keyword keyword = keyword(6L, null, clientSource(CLIENT_1));
+        Keyword updated = keyword(6L, Visibility.PUBLIC, clientSource(CLIENT_1));
+        when(profileKeywordManager.updateKeyword(eq(MY_ORCID), eq(6L), any(Keyword.class), anyBoolean())).thenReturn(updated);
 
-        keyword.setVisibility(null);
+        Response response = serviceDelegator.updateKeyword(MY_ORCID, 6L, keyword);
 
-        response = serviceDelegator.updateKeyword("4444-4444-4444-4441", 6L, keyword);
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
-        keyword = (Keyword) response.getEntity();
-        assertNotNull(keyword);
-        assertEquals(Visibility.PUBLIC, keyword.getVisibility());
+        assertEquals(Visibility.PUBLIC, ((Keyword) response.getEntity()).getVisibility());
+        ArgumentCaptor<Keyword> submitted = ArgumentCaptor.forClass(Keyword.class);
+        verify(profileKeywordManager).updateKeyword(eq(MY_ORCID), eq(6L), submitted.capture(), eq(true));
+        assertNull("keeping the stored visibility is the manager's job, not the delegator's", submitted.getValue().getVisibility());
     }
 
     @Test
     public void testDeleteKeyword() {
-        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4499", ScopePathType.PERSON_READ_LIMITED, ScopePathType.PERSON_UPDATE);
-        Response response = serviceDelegator.viewKeywords("4444-4444-4444-4499");
-        assertNotNull(response);
-        Keywords keywords = (Keywords) response.getEntity();
-        assertNotNull(keywords);
-        assertNotNull(keywords.getKeywords());
-        assertEquals(1, keywords.getKeywords().size());
-        response = serviceDelegator.deleteKeyword("4444-4444-4444-4499", 8L);
+        Response response = serviceDelegator.deleteKeyword("4444-4444-4444-4499", 8L);
+
         assertNotNull(response);
         assertEquals(Response.Status.NO_CONTENT.getStatusCode(), response.getStatus());
-        response = serviceDelegator.viewKeywords("4444-4444-4444-4499");
-        assertNotNull(response);
-        keywords = (Keywords) response.getEntity();
-        assertNotNull(keywords);
-        assertNotNull(keywords.getKeywords());
-        assertTrue(keywords.getKeywords().isEmpty());
+        verify(orcidSecurityManager).checkClientAccessAndScopes("4444-4444-4444-4499", ScopePathType.ORCID_BIO_UPDATE);
+        verify(profileKeywordManager).deleteKeyword("4444-4444-4444-4499", 8L, true);
     }
 
     @Test
     public void testReadPublicScope_Keywords() {
-        SecurityContextTestUtils.setUpSecurityContext(ORCID, ScopePathType.READ_PUBLIC);
-        // Public works
+        // Stubbed per element rather than with a blanket matcher: refusing
+        // everything would also refuse 9, 10 and 11 and make the positive half of
+        // this test meaningless.
+        Keyword nine = keyword(9L, Visibility.PUBLIC, clientSource(CLIENT_1));
+        Keyword ten = keyword(10L, Visibility.LIMITED, clientSource(CLIENT_1));
+        Keyword eleven = keyword(11L, Visibility.PRIVATE, clientSource(CLIENT_1));
+        Keyword twelve = keyword(12L, Visibility.LIMITED, clientSource(CLIENT_2));
+        Keyword thirteen = keyword(13L, Visibility.PRIVATE, clientSource(CLIENT_2));
+        when(profileKeywordManagerReadOnly.getKeyword(ORCID, 9L)).thenReturn(nine);
+        when(profileKeywordManagerReadOnly.getKeyword(ORCID, 10L)).thenReturn(ten);
+        when(profileKeywordManagerReadOnly.getKeyword(ORCID, 11L)).thenReturn(eleven);
+        when(profileKeywordManagerReadOnly.getKeyword(ORCID, 12L)).thenReturn(twelve);
+        when(profileKeywordManagerReadOnly.getKeyword(ORCID, 13L)).thenReturn(thirteen);
+        when(profileKeywordManagerReadOnly.getKeywords(ORCID)).thenReturn(keywords(nine, ten, eleven));
+        doThrow(new OrcidAccessControlException()).when(orcidSecurityManager).checkAndFilter(ORCID, twelve, ScopePathType.ORCID_BIO_READ_LIMITED);
+        doThrow(new OrcidAccessControlException()).when(orcidSecurityManager).checkAndFilter(ORCID, thirteen, ScopePathType.ORCID_BIO_READ_LIMITED);
+
         Response r = serviceDelegator.viewKeywords(ORCID);
         assertNotNull(r);
         assertEquals(Keywords.class.getName(), r.getEntity().getClass().getName());
         Keywords k = (Keywords) r.getEntity();
-        assertNotNull(k);
+        assertEquals("/0000-0000-0000-0003/keywords", k.getPath());
         Utils.verifyLastModified(k.getLastModifiedDate());
         assertEquals(3, k.getKeywords().size());
-        boolean found1 = false, found2 = false, found3 = false;
-        for (Keyword element : k.getKeywords()) {
-            Utils.verifyLastModified(element.getLastModifiedDate());
-            if (element.getPutCode() == 9) {
-                found1 = true;
-            } else if (element.getPutCode() == 10) {
-                found2 = true;
-            } else if (element.getPutCode() == 11) {
-                found3 = true;
-            } else {
-                fail("Invalid put code " + element.getPutCode());
-            }
-
-        }
-        assertTrue(found1);
-        assertTrue(found2);
-        assertTrue(found3);
 
         r = serviceDelegator.viewKeyword(ORCID, 9L);
         assertNotNull(r);
         assertEquals(Keyword.class.getName(), r.getEntity().getClass().getName());
 
-        // Limited where am the source of should work
+        // Limited where am the source should work
         serviceDelegator.viewKeyword(ORCID, 10L);
-        // Limited where am not the source of should fail
+
         try {
+            // Limited am not the source should fail
             serviceDelegator.viewKeyword(ORCID, 12L);
             fail();
         } catch (OrcidAccessControlException e) {
@@ -354,10 +296,10 @@ public class MemberV2ApiServiceDelegator_KeywordsTest extends DBUnitTest {
             fail();
         }
 
-        // Private where am the source of should work
+        // Private where am the source should work
         serviceDelegator.viewKeyword(ORCID, 11L);
-        // Private where am not the source of should fail
         try {
+            // Private am not the source should fail
             serviceDelegator.viewKeyword(ORCID, 13L);
             fail();
         } catch (OrcidAccessControlException e) {
@@ -369,8 +311,49 @@ public class MemberV2ApiServiceDelegator_KeywordsTest extends DBUnitTest {
 
     @Test(expected = WrongSourceException.class)
     public void testDeleteKeywordYouAreNotTheSourceOf() {
-        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4443", ScopePathType.PERSON_UPDATE);
-        serviceDelegator.deleteKeyword("4444-4444-4444-4443", 3L);
+        doThrow(new WrongSourceException(Collections.singletonMap("activity", "keyword"))).when(profileKeywordManager).deleteKeyword(OTHER_ORCID, 3L, true);
+
+        serviceDelegator.deleteKeyword(OTHER_ORCID, 3L);
         fail();
+    }
+
+    // ------------------------------------------------------------- helpers
+
+    private void assertViewKeywordDecorated(long putCode, Visibility visibility, Source source) {
+        Keyword keyword = keyword(putCode, visibility, source);
+        when(profileKeywordManagerReadOnly.getKeyword(OTHER_ORCID, putCode)).thenReturn(keyword);
+
+        Response response = serviceDelegator.viewKeyword(OTHER_ORCID, putCode);
+
+        assertNotNull(response);
+        Keyword returned = (Keyword) response.getEntity();
+        assertNotNull(returned);
+        assertEquals("/4444-4444-4444-4443/keywords/" + putCode, returned.getPath());
+        Utils.verifyLastModified(returned.getLastModifiedDate());
+        assertEquals(visibility, returned.getVisibility());
+        verify(orcidSecurityManager).checkAndFilter(OTHER_ORCID, keyword, ScopePathType.ORCID_BIO_READ_LIMITED);
+    }
+
+    @SuppressWarnings("unchecked")
+    private ArgumentCaptor<List<Keyword>> keywordListCaptor() {
+        return ArgumentCaptor.forClass(List.class);
+    }
+
+    private Keyword keyword(Long putCode, Visibility visibility, Source source) {
+        Keyword keyword = new Keyword();
+        keyword.setPutCode(putCode);
+        keyword.setContent("Keyword " + putCode);
+        keyword.setVisibility(visibility);
+        keyword.setSource(source);
+        keyword.setCreatedDate(createdDate());
+        keyword.setLastModifiedDate(lastModified());
+        return keyword;
+    }
+
+    private Keywords keywords(Keyword... elements) {
+        Keywords keywords = new Keywords();
+        keywords.setKeywords(new ArrayList<>(Arrays.asList(elements)));
+        keywords.setLastModifiedDate(lastModified());
+        return keywords;
     }
 }

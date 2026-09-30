@@ -14,24 +14,20 @@ import static org.mockito.Mockito.when;
 
 import java.util.Date;
 
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.orcid.core.manager.impl.RecoveryPhoneManagerImpl;
 import org.orcid.persistence.dao.ProfileEventDao;
 import org.orcid.persistence.dao.ProfileRecoveryPhoneDao;
 import org.orcid.persistence.jpa.entities.ProfileEventEntity;
 import org.orcid.persistence.jpa.entities.ProfileEventType;
 import org.orcid.persistence.jpa.entities.ProfileRecoveryPhoneEntity;
-import org.orcid.test.OrcidJUnit4ClassRunner;
-import org.springframework.test.context.ContextConfiguration;
 
-@RunWith(OrcidJUnit4ClassRunner.class)
-@ContextConfiguration(locations = { "classpath:test-orcid-core-context.xml" })
+@RunWith(MockitoJUnitRunner.class)
 public class RecoveryPhoneManagerTest {
 
     private static final String ORCID = "0000-0000-0000-0001";
@@ -51,11 +47,6 @@ public class RecoveryPhoneManagerTest {
 
     @InjectMocks
     private RecoveryPhoneManagerImpl recoveryPhoneManager;
-
-    @Before
-    public void init() {
-        MockitoAnnotations.initMocks(this);
-    }
 
     @Test
     public void getRecoveryPhoneReturnsNullWhenNoneStored() {

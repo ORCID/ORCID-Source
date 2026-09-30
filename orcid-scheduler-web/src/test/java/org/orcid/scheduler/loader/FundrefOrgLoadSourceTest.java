@@ -23,23 +23,20 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.orcid.core.manager.OrgDisambiguatedManager;
 import org.orcid.core.orgs.OrgDisambiguatedSourceType;
 import org.orcid.persistence.dao.OrgDisambiguatedDao;
 import org.orcid.persistence.jpa.entities.OrgDisambiguatedEntity;
-import org.orcid.scheduler.email.cli.manager.EmailMessageSenderTest;
 import org.orcid.scheduler.loader.io.FileRotator;
 import org.orcid.scheduler.loader.io.OrgDataClient;
 import org.orcid.scheduler.loader.source.LoadSourceDisabledException;
 import org.orcid.scheduler.loader.source.fundref.FundrefOrgLoadSource;
-import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.orcid.utils.jersey.JerseyClientHelper;
 import org.orcid.utils.jersey.JerseyClientResponse;
-import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.util.ReflectionTestUtils;
 
-@RunWith(OrcidJUnit4ClassRunner.class)
-@ContextConfiguration(locations = { "classpath:test-orcid-scheduler-context.xml" })
+@RunWith(MockitoJUnitRunner.Silent.class)
 public class FundrefOrgLoadSourceTest {
     
     @Mock

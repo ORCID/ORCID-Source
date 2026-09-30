@@ -4,6 +4,7 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -14,6 +15,7 @@ import org.orcid.jaxb.model.v3.release.common.Visibility;
 import org.orcid.pojo.PublicRecord;
 import org.orcid.pojo.summary.RecordSummaryPojo;
 import org.orcid.test.DBUnitTest;
+import org.orcid.test.DatabaseTest;
 import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.web.WebAppConfiguration;
@@ -35,6 +37,14 @@ import static org.junit.Assert.assertTrue;
 @WebAppConfiguration
 @ContextConfiguration(locations = { "classpath:test-frontend-web-servlet.xml" })
 @Deprecated(forRemoval = true)
+/*
+ * Kept as a database test. It exercises the deprecated PublicRecordController,
+ * which is annotated for removal and is duplicated by PublicRecordControllerTest
+ * and PublicProfileControllerTest, and its deprecated/locked/deactivated status
+ * assertions come from the ProfileEntity columns in /data/ProfileEntityData.xml.
+ * It should be deleted with the controller rather than migrated.
+ */
+@Category(DatabaseTest.class)
 public class PublicRecordControllerLegacyTest extends DBUnitTest {
 
     private static final List<String> DATA_FILES = Arrays.asList("/data/SourceClientDetailsEntityData.xml",

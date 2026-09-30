@@ -11,6 +11,14 @@ on:
 
   workflow_dispatch:
 
+# No permissions block on purpose. A called workflow cannot be granted more than
+# its caller holds, and naming any permission here sets every unnamed one to
+# none: lint.yml asks for issues: read and test_mvn.yml for actions: read, so a
+# block listing only the three the coverage comment needs fails the whole run
+# before a single job starts, with "is requesting 'issues: read', but is only
+# allowed 'issues: none'". The repository default is write, which is what main
+# relies on and is enough for coverage_report to post its comment.
+
 # cancel running job if another commit comes in
 concurrency:
   group: pr-${{ github.ref }}-1
@@ -23,7 +31,7 @@ jobs:
   test_mvn:
     uses: ./.github/workflows/test_mvn.yml
     with:
-      seed_maven_cache: true
+      seed_maven_cache: false
       install_maven_dependencies: true
 
 #   NOTE: codeql is only available on public repos or enterprise github accounts

@@ -22,10 +22,13 @@ import org.orcid.persistence.jpa.entities.WorkEntity;
 import org.orcid.test.DBUnitTest;
 import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.springframework.test.context.ContextConfiguration;
+import org.junit.experimental.categories.Category;
+import org.orcid.test.DatabaseTest;
 
 @RunWith(OrcidJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:test-orcid-persistence-context.xml" })
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
+@Category(DatabaseTest.class)
 public class WorkDaoTest extends DBUnitTest {
 
     private static String USER_ORCID = "4444-4444-4444-4443";

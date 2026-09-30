@@ -1,16 +1,32 @@
 package org.orcid.core.manager.v3.validator;
 
 import static org.junit.Assert.fail;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import jakarta.annotation.Resource;
-
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.junit.MockitoJUnitRunner;
+import org.orcid.core.manager.IdentifierTypeManager;
+import org.orcid.core.utils.SourceEntityUtils;
+import org.orcid.core.utils.v3.identifiers.PIDNormalizationService;
+import org.orcid.core.utils.v3.identifiers.PIDResolverService;
+import org.orcid.core.utils.v3.identifiers.normalizers.CaseSensitiveNormalizer;
+import org.orcid.core.utils.v3.identifiers.normalizers.Normalizer;
+import org.orcid.pojo.IdentifierType;
 import org.orcid.core.exception.ActivityIdentifierValidationException;
 import org.orcid.core.exception.ActivityTitleValidationException;
 import org.orcid.core.exception.ActivityTypeValidationException;
@@ -86,15 +102,62 @@ import org.orcid.jaxb.model.v3.release.record.Work;
 import org.orcid.jaxb.model.v3.release.record.WorkContributors;
 import org.orcid.jaxb.model.v3.release.record.WorkTitle;
 import org.orcid.persistence.jpa.entities.SourceEntity;
-import org.orcid.test.OrcidJUnit4ClassRunner;
-import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.util.ReflectionTestUtils;
 
-@RunWith(OrcidJUnit4ClassRunner.class)
-@ContextConfiguration(locations = { "classpath:test-orcid-core-context.xml" })
+@RunWith(MockitoJUnitRunner.Silent.class)
 public class ActivityValidatorTest {
 
-    @Resource(name = "activityValidatorV3")
+    /**
+     * ExternalIDValidator is a collaborator, not part of this unit. Every "the external
+     * identifiers are not valid" rule is enforced inside it and is proven for real by
+     * org.orcid.core.manager.v3.validator.ExternalIDValidatorTest. What is proven here is
+     * the boundary: that ActivityValidator hands the right identifiers to it and that the
+     * exception it raises stops the operation.
+     */
+    @Mock
+    private ExternalIDValidator externalIDValidator;
+
+    /** Resolving a DOI reaches the network in production; the validator only swallows its IllegalArgumentException. */
+    @Mock
+    private PIDResolverService resolverService;
+
+    @Mock
+    private IdentifierTypeManager identifierTypeManager;
+
+    /** Real: normalisation decides identifier equality, so a mock would make the duplicate tests vacuous. */
+    private final PIDNormalizationService norm = new PIDNormalizationService();
+
+    /** Real: isTheSameSource(Source, Source) is the actual comparison the duplicate rule turns on. */
+    private final SourceEntityUtils sourceEntityUtils = new SourceEntityUtils();
+
     private ActivityValidator activityValidator;
+
+    @Before
+    public void before() {
+        Map<String, IdentifierType> types = new HashMap<String, IdentifierType>();
+        for (String name : Arrays.asList("doi", "agr", "grant_number", "source-work-id")) {
+            IdentifierType type = new IdentifierType();
+            type.setName(name);
+            type.setCaseSensitive(Boolean.FALSE);
+            types.put(name, type);
+        }
+        when(identifierTypeManager.fetchIdentifierTypesByAPITypeName(Locale.ENGLISH)).thenReturn(types);
+
+        CaseSensitiveNormalizer caseSensitiveNormalizer = new CaseSensitiveNormalizer();
+        ReflectionTestUtils.setField(caseSensitiveNormalizer, "idman", identifierTypeManager);
+
+        List<Normalizer> normalizers = new ArrayList<Normalizer>();
+        normalizers.add(caseSensitiveNormalizer);
+        ReflectionTestUtils.setField(norm, "normalizers", normalizers);
+        ReflectionTestUtils.setField(norm, "idman", identifierTypeManager);
+        norm.init();
+
+        activityValidator = new ActivityValidator();
+        ReflectionTestUtils.setField(activityValidator, "externalIDValidator", externalIDValidator);
+        ReflectionTestUtils.setField(activityValidator, "norm", norm);
+        ReflectionTestUtils.setField(activityValidator, "sourceEntityUtils", sourceEntityUtils);
+        ReflectionTestUtils.setField(activityValidator, "resolverService", resolverService);
+    }
 
     /**
      * VALIDATE WORKS
@@ -305,14 +368,28 @@ public class ActivityValidatorTest {
     public void validateWork_invalidExternalIdentifierTypeTest() {
         Work work = getWork();
         work.getExternalIdentifiers().getExternalIdentifier().get(0).setType("invalid");
+        // The "these external identifiers are not valid" rule belongs to ExternalIDValidator and is
+        // proven there (ExternalIDValidatorTest). Here we prove the boundary: the exact identifiers are
+        // handed over, and the refusal stops the operation.
+        doThrow(new ActivityIdentifierValidationException()).when(externalIDValidator).validateWork(work.getExternalIdentifiers(), true);
         activityValidator.validateWork(work, null, true, true, Visibility.PUBLIC);
+    }
+
+    @Test
+    public void validateWork_delegatesExternalIdentifierValidationTest() {
+        Work work = getWork();
+        activityValidator.validateWork(work, null, true, true, Visibility.PUBLIC);
+        verify(externalIDValidator).validateWork(work.getExternalIdentifiers(), true);
     }
 
     @Test(expected = ActivityIdentifierValidationException.class)
     public void validateWork_emptyExternalIdentifierValueTest() {
         Work work = getWork();
         work.getExternalIdentifiers().getExternalIdentifier().get(0).setValue("");
-        ;
+        // The "these external identifiers are not valid" rule belongs to ExternalIDValidator and is
+        // proven there (ExternalIDValidatorTest). Here we prove the boundary: the exact identifiers are
+        // handed over, and the refusal stops the operation.
+        doThrow(new ActivityIdentifierValidationException()).when(externalIDValidator).validateWork(work.getExternalIdentifiers(), true);
         activityValidator.validateWork(work, null, true, true, Visibility.PUBLIC);
     }
 
@@ -412,7 +489,18 @@ public class ActivityValidatorTest {
     public void validateFunding_invalidExternalIdentifiersTest() {
         Funding funding = getFunding();
         funding.getExternalIdentifiers().getExternalIdentifier().get(0).setType(null);
+        // The "these external identifiers are not valid" rule belongs to ExternalIDValidator and is
+        // proven there (ExternalIDValidatorTest). Here we prove the boundary: the exact identifiers are
+        // handed over, and the refusal stops the operation.
+        doThrow(new ActivityIdentifierValidationException()).when(externalIDValidator).validateFunding(funding.getExternalIdentifiers());
         activityValidator.validateFunding(funding, null, true, true, Visibility.PUBLIC);
+    }
+
+    @Test
+    public void validateFunding_delegatesExternalIdentifierValidationTest() {
+        Funding funding = getFunding();
+        activityValidator.validateFunding(funding, null, true, true, Visibility.PUBLIC);
+        verify(externalIDValidator).validateFunding(funding.getExternalIdentifiers());
     }
 
     @Test(expected = InvalidOrgException.class)
@@ -731,7 +819,19 @@ public class ActivityValidatorTest {
     public void validatePeerReview_invalidExternalIdentifiersTest() {
         PeerReview pr = getPeerReviewWithWorkTypeAsSubjectType();
         pr.getExternalIdentifiers().getExternalIdentifier().get(0).setType(null);
+        // The "these external identifiers are not valid" rule belongs to ExternalIDValidator and is
+        // proven there (ExternalIDValidatorTest). Here we prove the boundary: the exact identifiers are
+        // handed over, and the refusal stops the operation.
+        doThrow(new ActivityIdentifierValidationException()).when(externalIDValidator).validatePeerReview(pr.getExternalIdentifiers());
         activityValidator.validatePeerReview(pr, null, true, true, Visibility.PUBLIC);
+    }
+
+    @Test
+    public void validatePeerReview_delegatesExternalIdentifierValidationTest() {
+        PeerReview pr = getPeerReviewWithWorkTypeAsSubjectType();
+        activityValidator.validatePeerReview(pr, null, true, true, Visibility.PUBLIC);
+        verify(externalIDValidator).validatePeerReview(pr.getExternalIdentifiers());
+        verify(externalIDValidator).validateWorkOrPeerReview(pr.getSubjectExternalIdentifier());
     }
 
     @Test(expected = InvalidPutCodeException.class)
@@ -761,6 +861,10 @@ public class ActivityValidatorTest {
     public void validatePeerReview_emptyExternalIdentifierValueTest() {
         PeerReview pr = getPeerReviewWithWorkTypeAsSubjectType();
         pr.getExternalIdentifiers().getExternalIdentifier().get(0).setValue("");
+        // The "these external identifiers are not valid" rule belongs to ExternalIDValidator and is
+        // proven there (ExternalIDValidatorTest). Here we prove the boundary: the exact identifiers are
+        // handed over, and the refusal stops the operation.
+        doThrow(new ActivityIdentifierValidationException()).when(externalIDValidator).validatePeerReview(pr.getExternalIdentifiers());
         activityValidator.validatePeerReview(pr, null, true, true, Visibility.PUBLIC);
     }
 
@@ -768,6 +872,10 @@ public class ActivityValidatorTest {
     public void validatePeerReview_invalidSubjectExternalIdentifiersTest() {
         PeerReview pr = getPeerReviewWithWorkTypeAsSubjectType();
         pr.getSubjectExternalIdentifier().setType(null);
+        // The "these external identifiers are not valid" rule belongs to ExternalIDValidator and is
+        // proven there (ExternalIDValidatorTest). Here we prove the boundary: the exact identifiers are
+        // handed over, and the refusal stops the operation.
+        doThrow(new ActivityIdentifierValidationException()).when(externalIDValidator).validateWorkOrPeerReview(pr.getSubjectExternalIdentifier());
         activityValidator.validatePeerReview(pr, null, true, true, Visibility.PUBLIC);
     }
 

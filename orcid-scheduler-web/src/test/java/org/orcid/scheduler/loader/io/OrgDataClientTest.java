@@ -21,14 +21,12 @@ import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.orcid.test.OrcidJUnit4ClassRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.orcid.utils.jersey.JerseyClientHelper;
 import org.orcid.utils.jersey.JerseyClientResponse;
-import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.util.ReflectionTestUtils;
 
-@RunWith(OrcidJUnit4ClassRunner.class)
-@ContextConfiguration(locations = { "classpath:test-orcid-scheduler-context.xml" })
+@RunWith(MockitoJUnitRunner.Silent.class)
 public class OrgDataClientTest {
     
     @InjectMocks

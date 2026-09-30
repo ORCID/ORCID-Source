@@ -21,12 +21,15 @@ import org.orcid.jaxb.model.message.Iso3166Country;
 import org.orcid.persistence.jpa.entities.AmbiguousOrgEntity;
 import org.orcid.persistence.jpa.entities.OrgEntity;
 import org.springframework.transaction.annotation.Transactional;
+import org.junit.experimental.categories.Category;
+import org.orcid.test.DatabaseTest;
 
 /**
  * 
  * @author Will Simpson
  * 
  */
+@Category(DatabaseTest.class)
 public class OrgManagerTest extends BaseTest {
     private static final List<String> DATA_FILES = Arrays.asList("/data/SubjectEntityData.xml", "/data/SourceClientDetailsEntityData.xml",
             "/data/ProfileEntityData.xml", "/data/OrgsEntityData.xml");

@@ -31,7 +31,10 @@ import org.orcid.test.TargetProxyHelper;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
+import org.junit.experimental.categories.Category;
+import org.orcid.test.DatabaseTest;
 
+@Category(DatabaseTest.class)
 public class SourceNameCacheManagerTest extends BaseTest {
 
     @Resource

@@ -15,15 +15,18 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 import org.orcid.listener.persistence.entities.Api20RecordStatusEntity;
 import org.orcid.listener.persistence.util.ActivityType;
+import org.orcid.test.DatabaseTest;
 import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.transaction.annotation.Transactional;
 
 @RunWith(OrcidJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:orcid-message-listener-test-context.xml" })
+@Category(DatabaseTest.class)
 public class Api20RecordStatusDaoTest {
     private static final String ORCID = "0000-0000-0000-0000";
     
