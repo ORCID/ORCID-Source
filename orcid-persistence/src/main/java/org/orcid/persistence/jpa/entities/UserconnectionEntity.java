@@ -209,8 +209,8 @@ public class UserconnectionEntity extends BaseEntity<UserconnectionPK> implement
 
     @Override
     public String toString() {
-        return "UserconnectionEntity [id=" + id + ", accesstoken=" + accesstoken + ", displayname=" + displayname + ", email=" + email + ", expiretime=" + expiretime
+        return "UserconnectionEntity [id=" + id + ", accesstoken=[REDACTED], displayname=" + displayname + ", email=" + email + ", expiretime=" + expiretime
                 + ", imageurl=" + imageurl + ", lastLogin=" + lastLogin + ", orcid=" + orcid + ", profileurl=" + profileurl + ", rank=" + rank + ", refreshtoken="
-                + refreshtoken + ", secret=" + secret + ", isLinked=" + isLinked + ", idType=" + idType + ", connectionSatus=" + connectionSatus + "]";
+            + "[REDACTED], secret=[REDACTED], isLinked=" + isLinked + ", idType=" + idType + ", connectionSatus=" + connectionSatus + "]";
     }
 }
