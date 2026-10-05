@@ -957,4 +957,47 @@ public class TwoFactorAuthenticationControllerTest {
         verify(twoFactorAuthenticationManager).disable2FAByRecoveryPhone(ORCID);
         verify(profileEntityCacheManager).remove(ORCID);
     }
+
+    // The OAuth interstitial carries a flag of its own (F2.1, PD-14423), and
+    // either flow's flag keeps the relaxed path open (F2.2)
+
+    @Test
+    public void testSendCodeAcceptsTheInterstitialWithOnlyTheOauthFlagOn() {
+        enableRecoveryPhoneFeature();
+        togglzRule.enable(Features.OAUTH_RECOVERY_PHONE_INTERSTITIAL);
+        profileWithLastLogin(60 * 1000L);
+        when(recoveryPhoneVerificationService.sendCode(eq(ORCID), any(RecoveryPhoneSendCodeRequest.class)))
+                .thenReturn(RecoveryPhoneSendCodeResponse.success(30));
+        RecoveryPhoneSendCodeRequest form = sendCodeRequest();
+        form.setContext(TwoFactorAuthenticationController.CONTEXT_INTERSTITIAL);
+
+        assertTrue(controller.sendRecoveryPhoneCode(request, form).isSuccess());
+    }
+
+    @Test
+    public void testSaveAcceptsTheInterstitialWithOnlyTheOauthFlagOn() {
+        enableRecoveryPhoneFeature();
+        togglzRule.enable(Features.OAUTH_RECOVERY_PHONE_INTERSTITIAL);
+        profileWithLastLogin(60 * 1000L);
+        when(recoveryPhoneVerificationService.verifyCode(ORCID, "+441234567890", "123456")).thenReturn(null);
+        when(recoveryPhoneVerificationService.normalize("+441234567890")).thenReturn("+441234567890");
+        java.util.Date now = new java.util.Date();
+        when(recoveryPhoneManager.saveRecoveryPhone(ORCID, "+441234567890")).thenReturn(storedRecoveryPhone("7890", now, now));
+        RecoveryPhoneSaveRequest form = saveRequest();
+        form.setContext(TwoFactorAuthenticationController.CONTEXT_INTERSTITIAL);
+
+        assertTrue(controller.saveRecoveryPhone(request, form).isSuccess());
+        verify(recoveryPhoneManager).saveRecoveryPhone(ORCID, "+441234567890");
+    }
+
+    @Test
+    public void testTheOauthFlagDoesNotRelaxTheGuardOutsideTheInterstitial() {
+        enableRecoveryPhoneFeature();
+        togglzRule.enable(Features.OAUTH_RECOVERY_PHONE_INTERSTITIAL);
+        profileWithLastLogin(60 * 1000L);
+
+        assertEquals(TwoFactorAuthenticationController.CHALLENGE_REQUIRED,
+                controller.sendRecoveryPhoneCode(request, sendCodeRequest()).getErrorCode());
+        verify(recoveryPhoneVerificationService, never()).sendCode(anyString(), any(RecoveryPhoneSendCodeRequest.class));
+    }
 }

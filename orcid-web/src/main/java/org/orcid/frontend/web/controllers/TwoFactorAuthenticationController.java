@@ -371,8 +371,12 @@ public class TwoFactorAuthenticationController extends BaseController {
         if (!CONTEXT_INTERSTITIAL.equals(resolveContext(context))) {
             return false;
         }
-        if (!Features.LOGIN_RECOVERY_PHONE_INTERSTITIAL.isActive()) {
-            // The relaxed path dies with the interstitial that justifies it (R7.4)
+        if (!Features.LOGIN_RECOVERY_PHONE_INTERSTITIAL.isActive() && !Features.OAUTH_RECOVERY_PHONE_INTERSTITIAL.isActive()) {
+            // The relaxed path dies with the interstitial that justifies it
+            // (R7.4). Either flow's flag keeps it open: which flow the form is
+            // in is as much a claim of the client's as the context is, so the
+            // server cannot tell the two apart, and both rest on the same
+            // proof - a sign in completed inside the window (F2.2)
             return false;
         }
         if (recoveryPhoneManager.getRecoveryPhone(orcid) != null) {

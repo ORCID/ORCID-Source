@@ -119,7 +119,10 @@ public enum Features implements Feature {
     TWO_FACTOR_RECOVERY_PHONE,
 
     @Label("Login - recovery phone interstitial")
-    LOGIN_RECOVERY_PHONE_INTERSTITIAL;
+    LOGIN_RECOVERY_PHONE_INTERSTITIAL,
+
+    @Label("OAUTH - recovery phone interstitial")
+    OAUTH_RECOVERY_PHONE_INTERSTITIAL;
     public boolean isActive() {
         return FeatureContext.getFeatureManager().isActive(this);
     }
