@@ -260,36 +260,8 @@ public class PasswordResetController extends BaseController {
             oneTimeResetPasswordForm.getErrors().add("expiredPasswordResetToken");
             return oneTimeResetPasswordForm;
         } else {
-            // Old logic support
-            // TODO: remove once PD-6002 is stable on prod
-            PasswordResetToken passwordResetToken;
-            try {
-                 passwordResetToken = buildResetTokenFromEncryptedLink(oneTimeResetPasswordForm.getToken());
-            } catch (EncryptionOperationNotPossibleException e) {
-                oneTimeResetPasswordForm.getErrors().add("invalidPasswordResetToken");
-                return oneTimeResetPasswordForm;
-            }
-            
-            if (isTokenExpired(passwordResetToken)) {
-                String message = "expiredPasswordResetToken";
-                oneTimeResetPasswordForm.getErrors().add(message);
-                return oneTimeResetPasswordForm;
-            }
-    
-            //check first if valid orcid as the admin portal can send either and email or an orcid
-            if(OrcidStringUtils.isValidOrcid(passwordResetToken.getEmail()) ){
-                if(profileEntityManager.orcidExists(passwordResetToken.getEmail())) {
-                    orcid = passwordResetToken.getEmail();
-                }
-                else {
-                    String message = "invalidPasswordResetToken";
-                    oneTimeResetPasswordForm.getErrors().add(message);
-                    return oneTimeResetPasswordForm;
-                }
-            }
-            else {
-                orcid = emailManagerReadOnly.findOrcidIdByEmail(passwordResetToken.getEmail());
-            }
+            oneTimeResetPasswordForm.getErrors().add("invalidPasswordResetToken");
+            return oneTimeResetPasswordForm;
         }
 
         passwordConfirmValidate(oneTimeResetPasswordForm.getRetypedPassword(), oneTimeResetPasswordForm.getNewPassword());
@@ -364,25 +336,8 @@ public class PasswordResetController extends BaseController {
         } else if (verificationResult.getStatus() == ExpiringLinkService.VerificationStatus.EXPIRED) {
             oneTimeResetPasswordForm.getErrors().add("expiredPasswordResetToken");
             return oneTimeResetPasswordForm;
-        }
-
-        // Old logic support
-        // TODO: remove once PD-6002 is stable on prod
-        PasswordResetToken passwordResetToken;
-        
-        try {
-             passwordResetToken = buildResetTokenFromEncryptedLink(oneTimeResetPasswordForm.getToken());
-
-        } catch (EncryptionOperationNotPossibleException e) {
-            oneTimeResetPasswordForm.getErrors().add("invalidPasswordResetToken");
-            return oneTimeResetPasswordForm;
-        }
-        
-        if (isTokenExpired(passwordResetToken)) {
-            String message = "expiredPasswordResetToken";
-            oneTimeResetPasswordForm.getErrors().add(message);
-            return oneTimeResetPasswordForm;
         } else {
+            oneTimeResetPasswordForm.getErrors().add("invalidPasswordResetToken");
             return oneTimeResetPasswordForm;
         }
         

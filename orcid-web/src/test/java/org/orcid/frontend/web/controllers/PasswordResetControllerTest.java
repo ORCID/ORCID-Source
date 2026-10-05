@@ -412,30 +412,8 @@ public class PasswordResetControllerTest {
     }
 
     @Test
-    public void submitPasswordEmailValidatePasswordLegacyValidTokenPasses() {
-        when(encryptionManager.decryptForExternalUse(anyString())).thenReturn("email=any@orcid.org&issueDate=2070-05-29T17:04:27");
-        OneTimeResetPasswordForm form = new OneTimeResetPasswordForm();
-        form.setToken("legacy");
-
-        OneTimeResetPasswordForm result = controller.submitPasswordEmailValidatePassword(newRequest(), new MockHttpServletResponse(), form);
-
-        assertTrue(result.getErrors().isEmpty());
-    }
-
-    @Test
-    public void submitPasswordEmailValidatePasswordLegacyExpiredTokenReturnsExpiredError() {
-        when(encryptionManager.decryptForExternalUse(anyString())).thenReturn("email=any@orcid.org&issueDate=1970-05-29T17:04:27");
-        OneTimeResetPasswordForm form = new OneTimeResetPasswordForm();
-        form.setToken("legacy");
-
-        OneTimeResetPasswordForm result = controller.submitPasswordEmailValidatePassword(newRequest(), new MockHttpServletResponse(), form);
-
-        assertEquals("expiredPasswordResetToken", result.getErrors().get(0));
-    }
-
-    @Test
-    public void submitPasswordEmailValidatePasswordLegacyInvalidTokenReturnsInvalidError() {
-        when(encryptionManager.decryptForExternalUse(anyString())).thenThrow(new EncryptionOperationNotPossibleException());
+    public void submitPasswordEmailValidatePasswordLegacyTokenReturnsInvalidError() {
+        when(expiringLinkService.verifyToken("legacy")).thenReturn(ExpiringLinkService.VerificationResult.invalid());
         OneTimeResetPasswordForm form = new OneTimeResetPasswordForm();
         form.setToken("legacy");
 
@@ -604,29 +582,13 @@ public class PasswordResetControllerTest {
     }
 
     @Test
-    public void submitPasswordResetV2LegacyTokenWithInvalidOrcidFails() {
-        when(encryptionManager.decryptForExternalUse(anyString())).thenReturn("email=0000-0000-0000-9999&issueDate=2070-05-29T17:04:27");
-        when(profileEntityManager.orcidExists("0000-0000-0000-9999")).thenReturn(false);
+    public void submitPasswordResetV2LegacyTokenReturnsInvalidError() {
+        when(expiringLinkService.verifyToken("legacy")).thenReturn(ExpiringLinkService.VerificationResult.invalid());
         OneTimeResetPasswordForm form = strongForm("legacy");
 
         OneTimeResetPasswordForm result = controller.submitPasswordResetV2(newRequest(), new MockHttpServletResponse(), form);
 
         assertEquals("invalidPasswordResetToken", result.getErrors().get(0));
-    }
-
-    @Test
-    public void submitPasswordResetV2LegacyTokenWithValidOrcidSucceeds() {
-        String legacyOrcid = "0000-0000-0000-1234";
-        when(encryptionManager.decryptForExternalUse(anyString())).thenReturn("email=" + legacyOrcid + "&issueDate=2070-05-29T17:04:27");
-        when(profileEntityManager.orcidExists(legacyOrcid)).thenReturn(true);
-        when(emailManager.getEmails(legacyOrcid)).thenReturn(new Emails());
-        when(twoFactorAuthenticationManager.userUsing2FA(legacyOrcid)).thenReturn(false);
-        OneTimeResetPasswordForm form = strongForm("legacy");
-
-        OneTimeResetPasswordForm result = controller.submitPasswordResetV2(newRequest(), new MockHttpServletResponse(), form);
-
-        assertTrue(result.getErrors().isEmpty());
-        verify(redisClient, never()).set(anyString(), anyString(), anyInt());
     }
 
     @Test
