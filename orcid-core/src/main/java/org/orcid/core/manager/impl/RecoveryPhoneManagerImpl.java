@@ -45,8 +45,9 @@ public class RecoveryPhoneManagerImpl implements RecoveryPhoneManager {
             return null;
         }
         // Decrypting lives here and not in getRecoveryPhone because the Account settings panel polls
-        // that one for the mask and the dates alone; only the flows that have to text the number pay
-        // for the crypto, and the result must not reach a log line, a RUM attribute or an HTTP response.
+        // that one for the mask and the dates alone; only the flows that have to text the number, and
+        // the manage page's owner-only read behind a passed challenge (F4.2), pay for the crypto. The
+        // result must not reach a log line, a RUM attribute or any other HTTP response.
         return encryptionManager.decryptForInternalUse(entity.getEncryptedPhoneNumber());
     }
 

@@ -287,6 +287,13 @@ public class TwoFactorAuthenticationControllerTest {
         session.setAttribute("RECOVERY_PHONE_ELEVATION_TS", System.currentTimeMillis());
     }
 
+    /** What a passed account verification challenge leaves on the session. */
+    private void passChallenge(long millisAgo) {
+        long passedAt = System.currentTimeMillis() - millisAgo;
+        session.setAttribute("RECOVERY_PHONE_ELEVATION_TS", passedAt);
+        session.setAttribute("RECOVERY_PHONE_CHALLENGE_TS", passedAt);
+    }
+
     private static RecoveryPhoneSendCodeRequest sendCodeRequest() {
         RecoveryPhoneSendCodeRequest form = new RecoveryPhoneSendCodeRequest();
         form.setPhoneNumber("+441234567890");
@@ -417,6 +424,8 @@ public class TwoFactorAuthenticationControllerTest {
 
         assertTrue(result.isSuccess());
         assertNotNull(session.getAttribute("RECOVERY_PHONE_ELEVATION_TS"));
+        // and the narrower grant only a passed challenge gives (F4.2)
+        assertNotNull(session.getAttribute("RECOVERY_PHONE_CHALLENGE_TS"));
     }
 
     @Test
@@ -537,7 +546,7 @@ public class TwoFactorAuthenticationControllerTest {
     @Test
     public void testSaveStoresTheNumberAndClearsTheElevation() {
         enableRecoveryPhoneFeature();
-        elevateSession();
+        passChallenge(0);
         java.util.Date now = new java.util.Date();
         when(recoveryPhoneVerificationService.verifyCode(eq(ORCID), anyString(), anyString())).thenReturn(null);
         when(recoveryPhoneVerificationService.normalize("+441234567890")).thenReturn("+441234567890");
@@ -554,6 +563,8 @@ public class TwoFactorAuthenticationControllerTest {
         // previous number or none at all
         verify(recoveryPhoneManager, never()).getRecoveryPhone(anyString());
         assertNull(session.getAttribute("RECOVERY_PHONE_ELEVATION_TS"));
+        // the number was just replaced, so nothing on the session reads it back
+        assertNull(session.getAttribute("RECOVERY_PHONE_CHALLENGE_TS"));
     }
 
     // Onboarding: the live 2FA code posted to register.json stands in for a
@@ -967,7 +978,7 @@ public class TwoFactorAuthenticationControllerTest {
     @Test
     public void testNumberIsInertWhenTheFeatureIsOff() {
         when(twoFactorAuthenticationManager.userUsing2FA(ORCID)).thenReturn(true);
-        elevateSession();
+        passChallenge(0);
 
         RecoveryPhoneNumberResponse result = controller.getRecoveryPhoneNumber(request, response);
 
@@ -982,7 +993,7 @@ public class TwoFactorAuthenticationControllerTest {
         // A delegate, or an admin switched into the record, who somehow holds
         // an elevated session is still not the account owner (F4.2)
         enableRecoveryPhoneFeature();
-        elevateSession();
+        passChallenge(0);
         doReturn("0000-0000-0000-0002").when(controller).getRealUserOrcid();
 
         RecoveryPhoneNumberResponse result = controller.getRecoveryPhoneNumber(request, response);
@@ -997,7 +1008,7 @@ public class TwoFactorAuthenticationControllerTest {
     public void testNumberIsRefusedWhen2FAIsOff() {
         togglzRule.enable(Features.TWO_FACTOR_RECOVERY_PHONE);
         when(twoFactorAuthenticationManager.userUsing2FA(ORCID)).thenReturn(false);
-        elevateSession();
+        passChallenge(0);
 
         RecoveryPhoneNumberResponse result = controller.getRecoveryPhoneNumber(request, response);
 
@@ -1019,7 +1030,7 @@ public class TwoFactorAuthenticationControllerTest {
     @Test
     public void testNumberIsRefusedOnceTheChallengeHasExpired() {
         enableRecoveryPhoneFeature();
-        session.setAttribute("RECOVERY_PHONE_ELEVATION_TS", System.currentTimeMillis() - (9 * 60 * 1000L));
+        passChallenge(9 * 60 * 1000L);
 
         assertEquals(TwoFactorAuthenticationController.CHALLENGE_REQUIRED,
                 controller.getRecoveryPhoneNumber(request, response).getErrorCode());
@@ -1042,10 +1053,25 @@ public class TwoFactorAuthenticationControllerTest {
         verify(recoveryPhoneManager, never()).getDecryptedPhoneNumber(anyString());
     }
 
+    /**
+     * Turning 2FA on elevates the session for the onboarding step that follows
+     * (R2.6). That elevation is not the account verification challenge, so it
+     * does not read the number back (F4.2).
+     */
+    @Test
+    public void testNumberIsNotLetThroughBy2FASetup() {
+        enableRecoveryPhoneFeature();
+        elevateSession();
+
+        assertEquals(TwoFactorAuthenticationController.CHALLENGE_REQUIRED,
+                controller.getRecoveryPhoneNumber(request, response).getErrorCode());
+        verify(recoveryPhoneManager, never()).getDecryptedPhoneNumber(anyString());
+    }
+
     @Test
     public void testNumberSaysSoWhenNoneIsStored() {
         enableRecoveryPhoneFeature();
-        elevateSession();
+        passChallenge(0);
         when(recoveryPhoneManager.getDecryptedPhoneNumber(ORCID)).thenReturn(null);
 
         RecoveryPhoneNumberResponse result = controller.getRecoveryPhoneNumber(request, response);
@@ -1057,7 +1083,7 @@ public class TwoFactorAuthenticationControllerTest {
     @Test
     public void testNumberReturnsTheStoredNumberToTheOwnerAndIsNeverCached() {
         enableRecoveryPhoneFeature();
-        session.setAttribute("RECOVERY_PHONE_ELEVATION_TS", System.currentTimeMillis() - (7 * 60 * 1000L));
+        passChallenge(7 * 60 * 1000L);
         when(recoveryPhoneManager.getDecryptedPhoneNumber(ORCID)).thenReturn(STORED_E164);
 
         RecoveryPhoneNumberResponse result = controller.getRecoveryPhoneNumber(request, response);

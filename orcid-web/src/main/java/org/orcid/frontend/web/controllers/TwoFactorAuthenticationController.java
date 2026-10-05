@@ -48,6 +48,13 @@ public class TwoFactorAuthenticationController extends BaseController {
     private static final String RECOVERY_PHONE_ELEVATION_ATTRIBUTE = "RECOVERY_PHONE_ELEVATION_TS";
 
     /**
+     * When the account verification challenge was last passed on this session.
+     * Kept apart from the elevation, which 2FA setup also grants, because only a
+     * passed challenge lets the number on file be read back (F4.2).
+     */
+    private static final String RECOVERY_PHONE_CHALLENGE_ATTRIBUTE = "RECOVERY_PHONE_CHALLENGE_TS";
+
+    /**
      * How long a passed authentication challenge, or the sign in the
      * interstitial rides on, lets the user keep working.
      *
@@ -160,7 +167,9 @@ public class TwoFactorAuthenticationController extends BaseController {
             return form;
         }
 
-        request.getSession().setAttribute(RECOVERY_PHONE_ELEVATION_ATTRIBUTE, System.currentTimeMillis());
+        long passedAt = System.currentTimeMillis();
+        request.getSession().setAttribute(RECOVERY_PHONE_ELEVATION_ATTRIBUTE, passedAt);
+        request.getSession().setAttribute(RECOVERY_PHONE_CHALLENGE_ATTRIBUTE, passedAt);
         form.setSuccess(true);
         return form;
     }
@@ -189,7 +198,7 @@ public class TwoFactorAuthenticationController extends BaseController {
         if (!twoFactorAuthenticationManager.userUsing2FA(orcid)) {
             return RecoveryPhoneNumberResponse.failure(TWO_FACTOR_DISABLED);
         }
-        if (!sessionIsElevated(request)) {
+        if (!challengePassedRecently(request)) {
             return RecoveryPhoneNumberResponse.failure(CHALLENGE_REQUIRED);
         }
         String phoneNumber = recoveryPhoneManager.getDecryptedPhoneNumber(orcid);
@@ -226,6 +235,7 @@ public class TwoFactorAuthenticationController extends BaseController {
         String phoneE164 = recoveryPhoneVerificationService.normalize(form.getPhoneNumber());
         RecoveryPhone saved = recoveryPhoneManager.saveRecoveryPhone(orcid, phoneE164);
         request.getSession().removeAttribute(RECOVERY_PHONE_ELEVATION_ATTRIBUTE);
+        request.getSession().removeAttribute(RECOVERY_PHONE_CHALLENGE_ATTRIBUTE);
 
         // The answer is built from the row the save wrote, not read back: a read goes to
         // the read-only pool, and on a deployed environment that is a replica which can
@@ -358,6 +368,7 @@ public class TwoFactorAuthenticationController extends BaseController {
         // 2FA is off, so the action this challenge was guarding proceeds on the
         // password alone; an elevation granted earlier has nothing left to guard
         request.getSession().removeAttribute(RECOVERY_PHONE_ELEVATION_ATTRIBUTE);
+        request.getSession().removeAttribute(RECOVERY_PHONE_CHALLENGE_ATTRIBUTE);
         result.setSuccess(true);
         return result;
     }
@@ -379,6 +390,19 @@ public class TwoFactorAuthenticationController extends BaseController {
             return null;
         }
         return CHALLENGE_REQUIRED;
+    }
+
+    /**
+     * The account verification challenge itself passed on this session within
+     * the window. Narrower than {@link #sessionIsElevated}: 2FA setup elevates
+     * the session too, and that grant must not read the number back (F4.2).
+     */
+    private boolean challengePassedRecently(HttpServletRequest request) {
+        Object passedAt = request.getSession().getAttribute(RECOVERY_PHONE_CHALLENGE_ATTRIBUTE);
+        if (!(passedAt instanceof Long)) {
+            return false;
+        }
+        return System.currentTimeMillis() - (Long) passedAt <= RECOVERY_PHONE_ELEVATION_TTL_MILLIS;
     }
 
     /** A challenge passed on this session within the elevation window. */
