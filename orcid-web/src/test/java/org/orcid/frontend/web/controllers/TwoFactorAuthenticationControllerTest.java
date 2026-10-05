@@ -407,6 +407,7 @@ public class TwoFactorAuthenticationControllerTest {
 
         assertTrue(result.isInvalidPassword());
         assertNull(session.getAttribute("RECOVERY_PHONE_ELEVATION_TS"));
+        assertNull(session.getAttribute("RECOVERY_PHONE_CHALLENGE_TS"));
     }
 
     @Test
@@ -579,6 +580,9 @@ public class TwoFactorAuthenticationControllerTest {
 
         assertTrue(controller.validateVerificationCode(request, registration).isValid());
         assertNotNull(session.getAttribute("RECOVERY_PHONE_ELEVATION_TS"));
+        // Setup is not a challenge: what it grants does not read the number
+        // back (F4.2)
+        assertNull(session.getAttribute("RECOVERY_PHONE_CHALLENGE_TS"));
 
         // and that elevation is what carries step 2 of setup, with no second
         // challenge in between
@@ -931,7 +935,7 @@ public class TwoFactorAuthenticationControllerTest {
     public void testChallengeVerifyDisables2FAOnAGoodCode() {
         enableRecoveryPhoneFeature();
         // An elevation from an earlier challenge has nothing left to guard
-        elevateSession();
+        passChallenge(60 * 1000L);
         profileWithLastLogin(60 * 1000L);
         when(encryptionManager.hashMatches("correct", "hashed")).thenReturn(true);
         when(recoveryPhoneManager.getDecryptedPhoneNumber(ORCID)).thenReturn("+441234567890");
@@ -947,6 +951,7 @@ public class TwoFactorAuthenticationControllerTest {
         verify(recordEmailSender).send2FADisabledEmail(ORCID);
         verify(profileEntityCacheManager).remove(ORCID);
         assertNull(session.getAttribute("RECOVERY_PHONE_ELEVATION_TS"));
+        assertNull(session.getAttribute("RECOVERY_PHONE_CHALLENGE_TS"));
     }
 
     @Test
