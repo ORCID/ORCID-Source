@@ -18,6 +18,7 @@ import org.orcid.core.manager.v3.ProfileEntityManager;
 import org.orcid.frontend.email.RecordEmailSender;
 import org.orcid.frontend.recoveryphone.RecoveryPhoneChallengeSendCodeResponse;
 import org.orcid.frontend.recoveryphone.RecoveryPhoneChallengeVerifyRequest;
+import org.orcid.frontend.recoveryphone.RecoveryPhoneNumberResponse;
 import org.orcid.frontend.recoveryphone.RecoveryPhoneSaveRequest;
 import org.orcid.frontend.recoveryphone.RecoveryPhoneSaveResponse;
 import org.orcid.frontend.recoveryphone.RecoveryPhoneSendCodeRequest;
@@ -956,6 +957,117 @@ public class TwoFactorAuthenticationControllerTest {
         assertTrue(result.getErrors().isEmpty());
         verify(twoFactorAuthenticationManager).disable2FAByRecoveryPhone(ORCID);
         verify(profileEntityCacheManager).remove(ORCID);
+    }
+    // The full number, for the manage page's prefilled field (F4.2): the one
+    // response allowed to carry it, so each refusal below is asserted as never
+    // having decrypted it at all
+
+    private static final String STORED_E164 = "+441234567890";
+
+    @Test
+    public void testNumberIsInertWhenTheFeatureIsOff() {
+        when(twoFactorAuthenticationManager.userUsing2FA(ORCID)).thenReturn(true);
+        elevateSession();
+
+        RecoveryPhoneNumberResponse result = controller.getRecoveryPhoneNumber(request, response);
+
+        assertFalse(result.isSuccess());
+        assertEquals(TwoFactorAuthenticationController.FEATURE_DISABLED, result.getErrorCode());
+        assertNull(result.getPhoneNumber());
+        verify(recoveryPhoneManager, never()).getDecryptedPhoneNumber(anyString());
+    }
+
+    @Test
+    public void testNumberIsRefusedToADelegateEvenOnAnElevatedSession() {
+        // A delegate, or an admin switched into the record, who somehow holds
+        // an elevated session is still not the account owner (F4.2)
+        enableRecoveryPhoneFeature();
+        elevateSession();
+        doReturn("0000-0000-0000-0002").when(controller).getRealUserOrcid();
+
+        RecoveryPhoneNumberResponse result = controller.getRecoveryPhoneNumber(request, response);
+
+        assertFalse(result.isSuccess());
+        assertEquals(TwoFactorAuthenticationController.NOT_ACCOUNT_OWNER, result.getErrorCode());
+        assertNull(result.getPhoneNumber());
+        verify(recoveryPhoneManager, never()).getDecryptedPhoneNumber(anyString());
+    }
+
+    @Test
+    public void testNumberIsRefusedWhen2FAIsOff() {
+        togglzRule.enable(Features.TWO_FACTOR_RECOVERY_PHONE);
+        when(twoFactorAuthenticationManager.userUsing2FA(ORCID)).thenReturn(false);
+        elevateSession();
+
+        RecoveryPhoneNumberResponse result = controller.getRecoveryPhoneNumber(request, response);
+
+        assertEquals(TwoFactorAuthenticationController.TWO_FACTOR_DISABLED, result.getErrorCode());
+        verify(recoveryPhoneManager, never()).getDecryptedPhoneNumber(anyString());
+    }
+
+    @Test
+    public void testNumberDemandsThePassedChallenge() {
+        enableRecoveryPhoneFeature();
+
+        RecoveryPhoneNumberResponse result = controller.getRecoveryPhoneNumber(request, response);
+
+        assertFalse(result.isSuccess());
+        assertEquals(TwoFactorAuthenticationController.CHALLENGE_REQUIRED, result.getErrorCode());
+        verify(recoveryPhoneManager, never()).getDecryptedPhoneNumber(anyString());
+    }
+
+    @Test
+    public void testNumberIsRefusedOnceTheChallengeHasExpired() {
+        enableRecoveryPhoneFeature();
+        session.setAttribute("RECOVERY_PHONE_ELEVATION_TS", System.currentTimeMillis() - (9 * 60 * 1000L));
+
+        assertEquals(TwoFactorAuthenticationController.CHALLENGE_REQUIRED,
+                controller.getRecoveryPhoneNumber(request, response).getErrorCode());
+        verify(recoveryPhoneManager, never()).getDecryptedPhoneNumber(anyString());
+    }
+
+    /**
+     * The interstitial's recent sign in lets it add a first number without a
+     * challenge. It is no proof for reading one back: the interstitial never
+     * shows a number, and a sign in is not the challenge the manage page asks.
+     */
+    @Test
+    public void testNumberIsNotLetThroughByARecentSignIn() {
+        enableInterstitialFeature();
+        togglzRule.enable(Features.OAUTH_RECOVERY_PHONE_INTERSTITIAL);
+        profileWithLastLogin(60 * 1000L);
+
+        assertEquals(TwoFactorAuthenticationController.CHALLENGE_REQUIRED,
+                controller.getRecoveryPhoneNumber(request, response).getErrorCode());
+        verify(recoveryPhoneManager, never()).getDecryptedPhoneNumber(anyString());
+    }
+
+    @Test
+    public void testNumberSaysSoWhenNoneIsStored() {
+        enableRecoveryPhoneFeature();
+        elevateSession();
+        when(recoveryPhoneManager.getDecryptedPhoneNumber(ORCID)).thenReturn(null);
+
+        RecoveryPhoneNumberResponse result = controller.getRecoveryPhoneNumber(request, response);
+
+        assertFalse(result.isSuccess());
+        assertEquals(TwoFactorAuthenticationController.NO_RECOVERY_PHONE, result.getErrorCode());
+    }
+
+    @Test
+    public void testNumberReturnsTheStoredNumberToTheOwnerAndIsNeverCached() {
+        enableRecoveryPhoneFeature();
+        session.setAttribute("RECOVERY_PHONE_ELEVATION_TS", System.currentTimeMillis() - (7 * 60 * 1000L));
+        when(recoveryPhoneManager.getDecryptedPhoneNumber(ORCID)).thenReturn(STORED_E164);
+
+        RecoveryPhoneNumberResponse result = controller.getRecoveryPhoneNumber(request, response);
+
+        assertTrue(result.isSuccess());
+        assertNull(result.getErrorCode());
+        assertEquals(STORED_E164, result.getPhoneNumber());
+        verify(response).setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
+        // Reading it is not a change: the elevation stays for the save
+        assertNotNull(session.getAttribute("RECOVERY_PHONE_ELEVATION_TS"));
     }
 
     // The OAuth interstitial carries a flag of its own (F2.1, PD-14423), and

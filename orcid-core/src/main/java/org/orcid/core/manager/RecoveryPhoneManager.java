@@ -12,11 +12,13 @@ public interface RecoveryPhoneManager {
     /**
      * The stored number in E.164 form, or null when there is none.
      *
-     * This is the only path that decrypts the stored number, and it exists for
-     * the flows that have to send a text to it without the user re-typing it.
+     * This is the only path that decrypts the stored number. It exists for the
+     * flows that have to send a text to it without the user re-typing it, and
+     * for the one response allowed to carry it: the manage page's prefilled
+     * field, owner only, behind a passed authentication challenge (F4.2).
      * The value must never be written to a log line, put in a RUM attribute key
-     * or value, or returned over HTTP (R1.2): anything that reaches the user
-     * carries the last four digits only.
+     * or value, or returned over HTTP anywhere else (R1.2): everything else
+     * that reaches the user carries the last four digits only.
      */
     String getDecryptedPhoneNumber(String orcid);
 

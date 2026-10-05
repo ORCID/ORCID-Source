@@ -15,6 +15,7 @@ import org.orcid.core.togglz.Features;
 import org.orcid.frontend.email.RecordEmailSender;
 import org.orcid.frontend.recoveryphone.RecoveryPhoneChallengeSendCodeResponse;
 import org.orcid.frontend.recoveryphone.RecoveryPhoneChallengeVerifyRequest;
+import org.orcid.frontend.recoveryphone.RecoveryPhoneNumberResponse;
 import org.orcid.frontend.recoveryphone.RecoveryPhoneSaveRequest;
 import org.orcid.frontend.recoveryphone.RecoveryPhoneSaveResponse;
 import org.orcid.frontend.recoveryphone.RecoveryPhoneSendCodeRequest;
@@ -77,6 +78,12 @@ public class TwoFactorAuthenticationController extends BaseController {
 
     /** The password given with a challenge is not the account's password. */
     static final String INVALID_PASSWORD = "INVALID_PASSWORD";
+
+    /**
+     * The session's real user is not the record's owner: a delegate, or an
+     * admin switched into the record.
+     */
+    static final String NOT_ACCOUNT_OWNER = "NOT_ACCOUNT_OWNER";
 
     /**
      * Where the recovery phone form is being shown. The context decides which
@@ -156,6 +163,40 @@ public class TwoFactorAuthenticationController extends BaseController {
         request.getSession().setAttribute(RECOVERY_PHONE_ELEVATION_ATTRIBUTE, System.currentTimeMillis());
         form.setSuccess(true);
         return form;
+    }
+
+    /**
+     * Hands the stored recovery number back in full for the manage page, whose
+     * phone field starts from the number on file rather than empty (F4.2).
+     *
+     * Who may see it is decided here and nowhere else. Only the account owner -
+     * never a delegate, never an admin switched into the record - and only on
+     * a session that passed the authentication challenge inside the elevation
+     * window. The interstitial's recent sign in does not count: the
+     * interstitial only ever adds a first number, so it has none to show. A
+     * POST, answered no-store, so no cache along the way keeps a copy.
+     */
+    @RequestMapping(value = "/recoveryPhone/number.json", method = RequestMethod.POST)
+    public @ResponseBody RecoveryPhoneNumberResponse getRecoveryPhoneNumber(HttpServletRequest request, HttpServletResponse response) {
+        response.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
+        String orcid = getCurrentUserOrcid();
+        if (!Features.TWO_FACTOR_RECOVERY_PHONE.isActive()) {
+            return RecoveryPhoneNumberResponse.failure(FEATURE_DISABLED);
+        }
+        if (!orcid.equals(getRealUserOrcid())) {
+            return RecoveryPhoneNumberResponse.failure(NOT_ACCOUNT_OWNER);
+        }
+        if (!twoFactorAuthenticationManager.userUsing2FA(orcid)) {
+            return RecoveryPhoneNumberResponse.failure(TWO_FACTOR_DISABLED);
+        }
+        if (!sessionIsElevated(request)) {
+            return RecoveryPhoneNumberResponse.failure(CHALLENGE_REQUIRED);
+        }
+        String phoneNumber = recoveryPhoneManager.getDecryptedPhoneNumber(orcid);
+        if (phoneNumber == null) {
+            return RecoveryPhoneNumberResponse.failure(NO_RECOVERY_PHONE);
+        }
+        return RecoveryPhoneNumberResponse.success(phoneNumber);
     }
 
     @RequestMapping(value = "/recoveryPhone/sendCode.json", method = RequestMethod.POST)
