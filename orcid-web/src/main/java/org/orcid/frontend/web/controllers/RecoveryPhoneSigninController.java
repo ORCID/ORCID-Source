@@ -17,6 +17,8 @@ import org.orcid.frontend.recoveryphone.RecoveryPhoneSendCodeRequest;
 import org.orcid.frontend.recoveryphone.RecoveryPhoneSendCodeResponse;
 import org.orcid.frontend.recoveryphone.RecoveryPhoneSigninSendCodeRequest;
 import org.orcid.frontend.recoveryphone.RecoveryPhoneSigninSendCodeResponse;
+import org.orcid.frontend.recoveryphone.RecoveryPhoneSigninStatusRequest;
+import org.orcid.frontend.recoveryphone.RecoveryPhoneSigninStatusResponse;
 import org.orcid.frontend.recoveryphone.RecoveryPhoneSigninVerifyRequest;
 import org.orcid.frontend.recoveryphone.RecoveryPhoneSigninVerifyResponse;
 import org.orcid.frontend.recoveryphone.RecoveryPhoneVerificationService;
@@ -97,6 +99,39 @@ public class RecoveryPhoneSigninController extends BaseController {
 
     @Resource
     private RecordEmailSender recordEmailSender;
+
+    /**
+     * Tells the 2FA step of sign in whether the account behind the credentials
+     * has a recovery number, so the step offers to text one only where there is
+     * a number to text, and the help centre everywhere else (F1.2).
+     *
+     * The answer goes only to a caller holding the password: the check is the
+     * one sendCode makes, through the same provider, so a wrong password here
+     * counts toward the sign in lockout like any other. The screen asks right
+     * after the sign in has accepted that password and said 2FA is on, so all
+     * this adds for the password holder is whether a number is stored.
+     */
+    @RequestMapping(value = "/status.json", method = RequestMethod.POST)
+    public @ResponseBody RecoveryPhoneSigninStatusResponse status(HttpServletRequest request,
+            @RequestBody RecoveryPhoneSigninStatusRequest form) {
+        if (!Features.TWO_FACTOR_RECOVERY_PHONE.isActive()) {
+            return RecoveryPhoneSigninStatusResponse.failure(FEATURE_DISABLED);
+        }
+
+        String credentialsFailure = verifyCredentials(request, form.getUsername(), form.getPassword());
+        if (credentialsFailure != null) {
+            return RecoveryPhoneSigninStatusResponse.failure(credentialsFailure);
+        }
+
+        String orcid = resolveOrcid(form.getUsername());
+        if (orcid == null) {
+            return RecoveryPhoneSigninStatusResponse.failure(BAD_CREDENTIALS);
+        }
+
+        // The read that costs no decryption: whether there is a number is all
+        // this answers
+        return RecoveryPhoneSigninStatusResponse.success(recoveryPhoneManager.getRecoveryPhone(orcid) != null);
+    }
 
     /**
      * Sends a fresh code to the recovery number stored on the account the given
