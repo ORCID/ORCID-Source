@@ -11,6 +11,8 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
+import org.mockito.Mockito;
+
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -125,7 +127,7 @@ public class PasswordResetControllerTest {
 
         when(orcidUrlManager.getBaseUrl()).thenReturn(BASE_URL);
         when(orcidUrlManager.determineFullTargetUrlFromSavedRequest(any(), any())).thenReturn(null);
-        when(expiringLinkService.verifyToken(anyString())).thenReturn(ExpiringLinkService.VerificationResult.invalid());
+        lenient().when(expiringLinkService.verifyToken(anyString())).thenReturn(ExpiringLinkService.VerificationResult.invalid());
     }
 
     @Test
