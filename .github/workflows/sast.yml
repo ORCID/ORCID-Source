@@ -3,6 +3,7 @@ on:
   pull_request:
     branches:
       - main
+      - 'release-[0-9]+.[0-9]+'
   schedule:
     - cron: '45 6 * * 0'
   workflow_dispatch:

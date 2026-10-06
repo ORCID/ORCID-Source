@@ -8,6 +8,7 @@ on:
       - '**' # run on any branch
       - '!main'
       - '!development'
+      - '!release-[0-9]+.[0-9]+' # pushrelease.yml runs the whole pipeline
 
 # cancel running job if another commit comes in
 concurrency:

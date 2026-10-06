@@ -1,0 +1,85 @@
+name: cut_release
+
+# Sprint-end cut. Creates release-<major>.<minor> at main's latest tag and tags
+# the same commit v<major>.<minor+1>.0, so main's next build is
+# v<major>.<minor+1>.1 and never takes a number pushrelease.yml gives the
+# branch. Refuses unless main's head is exactly that latest tag, so everything
+# merged is in the release and already built.
+#
+# A dry run by default: it only reports the cut it would make.
+
+on:
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: 'Only report the cut. Untick to create the branch and the tag.'
+        type: boolean
+        required: false
+        default: true
+
+concurrency:
+  group: cut_release
+  cancel-in-progress: false
+
+jobs:
+  cut_release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Harden the runner (Audit all outbound calls)
+        uses: step-security/harden-runner@fa2e9d605c4eeb9fcad4c99c224cee0c6c7f3594 # v2.16.0
+        with:
+          egress-policy: audit
+
+      - name: Run from main
+        if: github.ref != 'refs/heads/main'
+        run: |
+          echo "::error::Dispatch cut_release from main, not $GITHUB_REF_NAME"
+          exit 1
+
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+        if: ${{ inputs.dry_run }}
+        with:
+          fetch-depth: 0
+
+      # The branch and the tag are pushed past branch protection, which the
+      # default token cannot do
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+        if: ${{ !inputs.dry_run }}
+        with:
+          token: ${{ secrets.RELEASE_TOKEN }}
+          fetch-depth: 0
+
+      - name: Plan the cut
+        id: plan
+        run: .github/scripts/release-branch.sh plan-cut | tee -a "$GITHUB_OUTPUT"
+
+      - name: Report the plan
+        env:
+          DRY_RUN: ${{ inputs.dry_run }}
+          BRANCH: ${{ steps.plan.outputs.branch }}
+          COMMIT: ${{ steps.plan.outputs.commit }}
+          RELEASE_TAG: ${{ steps.plan.outputs.release_tag }}
+          MAIN_TAG: ${{ steps.plan.outputs.main_tag }}
+        run: |
+          {
+            if [ "$DRY_RUN" = "true" ]; then
+              echo "### Dry run: nothing was created"
+            else
+              echo "### Release cut"
+            fi
+            echo ""
+            echo "- \`$BRANCH\` at \`${COMMIT:0:10}\`, which is \`$RELEASE_TAG\`. Fixes merged into it are tagged ${RELEASE_TAG%.*}.<next patch>."
+            echo "- \`$MAIN_TAG\` on the same commit, so main's next build is ${MAIN_TAG%.*}.1."
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Create the branch and the tag
+        if: ${{ !inputs.dry_run }}
+        env:
+          BRANCH: ${{ steps.plan.outputs.branch }}
+          COMMIT: ${{ steps.plan.outputs.commit }}
+          MAIN_TAG: ${{ steps.plan.outputs.main_tag }}
+        # Both or neither: a branch without main's tag would let main's next
+        # build take the branch's next number
+        run: git push --atomic origin "$COMMIT:refs/heads/$BRANCH" "$COMMIT:refs/tags/$MAIN_TAG"

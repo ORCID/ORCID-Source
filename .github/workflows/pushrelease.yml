@@ -1,0 +1,173 @@
+name: pushrelease
+
+# Release branches. cut_release.yml cuts release-<major>.<minor> from main at
+# sprint end and moves main to the next minor. Every merge into the branch is
+# then built, tested, deployed and tagged as the next patch of that line, by
+# the same pipeline main uses, and its commits are offered back to main as a
+# forward-port pull request.
+
+on:
+  push:
+    branches:
+      - 'release-[0-9]+.[0-9]+'
+    # Ignore changes that are made as part of the rel_tag workflow to avoid infinite loop
+    paths-ignore:
+      - CHANGELOG.md
+    # Ignore workflow changes
+      - '.github/**'
+    # Ignore changes that are made as part of the rel_tag workflow to avoid infinite loop
+    tags-ignore:
+      - '**'
+
+  # Re-run the release of a branch whose last build failed: pick the release
+  # branch under "Use workflow from".
+  workflow_dispatch:
+
+# A merge that lands while a release is running waits for it, so the two never
+# take the same version
+concurrency:
+  group: pushrelease-${{ github.ref }}-1
+  cancel-in-progress: false
+
+jobs:
+  version:
+    # Creating the branch is a push too, but its commit is already built and
+    # tagged: it is the tag cut_release.yml cut from.
+    if: ${{ !github.event.created }}
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    outputs:
+      version_tag: ${{ steps.next.outputs.version_tag }}
+    steps:
+      - name: Harden the runner (Audit all outbound calls)
+        uses: step-security/harden-runner@fa2e9d605c4eeb9fcad4c99c224cee0c6c7f3594 # v2.16.0
+        with:
+          egress-policy: audit
+
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+
+      # The version-bump action would take the highest tag in the repository,
+      # which is main's line. Passing an explicit tag skips its bump in every job.
+      - name: Next patch in this branch's line
+        id: next
+        env:
+          BRANCH: ${{ github.ref_name }}
+        run: .github/scripts/release-branch.sh next-patch "$BRANCH" | tee -a "$GITHUB_OUTPUT"
+
+  build_test_release_tag:
+    needs: version
+    uses: ./.github/workflows/build_test_release_tag.yml
+    secrets: inherit # pass all secrets for pushing
+    with:
+      # The branch, not a sha: rel_tag pushes its changelog commit to it
+      ref: ${{ github.ref_name }}
+      version_tag: ${{ needs.version.outputs.version_tag }}
+      bump: none
+
+  # Cherry-picks the commits this push added onto main and opens a pull request
+  # with them. Independent of the release: a conflict here never blocks a tag.
+  forward_port:
+    if: ${{ github.event_name == 'push' && !github.event.created }}
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Harden the runner (Audit all outbound calls)
+        uses: step-security/harden-runner@fa2e9d605c4eeb9fcad4c99c224cee0c6c7f3594 # v2.16.0
+        with:
+          egress-policy: audit
+
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+        with:
+          # A branch pushed or a pull request opened with the default token
+          # starts no workflows, so the pull request would never get its
+          # required checks
+          token: ${{ secrets.RELEASE_TOKEN }}
+          fetch-depth: 0
+
+      - name: Cherry-pick this push onto main
+        id: pick
+        env:
+          BEFORE: ${{ github.event.before }}
+          AFTER: ${{ github.sha }}
+          RELEASE_BRANCH: ${{ github.ref_name }}
+        run: |
+          commits="$(.github/scripts/release-branch.sh unported origin/main "$AFTER" "$BEFORE")"
+          if [ -z "$commits" ]; then
+            echo "Nothing in this push needs to reach main."
+            exit 0
+          fi
+
+          pr_branch="forward-port/${RELEASE_BRANCH}/${AFTER:0:7}"
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git switch -c "$pr_branch" origin/main
+
+          # shellcheck disable=SC2086 # one sha per word
+          if git cherry-pick -x $commits; then
+            for sha in $commits; do
+              echo "- $(git log -1 --format=%s "$sha") (${sha:0:10} on \`$RELEASE_BRANCH\`)"
+            done > "$RUNNER_TEMP/forward-port.md"
+            git push origin "$pr_branch"
+            echo "pr_branch=$pr_branch" >> "$GITHUB_OUTPUT"
+          else
+            git cherry-pick --abort
+            echo "::warning::Commits from $RELEASE_BRANCH conflict with main; forward-port them by hand"
+            {
+              echo "### Forward-port to main needs a hand"
+              echo ""
+              echo "These commits conflict with main. Cherry-pick them onto a branch from main, resolve, and open a pull request:"
+              echo ""
+              echo '```'
+              echo "git switch -c <you>/<ticket>-forward-port origin/main"
+              echo "git cherry-pick -x ${commits//$'\n'/ }"
+              echo '```'
+            } >> "$GITHUB_STEP_SUMMARY"
+          fi
+
+      - name: Open the forward-port pull request
+        if: steps.pick.outputs.pr_branch != ''
+        env:
+          GH_TOKEN: ${{ secrets.RELEASE_TOKEN }}
+          PR_BRANCH: ${{ steps.pick.outputs.pr_branch }}
+          RELEASE_BRANCH: ${{ github.ref_name }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          count="$(git rev-list --count origin/main..HEAD)"
+          if [ "$count" -eq 1 ]; then
+            title="$(git log -1 --format=%s HEAD) (forward-port from $RELEASE_BRANCH)"
+          else
+            title="Forward-port $count commits from $RELEASE_BRANCH"
+          fi
+          {
+            echo "Merged into \`$RELEASE_BRANCH\`. This brings the same change to main, so the next release keeps it."
+            echo ""
+            cat "$RUNNER_TEMP/forward-port.md"
+            echo ""
+            echo "Opened by [pushrelease]($RUN_URL). Review and merge it like any other pull request."
+          } > "$RUNNER_TEMP/body.md"
+          gh pr create --base main --head "$PR_BRANCH" --title "$title" --body-file "$RUNNER_TEMP/body.md"
+
+      # Every run restates the backlog, so a forward-port that conflicted or
+      # was closed keeps showing up until its change is on main.
+      - name: Release commits not yet on main
+        if: always()
+        env:
+          AFTER: ${{ github.sha }}
+          RELEASE_BRANCH: ${{ github.ref_name }}
+        run: |
+          unported="$(.github/scripts/release-branch.sh unported origin/main "$AFTER")"
+          {
+            echo "### Commits on $RELEASE_BRANCH not yet on main"
+            echo ""
+            if [ -z "$unported" ]; then
+              echo "None."
+            else
+              echo "Open forward-port pull requests included:"
+              echo ""
+              for sha in $unported; do
+                echo "- \`${sha:0:10}\` $(git log -1 --format=%s "$sha")"
+              done
+            fi
+          } >> "$GITHUB_STEP_SUMMARY"

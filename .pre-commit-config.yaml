@@ -37,6 +37,13 @@ repos:
         types: [yaml]
         files: '^.github/workflows/'
 
+      - id: release-branch-tests
+        name: release-branch.sh tests
+        entry: .github/scripts/release-branch.test.sh
+        language: system
+        pass_filenames: false
+        files: '^\.github/(scripts/release-branch|workflows/(pushrelease|cut_release)\.yml)'
+
 ##########
 # pre-commit-ci config
 
