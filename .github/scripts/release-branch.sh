@@ -8,12 +8,16 @@
 #
 #   plan-cut
 #       What a cut would create, as key=value lines for $GITHUB_OUTPUT. Refuses
-#       unless main's head is exactly its latest tag, so every merge is built.
+#       unless main's head is exactly its latest tag, so every merge is built,
+#       and unless every fix on the last release branch is on main.
 #   next-patch <branch>
 #       version_tag=<next tag in the branch's line>, for $GITHUB_OUTPUT.
 #   unported <upstream> <head> [<limit>]
-#       Commits in <head> whose change is not in <upstream>, oldest first, one
-#       sha per line. Merge commits and changelog commits are left out. With
+#       Commits in <head> not yet in <upstream>, oldest first, one sha per
+#       line. A commit counts as in <upstream> when the same change is there,
+#       or when a commit there names it in the "(cherry picked from commit
+#       <sha>)" line that cherry-pick -x writes, which survives resolving a
+#       conflict. Merge commits and changelog commits are left out. With
 #       <limit>, only commits after it; an all-zero or unknown <limit> (a new
 #       branch, a force push) gives nothing.
 #
@@ -52,6 +56,7 @@ remote_branch_commit() {
 
 plan_cut() {
   local tags latest commit major minor patch branch main_tag main_commit prev_line
+  local last_release last_branch last_commit behind sha
   tags="$(remote_tags)"
   [ -n "$tags" ] || die "no v<major>.<minor>.<patch> tag on $REMOTE"
 
@@ -84,6 +89,25 @@ plan_cut() {
 
   [ -z "$(remote_branch_commit "$branch")" ] || die "$branch already exists on $REMOTE"
 
+  # A fix still only on the last release branch would be missing from this
+  # release, and from production once it ships.
+  last_release="$(git ls-remote --heads "$REMOTE" 'refs/heads/release-*' \
+    | awk '{ sub("^refs/heads/", "", $2); print $2, $1 }' \
+    | { grep -E '^release-[0-9]+\.[0-9]+ ' || true; } \
+    | sort -V -k1,1 | tail -n1)"
+  if [ -n "$last_release" ]; then
+    read -r last_branch last_commit <<<"$last_release"
+    git fetch -q "$REMOTE" "refs/heads/$last_branch" "refs/heads/$MAIN_BRANCH"
+    behind="$(unported "$main_commit" "$last_commit")"
+    if [ -n "$behind" ]; then
+      echo "$last_branch has changes that are not on $MAIN_BRANCH:" >&2
+      for sha in $behind; do
+        echo "  ${sha:0:10} $(git log -1 --format=%s "$sha")" >&2
+      done
+      die "merge their forward-port pull requests, or cherry-pick them with -x, before cutting"
+    fi
+  fi
+
   echo "branch=$branch"
   echo "commit=$commit"
   echo "release_tag=$latest"
@@ -113,7 +137,7 @@ next_patch() {
 }
 
 unported() {
-  local args=("$1" "$2") limit mark sha subject
+  local args=("$1" "$2") limit picked mark sha subject
   if [ $# -ge 3 ]; then
     limit="$3"
     if [[ "$limit" =~ ^0+$ ]] || ! git cat-file -e "${limit}^{commit}" 2>/dev/null; then
@@ -121,8 +145,12 @@ unported() {
     fi
     args+=("$limit")
   fi
+  picked="$(git log --format=%B "$2..$1" \
+    | { grep -oE 'cherry picked from commit [0-9a-f]{40}' || true; } \
+    | awk '{ print $5 }')"
   git cherry "${args[@]}" | while read -r mark sha; do
     [ "$mark" = "+" ] || continue
+    grep -qxF "$sha" <<<"$picked" && continue
     subject="$(git log -1 --format=%s "$sha")"
     [[ "$subject" =~ ^v[0-9]+\.[0-9]+\.[0-9]+\ changelog\ update$ ]] && continue
     echo "$sha"

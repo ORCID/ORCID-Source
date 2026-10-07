@@ -151,16 +151,30 @@ expect "unported ignores an unknown limit" "" rb unported origin/main "$AFTER2" 
 
 echo "# forward-port, and main moving on"
 git switch -q main
-git cherry-pick -x "$FIX1" >/dev/null
+# Clean and without -x: recognised by its change alone.
+git cherry-pick "$FIX1" >/dev/null
 git push -q origin main
-expect "unported recognises a cherry-picked fix" "$FIX2" rb unported origin/main rel
+expect "unported recognises a cherry-picked fix by its change" "$FIX2" rb unported origin/main rel
 
-MAIN_BUILT="$(git rev-parse HEAD)"
 git tag v3.24.1
 git push -q origin v3.24.1
 expect "next-patch ignores main's later tags" "version_tag=v3.23.13" rb next-patch release-3.23
-expect "plan-cut moves to the next line" \
-  "$(printf 'branch=release-3.24\ncommit=%s\nrelease_tag=v3.24.1\nmain_tag=v3.25.0' "$MAIN_BUILT")" \
+refuse "plan-cut refuses while the last release has a fix not on main" \
+  "release-3.23 has changes that are not on main" rb plan-cut
+refuse "plan-cut names the fix that is missing" "${FIX2:0:10} PD-2 second fix" rb plan-cut
+
+# Forward-ported by hand after a conflict: the change differs, the -x line names it.
+git cherry-pick -x "$FIX2" >/dev/null
+echo "PD-2 second fix, resolved against main" >fix2
+git commit -q -a --amend --no-edit
+git push -q origin main
+expect "unported recognises a resolved cherry-pick by its -x line" "" rb unported origin/main rel
+
+MAIN_BUILT="$(git rev-parse HEAD)"
+git tag v3.24.2
+git push -q origin v3.24.2
+expect "plan-cut cuts once the last release is on main" \
+  "$(printf 'branch=release-3.24\ncommit=%s\nrelease_tag=v3.24.2\nmain_tag=v3.25.0' "$MAIN_BUILT")" \
   rb plan-cut
 git push -q origin "$MAIN_BUILT:refs/heads/release-3.24"
 refuse "plan-cut refuses when the branch exists" "release-3.24 already exists" rb plan-cut

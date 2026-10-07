@@ -4,7 +4,8 @@ name: cut_release
 # the same commit v<major>.<minor+1>.0, so main's next build is
 # v<major>.<minor+1>.1 and never takes a number pushrelease.yml gives the
 # branch. Refuses unless main's head is exactly that latest tag, so everything
-# merged is in the release and already built.
+# merged is in the release and already built, and unless every fix on the last
+# release branch has reached main through its forward-port.
 #
 # A dry run by default: it only reports the cut it would make.
 
@@ -53,7 +54,19 @@ jobs:
 
       - name: Plan the cut
         id: plan
-        run: .github/scripts/release-branch.sh plan-cut | tee -a "$GITHUB_OUTPUT"
+        run: |
+          if ! .github/scripts/release-branch.sh plan-cut >"$RUNNER_TEMP/plan" 2>"$RUNNER_TEMP/refused"; then
+            {
+              echo "### Cut refused"
+              echo ""
+              echo '```'
+              cat "$RUNNER_TEMP/refused"
+              echo '```'
+            } >> "$GITHUB_STEP_SUMMARY"
+            cat "$RUNNER_TEMP/refused" >&2
+            exit 1
+          fi
+          tee -a "$GITHUB_OUTPUT" < "$RUNNER_TEMP/plan"
 
       - name: Report the plan
         env:
