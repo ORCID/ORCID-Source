@@ -1,3 +1,9 @@
+## v3.24.0 - 2026-10-07
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.23.22...v3.24.0)
+
+- [#7747](https://github.com/ORCID/ORCID-Source/pull/7747): Use the latest version of togglz-junit
+
 ## v3.23.22 - 2026-10-05
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.23.21...v3.23.22)
