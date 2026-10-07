@@ -1,3 +1,9 @@
+## v3.24.1 - 2026-10-07
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.24.0...v3.24.1)
+
+- [#7753](https://github.com/ORCID/ORCID-Source/pull/7753): PD-14532 Allow any know class to be deserialized
+
 ## v3.24.0 - 2026-10-07
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.23.22...v3.24.0)
