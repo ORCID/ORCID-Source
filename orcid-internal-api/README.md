@@ -51,14 +51,28 @@ verified only lookups will not resolve. Both endpoints need the
 `/orcid-internal/account-recovery` scope.
 
 **Confirm an iD and an email belong to the same record.** Answers for locked, deactivated,
-unclaimed and deprecated records too. It only ever confirms whether the pair matches: an unknown
-email, an unknown iD, and an email belonging to a different record all produce the same
-`{"match": false}`, so it cannot be used to discover whether an address is registered.
+unclaimed and deprecated records too. A non match says nothing but that: an unknown email, an
+unknown iD, and an email belonging to a different record all produce the same `{"match": false}`,
+so it cannot be used to discover whether an address is registered. Only a confirmed pair is told
+anything about the record - its status, and the addresses on it.
 
 ``curl -X POST -H 'Content-Type: application/json' -H 'Authorization: Bearer <TOKEN>' -d '{"orcid":"<ORCID>","email":"<EMAIL>"}' http://localhost:8080/orcid-internal-api/account-recovery/match``
 
-Returns `{"match": true, "recordStatus": "ACTIVE"}`, where the status is one of `ACTIVE`, `LOCKED`,
-`DEACTIVATED`, `UNCLAIMED` or `DEPRECATED`.
+Returns `{"match": true, "recordStatus": "ACTIVE", "emails": ["<EMAIL>", "<ANOTHER EMAIL>"]}`, where
+the status is one of `ACTIVE`, `LOCKED`, `DEACTIVATED`, `UNCLAIMED` or `DEPRECATED`. A non match
+reads exactly as it did before: `"match": false`, no record status, and no `emails` key at all.
+
+`emails` is every address on the record - verified or not, whatever its visibility, each once and in
+no particular order - and it is only ever present on a match (PD-14421). The workflow sends a
+delivery check to each of them, so that an account is not released while its owner still reads an
+address the requester did not name. Two consequences worth keeping in view:
+
+- **This scope now reveals a record's addresses** to a caller who already knows the iD and one of
+  its addresses, private ones included. Grant `/orcid-internal/account-recovery` to the recovery
+  workflow's client and nothing else.
+- **The list is never read on a non match**, so the answer to a wrong pair costs the same and says
+  the same as it did. A match whose record has no address rows answers `"emails": []` rather than
+  leaving the key out; a missing key is how a client tells this registry from an older one.
 
 **Mint a single use password reset link**, the same one an admin generates by hand today. Issuing a
 link invalidates any link issued earlier for that record, and it can only be redeemed once. The
