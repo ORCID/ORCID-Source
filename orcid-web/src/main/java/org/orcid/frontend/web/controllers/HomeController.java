@@ -20,6 +20,7 @@ import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.v3.ProfileEntityManager;
 import org.orcid.core.manager.v3.read_only.EmailManagerReadOnly;
+import org.orcid.core.manager.v3.read_only.ProfileEntityManagerReadOnly;
 import org.orcid.core.security.OrcidRoles;
 import org.orcid.core.stats.StatisticsManager;
 import org.orcid.core.togglz.Features;
@@ -87,6 +88,9 @@ public class HomeController extends BaseController {
 
     @Resource(name = "emailManagerReadOnlyV3")
     protected EmailManagerReadOnly emailManagerReadOnly;
+
+    @Resource(name = "profileEntityManagerReadOnlyV3")
+    private ProfileEntityManagerReadOnly profileEntityManagerReadOnly;
 
     @RequestMapping(value = "/")
     public ModelAndView homeHandler(HttpServletRequest request) {
@@ -227,7 +231,13 @@ public class HomeController extends BaseController {
             }
             if(!PojoUtil.isEmpty(p.getGroupType())) {
                 info.put("MEMBER_TYPE", p.getGroupType());
-            }            
+            }
+            // Mandatory password reset: only for the record's own user, never a
+            // delegate or an admin acting as them. Read uncached, because the
+            // flag does not change last_modified and so never evicts p above
+            if (Features.FORCE_PASSWORD_RESET.isActive() && effectiveOrcid.equals(realUserOrcid)) {
+                info.put("FORCE_PASSWORD_RESET", String.valueOf(profileEntityManagerReadOnly.isPasswordResetRequired(effectiveOrcid)));
+            }
         }
         return info;
     }
