@@ -1,3 +1,28 @@
+## v3.24.0 - 2026-10-07
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.23.22...v3.24.0)
+
+- [#7747](https://github.com/ORCID/ORCID-Source/pull/7747): Use the latest version of togglz-junit
+
+## v3.23.22 - 2026-10-05
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.23.21...v3.23.22)
+
+- [#7745](https://github.com/ORCID/ORCID-Source/pull/7745): PD-14421 list every record email on an account recovery match
+
+## v3.23.21 - 2026-09-30
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.23.20...v3.23.21)
+
+- [#7736](https://github.com/ORCID/ORCID-Source/pull/7736): PD-6059 gate fixes
+
+## v3.23.20 - 2026-09-30
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.23.19...v3.23.20)
+
+- [#7738](https://github.com/ORCID/ORCID-Source/pull/7738): PD-13512 bump orcid-model to 4.0.2 for v2 email flags
+- [#7739](https://github.com/ORCID/ORCID-Source/pull/7739): PD-14414 build the AWS SMS client without httpclient5
+
 ## v3.23.19 - 2026-09-24
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.23.18...v3.23.19)

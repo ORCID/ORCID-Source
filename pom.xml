@@ -1008,7 +1008,7 @@ the software.
             <dependency>
                <groupId>org.orcid</groupId>
                <artifactId>orcid-model</artifactId>
-               <version>4.0.1</version>
+               <version>4.0.2</version>
             </dependency>
             <dependency>
                <groupId>org.orcid</groupId>
@@ -1025,6 +1025,11 @@ the software.
             <dependency>
                 <groupId>software.amazon.awssdk</groupId>
                 <artifactId>pinpointsmsvoicev2</artifactId>
+                <version>${awssdk.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>software.amazon.awssdk</groupId>
+                <artifactId>url-connection-client</artifactId>
                 <version>${awssdk.version}</version>
             </dependency>
             <dependency>

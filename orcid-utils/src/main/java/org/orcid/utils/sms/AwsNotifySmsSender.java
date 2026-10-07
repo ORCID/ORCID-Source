@@ -1,5 +1,6 @@
 package org.orcid.utils.sms;
 
+import java.net.URI;
 import java.util.Collections;
 import java.util.Locale;
 import java.util.Map;
@@ -11,6 +12,7 @@ import org.springframework.stereotype.Component;
 import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
 import software.amazon.awssdk.auth.credentials.DefaultCredentialsProvider;
 import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
+import software.amazon.awssdk.http.urlconnection.UrlConnectionHttpClient;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.pinpointsmsvoicev2.PinpointSmsVoiceV2Client;
 import software.amazon.awssdk.services.pinpointsmsvoicev2.PinpointSmsVoiceV2ClientBuilder;
@@ -68,6 +70,8 @@ public class AwsNotifySmsSender implements VerificationCodeSender {
 
     private PinpointSmsVoiceV2Client client;
 
+    private URI endpointOverride;
+
     @Override
     public String getProvider() {
         return PROVIDER;
@@ -89,7 +93,9 @@ public class AwsNotifySmsSender implements VerificationCodeSender {
                     .build();
             SendNotifyTextMessageResponse response = getClient().sendNotifyTextMessage(request);
             return SmsSendResult.success(PROVIDER, response.messageId(), "SENT");
-        } catch (Exception e) {
+        } catch (Exception | LinkageError e) {
+            // LinkageError too: a classpath the SDK cannot run on fails every send, and
+            // it must come back as a failed send rather than escape as a 500
             return SmsSendResult.failure(PROVIDER, e.getClass().getSimpleName(), e.getMessage());
         }
     }
@@ -103,7 +109,7 @@ public class AwsNotifySmsSender implements VerificationCodeSender {
             getClient().putMessageFeedback(r -> r.messageId(providerMessageId)
                     .messageFeedbackStatus(approved ? MessageFeedbackStatus.RECEIVED : MessageFeedbackStatus.FAILED));
             return SmsSendResult.success(PROVIDER, providerMessageId, approved ? "approved" : "denied");
-        } catch (Exception e) {
+        } catch (Exception | LinkageError e) {
             return SmsSendResult.failure(PROVIDER, e.getClass().getSimpleName(), e.getMessage());
         }
     }
@@ -121,11 +127,17 @@ public class AwsNotifySmsSender implements VerificationCodeSender {
 
     private PinpointSmsVoiceV2Client getClient() {
         if (client == null) {
-            PinpointSmsVoiceV2ClientBuilder builder = PinpointSmsVoiceV2Client.builder().region(Region.of(region));
+            // The HTTP client is named rather than discovered: the SDK's default, the Apache 5
+            // client, needs a newer httpclient5 than the one this build pins (PD-14414)
+            PinpointSmsVoiceV2ClientBuilder builder = PinpointSmsVoiceV2Client.builder().region(Region.of(region))
+                    .httpClient(UrlConnectionHttpClient.create());
             if (StringUtils.isNotBlank(accessKey) && StringUtils.isNotBlank(secretKey)) {
                 builder.credentialsProvider(StaticCredentialsProvider.create(AwsBasicCredentials.create(accessKey, secretKey)));
             } else {
                 builder.credentialsProvider(DefaultCredentialsProvider.create());
+            }
+            if (endpointOverride != null) {
+                builder.endpointOverride(endpointOverride);
             }
             client = builder.build();
         }
@@ -134,5 +146,9 @@ public class AwsNotifySmsSender implements VerificationCodeSender {
 
     void setClient(PinpointSmsVoiceV2Client client) {
         this.client = client;
+    }
+
+    void setEndpointOverride(URI endpointOverride) {
+        this.endpointOverride = endpointOverride;
     }
 }
