@@ -94,7 +94,8 @@ public class InternalApiServiceImplBase {
      * locked, deactivated or unclaimed ones.
      *
      * @param request the iD and email to check as a pair
-     * @return whether the pair matches, plus the record status when it does
+     * @return whether the pair matches, plus, when it does, the record status and every email address
+     *         on the record
      */
     @POST
     @Consumes(value = { MediaType.APPLICATION_JSON })

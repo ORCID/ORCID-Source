@@ -1,3 +1,9 @@
+## v3.23.22 - 2026-10-05
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.23.21...v3.23.22)
+
+- [#7745](https://github.com/ORCID/ORCID-Source/pull/7745): PD-14421 list every record email on an account recovery match
+
 ## v3.23.21 - 2026-09-30
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.23.20...v3.23.21)
