@@ -1,13 +1,21 @@
 package org.orcid.core.adapter.mapstruct;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.apache.commons.lang3.StringUtils;
+import org.mapstruct.AfterMapping;
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
+import org.mapstruct.MappingTarget;
 import org.mapstruct.factory.Mappers;
 import org.orcid.core.manager.IdentityProviderManager;
 import org.orcid.core.manager.impl.OrcidUrlManager;
+import org.orcid.core.utils.JsonUtils;
 import org.orcid.jaxb.model.notification.amended_v2.NotificationAmended;
 import org.orcid.jaxb.model.notification.permission_v2.AuthorizationUrl;
 import org.orcid.jaxb.model.notification.permission_v2.Item;
+import org.orcid.jaxb.model.notification.permission_v2.Items;
 import org.orcid.jaxb.model.notification.permission_v2.NotificationPermission;
 import org.orcid.jaxb.model.v3.release.notification.amended.AmendedSection;
 import org.orcid.model.notification.institutional_sign_in_v2.NotificationInstitutionalConnection;
@@ -16,10 +24,50 @@ import org.orcid.persistence.jpa.entities.NotificationAmendedEntity;
 import org.orcid.persistence.jpa.entities.NotificationInstitutionalConnectionEntity;
 import org.orcid.persistence.jpa.entities.NotificationItemEntity;
 
-@Mapper
+@Mapper(componentModel = "spring", uses = { ExternalIdentifierTypeMapper.class, UrlMapperV2.class })
 public interface NotificationMapperV2 {
 
     NotificationMapperV2 INSTANCE = Mappers.getMapper(NotificationMapperV2.class);
+
+    @Mapping(source = "putCode", target = "id")
+    @Mapping(source = "externalIdentifier.type", target = "externalIdType", qualifiedByName = "apiToDb")
+    @Mapping(source = "externalIdentifier.value", target = "externalIdValue")
+    @Mapping(source = "externalIdentifier.url", target = "externalIdUrl")
+    @Mapping(source = "externalIdentifier.relationship", target = "externalIdRelationship")
+    @Mapping(source = "additionalInfo", target = "additionalInfo")
+    NotificationItemEntity toNotificationItemEntity(Item item);
+
+    @Mapping(source = "id", target = "putCode")
+    @Mapping(source = "externalIdType", target = "externalIdentifier.type", qualifiedByName = "dbToApi")
+    @Mapping(source = "externalIdValue", target = "externalIdentifier.value")
+    @Mapping(source = "externalIdUrl", target = "externalIdentifier.url")
+    @Mapping(source = "externalIdRelationship", target = "externalIdentifier.relationship")
+    @Mapping(source = "additionalInfo", target = "additionalInfo")
+    Item toItem(NotificationItemEntity entity);
+
+    @AfterMapping
+    default void afterToItem(NotificationItemEntity entity, @MappingTarget Item item) {
+        if (StringUtils.isBlank(entity.getExternalIdType()) && StringUtils.isBlank(entity.getExternalIdValue())
+                && StringUtils.isBlank(entity.getExternalIdUrl()) && StringUtils.isBlank(entity.getExternalIdRelationship())) {
+            item.setExternalIdentifier(null);
+        }
+    }
+
+    @SuppressWarnings("rawtypes")
+    default String mapAdditionalInfo(Map map) {
+        if (map == null || map.isEmpty()) {
+            return null;
+        }
+        return JsonUtils.convertToJsonString(map);
+    }
+
+    @SuppressWarnings("rawtypes")
+    default Map mapAdditionalInfo(String json) {
+        if (StringUtils.isBlank(json)) {
+            return null;
+        }
+        return JsonUtils.readObjectFromJsonString(json, HashMap.class);
+    }
 
     default String buildAuthorizationUrlIfBlank(String existingUrl, String path, OrcidUrlManager orcidUrlManager) {
         if (StringUtils.isBlank(existingUrl)) {
@@ -33,6 +81,9 @@ public interface NotificationMapperV2 {
         if (authUrl != null) {
             authUrl.setPath(fullPath);
             authUrl.setHost(baseHost);
+        }
+        if (notification.getItems() == null) {
+            notification.setItems(new Items());
         }
     }
 
@@ -66,7 +117,6 @@ public interface NotificationMapperV2 {
         if (model.getAmendedSection() == null) {
             return;
         }
-
         switch (model.getAmendedSection()) {
         case AFFILIATION:
             entity.setAmendedSection(AmendedSection.AFFILIATION.name());
@@ -108,6 +158,9 @@ public interface NotificationMapperV2 {
     }
 
     default void mapAmendedBtoA(NotificationAmendedEntity entity, NotificationAmended model) {
+        if (model.getItems() == null) {
+            model.setItems(new Items());
+        }
         if (entity.getAmendedSection() == null) {
             return;
         }

@@ -32,6 +32,7 @@
 			<#if notificationType == 'PERMISSION'>
             <p>
                 <div><img src="https://orcid.org/sites/all/themes/orcid/img/request.png">&nbsp;${(digestEmail.notificationsBySourceId[sourceId].source.sourceName.content)!sourceId}: <#if notification.notificationSubject??>${notification.notificationSubject} <#if notification.createdDate??>(${notification.createdDate.year?c}-<#if notification.createdDate.month?string?length == 1>0${notification.createdDate.month?c}<#else>${notification.createdDate.month?c}</#if>-<#if notification.createdDate.day?string?length == 1>0${notification.createdDate.day?c}<#else>${notification.createdDate.day?c}</#if>)</#if> <#else><@emailMacros.msg "email.digest.requesttoadd" /> <#if notification.createdDate??>(${notification.createdDate.year?c}-<#if notification.createdDate.month?string?length == 1>0${notification.createdDate.month?c}<#else>${notification.createdDate.month?c}</#if>-<#if notification.createdDate.day?string?length == 1>0${notification.createdDate.day?c}<#else>${notification.createdDate.day?c}</#if>)</#if> </#if></div>
+                <#if notification.items??>
                 <#assign itemsByType=notification.items.itemsByType>
                 <#list itemsByType?keys?sort as itemType>
                 <table width="100%" style="font-family: arial, helvetica, sans-serif; padding-left: 20px; padding-top: 15px;">
@@ -65,6 +66,7 @@
                     </tbody>					                      
 	        	</table>
 	        	</#list> 
+                </#if>
             </p>
             <#elseif notificationType == 'AMENDED' && !verboseNotifications>
             <p>
