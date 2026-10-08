@@ -165,6 +165,9 @@ public class PasswordResetController extends BaseController {
         List<String> errors = new ArrayList<>();
         passwordResetRequest.setErrors(errors);
         passwordResetRequest.setEmail(passwordResetRequest.getEmail().trim());
+        if (OrcidStringUtils.isValidOrcid(passwordResetRequest.getEmail())) {
+            return issuePasswordResetRequestForOrcid(passwordResetRequest);
+        }
         if (!validateEmailAddress(passwordResetRequest.getEmail())) {
             errors.add(getMessage("Email.resetPasswordForm.invalidEmail"));
             return new ResponseEntity<>(passwordResetRequest, HttpStatus.OK);
@@ -196,6 +199,60 @@ public class PasswordResetController extends BaseController {
             errors.add(getMessage("Email.resetPasswordForm.error"));
             return new ResponseEntity<>(passwordResetRequest, HttpStatus.BAD_REQUEST);
         }        
+    }
+
+    /**
+     * A password reset requested with an ORCID iD, which only the mandatory
+     * password reset notice on the sign in forms sends (PD-5692). The email
+     * goes to the record's primary address, fanned out like any other reset.
+     *
+     * Only a record that has to reset its password gets one: an iD is public,
+     * and every reset email replaces the record's previous reset link, so an
+     * open iD path would let anyone invalidate anyone's link. The answer is the
+     * same whatever happened, and it names only what the caller sent, never the
+     * address the email went to.
+     */
+    private ResponseEntity<EmailRequest> issuePasswordResetRequestForOrcid(EmailRequest passwordResetRequest) {
+        String orcid = passwordResetRequest.getEmail();
+        try {
+            if (Features.FORCE_PASSWORD_RESET.isActive() && profileEntityManager.isPasswordResetRequired(orcid)) {
+                String primaryEmail = findPrimaryEmail(orcid);
+                if (primaryEmail != null) {
+                    LOGGER.info("Password reset: Reset password requested by ORCID iD for '{}'", orcid);
+                    recordEmailSender.sendPasswordResetEmail(primaryEmail, orcid);
+                } else {
+                    LOGGER.warn("Password reset: No primary email to send the reset link to for '{}'", orcid);
+                }
+            } else {
+                LOGGER.info("Password reset: ORCID iD request ignored for '{}', no mandatory password reset", orcid);
+            }
+            passwordResetRequest.setSuccessMessage(getMessage("orcid.frontend.reset.password.successfulReset") + " " + orcid);
+            return new ResponseEntity<>(passwordResetRequest, HttpStatus.OK);
+        } catch (Exception e) {
+            LOGGER.error("Password reset: Unable to reset password for " + orcid, e);
+            passwordResetRequest.getErrors().add(getMessage("Email.resetPasswordForm.error"));
+            return new ResponseEntity<>(passwordResetRequest, HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    private String findPrimaryEmail(String orcid) {
+        try {
+            org.orcid.jaxb.model.v3.release.record.Email primary = emailManagerReadOnly.findPrimaryEmail(orcid);
+            return primary == null || PojoUtil.isEmpty(primary.getEmail()) ? null : primary.getEmail();
+        } catch (NoResultException e) {
+            return null;
+        }
+    }
+
+    /**
+     * Whether the given password is the record's current one. Read from the
+     * primary rather than the profile cache, so a password changed a moment ago
+     * on another node is the one compared.
+     */
+    private boolean isCurrentPassword(String orcid, String password) {
+        ProfileEntity profile = profileEntityManager.findByOrcid(orcid);
+        return profile != null && profile.getEncryptedPassword() != null && password != null
+                && encryptionManager.hashMatches(password, profile.getEncryptedPassword());
     }
 
     @RequestMapping(value = "/reset-password-email/{encryptedEmail}", method = RequestMethod.GET)
@@ -297,6 +354,14 @@ public class PasswordResetController extends BaseController {
                     return oneTimeResetPasswordForm;
                 }
             }
+        }
+
+        // Previous passwords cannot be reused (PD-5692). Checked only after 2FA
+        // has passed, so the reset link alone cannot be used to test guesses
+        // against the current password; the token is left unused for the retry
+        if (isCurrentPassword(orcid, oneTimeResetPasswordForm.getNewPassword().getValue())) {
+            oneTimeResetPasswordForm.getNewPassword().getErrors().add("Pattern.registrationForm.password.previouslyUsed");
+            return oneTimeResetPasswordForm;
         }
 
         profileEntityManager.updatePassword(orcid, oneTimeResetPasswordForm.getNewPassword().getValue());

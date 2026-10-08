@@ -1,3 +1,33 @@
+## v3.24.4 - 2026-10-08
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.24.3...v3.24.4)
+
+- [#7755](https://github.com/ORCID/ORCID-Source/pull/7755): PD-14292 Omit contributor email from API work reads
+
+## v3.24.3 - 2026-10-08
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.24.2...v3.24.3)
+
+- [#7754](https://github.com/ORCID/ORCID-Source/pull/7754): PD-14448 Fixed the JPQL entity property mapping in ClientDetailsDaoImpl.findMVPEnabled() and corrected the client ID column identifier in ClientDetailsDaoImpl.updateNotificationInfo()
+
+## v3.24.2 - 2026-10-08
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.24.1...v3.24.2)
+
+- [#7741](https://github.com/ORCID/ORCID-Source/pull/7741): PD-5692
+
+## v3.24.1 - 2026-10-07
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.24.0...v3.24.1)
+
+- [#7753](https://github.com/ORCID/ORCID-Source/pull/7753): PD-14532 Allow any know class to be deserialized
+
+## v3.24.0 - 2026-10-07
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.23.22...v3.24.0)
+
+- [#7747](https://github.com/ORCID/ORCID-Source/pull/7747): Use the latest version of togglz-junit
+
 ## v3.23.22 - 2026-10-05
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.23.21...v3.23.22)

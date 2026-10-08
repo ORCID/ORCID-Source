@@ -207,6 +207,7 @@ public class PublicV2ApiServiceDelegatorImpl
     public Response viewWork(String orcid, Long putCode) {
         Work w = workManagerReadOnly.getWork(orcid, putCode);
         publicAPISecurityManagerV2.checkIsPublic(w);
+        contributorUtilsReadOnly.filterContributorPrivateData(w);
         ActivityUtils.cleanEmptyFields(w);
         ActivityUtils.setPathToActivity(w, orcid);
 
@@ -557,6 +558,7 @@ public class PublicV2ApiServiceDelegatorImpl
         }
         WorkBulk workBulk = workManagerReadOnly.findWorkBulk(orcid, putCodes);
         publicAPISecurityManagerV2.filter(workBulk);
+        contributorUtilsReadOnly.filterContributorPrivateData(workBulk);
         ActivityUtils.cleanEmptyFields(workBulk);
         ActivityUtils.setPathToBulk(workBulk, orcid);
         sourceUtils.setSourceName(workBulk);
