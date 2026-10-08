@@ -23,6 +23,8 @@ import org.orcid.frontend.recoveryphone.RecoveryPhoneSendCodeRequest;
 import org.orcid.frontend.recoveryphone.RecoveryPhoneSendCodeResponse;
 import org.orcid.frontend.recoveryphone.RecoveryPhoneSigninSendCodeRequest;
 import org.orcid.frontend.recoveryphone.RecoveryPhoneSigninSendCodeResponse;
+import org.orcid.frontend.recoveryphone.RecoveryPhoneSigninStatusRequest;
+import org.orcid.frontend.recoveryphone.RecoveryPhoneSigninStatusResponse;
 import org.orcid.frontend.recoveryphone.RecoveryPhoneSigninVerifyRequest;
 import org.orcid.frontend.recoveryphone.RecoveryPhoneSigninVerifyResponse;
 import org.orcid.frontend.recoveryphone.RecoveryPhoneVerificationService;
@@ -534,5 +536,98 @@ public class RecoveryPhoneSigninControllerTest {
 
         assertEquals(RecoveryPhoneSigninController.BAD_CREDENTIALS, response.getErrorCode());
         verify(recoveryPhoneManager, never()).getRecoveryPhone(anyString());
+    }
+    // Which way out the 2FA step offers (F1.2): the recovery number where one
+    // is stored, the help centre everywhere else
+
+    private static RecoveryPhoneSigninStatusRequest statusRequest(String username) {
+        RecoveryPhoneSigninStatusRequest form = new RecoveryPhoneSigninStatusRequest();
+        form.setUsername(username);
+        form.setPassword(PASSWORD);
+        return form;
+    }
+
+    @Test
+    public void testStatusIsInertWhenTheFeatureIsOff() {
+        RecoveryPhoneSigninStatusResponse response = controller.status(request, statusRequest(ORCID));
+
+        assertFalse(response.isSuccess());
+        assertEquals(RecoveryPhoneSigninController.FEATURE_DISABLED, response.getErrorCode());
+        verify(authenticationProvider, never()).authenticate(any(Authentication.class));
+        verify(recoveryPhoneManager, never()).getRecoveryPhone(anyString());
+    }
+
+    /**
+     * The answer goes to the password holder only, and a wrong password goes
+     * through the provider, which is what counts it toward the lockout (R3.2).
+     */
+    @Test
+    public void testStatusChecksAWrongPasswordThroughTheProviderAndAnswersNothing() {
+        togglzRule.enable(Features.TWO_FACTOR_RECOVERY_PHONE);
+        passwordIsWrong();
+
+        RecoveryPhoneSigninStatusResponse response = controller.status(request, statusRequest(ORCID));
+
+        assertFalse(response.isSuccess());
+        assertEquals(RecoveryPhoneSigninController.BAD_CREDENTIALS, response.getErrorCode());
+        assertFalse(response.isHasRecoveryPhone());
+        verify(authenticationProvider).authenticate(any(Authentication.class));
+        verify(recoveryPhoneManager, never()).getRecoveryPhone(anyString());
+    }
+
+    @Test
+    public void testStatusRefusesAnAccountThatIsNotUsing2FA() {
+        togglzRule.enable(Features.TWO_FACTOR_RECOVERY_PHONE);
+        passwordIsCorrectAnd2FAIsOff();
+
+        RecoveryPhoneSigninStatusResponse response = controller.status(request, statusRequest(ORCID));
+
+        assertFalse(response.isSuccess());
+        assertEquals(RecoveryPhoneSigninController.TWO_FACTOR_DISABLED, response.getErrorCode());
+        verify(recoveryPhoneManager, never()).getRecoveryPhone(anyString());
+    }
+
+    @Test
+    public void testStatusSaysSoWhenANumberIsStored() {
+        togglzRule.enable(Features.TWO_FACTOR_RECOVERY_PHONE);
+        passwordIsCorrectAnd2FAIsOn();
+        aRecoveryPhoneIsStored();
+
+        RecoveryPhoneSigninStatusResponse response = controller.status(request, statusRequest(ORCID));
+
+        assertTrue(response.isSuccess());
+        assertNull(response.getErrorCode());
+        assertTrue(response.isHasRecoveryPhone());
+        // Asking costs no decryption and sends nothing
+        verify(recoveryPhoneManager, never()).getDecryptedPhoneNumber(anyString());
+        verify(recoveryPhoneVerificationService, never()).sendCode(anyString(), any(RecoveryPhoneSendCodeRequest.class));
+    }
+
+    @Test
+    public void testStatusSaysSoWhenNoNumberIsStored() {
+        togglzRule.enable(Features.TWO_FACTOR_RECOVERY_PHONE);
+        passwordIsCorrectAnd2FAIsOn();
+        when(recoveryPhoneManager.getRecoveryPhone(ORCID)).thenReturn(null);
+
+        RecoveryPhoneSigninStatusResponse response = controller.status(request, statusRequest(ORCID));
+
+        assertTrue(response.isSuccess());
+        assertFalse(response.isHasRecoveryPhone());
+        verify(recoveryPhoneVerificationService, never()).sendCode(anyString(), any(RecoveryPhoneSendCodeRequest.class));
+    }
+
+    /** An email signs in as well as an iD, so it has to reach the same record. */
+    @Test
+    public void testStatusResolvesAnEmailToTheRecord() {
+        togglzRule.enable(Features.TWO_FACTOR_RECOVERY_PHONE);
+        passwordIsCorrectAnd2FAIsOn();
+        when(emailManagerReadOnly.findOrcidIdByEmail(EMAIL)).thenReturn(ORCID);
+        aRecoveryPhoneIsStored();
+
+        RecoveryPhoneSigninStatusResponse response = controller.status(request, statusRequest(EMAIL));
+
+        assertTrue(response.isSuccess());
+        assertTrue(response.isHasRecoveryPhone());
+        verify(recoveryPhoneManager).getRecoveryPhone(ORCID);
     }
 }
