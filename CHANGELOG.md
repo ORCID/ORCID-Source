@@ -1,3 +1,9 @@
+## v3.24.2 - 2026-10-08
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.24.1...v3.24.2)
+
+- [#7741](https://github.com/ORCID/ORCID-Source/pull/7741): PD-5692
+
 ## v3.24.1 - 2026-10-07
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.24.0...v3.24.1)
