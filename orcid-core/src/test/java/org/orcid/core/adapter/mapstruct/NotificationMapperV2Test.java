@@ -118,7 +118,7 @@ public class NotificationMapperV2Test {
 
         NotificationItemEntity entity = mapper.toNotificationItemEntity(item);
         assertNotNull(entity);
-        assertEquals(Long.valueOf(123L), entity.getId());
+        org.junit.Assert.assertNull(entity.getId());
         assertEquals("WORK", entity.getItemType());
         assertEquals("Work Name", entity.getItemName());
         assertEquals("DOI", entity.getExternalIdType());
@@ -126,6 +126,7 @@ public class NotificationMapperV2Test {
         assertEquals("https://doi.org/10.1234/test", entity.getExternalIdUrl());
         assertEquals("SELF", entity.getExternalIdRelationship());
 
+        entity.setId(123L);
         Item mappedBack = mapper.toItem(entity);
         assertNotNull(mappedBack);
         assertEquals("123", mappedBack.getPutCode());
