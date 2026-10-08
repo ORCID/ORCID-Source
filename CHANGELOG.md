@@ -1,3 +1,9 @@
+## v3.24.5 - 2026-10-08
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.24.4...v3.24.5)
+
+- [#7743](https://github.com/ORCID/ORCID-Source/pull/7743): PD-6002 remove old pw reset link logic
+
 ## v3.24.4 - 2026-10-08
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.24.3...v3.24.4)
