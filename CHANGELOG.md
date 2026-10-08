@@ -1,3 +1,9 @@
+## v3.24.8 - 2026-10-08
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.24.7...v3.24.8)
+
+- [#7744](https://github.com/ORCID/ORCID-Source/pull/7744): Lmendoa/pd 14333 pd 14423 pd 14449 pd 14450 recovery phone
+
 ## v3.24.7 - 2026-10-08
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.24.6...v3.24.7)
