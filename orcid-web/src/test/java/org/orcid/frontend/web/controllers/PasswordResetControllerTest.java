@@ -750,6 +750,7 @@ public class PasswordResetControllerTest {
         verifyNoInteractions(recordEmailSender);
     }
 
+    @Test
     public void submitPasswordResetV2LegacyTokenReturnsInvalidError() {
         when(expiringLinkService.verifyToken("legacy")).thenReturn(ExpiringLinkService.VerificationResult.invalid());
         OneTimeResetPasswordForm form = strongForm("legacy");
