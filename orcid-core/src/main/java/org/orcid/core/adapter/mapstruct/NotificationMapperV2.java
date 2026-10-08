@@ -29,7 +29,7 @@ public interface NotificationMapperV2 {
 
     NotificationMapperV2 INSTANCE = Mappers.getMapper(NotificationMapperV2.class);
 
-    @Mapping(source = "putCode", target = "id")
+    @Mapping(target = "id", ignore = true)
     @Mapping(source = "externalIdentifier.type", target = "externalIdType", qualifiedByName = "apiToDb")
     @Mapping(source = "externalIdentifier.value", target = "externalIdValue")
     @Mapping(source = "externalIdentifier.url", target = "externalIdUrl")
