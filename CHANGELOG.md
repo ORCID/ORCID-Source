@@ -1,3 +1,9 @@
+## v3.24.7 - 2026-10-08
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.24.6...v3.24.7)
+
+- [#7735](https://github.com/ORCID/ORCID-Source/pull/7735): Bump org.freemarker:freemarker from 2.3.34 to 2.3.35
+
 ## v3.24.6 - 2026-10-08
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.24.5...v3.24.6)
