@@ -22,7 +22,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import org.orcid.core.adapter.JpaJaxbNotificationAdapter;
 import org.orcid.core.adapter.mapstruct.ExternalIdentifierTypeMapper;
+import org.orcid.core.adapter.mapstruct.NotificationMapperV2;
 import org.orcid.core.adapter.mapstruct.SourceMapperV2;
+import org.orcid.core.adapter.mapstruct.UrlMapperV2;
 import org.orcid.core.exception.OrcidValidationException;
 import org.orcid.core.manager.IdentityProviderManager;
 import org.orcid.core.manager.impl.OrcidUrlManager;
@@ -34,6 +36,7 @@ import org.orcid.jaxb.model.notification.custom_v2.NotificationServiceAnnounceme
 import org.orcid.jaxb.model.notification.custom_v2.NotificationTip;
 import org.orcid.jaxb.model.notification.permission_v2.AuthorizationUrl;
 import org.orcid.jaxb.model.notification.permission_v2.Item;
+import org.orcid.jaxb.model.notification.permission_v2.Items;
 import org.orcid.jaxb.model.notification.permission_v2.NotificationPermission;
 import org.orcid.jaxb.model.notification_v2.Notification;
 import org.orcid.model.notification.institutional_sign_in_v2.NotificationInstitutionalConnection;
@@ -44,11 +47,14 @@ import org.orcid.persistence.jpa.entities.*;
  */
 @Mapper(
     componentModel = "spring", 
-    uses = {SourceMapperV2.class, ExternalIdentifierTypeMapper.class}
+    uses = {SourceMapperV2.class, NotificationMapperV2.class, ExternalIdentifierTypeMapper.class, UrlMapperV2.class}
 )
 public abstract class JpaJaxbNotificationAdapterImpl implements JpaJaxbNotificationAdapter {
 
     private static final String LAST_RESORT_IDENTITY_PROVIDER_NAME = "identity provider";
+
+    @Autowired
+    protected NotificationMapperV2 notificationMapperV2;
 
     @Autowired
     protected OrcidUrlManager orcidUrlManager;
@@ -158,11 +164,11 @@ public abstract class JpaJaxbNotificationAdapterImpl implements JpaJaxbNotificat
 
     @AfterMapping
     protected void afterMapPermissionEntity(NotificationAddItemsEntity entity, @MappingTarget NotificationPermission n) {
-        AuthorizationUrl authUrl = n.getAuthorizationUrl();
-        if (authUrl != null && authUrl.getUri() != null) {
-            authUrl.setPath(extractFullPath(authUrl.getUri()));
-            authUrl.setHost(orcidUrlManager.getBaseHost());
+        String fullPath = null;
+        if (n.getAuthorizationUrl() != null && n.getAuthorizationUrl().getUri() != null) {
+            fullPath = extractFullPath(n.getAuthorizationUrl().getUri());
         }
+        notificationMapperV2.mapPermissionBtoA(entity, n, fullPath, orcidUrlManager.getBaseHost());
     }
 
     // 6. Notification Institutional Connection   
@@ -188,71 +194,36 @@ public abstract class JpaJaxbNotificationAdapterImpl implements JpaJaxbNotificat
 
     @AfterMapping
     protected void afterMapInstitutionalConnectionEntity(NotificationInstitutionalConnectionEntity entity, @MappingTarget NotificationInstitutionalConnection n) {
-        AuthorizationUrl authUrl = n.getAuthorizationUrl();
-        if (authUrl != null && authUrl.getUri() != null) {
-            authUrl.setPath(extractFullPath(authUrl.getUri()));
-            authUrl.setHost(orcidUrlManager.getBaseHost());
+        String fullPath = null;
+        if (n.getAuthorizationUrl() != null && n.getAuthorizationUrl().getUri() != null) {
+            fullPath = extractFullPath(n.getAuthorizationUrl().getUri());
         }
-        
-        String providerId = entity.getAuthenticationProviderId();
-        if (StringUtils.isNotBlank(providerId)) {
-            String idpName = identityProviderManager.retrieveIdentitifyProviderName(providerId);
-            n.setIdpName(idpName);
-        } else {
-            n.setIdpName(LAST_RESORT_IDENTITY_PROVIDER_NAME);
-        }
+        notificationMapperV2.mapInstitutionalBtoA(entity, n, fullPath, orcidUrlManager.getBaseHost(), identityProviderManager,
+                LAST_RESORT_IDENTITY_PROVIDER_NAME);
     }
 
     // 7. Notification Amended
     @Mapping(source = "putCode", target = "id")
     @Mapping(target = "dateCreated", ignore = true)
     @Mapping(source = "items.items", target = "notificationItems")
-    @Mapping(source = "amendedSection", target = "amendedSection")
+    @Mapping(target = "amendedSection", ignore = true)
     protected abstract NotificationAmendedEntity map(NotificationAmended n);
 
     @Mapping(source = "id", target = "putCode")
     @Mapping(source = "dateCreated", target = "createdDate")
     @Mapping(source = "notificationItems", target = "items.items")
-    @Mapping(source = "amendedSection", target = "amendedSection")
+    @Mapping(target = "amendedSection", ignore = true)
     @Mapping(source = ".", target = "source")
     protected abstract NotificationAmended map(NotificationAmendedEntity e);
 
-    // Custom AmendedSection Enum Converters
-    protected String mapAmendedSection(org.orcid.jaxb.model.notification.amended_v2.AmendedSection section) {
-        if (section == null) return org.orcid.jaxb.model.v3.release.notification.amended.AmendedSection.UNKNOWN.name();
-        return section.name();
+    @AfterMapping
+    protected void afterMapAmended(NotificationAmended n, @MappingTarget NotificationAmendedEntity entity) {
+        notificationMapperV2.mapAmendedAtoB(n, entity);
     }
 
-    protected org.orcid.jaxb.model.notification.amended_v2.AmendedSection mapAmendedSection(String section) {
-        if (StringUtils.isBlank(section)) return org.orcid.jaxb.model.notification.amended_v2.AmendedSection.UNKNOWN;
-        try {
-            return org.orcid.jaxb.model.notification.amended_v2.AmendedSection.valueOf(section);
-        } catch (IllegalArgumentException e) {
-            return org.orcid.jaxb.model.notification.amended_v2.AmendedSection.AFFILIATION;
-        }
-    }
-
-    // Notification Items Mapping
-    @Mapping(source = "externalIdentifier.type", target = "externalIdType", qualifiedByName = "apiToDb")
-    @Mapping(source = "externalIdentifier.value", target = "externalIdValue")
-    @Mapping(source = "additionalInfo", target = "additionalInfo")
-    protected abstract NotificationItemEntity mapItem(Item item);
-
-    @Mapping(source = "externalIdType", target = "externalIdentifier.type", qualifiedByName = "dbToApi")
-    @Mapping(source = "externalIdValue", target = "externalIdentifier.value")
-    @Mapping(source = "additionalInfo", target = "additionalInfo")
-    protected abstract Item mapItem(NotificationItemEntity entity);
-
-    @SuppressWarnings("rawtypes")
-    protected String mapAdditionalInfo(Map map) {
-        if (map == null || map.isEmpty()) return null;
-        return JsonUtils.convertToJsonString(map);
-    }
-
-    @SuppressWarnings("rawtypes")
-    protected Map mapAdditionalInfo(String json) {
-        if (StringUtils.isBlank(json)) return null;
-        return JsonUtils.readObjectFromJsonString(json, HashMap.class);
+    @AfterMapping
+    protected void afterMapAmendedEntity(NotificationAmendedEntity entity, @MappingTarget NotificationAmended n) {
+        notificationMapperV2.mapAmendedBtoA(entity, n);
     }
 
     // XMLGregorianCalendar <-> java.util.Date Converters

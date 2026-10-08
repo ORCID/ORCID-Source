@@ -124,6 +124,7 @@ public class JpaJaxbNotificationAdapterTest extends MockSourceNameCache {
         Notification amendedNotification = jpaJaxbNotificationAdapter.toNotification(amendedEntity);
         assertNotNull(amendedNotification);
         assertTrue(amendedNotification instanceof NotificationAmended);
+        assertNotNull(((NotificationAmended) amendedNotification).getItems());
         assertNotNull(amendedNotification.getSource());
         assertNotNull(amendedNotification.getSource().getSourceClientId());
         assertEquals(CLIENT_SOURCE_ID, amendedNotification.getSource().getSourceClientId().getPath());
@@ -138,11 +139,66 @@ public class JpaJaxbNotificationAdapterTest extends MockSourceNameCache {
         Notification permissionNotification = jpaJaxbNotificationAdapter.toNotification(addItemsEntity);
         assertNotNull(permissionNotification);
         assertTrue(permissionNotification instanceof NotificationPermission);
+        assertNotNull(((NotificationPermission) permissionNotification).getItems());
         assertNotNull(permissionNotification.getSource());
         assertNotNull(permissionNotification.getSource().getSourceClientId());
         assertEquals(CLIENT_SOURCE_ID, permissionNotification.getSource().getSourceClientId().getPath());
         assertNotNull(permissionNotification.getSource().getSourceName());
         assertEquals("Client name", permissionNotification.getSource().getSourceName().getContent());
+    }
+
+    @Test
+    public void testToNotificationPermissionWithItems() {
+        NotificationAddItemsEntity addItemsEntity = new NotificationAddItemsEntity();
+        addItemsEntity.setId(125L);
+        addItemsEntity.setNotificationType(NotificationType.PERMISSION.name());
+        addItemsEntity.setClientSourceId(CLIENT_SOURCE_ID);
+        addItemsEntity.setAuthorizationUrl("https://orcid.org/oauth/authorize?client_id=APP-1234");
+
+        NotificationItemEntity itemEntity1 = new NotificationItemEntity();
+        itemEntity1.setId(101L);
+        itemEntity1.setItemType("WORK");
+        itemEntity1.setItemName("Work Title");
+        itemEntity1.setExternalIdType("DOI");
+        itemEntity1.setExternalIdValue("10.1234/test");
+        itemEntity1.setExternalIdUrl("https://doi.org/10.1234/test");
+        itemEntity1.setExternalIdRelationship("SELF");
+
+        NotificationItemEntity itemEntity2 = new NotificationItemEntity();
+        itemEntity2.setId(102L);
+        itemEntity2.setItemType("EMPLOYMENT");
+        itemEntity2.setItemName("University of Testing");
+
+        addItemsEntity.setNotificationItems(java.util.Set.of(itemEntity1, itemEntity2));
+
+        Notification notification = jpaJaxbNotificationAdapter.toNotification(addItemsEntity);
+        assertNotNull(notification);
+        assertTrue(notification instanceof NotificationPermission);
+        NotificationPermission permissionNotification = (NotificationPermission) notification;
+        assertNotNull(permissionNotification.getItems());
+        assertNotNull(permissionNotification.getItems().getItems());
+        assertEquals(2, permissionNotification.getItems().getItems().size());
+        assertEquals(2, permissionNotification.getItems().getItemsByType().size());
+
+        Item item1 = permissionNotification.getItems().getItems().stream()
+                .filter(i -> ItemType.WORK.equals(i.getItemType()))
+                .findFirst().orElse(null);
+        assertNotNull(item1);
+        assertEquals("101", item1.getPutCode());
+        assertEquals("Work Title", item1.getItemName());
+        assertNotNull(item1.getExternalIdentifier());
+        assertEquals("doi", item1.getExternalIdentifier().getType());
+        assertEquals("10.1234/test", item1.getExternalIdentifier().getValue());
+        assertEquals("https://doi.org/10.1234/test", item1.getExternalIdentifier().getUrl().getValue());
+        assertEquals(org.orcid.jaxb.model.record_v2.Relationship.SELF, item1.getExternalIdentifier().getRelationship());
+
+        Item item2 = permissionNotification.getItems().getItems().stream()
+                .filter(i -> ItemType.EMPLOYMENT.equals(i.getItemType()))
+                .findFirst().orElse(null);
+        assertNotNull(item2);
+        assertEquals("102", item2.getPutCode());
+        assertEquals("University of Testing", item2.getItemName());
+        assertNull(item2.getExternalIdentifier());
     }
 
     @Test

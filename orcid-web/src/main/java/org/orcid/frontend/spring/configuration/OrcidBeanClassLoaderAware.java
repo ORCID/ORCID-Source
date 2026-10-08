@@ -3,6 +3,7 @@ package org.orcid.frontend.spring.configuration;
 import com.fasterxml.jackson.annotation.*;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.jsontype.BasicPolymorphicTypeValidator;
 import org.orcid.authorization.authentication.MFAWebAuthenticationDetails;
 import org.orcid.frontend.web.util.MFAWebAuthenticationDetailsDeserializer;
 import org.orcid.frontend.web.util.SwitchUserGrantedAuthorityDeserializer;
@@ -34,6 +35,16 @@ public class OrcidBeanClassLoaderAware implements BeanClassLoaderAware {
         ObjectMapper mapper = new ObjectMapper();
         mapper.registerModules(SecurityJackson2Modules.getModules(this.loader));
         mapper.registerModules(new CoreJackson2Module());
+        mapper.activateDefaultTyping(
+                BasicPolymorphicTypeValidator.builder()
+                        .allowIfSubType("java.lang")
+                        .allowIfSubType("org.orcid")
+                        .allowIfSubType("org.springframework.security")
+                        .allowIfSubType("jakarta.servlet")
+                        .allowIfSubType("java.util")
+                        .build(),
+                ObjectMapper.DefaultTyping.NON_FINAL,
+                JsonTypeInfo.As.PROPERTY);
         mapper.addMixIn(String[].class, StringArrayMixin.class);
         mapper.addMixIn(SwitchUserGrantedAuthority.class, SwitchUserGrantedAuthorityMixin.class);
         mapper.addMixIn(MFAWebAuthenticationDetails.class, MFAWebAuthenticationDetailsMixin.class);

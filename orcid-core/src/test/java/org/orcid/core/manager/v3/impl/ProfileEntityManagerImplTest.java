@@ -575,6 +575,22 @@ public class ProfileEntityManagerImplTest {
     }
 
     @Test
+    public void claimProfileAndUpdatePreferencesClearsForcePasswordReset() {
+        when(emailManager.verifySetCurrentAndPrimary("orcid", "a@b.com")).thenReturn(true);
+        ProfileEntity profile = new ProfileEntity();
+        profile.setForcePasswordReset(new Date());
+        when(profileDao.find("orcid")).thenReturn(profile);
+        when(encryptionManager.hashForInternalUse("password#1")).thenReturn("enc");
+        when(biographyManager.exists("orcid")).thenReturn(false);
+        when(emailFrequencyManager.emailFrequencyExists("orcid")).thenReturn(true);
+
+        manager.claimProfileAndUpdatePreferences("orcid", "a@b.com", null, claim(false));
+
+        assertNull(profile.getForcePasswordReset());
+        verify(profileDao).merge(profile);
+    }
+
+    @Test
     public void updateLocaleDelegates() {
         manager.updateLocale("orcid", AvailableLocales.EN);
         verify(profileDao).updateLocale("orcid", AvailableLocales.EN.name());
@@ -629,6 +645,49 @@ public class ProfileEntityManagerImplTest {
         assertEquals("Family", existingName.getFamilyName().getContent());
         verify(recordNameManagerV3).updateRecordName("orcid", existingName);
         verify(emailManager).clearEmailsAfterReactivation("orcid");
+    }
+
+    @Test
+    public void reactivateFromUserPathClearsForcePasswordReset() {
+        ProfileEntity profile = new ProfileEntity();
+        profile.setDeactivationDate(new Date());
+        profile.setForcePasswordReset(new Date());
+        when(profileDao.find("orcid")).thenReturn(profile);
+        when(encryptionManager.hashForInternalUse("reactivation#1")).thenReturn("encrypted");
+        when(recordNameManagerReadOnlyV3.getRecordName("orcid")).thenReturn(new Name());
+
+        manager.reactivate("orcid", "primary@test.org", reactivation());
+
+        assertEquals("encrypted", profile.getEncryptedPassword());
+        assertNull(profile.getForcePasswordReset());
+        verify(profileDao).merge(profile);
+    }
+
+    @Test
+    public void reactivateFromAdminPathKeepsForcePasswordReset() {
+        // An admin reactivation keeps the old password, so the reset is still owed
+        ProfileEntity profile = new ProfileEntity();
+        profile.setDeactivationDate(new Date());
+        Date flagged = new Date();
+        profile.setForcePasswordReset(flagged);
+        when(profileDao.find("orcid")).thenReturn(profile);
+
+        manager.reactivate("orcid", "primary@test.org", null);
+
+        assertEquals(flagged, profile.getForcePasswordReset());
+    }
+
+    @Test
+    public void isPasswordResetRequiredDelegates() {
+        when(profileDao.isPasswordResetRequired("orcid")).thenReturn(true);
+        assertTrue(manager.isPasswordResetRequired("orcid"));
+    }
+
+    @Test
+    public void isPasswordResetRequiredIsFalseForAnEmptyOrcid() {
+        assertFalse(manager.isPasswordResetRequired(""));
+        assertFalse(manager.isPasswordResetRequired(null));
+        verify(profileDao, never()).isPasswordResetRequired(anyString());
     }
 
     @Test

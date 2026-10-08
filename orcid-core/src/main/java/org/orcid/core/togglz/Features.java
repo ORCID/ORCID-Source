@@ -122,7 +122,10 @@ public enum Features implements Feature {
     LOGIN_RECOVERY_PHONE_INTERSTITIAL,
 
     @Label("OAUTH - recovery phone interstitial")
-    OAUTH_RECOVERY_PHONE_INTERSTITIAL;
+    OAUTH_RECOVERY_PHONE_INTERSTITIAL,
+
+    @Label("Mandatory password reset: block password sign in and show the reset notice for records flagged with force_password_reset")
+    FORCE_PASSWORD_RESET;
     public boolean isActive() {
         return FeatureContext.getFeatureManager().isActive(this);
     }
