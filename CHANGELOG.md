@@ -1,3 +1,9 @@
+## v3.24.6 - 2026-10-08
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.24.5...v3.24.6)
+
+- [#7756](https://github.com/ORCID/ORCID-Source/pull/7756): PD-14452 Refactored notification item mapping and post-processing logic into NotificationMapperV2 and NotificationMapperV3, aligning with the existing mapper architectural pattern.
+
 ## v3.24.5 - 2026-10-08
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.24.4...v3.24.5)
