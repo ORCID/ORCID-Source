@@ -1,3 +1,9 @@
+## v3.24.3 - 2026-10-08
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.24.2...v3.24.3)
+
+- [#7754](https://github.com/ORCID/ORCID-Source/pull/7754): PD-14448 Fixed the JPQL entity property mapping in ClientDetailsDaoImpl.findMVPEnabled() and corrected the client ID column identifier in ClientDetailsDaoImpl.updateNotificationInfo()
+
 ## v3.24.2 - 2026-10-08
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.24.1...v3.24.2)
