@@ -25,11 +25,14 @@ import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.v3.ActivityManager;
 import org.orcid.core.manager.v3.ProfileEntityManager;
 import org.orcid.core.manager.v3.read_only.RecordNameManagerReadOnly;
+import org.orcid.jaxb.model.common.SequenceType;
 import org.orcid.jaxb.model.v3.release.common.Contributor;
+import org.orcid.jaxb.model.v3.release.common.ContributorAttributes;
 import org.orcid.jaxb.model.v3.release.common.ContributorEmail;
 import org.orcid.jaxb.model.v3.release.common.ContributorOrcid;
 import org.orcid.jaxb.model.v3.release.common.CreditName;
 import org.orcid.jaxb.model.v3.release.common.Title;
+import org.orcid.jaxb.model.v3.release.error.OrcidError;
 import org.orcid.jaxb.model.v3.release.record.Funding;
 import org.orcid.jaxb.model.v3.release.record.FundingContributor;
 import org.orcid.jaxb.model.v3.release.record.FundingContributors;
@@ -128,6 +131,60 @@ public class ContributorUtilsTest {
         Funding funding = getFundingWithoutContributors();
         contributorUtils.filterContributorPrivateData(funding);
         assertNotNull(funding); // test no failures
+    }
+
+    @Test
+    public void testFilterContributorPrivateDataForWork() {
+        // A public name is available, so a name replacement would be visible
+        when(profileEntityManager.orcidExists(anyString())).thenReturn(true);
+        when(recordNameManagerReadOnlyV3.fetchDisplayablePublicName(anyString())).thenReturn("a public name");
+
+        Work work = getWorkWithOrcidContributor();
+        ContributorAttributes attributes = new ContributorAttributes();
+        attributes.setContributorRole("author");
+        attributes.setContributorSequence(SequenceType.FIRST);
+        work.getWorkContributors().getContributor().get(0).setContributorAttributes(attributes);
+
+        contributorUtils.filterContributorPrivateData(work);
+
+        Contributor contributor = work.getWorkContributors().getContributor().get(0);
+        assertNull(contributor.getContributorEmail());
+        assertEquals("original credit name", contributor.getCreditName().getContent());
+        assertEquals("0000-0003-4902-6327", contributor.getContributorOrcid().getPath());
+        assertEquals("author", contributor.getContributorAttributes().getContributorRole());
+        assertEquals(SequenceType.FIRST, contributor.getContributorAttributes().getContributorSequence());
+    }
+
+    @Test
+    public void testFilterContributorPrivateDataForWorkWithNoOrcidRecord() {
+        Work work = getWorkWithContributorWithoutOrcid();
+        contributorUtils.filterContributorPrivateData(work);
+
+        Contributor contributor = work.getWorkContributors().getContributor().get(0);
+        assertNull(contributor.getContributorEmail());
+        assertEquals("original credit name", contributor.getCreditName().getContent());
+    }
+
+    @Test
+    public void testFilterContributorPrivateDataForWorkWithoutContributors() {
+        Work work = getWorkWithoutContributors();
+        contributorUtils.filterContributorPrivateData(work);
+        assertNull(work.getWorkContributors());
+    }
+
+    @Test
+    public void testFilterContributorPrivateDataForBulkWork() {
+        OrcidError error = new OrcidError();
+        error.setDeveloperMessage("not a work");
+        WorkBulk bulk = new WorkBulk();
+        bulk.setBulk(new ArrayList<>(Arrays.asList(getWorkWithOrcidContributor(), error, getWorkWithContributorWithoutOrcid())));
+
+        contributorUtils.filterContributorPrivateData(bulk);
+
+        assertEquals(3, bulk.getBulk().size());
+        assertNull(((Work) bulk.getBulk().get(0)).getWorkContributors().getContributor().get(0).getContributorEmail());
+        assertEquals("not a work", ((OrcidError) bulk.getBulk().get(1)).getDeveloperMessage());
+        assertNull(((Work) bulk.getBulk().get(2)).getWorkContributors().getContributor().get(0).getContributorEmail());
     }
 
     private Work getWorkWithoutContributors() {

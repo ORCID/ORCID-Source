@@ -208,7 +208,25 @@ public class MemberV3ApiServiceDelegator_WorksTest extends DBUnitTest {
         assertNotNull(work.getWorkContributors().getContributor().get(0).getContributorOrcid());
         assertEquals("0000-0000-0000-0000", work.getWorkContributors().getContributor().get(0).getContributorOrcid().getPath());
         assertNull(work.getWorkContributors().getContributor().get(0).getCreditName());
+        assertNull(work.getWorkContributors().getContributor().get(0).getContributorEmail());
         Utils.assertIsPublicOrSource(work, "APP-5555555555555555");
+    }
+
+    // Work 11 was deposited by APP-5555555555555555; the email is withheld from every caller
+    @Test
+    public void testViewWorkOmitsContributorEmailForAnotherClientReadPublic() {
+        SecurityContextTestUtils.setUpSecurityContextForClientOnly("APP-6666666666666666", ScopePathType.READ_PUBLIC);
+        Work work = (Work) serviceDelegator.viewWork(ORCID, 11L).getEntity();
+        assertEquals(1, work.getWorkContributors().getContributor().size());
+        assertNull(work.getWorkContributors().getContributor().get(0).getContributorEmail());
+    }
+
+    @Test
+    public void testViewWorkOmitsContributorEmailForAnotherClientReadLimited() {
+        SecurityContextTestUtils.setUpSecurityContext(ORCID, "APP-6666666666666666", ScopePathType.READ_LIMITED);
+        Work work = (Work) serviceDelegator.viewWork(ORCID, 11L).getEntity();
+        assertEquals(1, work.getWorkContributors().getContributor().size());
+        assertNull(work.getWorkContributors().getContributor().get(0).getContributorEmail());
     }
 
     @Test
@@ -716,6 +734,9 @@ public class MemberV3ApiServiceDelegator_WorksTest extends DBUnitTest {
         assertEquals("/0000-0000-0000-0003/work/11", ((Work) workBulk.getBulk().get(0)).getPath());
         assertEquals("/0000-0000-0000-0003/work/12", ((Work) workBulk.getBulk().get(1)).getPath());
         assertEquals("/0000-0000-0000-0003/work/13", ((Work) workBulk.getBulk().get(2)).getPath());
+        Work work11 = (Work) workBulk.getBulk().get(0);
+        assertEquals(1, work11.getWorkContributors().getContributor().size());
+        assertNull(work11.getWorkContributors().getContributor().get(0).getContributorEmail());
     }
     
     @Test

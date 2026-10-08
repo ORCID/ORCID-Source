@@ -1,3 +1,9 @@
+## v3.24.4 - 2026-10-08
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.24.3...v3.24.4)
+
+- [#7755](https://github.com/ORCID/ORCID-Source/pull/7755): PD-14292 Omit contributor email from API work reads
+
 ## v3.24.3 - 2026-10-08
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.24.2...v3.24.3)
