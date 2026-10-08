@@ -183,6 +183,7 @@ public class PublicV3ApiServiceDelegatorTest extends DBUnitTest {
         assertNotNull(work.getWorkContributors().getContributor().get(0).getContributorOrcid());
         assertEquals("0000-0000-0000-0000", work.getWorkContributors().getContributor().get(0).getContributorOrcid().getPath());
         assertNull(work.getWorkContributors().getContributor().get(0).getCreditName());
+        assertNull(work.getWorkContributors().getContributor().get(0).getContributorEmail());
     }
 
     @Test
@@ -233,6 +234,7 @@ public class PublicV3ApiServiceDelegatorTest extends DBUnitTest {
         assertNotNull(work.getWorkContributors().getContributor().get(0).getContributorOrcid());
         assertEquals("0000-0000-0000-0000", work.getWorkContributors().getContributor().get(0).getContributorOrcid().getPath());
         assertNull(work.getWorkContributors().getContributor().get(0).getCreditName());
+        assertNull(work.getWorkContributors().getContributor().get(0).getContributorEmail());
     }
 
     @Test
