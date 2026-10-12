@@ -827,6 +827,7 @@ public class MemberV3ApiServiceImplV3_0 extends MemberApiServiceImplHelper {
     @Path(BIOGRAPHY)
     @Operation(summary = "Get biography details", tags = "Biography", security = { @SecurityRequirement(name = "orcid_auth", scopes = { ScopeConstants.READ_LIMITED }), @SecurityRequirement(name = "orcid_auth", scopes = { ScopeConstants.READ_PUBLIC }) })
     @ApiResponse(responseCode = "200", description = "Get biography details", content = @Content(schema = @Schema(implementation = Biography.class)))
+    @ApiResponse(responseCode = "404", description = "The record has no biography (error 9041)", content = @Content(schema = @Schema(implementation = OrcidError.class)))
     public Response viewBiography(@PathParam("orcid") String orcid) {
         return serviceDelegator.viewBiography(orcid);
     }
