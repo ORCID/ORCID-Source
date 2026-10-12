@@ -179,6 +179,21 @@ jobs:
               -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn \
               --projects ${{ matrix.project }} --fail-at-end
 
+      - name: "OpenAPI description of ${{ matrix.project }} is committed and current"
+        if: ${{ matrix.project == 'orcid-api-web' || matrix.project == 'orcid-pub-web' }}
+        run: |
+          for generated in ${{ matrix.project }}/target/openapi/*.yaml; do
+            committed="openapi/$(basename "$generated")"
+            diff -u "$committed" "$generated" || { echo "::error file=$committed::out of date; copy $generated over it"; exit 1; }
+          done
+
+      - name: "Lint the OpenAPI description of ${{ matrix.project }}"
+        if: ${{ matrix.project == 'orcid-api-web' || matrix.project == 'orcid-pub-web' }}
+        run: |
+          for generated in ${{ matrix.project }}/target/openapi/*.yaml; do
+            npx --yes @redocly/cli@1.34.5 lint --config openapi/redocly.yaml "openapi/$(basename "$generated")"
+          done
+
       - name: Publish unit test report for non forked repo
         if: ${{ failure() && (github.event.pull_request.head.repo.full_name == github.repository) }} # only report if a test has failed and we are a non forked repo
         uses: dorny/test-reporter@31a54ee7ebcacc03a09ea97a7e5465a47b84aea5 # v1.9.1

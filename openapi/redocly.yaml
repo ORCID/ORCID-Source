@@ -1,0 +1,7 @@
+extends:
+  - recommended
+rules:
+  # Paths such as /v3.0/client/{client_id} and /v3.0/{orcid}/email look ambiguous to the linter, which ignores
+  # parameter patterns. The server matches literal segments first, and the orcid parameter's pattern (an ORCID iD)
+  # never matches a literal segment such as "client".
+  no-ambiguous-paths: off
