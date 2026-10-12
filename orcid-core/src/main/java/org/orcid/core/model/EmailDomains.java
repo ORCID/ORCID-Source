@@ -15,7 +15,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(propOrder = { "count", "emailDomains" })
 @XmlRootElement(name = "email-domains", namespace = "http://www.orcid.org/ns/summary")
-@Schema(description = "Email domains list")
+@Schema(name = "RecordSummaryEmailDomains", description = "Email domains list")
 public class EmailDomains implements Serializable {
     /**
      * 
