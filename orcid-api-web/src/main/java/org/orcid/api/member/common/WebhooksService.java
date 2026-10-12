@@ -18,7 +18,18 @@ import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.UriInfo;
 
+import io.swagger.v3.oas.annotations.Hidden;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.headers.Header;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+
 import org.orcid.api.member.common.delegator.WebhooksServiceDelegator;
+import org.orcid.jaxb.model.message.ScopeConstants;
+import org.orcid.jaxb.model.v3.release.error.OrcidError;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -42,7 +53,26 @@ public class WebhooksService {
     @PUT    
     @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML })
     @Consumes(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML })
-    public Response registerWebhookXML(@PathParam("orcid") String orcid, @PathParam("webhook_uri") String webhookUri) {
+    @Operation(operationId = "registerWebhook", summary = "Register a webhook", tags = "Webhooks",
+            description = "Asks the registry to notify the URI when the record changes. The request has no body. Errors come back as XML or JSON, following the Accept header.",
+            security = @SecurityRequirement(name = "orcid_auth", scopes = { ScopeConstants.WEBHOOK }))
+    @ApiResponse(responseCode = "201", description = "Webhook registered; the Location header repeats the request URI", headers = @Header(name = "Location", description = "URI of the webhook", schema = @Schema(type = "string", format = "uri")))
+    @ApiResponse(responseCode = "204", description = "The webhook was already registered")
+    @ApiResponse(responseCode = "400", description = "The webhook URI is not a valid URI", content = {
+            @Content(mediaType = VND_ORCID_XML, schema = @Schema(implementation = OrcidError.class)),
+            @Content(mediaType = ORCID_XML, schema = @Schema(implementation = OrcidError.class)),
+            @Content(mediaType = MediaType.APPLICATION_XML, schema = @Schema(implementation = OrcidError.class)),
+            @Content(mediaType = VND_ORCID_JSON, schema = @Schema(implementation = OrcidError.class)),
+            @Content(mediaType = ORCID_JSON, schema = @Schema(implementation = OrcidError.class)),
+            @Content(mediaType = MediaType.APPLICATION_JSON, schema = @Schema(implementation = OrcidError.class)) })
+    @ApiResponse(responseCode = "404", description = "No record has this ORCID iD", content = {
+            @Content(mediaType = VND_ORCID_XML, schema = @Schema(implementation = OrcidError.class)),
+            @Content(mediaType = ORCID_XML, schema = @Schema(implementation = OrcidError.class)),
+            @Content(mediaType = MediaType.APPLICATION_XML, schema = @Schema(implementation = OrcidError.class)),
+            @Content(mediaType = VND_ORCID_JSON, schema = @Schema(implementation = OrcidError.class)),
+            @Content(mediaType = ORCID_JSON, schema = @Schema(implementation = OrcidError.class)),
+            @Content(mediaType = MediaType.APPLICATION_JSON, schema = @Schema(implementation = OrcidError.class)) })
+    public Response registerWebhookXML(@PathParam("orcid") String orcid, @Parameter(description = "The URI to notify, URL-encoded, for example `https%3A%2F%2Fexample.org%2Forcid-updates`") @PathParam("webhook_uri") String webhookUri) {
         return serviceDelegator.registerWebhook(orcid, webhookUri, uriInfo.getAbsolutePath());
     } 
     
@@ -57,6 +87,8 @@ public class WebhooksService {
     @PUT    
     @Produces(value = { VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
     @Consumes(value = { VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
+    // OpenAPI allows one operation per path and method; registerWebhookXML describes both.
+    @Hidden
     public Response registerWebhookJson(@PathParam("orcid") String orcid, @PathParam("webhook_uri") String webhookUri) {
         return serviceDelegator.registerWebhook(orcid, webhookUri, uriInfo.getAbsolutePath());
     }   
@@ -73,7 +105,25 @@ public class WebhooksService {
     @DELETE
     @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML })
     @Consumes(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML })   
-    public Response unregisterWebhookXML(@PathParam("orcid") String orcid, @PathParam("webhook_uri") String webhookUri) {
+    @Operation(operationId = "unregisterWebhook", summary = "Unregister a webhook", tags = "Webhooks",
+            description = "Only the client that registered the webhook can unregister it. Errors come back as XML or JSON, following the Accept header.",
+            security = @SecurityRequirement(name = "orcid_auth", scopes = { ScopeConstants.WEBHOOK }))
+    @ApiResponse(responseCode = "204", description = "Webhook unregistered")
+    @ApiResponse(responseCode = "403", description = "The webhook belongs to another client", content = {
+            @Content(mediaType = VND_ORCID_XML, schema = @Schema(implementation = OrcidError.class)),
+            @Content(mediaType = ORCID_XML, schema = @Schema(implementation = OrcidError.class)),
+            @Content(mediaType = MediaType.APPLICATION_XML, schema = @Schema(implementation = OrcidError.class)),
+            @Content(mediaType = VND_ORCID_JSON, schema = @Schema(implementation = OrcidError.class)),
+            @Content(mediaType = ORCID_JSON, schema = @Schema(implementation = OrcidError.class)),
+            @Content(mediaType = MediaType.APPLICATION_JSON, schema = @Schema(implementation = OrcidError.class)) })
+    @ApiResponse(responseCode = "404", description = "No record has this ORCID iD, or the record has no such webhook", content = {
+            @Content(mediaType = VND_ORCID_XML, schema = @Schema(implementation = OrcidError.class)),
+            @Content(mediaType = ORCID_XML, schema = @Schema(implementation = OrcidError.class)),
+            @Content(mediaType = MediaType.APPLICATION_XML, schema = @Schema(implementation = OrcidError.class)),
+            @Content(mediaType = VND_ORCID_JSON, schema = @Schema(implementation = OrcidError.class)),
+            @Content(mediaType = ORCID_JSON, schema = @Schema(implementation = OrcidError.class)),
+            @Content(mediaType = MediaType.APPLICATION_JSON, schema = @Schema(implementation = OrcidError.class)) })
+    public Response unregisterWebhookXML(@PathParam("orcid") String orcid, @Parameter(description = "The URI to notify, URL-encoded, for example `https%3A%2F%2Fexample.org%2Forcid-updates`") @PathParam("webhook_uri") String webhookUri) {
         return serviceDelegator.unregisterWebhook(orcid, webhookUri);
     }
 
@@ -89,6 +139,8 @@ public class WebhooksService {
     @DELETE
     @Produces(value = { VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
     @Consumes(value = { VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })    
+    // OpenAPI allows one operation per path and method; unregisterWebhookXML describes both.
+    @Hidden
     public Response unregisterWebhookJson(@PathParam("orcid") String orcid, @PathParam("webhook_uri") String webhookUri) {
         return serviceDelegator.unregisterWebhook(orcid, webhookUri);
     }
