@@ -7,14 +7,18 @@ import static org.junit.Assert.assertTrue;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Optional;
+import java.util.regex.Pattern;
 
 import org.junit.Test;
+import org.orcid.utils.OrcidStringUtils;
 
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.Operation;
 import io.swagger.v3.oas.models.PathItem;
 import io.swagger.v3.oas.models.Paths;
+import io.swagger.v3.oas.models.parameters.Parameter;
 import io.swagger.v3.oas.models.parameters.PathParameter;
+import io.swagger.v3.oas.models.parameters.QueryParameter;
 import io.swagger.v3.oas.models.media.DateTimeSchema;
 import io.swagger.v3.oas.models.media.Content;
 import io.swagger.v3.oas.models.media.Schema;
@@ -93,6 +97,31 @@ public class OrcidOpenApiFilterTest {
         assertEquals("integer", date.getType());
         assertEquals("int64", date.getFormat());
         assertTrue(date.getNullable());
+    }
+
+    @Test
+    public void describesTheIdAndPutCodePathParameters() {
+        Parameter orcid = filter.filterParameter(new PathParameter().name("orcid").schema(new StringSchema()), null, null, Collections.emptyMap(),
+                Collections.emptyMap(), Collections.emptyMap()).get();
+        assertTrue(orcid.getDescription().contains("0000-0002-1825-0097"));
+        Pattern documented = Pattern.compile(orcid.getSchema().getPattern());
+        for (String id : new String[] { "0000-0002-1825-0097", "0000-0002-9079-593X" }) {
+            assertTrue(id, OrcidStringUtils.isValidOrcid(id));
+            assertTrue(id, documented.matcher(id).matches());
+        }
+        for (String id : new String[] { "0000-0002-9079-593x", "0000-0002-1825", "https://orcid.org/0000-0002-1825-0097" }) {
+            assertFalse(id, OrcidStringUtils.isValidOrcid(id));
+            assertFalse(id, documented.matcher(id).matches());
+        }
+
+        Parameter putCode = filter.filterParameter(new PathParameter().name("putCode").schema(new StringSchema()), null, null, Collections.emptyMap(),
+                Collections.emptyMap(), Collections.emptyMap()).get();
+        assertTrue(putCode.getDescription().startsWith("Put-code"));
+
+        Parameter other = filter.filterParameter(new QueryParameter().name("orcid").schema(new StringSchema()), null, null, Collections.emptyMap(),
+                Collections.emptyMap(), Collections.emptyMap()).get();
+        assertEquals(null, other.getDescription());
+        assertEquals(null, other.getSchema().getPattern());
     }
 
     private Schema<?> property(Schema<?> property, String name) {

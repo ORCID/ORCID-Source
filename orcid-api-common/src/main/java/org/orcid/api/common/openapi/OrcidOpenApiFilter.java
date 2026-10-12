@@ -124,6 +124,23 @@ public class OrcidOpenApiFilter extends AbstractSpecFilter {
         return Optional.of(property);
     }
 
+    /**
+     * Path parameters that nearly every operation shares, described once here
+     * rather than on each of the resource methods. The iD pattern is the one
+     * the Registry validates iDs with ({@code OrcidStringUtils.ORCID_STRING}).
+     */
+    @Override
+    public Optional<Parameter> filterParameter(Parameter parameter, Operation operation, ApiDescription api, Map<String, List<String>> params,
+            Map<String, String> cookies, Map<String, List<String>> headers) {
+        if ("path".equals(parameter.getIn()) && "orcid".equals(parameter.getName())) {
+            parameter.setDescription("ORCID iD of the record, for example `0000-0002-1825-0097`.");
+            parameter.getSchema().setPattern("^(\\d{4}-){3}\\d{3}[\\dX]$");
+        } else if ("path".equals(parameter.getIn()) && "putCode".equals(parameter.getName())) {
+            parameter.setDescription("Put-code of the item: the identifier the API gave it when it was added.");
+        }
+        return Optional.of(parameter);
+    }
+
     @Override
     public boolean isRemovingUnreferencedDefinitions() {
         return true;
