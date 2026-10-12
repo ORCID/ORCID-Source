@@ -64,6 +64,14 @@
             <artifactId>jackson-jakarta-rs-json-provider</artifactId>
             <version>${jackson.version}</version>
         </dependency>
+        <!-- For the OpenAPI generator helpers in org.orcid.api.common.openapi only. The generator plugin brings its
+             own copy at build time, so these are never packaged in a war. -->
+        <dependency>
+            <groupId>io.swagger.core.v3</groupId>
+            <artifactId>swagger-integration-jakarta</artifactId>
+            <version>${swagger-jakarta.version}</version>
+            <scope>provided</scope>
+        </dependency>
         <dependency>
             <groupId>org.glassfish.jersey.core</groupId>
             <artifactId>jersey-server</artifactId> 
