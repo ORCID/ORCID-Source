@@ -106,7 +106,7 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/OAuthError"
-          description: "The token is invalid, expired or revoked. The token is optional,\
+          description: "The token is unknown, expired or revoked. The token is optional,\
             \ but a bad one is refused."
         "404":
           content:
@@ -130,7 +130,7 @@ paths:
                 $ref: "#/components/schemas/OrcidError"
           description: "No record has this iD, or no item has this put-code (error\
             \ 9016)."
-      summary: Fetch client details
+      summary: Fetch a client's details
       tags:
       - Clients
   /v3.0/csv-search:
@@ -179,7 +179,7 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/OAuthError"
-          description: "The token is invalid, expired or revoked. The token is optional,\
+          description: "The token is unknown, expired or revoked. The token is optional,\
             \ but a bad one is refused."
       summary: Search records
       tags:
@@ -255,7 +255,7 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/OAuthError"
-          description: "The token is invalid, expired or revoked. The token is optional,\
+          description: "The token is unknown, expired or revoked. The token is optional,\
             \ but a bad one is refused."
       summary: Search records
       tags:
@@ -291,7 +291,7 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/OAuthError"
-          description: "The token is invalid, expired or revoked. The token is optional,\
+          description: "The token is unknown, expired or revoked. The token is optional,\
             \ but a bad one is refused."
       summary: Fetch the external identifier types
       tags:
@@ -367,7 +367,7 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/OAuthError"
-          description: "The token is invalid, expired or revoked. The token is optional,\
+          description: "The token is unknown, expired or revoked. The token is optional,\
             \ but a bad one is refused."
       summary: Search records
       tags:
@@ -442,7 +442,7 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/OAuthError"
-          description: "The token is invalid, expired or revoked. The token is optional,\
+          description: "The token is unknown, expired or revoked. The token is optional,\
             \ but a bad one is refused."
         "404":
           content:
@@ -486,8 +486,9 @@ paths:
             application/xml:
               schema:
                 $ref: "#/components/schemas/OrcidError"
-          description: The record is locked (error 9018) or deactivated (9044).
-      summary: Fetch record details
+          description: "The record is locked (error 9018), deactivated (9044), or\
+            \ unclaimed and still in its claim period (9036)."
+      summary: Fetch the record
       tags:
       - Record
   /v3.0/{orcid}/activities:
@@ -556,7 +557,7 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/OAuthError"
-          description: "The token is invalid, expired or revoked. The token is optional,\
+          description: "The token is unknown, expired or revoked. The token is optional,\
             \ but a bad one is refused."
         "404":
           content:
@@ -600,8 +601,9 @@ paths:
             application/xml:
               schema:
                 $ref: "#/components/schemas/OrcidError"
-          description: The record is locked (error 9018) or deactivated (9044).
-      summary: Fetch all Activities
+          description: "The record is locked (error 9018), deactivated (9044), or\
+            \ unclaimed and still in its claim period (9036)."
+      summary: Fetch all activities
       tags:
       - Activities
   /v3.0/{orcid}/address:
@@ -670,7 +672,7 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/OAuthError"
-          description: "The token is invalid, expired or revoked. The token is optional,\
+          description: "The token is unknown, expired or revoked. The token is optional,\
             \ but a bad one is refused."
         "404":
           content:
@@ -714,7 +716,8 @@ paths:
             application/xml:
               schema:
                 $ref: "#/components/schemas/OrcidError"
-          description: The record is locked (error 9018) or deactivated (9044).
+          description: "The record is locked (error 9018), deactivated (9044), or\
+            \ unclaimed and still in its claim period (9036)."
       summary: Fetch all addresses
       tags:
       - Addresses
@@ -791,7 +794,7 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/OAuthError"
-          description: "The token is invalid, expired or revoked. The token is optional,\
+          description: "The token is unknown, expired or revoked. The token is optional,\
             \ but a bad one is refused."
         "403":
           content:
@@ -856,7 +859,8 @@ paths:
             application/xml:
               schema:
                 $ref: "#/components/schemas/OrcidError"
-          description: The record is locked (error 9018) or deactivated (9044).
+          description: "The record is locked (error 9018), deactivated (9044), or\
+            \ unclaimed and still in its claim period (9036)."
       summary: Fetch an address
       tags:
       - Addresses
@@ -926,8 +930,29 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/OAuthError"
-          description: "The token is invalid, expired or revoked. The token is optional,\
+          description: "The token is unknown, expired or revoked. The token is optional,\
             \ but a bad one is refused."
+        "403":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/OrcidError"
+            application/orcid+json:
+              schema:
+                $ref: "#/components/schemas/OrcidError"
+            application/orcid+xml:
+              schema:
+                $ref: "#/components/schemas/OrcidError"
+            application/vnd.orcid+json:
+              schema:
+                $ref: "#/components/schemas/OrcidError"
+            application/vnd.orcid+xml:
+              schema:
+                $ref: "#/components/schemas/OrcidError"
+            application/xml:
+              schema:
+                $ref: "#/components/schemas/OrcidError"
+          description: The item is not public (error 9039).
         "404":
           content:
             application/json:
@@ -969,8 +994,9 @@ paths:
             application/xml:
               schema:
                 $ref: "#/components/schemas/OrcidError"
-          description: The record is locked (error 9018) or deactivated (9044).
-      summary: Get biography details
+          description: "The record is locked (error 9018), deactivated (9044), or\
+            \ unclaimed and still in its claim period (9036)."
+      summary: Fetch the biography
       tags:
       - Biography
   /v3.0/{orcid}/distinction/summary/{putCode}:
@@ -1046,7 +1072,7 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/OAuthError"
-          description: "The token is invalid, expired or revoked. The token is optional,\
+          description: "The token is unknown, expired or revoked. The token is optional,\
             \ but a bad one is refused."
         "403":
           content:
@@ -1111,8 +1137,9 @@ paths:
             application/xml:
               schema:
                 $ref: "#/components/schemas/OrcidError"
-          description: The record is locked (error 9018) or deactivated (9044).
-      summary: Fetch an Distinction summary
+          description: "The record is locked (error 9018), deactivated (9044), or\
+            \ unclaimed and still in its claim period (9036)."
+      summary: Fetch a distinction summary
       tags:
       - Distinction
   /v3.0/{orcid}/distinction/{putCode}:
@@ -1188,7 +1215,7 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/OAuthError"
-          description: "The token is invalid, expired or revoked. The token is optional,\
+          description: "The token is unknown, expired or revoked. The token is optional,\
             \ but a bad one is refused."
         "403":
           content:
@@ -1253,8 +1280,9 @@ paths:
             application/xml:
               schema:
                 $ref: "#/components/schemas/OrcidError"
-          description: The record is locked (error 9018) or deactivated (9044).
-      summary: Fetch an Distinction
+          description: "The record is locked (error 9018), deactivated (9044), or\
+            \ unclaimed and still in its claim period (9036)."
+      summary: Fetch a distinction
       tags:
       - Distinction
   /v3.0/{orcid}/distinctions:
@@ -1323,30 +1351,8 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/OAuthError"
-          description: "The token is invalid, expired or revoked. The token is optional,\
+          description: "The token is unknown, expired or revoked. The token is optional,\
             \ but a bad one is refused."
-        "404":
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/OrcidError"
-            application/orcid+json:
-              schema:
-                $ref: "#/components/schemas/OrcidError"
-            application/orcid+xml:
-              schema:
-                $ref: "#/components/schemas/OrcidError"
-            application/vnd.orcid+json:
-              schema:
-                $ref: "#/components/schemas/OrcidError"
-            application/vnd.orcid+xml:
-              schema:
-                $ref: "#/components/schemas/OrcidError"
-            application/xml:
-              schema:
-                $ref: "#/components/schemas/OrcidError"
-          description: "No record has this iD, or no item has this put-code (error\
-            \ 9016)."
         "409":
           content:
             application/json:
@@ -1367,7 +1373,8 @@ paths:
             application/xml:
               schema:
                 $ref: "#/components/schemas/OrcidError"
-          description: The record is locked (error 9018) or deactivated (9044).
+          description: "The record is locked (error 9018), deactivated (9044), or\
+            \ unclaimed and still in its claim period (9036)."
       summary: Fetch all distinctions
       tags:
       - Distinction
@@ -1445,7 +1452,7 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/OAuthError"
-          description: "The token is invalid, expired or revoked. The token is optional,\
+          description: "The token is unknown, expired or revoked. The token is optional,\
             \ but a bad one is refused."
         "403":
           content:
@@ -1510,8 +1517,9 @@ paths:
             application/xml:
               schema:
                 $ref: "#/components/schemas/OrcidError"
-          description: The record is locked (error 9018) or deactivated (9044).
-      summary: Fetch an Education Summary
+          description: "The record is locked (error 9018), deactivated (9044), or\
+            \ unclaimed and still in its claim period (9036)."
+      summary: Fetch an education summary
       tags:
       - Education
   /v3.0/{orcid}/education/{putCode}:
@@ -1588,7 +1596,7 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/OAuthError"
-          description: "The token is invalid, expired or revoked. The token is optional,\
+          description: "The token is unknown, expired or revoked. The token is optional,\
             \ but a bad one is refused."
         "403":
           content:
@@ -1653,8 +1661,9 @@ paths:
             application/xml:
               schema:
                 $ref: "#/components/schemas/OrcidError"
-          description: The record is locked (error 9018) or deactivated (9044).
-      summary: Fetch an Education
+          description: "The record is locked (error 9018), deactivated (9044), or\
+            \ unclaimed and still in its claim period (9036)."
+      summary: Fetch an education
       tags:
       - Education
   /v3.0/{orcid}/educations:
@@ -1723,7 +1732,7 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/OAuthError"
-          description: "The token is invalid, expired or revoked. The token is optional,\
+          description: "The token is unknown, expired or revoked. The token is optional,\
             \ but a bad one is refused."
         "404":
           content:
@@ -1767,7 +1776,8 @@ paths:
             application/xml:
               schema:
                 $ref: "#/components/schemas/OrcidError"
-          description: The record is locked (error 9018) or deactivated (9044).
+          description: "The record is locked (error 9018), deactivated (9044), or\
+            \ unclaimed and still in its claim period (9036)."
       summary: Fetch all educations
       tags:
       - Education
@@ -1837,7 +1847,7 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/OAuthError"
-          description: "The token is invalid, expired or revoked. The token is optional,\
+          description: "The token is unknown, expired or revoked. The token is optional,\
             \ but a bad one is refused."
         "404":
           content:
@@ -1881,8 +1891,9 @@ paths:
             application/xml:
               schema:
                 $ref: "#/components/schemas/OrcidError"
-          description: The record is locked (error 9018) or deactivated (9044).
-      summary: Fetch all emails for an ORCID ID
+          description: "The record is locked (error 9018), deactivated (9044), or\
+            \ unclaimed and still in its claim period (9036)."
+      summary: Fetch all emails
       tags:
       - Emails
   /v3.0/{orcid}/employment/summary/{putCode}:
@@ -1959,7 +1970,7 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/OAuthError"
-          description: "The token is invalid, expired or revoked. The token is optional,\
+          description: "The token is unknown, expired or revoked. The token is optional,\
             \ but a bad one is refused."
         "403":
           content:
@@ -2024,8 +2035,9 @@ paths:
             application/xml:
               schema:
                 $ref: "#/components/schemas/OrcidError"
-          description: The record is locked (error 9018) or deactivated (9044).
-      summary: Fetch an Employment Summary
+          description: "The record is locked (error 9018), deactivated (9044), or\
+            \ unclaimed and still in its claim period (9036)."
+      summary: Fetch an employment summary
       tags:
       - Employment
   /v3.0/{orcid}/employment/{putCode}:
@@ -2102,7 +2114,7 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/OAuthError"
-          description: "The token is invalid, expired or revoked. The token is optional,\
+          description: "The token is unknown, expired or revoked. The token is optional,\
             \ but a bad one is refused."
         "403":
           content:
@@ -2167,8 +2179,9 @@ paths:
             application/xml:
               schema:
                 $ref: "#/components/schemas/OrcidError"
-          description: The record is locked (error 9018) or deactivated (9044).
-      summary: Fetch an Employment
+          description: "The record is locked (error 9018), deactivated (9044), or\
+            \ unclaimed and still in its claim period (9036)."
+      summary: Fetch an employment
       tags:
       - Employment
   /v3.0/{orcid}/employments:
@@ -2237,7 +2250,7 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/OAuthError"
-          description: "The token is invalid, expired or revoked. The token is optional,\
+          description: "The token is unknown, expired or revoked. The token is optional,\
             \ but a bad one is refused."
         "404":
           content:
@@ -2281,7 +2294,8 @@ paths:
             application/xml:
               schema:
                 $ref: "#/components/schemas/OrcidError"
-          description: The record is locked (error 9018) or deactivated (9044).
+          description: "The record is locked (error 9018), deactivated (9044), or\
+            \ unclaimed and still in its claim period (9036)."
       summary: Fetch all employments
       tags:
       - Employment
@@ -2351,7 +2365,7 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/OAuthError"
-          description: "The token is invalid, expired or revoked. The token is optional,\
+          description: "The token is unknown, expired or revoked. The token is optional,\
             \ but a bad one is refused."
         "404":
           content:
@@ -2395,8 +2409,9 @@ paths:
             application/xml:
               schema:
                 $ref: "#/components/schemas/OrcidError"
-          description: The record is locked (error 9018) or deactivated (9044).
-      summary: Fetch external identifiers
+          description: "The record is locked (error 9018), deactivated (9044), or\
+            \ unclaimed and still in its claim period (9036)."
+      summary: Fetch all person external identifiers
       tags:
       - External identifiers
   /v3.0/{orcid}/external-identifiers/{putCode}:
@@ -2472,7 +2487,7 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/OAuthError"
-          description: "The token is invalid, expired or revoked. The token is optional,\
+          description: "The token is unknown, expired or revoked. The token is optional,\
             \ but a bad one is refused."
         "403":
           content:
@@ -2537,8 +2552,9 @@ paths:
             application/xml:
               schema:
                 $ref: "#/components/schemas/OrcidError"
-          description: The record is locked (error 9018) or deactivated (9044).
-      summary: Fetch external identifier
+          description: "The record is locked (error 9018), deactivated (9044), or\
+            \ unclaimed and still in its claim period (9036)."
+      summary: Fetch a person external identifier
       tags:
       - External identifiers
   /v3.0/{orcid}/funding/summary/{putCode}:
@@ -2615,7 +2631,7 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/OAuthError"
-          description: "The token is invalid, expired or revoked. The token is optional,\
+          description: "The token is unknown, expired or revoked. The token is optional,\
             \ but a bad one is refused."
         "403":
           content:
@@ -2680,8 +2696,9 @@ paths:
             application/xml:
               schema:
                 $ref: "#/components/schemas/OrcidError"
-          description: The record is locked (error 9018) or deactivated (9044).
-      summary: Fetch a Funding Summary
+          description: "The record is locked (error 9018), deactivated (9044), or\
+            \ unclaimed and still in its claim period (9036)."
+      summary: Fetch a funding summary
       tags:
       - Fundings
   /v3.0/{orcid}/funding/{putCode}:
@@ -2758,7 +2775,7 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/OAuthError"
-          description: "The token is invalid, expired or revoked. The token is optional,\
+          description: "The token is unknown, expired or revoked. The token is optional,\
             \ but a bad one is refused."
         "403":
           content:
@@ -2823,8 +2840,9 @@ paths:
             application/xml:
               schema:
                 $ref: "#/components/schemas/OrcidError"
-          description: The record is locked (error 9018) or deactivated (9044).
-      summary: Fetch a Funding
+          description: "The record is locked (error 9018), deactivated (9044), or\
+            \ unclaimed and still in its claim period (9036)."
+      summary: Fetch a funding
       tags:
       - Fundings
   /v3.0/{orcid}/fundings:
@@ -2893,7 +2911,7 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/OAuthError"
-          description: "The token is invalid, expired or revoked. The token is optional,\
+          description: "The token is unknown, expired or revoked. The token is optional,\
             \ but a bad one is refused."
         "404":
           content:
@@ -2937,7 +2955,8 @@ paths:
             application/xml:
               schema:
                 $ref: "#/components/schemas/OrcidError"
-          description: The record is locked (error 9018) or deactivated (9044).
+          description: "The record is locked (error 9018), deactivated (9044), or\
+            \ unclaimed and still in its claim period (9036)."
       summary: Fetch all fundings
       tags:
       - Fundings
@@ -3014,7 +3033,7 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/OAuthError"
-          description: "The token is invalid, expired or revoked. The token is optional,\
+          description: "The token is unknown, expired or revoked. The token is optional,\
             \ but a bad one is refused."
         "403":
           content:
@@ -3079,8 +3098,9 @@ paths:
             application/xml:
               schema:
                 $ref: "#/components/schemas/OrcidError"
-          description: The record is locked (error 9018) or deactivated (9044).
-      summary: Fetch an InvitedPosition summary
+          description: "The record is locked (error 9018), deactivated (9044), or\
+            \ unclaimed and still in its claim period (9036)."
+      summary: Fetch an invited position summary
       tags:
       - Invited position
   /v3.0/{orcid}/invited-position/{putCode}:
@@ -3156,7 +3176,7 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/OAuthError"
-          description: "The token is invalid, expired or revoked. The token is optional,\
+          description: "The token is unknown, expired or revoked. The token is optional,\
             \ but a bad one is refused."
         "403":
           content:
@@ -3221,8 +3241,9 @@ paths:
             application/xml:
               schema:
                 $ref: "#/components/schemas/OrcidError"
-          description: The record is locked (error 9018) or deactivated (9044).
-      summary: Fetch an InvitedPosition
+          description: "The record is locked (error 9018), deactivated (9044), or\
+            \ unclaimed and still in its claim period (9036)."
+      summary: Fetch an invited position
       tags:
       - Invited position
   /v3.0/{orcid}/invited-positions:
@@ -3291,30 +3312,8 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/OAuthError"
-          description: "The token is invalid, expired or revoked. The token is optional,\
+          description: "The token is unknown, expired or revoked. The token is optional,\
             \ but a bad one is refused."
-        "404":
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/OrcidError"
-            application/orcid+json:
-              schema:
-                $ref: "#/components/schemas/OrcidError"
-            application/orcid+xml:
-              schema:
-                $ref: "#/components/schemas/OrcidError"
-            application/vnd.orcid+json:
-              schema:
-                $ref: "#/components/schemas/OrcidError"
-            application/vnd.orcid+xml:
-              schema:
-                $ref: "#/components/schemas/OrcidError"
-            application/xml:
-              schema:
-                $ref: "#/components/schemas/OrcidError"
-          description: "No record has this iD, or no item has this put-code (error\
-            \ 9016)."
         "409":
           content:
             application/json:
@@ -3335,8 +3334,9 @@ paths:
             application/xml:
               schema:
                 $ref: "#/components/schemas/OrcidError"
-          description: The record is locked (error 9018) or deactivated (9044).
-      summary: Fetch all invitedPositions
+          description: "The record is locked (error 9018), deactivated (9044), or\
+            \ unclaimed and still in its claim period (9036)."
+      summary: Fetch all invited positions
       tags:
       - Invited position
   /v3.0/{orcid}/keywords:
@@ -3405,7 +3405,7 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/OAuthError"
-          description: "The token is invalid, expired or revoked. The token is optional,\
+          description: "The token is unknown, expired or revoked. The token is optional,\
             \ but a bad one is refused."
         "404":
           content:
@@ -3449,8 +3449,9 @@ paths:
             application/xml:
               schema:
                 $ref: "#/components/schemas/OrcidError"
-          description: The record is locked (error 9018) or deactivated (9044).
-      summary: Fetch keywords
+          description: "The record is locked (error 9018), deactivated (9044), or\
+            \ unclaimed and still in its claim period (9036)."
+      summary: Fetch all keywords
       tags:
       - Keywords
   /v3.0/{orcid}/keywords/{putCode}:
@@ -3526,7 +3527,7 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/OAuthError"
-          description: "The token is invalid, expired or revoked. The token is optional,\
+          description: "The token is unknown, expired or revoked. The token is optional,\
             \ but a bad one is refused."
         "403":
           content:
@@ -3591,8 +3592,9 @@ paths:
             application/xml:
               schema:
                 $ref: "#/components/schemas/OrcidError"
-          description: The record is locked (error 9018) or deactivated (9044).
-      summary: Fetch keyword
+          description: "The record is locked (error 9018), deactivated (9044), or\
+            \ unclaimed and still in its claim period (9036)."
+      summary: Fetch a keyword
       tags:
       - Keywords
   /v3.0/{orcid}/membership/summary/{putCode}:
@@ -3668,7 +3670,7 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/OAuthError"
-          description: "The token is invalid, expired or revoked. The token is optional,\
+          description: "The token is unknown, expired or revoked. The token is optional,\
             \ but a bad one is refused."
         "403":
           content:
@@ -3733,8 +3735,9 @@ paths:
             application/xml:
               schema:
                 $ref: "#/components/schemas/OrcidError"
-          description: The record is locked (error 9018) or deactivated (9044).
-      summary: Fetch an Membership summary
+          description: "The record is locked (error 9018), deactivated (9044), or\
+            \ unclaimed and still in its claim period (9036)."
+      summary: Fetch a membership summary
       tags:
       - Membership
   /v3.0/{orcid}/membership/{putCode}:
@@ -3810,7 +3813,7 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/OAuthError"
-          description: "The token is invalid, expired or revoked. The token is optional,\
+          description: "The token is unknown, expired or revoked. The token is optional,\
             \ but a bad one is refused."
         "403":
           content:
@@ -3875,8 +3878,9 @@ paths:
             application/xml:
               schema:
                 $ref: "#/components/schemas/OrcidError"
-          description: The record is locked (error 9018) or deactivated (9044).
-      summary: Fetch an Membership
+          description: "The record is locked (error 9018), deactivated (9044), or\
+            \ unclaimed and still in its claim period (9036)."
+      summary: Fetch a membership
       tags:
       - Membership
   /v3.0/{orcid}/memberships:
@@ -3945,30 +3949,8 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/OAuthError"
-          description: "The token is invalid, expired or revoked. The token is optional,\
+          description: "The token is unknown, expired or revoked. The token is optional,\
             \ but a bad one is refused."
-        "404":
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/OrcidError"
-            application/orcid+json:
-              schema:
-                $ref: "#/components/schemas/OrcidError"
-            application/orcid+xml:
-              schema:
-                $ref: "#/components/schemas/OrcidError"
-            application/vnd.orcid+json:
-              schema:
-                $ref: "#/components/schemas/OrcidError"
-            application/vnd.orcid+xml:
-              schema:
-                $ref: "#/components/schemas/OrcidError"
-            application/xml:
-              schema:
-                $ref: "#/components/schemas/OrcidError"
-          description: "No record has this iD, or no item has this put-code (error\
-            \ 9016)."
         "409":
           content:
             application/json:
@@ -3989,7 +3971,8 @@ paths:
             application/xml:
               schema:
                 $ref: "#/components/schemas/OrcidError"
-          description: The record is locked (error 9018) or deactivated (9044).
+          description: "The record is locked (error 9018), deactivated (9044), or\
+            \ unclaimed and still in its claim period (9036)."
       summary: Fetch all memberships
       tags:
       - Membership
@@ -4059,7 +4042,7 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/OAuthError"
-          description: "The token is invalid, expired or revoked. The token is optional,\
+          description: "The token is unknown, expired or revoked. The token is optional,\
             \ but a bad one is refused."
         "404":
           content:
@@ -4103,8 +4086,9 @@ paths:
             application/xml:
               schema:
                 $ref: "#/components/schemas/OrcidError"
-          description: The record is locked (error 9018) or deactivated (9044).
-      summary: Fetch Other names
+          description: "The record is locked (error 9018), deactivated (9044), or\
+            \ unclaimed and still in its claim period (9036)."
+      summary: Fetch all other names
       tags:
       - Other names
   /v3.0/{orcid}/other-names/{putCode}:
@@ -4180,7 +4164,7 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/OAuthError"
-          description: "The token is invalid, expired or revoked. The token is optional,\
+          description: "The token is unknown, expired or revoked. The token is optional,\
             \ but a bad one is refused."
         "403":
           content:
@@ -4245,8 +4229,9 @@ paths:
             application/xml:
               schema:
                 $ref: "#/components/schemas/OrcidError"
-          description: The record is locked (error 9018) or deactivated (9044).
-      summary: Fetch Other name
+          description: "The record is locked (error 9018), deactivated (9044), or\
+            \ unclaimed and still in its claim period (9036)."
+      summary: Fetch an other name
       tags:
       - Other names
   /v3.0/{orcid}/peer-review/summary/{putCode}:
@@ -4323,7 +4308,7 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/OAuthError"
-          description: "The token is invalid, expired or revoked. The token is optional,\
+          description: "The token is unknown, expired or revoked. The token is optional,\
             \ but a bad one is refused."
         "403":
           content:
@@ -4388,8 +4373,9 @@ paths:
             application/xml:
               schema:
                 $ref: "#/components/schemas/OrcidError"
-          description: The record is locked (error 9018) or deactivated (9044).
-      summary: Fetch a Peer Review Summary
+          description: "The record is locked (error 9018), deactivated (9044), or\
+            \ unclaimed and still in its claim period (9036)."
+      summary: Fetch a peer review summary
       tags:
       - Peer reviews
   /v3.0/{orcid}/peer-review/{putCode}:
@@ -4466,7 +4452,7 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/OAuthError"
-          description: "The token is invalid, expired or revoked. The token is optional,\
+          description: "The token is unknown, expired or revoked. The token is optional,\
             \ but a bad one is refused."
         "403":
           content:
@@ -4531,8 +4517,9 @@ paths:
             application/xml:
               schema:
                 $ref: "#/components/schemas/OrcidError"
-          description: The record is locked (error 9018) or deactivated (9044).
-      summary: Fetch a Peer Review
+          description: "The record is locked (error 9018), deactivated (9044), or\
+            \ unclaimed and still in its claim period (9036)."
+      summary: Fetch a peer review
       tags:
       - Peer reviews
   /v3.0/{orcid}/peer-reviews:
@@ -4601,7 +4588,7 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/OAuthError"
-          description: "The token is invalid, expired or revoked. The token is optional,\
+          description: "The token is unknown, expired or revoked. The token is optional,\
             \ but a bad one is refused."
         "404":
           content:
@@ -4645,7 +4632,8 @@ paths:
             application/xml:
               schema:
                 $ref: "#/components/schemas/OrcidError"
-          description: The record is locked (error 9018) or deactivated (9044).
+          description: "The record is locked (error 9018), deactivated (9044), or\
+            \ unclaimed and still in its claim period (9036)."
       summary: Fetch all peer reviews
       tags:
       - Peer reviews
@@ -4715,7 +4703,7 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/OAuthError"
-          description: "The token is invalid, expired or revoked. The token is optional,\
+          description: "The token is unknown, expired or revoked. The token is optional,\
             \ but a bad one is refused."
         "404":
           content:
@@ -4759,8 +4747,9 @@ paths:
             application/xml:
               schema:
                 $ref: "#/components/schemas/OrcidError"
-          description: The record is locked (error 9018) or deactivated (9044).
-      summary: Fetch person details
+          description: "The record is locked (error 9018), deactivated (9044), or\
+            \ unclaimed and still in its claim period (9036)."
+      summary: Fetch the person section
       tags:
       - Person
   /v3.0/{orcid}/personal-details:
@@ -4829,7 +4818,7 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/OAuthError"
-          description: "The token is invalid, expired or revoked. The token is optional,\
+          description: "The token is unknown, expired or revoked. The token is optional,\
             \ but a bad one is refused."
         "404":
           content:
@@ -4873,8 +4862,9 @@ paths:
             application/xml:
               schema:
                 $ref: "#/components/schemas/OrcidError"
-          description: The record is locked (error 9018) or deactivated (9044).
-      summary: Fetch personal details for an ORCID ID
+          description: "The record is locked (error 9018), deactivated (9044), or\
+            \ unclaimed and still in its claim period (9036)."
+      summary: Fetch personal details
       tags:
       - Personal details
   /v3.0/{orcid}/qualification/summary/{putCode}:
@@ -4950,7 +4940,7 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/OAuthError"
-          description: "The token is invalid, expired or revoked. The token is optional,\
+          description: "The token is unknown, expired or revoked. The token is optional,\
             \ but a bad one is refused."
         "403":
           content:
@@ -5015,8 +5005,9 @@ paths:
             application/xml:
               schema:
                 $ref: "#/components/schemas/OrcidError"
-          description: The record is locked (error 9018) or deactivated (9044).
-      summary: Fetch an Qualification summary
+          description: "The record is locked (error 9018), deactivated (9044), or\
+            \ unclaimed and still in its claim period (9036)."
+      summary: Fetch a qualification summary
       tags:
       - Qualification
   /v3.0/{orcid}/qualification/{putCode}:
@@ -5092,7 +5083,7 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/OAuthError"
-          description: "The token is invalid, expired or revoked. The token is optional,\
+          description: "The token is unknown, expired or revoked. The token is optional,\
             \ but a bad one is refused."
         "403":
           content:
@@ -5157,8 +5148,9 @@ paths:
             application/xml:
               schema:
                 $ref: "#/components/schemas/OrcidError"
-          description: The record is locked (error 9018) or deactivated (9044).
-      summary: Fetch an Qualification
+          description: "The record is locked (error 9018), deactivated (9044), or\
+            \ unclaimed and still in its claim period (9036)."
+      summary: Fetch a qualification
       tags:
       - Qualification
   /v3.0/{orcid}/qualifications:
@@ -5227,30 +5219,8 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/OAuthError"
-          description: "The token is invalid, expired or revoked. The token is optional,\
+          description: "The token is unknown, expired or revoked. The token is optional,\
             \ but a bad one is refused."
-        "404":
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/OrcidError"
-            application/orcid+json:
-              schema:
-                $ref: "#/components/schemas/OrcidError"
-            application/orcid+xml:
-              schema:
-                $ref: "#/components/schemas/OrcidError"
-            application/vnd.orcid+json:
-              schema:
-                $ref: "#/components/schemas/OrcidError"
-            application/vnd.orcid+xml:
-              schema:
-                $ref: "#/components/schemas/OrcidError"
-            application/xml:
-              schema:
-                $ref: "#/components/schemas/OrcidError"
-          description: "No record has this iD, or no item has this put-code (error\
-            \ 9016)."
         "409":
           content:
             application/json:
@@ -5271,7 +5241,8 @@ paths:
             application/xml:
               schema:
                 $ref: "#/components/schemas/OrcidError"
-          description: The record is locked (error 9018) or deactivated (9044).
+          description: "The record is locked (error 9018), deactivated (9044), or\
+            \ unclaimed and still in its claim period (9036)."
       summary: Fetch all qualifications
       tags:
       - Qualification
@@ -5341,7 +5312,7 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/OAuthError"
-          description: "The token is invalid, expired or revoked. The token is optional,\
+          description: "The token is unknown, expired or revoked. The token is optional,\
             \ but a bad one is refused."
         "404":
           content:
@@ -5385,8 +5356,9 @@ paths:
             application/xml:
               schema:
                 $ref: "#/components/schemas/OrcidError"
-          description: The record is locked (error 9018) or deactivated (9044).
-      summary: Fetch record details2
+          description: "The record is locked (error 9018), deactivated (9044), or\
+            \ unclaimed and still in its claim period (9036)."
+      summary: Fetch the record at its /record path
       tags:
       - Record
   /v3.0/{orcid}/research-resource/summary/{putCode}:
@@ -5462,7 +5434,7 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/OAuthError"
-          description: "The token is invalid, expired or revoked. The token is optional,\
+          description: "The token is unknown, expired or revoked. The token is optional,\
             \ but a bad one is refused."
         "403":
           content:
@@ -5527,8 +5499,9 @@ paths:
             application/xml:
               schema:
                 $ref: "#/components/schemas/OrcidError"
-          description: The record is locked (error 9018) or deactivated (9044).
-      summary: Fetch a Research Resource summary
+          description: "The record is locked (error 9018), deactivated (9044), or\
+            \ unclaimed and still in its claim period (9036)."
+      summary: Fetch a research resource summary
       tags:
       - Research resources
   /v3.0/{orcid}/research-resource/{putCode}:
@@ -5604,7 +5577,7 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/OAuthError"
-          description: "The token is invalid, expired or revoked. The token is optional,\
+          description: "The token is unknown, expired or revoked. The token is optional,\
             \ but a bad one is refused."
         "403":
           content:
@@ -5669,8 +5642,9 @@ paths:
             application/xml:
               schema:
                 $ref: "#/components/schemas/OrcidError"
-          description: The record is locked (error 9018) or deactivated (9044).
-      summary: Fetch a Research Resource
+          description: "The record is locked (error 9018), deactivated (9044), or\
+            \ unclaimed and still in its claim period (9036)."
+      summary: Fetch a research resource
       tags:
       - Research resources
   /v3.0/{orcid}/research-resources:
@@ -5739,30 +5713,8 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/OAuthError"
-          description: "The token is invalid, expired or revoked. The token is optional,\
+          description: "The token is unknown, expired or revoked. The token is optional,\
             \ but a bad one is refused."
-        "404":
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/OrcidError"
-            application/orcid+json:
-              schema:
-                $ref: "#/components/schemas/OrcidError"
-            application/orcid+xml:
-              schema:
-                $ref: "#/components/schemas/OrcidError"
-            application/vnd.orcid+json:
-              schema:
-                $ref: "#/components/schemas/OrcidError"
-            application/vnd.orcid+xml:
-              schema:
-                $ref: "#/components/schemas/OrcidError"
-            application/xml:
-              schema:
-                $ref: "#/components/schemas/OrcidError"
-          description: "No record has this iD, or no item has this put-code (error\
-            \ 9016)."
         "409":
           content:
             application/json:
@@ -5783,8 +5735,9 @@ paths:
             application/xml:
               schema:
                 $ref: "#/components/schemas/OrcidError"
-          description: The record is locked (error 9018) or deactivated (9044).
-      summary: Fetch all Research Resources
+          description: "The record is locked (error 9018), deactivated (9044), or\
+            \ unclaimed and still in its claim period (9036)."
+      summary: Fetch all research resources
       tags:
       - Research resources
   /v3.0/{orcid}/researcher-urls:
@@ -5853,7 +5806,7 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/OAuthError"
-          description: "The token is invalid, expired or revoked. The token is optional,\
+          description: "The token is unknown, expired or revoked. The token is optional,\
             \ but a bad one is refused."
         "404":
           content:
@@ -5897,8 +5850,9 @@ paths:
             application/xml:
               schema:
                 $ref: "#/components/schemas/OrcidError"
-          description: The record is locked (error 9018) or deactivated (9044).
-      summary: Fetch all researcher urls for an ORCID ID
+          description: "The record is locked (error 9018), deactivated (9044), or\
+            \ unclaimed and still in its claim period (9036)."
+      summary: Fetch all researcher URLs
       tags:
       - Researcher URLs
   /v3.0/{orcid}/researcher-urls/{putCode}:
@@ -5974,7 +5928,7 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/OAuthError"
-          description: "The token is invalid, expired or revoked. The token is optional,\
+          description: "The token is unknown, expired or revoked. The token is optional,\
             \ but a bad one is refused."
         "403":
           content:
@@ -6039,8 +5993,9 @@ paths:
             application/xml:
               schema:
                 $ref: "#/components/schemas/OrcidError"
-          description: The record is locked (error 9018) or deactivated (9044).
-      summary: Fetch one researcher url for an ORCID ID
+          description: "The record is locked (error 9018), deactivated (9044), or\
+            \ unclaimed and still in its claim period (9036)."
+      summary: Fetch a researcher URL
       tags:
       - Researcher URLs
   /v3.0/{orcid}/service/summary/{putCode}:
@@ -6116,7 +6071,7 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/OAuthError"
-          description: "The token is invalid, expired or revoked. The token is optional,\
+          description: "The token is unknown, expired or revoked. The token is optional,\
             \ but a bad one is refused."
         "403":
           content:
@@ -6181,8 +6136,9 @@ paths:
             application/xml:
               schema:
                 $ref: "#/components/schemas/OrcidError"
-          description: The record is locked (error 9018) or deactivated (9044).
-      summary: Fetch an Service summary
+          description: "The record is locked (error 9018), deactivated (9044), or\
+            \ unclaimed and still in its claim period (9036)."
+      summary: Fetch a service summary
       tags:
       - Service
   /v3.0/{orcid}/service/{putCode}:
@@ -6258,7 +6214,7 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/OAuthError"
-          description: "The token is invalid, expired or revoked. The token is optional,\
+          description: "The token is unknown, expired or revoked. The token is optional,\
             \ but a bad one is refused."
         "403":
           content:
@@ -6323,8 +6279,9 @@ paths:
             application/xml:
               schema:
                 $ref: "#/components/schemas/OrcidError"
-          description: The record is locked (error 9018) or deactivated (9044).
-      summary: Fetch an Service
+          description: "The record is locked (error 9018), deactivated (9044), or\
+            \ unclaimed and still in its claim period (9036)."
+      summary: Fetch a service
       tags:
       - Service
   /v3.0/{orcid}/services:
@@ -6393,30 +6350,8 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/OAuthError"
-          description: "The token is invalid, expired or revoked. The token is optional,\
+          description: "The token is unknown, expired or revoked. The token is optional,\
             \ but a bad one is refused."
-        "404":
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/OrcidError"
-            application/orcid+json:
-              schema:
-                $ref: "#/components/schemas/OrcidError"
-            application/orcid+xml:
-              schema:
-                $ref: "#/components/schemas/OrcidError"
-            application/vnd.orcid+json:
-              schema:
-                $ref: "#/components/schemas/OrcidError"
-            application/vnd.orcid+xml:
-              schema:
-                $ref: "#/components/schemas/OrcidError"
-            application/xml:
-              schema:
-                $ref: "#/components/schemas/OrcidError"
-          description: "No record has this iD, or no item has this put-code (error\
-            \ 9016)."
         "409":
           content:
             application/json:
@@ -6437,7 +6372,8 @@ paths:
             application/xml:
               schema:
                 $ref: "#/components/schemas/OrcidError"
-          description: The record is locked (error 9018) or deactivated (9044).
+          description: "The record is locked (error 9018), deactivated (9044), or\
+            \ unclaimed and still in its claim period (9036)."
       summary: Fetch all services
       tags:
       - Service
@@ -6515,7 +6451,7 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/OAuthError"
-          description: "The token is invalid, expired or revoked. The token is optional,\
+          description: "The token is unknown, expired or revoked. The token is optional,\
             \ but a bad one is refused."
         "403":
           content:
@@ -6580,8 +6516,9 @@ paths:
             application/xml:
               schema:
                 $ref: "#/components/schemas/OrcidError"
-          description: The record is locked (error 9018) or deactivated (9044).
-      summary: Fetch a Work Summary
+          description: "The record is locked (error 9018), deactivated (9044), or\
+            \ unclaimed and still in its claim period (9036)."
+      summary: Fetch a work summary
       tags:
       - Works
   /v3.0/{orcid}/work/{putCode}:
@@ -6662,7 +6599,7 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/OAuthError"
-          description: "The token is invalid, expired or revoked. The token is optional,\
+          description: "The token is unknown, expired or revoked. The token is optional,\
             \ but a bad one is refused."
         "403":
           content:
@@ -6727,8 +6664,9 @@ paths:
             application/xml:
               schema:
                 $ref: "#/components/schemas/OrcidError"
-          description: The record is locked (error 9018) or deactivated (9044).
-      summary: Fetch a Work
+          description: "The record is locked (error 9018), deactivated (9044), or\
+            \ unclaimed and still in its claim period (9036)."
+      summary: Fetch a work
       tags:
       - Works
   /v3.0/{orcid}/works:
@@ -6797,7 +6735,7 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/OAuthError"
-          description: "The token is invalid, expired or revoked. The token is optional,\
+          description: "The token is unknown, expired or revoked. The token is optional,\
             \ but a bad one is refused."
         "404":
           content:
@@ -6841,7 +6779,8 @@ paths:
             application/xml:
               schema:
                 $ref: "#/components/schemas/OrcidError"
-          description: The record is locked (error 9018) or deactivated (9044).
+          description: "The record is locked (error 9018), deactivated (9044), or\
+            \ unclaimed and still in its claim period (9036)."
       summary: Fetch all works
       tags:
       - Works
@@ -6938,7 +6877,7 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/OAuthError"
-          description: "The token is invalid, expired or revoked. The token is optional,\
+          description: "The token is unknown, expired or revoked. The token is optional,\
             \ but a bad one is refused."
         "404":
           content:
@@ -6982,8 +6921,9 @@ paths:
             application/xml:
               schema:
                 $ref: "#/components/schemas/OrcidError"
-          description: The record is locked (error 9018) or deactivated (9044).
-      summary: Fetch specified works
+          description: "The record is locked (error 9018), deactivated (9044), or\
+            \ unclaimed and still in its claim period (9036)."
+      summary: Fetch works by put-code
       tags:
       - Works
 components:
@@ -7368,6 +7308,9 @@ components:
       properties:
         contributor-role:
           type: string
+          description: An original role or a CRediT role URI; anything else is refused
+            (error 9058). The XSD says the original roles will be removed in a future
+            version.
           enum:
           - author
           - assignee
@@ -7380,6 +7323,20 @@ components:
           - principal-investigator
           - postdoctoral-researcher
           - support-staff
+          - http://credit.niso.org/contributor-roles/conceptualization/
+          - http://credit.niso.org/contributor-roles/data-curation/
+          - http://credit.niso.org/contributor-roles/formal-analysis/
+          - http://credit.niso.org/contributor-roles/funding-acquisition/
+          - http://credit.niso.org/contributor-roles/investigation/
+          - http://credit.niso.org/contributor-roles/methodology/
+          - http://credit.niso.org/contributor-roles/project-administration/
+          - http://credit.niso.org/contributor-roles/resources/
+          - http://credit.niso.org/contributor-roles/software/
+          - http://credit.niso.org/contributor-roles/supervision/
+          - http://credit.niso.org/contributor-roles/validation/
+          - http://credit.niso.org/contributor-roles/visualization/
+          - http://credit.niso.org/contributor-roles/writing-original-draft/
+          - http://credit.niso.org/contributor-roles/writing-review-editing/
           - null
           nullable: true
           xml:
@@ -8486,18 +8443,27 @@ components:
       properties:
         contributor-role:
           type: string
+          description: A funding role or a CRediT role URI; anything else is refused
+            (error 9058).
           enum:
-          - author
-          - assignee
-          - editor
-          - chair-or-translator
-          - co-investigator
-          - co-inventor
-          - graduate-student
-          - other-inventor
-          - principal-investigator
-          - postdoctoral-researcher
-          - support-staff
+          - lead
+          - co-lead
+          - supported-by
+          - other-contribution
+          - http://credit.niso.org/contributor-roles/conceptualization/
+          - http://credit.niso.org/contributor-roles/data-curation/
+          - http://credit.niso.org/contributor-roles/formal-analysis/
+          - http://credit.niso.org/contributor-roles/funding-acquisition/
+          - http://credit.niso.org/contributor-roles/investigation/
+          - http://credit.niso.org/contributor-roles/methodology/
+          - http://credit.niso.org/contributor-roles/project-administration/
+          - http://credit.niso.org/contributor-roles/resources/
+          - http://credit.niso.org/contributor-roles/software/
+          - http://credit.niso.org/contributor-roles/supervision/
+          - http://credit.niso.org/contributor-roles/validation/
+          - http://credit.niso.org/contributor-roles/visualization/
+          - http://credit.niso.org/contributor-roles/writing-original-draft/
+          - http://credit.niso.org/contributor-roles/writing-review-editing/
           - null
           nullable: true
           xml:
@@ -8673,7 +8639,8 @@ components:
           $ref: "#/components/schemas/CompletionDate"
         creation-method:
           type: string
-          description: CreationMethodV2_0
+          description: JSON carries the constant name (DIRECT); XML carries the XSD
+            value (Direct).
           enum:
           - API
           - DIRECT
@@ -9166,13 +9133,11 @@ components:
       properties:
         error:
           type: string
-          description: "`invalid_token` when the token is not valid, `forbidden` when\
-            \ none was sent."
+          description: "`invalid_token` when the token is unknown, expired or revoked."
           nullable: true
         error_description:
           type: string
-          description: "A sentence for developers, ending with the token that was\
-            \ sent, if any."
+          description: A sentence for developers.
           nullable: true
       required:
       - error
@@ -9942,6 +9907,7 @@ components:
             attribute: true
         external-id-relationship:
           type: string
+          description: Only self is accepted on writes (error 9020).
           enum:
           - part-of
           - self
