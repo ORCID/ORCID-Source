@@ -957,7 +957,7 @@ public class MemberV3ApiServiceImplV3_0 extends MemberApiServiceImplHelper {
     @Parameter(name = "start", in = ParameterIn.QUERY, description = "Offset of the first result (0-based).", schema = @Schema(type = "integer"))
     @Parameter(name = "rows", in = ParameterIn.QUERY, description = "Number of results to return (maximum 1000).", schema = @Schema(type = "integer"))
     @ApiResponse(responseCode = "200", description = "Search records", content = @Content(schema = @Schema(implementation = Search.class)))
-    @ApiResponse(responseCode = "400", description = "The start or rows parameter is out of range (rows 1,000 at most; start 10,000 at most without a token)", content = @Content(schema = @Schema(implementation = OrcidError.class)))
+    @ApiResponse(responseCode = "400", description = "The rows parameter is not a number, or is out of range (1,000 at most)", content = @Content(schema = @Schema(implementation = OrcidError.class)))
     public Response searchByQuery(@Parameter(description = "Solr query, for example `family-name:Carberry` or `doi-self:10.1087/20120404`.") @QueryParam("q") @DefaultValue("") String query, @Context UriInfo uriInfo) throws ParseException {
         Map<String, List<String>> solrParams = new HashMap<>(uriInfo.getQueryParameters());
         Response xmlQueryResults = serviceDelegator.searchByQuery(solrParams);
@@ -972,7 +972,7 @@ public class MemberV3ApiServiceImplV3_0 extends MemberApiServiceImplHelper {
     @Parameter(name = "rows", in = ParameterIn.QUERY, description = "Number of results to return (maximum 1000).", schema = @Schema(type = "integer"))
     @Parameter(name = "fl", in = ParameterIn.QUERY, description = "Comma-separated fields to return, for example `orcid,given-names,family-name`.", schema = @Schema(type = "string"))
     @ApiResponse(responseCode = "200", description = "One row per result, with the requested fields", content = @Content(mediaType = "text/csv", schema = @Schema(type = "string")))
-    @ApiResponse(responseCode = "400", description = "The start or rows parameter is out of range (rows 1,000 at most; start 10,000 at most without a token)", content = @Content(schema = @Schema(implementation = OrcidError.class)))
+    @ApiResponse(responseCode = "400", description = "The rows parameter is not a number, or is out of range (1,000 at most)", content = @Content(schema = @Schema(implementation = OrcidError.class)))
     public Response searchByQueryCSV(@Parameter(description = "Solr query, for example `family-name:Carberry` or `doi-self:10.1087/20120404`.") @QueryParam("q") @DefaultValue("") String query, @Context UriInfo uriInfo) throws ParseException {
         Map<String, List<String>> solrParams = new HashMap<>(uriInfo.getQueryParameters());
         Response csvQueryResults = serviceDelegator.searchByQueryCSV(solrParams);
@@ -986,7 +986,7 @@ public class MemberV3ApiServiceImplV3_0 extends MemberApiServiceImplHelper {
     @Parameter(name = "start", in = ParameterIn.QUERY, description = "Offset of the first result (0-based).", schema = @Schema(type = "integer"))
     @Parameter(name = "rows", in = ParameterIn.QUERY, description = "Number of results to return (maximum 1000).", schema = @Schema(type = "integer"))
     @ApiResponse(responseCode = "200", description = "Matching records with their names, emails and institutions", content = @Content(schema = @Schema(implementation = ExpandedSearch.class)))
-    @ApiResponse(responseCode = "400", description = "The start or rows parameter is out of range (rows 1,000 at most; start 10,000 at most without a token)", content = @Content(schema = @Schema(implementation = OrcidError.class)))
+    @ApiResponse(responseCode = "400", description = "The rows parameter is not a number, or is out of range (1,000 at most)", content = @Content(schema = @Schema(implementation = OrcidError.class)))
     public Response expandedSearchByQuery(@Parameter(description = "Solr query, for example `family-name:Carberry` or `doi-self:10.1087/20120404`.") @QueryParam("q") @DefaultValue("") String query, @Context UriInfo uriInfo) {
         Map<String, List<String>> solrParams = new HashMap<>(uriInfo.getQueryParameters());
         Response queryResults = serviceDelegator.expandedSearchByQuery(solrParams);

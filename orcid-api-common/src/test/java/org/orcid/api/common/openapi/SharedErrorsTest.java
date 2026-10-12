@@ -106,4 +106,69 @@ public class SharedErrorsTest {
         assertEquals(SharedErrors.ORCID_MEDIA_TYPES.size(), delete.getResponses().get("404").getContent().size());
         assertTrue(delete.getResponses().get("409").getDescription().contains("deprecated"));
     }
+
+    @Test
+    public void aMemberItemNamesPrivateItemsOnReadsAndOtherClientsItemsOnWrites() {
+        Operation read = operation(true, "orcid", "putCode");
+        SharedErrors.addTo(read, "/v3.0/{orcid}/work/{putCode}", "GET");
+        String readForbidden = read.getResponses().get("403").getDescription();
+        assertTrue(readForbidden.contains("public client") && readForbidden.contains("9038") && readForbidden.contains("9013"));
+        assertTrue(read.getResponses().get("401").getDescription().contains("9017"));
+
+        Operation delete = operation(true, "orcid", "putCode");
+        SharedErrors.addTo(delete, "/v3.0/{orcid}/work/{putCode}", "DELETE");
+        assertTrue(delete.getResponses().get("403").getDescription().contains("9010"));
+        assertFalse(delete.getResponses().get("403").getDescription().contains("9013"));
+    }
+
+    @Test
+    public void bulkWorksReportDuplicatesInTheirOwnBody() {
+        Operation bulk = operation(true, "orcid").operationId("createWorks").requestBody(new RequestBody());
+        SharedErrors.addTo(bulk, "/v3.0/{orcid}/works", "POST");
+        assertFalse(bulk.getResponses().get("409").getDescription().contains("9021"));
+        assertTrue(bulk.getResponses().get("409").getDescription().contains("9018"));
+    }
+
+    @Test
+    public void somePublicListsAnswerEmptyForAnUnknownId() {
+        Operation distinctions = operation(false, "orcid").operationId("viewDistinctions");
+        SharedErrors.addTo(distinctions, "/v3.0/{orcid}/distinctions", "GET");
+        assertFalse(distinctions.getResponses().containsKey("404"));
+
+        Operation employments = operation(false, "orcid").operationId("viewEmployments");
+        SharedErrors.addTo(employments, "/v3.0/{orcid}/employments", "GET");
+        assertTrue(employments.getResponses().containsKey("404"));
+
+        Operation memberDistinctions = operation(true, "orcid").operationId("viewDistinctions");
+        SharedErrors.addTo(memberDistinctions, "/v3.0/{orcid}/distinctions", "GET");
+        assertTrue(memberDistinctions.getResponses().containsKey("404"));
+    }
+
+    @Test
+    public void thePublicBiographyCanBeNotPublic() {
+        Operation biography = operation(false, "orcid").operationId("viewBiography");
+        SharedErrors.addTo(biography, "/v3.0/{orcid}/biography", "GET");
+        assertTrue(biography.getResponses().get("403").getDescription().contains("9039"));
+    }
+
+    @Test
+    public void notificationsHaveTheirOwnCodes() {
+        Operation read = operation(true, "orcid", "id");
+        SharedErrors.addTo(read, "/v3.0/{orcid}/notification-permission/{id}", "GET");
+        assertTrue(read.getResponses().get("404").getDescription().contains("9029"));
+        assertTrue(read.getResponses().get("403").getDescription().contains("9004"));
+        assertFalse(read.getResponses().get("409").getDescription().contains("9044"));
+
+        Operation archive = operation(true, "orcid", "id");
+        SharedErrors.addTo(archive, "/v3.0/{orcid}/notification-permission/{id}", "DELETE");
+        assertTrue(archive.getResponses().get("409").getDescription().contains("9044"));
+    }
+
+    @Test
+    public void anUnknownGroupIdRecordIsABadRequest() {
+        Operation update = operation(true, "putCode").requestBody(new RequestBody());
+        SharedErrors.addTo(update, "/v3.0/group-id-record/{putCode}", "PUT");
+        assertTrue(update.getResponses().get("400").getDescription().contains("9026"));
+        assertFalse(update.getResponses().containsKey("404"));
+    }
 }
