@@ -37,7 +37,7 @@ the software.
         <swagger-jakarta.version>2.2.55</swagger-jakarta.version>
         <!-- Jackson that swagger-jakarta ${swagger-jakarta.version} is built against; used by the generator plugin only. -->
         <swagger-jakarta.jackson.version>2.22.1</swagger-jakarta.jackson.version>
-        <orcid-model.version>4.0.2</orcid-model.version>
+        <orcid-model.version>4.0.3</orcid-model.version>
         <aspectj.version>1.9.6</aspectj.version>
         <jena.version>4.4.0</jena.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
