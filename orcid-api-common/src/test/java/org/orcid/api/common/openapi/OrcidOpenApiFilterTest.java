@@ -105,6 +105,14 @@ public class OrcidOpenApiFilterTest {
     }
 
     @Test
+    public void aNullableEnumListsNullAmongItsValues() {
+        StringSchema relationship = new StringSchema();
+        relationship.setEnum(java.util.List.of("self", "part-of"));
+        assertEquals(java.util.Arrays.asList("self", "part-of", null), property(relationship, "external-id-relationship").getEnum());
+        assertEquals(java.util.Arrays.asList("self", "part-of", null), property(relationship, "external-id-relationship").getEnum());
+    }
+
+    @Test
     public void datesAreMillisecondsInJson() {
         Schema<?> date = property(new DateTimeSchema(), "value");
         assertEquals("integer", date.getType());

@@ -1,5 +1,6 @@
 package org.orcid.api.common.openapi;
 
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -99,8 +100,24 @@ public class OrcidOpenApiFilter extends AbstractSpecFilter {
     @Override
     public Optional<Schema> filterSchema(Schema schema, Map<String, List<String>> params, Map<String, String> cookies,
             Map<String, List<String>> headers) {
-        schema.setNullable(true);
+        nullable(schema);
         return Optional.of(schema);
+    }
+
+    /**
+     * An enum only admits null when null is one of its values; nullable alone
+     * does not let a validator accept it.
+     */
+    @SuppressWarnings({ "rawtypes", "unchecked" })
+    private static void nullable(Schema schema) {
+        schema.setNullable(true);
+        if (schema.getEnum() != null) {
+            List values = new ArrayList(schema.getEnum());
+            if (!values.contains(null)) {
+                values.add(null);
+                schema.setEnum(values);
+            }
+        }
     }
 
     /**
@@ -120,7 +137,7 @@ public class OrcidOpenApiFilter extends AbstractSpecFilter {
             property.setFormat("int64");
             property.setDescription("Milliseconds since the epoch. XML carries the same instant as an xs:dateTime.");
         }
-        property.setNullable(true);
+        nullable(property);
         return Optional.of(property);
     }
 
