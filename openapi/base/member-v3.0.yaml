@@ -13,3 +13,87 @@ servers:
     description: Production
   - url: https://api.sandbox.orcid.org
     description: Sandbox
+tags:
+  - name: Record
+    description: The whole record, person section and activity summaries together.
+  - name: Record summary
+    description: Counts and highlights of the record's public items.
+  - name: Person
+    description: The person section in one read.
+  - name: Personal details
+    description: Names and biography.
+  - name: Biography
+    description: The record owner's biography. Read only.
+  - name: Other names
+    description: Other names the record owner is known by.
+  - name: Researcher URLs
+    description: Links to the record owner's pages elsewhere.
+  - name: Keywords
+    description: Keywords that describe the record owner's work.
+  - name: Addresses
+    description: Countries the record owner is associated with.
+  - name: Emails
+    description: The record owner's email addresses. Read only.
+  - name: External identifiers
+    description: The record owner's identifiers in other systems, such as a Scopus Author ID.
+  - name: Activities
+    description: Summaries of every activity section in one read.
+  - name: Works
+    description: Research outputs, such as articles, datasets and software.
+  - name: Fundings
+    description: Grants, awards and other funding.
+  - name: Education
+    description: Affiliations of type education.
+  - name: Employment
+    description: Affiliations of type employment.
+  - name: Qualification
+    description: Affiliations of type qualification.
+  - name: Invited position
+    description: Affiliations of type invited position.
+  - name: Distinction
+    description: Affiliations of type distinction.
+  - name: Membership
+    description: Affiliations of type membership.
+  - name: Service
+    description: Affiliations of type service.
+  - name: Peer reviews
+    description: Peer review activity, grouped by the group ID of what was reviewed.
+  - name: Research resources
+    description: Facilities, collections and other resources the record owner used.
+  - name: Notifications
+    description: Permission notifications, which ask the record owner to connect with an integration.
+  - name: Group IDs
+    description: Group IDs that peer reviews are grouped by, such as a journal's ISSN.
+  - name: Clients
+    description: Public details of an API client.
+  - name: Search
+    description: Search the registry with Solr query syntax.
+  - name: Webhooks
+    description: Ask the registry to notify a URI when a record changes.
+components:
+  securitySchemes:
+    orcid_auth:
+      type: oauth2
+      description: >-
+        Send the access token as `Authorization: Bearer <token>`. Tokens that
+        act on a record come from the authorization code flow, after its owner
+        grants access; other tokens come from client credentials. Only member
+        clients can use this API.
+      flows:
+        authorizationCode:
+          authorizationUrl: https://orcid.org/oauth/authorize
+          tokenUrl: https://orcid.org/oauth/token
+          scopes:
+            /authenticate: Read the user's ORCID iD and the record's public data.
+            /read-limited: Read the items the record owner shares with trusted parties, and the public ones.
+            /activities/update: Add, update and delete the activities this client is the source of.
+            /person/update: Add, update and delete the person items this client is the source of.
+            openid: Sign the user in with OpenID Connect; the token response carries an ID token.
+        clientCredentials:
+          tokenUrl: https://orcid.org/oauth/token
+          scopes:
+            /read-public: Read public items only, from any record.
+            /webhook: Register and unregister webhooks.
+            /premium-notification: Send permission notifications.
+            /group-id-record/read: Read group IDs.
+            /group-id-record/update: Create, update and delete group IDs.
