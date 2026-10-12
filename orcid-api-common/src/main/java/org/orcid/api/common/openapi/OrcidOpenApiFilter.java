@@ -12,7 +12,6 @@ import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.Operation;
 import io.swagger.v3.oas.models.PathItem;
 import io.swagger.v3.oas.models.Paths;
-import io.swagger.v3.oas.models.media.ComposedSchema;
 import io.swagger.v3.oas.models.media.Content;
 import io.swagger.v3.oas.models.media.MediaType;
 import io.swagger.v3.oas.models.media.Schema;
@@ -92,19 +91,34 @@ public class OrcidOpenApiFilter extends AbstractSpecFilter {
 
     /**
      * The API's JSON provider writes absent values out as null
-     * ({@code "source": null}), so any property may be null. OpenAPI 3.0 ignores
-     * {@code nullable} beside a {@code $ref}, so a reference is wrapped in
-     * {@code allOf}.
+     * ({@code "source": null}), so any value may be null. OpenAPI 3.0 cannot say
+     * that beside a {@code $ref}, so the referenced schemas themselves are marked
+     * nullable, and every other property directly.
      */
-    @SuppressWarnings({ "rawtypes", "unchecked" })
+    @SuppressWarnings("rawtypes")
+    @Override
+    public Optional<Schema> filterSchema(Schema schema, Map<String, List<String>> params, Map<String, String> cookies,
+            Map<String, List<String>> headers) {
+        schema.setNullable(true);
+        return Optional.of(schema);
+    }
+
+    /**
+     * Besides nullability: the JSON provider writes dates as milliseconds since
+     * the epoch ({@code "value": 1791835454322}), not as the date-time strings
+     * the XML carries, and JSON is what these descriptions follow.
+     */
+    @SuppressWarnings("rawtypes")
     @Override
     public Optional<Schema> filterSchemaProperty(Schema property, Schema schema, String propName, Map<String, List<String>> params,
             Map<String, String> cookies, Map<String, List<String>> headers) {
         if (property.get$ref() != null) {
-            ComposedSchema nullableReference = new ComposedSchema();
-            nullableReference.addAllOfItem(new Schema().$ref(property.get$ref()));
-            nullableReference.setNullable(true);
-            return Optional.of(nullableReference);
+            return Optional.of(property);
+        }
+        if ("string".equals(property.getType()) && "date-time".equals(property.getFormat())) {
+            property.setType("integer");
+            property.setFormat("int64");
+            property.setDescription("Milliseconds since the epoch. XML carries the same instant as an xs:dateTime.");
         }
         property.setNullable(true);
         return Optional.of(property);
