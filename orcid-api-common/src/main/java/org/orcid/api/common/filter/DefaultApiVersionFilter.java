@@ -111,12 +111,10 @@ public class DefaultApiVersionFilter extends OncePerRequestFilter {
                     else {
                         url = baseUrl + "/v" + VERSION_3_0 + path.replace("/v", "").substring(version.length());
                         version = VERSION_3_0;
-                    } 
-                    
-                    String redirectURLEncoded = response.encodeRedirectURL(url);
-                    response.setStatus(HttpStatus.PERMANENT_REDIRECT_308); 
-                    response.setHeader("Location", redirectURLEncoded);
-                    LOGGER.info("Redirecting request '{}' to '{}'", httpRequest.getServletPath(), redirectURLEncoded);
+                    }
+                    response.setStatus(HttpStatus.PERMANENT_REDIRECT_308);
+                    response.setHeader("Location", url);
+                    LOGGER.info("Redirecting request '{}' to '{}'", httpRequest.getServletPath(), url);
                     String accept = request.getHeader("Accept") == null ? "" : request.getHeader("Accept").toLowerCase();
                     if (accept.contains("json")) {
                         response.getWriter().println(getJsonResponse(version));
