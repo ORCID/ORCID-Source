@@ -149,8 +149,9 @@ public class OrcidOpenApiFilter extends AbstractSpecFilter {
     /**
      * The media type constants carry a quality factor for content negotiation
      * ({@code application/vnd.orcid+xml; qs=5}). A client never sends it, so it
-     * does not belong in the description. Where two keys become one, the first
-     * wins; they describe the same body.
+     * does not belong in the description. Two keys only become one when an
+     * annotation names a media type the method also produces, as the JSON-LD
+     * record does; the annotation's key has no parameters, and it wins.
      */
     static Content withoutMediaTypeParameters(Content content) {
         if (content == null) {
@@ -161,7 +162,11 @@ public class OrcidOpenApiFilter extends AbstractSpecFilter {
             String key = entry.getKey();
             int semicolon = key.indexOf(';');
             String bare = (semicolon < 0 ? key : key.substring(0, semicolon)).trim();
-            stripped.putIfAbsent(bare, entry.getValue());
+            if (semicolon < 0) {
+                stripped.put(bare, entry.getValue());
+            } else {
+                stripped.putIfAbsent(bare, entry.getValue());
+            }
         }
         Content result = new Content();
         result.putAll(stripped);

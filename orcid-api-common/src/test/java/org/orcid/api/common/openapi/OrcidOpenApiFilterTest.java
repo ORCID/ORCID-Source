@@ -53,6 +53,19 @@ public class OrcidOpenApiFilterTest {
     }
 
     @Test
+    public void aMediaTypeAnAnnotationDeclaresWinsOverTheProducedOne() {
+        Content content = new Content();
+        content.addMediaType("application/json", new MediaType().schema(new Schema<>().$ref("#/components/schemas/Record")));
+        content.addMediaType("application/ld+json; qs=0.2", new MediaType().schema(new Schema<>().$ref("#/components/schemas/Record")));
+        content.addMediaType("application/ld+json", new MediaType().schema(new Schema<>().type("object")));
+
+        Content stripped = OrcidOpenApiFilter.withoutMediaTypeParameters(content);
+
+        assertEquals(java.util.List.of("application/json", "application/ld+json"), new ArrayList<>(stripped.keySet()));
+        assertEquals("object", stripped.get("application/ld+json").getSchema().getType());
+    }
+
+    @Test
     public void leavesOperationsWithoutContentAlone() {
         Operation filtered = filter(new Operation().operationId("deleteWork").responses(new ApiResponses().addApiResponse("204", new ApiResponse()))).get();
         assertEquals(null, filtered.getResponses().get("204").getContent());
