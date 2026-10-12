@@ -534,11 +534,10 @@ public class PublicV3ApiServiceImplV3_0 {
   @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
   @Path(SEARCH_PATH)
   @Operation(summary = "Search records", tags = "Search")
-  @Parameter(name = "q", in = ParameterIn.QUERY, description = "Solr query, for example `family-name:Carberry` or `doi-self:10.1087/20120404`.", schema = @Schema(type = "string"))
   @Parameter(name = "start", in = ParameterIn.QUERY, description = "Offset of the first result (0-based).", schema = @Schema(type = "integer"))
   @Parameter(name = "rows", in = ParameterIn.QUERY, description = "Number of results to return (maximum 1000).", schema = @Schema(type = "integer"))
   @ApiResponse(responseCode = "200", description = "Search records", content = @Content(schema = @Schema(implementation = WorkBulk.class)))
-  public Response searchByQuery(@QueryParam("q") @DefaultValue("") String query, @Context UriInfo uriInfo) throws ParseException{
+  public Response searchByQuery(@Parameter(description = "Solr query, for example `family-name:Carberry` or `doi-self:10.1087/20120404`.") @QueryParam("q") @DefaultValue("") String query, @Context UriInfo uriInfo) throws ParseException{
       serviceDelegator.trackEvents(httpRequest);
       Map<String, List<String>> solrParams = new HashMap<>(uriInfo.getQueryParameters());
       Response jsonQueryResults = serviceDelegator.searchByQuery(solrParams);
@@ -549,12 +548,11 @@ public class PublicV3ApiServiceImplV3_0 {
   @Produces(TEXT_CSV)
   @Path(CSV_SEARCH_PATH)
   @Operation(summary = "Search records", tags = "Search")
-  @Parameter(name = "q", in = ParameterIn.QUERY, description = "Solr query, for example `family-name:Carberry` or `doi-self:10.1087/20120404`.", schema = @Schema(type = "string"))
   @Parameter(name = "start", in = ParameterIn.QUERY, description = "Offset of the first result (0-based).", schema = @Schema(type = "integer"))
   @Parameter(name = "rows", in = ParameterIn.QUERY, description = "Number of results to return (maximum 1000).", schema = @Schema(type = "integer"))
   @Parameter(name = "fl", in = ParameterIn.QUERY, description = "Comma-separated fields to return, for example `orcid,given-names,family-name`.", schema = @Schema(type = "string"))
   @ApiResponse(responseCode = "200", description = "One row per result, with the requested fields", content = @Content(mediaType = "text/csv", schema = @Schema(type = "string")))
-  public Response searchByQueryCSV(@QueryParam("q") @DefaultValue("") String query, @Context UriInfo uriInfo) throws ParseException{
+  public Response searchByQueryCSV(@Parameter(description = "Solr query, for example `family-name:Carberry` or `doi-self:10.1087/20120404`.") @QueryParam("q") @DefaultValue("") String query, @Context UriInfo uriInfo) throws ParseException{
       serviceDelegator.trackEvents(httpRequest);
       Map<String, List<String>> solrParams = new HashMap<>(uriInfo.getQueryParameters());
       Response csvQueryResults = serviceDelegator.searchByQueryCSV(solrParams);
@@ -565,11 +563,10 @@ public class PublicV3ApiServiceImplV3_0 {
   @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
   @Path(EXPANDED_SEARCH_PATH)
   @Operation(summary = "Search records", tags = "Search")
-  @Parameter(name = "q", in = ParameterIn.QUERY, description = "Solr query, for example `family-name:Carberry` or `doi-self:10.1087/20120404`.", schema = @Schema(type = "string"))
   @Parameter(name = "start", in = ParameterIn.QUERY, description = "Offset of the first result (0-based).", schema = @Schema(type = "integer"))
   @Parameter(name = "rows", in = ParameterIn.QUERY, description = "Number of results to return (maximum 1000).", schema = @Schema(type = "integer"))
   @ApiResponse(responseCode = "200", description = "Matching records with their names, emails and institutions", content = @Content(schema = @Schema(implementation = ExpandedSearch.class)))
-  public Response expandedSearchByQuery(@QueryParam("q") @DefaultValue("") String query, @Context UriInfo uriInfo) throws ParseException{
+  public Response expandedSearchByQuery(@Parameter(description = "Solr query, for example `family-name:Carberry` or `doi-self:10.1087/20120404`.") @QueryParam("q") @DefaultValue("") String query, @Context UriInfo uriInfo) throws ParseException{
       serviceDelegator.trackEvents(httpRequest);
       Map<String, List<String>> solrParams = new HashMap<>(uriInfo.getQueryParameters());
       Response queryResults = serviceDelegator.expandedSearchByQuery(solrParams);
