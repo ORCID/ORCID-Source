@@ -1,6 +1,5 @@
 package org.orcid.api.common.openapi;
 
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
@@ -37,14 +36,6 @@ public class OrcidObjectMapperProcessorTest {
         SerializationConfig config = mapper.getSerializationConfig();
         BeanDescription description = config.introspectClassAnnotations(Sample.class);
         assertNull(config.getAnnotationIntrospector().findRootName(description.getClassInfo()));
-    }
-
-    @Test
-    public void yamlMapperIsLeftAlone() {
-        ObjectMapper yaml = new ObjectMapper();
-        Object before = yaml.getSerializationConfig().getAnnotationIntrospector();
-        new OrcidObjectMapperProcessor().processYamlObjectMapper(yaml);
-        assertEquals(before, yaml.getSerializationConfig().getAnnotationIntrospector());
     }
 
     private static ObjectMapper processed() {

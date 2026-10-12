@@ -30,14 +30,6 @@ public class OrcidObjectMapperProcessor implements ObjectMapperProcessor {
         mapper.setAnnotationIntrospector(AnnotationIntrospector.pair(jackson, new JaxbWithoutRootNames(mapper.getTypeFactory())));
     }
 
-    /**
-     * Nothing to change. Implemented because the swagger-integration 2.1.1 that
-     * orcid-model brings onto the compile classpath declares it abstract.
-     */
-    @Override
-    public void processYamlObjectMapper(ObjectMapper mapper) {
-    }
-
     static class JaxbWithoutRootNames extends JakartaXmlBindAnnotationIntrospector {
 
         private static final long serialVersionUID = 1L;

@@ -18,6 +18,15 @@
         <jena.dir>${project.build.directory}/generated-sources/jena</jena.dir>
     </properties>
     <dependencies>
+        <!-- For the OpenAPI generator helpers in org.orcid.api.common.openapi only; the generator plugin brings its
+             own copy at build time, so this is never packaged in a war. It must stay first: orcid-model also puts
+             swagger 2.1.1 (same package names) on the classpath, and Maven orders the classpath depth-first. -->
+        <dependency>
+            <groupId>io.swagger.core.v3</groupId>
+            <artifactId>swagger-integration-jakarta</artifactId>
+            <version>${swagger-jakarta.version}</version>
+            <scope>provided</scope>
+        </dependency>
         <!-- Internal dependencies -->
         <dependency>
             <groupId>${project.groupId}</groupId>
@@ -63,14 +72,6 @@
             <groupId>com.fasterxml.jackson.jakarta.rs</groupId>
             <artifactId>jackson-jakarta-rs-json-provider</artifactId>
             <version>${jackson.version}</version>
-        </dependency>
-        <!-- For the OpenAPI generator helpers in org.orcid.api.common.openapi only. The generator plugin brings its
-             own copy at build time, so these are never packaged in a war. -->
-        <dependency>
-            <groupId>io.swagger.core.v3</groupId>
-            <artifactId>swagger-integration-jakarta</artifactId>
-            <version>${swagger-jakarta.version}</version>
-            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.glassfish.jersey.core</groupId>
