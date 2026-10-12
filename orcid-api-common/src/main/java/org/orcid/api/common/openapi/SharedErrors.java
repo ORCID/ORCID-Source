@@ -98,6 +98,8 @@ final class SharedErrors {
             forbidden.add("the token lacks the scope this needs (error 9038)");
             if (putCode && get && !groupIdRecord) {
                 forbidden.add("the item is private and another client added it (9013)");
+            } else if (putCode && put && path.startsWith("/v3.0/{orcid}/work/")) {
+                forbidden.add("another client added the item (9010; 9014 when the body changes nothing)");
             } else if (putCode && !get) {
                 forbidden.add("another client added the item (9010)");
             }

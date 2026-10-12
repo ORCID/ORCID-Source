@@ -200,6 +200,8 @@ public class SharedErrorsTest {
         assertTrue(update.getResponses().get("409").getDescription().contains("9021"));
         assertFalse(update.getResponses().get("409").getDescription().contains("9048"));
 
+        assertTrue(update.getResponses().get("403").getDescription().contains("9014 when the body changes nothing"));
+
         Operation work = operation(true, "orcid").requestBody(new RequestBody());
         SharedErrors.addTo(work, "/v3.0/{orcid}/work", "POST");
         assertTrue(work.getResponses().get("409").getDescription().contains("9048"));
