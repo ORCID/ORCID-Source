@@ -113,6 +113,12 @@ import org.springframework.stereotype.Component;
 
 import org.apache.hc.core5.http.ParseException;
 
+import org.orcid.jaxb.model.v3.release.record.Record;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+
 @Component
 @Path("/v3.0")
 public class MemberV3ApiServiceImplV3_0 extends MemberApiServiceImplHelper {
@@ -736,6 +742,8 @@ public class MemberV3ApiServiceImplV3_0 extends MemberApiServiceImplHelper {
     @GET
     @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
     @Path(OrcidApiConstants.RECORD_SIMPLE)
+    @Operation(summary = "Fetch a record")
+    @ApiResponse(responseCode = "200", description = "The record, with what the caller may see", content = @Content(schema = @Schema(implementation = Record.class)))
     public Response viewRecord(@PathParam("orcid") String orcid) {
         return serviceDelegator.viewRecord(orcid);
     }
@@ -744,6 +752,8 @@ public class MemberV3ApiServiceImplV3_0 extends MemberApiServiceImplHelper {
     @GET
     @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
     @Path(OrcidApiConstants.RECORD_RECORD)
+    @Operation(summary = "Fetch a record")
+    @ApiResponse(responseCode = "200", description = "The record, with what the caller may see", content = @Content(schema = @Schema(implementation = Record.class)))
     public Response viewRecordRecord(@PathParam("orcid") String orcid) {
         return serviceDelegator.viewRecord(orcid);
     }
