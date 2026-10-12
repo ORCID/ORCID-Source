@@ -13,3 +13,77 @@ servers:
     description: Production
   - url: https://pub.sandbox.orcid.org
     description: Sandbox
+security:
+  - {}
+  - orcid_auth:
+      - /read-public
+tags:
+  - name: Record
+    description: The whole record, person section and activity summaries together.
+  - name: Person
+    description: The person section in one read.
+  - name: Personal details
+    description: Names and biography.
+  - name: Biography
+    description: The record owner's biography.
+  - name: Other names
+    description: Other names the record owner is known by.
+  - name: Researcher URLs
+    description: Links to the record owner's pages elsewhere.
+  - name: Keywords
+    description: Keywords that describe the record owner's work.
+  - name: Addresses
+    description: Countries the record owner is associated with.
+  - name: Emails
+    description: The record owner's public email addresses.
+  - name: External identifiers
+    description: The record owner's identifiers in other systems, such as a Scopus Author ID.
+  - name: Activities
+    description: Summaries of every activity section in one read.
+  - name: Works
+    description: Research outputs, such as articles, datasets and software.
+  - name: Fundings
+    description: Grants, awards and other funding.
+  - name: Education
+    description: Affiliations of type education.
+  - name: Employment
+    description: Affiliations of type employment.
+  - name: Qualification
+    description: Affiliations of type qualification.
+  - name: Invited position
+    description: Affiliations of type invited position.
+  - name: Distinction
+    description: Affiliations of type distinction.
+  - name: Membership
+    description: Affiliations of type membership.
+  - name: Service
+    description: Affiliations of type service.
+  - name: Peer reviews
+    description: Peer review activity, grouped by the group ID of what was reviewed.
+  - name: Research resources
+    description: Facilities, collections and other resources the record owner used.
+  - name: Clients
+    description: Public details of an API client.
+  - name: Search
+    description: Search the registry with Solr query syntax.
+  - name: Identifiers
+    description: The external identifier types the registry accepts.
+components:
+  securitySchemes:
+    orcid_auth:
+      type: oauth2
+      description: >-
+        A token is optional. Requests without one are accepted up to a daily
+        quota per IP address; requests with a token are not held to that quota.
+        Send it as `Authorization: Bearer <token>`.
+      flows:
+        clientCredentials:
+          tokenUrl: https://orcid.org/oauth/token
+          scopes:
+            /read-public: Read public data.
+        authorizationCode:
+          authorizationUrl: https://orcid.org/oauth/authorize
+          tokenUrl: https://orcid.org/oauth/token
+          scopes:
+            /authenticate: Read the user's ORCID iD; the token also reads public data.
+            openid: Sign the user in with OpenID Connect; the token response carries an ID token.
