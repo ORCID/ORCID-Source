@@ -10,8 +10,15 @@ import java.util.Optional;
 
 import org.junit.Test;
 
+import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.Operation;
+import io.swagger.v3.oas.models.PathItem;
+import io.swagger.v3.oas.models.Paths;
+import io.swagger.v3.oas.models.parameters.PathParameter;
+import io.swagger.v3.oas.models.media.ComposedSchema;
 import io.swagger.v3.oas.models.media.Content;
+import io.swagger.v3.oas.models.media.Schema;
+import io.swagger.v3.oas.models.media.StringSchema;
 import io.swagger.v3.oas.models.media.MediaType;
 import io.swagger.v3.oas.models.parameters.RequestBody;
 import io.swagger.v3.oas.models.responses.ApiResponse;
@@ -50,6 +57,33 @@ public class OrcidOpenApiFilterTest {
     @Test
     public void removesSchemasNoOperationUses() {
         assertTrue(filter.isRemovingUnreferencedDefinitions());
+    }
+
+    @Test
+    public void pinsTheVersionTheIdentifiersResourceTakesAsAPathVariable() {
+        Operation get = new Operation().operationId("viewIdentifierTypes").addParametersItem(new PathParameter().name("version"));
+        OpenAPI openAPI = new OpenAPI().paths(new Paths().addPathItem("/v{version}/identifiers", new PathItem().get(get))
+                .addPathItem("/v3.0/{orcid}/works", new PathItem().get(new Operation().operationId("viewWorks"))));
+
+        OpenAPI filtered = filter.filterOpenAPI(openAPI, Collections.emptyMap(), Collections.emptyMap(), Collections.emptyMap()).get();
+
+        assertEquals(java.util.Set.of("/v3.0/identifiers", "/v3.0/{orcid}/works"), filtered.getPaths().keySet());
+        assertTrue(filtered.getPaths().get("/v3.0/identifiers").getGet().getParameters().isEmpty());
+    }
+
+    @Test
+    public void everyPropertyMayBeNullBecauseTheJsonProviderWritesNulls() {
+        Schema<?> plain = filter.filterSchemaProperty(new StringSchema(), null, "short-description", Collections.emptyMap(), Collections.emptyMap(),
+                Collections.emptyMap()).get();
+        assertTrue(plain.getNullable());
+
+        @SuppressWarnings("rawtypes")
+        Schema reference = new Schema().$ref("#/components/schemas/Source");
+        Schema<?> wrapped = filter.filterSchemaProperty(reference, null, "source", Collections.emptyMap(), Collections.emptyMap(), Collections.emptyMap())
+                .get();
+        assertTrue(wrapped instanceof ComposedSchema);
+        assertTrue(wrapped.getNullable());
+        assertEquals("#/components/schemas/Source", ((ComposedSchema) wrapped).getAllOf().get(0).get$ref());
     }
 
     private Optional<Operation> filter(Operation operation) {
