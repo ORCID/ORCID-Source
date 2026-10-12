@@ -87,6 +87,9 @@ public class OrcidOpenApiFilter extends AbstractSpecFilter {
                 response.setContent(withoutMediaTypeParameters(response.getContent()));
             }
         }
+        if (api != null) {
+            SharedErrors.addTo(operation, api.getPath(), api.getMethod());
+        }
         return Optional.of(operation);
     }
 
