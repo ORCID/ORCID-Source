@@ -266,6 +266,7 @@ public class MemberV3ApiServiceImplV3_0 extends MemberApiServiceImplHelper {
     @Path(BULK_WORKS)
     @Operation(summary = "Fetch specified works", tags = "Works", security = { @SecurityRequirement(name = "orcid_auth", scopes = { ScopeConstants.READ_LIMITED }), @SecurityRequirement(name = "orcid_auth", scopes = { ScopeConstants.READ_PUBLIC }) })
     @ApiResponse(responseCode = "200", description = "Fetch specified works", content = @Content(schema = @Schema(implementation = WorkBulk.class)))
+    @ApiResponse(responseCode = "400", description = "More than 100 put-codes (error 9042)", content = @Content(schema = @Schema(implementation = OrcidError.class)))
     public Response viewSpecifiedWorks(@PathParam("orcid") String orcid, @PathParam("putCodes") String putCodes) {
         return serviceDelegator.viewBulkWorks(orcid, putCodes);
     }
@@ -285,7 +286,6 @@ public class MemberV3ApiServiceImplV3_0 extends MemberApiServiceImplHelper {
     @Path(WORK)
     @Operation(summary = "Create a Work", tags = "Works", security = @SecurityRequirement(name = "orcid_auth", scopes = { ScopeConstants.ACTIVITIES_UPDATE }))
     @ApiResponse(responseCode = "201", description = "Work created, see HTTP Location header for URI", headers = @Header(name = "Location", description = "URI of the new item", schema = @Schema(type = "string", format = "uri")))
-    @ApiResponse(responseCode = "400", description = "Invalid Work representation", content = @Content(schema = @Schema(implementation = OrcidError.class)))
     public Response createWork(@PathParam("orcid") String orcid, Work work) {
         return serviceDelegator.createWork(orcid, work);
     }
@@ -296,7 +296,6 @@ public class MemberV3ApiServiceImplV3_0 extends MemberApiServiceImplHelper {
     @Path(WORKS)
     @Operation(summary = "Create a list of Works", tags = "Works", security = @SecurityRequirement(name = "orcid_auth", scopes = { ScopeConstants.ACTIVITIES_UPDATE }))
     @ApiResponse(responseCode = "200", description = "Each element of the bulk is the created work or the error for that work", content = @Content(schema = @Schema(implementation = WorkBulk.class)))
-    @ApiResponse(responseCode = "400", description = "Invalid Work representation", content = @Content(schema = @Schema(implementation = OrcidError.class)))
     public Response createWorks(@PathParam("orcid") String orcid, WorkBulk works) {
         return serviceDelegator.createWorks(orcid, works);
     }
@@ -354,7 +353,6 @@ public class MemberV3ApiServiceImplV3_0 extends MemberApiServiceImplHelper {
     @Path(FUNDING)
     @Operation(summary = "Create a Funding", tags = "Fundings", security = @SecurityRequirement(name = "orcid_auth", scopes = { ScopeConstants.ACTIVITIES_UPDATE }))
     @ApiResponse(responseCode = "201", description = "Funding created, see HTTP Location header for URI", headers = @Header(name = "Location", description = "URI of the new item", schema = @Schema(type = "string", format = "uri")))
-    @ApiResponse(responseCode = "400", description = "Invalid Funding representation", content = @Content(schema = @Schema(implementation = OrcidError.class)))
     public Response createFunding(@PathParam("orcid") String orcid, Funding funding) {
         return serviceDelegator.createFunding(orcid, funding);
     }
@@ -384,8 +382,6 @@ public class MemberV3ApiServiceImplV3_0 extends MemberApiServiceImplHelper {
     @Path(EDUCATION + PUTCODE)
     @Operation(summary = "Fetch an Education", tags = "Education", security = { @SecurityRequirement(name = "orcid_auth", scopes = { ScopeConstants.READ_LIMITED }), @SecurityRequirement(name = "orcid_auth", scopes = { ScopeConstants.READ_PUBLIC }) })
     @ApiResponse(responseCode = "200", description = "OK", content = @Content(schema = @Schema(implementation = Education.class)))
-    @ApiResponse(responseCode = "404", description = "putCode not found", content = @Content(schema = @Schema(implementation = OrcidError.class)))
-    @ApiResponse(responseCode = "400", description = "Invalid putCode or ORCID ID", content = @Content(schema = @Schema(implementation = OrcidError.class)))
     public Response viewEducation(@PathParam("orcid") String orcid, @PathParam("putCode") String putCode) {
         return serviceDelegator.viewEducation(orcid, getPutCode(putCode));
     }
@@ -414,7 +410,6 @@ public class MemberV3ApiServiceImplV3_0 extends MemberApiServiceImplHelper {
     @Path(EDUCATION)
     @Operation(summary = "Create an Education", tags = "Education", security = { @SecurityRequirement(name = "orcid_auth", scopes = { ScopeConstants.READ_LIMITED }), @SecurityRequirement(name = "orcid_auth", scopes = { ScopeConstants.READ_PUBLIC }) })
     @ApiResponse(responseCode = "201", description = "Education created, see HTTP Location header for URI", headers = @Header(name = "Location", description = "URI of the new item", schema = @Schema(type = "string", format = "uri")))
-    @ApiResponse(responseCode = "400", description = "Invalid Education representation", content = @Content(schema = @Schema(implementation = OrcidError.class)))
     public Response createEducation(@PathParam("orcid") String orcid, Education education) {
         return serviceDelegator.createEducation(orcid, education);
     }
@@ -471,7 +466,6 @@ public class MemberV3ApiServiceImplV3_0 extends MemberApiServiceImplHelper {
     @Path(EMPLOYMENT)
     @Operation(summary = "Create an Employment", tags = "Employment", security = @SecurityRequirement(name = "orcid_auth", scopes = { ScopeConstants.ACTIVITIES_UPDATE }))
     @ApiResponse(responseCode = "201", description = "Employment created, see HTTP Location header for URI", headers = @Header(name = "Location", description = "URI of the new item", schema = @Schema(type = "string", format = "uri")))
-    @ApiResponse(responseCode = "400", description = "Invalid Employment representation", content = @Content(schema = @Schema(implementation = OrcidError.class)))
     public Response createEmployment(@PathParam("orcid") String orcid, Employment employment) {
         return serviceDelegator.createEmployment(orcid, employment);
     }
@@ -528,7 +522,6 @@ public class MemberV3ApiServiceImplV3_0 extends MemberApiServiceImplHelper {
     @Path(PEER_REVIEW)
     @Operation(summary = "Create a Peer Review", tags = "Peer reviews", security = @SecurityRequirement(name = "orcid_auth", scopes = { ScopeConstants.ACTIVITIES_UPDATE }))
     @ApiResponse(responseCode = "201", description = "Peer Review created, see HTTP Location header for URI", headers = @Header(name = "Location", description = "URI of the new item", schema = @Schema(type = "string", format = "uri")))
-    @ApiResponse(responseCode = "400", description = "Invalid Peer Review representation", content = @Content(schema = @Schema(implementation = OrcidError.class)))
     public Response createPeerReview(@PathParam("orcid") String orcid, PeerReview peerReview) {
         return serviceDelegator.createPeerReview(orcid, peerReview);
     }
@@ -557,6 +550,7 @@ public class MemberV3ApiServiceImplV3_0 extends MemberApiServiceImplHelper {
     @Path(GROUP_ID_RECORD + PUTCODE)
     @Operation(summary = "Fetch a Group", tags = "Group IDs", security = @SecurityRequirement(name = "orcid_auth", scopes = { ScopeConstants.GROUP_ID_RECORD_READ }))
     @ApiResponse(responseCode = "200", description = "Fetch a Group", content = @Content(schema = @Schema(implementation = GroupIdRecord.class)))
+    @ApiResponse(responseCode = "400", description = "No group ID record has this put-code (error 9026)", content = @Content(schema = @Schema(implementation = OrcidError.class)))
     public Response viewGroupIdRecord(@PathParam("putCode") String putCode) {
         return serviceDelegator.viewGroupIdRecord(getPutCode(putCode));
     }
@@ -567,7 +561,6 @@ public class MemberV3ApiServiceImplV3_0 extends MemberApiServiceImplHelper {
     @Path(GROUP_ID_RECORD)
     @Operation(summary = "Create a Group", tags = "Group IDs", security = @SecurityRequirement(name = "orcid_auth", scopes = { ScopeConstants.GROUP_ID_RECORD_UPDATE }))
     @ApiResponse(responseCode = "201", description = "Group created, see HTTP Location header for URI", headers = @Header(name = "Location", description = "URI of the new item", schema = @Schema(type = "string", format = "uri")))
-    @ApiResponse(responseCode = "400", description = "Invalid Group representation", content = @Content(schema = @Schema(implementation = OrcidError.class)))
     public Response createGroupIdRecord(GroupIdRecord groupIdRecord) {
         return serviceDelegator.createGroupIdRecord(groupIdRecord);
     }
@@ -632,8 +625,6 @@ public class MemberV3ApiServiceImplV3_0 extends MemberApiServiceImplHelper {
     @Path(PERMISSIONS_VIEW_PATH)
     @Operation(summary = "Fetch a notification by id", tags = "Notifications", security = @SecurityRequirement(name = "orcid_auth", scopes = { ScopeConstants.PREMIUM_NOTIFICATION }))
     @ApiResponse(responseCode = "200", description = "The notification", content = @Content(schema = @Schema(implementation = NotificationPermission.class)))
-    @ApiResponse(responseCode = "404", description = "Notification not found", content = @Content(schema = @Schema(implementation = OrcidError.class)))
-    @ApiResponse(responseCode = "401", description = "Access denied, this is not your notification", content = @Content(schema = @Schema(implementation = OrcidError.class)))
     public Response viewPermissionNotification(@PathParam("orcid") String orcid, @PathParam("id") Long id) {
         return notificationsServiceDelegator.findPermissionNotification(orcid, id);
     }
@@ -644,8 +635,6 @@ public class MemberV3ApiServiceImplV3_0 extends MemberApiServiceImplHelper {
     @Consumes()
     @Operation(summary = "Archive a notification", tags = "Notifications", security = @SecurityRequirement(name = "orcid_auth", scopes = { ScopeConstants.PREMIUM_NOTIFICATION }))
     @ApiResponse(responseCode = "200", description = "The notification, now archived", content = @Content(schema = @Schema(implementation = NotificationPermission.class)))
-    @ApiResponse(responseCode = "404", description = "Notification not found", content = @Content(schema = @Schema(implementation = OrcidError.class)))
-    @ApiResponse(responseCode = "401", description = "Access denied, this is not your notification", content = @Content(schema = @Schema(implementation = OrcidError.class)))
     public Response flagAsArchivedPermissionNotification(@PathParam("orcid") String orcid, @PathParam("id") Long id) throws OrcidNotificationAlreadyReadException {
         return notificationsServiceDelegator.flagNotificationAsArchived(orcid, id);
     }
@@ -965,6 +954,7 @@ public class MemberV3ApiServiceImplV3_0 extends MemberApiServiceImplHelper {
     @Parameter(name = "start", in = ParameterIn.QUERY, description = "Offset of the first result (0-based).", schema = @Schema(type = "integer"))
     @Parameter(name = "rows", in = ParameterIn.QUERY, description = "Number of results to return (maximum 1000).", schema = @Schema(type = "integer"))
     @ApiResponse(responseCode = "200", description = "Search records", content = @Content(schema = @Schema(implementation = Search.class)))
+    @ApiResponse(responseCode = "400", description = "The start or rows parameter is out of range (rows 1,000 at most; start 10,000 at most without a token)", content = @Content(schema = @Schema(implementation = OrcidError.class)))
     public Response searchByQuery(@Parameter(description = "Solr query, for example `family-name:Carberry` or `doi-self:10.1087/20120404`.") @QueryParam("q") @DefaultValue("") String query, @Context UriInfo uriInfo) throws ParseException {
         Map<String, List<String>> solrParams = new HashMap<>(uriInfo.getQueryParameters());
         Response xmlQueryResults = serviceDelegator.searchByQuery(solrParams);
@@ -979,6 +969,7 @@ public class MemberV3ApiServiceImplV3_0 extends MemberApiServiceImplHelper {
     @Parameter(name = "rows", in = ParameterIn.QUERY, description = "Number of results to return (maximum 1000).", schema = @Schema(type = "integer"))
     @Parameter(name = "fl", in = ParameterIn.QUERY, description = "Comma-separated fields to return, for example `orcid,given-names,family-name`.", schema = @Schema(type = "string"))
     @ApiResponse(responseCode = "200", description = "One row per result, with the requested fields", content = @Content(mediaType = "text/csv", schema = @Schema(type = "string")))
+    @ApiResponse(responseCode = "400", description = "The start or rows parameter is out of range (rows 1,000 at most; start 10,000 at most without a token)", content = @Content(schema = @Schema(implementation = OrcidError.class)))
     public Response searchByQueryCSV(@Parameter(description = "Solr query, for example `family-name:Carberry` or `doi-self:10.1087/20120404`.") @QueryParam("q") @DefaultValue("") String query, @Context UriInfo uriInfo) throws ParseException {
         Map<String, List<String>> solrParams = new HashMap<>(uriInfo.getQueryParameters());
         Response csvQueryResults = serviceDelegator.searchByQueryCSV(solrParams);
@@ -992,6 +983,7 @@ public class MemberV3ApiServiceImplV3_0 extends MemberApiServiceImplHelper {
     @Parameter(name = "start", in = ParameterIn.QUERY, description = "Offset of the first result (0-based).", schema = @Schema(type = "integer"))
     @Parameter(name = "rows", in = ParameterIn.QUERY, description = "Number of results to return (maximum 1000).", schema = @Schema(type = "integer"))
     @ApiResponse(responseCode = "200", description = "Matching records with their names, emails and institutions", content = @Content(schema = @Schema(implementation = ExpandedSearch.class)))
+    @ApiResponse(responseCode = "400", description = "The start or rows parameter is out of range (rows 1,000 at most; start 10,000 at most without a token)", content = @Content(schema = @Schema(implementation = OrcidError.class)))
     public Response expandedSearchByQuery(@Parameter(description = "Solr query, for example `family-name:Carberry` or `doi-self:10.1087/20120404`.") @QueryParam("q") @DefaultValue("") String query, @Context UriInfo uriInfo) {
         Map<String, List<String>> solrParams = new HashMap<>(uriInfo.getQueryParameters());
         Response queryResults = serviceDelegator.expandedSearchByQuery(solrParams);
@@ -1013,8 +1005,6 @@ public class MemberV3ApiServiceImplV3_0 extends MemberApiServiceImplHelper {
     @Path(DISTINCTION + PUTCODE)
     @Operation(summary = "Fetch an Distinction", tags = "Distinction", security = { @SecurityRequirement(name = "orcid_auth", scopes = { ScopeConstants.READ_LIMITED }), @SecurityRequirement(name = "orcid_auth", scopes = { ScopeConstants.READ_PUBLIC }) })
     @ApiResponse(responseCode = "200", description = "OK", content = @Content(schema = @Schema(implementation = Distinction.class)))
-    @ApiResponse(responseCode = "404", description = "putCode not found", content = @Content(schema = @Schema(implementation = OrcidError.class)))
-    @ApiResponse(responseCode = "400", description = "Invalid putCode or ORCID ID", content = @Content(schema = @Schema(implementation = OrcidError.class)))
     public Response viewDistinction(@PathParam("orcid") String orcid, @PathParam("putCode") String putCode) {
         return serviceDelegator.viewDistinction(orcid, getPutCode(putCode));
     }
@@ -1043,7 +1033,6 @@ public class MemberV3ApiServiceImplV3_0 extends MemberApiServiceImplHelper {
     @Path(DISTINCTION)
     @Operation(summary = "Create an Distinction", tags = "Distinction", security = { @SecurityRequirement(name = "orcid_auth", scopes = { ScopeConstants.READ_LIMITED }), @SecurityRequirement(name = "orcid_auth", scopes = { ScopeConstants.READ_PUBLIC }) })
     @ApiResponse(responseCode = "201", description = "Distinction created, see HTTP Location header for URI", headers = @Header(name = "Location", description = "URI of the new item", schema = @Schema(type = "string", format = "uri")))
-    @ApiResponse(responseCode = "400", description = "Invalid Distinction representation", content = @Content(schema = @Schema(implementation = OrcidError.class)))
     public Response createDistinction(@PathParam("orcid") String orcid, Distinction distinction) {
         return serviceDelegator.createDistinction(orcid, distinction);
     }
@@ -1072,8 +1061,6 @@ public class MemberV3ApiServiceImplV3_0 extends MemberApiServiceImplHelper {
     @Path(INVITED_POSITION + PUTCODE)
     @Operation(summary = "Fetch an InvitedPosition", tags = "Invited position", security = { @SecurityRequirement(name = "orcid_auth", scopes = { ScopeConstants.READ_LIMITED }), @SecurityRequirement(name = "orcid_auth", scopes = { ScopeConstants.READ_PUBLIC }) })
     @ApiResponse(responseCode = "200", description = "OK", content = @Content(schema = @Schema(implementation = InvitedPosition.class)))
-    @ApiResponse(responseCode = "404", description = "putCode not found", content = @Content(schema = @Schema(implementation = OrcidError.class)))
-    @ApiResponse(responseCode = "400", description = "Invalid putCode or ORCID ID", content = @Content(schema = @Schema(implementation = OrcidError.class)))
     public Response viewInvitedPosition(@PathParam("orcid") String orcid, @PathParam("putCode") String putCode) {
         return serviceDelegator.viewInvitedPosition(orcid, getPutCode(putCode));
     }
@@ -1102,7 +1089,6 @@ public class MemberV3ApiServiceImplV3_0 extends MemberApiServiceImplHelper {
     @Path(INVITED_POSITION)
     @Operation(summary = "Create an InvitedPosition", tags = "Invited position", security = { @SecurityRequirement(name = "orcid_auth", scopes = { ScopeConstants.READ_LIMITED }), @SecurityRequirement(name = "orcid_auth", scopes = { ScopeConstants.READ_PUBLIC }) })
     @ApiResponse(responseCode = "201", description = "InvitedPosition created, see HTTP Location header for URI", headers = @Header(name = "Location", description = "URI of the new item", schema = @Schema(type = "string", format = "uri")))
-    @ApiResponse(responseCode = "400", description = "Invalid InvitedPosition representation", content = @Content(schema = @Schema(implementation = OrcidError.class)))
     public Response createInvitedPosition(@PathParam("orcid") String orcid, InvitedPosition invitedPosition) {
         return serviceDelegator.createInvitedPosition(orcid, invitedPosition);
     }
@@ -1131,8 +1117,6 @@ public class MemberV3ApiServiceImplV3_0 extends MemberApiServiceImplHelper {
     @Path(MEMBERSHIP + PUTCODE)
     @Operation(summary = "Fetch an Membership", tags = "Membership", security = { @SecurityRequirement(name = "orcid_auth", scopes = { ScopeConstants.READ_LIMITED }), @SecurityRequirement(name = "orcid_auth", scopes = { ScopeConstants.READ_PUBLIC }) })
     @ApiResponse(responseCode = "200", description = "OK", content = @Content(schema = @Schema(implementation = Membership.class)))
-    @ApiResponse(responseCode = "404", description = "putCode not found", content = @Content(schema = @Schema(implementation = OrcidError.class)))
-    @ApiResponse(responseCode = "400", description = "Invalid putCode or ORCID ID", content = @Content(schema = @Schema(implementation = OrcidError.class)))
     public Response viewMembership(@PathParam("orcid") String orcid, @PathParam("putCode") String putCode) {
         return serviceDelegator.viewMembership(orcid, getPutCode(putCode));
     }
@@ -1161,7 +1145,6 @@ public class MemberV3ApiServiceImplV3_0 extends MemberApiServiceImplHelper {
     @Path(MEMBERSHIP)
     @Operation(summary = "Create an Membership", tags = "Membership", security = { @SecurityRequirement(name = "orcid_auth", scopes = { ScopeConstants.READ_LIMITED }), @SecurityRequirement(name = "orcid_auth", scopes = { ScopeConstants.READ_PUBLIC }) })
     @ApiResponse(responseCode = "201", description = "Membership created, see HTTP Location header for URI", headers = @Header(name = "Location", description = "URI of the new item", schema = @Schema(type = "string", format = "uri")))
-    @ApiResponse(responseCode = "400", description = "Invalid Membership representation", content = @Content(schema = @Schema(implementation = OrcidError.class)))
     public Response createMembership(@PathParam("orcid") String orcid, Membership membership) {
         return serviceDelegator.createMembership(orcid, membership);
     }
@@ -1190,8 +1173,6 @@ public class MemberV3ApiServiceImplV3_0 extends MemberApiServiceImplHelper {
     @Path(QUALIFICATION + PUTCODE)
     @Operation(summary = "Fetch an Qualification", tags = "Qualification", security = { @SecurityRequirement(name = "orcid_auth", scopes = { ScopeConstants.READ_LIMITED }), @SecurityRequirement(name = "orcid_auth", scopes = { ScopeConstants.READ_PUBLIC }) })
     @ApiResponse(responseCode = "200", description = "OK", content = @Content(schema = @Schema(implementation = Qualification.class)))
-    @ApiResponse(responseCode = "404", description = "putCode not found", content = @Content(schema = @Schema(implementation = OrcidError.class)))
-    @ApiResponse(responseCode = "400", description = "Invalid putCode or ORCID ID", content = @Content(schema = @Schema(implementation = OrcidError.class)))
     public Response viewQualification(@PathParam("orcid") String orcid, @PathParam("putCode") String putCode) {
         return serviceDelegator.viewQualification(orcid, getPutCode(putCode));
     }
@@ -1220,7 +1201,6 @@ public class MemberV3ApiServiceImplV3_0 extends MemberApiServiceImplHelper {
     @Path(QUALIFICATION)
     @Operation(summary = "Create an Qualification", tags = "Qualification", security = { @SecurityRequirement(name = "orcid_auth", scopes = { ScopeConstants.READ_LIMITED }), @SecurityRequirement(name = "orcid_auth", scopes = { ScopeConstants.READ_PUBLIC }) })
     @ApiResponse(responseCode = "201", description = "Qualification created, see HTTP Location header for URI", headers = @Header(name = "Location", description = "URI of the new item", schema = @Schema(type = "string", format = "uri")))
-    @ApiResponse(responseCode = "400", description = "Invalid Qualification representation", content = @Content(schema = @Schema(implementation = OrcidError.class)))
     public Response createQualification(@PathParam("orcid") String orcid, Qualification qualification) {
         return serviceDelegator.createQualification(orcid, qualification);
     }
@@ -1249,8 +1229,6 @@ public class MemberV3ApiServiceImplV3_0 extends MemberApiServiceImplHelper {
     @Path(SERVICE + PUTCODE)
     @Operation(summary = "Fetch an Service", tags = "Service", security = { @SecurityRequirement(name = "orcid_auth", scopes = { ScopeConstants.READ_LIMITED }), @SecurityRequirement(name = "orcid_auth", scopes = { ScopeConstants.READ_PUBLIC }) })
     @ApiResponse(responseCode = "200", description = "OK", content = @Content(schema = @Schema(implementation = Service.class)))
-    @ApiResponse(responseCode = "404", description = "putCode not found", content = @Content(schema = @Schema(implementation = OrcidError.class)))
-    @ApiResponse(responseCode = "400", description = "Invalid putCode or ORCID ID", content = @Content(schema = @Schema(implementation = OrcidError.class)))
     public Response viewService(@PathParam("orcid") String orcid, @PathParam("putCode") String putCode) {
         return serviceDelegator.viewService(orcid, getPutCode(putCode));
     }
@@ -1279,7 +1257,6 @@ public class MemberV3ApiServiceImplV3_0 extends MemberApiServiceImplHelper {
     @Path(SERVICE)
     @Operation(summary = "Create an Service", tags = "Service", security = { @SecurityRequirement(name = "orcid_auth", scopes = { ScopeConstants.READ_LIMITED }), @SecurityRequirement(name = "orcid_auth", scopes = { ScopeConstants.READ_PUBLIC }) })
     @ApiResponse(responseCode = "201", description = "Service created, see HTTP Location header for URI", headers = @Header(name = "Location", description = "URI of the new item", schema = @Schema(type = "string", format = "uri")))
-    @ApiResponse(responseCode = "400", description = "Invalid Service representation", content = @Content(schema = @Schema(implementation = OrcidError.class)))
     public Response createService(@PathParam("orcid") String orcid, Service service) {
         return serviceDelegator.createService(orcid, service);
     }
@@ -1309,8 +1286,6 @@ public class MemberV3ApiServiceImplV3_0 extends MemberApiServiceImplHelper {
     @Path(RESEARCH_RESOURCE + PUTCODE)
     @Operation(summary = "Fetch a Research Resource", tags = "Research resources", security = { @SecurityRequirement(name = "orcid_auth", scopes = { ScopeConstants.READ_LIMITED }), @SecurityRequirement(name = "orcid_auth", scopes = { ScopeConstants.READ_PUBLIC }) })
     @ApiResponse(responseCode = "200", description = "OK", content = @Content(schema = @Schema(implementation = ResearchResource.class)))
-    @ApiResponse(responseCode = "404", description = "putCode not found", content = @Content(schema = @Schema(implementation = OrcidError.class)))
-    @ApiResponse(responseCode = "400", description = "Invalid putCode or ORCID ID", content = @Content(schema = @Schema(implementation = OrcidError.class)))
     public Response viewResearchResource(@PathParam("orcid") String orcid, @PathParam("putCode") String putCode) {
         return serviceDelegator.viewResearchResource(orcid, getPutCode(putCode));
     }
@@ -1339,7 +1314,6 @@ public class MemberV3ApiServiceImplV3_0 extends MemberApiServiceImplHelper {
     @Path(RESEARCH_RESOURCE)
     @Operation(summary = "Create a Research Resource", tags = "Research resources", security = { @SecurityRequirement(name = "orcid_auth", scopes = { ScopeConstants.READ_LIMITED }), @SecurityRequirement(name = "orcid_auth", scopes = { ScopeConstants.READ_PUBLIC }) })
     @ApiResponse(responseCode = "201", description = "ResearchResource created, see HTTP Location header for URI", headers = @Header(name = "Location", description = "URI of the new item", schema = @Schema(type = "string", format = "uri")))
-    @ApiResponse(responseCode = "400", description = "Invalid ResearchResource representation", content = @Content(schema = @Schema(implementation = OrcidError.class)))
     public Response createResearchResource(@PathParam("orcid") String orcid, ResearchResource ResearchResource) {
         return serviceDelegator.createResearchResource(orcid, ResearchResource);
     }

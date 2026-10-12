@@ -242,6 +242,7 @@ public class PublicV3ApiServiceImplV3_0 {
   @Path(BULK_WORKS)
   @Operation(summary = "Fetch specified works", tags = "Works")
   @ApiResponse(responseCode = "200", description = "The requested works; an error element stands in for each put-code that could not be read", content = @Content(schema = @Schema(implementation = WorkBulk.class)))
+  @ApiResponse(responseCode = "400", description = "More than 100 put-codes (error 9042)", content = @Content(schema = @Schema(implementation = OrcidError.class)))
   public Response viewSpecifiedWorks(@PathParam("orcid") String orcid, @PathParam("putCodes") String putCodes) {
       serviceDelegator.trackEvents(httpRequest);
       return serviceDelegator.viewBulkWorks(orcid, putCodes);
@@ -312,7 +313,6 @@ public class PublicV3ApiServiceImplV3_0 {
   @Path(EMPLOYMENT + PUTCODE)
   @Operation(summary = "Fetch an Employment", tags = "Employment")
   @ApiResponse(responseCode = "200", description = "Employment found", content = @Content(schema = @Schema(implementation = Employment.class)))
-  @ApiResponse(responseCode = "404", description = "Employment not found", content = @Content(schema = @Schema(implementation = OrcidError.class)))
   public Response viewEmployment(@PathParam("orcid") String orcid, @PathParam("putCode") Long putCode) {
       serviceDelegator.trackEvents(httpRequest);
       return serviceDelegator.viewEmployment(orcid, putCode);
@@ -539,6 +539,7 @@ public class PublicV3ApiServiceImplV3_0 {
   @Parameter(name = "start", in = ParameterIn.QUERY, description = "Offset of the first result (0-based).", schema = @Schema(type = "integer"))
   @Parameter(name = "rows", in = ParameterIn.QUERY, description = "Number of results to return (maximum 1000).", schema = @Schema(type = "integer"))
   @ApiResponse(responseCode = "200", description = "The iDs of the matching records", content = @Content(schema = @Schema(implementation = Search.class)))
+  @ApiResponse(responseCode = "400", description = "The start or rows parameter is out of range (rows 1,000 at most; start 10,000 at most without a token)", content = @Content(schema = @Schema(implementation = OrcidError.class)))
   public Response searchByQuery(@Parameter(description = "Solr query, for example `family-name:Carberry` or `doi-self:10.1087/20120404`.") @QueryParam("q") @DefaultValue("") String query, @Context UriInfo uriInfo) throws ParseException{
       serviceDelegator.trackEvents(httpRequest);
       Map<String, List<String>> solrParams = new HashMap<>(uriInfo.getQueryParameters());
@@ -554,6 +555,7 @@ public class PublicV3ApiServiceImplV3_0 {
   @Parameter(name = "rows", in = ParameterIn.QUERY, description = "Number of results to return (maximum 1000).", schema = @Schema(type = "integer"))
   @Parameter(name = "fl", in = ParameterIn.QUERY, description = "Comma-separated fields to return, for example `orcid,given-names,family-name`.", schema = @Schema(type = "string"))
   @ApiResponse(responseCode = "200", description = "One row per result, with the requested fields", content = @Content(mediaType = "text/csv", schema = @Schema(type = "string")))
+  @ApiResponse(responseCode = "400", description = "The start or rows parameter is out of range (rows 1,000 at most; start 10,000 at most without a token)", content = @Content(schema = @Schema(implementation = OrcidError.class)))
   public Response searchByQueryCSV(@Parameter(description = "Solr query, for example `family-name:Carberry` or `doi-self:10.1087/20120404`.") @QueryParam("q") @DefaultValue("") String query, @Context UriInfo uriInfo) throws ParseException{
       serviceDelegator.trackEvents(httpRequest);
       Map<String, List<String>> solrParams = new HashMap<>(uriInfo.getQueryParameters());
@@ -568,6 +570,7 @@ public class PublicV3ApiServiceImplV3_0 {
   @Parameter(name = "start", in = ParameterIn.QUERY, description = "Offset of the first result (0-based).", schema = @Schema(type = "integer"))
   @Parameter(name = "rows", in = ParameterIn.QUERY, description = "Number of results to return (maximum 1000).", schema = @Schema(type = "integer"))
   @ApiResponse(responseCode = "200", description = "Matching records with their names, emails and institutions", content = @Content(schema = @Schema(implementation = ExpandedSearch.class)))
+  @ApiResponse(responseCode = "400", description = "The start or rows parameter is out of range (rows 1,000 at most; start 10,000 at most without a token)", content = @Content(schema = @Schema(implementation = OrcidError.class)))
   public Response expandedSearchByQuery(@Parameter(description = "Solr query, for example `family-name:Carberry` or `doi-self:10.1087/20120404`.") @QueryParam("q") @DefaultValue("") String query, @Context UriInfo uriInfo) throws ParseException{
       serviceDelegator.trackEvents(httpRequest);
       Map<String, List<String>> solrParams = new HashMap<>(uriInfo.getQueryParameters());
@@ -589,8 +592,6 @@ public class PublicV3ApiServiceImplV3_0 {
   @Path(DISTINCTION + PUTCODE)
   @Operation(summary = "Fetch an Distinction", tags = "Distinction")
   @ApiResponse(responseCode = "200", description = "OK", content = @Content(schema = @Schema(implementation = Distinction.class)))
-  @ApiResponse(responseCode = "404", description = "putCode not found", content = @Content(schema = @Schema(implementation = OrcidError.class)))
-  @ApiResponse(responseCode = "400", description = "Invalid putCode or ORCID ID", content = @Content(schema = @Schema(implementation = OrcidError.class)))
   public Response viewDistinction(@PathParam("orcid") String orcid, @PathParam("putCode") String putCode) {
       serviceDelegator.trackEvents(httpRequest);
       return serviceDelegator.viewDistinction(orcid, Long.valueOf(putCode));
@@ -621,8 +622,6 @@ public class PublicV3ApiServiceImplV3_0 {
   @Path(INVITED_POSITION + PUTCODE)
   @Operation(summary = "Fetch an InvitedPosition", tags = "Invited position")
   @ApiResponse(responseCode = "200", description = "OK", content = @Content(schema = @Schema(implementation = InvitedPosition.class)))
-  @ApiResponse(responseCode = "404", description = "putCode not found", content = @Content(schema = @Schema(implementation = OrcidError.class)))
-  @ApiResponse(responseCode = "400", description = "Invalid putCode or ORCID ID", content = @Content(schema = @Schema(implementation = OrcidError.class)))
   public Response viewInvitedPosition(@PathParam("orcid") String orcid, @PathParam("putCode") String putCode) {
       serviceDelegator.trackEvents(httpRequest);
       return serviceDelegator.viewInvitedPosition(orcid, Long.valueOf(putCode));
@@ -653,8 +652,6 @@ public class PublicV3ApiServiceImplV3_0 {
   @Path(MEMBERSHIP + PUTCODE)
   @Operation(summary = "Fetch an Membership", tags = "Membership")
   @ApiResponse(responseCode = "200", description = "OK", content = @Content(schema = @Schema(implementation = Membership.class)))
-  @ApiResponse(responseCode = "404", description = "putCode not found", content = @Content(schema = @Schema(implementation = OrcidError.class)))
-  @ApiResponse(responseCode = "400", description = "Invalid putCode or ORCID ID", content = @Content(schema = @Schema(implementation = OrcidError.class)))
   public Response viewMembership(@PathParam("orcid") String orcid, @PathParam("putCode") String putCode) {
       serviceDelegator.trackEvents(httpRequest);
       return serviceDelegator.viewMembership(orcid, Long.valueOf(putCode));
@@ -685,8 +682,6 @@ public class PublicV3ApiServiceImplV3_0 {
   @Path(QUALIFICATION + PUTCODE)
   @Operation(summary = "Fetch an Qualification", tags = "Qualification")
   @ApiResponse(responseCode = "200", description = "OK", content = @Content(schema = @Schema(implementation = Qualification.class)))
-  @ApiResponse(responseCode = "404", description = "putCode not found", content = @Content(schema = @Schema(implementation = OrcidError.class)))
-  @ApiResponse(responseCode = "400", description = "Invalid putCode or ORCID ID", content = @Content(schema = @Schema(implementation = OrcidError.class)))
   public Response viewQualification(@PathParam("orcid") String orcid, @PathParam("putCode") String putCode) {
       serviceDelegator.trackEvents(httpRequest);
       return serviceDelegator.viewQualification(orcid, Long.valueOf(putCode));
@@ -717,8 +712,6 @@ public class PublicV3ApiServiceImplV3_0 {
   @Path(SERVICE + PUTCODE)
   @Operation(summary = "Fetch an Service", tags = "Service")
   @ApiResponse(responseCode = "200", description = "OK", content = @Content(schema = @Schema(implementation = Service.class)))
-  @ApiResponse(responseCode = "404", description = "putCode not found", content = @Content(schema = @Schema(implementation = OrcidError.class)))
-  @ApiResponse(responseCode = "400", description = "Invalid putCode or ORCID ID", content = @Content(schema = @Schema(implementation = OrcidError.class)))
   public Response viewService(@PathParam("orcid") String orcid, @PathParam("putCode") String putCode) {
       serviceDelegator.trackEvents(httpRequest);
       return serviceDelegator.viewService(orcid, Long.valueOf(putCode));
@@ -749,8 +742,6 @@ public class PublicV3ApiServiceImplV3_0 {
   @Path(RESEARCH_RESOURCE + PUTCODE)
   @Operation(summary = "Fetch a Research Resource", tags = "Research resources")
   @ApiResponse(responseCode = "200", description = "OK", content = @Content(schema = @Schema(implementation = ResearchResource.class)))
-  @ApiResponse(responseCode = "404", description = "putCode not found", content = @Content(schema = @Schema(implementation = OrcidError.class)))
-  @ApiResponse(responseCode = "400", description = "Invalid putCode or ORCID ID", content = @Content(schema = @Schema(implementation = OrcidError.class)))
   public Response viewResearchResource(@PathParam("orcid") String orcid, @PathParam("putCode") String putCode) {
       serviceDelegator.trackEvents(httpRequest);
       return serviceDelegator.viewResearchResource(orcid, Long.valueOf(putCode));
