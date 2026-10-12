@@ -38,6 +38,9 @@ final class SharedErrors {
     static final Set<String> LISTS_EMPTY_FOR_UNKNOWN_ID = Set.of("viewDistinctions", "viewInvitedPositions", "viewMemberships",
             "viewQualifications", "viewServices", "viewResearchResources");
 
+    /** Person-section items, whose duplicates are error 9030; activities' duplicates are 9021. */
+    static final List<String> PERSON_ITEMS = List.of("/other-names", "/keywords", "/researcher-urls", "/address", "/external-identifiers");
+
     private SharedErrors() {
     }
 
@@ -50,8 +53,11 @@ final class SharedErrors {
         boolean record = path.startsWith("/v3.0/{orcid}");
         boolean get = "GET".equalsIgnoreCase(httpMethod);
         boolean post = "POST".equalsIgnoreCase(httpMethod);
+        boolean put = "PUT".equalsIgnoreCase(httpMethod);
         boolean body = operation.getRequestBody() != null;
         boolean putCode = hasPathParameter(operation, "putCode");
+        // Some resource methods take the put-code as a String and parse it themselves.
+        boolean textPutCode = putCode && "string".equals(pathParameterType(operation, "putCode"));
         boolean notification = path.startsWith("/v3.0/{orcid}/notification-permission");
         boolean notificationId = notification && hasPathParameter(operation, "id");
         boolean groupIdRecord = path.startsWith("/v3.0/group-id-record");
@@ -68,6 +74,9 @@ final class SharedErrors {
         if (member && putCode) {
             invalid.add("the put-code is not a number (9034)");
         }
+        if (!member && textPutCode) {
+            invalid.add("the put-code is not a number (9006)");
+        }
         if (groupIdRecord && putCode) {
             invalid.add("no group ID record has this put-code (9026)");
         }
@@ -82,20 +91,33 @@ final class SharedErrors {
 
         if (member) {
             String unauthorized = "The token is unknown, expired or revoked (an OAuth error, always JSON)";
-            unauthorized += record ? ", or it was granted for another record (error 9017), which includes an iD that has no record." : ".";
+            unauthorized += record ? ", or it was granted for another record (error 9017). A user's token sent to an iD that has no record gets this too." : ".";
             addIfAbsent(responses, "401", withOAuthError(orcidError(types, unauthorized)));
             List<String> forbidden = new ArrayList<>();
             forbidden.add("No token was sent, or the token belongs to a public client (an OAuth error, always JSON)");
             forbidden.add("the token lacks the scope this needs (error 9038)");
-            if (putCode && get) {
+            if (putCode && get && !groupIdRecord) {
                 forbidden.add("the item is private and another client added it (9013)");
-            } else if (putCode) {
+            } else if (putCode && !get) {
                 forbidden.add("another client added the item (9010)");
             }
-            if (notificationId) {
-                forbidden.add("another client sent the notification (9004)");
+            if ("viewBiography".equals(operationId)) {
+                forbidden.add("the biography is private (9013)");
             }
-            addIfAbsent(responses, "403", withOAuthError(orcidError(types, String.join("; or ", forbidden) + ".")));
+            if (notificationId && get) {
+                forbidden.add("another client sent the notification (9004)");
+            } else if (notificationId) {
+                forbidden.add("another client sent the notification (9010), or the record owner has already read it (9009)");
+            }
+            String text = String.join("; or ", forbidden) + ".";
+            ApiResponse declared = responses.get("403");
+            if (declared == null) {
+                responses.addApiResponse("403", withOAuthError(orcidError(types, text)));
+            } else if (declared.getContent() != null) {
+                // The operation names its own cause; the token check can still refuse the request first.
+                declared.description(declared.getDescription() + "; or " + Character.toLowerCase(text.charAt(0)) + text.substring(1));
+                withOAuthError(declared);
+            }
         } else {
             addIfAbsent(responses, "401", oauthError("The token is unknown, expired or revoked. The token is optional, but a bad one is refused."));
             if ((putCode && get) || "viewBiography".equals(operationId)) {
@@ -106,19 +128,31 @@ final class SharedErrors {
         boolean emptyForUnknownId = !member && LISTS_EMPTY_FOR_UNKNOWN_ID.contains(operationId);
         if (notificationId) {
             addIfAbsent(responses, "404", orcidError(types, "No record has this iD (error 9016), or no notification has this id (9029)."));
-        } else if ((record && !emptyForUnknownId) || path.startsWith("/v3.0/client/")) {
+        } else if (path.startsWith("/v3.0/client/")) {
+            addIfAbsent(responses, "404", orcidError(types, "No client has this id (error 9016)."));
+        } else if (record && !emptyForUnknownId) {
             addIfAbsent(responses, "404", orcidError(types, "No record has this iD, or no item has this put-code (error 9016)."
-                    + (!member && putCode ? " Also when the put-code is not a number." : "")));
+                    + (!member && putCode && !textPutCode ? " Also when the put-code is not a number." : "")));
+        }
+        if (groupIdRecord && put) {
+            addIfAbsent(responses, "409", orcidError(types, "Another group ID record already has this group-id (error 9025)."));
         }
         if (record) {
             String conflict = "The record is locked (error 9018), " + (notification && get ? "" : "deactivated (9044), ")
                     + "or unclaimed and still in its claim period (9036)";
+            boolean duplicates = (post || put) && body && !notification && !"createWorks".equals(operationId);
+            boolean personItem = PERSON_ITEMS.stream().anyMatch(path::contains);
             if (get) {
                 conflict += ".";
-            } else if (post && body && !"createWorks".equals(operationId)) {
-                conflict += "; or deprecated; or the item duplicates one already on the record (9021).";
             } else {
-                conflict += "; or deprecated.";
+                conflict += "; or deprecated";
+                if (duplicates) {
+                    conflict += "; or the item duplicates one already on the record (" + (personItem ? "9030" : "9021") + ")";
+                }
+                if (post && path.matches("/v3\\.0/\\{orcid\\}/works?")) {
+                    conflict += "; or the record already holds the most works it may (9048)";
+                }
+                conflict += ".";
             }
             addIfAbsent(responses, "409", orcidError(types, conflict));
             if (get) {
@@ -128,6 +162,18 @@ final class SharedErrors {
                 addIfAbsent(responses, "301", moved);
             }
         }
+    }
+
+    /** The schema type of a path parameter, or null. */
+    private static String pathParameterType(Operation operation, String name) {
+        if (operation.getParameters() != null) {
+            for (Parameter parameter : operation.getParameters()) {
+                if ("path".equals(parameter.getIn()) && name.equals(parameter.getName()) && parameter.getSchema() != null) {
+                    return parameter.getSchema().getType();
+                }
+            }
+        }
+        return null;
     }
 
     private static boolean hasPathParameter(Operation operation, String name) {

@@ -13,7 +13,9 @@ import org.junit.Test;
 import io.swagger.v3.oas.models.Operation;
 import io.swagger.v3.oas.models.media.Content;
 import io.swagger.v3.oas.models.media.MediaType;
+import io.swagger.v3.oas.models.media.IntegerSchema;
 import io.swagger.v3.oas.models.media.Schema;
+import io.swagger.v3.oas.models.media.StringSchema;
 import io.swagger.v3.oas.models.parameters.PathParameter;
 import io.swagger.v3.oas.models.parameters.RequestBody;
 import io.swagger.v3.oas.models.responses.ApiResponse;
@@ -170,5 +172,83 @@ public class SharedErrorsTest {
         SharedErrors.addTo(update, "/v3.0/group-id-record/{putCode}", "PUT");
         assertTrue(update.getResponses().get("400").getDescription().contains("9026"));
         assertFalse(update.getResponses().containsKey("404"));
+    }
+
+    @Test
+    public void aPublicPutCodeTakenAsTextIsABadRequestWhenItIsNotANumber() {
+        Operation text = operation(false, "orcid");
+        text.addParametersItem(new PathParameter().name("putCode").schema(new StringSchema()));
+        SharedErrors.addTo(text, "/v3.0/{orcid}/keywords/{putCode}", "GET");
+        assertTrue(text.getResponses().get("400").getDescription().contains("9006"));
+        assertFalse(text.getResponses().get("404").getDescription().contains("not a number"));
+
+        Operation number = operation(false, "orcid");
+        number.addParametersItem(new PathParameter().name("putCode").schema(new IntegerSchema().format("int64")));
+        SharedErrors.addTo(number, "/v3.0/{orcid}/work/{putCode}", "GET");
+        assertFalse(number.getResponses().containsKey("400"));
+        assertTrue(number.getResponses().get("404").getDescription().contains("not a number"));
+    }
+
+    @Test
+    public void duplicatesHaveTheCodeOfTheirSectionOnCreateAndUpdate() {
+        Operation keyword = operation(true, "orcid").requestBody(new RequestBody());
+        SharedErrors.addTo(keyword, "/v3.0/{orcid}/keywords", "POST");
+        assertTrue(keyword.getResponses().get("409").getDescription().contains("9030"));
+
+        Operation update = operation(true, "orcid", "putCode").requestBody(new RequestBody());
+        SharedErrors.addTo(update, "/v3.0/{orcid}/work/{putCode}", "PUT");
+        assertTrue(update.getResponses().get("409").getDescription().contains("9021"));
+        assertFalse(update.getResponses().get("409").getDescription().contains("9048"));
+
+        Operation work = operation(true, "orcid").requestBody(new RequestBody());
+        SharedErrors.addTo(work, "/v3.0/{orcid}/work", "POST");
+        assertTrue(work.getResponses().get("409").getDescription().contains("9048"));
+
+        Operation notification = operation(true, "orcid").requestBody(new RequestBody());
+        SharedErrors.addTo(notification, "/v3.0/{orcid}/notification-permission", "POST");
+        assertFalse(notification.getResponses().get("409").getDescription().contains("duplicates"));
+    }
+
+    @Test
+    public void archivingANotificationNamesItsOwnRefusals() {
+        Operation archive = operation(true, "orcid", "id");
+        SharedErrors.addTo(archive, "/v3.0/{orcid}/notification-permission/{id}", "DELETE");
+        String forbidden = archive.getResponses().get("403").getDescription();
+        assertTrue(forbidden.contains("9010") && forbidden.contains("9009"));
+        assertFalse(forbidden.contains("9004"));
+    }
+
+    @Test
+    public void groupIdRecordsHaveNoVisibilityButAUniqueGroupId() {
+        Operation read = operation(true, "putCode");
+        SharedErrors.addTo(read, "/v3.0/group-id-record/{putCode}", "GET");
+        assertFalse(read.getResponses().get("403").getDescription().contains("9013"));
+
+        Operation update = operation(true, "putCode").requestBody(new RequestBody());
+        SharedErrors.addTo(update, "/v3.0/group-id-record/{putCode}", "PUT");
+        assertTrue(update.getResponses().get("409").getDescription().contains("9025"));
+    }
+
+    @Test
+    public void aDeclared403KeepsTheTokenChecksRefusals() {
+        Operation webhook = operation(true, "orcid", "webhook_uri");
+        Content xml = new Content().addMediaType("application/vnd.orcid+xml", new MediaType().schema(new Schema<>().$ref(SharedErrors.ORCID_ERROR)));
+        webhook.getResponses().addApiResponse("403", new ApiResponse().description("The webhook belongs to another client").content(xml));
+        SharedErrors.addTo(webhook, "/{orcid}/webhook/{webhook_uri}", "DELETE");
+        ApiResponse forbidden = webhook.getResponses().get("403");
+        assertTrue(forbidden.getDescription().startsWith("The webhook belongs to another client; or no token was sent"));
+        List<Schema> either = forbidden.getContent().get("application/json").getSchema().getAnyOf();
+        assertEquals(SharedErrors.OAUTH_ERROR, either.get(1).get$ref());
+    }
+
+    @Test
+    public void aClientAndAMemberBiographyHaveTheirOwnWording() {
+        Operation client = operation(false, "client_id");
+        SharedErrors.addTo(client, "/v3.0/client/{client_id}", "GET");
+        assertTrue(client.getResponses().get("404").getDescription().startsWith("No client"));
+
+        Operation biography = operation(true, "orcid").operationId("viewBiography");
+        SharedErrors.addTo(biography, "/v3.0/{orcid}/biography", "GET");
+        assertTrue(biography.getResponses().get("403").getDescription().contains("biography is private (9013)"));
     }
 }

@@ -24,6 +24,8 @@ import io.swagger.v3.core.converter.AnnotatedType;
 import io.swagger.v3.core.converter.ModelConverter;
 import io.swagger.v3.core.converter.ModelConverterContext;
 import io.swagger.v3.oas.models.media.Schema;
+import jakarta.xml.bind.annotation.XmlElement;
+import jakarta.xml.bind.annotation.XmlElements;
 
 /**
  * Calls the converter with the real fields' types and annotations. Swagger's
@@ -98,5 +100,28 @@ public class OrcidModelConverterTest {
         ModelConverter rest = (type, ctx, chain) -> next;
         AnnotatedType annotated = new AnnotatedType(unrelated).ctxAnnotations(summaries.getAnnotations());
         assertSame(next, converter.resolve(annotated, context, List.of(rest).iterator()));
+    }
+
+    /** A list whose only element names no type. */
+    static class Untyped {
+        @XmlElements({ @XmlElement(name = "plain") })
+        List<Object> items;
+    }
+
+    @Test
+    public void anElementWithoutATypeOrAModelGoesDownTheChain() throws Exception {
+        @SuppressWarnings("rawtypes")
+        Schema next = new Schema<>();
+        ModelConverter rest = (type, ctx, chain) -> next;
+
+        Field untyped = Untyped.class.getDeclaredField("items");
+        AnnotatedType plain = new AnnotatedType(untyped.getGenericType()).ctxAnnotations(untyped.getAnnotations());
+        assertSame(next, converter.resolve(plain, context, List.of(rest).iterator()));
+
+        // A resolver that describes nothing leaves nothing to wrap.
+        ModelConverterContext empty = mock(ModelConverterContext.class);
+        Field bulk = WorkBulk.class.getDeclaredField("bulk");
+        AnnotatedType works = new AnnotatedType(bulk.getGenericType()).ctxAnnotations(bulk.getAnnotations());
+        assertSame(next, converter.resolve(works, empty, List.of(rest).iterator()));
     }
 }

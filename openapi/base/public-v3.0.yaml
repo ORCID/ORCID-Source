@@ -87,9 +87,10 @@ components:
     orcid_auth:
       type: oauth2
       description: >-
-        A token is optional. Requests without one are accepted up to a daily
-        quota per IP address; requests with a token are not held to that quota.
-        Send it as `Authorization: Bearer <token>`.
+        A token is optional. When the Registry's rate limiting is switched on,
+        requests without one are accepted up to a daily quota per IP address and
+        then refused with 429; requests with a token are counted per client and
+        not held to that quota. Send it as `Authorization: Bearer <token>`.
       flows:
         clientCredentials:
           tokenUrl: https://orcid.org/oauth/token
