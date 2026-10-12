@@ -2,6 +2,7 @@ package org.orcid.api.common.openapi;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import io.swagger.v3.oas.models.Operation;
 import io.swagger.v3.oas.models.headers.Header;
@@ -16,10 +17,11 @@ import io.swagger.v3.oas.models.responses.ApiResponses;
 
 /**
  * The error responses operations share, added by {@link OrcidOpenApiFilter} so
- * they are written down once. Each was observed against a running Registry by
- * the contract tests (ORCID/orcid-api-contract-tests, tests/test_errors.py); the
- * error codes are OrcidCoreExceptionMapper's. A response an operation declares
- * itself is kept.
+ * they are written down once. Each rule is what the API's error handling
+ * answers for that kind of operation, with OrcidCoreExceptionMapper's codes; the
+ * contract tests (ORCID/orcid-api-contract-tests, tests/test_errors.py) exercise
+ * each class of error on representative operations. A response an operation
+ * declares itself is kept.
  */
 final class SharedErrors {
 
@@ -31,6 +33,10 @@ final class SharedErrors {
 
     /** The body the token check writes; declared in the base files. */
     static final String OAUTH_ERROR = "#/components/schemas/OAuthError";
+
+    /** Public lists that answer 200 with no groups, not 404, for an iD that has no record. */
+    static final Set<String> LISTS_EMPTY_FOR_UNKNOWN_ID = Set.of("viewDistinctions", "viewInvitedPositions", "viewMemberships",
+            "viewQualifications", "viewServices", "viewResearchResources");
 
     private SharedErrors() {
     }
@@ -46,6 +52,10 @@ final class SharedErrors {
         boolean post = "POST".equalsIgnoreCase(httpMethod);
         boolean body = operation.getRequestBody() != null;
         boolean putCode = hasPathParameter(operation, "putCode");
+        boolean notification = path.startsWith("/v3.0/{orcid}/notification-permission");
+        boolean notificationId = notification && hasPathParameter(operation, "id");
+        boolean groupIdRecord = path.startsWith("/v3.0/group-id-record");
+        String operationId = operation.getOperationId() == null ? "" : operation.getOperationId();
         List<String> types = errorMediaTypes(responses);
 
         List<String> invalid = new ArrayList<>();
@@ -58,6 +68,9 @@ final class SharedErrors {
         if (member && putCode) {
             invalid.add("the put-code is not a number (9034)");
         }
+        if (groupIdRecord && putCode) {
+            invalid.add("no group ID record has this put-code (9026)");
+        }
         if (!invalid.isEmpty()) {
             String text = "Bad request: " + String.join("; ", invalid) + ".";
             ApiResponse badRequest = orcidError(types, body ? text + " Malformed JSON is answered with the parser's message, as plain text." : text);
@@ -68,24 +81,45 @@ final class SharedErrors {
         }
 
         if (member) {
-            addIfAbsent(responses, "401", withOAuthError(orcidError(types,
-                    "The token is invalid, expired or revoked (an OAuth error, always JSON), or it belongs to a public client or to another record (error 9017).")));
-            addIfAbsent(responses, "403", withOAuthError(orcidError(types,
-                    "No token was sent (an OAuth error, always JSON), or the token lacks the scope this needs (error 9038).")));
-        } else {
-            addIfAbsent(responses, "401", oauthError("The token is invalid, expired or revoked. The token is optional, but a bad one is refused."));
+            String unauthorized = "The token is unknown, expired or revoked (an OAuth error, always JSON)";
+            unauthorized += record ? ", or it was granted for another record (error 9017), which includes an iD that has no record." : ".";
+            addIfAbsent(responses, "401", withOAuthError(orcidError(types, unauthorized)));
+            List<String> forbidden = new ArrayList<>();
+            forbidden.add("No token was sent, or the token belongs to a public client (an OAuth error, always JSON)");
+            forbidden.add("the token lacks the scope this needs (error 9038)");
             if (putCode && get) {
+                forbidden.add("the item is private and another client added it (9013)");
+            } else if (putCode) {
+                forbidden.add("another client added the item (9010)");
+            }
+            if (notificationId) {
+                forbidden.add("another client sent the notification (9004)");
+            }
+            addIfAbsent(responses, "403", withOAuthError(orcidError(types, String.join("; or ", forbidden) + ".")));
+        } else {
+            addIfAbsent(responses, "401", oauthError("The token is unknown, expired or revoked. The token is optional, but a bad one is refused."));
+            if ((putCode && get) || "viewBiography".equals(operationId)) {
                 addIfAbsent(responses, "403", orcidError(types, "The item is not public (error 9039)."));
             }
         }
 
-        if (record || path.startsWith("/v3.0/client/")) {
+        boolean emptyForUnknownId = !member && LISTS_EMPTY_FOR_UNKNOWN_ID.contains(operationId);
+        if (notificationId) {
+            addIfAbsent(responses, "404", orcidError(types, "No record has this iD (error 9016), or no notification has this id (9029)."));
+        } else if ((record && !emptyForUnknownId) || path.startsWith("/v3.0/client/")) {
             addIfAbsent(responses, "404", orcidError(types, "No record has this iD, or no item has this put-code (error 9016)."
                     + (!member && putCode ? " Also when the put-code is not a number." : "")));
         }
         if (record) {
-            String conflict = "The record is locked (error 9018) or deactivated (9044)";
-            conflict += get ? "." : post && body ? ", or deprecated, or the item duplicates one already on the record (9021)." : ", or deprecated.";
+            String conflict = "The record is locked (error 9018), " + (notification && get ? "" : "deactivated (9044), ")
+                    + "or unclaimed and still in its claim period (9036)";
+            if (get) {
+                conflict += ".";
+            } else if (post && body && !"createWorks".equals(operationId)) {
+                conflict += "; or deprecated; or the item duplicates one already on the record (9021).";
+            } else {
+                conflict += "; or deprecated.";
+            }
             addIfAbsent(responses, "409", orcidError(types, conflict));
             if (get) {
                 ApiResponse moved = orcidError(types, "The record is deprecated. Location is this URL with the primary record's iD.");

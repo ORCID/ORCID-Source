@@ -81,10 +81,10 @@ components:
       properties:
         error:
           type: string
-          description: "`invalid_token` when the token is not valid, `forbidden` when none was sent."
+          description: "`invalid_token` when the token is unknown, expired or revoked; `forbidden` when no token was sent or the token belongs to a public client."
         error_description:
           type: string
-          description: A sentence for developers, ending with the token that was sent, if any.
+          description: A sentence for developers.
   securitySchemes:
     orcid_auth:
       type: oauth2

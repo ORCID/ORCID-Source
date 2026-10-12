@@ -44,21 +44,31 @@ public class OrcidModelConverter implements ModelConverter {
         }
         XmlElements elements = annotation(type.getCtxAnnotations(), XmlElements.class);
         if (javaType != null && elements != null && javaType.isCollectionLikeType()) {
-            return wrappedElements(elements, javaType.getContentType().getRawClass(), context);
+            Schema wrapped = wrappedElements(elements, javaType.getContentType().getRawClass(), context);
+            if (wrapped != null) {
+                return wrapped;
+            }
         }
         return chain.hasNext() ? chain.next().resolve(type, context, chain) : null;
     }
 
+    /** Null when no element can be described, so the generator's own reading is used instead. */
     @SuppressWarnings("rawtypes")
     private static Schema wrappedElements(XmlElements elements, Class<?> elementBound, ModelConverterContext context) {
         List<Schema> wrappers = new ArrayList<>();
         for (XmlElement element : elements.value()) {
-            if (!elementBound.isAssignableFrom(element.type())) {
+            if (element.type() == XmlElement.DEFAULT.class || !elementBound.isAssignableFrom(element.type())) {
                 continue;
             }
             Schema model = context.resolve(new AnnotatedType(element.type()).resolveAsRef(true));
-            Schema target = model != null && model.getName() != null ? new Schema<>().$ref(RefUtils.constructRef(model.getName())) : model;
+            if (model == null) {
+                continue;
+            }
+            Schema target = model.getName() != null ? new Schema<>().$ref(RefUtils.constructRef(model.getName())) : model;
             wrappers.add(new ObjectSchema().addProperty(element.name(), target).addRequiredItem(element.name()));
+        }
+        if (wrappers.isEmpty()) {
+            return null;
         }
         Schema items = wrappers.size() == 1 ? wrappers.get(0) : new ComposedSchema().oneOf(wrappers);
         return new ArraySchema().items(items);

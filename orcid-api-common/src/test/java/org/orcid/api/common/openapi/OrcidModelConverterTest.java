@@ -87,4 +87,16 @@ public class OrcidModelConverterTest {
         AnnotatedType annotated = new AnnotatedType(value.getGenericType()).ctxAnnotations(value.getAnnotations());
         assertSame(next, converter.resolve(annotated, context, List.of(rest).iterator()));
     }
+
+    @Test
+    public void aListNoElementFitsGoesDownTheChain() throws Exception {
+        // No @XmlElements entry is an Amount, so there is nothing to describe: the generator's own reading is kept.
+        Field summaries = AffiliationGroup.class.getDeclaredField("summaries");
+        Type unrelated = TypeFactory.defaultInstance().constructCollectionType(List.class, Amount.class);
+        @SuppressWarnings("rawtypes")
+        Schema next = new Schema<>();
+        ModelConverter rest = (type, ctx, chain) -> next;
+        AnnotatedType annotated = new AnnotatedType(unrelated).ctxAnnotations(summaries.getAnnotations());
+        assertSame(next, converter.resolve(annotated, context, List.of(rest).iterator()));
+    }
 }
