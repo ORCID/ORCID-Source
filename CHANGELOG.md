@@ -1,3 +1,9 @@
+## v3.24.9 - 2026-10-13
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.24.8...v3.24.9)
+
+- [#7761](https://github.com/ORCID/ORCID-Source/pull/7761): PD-13696 Remove insecure url rewriting
+
 ## v3.24.8 - 2026-10-08
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.24.7...v3.24.8)
