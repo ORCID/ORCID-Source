@@ -20,7 +20,7 @@ public class OrcidAPIClient {
     private final HttpClient client;
     
     @Value("${org.orcid.messaging.api.requestTimeout:60}")
-    private int requestTimeout = 60;
+    private int requestTimeout;
     
     @Autowired
     public OrcidAPIClient(@Value("${org.orcid.messaging.api.connectionTimeout:60}") Integer connectionTimeout,
