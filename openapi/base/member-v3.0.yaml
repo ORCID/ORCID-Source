@@ -71,6 +71,20 @@ tags:
   - name: Webhooks
     description: Ask the registry to notify a URI when a record changes.
 components:
+  schemas:
+    OAuthError:
+      type: object
+      description: >-
+        What the token check answers with: always JSON, whatever the Accept
+        header asked for.
+      required: [error, error_description]
+      properties:
+        error:
+          type: string
+          description: "`invalid_token` when the token is unknown, expired or revoked; `forbidden` when no token was sent or the token belongs to a public client."
+        error_description:
+          type: string
+          description: A sentence for developers.
   securitySchemes:
     orcid_auth:
       type: oauth2

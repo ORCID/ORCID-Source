@@ -1,5 +1,6 @@
 package org.orcid.api.common.openapi;
 
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -86,6 +87,9 @@ public class OrcidOpenApiFilter extends AbstractSpecFilter {
                 response.setContent(withoutMediaTypeParameters(response.getContent()));
             }
         }
+        if (api != null) {
+            SharedErrors.addTo(operation, api.getPath(), api.getMethod());
+        }
         return Optional.of(operation);
     }
 
@@ -99,8 +103,24 @@ public class OrcidOpenApiFilter extends AbstractSpecFilter {
     @Override
     public Optional<Schema> filterSchema(Schema schema, Map<String, List<String>> params, Map<String, String> cookies,
             Map<String, List<String>> headers) {
-        schema.setNullable(true);
+        nullable(schema);
         return Optional.of(schema);
+    }
+
+    /**
+     * An enum only admits null when null is one of its values; nullable alone
+     * does not let a validator accept it.
+     */
+    @SuppressWarnings({ "rawtypes", "unchecked" })
+    private static void nullable(Schema schema) {
+        schema.setNullable(true);
+        if (schema.getEnum() != null) {
+            List values = new ArrayList(schema.getEnum());
+            if (!values.contains(null)) {
+                values.add(null);
+                schema.setEnum(values);
+            }
+        }
     }
 
     /**
@@ -120,7 +140,7 @@ public class OrcidOpenApiFilter extends AbstractSpecFilter {
             property.setFormat("int64");
             property.setDescription("Milliseconds since the epoch. XML carries the same instant as an xs:dateTime.");
         }
-        property.setNullable(true);
+        nullable(property);
         return Optional.of(property);
     }
 
@@ -149,8 +169,9 @@ public class OrcidOpenApiFilter extends AbstractSpecFilter {
     /**
      * The media type constants carry a quality factor for content negotiation
      * ({@code application/vnd.orcid+xml; qs=5}). A client never sends it, so it
-     * does not belong in the description. Where two keys become one, the first
-     * wins; they describe the same body.
+     * does not belong in the description. Two keys only become one when an
+     * annotation names a media type the method also produces, as the JSON-LD
+     * record does; the annotation's key has no parameters, and it wins.
      */
     static Content withoutMediaTypeParameters(Content content) {
         if (content == null) {
@@ -161,7 +182,11 @@ public class OrcidOpenApiFilter extends AbstractSpecFilter {
             String key = entry.getKey();
             int semicolon = key.indexOf(';');
             String bare = (semicolon < 0 ? key : key.substring(0, semicolon)).trim();
-            stripped.putIfAbsent(bare, entry.getValue());
+            if (semicolon < 0) {
+                stripped.put(bare, entry.getValue());
+            } else {
+                stripped.putIfAbsent(bare, entry.getValue());
+            }
         }
         Content result = new Content();
         result.putAll(stripped);

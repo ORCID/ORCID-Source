@@ -256,6 +256,9 @@ the software.
                         <sortOutput>true</sortOutput>
                         <objectMapperProcessorClass>org.orcid.api.common.openapi.OrcidObjectMapperProcessor</objectMapperProcessorClass>
                         <filterClass>org.orcid.api.common.openapi.OrcidOpenApiFilter</filterClass>
+                        <modelConverterClasses>
+                            <modelConverterClass>org.orcid.api.common.openapi.OrcidModelConverter</modelConverterClass>
+                        </modelConverterClasses>
                     </configuration>
                     <dependencies>
                         <dependency>
