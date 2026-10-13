@@ -1,3 +1,9 @@
+## v3.24.10 - 2026-10-13
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.24.9...v3.24.10)
+
+- [#7762](https://github.com/ORCID/ORCID-Source/pull/7762): Fixed  OrcidAPIClient  that sent an incorrect Content-Type header instead of Accept when making GET requests to fetch activities, causing 500 errors during message processing.
+
 ## v3.24.9 - 2026-10-13
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.24.8...v3.24.9)
