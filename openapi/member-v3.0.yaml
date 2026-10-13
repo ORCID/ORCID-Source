@@ -103,7 +103,7 @@ paths:
             application/xml:
               schema:
                 $ref: "#/components/schemas/ClientSummary"
-          description: Fetch client details
+          description: The client's public details
         "401":
           content:
             application/json:
@@ -173,8 +173,7 @@ paths:
             application/xml:
               schema:
                 $ref: "#/components/schemas/OrcidError"
-          description: "No record has this iD, or no item has this put-code (error\
-            \ 9016)."
+          description: No client has this id (error 9016).
       security:
       - orcid_auth:
         - /read-public
@@ -215,13 +214,6 @@ paths:
               schema:
                 type: string
           description: "One row per result, with the requested fields"
-        "400":
-          content:
-            text/csv:
-              schema:
-                $ref: "#/components/schemas/OrcidError"
-          description: "The rows parameter is not a number, or is out of range (1,000\
-            \ at most)"
         "401":
           content:
             application/json:
@@ -274,7 +266,7 @@ paths:
       security:
       - orcid_auth:
         - /read-public
-      summary: Search records
+      summary: "Search records, as CSV"
       tags:
       - Search
   /v3.0/expanded-search:
@@ -342,7 +334,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/OrcidError"
           description: "The rows parameter is not a number, or is out of range (1,000\
-            \ at most)"
+            \ at most) (error 9012)"
         "401":
           content:
             application/json:
@@ -395,7 +387,7 @@ paths:
       security:
       - orcid_auth:
         - /read-public
-      summary: Search records
+      summary: "Search records, with more fields per result"
       tags:
       - Search
   /v3.0/group-id-record:
@@ -557,7 +549,7 @@ paths:
               $ref: "#/components/schemas/GroupIdRecord"
       responses:
         "201":
-          description: "Group ID record created, see HTTP Location header for URI"
+          description: Created; the new item's URI is in the Location header
           headers:
             Location:
               description: URI of the new item
@@ -682,7 +674,7 @@ paths:
           type: string
       responses:
         "204":
-          description: Group ID record deleted
+          description: Deleted
         "400":
           content:
             application/json:
@@ -833,7 +825,8 @@ paths:
             application/xml:
               schema:
                 $ref: "#/components/schemas/OrcidError"
-          description: No group ID record has this put-code (error 9026)
+          description: "No group ID record has this put-code (error 9026), or the\
+            \ put-code is not a number (9034)"
         "401":
           content:
             application/json:
@@ -882,7 +875,7 @@ paths:
                 $ref: "#/components/schemas/OrcidError"
           description: "No token was sent, or the token belongs to a public client\
             \ (an OAuth error, always JSON); or the token lacks the scope this needs\
-            \ (error 9038); or the item is private and another client added it (9013)."
+            \ (error 9038)."
       security:
       - orcid_auth:
         - /group-id-record/read
@@ -940,7 +933,7 @@ paths:
             application/xml:
               schema:
                 $ref: "#/components/schemas/GroupIdRecord"
-          description: Group ID record updated
+          description: Updated; the body is the item as stored
         "400":
           content:
             application/json:
@@ -1018,6 +1011,27 @@ paths:
           description: "No token was sent, or the token belongs to a public client\
             \ (an OAuth error, always JSON); or the token lacks the scope this needs\
             \ (error 9038); or another client added the item (9010)."
+        "409":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/OrcidError"
+            application/orcid+json:
+              schema:
+                $ref: "#/components/schemas/OrcidError"
+            application/orcid+xml:
+              schema:
+                $ref: "#/components/schemas/OrcidError"
+            application/vnd.orcid+json:
+              schema:
+                $ref: "#/components/schemas/OrcidError"
+            application/vnd.orcid+xml:
+              schema:
+                $ref: "#/components/schemas/OrcidError"
+            application/xml:
+              schema:
+                $ref: "#/components/schemas/OrcidError"
+          description: Another group ID record already has this group-id (error 9025).
       security:
       - orcid_auth:
         - /group-id-record/update
@@ -1067,7 +1081,7 @@ paths:
             application/xml:
               schema:
                 $ref: "#/components/schemas/Search"
-          description: Search records
+          description: The iDs of the matching records
         "400":
           content:
             application/json:
@@ -1089,7 +1103,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/OrcidError"
           description: "The rows parameter is not a number, or is out of range (1,000\
-            \ at most)"
+            \ at most) (error 9012)"
         "401":
           content:
             application/json:
@@ -1177,7 +1191,7 @@ paths:
             application/xml:
               schema:
                 $ref: "#/components/schemas/Record"
-          description: Fetch record details
+          description: The record
         "301":
           content:
             application/json:
@@ -1229,8 +1243,8 @@ paths:
               schema:
                 $ref: "#/components/schemas/OrcidError"
           description: "The token is unknown, expired or revoked (an OAuth error,\
-            \ always JSON), or it was granted for another record (error 9017), which\
-            \ includes an iD that has no record."
+            \ always JSON), or it was granted for another record (error 9017). A user's\
+            \ token sent to an iD that has no record gets this too."
         "403":
           content:
             application/json:
@@ -1340,7 +1354,7 @@ paths:
             application/xml:
               schema:
                 $ref: "#/components/schemas/ActivitiesSummary"
-          description: Fetch all activities
+          description: A summary of every activity on the record
         "301":
           content:
             application/json:
@@ -1392,8 +1406,8 @@ paths:
               schema:
                 $ref: "#/components/schemas/OrcidError"
           description: "The token is unknown, expired or revoked (an OAuth error,\
-            \ always JSON), or it was granted for another record (error 9017), which\
-            \ includes an iD that has no record."
+            \ always JSON), or it was granted for another record (error 9017). A user's\
+            \ token sent to an iD that has no record gets this too."
         "403":
           content:
             application/json:
@@ -1503,7 +1517,7 @@ paths:
             application/xml:
               schema:
                 $ref: "#/components/schemas/Addresses"
-          description: Fetch all addresses of a profile
+          description: The record's addresses
         "301":
           content:
             application/json:
@@ -1555,8 +1569,8 @@ paths:
               schema:
                 $ref: "#/components/schemas/OrcidError"
           description: "The token is unknown, expired or revoked (an OAuth error,\
-            \ always JSON), or it was granted for another record (error 9017), which\
-            \ includes an iD that has no record."
+            \ always JSON), or it was granted for another record (error 9017). A user's\
+            \ token sent to an iD that has no record gets this too."
         "403":
           content:
             application/json:
@@ -1723,8 +1737,8 @@ paths:
               schema:
                 $ref: "#/components/schemas/OrcidError"
           description: "The token is unknown, expired or revoked (an OAuth error,\
-            \ always JSON), or it was granted for another record (error 9017), which\
-            \ includes an iD that has no record."
+            \ always JSON), or it was granted for another record (error 9017). A user's\
+            \ token sent to an iD that has no record gets this too."
         "403":
           content:
             application/json:
@@ -1794,7 +1808,7 @@ paths:
                 $ref: "#/components/schemas/OrcidError"
           description: "The record is locked (error 9018), deactivated (9044), or\
             \ unclaimed and still in its claim period (9036); or deprecated; or the\
-            \ item duplicates one already on the record (9021)."
+            \ item duplicates one already on the record (9030)."
       security:
       - orcid_auth:
         - /person/update
@@ -1866,8 +1880,8 @@ paths:
               schema:
                 $ref: "#/components/schemas/OrcidError"
           description: "The token is unknown, expired or revoked (an OAuth error,\
-            \ always JSON), or it was granted for another record (error 9017), which\
-            \ includes an iD that has no record."
+            \ always JSON), or it was granted for another record (error 9017). A user's\
+            \ token sent to an iD that has no record gets this too."
         "403":
           content:
             application/json:
@@ -1981,7 +1995,7 @@ paths:
             application/xml:
               schema:
                 $ref: "#/components/schemas/Address"
-          description: Fetch an address
+          description: The address
         "301":
           content:
             application/json:
@@ -2054,8 +2068,8 @@ paths:
               schema:
                 $ref: "#/components/schemas/OrcidError"
           description: "The token is unknown, expired or revoked (an OAuth error,\
-            \ always JSON), or it was granted for another record (error 9017), which\
-            \ includes an iD that has no record."
+            \ always JSON), or it was granted for another record (error 9017). A user's\
+            \ token sent to an iD that has no record gets this too."
         "403":
           content:
             application/json:
@@ -2191,7 +2205,7 @@ paths:
             application/xml:
               schema:
                 $ref: "#/components/schemas/Address"
-          description: Edit an address
+          description: Updated; the body is the item as stored
         "400":
           content:
             application/json:
@@ -2242,8 +2256,8 @@ paths:
               schema:
                 $ref: "#/components/schemas/OrcidError"
           description: "The token is unknown, expired or revoked (an OAuth error,\
-            \ always JSON), or it was granted for another record (error 9017), which\
-            \ includes an iD that has no record."
+            \ always JSON), or it was granted for another record (error 9017). A user's\
+            \ token sent to an iD that has no record gets this too."
         "403":
           content:
             application/json:
@@ -2312,7 +2326,8 @@ paths:
               schema:
                 $ref: "#/components/schemas/OrcidError"
           description: "The record is locked (error 9018), deactivated (9044), or\
-            \ unclaimed and still in its claim period (9036); or deprecated."
+            \ unclaimed and still in its claim period (9036); or deprecated; or the\
+            \ item duplicates one already on the record (9030)."
       security:
       - orcid_auth:
         - /person/update
@@ -2351,7 +2366,7 @@ paths:
             application/xml:
               schema:
                 $ref: "#/components/schemas/Biography"
-          description: Get biography details
+          description: The biography
         "301":
           content:
             application/json:
@@ -2403,8 +2418,8 @@ paths:
               schema:
                 $ref: "#/components/schemas/OrcidError"
           description: "The token is unknown, expired or revoked (an OAuth error,\
-            \ always JSON), or it was granted for another record (error 9017), which\
-            \ includes an iD that has no record."
+            \ always JSON), or it was granted for another record (error 9017). A user's\
+            \ token sent to an iD that has no record gets this too."
         "403":
           content:
             application/json:
@@ -2429,7 +2444,7 @@ paths:
                 $ref: "#/components/schemas/OrcidError"
           description: "No token was sent, or the token belongs to a public client\
             \ (an OAuth error, always JSON); or the token lacks the scope this needs\
-            \ (error 9038)."
+            \ (error 9038); or the biography is private (9013)."
         "404":
           content:
             application/json:
@@ -2450,7 +2465,8 @@ paths:
             application/xml:
               schema:
                 $ref: "#/components/schemas/OrcidError"
-          description: The record has no biography (error 9041)
+          description: "The record has no biography (error 9041), or no record has\
+            \ this iD (9016)"
         "409":
           content:
             application/json:
@@ -2514,7 +2530,7 @@ paths:
               $ref: "#/components/schemas/Distinction"
       responses:
         "201":
-          description: "Distinction created, see HTTP Location header for URI"
+          description: Created; the new item's URI is in the Location header
           headers:
             Location:
               description: URI of the new item
@@ -2571,8 +2587,8 @@ paths:
               schema:
                 $ref: "#/components/schemas/OrcidError"
           description: "The token is unknown, expired or revoked (an OAuth error,\
-            \ always JSON), or it was granted for another record (error 9017), which\
-            \ includes an iD that has no record."
+            \ always JSON), or it was granted for another record (error 9017). A user's\
+            \ token sent to an iD that has no record gets this too."
         "403":
           content:
             application/json:
@@ -2688,7 +2704,7 @@ paths:
             application/xml:
               schema:
                 $ref: "#/components/schemas/DistinctionSummary"
-          description: Fetch an Distinction summary
+          description: The summary of the distinction
         "301":
           content:
             application/json:
@@ -2761,8 +2777,8 @@ paths:
               schema:
                 $ref: "#/components/schemas/OrcidError"
           description: "The token is unknown, expired or revoked (an OAuth error,\
-            \ always JSON), or it was granted for another record (error 9017), which\
-            \ includes an iD that has no record."
+            \ always JSON), or it was granted for another record (error 9017). A user's\
+            \ token sent to an iD that has no record gets this too."
         "403":
           content:
             application/json:
@@ -2860,7 +2876,7 @@ paths:
           type: string
       responses:
         "204":
-          description: Distinction deleted
+          description: Deleted
         "400":
           content:
             application/json:
@@ -2905,8 +2921,8 @@ paths:
               schema:
                 $ref: "#/components/schemas/OrcidError"
           description: "The token is unknown, expired or revoked (an OAuth error,\
-            \ always JSON), or it was granted for another record (error 9017), which\
-            \ includes an iD that has no record."
+            \ always JSON), or it was granted for another record (error 9017). A user's\
+            \ token sent to an iD that has no record gets this too."
         "403":
           content:
             application/json:
@@ -3020,7 +3036,7 @@ paths:
             application/xml:
               schema:
                 $ref: "#/components/schemas/Distinction"
-          description: OK
+          description: The distinction
         "301":
           content:
             application/json:
@@ -3093,8 +3109,8 @@ paths:
               schema:
                 $ref: "#/components/schemas/OrcidError"
           description: "The token is unknown, expired or revoked (an OAuth error,\
-            \ always JSON), or it was granted for another record (error 9017), which\
-            \ includes an iD that has no record."
+            \ always JSON), or it was granted for another record (error 9017). A user's\
+            \ token sent to an iD that has no record gets this too."
         "403":
           content:
             application/json:
@@ -3230,7 +3246,7 @@ paths:
             application/xml:
               schema:
                 $ref: "#/components/schemas/Distinction"
-          description: Distinction updated
+          description: Updated; the body is the item as stored
         "400":
           content:
             application/json:
@@ -3281,8 +3297,8 @@ paths:
               schema:
                 $ref: "#/components/schemas/OrcidError"
           description: "The token is unknown, expired or revoked (an OAuth error,\
-            \ always JSON), or it was granted for another record (error 9017), which\
-            \ includes an iD that has no record."
+            \ always JSON), or it was granted for another record (error 9017). A user's\
+            \ token sent to an iD that has no record gets this too."
         "403":
           content:
             application/json:
@@ -3351,7 +3367,8 @@ paths:
               schema:
                 $ref: "#/components/schemas/OrcidError"
           description: "The record is locked (error 9018), deactivated (9044), or\
-            \ unclaimed and still in its claim period (9036); or deprecated."
+            \ unclaimed and still in its claim period (9036); or deprecated; or the\
+            \ item duplicates one already on the record (9021)."
       security:
       - orcid_auth:
         - /activities/update
@@ -3390,7 +3407,7 @@ paths:
             application/xml:
               schema:
                 $ref: "#/components/schemas/DistinctionsSummary"
-          description: Fetch all distinctions
+          description: The record's distinctions
         "301":
           content:
             application/json:
@@ -3442,8 +3459,8 @@ paths:
               schema:
                 $ref: "#/components/schemas/OrcidError"
           description: "The token is unknown, expired or revoked (an OAuth error,\
-            \ always JSON), or it was granted for another record (error 9017), which\
-            \ includes an iD that has no record."
+            \ always JSON), or it was granted for another record (error 9017). A user's\
+            \ token sent to an iD that has no record gets this too."
         "403":
           content:
             application/json:
@@ -3554,7 +3571,7 @@ paths:
               $ref: "#/components/schemas/Education"
       responses:
         "201":
-          description: "Education created, see HTTP Location header for URI"
+          description: Created; the new item's URI is in the Location header
           headers:
             Location:
               description: URI of the new item
@@ -3611,8 +3628,8 @@ paths:
               schema:
                 $ref: "#/components/schemas/OrcidError"
           description: "The token is unknown, expired or revoked (an OAuth error,\
-            \ always JSON), or it was granted for another record (error 9017), which\
-            \ includes an iD that has no record."
+            \ always JSON), or it was granted for another record (error 9017). A user's\
+            \ token sent to an iD that has no record gets this too."
         "403":
           content:
             application/json:
@@ -3728,7 +3745,7 @@ paths:
             application/xml:
               schema:
                 $ref: "#/components/schemas/EducationSummary"
-          description: Fetch an Education summary
+          description: The summary of the education
         "301":
           content:
             application/json:
@@ -3801,8 +3818,8 @@ paths:
               schema:
                 $ref: "#/components/schemas/OrcidError"
           description: "The token is unknown, expired or revoked (an OAuth error,\
-            \ always JSON), or it was granted for another record (error 9017), which\
-            \ includes an iD that has no record."
+            \ always JSON), or it was granted for another record (error 9017). A user's\
+            \ token sent to an iD that has no record gets this too."
         "403":
           content:
             application/json:
@@ -3900,7 +3917,7 @@ paths:
           type: string
       responses:
         "204":
-          description: Education deleted
+          description: Deleted
         "400":
           content:
             application/json:
@@ -3945,8 +3962,8 @@ paths:
               schema:
                 $ref: "#/components/schemas/OrcidError"
           description: "The token is unknown, expired or revoked (an OAuth error,\
-            \ always JSON), or it was granted for another record (error 9017), which\
-            \ includes an iD that has no record."
+            \ always JSON), or it was granted for another record (error 9017). A user's\
+            \ token sent to an iD that has no record gets this too."
         "403":
           content:
             application/json:
@@ -4060,7 +4077,7 @@ paths:
             application/xml:
               schema:
                 $ref: "#/components/schemas/Education"
-          description: OK
+          description: The education
         "301":
           content:
             application/json:
@@ -4133,8 +4150,8 @@ paths:
               schema:
                 $ref: "#/components/schemas/OrcidError"
           description: "The token is unknown, expired or revoked (an OAuth error,\
-            \ always JSON), or it was granted for another record (error 9017), which\
-            \ includes an iD that has no record."
+            \ always JSON), or it was granted for another record (error 9017). A user's\
+            \ token sent to an iD that has no record gets this too."
         "403":
           content:
             application/json:
@@ -4270,7 +4287,7 @@ paths:
             application/xml:
               schema:
                 $ref: "#/components/schemas/Education"
-          description: Education updated
+          description: Updated; the body is the item as stored
         "400":
           content:
             application/json:
@@ -4321,8 +4338,8 @@ paths:
               schema:
                 $ref: "#/components/schemas/OrcidError"
           description: "The token is unknown, expired or revoked (an OAuth error,\
-            \ always JSON), or it was granted for another record (error 9017), which\
-            \ includes an iD that has no record."
+            \ always JSON), or it was granted for another record (error 9017). A user's\
+            \ token sent to an iD that has no record gets this too."
         "403":
           content:
             application/json:
@@ -4391,7 +4408,8 @@ paths:
               schema:
                 $ref: "#/components/schemas/OrcidError"
           description: "The record is locked (error 9018), deactivated (9044), or\
-            \ unclaimed and still in its claim period (9036); or deprecated."
+            \ unclaimed and still in its claim period (9036); or deprecated; or the\
+            \ item duplicates one already on the record (9021)."
       security:
       - orcid_auth:
         - /activities/update
@@ -4430,7 +4448,7 @@ paths:
             application/xml:
               schema:
                 $ref: "#/components/schemas/EducationsSummary"
-          description: Fetch all educations
+          description: The record's educations
         "301":
           content:
             application/json:
@@ -4482,8 +4500,8 @@ paths:
               schema:
                 $ref: "#/components/schemas/OrcidError"
           description: "The token is unknown, expired or revoked (an OAuth error,\
-            \ always JSON), or it was granted for another record (error 9017), which\
-            \ includes an iD that has no record."
+            \ always JSON), or it was granted for another record (error 9017). A user's\
+            \ token sent to an iD that has no record gets this too."
         "403":
           content:
             application/json:
@@ -4593,7 +4611,7 @@ paths:
             application/xml:
               schema:
                 $ref: "#/components/schemas/Emails"
-          description: Fetch all emails for an ORCID ID
+          description: The record's emails
         "301":
           content:
             application/json:
@@ -4645,8 +4663,8 @@ paths:
               schema:
                 $ref: "#/components/schemas/OrcidError"
           description: "The token is unknown, expired or revoked (an OAuth error,\
-            \ always JSON), or it was granted for another record (error 9017), which\
-            \ includes an iD that has no record."
+            \ always JSON), or it was granted for another record (error 9017). A user's\
+            \ token sent to an iD that has no record gets this too."
         "403":
           content:
             application/json:
@@ -4757,7 +4775,7 @@ paths:
               $ref: "#/components/schemas/Employment"
       responses:
         "201":
-          description: "Employment created, see HTTP Location header for URI"
+          description: Created; the new item's URI is in the Location header
           headers:
             Location:
               description: URI of the new item
@@ -4814,8 +4832,8 @@ paths:
               schema:
                 $ref: "#/components/schemas/OrcidError"
           description: "The token is unknown, expired or revoked (an OAuth error,\
-            \ always JSON), or it was granted for another record (error 9017), which\
-            \ includes an iD that has no record."
+            \ always JSON), or it was granted for another record (error 9017). A user's\
+            \ token sent to an iD that has no record gets this too."
         "403":
           content:
             application/json:
@@ -4931,7 +4949,7 @@ paths:
             application/xml:
               schema:
                 $ref: "#/components/schemas/EmploymentSummary"
-          description: Fetch an Employment Summary
+          description: The summary of the employment
         "301":
           content:
             application/json:
@@ -5004,8 +5022,8 @@ paths:
               schema:
                 $ref: "#/components/schemas/OrcidError"
           description: "The token is unknown, expired or revoked (an OAuth error,\
-            \ always JSON), or it was granted for another record (error 9017), which\
-            \ includes an iD that has no record."
+            \ always JSON), or it was granted for another record (error 9017). A user's\
+            \ token sent to an iD that has no record gets this too."
         "403":
           content:
             application/json:
@@ -5103,7 +5121,7 @@ paths:
           type: string
       responses:
         "204":
-          description: Employment deleted
+          description: Deleted
         "400":
           content:
             application/json:
@@ -5148,8 +5166,8 @@ paths:
               schema:
                 $ref: "#/components/schemas/OrcidError"
           description: "The token is unknown, expired or revoked (an OAuth error,\
-            \ always JSON), or it was granted for another record (error 9017), which\
-            \ includes an iD that has no record."
+            \ always JSON), or it was granted for another record (error 9017). A user's\
+            \ token sent to an iD that has no record gets this too."
         "403":
           content:
             application/json:
@@ -5263,7 +5281,7 @@ paths:
             application/xml:
               schema:
                 $ref: "#/components/schemas/Employment"
-          description: Fetch an Employment
+          description: The employment
         "301":
           content:
             application/json:
@@ -5336,8 +5354,8 @@ paths:
               schema:
                 $ref: "#/components/schemas/OrcidError"
           description: "The token is unknown, expired or revoked (an OAuth error,\
-            \ always JSON), or it was granted for another record (error 9017), which\
-            \ includes an iD that has no record."
+            \ always JSON), or it was granted for another record (error 9017). A user's\
+            \ token sent to an iD that has no record gets this too."
         "403":
           content:
             application/json:
@@ -5473,7 +5491,7 @@ paths:
             application/xml:
               schema:
                 $ref: "#/components/schemas/Employment"
-          description: Employment updated
+          description: Updated; the body is the item as stored
         "400":
           content:
             application/json:
@@ -5524,8 +5542,8 @@ paths:
               schema:
                 $ref: "#/components/schemas/OrcidError"
           description: "The token is unknown, expired or revoked (an OAuth error,\
-            \ always JSON), or it was granted for another record (error 9017), which\
-            \ includes an iD that has no record."
+            \ always JSON), or it was granted for another record (error 9017). A user's\
+            \ token sent to an iD that has no record gets this too."
         "403":
           content:
             application/json:
@@ -5594,7 +5612,8 @@ paths:
               schema:
                 $ref: "#/components/schemas/OrcidError"
           description: "The record is locked (error 9018), deactivated (9044), or\
-            \ unclaimed and still in its claim period (9036); or deprecated."
+            \ unclaimed and still in its claim period (9036); or deprecated; or the\
+            \ item duplicates one already on the record (9021)."
       security:
       - orcid_auth:
         - /activities/update
@@ -5633,7 +5652,7 @@ paths:
             application/xml:
               schema:
                 $ref: "#/components/schemas/EmploymentsSummary"
-          description: Fetch all employments
+          description: The record's employments
         "301":
           content:
             application/json:
@@ -5685,8 +5704,8 @@ paths:
               schema:
                 $ref: "#/components/schemas/OrcidError"
           description: "The token is unknown, expired or revoked (an OAuth error,\
-            \ always JSON), or it was granted for another record (error 9017), which\
-            \ includes an iD that has no record."
+            \ always JSON), or it was granted for another record (error 9017). A user's\
+            \ token sent to an iD that has no record gets this too."
         "403":
           content:
             application/json:
@@ -5796,7 +5815,7 @@ paths:
             application/xml:
               schema:
                 $ref: "#/components/schemas/PersonExternalIdentifiers"
-          description: Fetch external identifiers
+          description: The record's person external identifiers
         "301":
           content:
             application/json:
@@ -5848,8 +5867,8 @@ paths:
               schema:
                 $ref: "#/components/schemas/OrcidError"
           description: "The token is unknown, expired or revoked (an OAuth error,\
-            \ always JSON), or it was granted for another record (error 9017), which\
-            \ includes an iD that has no record."
+            \ always JSON), or it was granted for another record (error 9017). A user's\
+            \ token sent to an iD that has no record gets this too."
         "403":
           content:
             application/json:
@@ -6016,8 +6035,8 @@ paths:
               schema:
                 $ref: "#/components/schemas/OrcidError"
           description: "The token is unknown, expired or revoked (an OAuth error,\
-            \ always JSON), or it was granted for another record (error 9017), which\
-            \ includes an iD that has no record."
+            \ always JSON), or it was granted for another record (error 9017). A user's\
+            \ token sent to an iD that has no record gets this too."
         "403":
           content:
             application/json:
@@ -6087,7 +6106,7 @@ paths:
                 $ref: "#/components/schemas/OrcidError"
           description: "The record is locked (error 9018), deactivated (9044), or\
             \ unclaimed and still in its claim period (9036); or deprecated; or the\
-            \ item duplicates one already on the record (9021)."
+            \ item duplicates one already on the record (9030)."
       security:
       - orcid_auth:
         - /person/update
@@ -6159,8 +6178,8 @@ paths:
               schema:
                 $ref: "#/components/schemas/OrcidError"
           description: "The token is unknown, expired or revoked (an OAuth error,\
-            \ always JSON), or it was granted for another record (error 9017), which\
-            \ includes an iD that has no record."
+            \ always JSON), or it was granted for another record (error 9017). A user's\
+            \ token sent to an iD that has no record gets this too."
         "403":
           content:
             application/json:
@@ -6274,7 +6293,7 @@ paths:
             application/xml:
               schema:
                 $ref: "#/components/schemas/PersonExternalIdentifier"
-          description: Fetch external identifier
+          description: The person external identifier
         "301":
           content:
             application/json:
@@ -6347,8 +6366,8 @@ paths:
               schema:
                 $ref: "#/components/schemas/OrcidError"
           description: "The token is unknown, expired or revoked (an OAuth error,\
-            \ always JSON), or it was granted for another record (error 9017), which\
-            \ includes an iD that has no record."
+            \ always JSON), or it was granted for another record (error 9017). A user's\
+            \ token sent to an iD that has no record gets this too."
         "403":
           content:
             application/json:
@@ -6484,7 +6503,7 @@ paths:
             application/xml:
               schema:
                 $ref: "#/components/schemas/PersonExternalIdentifier"
-          description: Edit external identifier
+          description: Updated; the body is the item as stored
         "400":
           content:
             application/json:
@@ -6535,8 +6554,8 @@ paths:
               schema:
                 $ref: "#/components/schemas/OrcidError"
           description: "The token is unknown, expired or revoked (an OAuth error,\
-            \ always JSON), or it was granted for another record (error 9017), which\
-            \ includes an iD that has no record."
+            \ always JSON), or it was granted for another record (error 9017). A user's\
+            \ token sent to an iD that has no record gets this too."
         "403":
           content:
             application/json:
@@ -6605,7 +6624,8 @@ paths:
               schema:
                 $ref: "#/components/schemas/OrcidError"
           description: "The record is locked (error 9018), deactivated (9044), or\
-            \ unclaimed and still in its claim period (9036); or deprecated."
+            \ unclaimed and still in its claim period (9036); or deprecated; or the\
+            \ item duplicates one already on the record (9030)."
       security:
       - orcid_auth:
         - /person/update
@@ -6645,7 +6665,7 @@ paths:
               $ref: "#/components/schemas/Funding"
       responses:
         "201":
-          description: "Funding created, see HTTP Location header for URI"
+          description: Created; the new item's URI is in the Location header
           headers:
             Location:
               description: URI of the new item
@@ -6702,8 +6722,8 @@ paths:
               schema:
                 $ref: "#/components/schemas/OrcidError"
           description: "The token is unknown, expired or revoked (an OAuth error,\
-            \ always JSON), or it was granted for another record (error 9017), which\
-            \ includes an iD that has no record."
+            \ always JSON), or it was granted for another record (error 9017). A user's\
+            \ token sent to an iD that has no record gets this too."
         "403":
           content:
             application/json:
@@ -6819,7 +6839,7 @@ paths:
             application/xml:
               schema:
                 $ref: "#/components/schemas/FundingSummary"
-          description: Fetch a Funding Summary
+          description: The summary of the funding
         "301":
           content:
             application/json:
@@ -6892,8 +6912,8 @@ paths:
               schema:
                 $ref: "#/components/schemas/OrcidError"
           description: "The token is unknown, expired or revoked (an OAuth error,\
-            \ always JSON), or it was granted for another record (error 9017), which\
-            \ includes an iD that has no record."
+            \ always JSON), or it was granted for another record (error 9017). A user's\
+            \ token sent to an iD that has no record gets this too."
         "403":
           content:
             application/json:
@@ -6991,7 +7011,7 @@ paths:
           type: string
       responses:
         "204":
-          description: Funding deleted
+          description: Deleted
         "400":
           content:
             application/json:
@@ -7036,8 +7056,8 @@ paths:
               schema:
                 $ref: "#/components/schemas/OrcidError"
           description: "The token is unknown, expired or revoked (an OAuth error,\
-            \ always JSON), or it was granted for another record (error 9017), which\
-            \ includes an iD that has no record."
+            \ always JSON), or it was granted for another record (error 9017). A user's\
+            \ token sent to an iD that has no record gets this too."
         "403":
           content:
             application/json:
@@ -7151,7 +7171,7 @@ paths:
             application/xml:
               schema:
                 $ref: "#/components/schemas/Funding"
-          description: Fetch a Funding
+          description: The funding
         "301":
           content:
             application/json:
@@ -7224,8 +7244,8 @@ paths:
               schema:
                 $ref: "#/components/schemas/OrcidError"
           description: "The token is unknown, expired or revoked (an OAuth error,\
-            \ always JSON), or it was granted for another record (error 9017), which\
-            \ includes an iD that has no record."
+            \ always JSON), or it was granted for another record (error 9017). A user's\
+            \ token sent to an iD that has no record gets this too."
         "403":
           content:
             application/json:
@@ -7361,7 +7381,7 @@ paths:
             application/xml:
               schema:
                 $ref: "#/components/schemas/Funding"
-          description: Funding updated
+          description: Updated; the body is the item as stored
         "400":
           content:
             application/json:
@@ -7412,8 +7432,8 @@ paths:
               schema:
                 $ref: "#/components/schemas/OrcidError"
           description: "The token is unknown, expired or revoked (an OAuth error,\
-            \ always JSON), or it was granted for another record (error 9017), which\
-            \ includes an iD that has no record."
+            \ always JSON), or it was granted for another record (error 9017). A user's\
+            \ token sent to an iD that has no record gets this too."
         "403":
           content:
             application/json:
@@ -7482,7 +7502,8 @@ paths:
               schema:
                 $ref: "#/components/schemas/OrcidError"
           description: "The record is locked (error 9018), deactivated (9044), or\
-            \ unclaimed and still in its claim period (9036); or deprecated."
+            \ unclaimed and still in its claim period (9036); or deprecated; or the\
+            \ item duplicates one already on the record (9021)."
       security:
       - orcid_auth:
         - /activities/update
@@ -7521,7 +7542,7 @@ paths:
             application/xml:
               schema:
                 $ref: "#/components/schemas/Fundings"
-          description: Fetch all fundings
+          description: The record's fundings
         "301":
           content:
             application/json:
@@ -7573,8 +7594,8 @@ paths:
               schema:
                 $ref: "#/components/schemas/OrcidError"
           description: "The token is unknown, expired or revoked (an OAuth error,\
-            \ always JSON), or it was granted for another record (error 9017), which\
-            \ includes an iD that has no record."
+            \ always JSON), or it was granted for another record (error 9017). A user's\
+            \ token sent to an iD that has no record gets this too."
         "403":
           content:
             application/json:
@@ -7685,7 +7706,7 @@ paths:
               $ref: "#/components/schemas/InvitedPosition"
       responses:
         "201":
-          description: "InvitedPosition created, see HTTP Location header for URI"
+          description: Created; the new item's URI is in the Location header
           headers:
             Location:
               description: URI of the new item
@@ -7742,8 +7763,8 @@ paths:
               schema:
                 $ref: "#/components/schemas/OrcidError"
           description: "The token is unknown, expired or revoked (an OAuth error,\
-            \ always JSON), or it was granted for another record (error 9017), which\
-            \ includes an iD that has no record."
+            \ always JSON), or it was granted for another record (error 9017). A user's\
+            \ token sent to an iD that has no record gets this too."
         "403":
           content:
             application/json:
@@ -7859,7 +7880,7 @@ paths:
             application/xml:
               schema:
                 $ref: "#/components/schemas/InvitedPositionSummary"
-          description: Fetch an InvitedPosition summary
+          description: The summary of the invited position
         "301":
           content:
             application/json:
@@ -7932,8 +7953,8 @@ paths:
               schema:
                 $ref: "#/components/schemas/OrcidError"
           description: "The token is unknown, expired or revoked (an OAuth error,\
-            \ always JSON), or it was granted for another record (error 9017), which\
-            \ includes an iD that has no record."
+            \ always JSON), or it was granted for another record (error 9017). A user's\
+            \ token sent to an iD that has no record gets this too."
         "403":
           content:
             application/json:
@@ -8031,7 +8052,7 @@ paths:
           type: string
       responses:
         "204":
-          description: InvitedPosition deleted
+          description: Deleted
         "400":
           content:
             application/json:
@@ -8076,8 +8097,8 @@ paths:
               schema:
                 $ref: "#/components/schemas/OrcidError"
           description: "The token is unknown, expired or revoked (an OAuth error,\
-            \ always JSON), or it was granted for another record (error 9017), which\
-            \ includes an iD that has no record."
+            \ always JSON), or it was granted for another record (error 9017). A user's\
+            \ token sent to an iD that has no record gets this too."
         "403":
           content:
             application/json:
@@ -8191,7 +8212,7 @@ paths:
             application/xml:
               schema:
                 $ref: "#/components/schemas/InvitedPosition"
-          description: OK
+          description: The invited position
         "301":
           content:
             application/json:
@@ -8264,8 +8285,8 @@ paths:
               schema:
                 $ref: "#/components/schemas/OrcidError"
           description: "The token is unknown, expired or revoked (an OAuth error,\
-            \ always JSON), or it was granted for another record (error 9017), which\
-            \ includes an iD that has no record."
+            \ always JSON), or it was granted for another record (error 9017). A user's\
+            \ token sent to an iD that has no record gets this too."
         "403":
           content:
             application/json:
@@ -8401,7 +8422,7 @@ paths:
             application/xml:
               schema:
                 $ref: "#/components/schemas/InvitedPosition"
-          description: InvitedPosition updated
+          description: Updated; the body is the item as stored
         "400":
           content:
             application/json:
@@ -8452,8 +8473,8 @@ paths:
               schema:
                 $ref: "#/components/schemas/OrcidError"
           description: "The token is unknown, expired or revoked (an OAuth error,\
-            \ always JSON), or it was granted for another record (error 9017), which\
-            \ includes an iD that has no record."
+            \ always JSON), or it was granted for another record (error 9017). A user's\
+            \ token sent to an iD that has no record gets this too."
         "403":
           content:
             application/json:
@@ -8522,7 +8543,8 @@ paths:
               schema:
                 $ref: "#/components/schemas/OrcidError"
           description: "The record is locked (error 9018), deactivated (9044), or\
-            \ unclaimed and still in its claim period (9036); or deprecated."
+            \ unclaimed and still in its claim period (9036); or deprecated; or the\
+            \ item duplicates one already on the record (9021)."
       security:
       - orcid_auth:
         - /activities/update
@@ -8561,7 +8583,7 @@ paths:
             application/xml:
               schema:
                 $ref: "#/components/schemas/InvitedPositions"
-          description: Fetch all invitedPositions
+          description: The record's invited positions
         "301":
           content:
             application/json:
@@ -8613,8 +8635,8 @@ paths:
               schema:
                 $ref: "#/components/schemas/OrcidError"
           description: "The token is unknown, expired or revoked (an OAuth error,\
-            \ always JSON), or it was granted for another record (error 9017), which\
-            \ includes an iD that has no record."
+            \ always JSON), or it was granted for another record (error 9017). A user's\
+            \ token sent to an iD that has no record gets this too."
         "403":
           content:
             application/json:
@@ -8724,7 +8746,7 @@ paths:
             application/xml:
               schema:
                 $ref: "#/components/schemas/Keywords"
-          description: Fetch keywords
+          description: The record's keywords
         "301":
           content:
             application/json:
@@ -8776,8 +8798,8 @@ paths:
               schema:
                 $ref: "#/components/schemas/OrcidError"
           description: "The token is unknown, expired or revoked (an OAuth error,\
-            \ always JSON), or it was granted for another record (error 9017), which\
-            \ includes an iD that has no record."
+            \ always JSON), or it was granted for another record (error 9017). A user's\
+            \ token sent to an iD that has no record gets this too."
         "403":
           content:
             application/json:
@@ -8944,8 +8966,8 @@ paths:
               schema:
                 $ref: "#/components/schemas/OrcidError"
           description: "The token is unknown, expired or revoked (an OAuth error,\
-            \ always JSON), or it was granted for another record (error 9017), which\
-            \ includes an iD that has no record."
+            \ always JSON), or it was granted for another record (error 9017). A user's\
+            \ token sent to an iD that has no record gets this too."
         "403":
           content:
             application/json:
@@ -9015,7 +9037,7 @@ paths:
                 $ref: "#/components/schemas/OrcidError"
           description: "The record is locked (error 9018), deactivated (9044), or\
             \ unclaimed and still in its claim period (9036); or deprecated; or the\
-            \ item duplicates one already on the record (9021)."
+            \ item duplicates one already on the record (9030)."
       security:
       - orcid_auth:
         - /person/update
@@ -9087,8 +9109,8 @@ paths:
               schema:
                 $ref: "#/components/schemas/OrcidError"
           description: "The token is unknown, expired or revoked (an OAuth error,\
-            \ always JSON), or it was granted for another record (error 9017), which\
-            \ includes an iD that has no record."
+            \ always JSON), or it was granted for another record (error 9017). A user's\
+            \ token sent to an iD that has no record gets this too."
         "403":
           content:
             application/json:
@@ -9202,7 +9224,7 @@ paths:
             application/xml:
               schema:
                 $ref: "#/components/schemas/Keyword"
-          description: Fetch keyword
+          description: The keyword
         "301":
           content:
             application/json:
@@ -9275,8 +9297,8 @@ paths:
               schema:
                 $ref: "#/components/schemas/OrcidError"
           description: "The token is unknown, expired or revoked (an OAuth error,\
-            \ always JSON), or it was granted for another record (error 9017), which\
-            \ includes an iD that has no record."
+            \ always JSON), or it was granted for another record (error 9017). A user's\
+            \ token sent to an iD that has no record gets this too."
         "403":
           content:
             application/json:
@@ -9412,7 +9434,7 @@ paths:
             application/xml:
               schema:
                 $ref: "#/components/schemas/Keyword"
-          description: Edit keyword
+          description: Updated; the body is the item as stored
         "400":
           content:
             application/json:
@@ -9463,8 +9485,8 @@ paths:
               schema:
                 $ref: "#/components/schemas/OrcidError"
           description: "The token is unknown, expired or revoked (an OAuth error,\
-            \ always JSON), or it was granted for another record (error 9017), which\
-            \ includes an iD that has no record."
+            \ always JSON), or it was granted for another record (error 9017). A user's\
+            \ token sent to an iD that has no record gets this too."
         "403":
           content:
             application/json:
@@ -9533,7 +9555,8 @@ paths:
               schema:
                 $ref: "#/components/schemas/OrcidError"
           description: "The record is locked (error 9018), deactivated (9044), or\
-            \ unclaimed and still in its claim period (9036); or deprecated."
+            \ unclaimed and still in its claim period (9036); or deprecated; or the\
+            \ item duplicates one already on the record (9030)."
       security:
       - orcid_auth:
         - /person/update
@@ -9573,7 +9596,7 @@ paths:
               $ref: "#/components/schemas/Membership"
       responses:
         "201":
-          description: "Membership created, see HTTP Location header for URI"
+          description: Created; the new item's URI is in the Location header
           headers:
             Location:
               description: URI of the new item
@@ -9630,8 +9653,8 @@ paths:
               schema:
                 $ref: "#/components/schemas/OrcidError"
           description: "The token is unknown, expired or revoked (an OAuth error,\
-            \ always JSON), or it was granted for another record (error 9017), which\
-            \ includes an iD that has no record."
+            \ always JSON), or it was granted for another record (error 9017). A user's\
+            \ token sent to an iD that has no record gets this too."
         "403":
           content:
             application/json:
@@ -9747,7 +9770,7 @@ paths:
             application/xml:
               schema:
                 $ref: "#/components/schemas/MembershipSummary"
-          description: Fetch an Membership summary
+          description: The summary of the membership
         "301":
           content:
             application/json:
@@ -9820,8 +9843,8 @@ paths:
               schema:
                 $ref: "#/components/schemas/OrcidError"
           description: "The token is unknown, expired or revoked (an OAuth error,\
-            \ always JSON), or it was granted for another record (error 9017), which\
-            \ includes an iD that has no record."
+            \ always JSON), or it was granted for another record (error 9017). A user's\
+            \ token sent to an iD that has no record gets this too."
         "403":
           content:
             application/json:
@@ -9919,7 +9942,7 @@ paths:
           type: string
       responses:
         "204":
-          description: Membership deleted
+          description: Deleted
         "400":
           content:
             application/json:
@@ -9964,8 +9987,8 @@ paths:
               schema:
                 $ref: "#/components/schemas/OrcidError"
           description: "The token is unknown, expired or revoked (an OAuth error,\
-            \ always JSON), or it was granted for another record (error 9017), which\
-            \ includes an iD that has no record."
+            \ always JSON), or it was granted for another record (error 9017). A user's\
+            \ token sent to an iD that has no record gets this too."
         "403":
           content:
             application/json:
@@ -10079,7 +10102,7 @@ paths:
             application/xml:
               schema:
                 $ref: "#/components/schemas/Membership"
-          description: OK
+          description: The membership
         "301":
           content:
             application/json:
@@ -10152,8 +10175,8 @@ paths:
               schema:
                 $ref: "#/components/schemas/OrcidError"
           description: "The token is unknown, expired or revoked (an OAuth error,\
-            \ always JSON), or it was granted for another record (error 9017), which\
-            \ includes an iD that has no record."
+            \ always JSON), or it was granted for another record (error 9017). A user's\
+            \ token sent to an iD that has no record gets this too."
         "403":
           content:
             application/json:
@@ -10289,7 +10312,7 @@ paths:
             application/xml:
               schema:
                 $ref: "#/components/schemas/Membership"
-          description: Membership updated
+          description: Updated; the body is the item as stored
         "400":
           content:
             application/json:
@@ -10340,8 +10363,8 @@ paths:
               schema:
                 $ref: "#/components/schemas/OrcidError"
           description: "The token is unknown, expired or revoked (an OAuth error,\
-            \ always JSON), or it was granted for another record (error 9017), which\
-            \ includes an iD that has no record."
+            \ always JSON), or it was granted for another record (error 9017). A user's\
+            \ token sent to an iD that has no record gets this too."
         "403":
           content:
             application/json:
@@ -10410,7 +10433,8 @@ paths:
               schema:
                 $ref: "#/components/schemas/OrcidError"
           description: "The record is locked (error 9018), deactivated (9044), or\
-            \ unclaimed and still in its claim period (9036); or deprecated."
+            \ unclaimed and still in its claim period (9036); or deprecated; or the\
+            \ item duplicates one already on the record (9021)."
       security:
       - orcid_auth:
         - /activities/update
@@ -10449,7 +10473,7 @@ paths:
             application/xml:
               schema:
                 $ref: "#/components/schemas/Memberships"
-          description: Fetch all memberships
+          description: The record's memberships
         "301":
           content:
             application/json:
@@ -10501,8 +10525,8 @@ paths:
               schema:
                 $ref: "#/components/schemas/OrcidError"
           description: "The token is unknown, expired or revoked (an OAuth error,\
-            \ always JSON), or it was granted for another record (error 9017), which\
-            \ includes an iD that has no record."
+            \ always JSON), or it was granted for another record (error 9017). A user's\
+            \ token sent to an iD that has no record gets this too."
         "403":
           content:
             application/json:
@@ -10664,8 +10688,8 @@ paths:
               schema:
                 $ref: "#/components/schemas/OrcidError"
           description: "The token is unknown, expired or revoked (an OAuth error,\
-            \ always JSON), or it was granted for another record (error 9017), which\
-            \ includes an iD that has no record."
+            \ always JSON), or it was granted for another record (error 9017). A user's\
+            \ token sent to an iD that has no record gets this too."
         "403":
           content:
             application/json:
@@ -10830,8 +10854,8 @@ paths:
               schema:
                 $ref: "#/components/schemas/OrcidError"
           description: "The token is unknown, expired or revoked (an OAuth error,\
-            \ always JSON), or it was granted for another record (error 9017), which\
-            \ includes an iD that has no record."
+            \ always JSON), or it was granted for another record (error 9017). A user's\
+            \ token sent to an iD that has no record gets this too."
         "403":
           content:
             application/json:
@@ -10900,8 +10924,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/OrcidError"
           description: "The record is locked (error 9018), deactivated (9044), or\
-            \ unclaimed and still in its claim period (9036); or deprecated; or the\
-            \ item duplicates one already on the record (9021)."
+            \ unclaimed and still in its claim period (9036); or deprecated."
       security:
       - orcid_auth:
         - /premium-notification
@@ -10970,8 +10993,8 @@ paths:
               schema:
                 $ref: "#/components/schemas/OrcidError"
           description: "The token is unknown, expired or revoked (an OAuth error,\
-            \ always JSON), or it was granted for another record (error 9017), which\
-            \ includes an iD that has no record."
+            \ always JSON), or it was granted for another record (error 9017). A user's\
+            \ token sent to an iD that has no record gets this too."
         "403":
           content:
             application/json:
@@ -10996,7 +11019,8 @@ paths:
                 $ref: "#/components/schemas/OrcidError"
           description: "No token was sent, or the token belongs to a public client\
             \ (an OAuth error, always JSON); or the token lacks the scope this needs\
-            \ (error 9038); or another client sent the notification (9004)."
+            \ (error 9038); or another client sent the notification (9010), or the\
+            \ record owner has already read it (9009)."
         "404":
           content:
             application/json:
@@ -11136,8 +11160,8 @@ paths:
               schema:
                 $ref: "#/components/schemas/OrcidError"
           description: "The token is unknown, expired or revoked (an OAuth error,\
-            \ always JSON), or it was granted for another record (error 9017), which\
-            \ includes an iD that has no record."
+            \ always JSON), or it was granted for another record (error 9017). A user's\
+            \ token sent to an iD that has no record gets this too."
         "403":
           content:
             application/json:
@@ -11245,7 +11269,7 @@ paths:
             application/xml:
               schema:
                 $ref: "#/components/schemas/OtherNames"
-          description: Fetch Other names
+          description: The record's other names
         "301":
           content:
             application/json:
@@ -11297,8 +11321,8 @@ paths:
               schema:
                 $ref: "#/components/schemas/OrcidError"
           description: "The token is unknown, expired or revoked (an OAuth error,\
-            \ always JSON), or it was granted for another record (error 9017), which\
-            \ includes an iD that has no record."
+            \ always JSON), or it was granted for another record (error 9017). A user's\
+            \ token sent to an iD that has no record gets this too."
         "403":
           content:
             application/json:
@@ -11465,8 +11489,8 @@ paths:
               schema:
                 $ref: "#/components/schemas/OrcidError"
           description: "The token is unknown, expired or revoked (an OAuth error,\
-            \ always JSON), or it was granted for another record (error 9017), which\
-            \ includes an iD that has no record."
+            \ always JSON), or it was granted for another record (error 9017). A user's\
+            \ token sent to an iD that has no record gets this too."
         "403":
           content:
             application/json:
@@ -11536,7 +11560,7 @@ paths:
                 $ref: "#/components/schemas/OrcidError"
           description: "The record is locked (error 9018), deactivated (9044), or\
             \ unclaimed and still in its claim period (9036); or deprecated; or the\
-            \ item duplicates one already on the record (9021)."
+            \ item duplicates one already on the record (9030)."
       security:
       - orcid_auth:
         - /person/update
@@ -11608,8 +11632,8 @@ paths:
               schema:
                 $ref: "#/components/schemas/OrcidError"
           description: "The token is unknown, expired or revoked (an OAuth error,\
-            \ always JSON), or it was granted for another record (error 9017), which\
-            \ includes an iD that has no record."
+            \ always JSON), or it was granted for another record (error 9017). A user's\
+            \ token sent to an iD that has no record gets this too."
         "403":
           content:
             application/json:
@@ -11723,7 +11747,7 @@ paths:
             application/xml:
               schema:
                 $ref: "#/components/schemas/OtherName"
-          description: Fetch Other name
+          description: The other name
         "301":
           content:
             application/json:
@@ -11796,8 +11820,8 @@ paths:
               schema:
                 $ref: "#/components/schemas/OrcidError"
           description: "The token is unknown, expired or revoked (an OAuth error,\
-            \ always JSON), or it was granted for another record (error 9017), which\
-            \ includes an iD that has no record."
+            \ always JSON), or it was granted for another record (error 9017). A user's\
+            \ token sent to an iD that has no record gets this too."
         "403":
           content:
             application/json:
@@ -11933,7 +11957,7 @@ paths:
             application/xml:
               schema:
                 $ref: "#/components/schemas/OtherName"
-          description: Edit other name
+          description: Updated; the body is the item as stored
         "400":
           content:
             application/json:
@@ -11984,8 +12008,8 @@ paths:
               schema:
                 $ref: "#/components/schemas/OrcidError"
           description: "The token is unknown, expired or revoked (an OAuth error,\
-            \ always JSON), or it was granted for another record (error 9017), which\
-            \ includes an iD that has no record."
+            \ always JSON), or it was granted for another record (error 9017). A user's\
+            \ token sent to an iD that has no record gets this too."
         "403":
           content:
             application/json:
@@ -12054,7 +12078,8 @@ paths:
               schema:
                 $ref: "#/components/schemas/OrcidError"
           description: "The record is locked (error 9018), deactivated (9044), or\
-            \ unclaimed and still in its claim period (9036); or deprecated."
+            \ unclaimed and still in its claim period (9036); or deprecated; or the\
+            \ item duplicates one already on the record (9030)."
       security:
       - orcid_auth:
         - /person/update
@@ -12094,7 +12119,7 @@ paths:
               $ref: "#/components/schemas/PeerReview"
       responses:
         "201":
-          description: "Peer Review created, see HTTP Location header for URI"
+          description: Created; the new item's URI is in the Location header
           headers:
             Location:
               description: URI of the new item
@@ -12151,8 +12176,8 @@ paths:
               schema:
                 $ref: "#/components/schemas/OrcidError"
           description: "The token is unknown, expired or revoked (an OAuth error,\
-            \ always JSON), or it was granted for another record (error 9017), which\
-            \ includes an iD that has no record."
+            \ always JSON), or it was granted for another record (error 9017). A user's\
+            \ token sent to an iD that has no record gets this too."
         "403":
           content:
             application/json:
@@ -12268,7 +12293,7 @@ paths:
             application/xml:
               schema:
                 $ref: "#/components/schemas/PeerReviewSummary"
-          description: Fetch a Peer Review Summary
+          description: The summary of the peer review
         "301":
           content:
             application/json:
@@ -12341,8 +12366,8 @@ paths:
               schema:
                 $ref: "#/components/schemas/OrcidError"
           description: "The token is unknown, expired or revoked (an OAuth error,\
-            \ always JSON), or it was granted for another record (error 9017), which\
-            \ includes an iD that has no record."
+            \ always JSON), or it was granted for another record (error 9017). A user's\
+            \ token sent to an iD that has no record gets this too."
         "403":
           content:
             application/json:
@@ -12440,7 +12465,7 @@ paths:
           type: string
       responses:
         "204":
-          description: Peer Review deleted
+          description: Deleted
         "400":
           content:
             application/json:
@@ -12485,8 +12510,8 @@ paths:
               schema:
                 $ref: "#/components/schemas/OrcidError"
           description: "The token is unknown, expired or revoked (an OAuth error,\
-            \ always JSON), or it was granted for another record (error 9017), which\
-            \ includes an iD that has no record."
+            \ always JSON), or it was granted for another record (error 9017). A user's\
+            \ token sent to an iD that has no record gets this too."
         "403":
           content:
             application/json:
@@ -12600,7 +12625,7 @@ paths:
             application/xml:
               schema:
                 $ref: "#/components/schemas/PeerReview"
-          description: Fetch a Peer Review
+          description: The peer review
         "301":
           content:
             application/json:
@@ -12673,8 +12698,8 @@ paths:
               schema:
                 $ref: "#/components/schemas/OrcidError"
           description: "The token is unknown, expired or revoked (an OAuth error,\
-            \ always JSON), or it was granted for another record (error 9017), which\
-            \ includes an iD that has no record."
+            \ always JSON), or it was granted for another record (error 9017). A user's\
+            \ token sent to an iD that has no record gets this too."
         "403":
           content:
             application/json:
@@ -12810,7 +12835,7 @@ paths:
             application/xml:
               schema:
                 $ref: "#/components/schemas/PeerReview"
-          description: Peer Review updated
+          description: Updated; the body is the item as stored
         "400":
           content:
             application/json:
@@ -12861,8 +12886,8 @@ paths:
               schema:
                 $ref: "#/components/schemas/OrcidError"
           description: "The token is unknown, expired or revoked (an OAuth error,\
-            \ always JSON), or it was granted for another record (error 9017), which\
-            \ includes an iD that has no record."
+            \ always JSON), or it was granted for another record (error 9017). A user's\
+            \ token sent to an iD that has no record gets this too."
         "403":
           content:
             application/json:
@@ -12931,7 +12956,8 @@ paths:
               schema:
                 $ref: "#/components/schemas/OrcidError"
           description: "The record is locked (error 9018), deactivated (9044), or\
-            \ unclaimed and still in its claim period (9036); or deprecated."
+            \ unclaimed and still in its claim period (9036); or deprecated; or the\
+            \ item duplicates one already on the record (9021)."
       security:
       - orcid_auth:
         - /activities/update
@@ -12970,7 +12996,7 @@ paths:
             application/xml:
               schema:
                 $ref: "#/components/schemas/PeerReviews"
-          description: Fetch all peer reviews
+          description: The record's peer reviews
         "301":
           content:
             application/json:
@@ -13022,8 +13048,8 @@ paths:
               schema:
                 $ref: "#/components/schemas/OrcidError"
           description: "The token is unknown, expired or revoked (an OAuth error,\
-            \ always JSON), or it was granted for another record (error 9017), which\
-            \ includes an iD that has no record."
+            \ always JSON), or it was granted for another record (error 9017). A user's\
+            \ token sent to an iD that has no record gets this too."
         "403":
           content:
             application/json:
@@ -13133,7 +13159,7 @@ paths:
             application/xml:
               schema:
                 $ref: "#/components/schemas/Person"
-          description: Fetch person details
+          description: The person section of the record
         "301":
           content:
             application/json:
@@ -13185,8 +13211,8 @@ paths:
               schema:
                 $ref: "#/components/schemas/OrcidError"
           description: "The token is unknown, expired or revoked (an OAuth error,\
-            \ always JSON), or it was granted for another record (error 9017), which\
-            \ includes an iD that has no record."
+            \ always JSON), or it was granted for another record (error 9017). A user's\
+            \ token sent to an iD that has no record gets this too."
         "403":
           content:
             application/json:
@@ -13296,7 +13322,7 @@ paths:
             application/xml:
               schema:
                 $ref: "#/components/schemas/PersonalDetails"
-          description: Fetch personal details for an ORCID ID
+          description: "The record's name, other names and biography"
         "301":
           content:
             application/json:
@@ -13348,8 +13374,8 @@ paths:
               schema:
                 $ref: "#/components/schemas/OrcidError"
           description: "The token is unknown, expired or revoked (an OAuth error,\
-            \ always JSON), or it was granted for another record (error 9017), which\
-            \ includes an iD that has no record."
+            \ always JSON), or it was granted for another record (error 9017). A user's\
+            \ token sent to an iD that has no record gets this too."
         "403":
           content:
             application/json:
@@ -13460,7 +13486,7 @@ paths:
               $ref: "#/components/schemas/Qualification"
       responses:
         "201":
-          description: "Qualification created, see HTTP Location header for URI"
+          description: Created; the new item's URI is in the Location header
           headers:
             Location:
               description: URI of the new item
@@ -13517,8 +13543,8 @@ paths:
               schema:
                 $ref: "#/components/schemas/OrcidError"
           description: "The token is unknown, expired or revoked (an OAuth error,\
-            \ always JSON), or it was granted for another record (error 9017), which\
-            \ includes an iD that has no record."
+            \ always JSON), or it was granted for another record (error 9017). A user's\
+            \ token sent to an iD that has no record gets this too."
         "403":
           content:
             application/json:
@@ -13634,7 +13660,7 @@ paths:
             application/xml:
               schema:
                 $ref: "#/components/schemas/QualificationSummary"
-          description: Fetch an Qualification summary
+          description: The summary of the qualification
         "301":
           content:
             application/json:
@@ -13707,8 +13733,8 @@ paths:
               schema:
                 $ref: "#/components/schemas/OrcidError"
           description: "The token is unknown, expired or revoked (an OAuth error,\
-            \ always JSON), or it was granted for another record (error 9017), which\
-            \ includes an iD that has no record."
+            \ always JSON), or it was granted for another record (error 9017). A user's\
+            \ token sent to an iD that has no record gets this too."
         "403":
           content:
             application/json:
@@ -13806,7 +13832,7 @@ paths:
           type: string
       responses:
         "204":
-          description: Qualification deleted
+          description: Deleted
         "400":
           content:
             application/json:
@@ -13851,8 +13877,8 @@ paths:
               schema:
                 $ref: "#/components/schemas/OrcidError"
           description: "The token is unknown, expired or revoked (an OAuth error,\
-            \ always JSON), or it was granted for another record (error 9017), which\
-            \ includes an iD that has no record."
+            \ always JSON), or it was granted for another record (error 9017). A user's\
+            \ token sent to an iD that has no record gets this too."
         "403":
           content:
             application/json:
@@ -13966,7 +13992,7 @@ paths:
             application/xml:
               schema:
                 $ref: "#/components/schemas/Qualification"
-          description: OK
+          description: The qualification
         "301":
           content:
             application/json:
@@ -14039,8 +14065,8 @@ paths:
               schema:
                 $ref: "#/components/schemas/OrcidError"
           description: "The token is unknown, expired or revoked (an OAuth error,\
-            \ always JSON), or it was granted for another record (error 9017), which\
-            \ includes an iD that has no record."
+            \ always JSON), or it was granted for another record (error 9017). A user's\
+            \ token sent to an iD that has no record gets this too."
         "403":
           content:
             application/json:
@@ -14176,7 +14202,7 @@ paths:
             application/xml:
               schema:
                 $ref: "#/components/schemas/Qualification"
-          description: Qualification updated
+          description: Updated; the body is the item as stored
         "400":
           content:
             application/json:
@@ -14227,8 +14253,8 @@ paths:
               schema:
                 $ref: "#/components/schemas/OrcidError"
           description: "The token is unknown, expired or revoked (an OAuth error,\
-            \ always JSON), or it was granted for another record (error 9017), which\
-            \ includes an iD that has no record."
+            \ always JSON), or it was granted for another record (error 9017). A user's\
+            \ token sent to an iD that has no record gets this too."
         "403":
           content:
             application/json:
@@ -14297,7 +14323,8 @@ paths:
               schema:
                 $ref: "#/components/schemas/OrcidError"
           description: "The record is locked (error 9018), deactivated (9044), or\
-            \ unclaimed and still in its claim period (9036); or deprecated."
+            \ unclaimed and still in its claim period (9036); or deprecated; or the\
+            \ item duplicates one already on the record (9021)."
       security:
       - orcid_auth:
         - /activities/update
@@ -14336,7 +14363,7 @@ paths:
             application/xml:
               schema:
                 $ref: "#/components/schemas/Qualifications"
-          description: Fetch all qualifications
+          description: The record's qualifications
         "301":
           content:
             application/json:
@@ -14388,8 +14415,8 @@ paths:
               schema:
                 $ref: "#/components/schemas/OrcidError"
           description: "The token is unknown, expired or revoked (an OAuth error,\
-            \ always JSON), or it was granted for another record (error 9017), which\
-            \ includes an iD that has no record."
+            \ always JSON), or it was granted for another record (error 9017). A user's\
+            \ token sent to an iD that has no record gets this too."
         "403":
           content:
             application/json:
@@ -14499,7 +14526,7 @@ paths:
             application/xml:
               schema:
                 $ref: "#/components/schemas/Record"
-          description: Fetch record details
+          description: The record
         "301":
           content:
             application/json:
@@ -14551,8 +14578,8 @@ paths:
               schema:
                 $ref: "#/components/schemas/OrcidError"
           description: "The token is unknown, expired or revoked (an OAuth error,\
-            \ always JSON), or it was granted for another record (error 9017), which\
-            \ includes an iD that has no record."
+            \ always JSON), or it was granted for another record (error 9017). A user's\
+            \ token sent to an iD that has no record gets this too."
         "403":
           content:
             application/json:
@@ -14627,7 +14654,7 @@ paths:
         - /read-limited
       - orcid_auth:
         - /read-public
-      summary: Fetch the record
+      summary: Fetch the record at its /record path
       tags:
       - Record
   /v3.0/{orcid}/research-resource:
@@ -14663,7 +14690,7 @@ paths:
               $ref: "#/components/schemas/ResearchResource"
       responses:
         "201":
-          description: "ResearchResource created, see HTTP Location header for URI"
+          description: Created; the new item's URI is in the Location header
           headers:
             Location:
               description: URI of the new item
@@ -14720,8 +14747,8 @@ paths:
               schema:
                 $ref: "#/components/schemas/OrcidError"
           description: "The token is unknown, expired or revoked (an OAuth error,\
-            \ always JSON), or it was granted for another record (error 9017), which\
-            \ includes an iD that has no record."
+            \ always JSON), or it was granted for another record (error 9017). A user's\
+            \ token sent to an iD that has no record gets this too."
         "403":
           content:
             application/json:
@@ -14837,7 +14864,7 @@ paths:
             application/xml:
               schema:
                 $ref: "#/components/schemas/ResearchResourceSummary"
-          description: Fetch a Research Resource summary
+          description: The summary of the research resource
         "301":
           content:
             application/json:
@@ -14910,8 +14937,8 @@ paths:
               schema:
                 $ref: "#/components/schemas/OrcidError"
           description: "The token is unknown, expired or revoked (an OAuth error,\
-            \ always JSON), or it was granted for another record (error 9017), which\
-            \ includes an iD that has no record."
+            \ always JSON), or it was granted for another record (error 9017). A user's\
+            \ token sent to an iD that has no record gets this too."
         "403":
           content:
             application/json:
@@ -15009,7 +15036,7 @@ paths:
           type: string
       responses:
         "204":
-          description: ResearchResource deleted
+          description: Deleted
         "400":
           content:
             application/json:
@@ -15054,8 +15081,8 @@ paths:
               schema:
                 $ref: "#/components/schemas/OrcidError"
           description: "The token is unknown, expired or revoked (an OAuth error,\
-            \ always JSON), or it was granted for another record (error 9017), which\
-            \ includes an iD that has no record."
+            \ always JSON), or it was granted for another record (error 9017). A user's\
+            \ token sent to an iD that has no record gets this too."
         "403":
           content:
             application/json:
@@ -15169,7 +15196,7 @@ paths:
             application/xml:
               schema:
                 $ref: "#/components/schemas/ResearchResource"
-          description: OK
+          description: The research resource
         "301":
           content:
             application/json:
@@ -15242,8 +15269,8 @@ paths:
               schema:
                 $ref: "#/components/schemas/OrcidError"
           description: "The token is unknown, expired or revoked (an OAuth error,\
-            \ always JSON), or it was granted for another record (error 9017), which\
-            \ includes an iD that has no record."
+            \ always JSON), or it was granted for another record (error 9017). A user's\
+            \ token sent to an iD that has no record gets this too."
         "403":
           content:
             application/json:
@@ -15379,7 +15406,7 @@ paths:
             application/xml:
               schema:
                 $ref: "#/components/schemas/ResearchResource"
-          description: ResearchResource updated
+          description: Updated; the body is the item as stored
         "400":
           content:
             application/json:
@@ -15430,8 +15457,8 @@ paths:
               schema:
                 $ref: "#/components/schemas/OrcidError"
           description: "The token is unknown, expired or revoked (an OAuth error,\
-            \ always JSON), or it was granted for another record (error 9017), which\
-            \ includes an iD that has no record."
+            \ always JSON), or it was granted for another record (error 9017). A user's\
+            \ token sent to an iD that has no record gets this too."
         "403":
           content:
             application/json:
@@ -15500,7 +15527,8 @@ paths:
               schema:
                 $ref: "#/components/schemas/OrcidError"
           description: "The record is locked (error 9018), deactivated (9044), or\
-            \ unclaimed and still in its claim period (9036); or deprecated."
+            \ unclaimed and still in its claim period (9036); or deprecated; or the\
+            \ item duplicates one already on the record (9021)."
       security:
       - orcid_auth:
         - /activities/update
@@ -15539,7 +15567,7 @@ paths:
             application/xml:
               schema:
                 $ref: "#/components/schemas/ResearchResources"
-          description: Fetch all Research Resources
+          description: The record's research resources
         "301":
           content:
             application/json:
@@ -15591,8 +15619,8 @@ paths:
               schema:
                 $ref: "#/components/schemas/OrcidError"
           description: "The token is unknown, expired or revoked (an OAuth error,\
-            \ always JSON), or it was granted for another record (error 9017), which\
-            \ includes an iD that has no record."
+            \ always JSON), or it was granted for another record (error 9017). A user's\
+            \ token sent to an iD that has no record gets this too."
         "403":
           content:
             application/json:
@@ -15702,7 +15730,7 @@ paths:
             application/xml:
               schema:
                 $ref: "#/components/schemas/ResearcherUrls"
-          description: Fetch all researcher urls for an ORCID ID
+          description: The record's researcher URLs
         "301":
           content:
             application/json:
@@ -15754,8 +15782,8 @@ paths:
               schema:
                 $ref: "#/components/schemas/OrcidError"
           description: "The token is unknown, expired or revoked (an OAuth error,\
-            \ always JSON), or it was granted for another record (error 9017), which\
-            \ includes an iD that has no record."
+            \ always JSON), or it was granted for another record (error 9017). A user's\
+            \ token sent to an iD that has no record gets this too."
         "403":
           content:
             application/json:
@@ -15922,8 +15950,8 @@ paths:
               schema:
                 $ref: "#/components/schemas/OrcidError"
           description: "The token is unknown, expired or revoked (an OAuth error,\
-            \ always JSON), or it was granted for another record (error 9017), which\
-            \ includes an iD that has no record."
+            \ always JSON), or it was granted for another record (error 9017). A user's\
+            \ token sent to an iD that has no record gets this too."
         "403":
           content:
             application/json:
@@ -15993,7 +16021,7 @@ paths:
                 $ref: "#/components/schemas/OrcidError"
           description: "The record is locked (error 9018), deactivated (9044), or\
             \ unclaimed and still in its claim period (9036); or deprecated; or the\
-            \ item duplicates one already on the record (9021)."
+            \ item duplicates one already on the record (9030)."
       security:
       - orcid_auth:
         - /person/update
@@ -16065,8 +16093,8 @@ paths:
               schema:
                 $ref: "#/components/schemas/OrcidError"
           description: "The token is unknown, expired or revoked (an OAuth error,\
-            \ always JSON), or it was granted for another record (error 9017), which\
-            \ includes an iD that has no record."
+            \ always JSON), or it was granted for another record (error 9017). A user's\
+            \ token sent to an iD that has no record gets this too."
         "403":
           content:
             application/json:
@@ -16180,7 +16208,7 @@ paths:
             application/xml:
               schema:
                 $ref: "#/components/schemas/ResearcherUrl"
-          description: Fetch one researcher url for an ORCID ID
+          description: The researcher URL
         "301":
           content:
             application/json:
@@ -16253,8 +16281,8 @@ paths:
               schema:
                 $ref: "#/components/schemas/OrcidError"
           description: "The token is unknown, expired or revoked (an OAuth error,\
-            \ always JSON), or it was granted for another record (error 9017), which\
-            \ includes an iD that has no record."
+            \ always JSON), or it was granted for another record (error 9017). A user's\
+            \ token sent to an iD that has no record gets this too."
         "403":
           content:
             application/json:
@@ -16390,7 +16418,7 @@ paths:
             application/xml:
               schema:
                 $ref: "#/components/schemas/ResearcherUrl"
-          description: Edits researcher url for an ORCID ID
+          description: Updated; the body is the item as stored
         "400":
           content:
             application/json:
@@ -16441,8 +16469,8 @@ paths:
               schema:
                 $ref: "#/components/schemas/OrcidError"
           description: "The token is unknown, expired or revoked (an OAuth error,\
-            \ always JSON), or it was granted for another record (error 9017), which\
-            \ includes an iD that has no record."
+            \ always JSON), or it was granted for another record (error 9017). A user's\
+            \ token sent to an iD that has no record gets this too."
         "403":
           content:
             application/json:
@@ -16511,7 +16539,8 @@ paths:
               schema:
                 $ref: "#/components/schemas/OrcidError"
           description: "The record is locked (error 9018), deactivated (9044), or\
-            \ unclaimed and still in its claim period (9036); or deprecated."
+            \ unclaimed and still in its claim period (9036); or deprecated; or the\
+            \ item duplicates one already on the record (9030)."
       security:
       - orcid_auth:
         - /person/update
@@ -16551,7 +16580,7 @@ paths:
               $ref: "#/components/schemas/Service"
       responses:
         "201":
-          description: "Service created, see HTTP Location header for URI"
+          description: Created; the new item's URI is in the Location header
           headers:
             Location:
               description: URI of the new item
@@ -16608,8 +16637,8 @@ paths:
               schema:
                 $ref: "#/components/schemas/OrcidError"
           description: "The token is unknown, expired or revoked (an OAuth error,\
-            \ always JSON), or it was granted for another record (error 9017), which\
-            \ includes an iD that has no record."
+            \ always JSON), or it was granted for another record (error 9017). A user's\
+            \ token sent to an iD that has no record gets this too."
         "403":
           content:
             application/json:
@@ -16725,7 +16754,7 @@ paths:
             application/xml:
               schema:
                 $ref: "#/components/schemas/ServiceSummary"
-          description: Fetch an Service summary
+          description: The summary of the service
         "301":
           content:
             application/json:
@@ -16798,8 +16827,8 @@ paths:
               schema:
                 $ref: "#/components/schemas/OrcidError"
           description: "The token is unknown, expired or revoked (an OAuth error,\
-            \ always JSON), or it was granted for another record (error 9017), which\
-            \ includes an iD that has no record."
+            \ always JSON), or it was granted for another record (error 9017). A user's\
+            \ token sent to an iD that has no record gets this too."
         "403":
           content:
             application/json:
@@ -16897,7 +16926,7 @@ paths:
           type: string
       responses:
         "204":
-          description: Service deleted
+          description: Deleted
         "400":
           content:
             application/json:
@@ -16942,8 +16971,8 @@ paths:
               schema:
                 $ref: "#/components/schemas/OrcidError"
           description: "The token is unknown, expired or revoked (an OAuth error,\
-            \ always JSON), or it was granted for another record (error 9017), which\
-            \ includes an iD that has no record."
+            \ always JSON), or it was granted for another record (error 9017). A user's\
+            \ token sent to an iD that has no record gets this too."
         "403":
           content:
             application/json:
@@ -17057,7 +17086,7 @@ paths:
             application/xml:
               schema:
                 $ref: "#/components/schemas/Service"
-          description: OK
+          description: The service
         "301":
           content:
             application/json:
@@ -17130,8 +17159,8 @@ paths:
               schema:
                 $ref: "#/components/schemas/OrcidError"
           description: "The token is unknown, expired or revoked (an OAuth error,\
-            \ always JSON), or it was granted for another record (error 9017), which\
-            \ includes an iD that has no record."
+            \ always JSON), or it was granted for another record (error 9017). A user's\
+            \ token sent to an iD that has no record gets this too."
         "403":
           content:
             application/json:
@@ -17267,7 +17296,7 @@ paths:
             application/xml:
               schema:
                 $ref: "#/components/schemas/Service"
-          description: Service updated
+          description: Updated; the body is the item as stored
         "400":
           content:
             application/json:
@@ -17318,8 +17347,8 @@ paths:
               schema:
                 $ref: "#/components/schemas/OrcidError"
           description: "The token is unknown, expired or revoked (an OAuth error,\
-            \ always JSON), or it was granted for another record (error 9017), which\
-            \ includes an iD that has no record."
+            \ always JSON), or it was granted for another record (error 9017). A user's\
+            \ token sent to an iD that has no record gets this too."
         "403":
           content:
             application/json:
@@ -17388,7 +17417,8 @@ paths:
               schema:
                 $ref: "#/components/schemas/OrcidError"
           description: "The record is locked (error 9018), deactivated (9044), or\
-            \ unclaimed and still in its claim period (9036); or deprecated."
+            \ unclaimed and still in its claim period (9036); or deprecated; or the\
+            \ item duplicates one already on the record (9021)."
       security:
       - orcid_auth:
         - /activities/update
@@ -17427,7 +17457,7 @@ paths:
             application/xml:
               schema:
                 $ref: "#/components/schemas/Services"
-          description: Fetch all services
+          description: The record's services
         "301":
           content:
             application/json:
@@ -17479,8 +17509,8 @@ paths:
               schema:
                 $ref: "#/components/schemas/OrcidError"
           description: "The token is unknown, expired or revoked (an OAuth error,\
-            \ always JSON), or it was granted for another record (error 9017), which\
-            \ includes an iD that has no record."
+            \ always JSON), or it was granted for another record (error 9017). A user's\
+            \ token sent to an iD that has no record gets this too."
         "403":
           content:
             application/json:
@@ -17642,8 +17672,8 @@ paths:
               schema:
                 $ref: "#/components/schemas/OrcidError"
           description: "The token is unknown, expired or revoked (an OAuth error,\
-            \ always JSON), or it was granted for another record (error 9017), which\
-            \ includes an iD that has no record."
+            \ always JSON), or it was granted for another record (error 9017). A user's\
+            \ token sent to an iD that has no record gets this too."
         "403":
           content:
             application/json:
@@ -17689,8 +17719,9 @@ paths:
             application/xml:
               schema:
                 $ref: "#/components/schemas/OrcidError"
-          description: "No record has this iD, or no item has this put-code (error\
-            \ 9016)."
+          description: "No record has this iD (error 9016). While the summary endpoint\
+            \ is switched off (feature MAPI_SUMMARY_ENDPOINT), every call answers\
+            \ 404 with Tomcat's HTML error page."
         "409":
           content:
             application/json:
@@ -17754,7 +17785,7 @@ paths:
               $ref: "#/components/schemas/Work"
       responses:
         "201":
-          description: "Work created, see HTTP Location header for URI"
+          description: Created; the new item's URI is in the Location header
           headers:
             Location:
               description: URI of the new item
@@ -17811,8 +17842,8 @@ paths:
               schema:
                 $ref: "#/components/schemas/OrcidError"
           description: "The token is unknown, expired or revoked (an OAuth error,\
-            \ always JSON), or it was granted for another record (error 9017), which\
-            \ includes an iD that has no record."
+            \ always JSON), or it was granted for another record (error 9017). A user's\
+            \ token sent to an iD that has no record gets this too."
         "403":
           content:
             application/json:
@@ -17882,7 +17913,8 @@ paths:
                 $ref: "#/components/schemas/OrcidError"
           description: "The record is locked (error 9018), deactivated (9044), or\
             \ unclaimed and still in its claim period (9036); or deprecated; or the\
-            \ item duplicates one already on the record (9021)."
+            \ item duplicates one already on the record (9021); or the record already\
+            \ holds the most works it may (9048)."
       security:
       - orcid_auth:
         - /activities/update
@@ -17928,7 +17960,7 @@ paths:
             application/xml:
               schema:
                 $ref: "#/components/schemas/WorkSummary"
-          description: Fetch a Work Summary
+          description: The summary of the work
         "301":
           content:
             application/json:
@@ -18001,8 +18033,8 @@ paths:
               schema:
                 $ref: "#/components/schemas/OrcidError"
           description: "The token is unknown, expired or revoked (an OAuth error,\
-            \ always JSON), or it was granted for another record (error 9017), which\
-            \ includes an iD that has no record."
+            \ always JSON), or it was granted for another record (error 9017). A user's\
+            \ token sent to an iD that has no record gets this too."
         "403":
           content:
             application/json:
@@ -18100,7 +18132,7 @@ paths:
           type: string
       responses:
         "204":
-          description: Work deleted
+          description: Deleted
         "400":
           content:
             application/json:
@@ -18145,8 +18177,8 @@ paths:
               schema:
                 $ref: "#/components/schemas/OrcidError"
           description: "The token is unknown, expired or revoked (an OAuth error,\
-            \ always JSON), or it was granted for another record (error 9017), which\
-            \ includes an iD that has no record."
+            \ always JSON), or it was granted for another record (error 9017). A user's\
+            \ token sent to an iD that has no record gets this too."
         "403":
           content:
             application/json:
@@ -18260,7 +18292,7 @@ paths:
             application/xml:
               schema:
                 $ref: "#/components/schemas/Work"
-          description: Fetch a Work
+          description: The work
         "301":
           content:
             application/json:
@@ -18333,8 +18365,8 @@ paths:
               schema:
                 $ref: "#/components/schemas/OrcidError"
           description: "The token is unknown, expired or revoked (an OAuth error,\
-            \ always JSON), or it was granted for another record (error 9017), which\
-            \ includes an iD that has no record."
+            \ always JSON), or it was granted for another record (error 9017). A user's\
+            \ token sent to an iD that has no record gets this too."
         "403":
           content:
             application/json:
@@ -18470,7 +18502,7 @@ paths:
             application/xml:
               schema:
                 $ref: "#/components/schemas/Work"
-          description: Work updated
+          description: Updated; the body is the item as stored
         "400":
           content:
             application/json:
@@ -18521,8 +18553,8 @@ paths:
               schema:
                 $ref: "#/components/schemas/OrcidError"
           description: "The token is unknown, expired or revoked (an OAuth error,\
-            \ always JSON), or it was granted for another record (error 9017), which\
-            \ includes an iD that has no record."
+            \ always JSON), or it was granted for another record (error 9017). A user's\
+            \ token sent to an iD that has no record gets this too."
         "403":
           content:
             application/json:
@@ -18547,7 +18579,8 @@ paths:
                 $ref: "#/components/schemas/OrcidError"
           description: "No token was sent, or the token belongs to a public client\
             \ (an OAuth error, always JSON); or the token lacks the scope this needs\
-            \ (error 9038); or another client added the item (9010)."
+            \ (error 9038); or another client added the item (9010; 9014 when the\
+            \ body changes nothing)."
         "404":
           content:
             application/json:
@@ -18591,7 +18624,8 @@ paths:
               schema:
                 $ref: "#/components/schemas/OrcidError"
           description: "The record is locked (error 9018), deactivated (9044), or\
-            \ unclaimed and still in its claim period (9036); or deprecated."
+            \ unclaimed and still in its claim period (9036); or deprecated; or the\
+            \ item duplicates one already on the record (9021)."
       security:
       - orcid_auth:
         - /activities/update
@@ -18630,7 +18664,7 @@ paths:
             application/xml:
               schema:
                 $ref: "#/components/schemas/WorksSummary"
-          description: Fetch all works
+          description: The record's works
         "301":
           content:
             application/json:
@@ -18682,8 +18716,8 @@ paths:
               schema:
                 $ref: "#/components/schemas/OrcidError"
           description: "The token is unknown, expired or revoked (an OAuth error,\
-            \ always JSON), or it was granted for another record (error 9017), which\
-            \ includes an iD that has no record."
+            \ always JSON), or it was granted for another record (error 9017). A user's\
+            \ token sent to an iD that has no record gets this too."
         "403":
           content:
             application/json:
@@ -18863,8 +18897,8 @@ paths:
               schema:
                 $ref: "#/components/schemas/OrcidError"
           description: "The token is unknown, expired or revoked (an OAuth error,\
-            \ always JSON), or it was granted for another record (error 9017), which\
-            \ includes an iD that has no record."
+            \ always JSON), or it was granted for another record (error 9017). A user's\
+            \ token sent to an iD that has no record gets this too."
         "403":
           content:
             application/json:
@@ -18933,7 +18967,8 @@ paths:
               schema:
                 $ref: "#/components/schemas/OrcidError"
           description: "The record is locked (error 9018), deactivated (9044), or\
-            \ unclaimed and still in its claim period (9036); or deprecated."
+            \ unclaimed and still in its claim period (9036); or deprecated; or the\
+            \ record already holds the most works it may (9048)."
       security:
       - orcid_auth:
         - /activities/update
@@ -18977,7 +19012,8 @@ paths:
             application/xml:
               schema:
                 $ref: "#/components/schemas/WorkBulk"
-          description: Fetch specified works
+          description: The requested works; an error element stands in for each put-code
+            that could not be read
         "301":
           content:
             application/json:
@@ -19050,8 +19086,8 @@ paths:
               schema:
                 $ref: "#/components/schemas/OrcidError"
           description: "The token is unknown, expired or revoked (an OAuth error,\
-            \ always JSON), or it was granted for another record (error 9017), which\
-            \ includes an iD that has no record."
+            \ always JSON), or it was granted for another record (error 9017). A user's\
+            \ token sent to an iD that has no record gets this too."
         "403":
           content:
             application/json:
@@ -19179,7 +19215,9 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/OrcidError"
+                anyOf:
+                - $ref: "#/components/schemas/OrcidError"
+                - $ref: "#/components/schemas/OAuthError"
             application/orcid+json:
               schema:
                 $ref: "#/components/schemas/OrcidError"
@@ -19195,7 +19233,9 @@ paths:
             application/xml:
               schema:
                 $ref: "#/components/schemas/OrcidError"
-          description: The webhook belongs to another client
+          description: "The webhook belongs to another client; or no token was sent,\
+            \ or the token belongs to a public client (an OAuth error, always JSON);\
+            \ or the token lacks the scope this needs (error 9038)."
         "404":
           content:
             application/json:
@@ -19751,9 +19791,10 @@ components:
       properties:
         contributor-role:
           type: string
-          description: An original role or a CRediT role URI; anything else is refused
-            (error 9058). The XSD says the original roles will be removed in a future
-            version.
+          description: "An original role or a CRediT role URI, as reads return them.\
+            \ Other values are refused (error 9058), apart from a few aliases the\
+            \ API normalises, such as CONCEPTUALIZATION. The XSD says the original\
+            \ roles will be removed in a future version."
           enum:
           - author
           - assignee
@@ -19793,9 +19834,6 @@ components:
           nullable: true
           xml:
             namespace: http://www.orcid.org/ns/work
-      required:
-      - contributor-role
-      - contributor-sequence
       xml:
         name: contributor-attributes
         namespace: http://www.orcid.org/ns/common
@@ -20886,8 +20924,9 @@ components:
       properties:
         contributor-role:
           type: string
-          description: A funding role or a CRediT role URI; anything else is refused
-            (error 9058).
+          description: "A funding role or a CRediT role URI, as reads return them.\
+            \ Other values are refused (error 9058), apart from a few aliases the\
+            \ API normalises, such as SUPERVISION."
           enum:
           - lead
           - co-lead
@@ -20911,8 +20950,6 @@ components:
           nullable: true
           xml:
             namespace: http://www.orcid.org/ns/funding
-      required:
-      - contributor-role
       xml:
         name: contributorAttributes
         namespace: http://www.orcid.org/ns/funding
@@ -21347,6 +21384,9 @@ components:
             namespace: http://www.orcid.org/ns/notification
         item-type:
           type: string
+          description: "A permission notification accepts only employment, education,\
+            \ qualification, invited-position, distinction, membership, service, funding,\
+            \ work and peer-review (error 9047)."
           enum:
           - bio
           - distinction
@@ -21371,7 +21411,6 @@ components:
           xml:
             attribute: true
       required:
-      - external-id
       - item-name
       - item-type
       xml:
@@ -21749,6 +21788,8 @@ components:
       required:
       - authorization-url
       - items
+      - notification-intro
+      - notification-subject
       - notification-type
       xml:
         name: notification
@@ -21869,11 +21910,13 @@ components:
       properties:
         city:
           type: string
+          description: Required for education and employment (error 9060).
           nullable: true
           xml:
             namespace: http://www.orcid.org/ns/common
         country:
           type: string
+          description: Required for education and employment (error 9060).
           enum:
           - AF
           - AX
@@ -22134,9 +22177,6 @@ components:
           nullable: true
           xml:
             namespace: http://www.orcid.org/ns/common
-      required:
-      - city
-      - country
       xml:
         name: organizationAddress
         namespace: http://www.orcid.org/ns/common

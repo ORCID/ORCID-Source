@@ -8,6 +8,8 @@ repos:
         entry: check-added-large-files
         language: python
         stages: [commit, push, manual]
+        # The generated OpenAPI descriptions are committed on purpose (the CI drift check compares them).
+        exclude: ^openapi/.*-v3\.0\.yaml$
 
       - id: check-executables-have-shebangs
         name: check that executables have shebangs
