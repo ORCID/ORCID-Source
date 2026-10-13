@@ -1344,7 +1344,7 @@ public class MemberV3ApiServiceImplV3_0 extends MemberApiServiceImplHelper {
     @Path(RECORD_SUMMARY)
     @Operation(summary = "Fetch a summary of the record", tags = "Record summary", security = { @SecurityRequirement(name = "orcid_auth", scopes = { ScopeConstants.READ_LIMITED }), @SecurityRequirement(name = "orcid_auth", scopes = { ScopeConstants.READ_PUBLIC }) })
     @ApiResponse(responseCode = "200", description = "Counts and highlights of the record's public items", content = @Content(schema = @Schema(implementation = RecordSummary.class)))
-    @ApiResponse(responseCode = "404", description = "No record has this iD (error 9016). While the summary endpoint is switched off (feature MAPI_SUMMARY_ENDPOINT), every call answers 404 with no body.", content = @Content(schema = @Schema(implementation = OrcidError.class)))
+    @ApiResponse(responseCode = "404", description = "No record has this iD (error 9016). While the summary endpoint is switched off (feature MAPI_SUMMARY_ENDPOINT), every call answers 404 with Tomcat's HTML error page.", content = @Content(schema = @Schema(implementation = OrcidError.class)))
     public Response getRecordSummary(@PathParam("orcid") String orcid) {
         if(!Features.MAPI_SUMMARY_ENDPOINT.isActive()) {
             return Response.status(Response.Status.NOT_FOUND).build();
