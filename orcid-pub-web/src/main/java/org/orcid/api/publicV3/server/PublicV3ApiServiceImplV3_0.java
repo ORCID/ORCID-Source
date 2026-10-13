@@ -539,7 +539,7 @@ public class PublicV3ApiServiceImplV3_0 {
   @Parameter(name = "start", in = ParameterIn.QUERY, description = "Offset of the first result (0-based).", schema = @Schema(type = "integer"))
   @Parameter(name = "rows", in = ParameterIn.QUERY, description = "Number of results to return (maximum 1000).", schema = @Schema(type = "integer"))
   @ApiResponse(responseCode = "200", description = "The iDs of the matching records", content = @Content(schema = @Schema(implementation = Search.class)))
-  @ApiResponse(responseCode = "400", description = "The start or rows parameter is not a number, or is out of range: rows 1,000 at most; start 10,000 at most without a token (error 9012)", content = @Content(schema = @Schema(implementation = OrcidError.class)))
+  @ApiResponse(responseCode = "400", description = "The start or rows parameter is not a number, or is out of range: rows 1,000 at most (error 9012); start 10,000 at most without a token (9043)", content = @Content(schema = @Schema(implementation = OrcidError.class)))
   public Response searchByQuery(@Parameter(description = "Solr query, for example `family-name:Carberry` or `doi-self:10.1087/20120404`.") @QueryParam("q") @DefaultValue("") String query, @Context UriInfo uriInfo) throws ParseException{
       serviceDelegator.trackEvents(httpRequest);
       Map<String, List<String>> solrParams = new HashMap<>(uriInfo.getQueryParameters());
@@ -569,7 +569,7 @@ public class PublicV3ApiServiceImplV3_0 {
   @Parameter(name = "start", in = ParameterIn.QUERY, description = "Offset of the first result (0-based).", schema = @Schema(type = "integer"))
   @Parameter(name = "rows", in = ParameterIn.QUERY, description = "Number of results to return (maximum 1000).", schema = @Schema(type = "integer"))
   @ApiResponse(responseCode = "200", description = "Matching records with their names, emails and institutions", content = @Content(schema = @Schema(implementation = ExpandedSearch.class)))
-  @ApiResponse(responseCode = "400", description = "The start or rows parameter is not a number, or is out of range: rows 1,000 at most; start 10,000 at most without a token (error 9012)", content = @Content(schema = @Schema(implementation = OrcidError.class)))
+  @ApiResponse(responseCode = "400", description = "The start or rows parameter is not a number, or is out of range: rows 1,000 at most (error 9012); start 10,000 at most without a token (9043)", content = @Content(schema = @Schema(implementation = OrcidError.class)))
   public Response expandedSearchByQuery(@Parameter(description = "Solr query, for example `family-name:Carberry` or `doi-self:10.1087/20120404`.") @QueryParam("q") @DefaultValue("") String query, @Context UriInfo uriInfo) throws ParseException{
       serviceDelegator.trackEvents(httpRequest);
       Map<String, List<String>> solrParams = new HashMap<>(uriInfo.getQueryParameters());
