@@ -409,7 +409,9 @@ jobs:
           drift=0
           for m in $reactor; do
             [ -d "$m/src/test" ] || continue
-            if grep -rlqE '^[[:space:]]*@Category\([^)]*DatabaseTest\.class' "$m/src/test"; then
+            # Any mention of the class, not just a one-line @Category(...): the
+            # annotation may span lines or sit in an array.
+            if grep -rlqE 'DatabaseTest\.class' "$m/src/test"; then
               case " $in_matrix " in
                 *" $m "*) ;;
                 *) echo "::error::$m has @Category(DatabaseTest.class) tests but is not in the db_tests matrix, so they never run. Add it."; drift=1 ;;
