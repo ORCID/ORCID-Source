@@ -201,8 +201,11 @@ import static org.mockito.Mockito.doCallRealMethod;
  * The old fixture-shaped assertions that a mock can only restate - titles,
  * department names, source client ids, the verified flag on an email, and the
  * positional order of external identifiers, which is a DAO ordering claim -
- * have been dropped rather than reproduced against the test's own stubs. See
- * the commit message for where each of them now lives.
+ * have been dropped rather than reproduced against the test's own stubs. Each
+ * is proved where it is decided: titles, department names and source ids by
+ * the v3 JpaJaxb adapter tests in orcid-core, the verified flag by
+ * v3.JpaJaxbEmailAdapterTest and v3.EmailManagerReadOnlyTest, and the order of
+ * external identifiers by the database test v3.ExternalIdentifierManagerTest.
  *
  * <p>
  * The runner is Silent rather than strict because
@@ -2210,9 +2213,12 @@ public class PublicV3ApiServiceDelegatorTest {
      * APP-5555555555555555 and the source name "Source Client 1". Both the
      * verified flag and the source name rewriting live below this layer, in
      * EmailManagerReadOnly and in SourceUtils/SourceNameCacheManager, and both
-     * are mocks here; re-asserting them would only restate the stub. There is
-     * no SourceUtils test in the repository to move that claim into, so it is
-     * currently uncovered - see the commit message. What these three keep is
+     * are mocks here; re-asserting them would only restate the stub. The
+     * rewriting runs for real, on the same SourceUtils class this module wires
+     * as sourceUtilsReadOnly, in MemberV3ApiServiceDelegator_EmailsTest and
+     * MemberV2ApiServiceDelegator_EmailsTest, which assert that client-sourced
+     * emails, the verified non professional one included, keep their client
+     * source and name. What these three keep is
      * the part that is this layer's: each of the three endpoints that can
      * return emails puts them through the public gate and the source name
      * decoration, for a client-only caller.
