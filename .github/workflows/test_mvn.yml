@@ -127,6 +127,7 @@ jobs:
           distribution: 'temurin'
           java-version: ${{ inputs.java_version }}
 
+# >>> maven cache and dependencies: keep identical in test_mvn and db_tests (db_stage_drift diffs them)
 ########################################################################################
 # handle restoring a custom gha cache
 
@@ -172,6 +173,7 @@ jobs:
         with:
           version_tag_numeric: ${{ steps.version.outputs.version_tag_numeric }}
 
+# <<< maven cache and dependencies
 ########################################################################################
       - name: "Test ${{ matrix.project }}"
         run: |
@@ -278,7 +280,31 @@ jobs:
           distribution: 'temurin'
           java-version: ${{ inputs.java_version }}
 
-      - name: restore maven cache
+# >>> maven cache and dependencies: keep identical in test_mvn and db_tests (db_stage_drift diffs them)
+########################################################################################
+# handle restoring a custom gha cache
+
+      - name: if not installing dependencies restore special previous git_sha cache
+        if:  ${{ ! inputs.install_maven_dependencies }}
+        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
+        with:
+          path: ~/.m2/repository
+          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}-${{ steps.version.outputs.version_tag_numeric }}-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}-${{ steps.version.outputs.version_tag_numeric }}-${{ github.sha }}
+
+      - name: bump version of the parent pom and connected projects
+        if: ${{ ! inputs.install_maven_dependencies }}
+        run: |
+          mvn -T 1C --batch-mode versions:set -DskipTests \
+              -DnewVersion="$version_tag_numeric" -DgenerateBackupPoms=false
+        env:
+          version_tag_numeric: "${{ steps.version.outputs.version_tag_numeric }}"
+
+########################################################################################
+
+      - name: if installing dependencies use a standard cache key name
+        if: ${{ inputs.install_maven_dependencies }}
         uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
         with:
           path: ~/.m2/repository
@@ -288,16 +314,19 @@ jobs:
 
       - name: seed_maven_cache
         if: ${{ inputs.seed_maven_cache }}
+        id: cache
         uses: ORCID/ORCID-Source-cache-action@9831e0ffb2e9db46bffa6bb55fb897d159da5668 # main
         with:
           version_tag_numeric: ${{ steps.version.outputs.version_tag_numeric }}
 
       - name: install_dependencies and bump version
         if: ${{ inputs.install_maven_dependencies }}
+        id: install_dependencies
         uses: ORCID/ORCID-Source-dependencies-action@e470d485ef8dc69858100998d77d03ccefb06ef1 # main
         with:
           version_tag_numeric: ${{ steps.version.outputs.version_tag_numeric }}
 
+# <<< maven cache and dependencies
       - name: Run database tests
         run: |
           mvn -T 1C --batch-mode test -P db-tests \
@@ -395,6 +424,23 @@ jobs:
             echo "database stage matrix covers every module that needs it"
           fi
           exit $drift
+
+      - name: Both stages must restore and install dependencies the same way
+        run: |
+          # The release pipeline calls this workflow with install_maven_dependencies
+          # false: modules come from the cache the install job saved under the commit
+          # sha, at the bumped version. A stage that restores anything else cannot
+          # resolve its sibling modules there, and nothing on a pull request shows it.
+          block() { sed -n "/^  $1:/,/^  $2:/p" .github/workflows/test_mvn.yml \
+                    | sed -n '/^# >>> maven cache and dependencies/,/^# <<< maven cache and dependencies/p'; }
+          unit=$(block test_mvn db_tests)
+          db=$(block db_tests db_stage_drift)
+          if [ -z "$unit" ] || [ "$unit" != "$db" ]; then
+            echo "::error::the maven cache and dependency steps differ between test_mvn and db_tests"
+            diff <(echo "$unit") <(echo "$db") || true
+            exit 1
+          fi
+          echo "both stages share one cache and dependency block"
 
   coverage_report:
     # Renders the JaCoCo results the matrix produced. Measures only: no
