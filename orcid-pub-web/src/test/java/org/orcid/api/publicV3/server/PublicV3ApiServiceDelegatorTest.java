@@ -166,6 +166,11 @@ import org.springframework.test.util.ReflectionTestUtils;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.orcid.jaxb.model.v3.release.common.Contributor;
+import org.orcid.jaxb.model.v3.release.common.ContributorEmail;
+import org.orcid.jaxb.model.v3.release.common.ContributorOrcid;
+import org.orcid.jaxb.model.v3.release.record.WorkContributors;
+import static org.mockito.Mockito.doCallRealMethod;
 
 /**
  * What this class can and cannot prove, now that its collaborators are mocks.
@@ -345,7 +350,9 @@ public class PublicV3ApiServiceDelegatorTest {
     @Test
     public void testViewWork() {
         Work work = work(11L, Visibility.PUBLIC);
+        work.setWorkContributors(contributorWithEmail());
         when(workManagerReadOnly.getWork(ORCID, 11L)).thenReturn(work);
+        stripContributorEmailsForReal();
 
         Response response = serviceDelegator.viewWork(ORCID, 11L);
 
@@ -356,6 +363,10 @@ public class PublicV3ApiServiceDelegatorTest {
         verify(orcidSecurityManager).checkProfile(ORCID);
         verify(publicAPISecurityManagerV3).checkIsPublic(work);
         verify(sourceUtilsReadOnly).setSourceName(work);
+        // PD-14292: the contributor email is write-only and never comes back on a read;
+        // ContributorUtilsTest proves the strip itself.
+        verify(contributorUtilsReadOnly).filterContributorPrivateData(work);
+        assertNull(work.getWorkContributors().getContributor().get(0).getContributorEmail());
     }
 
     @Test
@@ -385,9 +396,11 @@ public class PublicV3ApiServiceDelegatorTest {
     public void testViewBulkWorks() {
         WorkBulk bulk = new WorkBulk();
         Work work = work(11L, Visibility.PUBLIC);
+        work.setWorkContributors(contributorWithEmail());
         bulk.setBulk(new ArrayList<BulkElement>(Arrays.asList(work)));
         when(profileEntityManagerReadOnly.findByOrcid(ORCID)).thenReturn(new ProfileEntity());
         when(workManagerReadOnly.findWorkBulk(ORCID, "11,12,13")).thenReturn(bulk);
+        stripContributorEmailsForReal();
 
         Response response = serviceDelegator.viewBulkWorks(ORCID, "11,12,13");
 
@@ -401,6 +414,8 @@ public class PublicV3ApiServiceDelegatorTest {
         // sourceUtilsReadOnly, and getting that wrong is invisible at runtime
         verify(sourceUtils).setSourceName(bulk);
         verifyNoInteractions(sourceUtilsReadOnly);
+        verify(contributorUtilsReadOnly).filterContributorPrivateData(bulk);
+        assertNull(work.getWorkContributors().getContributor().get(0).getContributorEmail());
     }
 
     @Test
@@ -2301,6 +2316,25 @@ public class PublicV3ApiServiceDelegatorTest {
     private static LastModifiedDate lastModified(long putCode) {
         // distinct per put code so a "latest wins" aggregation is observable
         return new LastModifiedDate(DateUtils.convertToXMLGregorianCalendar(1500000000000L + (putCode * 1000L)));
+    }
+
+    private static WorkContributors contributorWithEmail() {
+        Contributor contributor = new Contributor();
+        contributor.setContributorOrcid(new ContributorOrcid("0000-0000-0000-0000"));
+        contributor.setContributorEmail(new ContributorEmail("never@show.this"));
+        WorkContributors contributors = new WorkContributors();
+        contributors.getContributor().add(contributor);
+        return contributors;
+    }
+
+    /**
+     * The Work and WorkBulk overloads of filterContributorPrivateData touch no
+     * collaborator, so the real method can run on the mock: the email is then
+     * actually removed rather than merely asked for.
+     */
+    private void stripContributorEmailsForReal() {
+        doCallRealMethod().when(contributorUtilsReadOnly).filterContributorPrivateData(any(Work.class));
+        doCallRealMethod().when(contributorUtilsReadOnly).filterContributorPrivateData(any(WorkBulk.class));
     }
 
     private static Work work(Long putCode, Visibility visibility) {

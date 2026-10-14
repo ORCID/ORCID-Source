@@ -9,6 +9,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.doCallRealMethod;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -39,6 +40,7 @@ import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.message.WorkExternalIdentifierType;
 import org.orcid.jaxb.model.record.bulk.BulkElement;
 import org.orcid.jaxb.model.v3.release.common.Contributor;
+import org.orcid.jaxb.model.v3.release.common.ContributorEmail;
 import org.orcid.jaxb.model.v3.release.common.ContributorOrcid;
 import org.orcid.jaxb.model.v3.release.common.LastModifiedDate;
 import org.orcid.jaxb.model.v3.release.common.Source;
@@ -90,6 +92,25 @@ public class MemberV3ApiServiceDelegator_WorksTest extends MemberV3ApiServiceDel
      * test builds a request of.
      */
     private static final long BULK_READ_SIZE = 100;
+
+    private static WorkContributors contributorWithEmail() {
+        Contributor contributor = new Contributor();
+        contributor.setContributorOrcid(new ContributorOrcid("0000-0000-0000-0000"));
+        contributor.setContributorEmail(new ContributorEmail("never@show.this"));
+        WorkContributors contributors = new WorkContributors();
+        contributors.getContributor().add(contributor);
+        return contributors;
+    }
+
+    /**
+     * The Work and WorkBulk overloads of filterContributorPrivateData touch no
+     * collaborator, so the real method can run on the mock: the email is then
+     * actually removed rather than merely asked for.
+     */
+    private void stripContributorEmailsForReal() {
+        doCallRealMethod().when(contributorUtils).filterContributorPrivateData(any(Work.class));
+        doCallRealMethod().when(contributorUtils).filterContributorPrivateData(any(WorkBulk.class));
+    }
 
     private Work work(long putCode, String title, WorkType type, Visibility visibility, Source source) {
         Work work = new Work();
@@ -229,9 +250,11 @@ public class MemberV3ApiServiceDelegator_WorksTest extends MemberV3ApiServiceDel
         WorkContributors contributors = new WorkContributors();
         Contributor contributor = new Contributor();
         contributor.setContributorOrcid(new ContributorOrcid("0000-0000-0000-0000"));
+        contributor.setContributorEmail(new ContributorEmail("never@show.this"));
         contributors.getContributor().add(contributor);
         stored.setWorkContributors(contributors);
         when(workManagerReadOnly.getWork(ORCID, 11L)).thenReturn(stored);
+        stripContributorEmailsForReal();
 
         Response r = serviceDelegator.viewWork(ORCID, 11L);
         Work work = (Work) r.getEntity();
@@ -250,6 +273,12 @@ public class MemberV3ApiServiceDelegator_WorksTest extends MemberV3ApiServiceDel
         assertEquals(1, work.getWorkContributors().getContributor().size());
         assertEquals("0000-0000-0000-0000", work.getWorkContributors().getContributor().get(0).getContributorOrcid().getPath());
         verify(orcidSecurityManager).checkAndFilter(ORCID, work, SCOPE);
+        // PD-14292: the contributor email is write-only and never comes back on a read. The
+        // delegator strips it unconditionally, without consulting the caller, so main's
+        // per-caller variants of this test have nothing to vary on mocks; ContributorUtilsTest
+        // proves the strip itself.
+        verify(contributorUtils).filterContributorPrivateData(work);
+        assertNull(work.getWorkContributors().getContributor().get(0).getContributorEmail());
     }
 
     @Test
@@ -809,11 +838,14 @@ public class MemberV3ApiServiceDelegator_WorksTest extends MemberV3ApiServiceDel
         // manager replaced it; that substitution is proved by orcid-core's
         // OrcidSecurityManager_WorkBulkTest, not here.
         WorkBulk stored = new WorkBulk();
-        stored.getBulk().add(work(11L, "PUBLIC", WorkType.JOURNAL_ARTICLE, Visibility.PUBLIC, clientSource(CLIENT_1)));
+        Work work11 = work(11L, "PUBLIC", WorkType.JOURNAL_ARTICLE, Visibility.PUBLIC, clientSource(CLIENT_1));
+        work11.setWorkContributors(contributorWithEmail());
+        stored.getBulk().add(work11);
         stored.getBulk().add(work(12L, "LIMITED", WorkType.JOURNAL_ARTICLE, Visibility.LIMITED, clientSource(CLIENT_1)));
         stored.getBulk().add(work(13L, "PRIVATE", WorkType.JOURNAL_ARTICLE, Visibility.PRIVATE, clientSource(CLIENT_1)));
         stored.getBulk().add(new OrcidError());
         when(workManagerReadOnly.findWorkBulk(ORCID, "11,12,13,16")).thenReturn(stored);
+        stripContributorEmailsForReal();
 
         Response response = serviceDelegator.viewBulkWorks(ORCID, "11,12,13,16");
         WorkBulk workBulk = (WorkBulk) response.getEntity();
@@ -828,6 +860,9 @@ public class MemberV3ApiServiceDelegator_WorksTest extends MemberV3ApiServiceDel
         assertEquals("/0000-0000-0000-0003/work/12", ((Work) workBulk.getBulk().get(1)).getPath());
         assertEquals("/0000-0000-0000-0003/work/13", ((Work) workBulk.getBulk().get(2)).getPath());
         verify(orcidSecurityManager).checkAndFilter(ORCID, workBulk, SCOPE);
+        verify(contributorUtils).filterContributorPrivateData(workBulk);
+        assertEquals(1, work11.getWorkContributors().getContributor().size());
+        assertNull(work11.getWorkContributors().getContributor().get(0).getContributorEmail());
     }
 
     @Test

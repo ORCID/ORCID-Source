@@ -100,9 +100,8 @@ public class ClientDetailsDaoImpl extends GenericDaoImpl<ClientDetailsEntity, St
 
     /**
      * Update the last modified dates of given client ids
-     * 
-     * @param clientIds
-     *            A list of client ids
+     *
+     * @param clientIds A list of client ids
      * @return the amount of modified rows
      */
 
@@ -194,9 +193,8 @@ public class ClientDetailsDaoImpl extends GenericDaoImpl<ClientDetailsEntity, St
 
     /**
      * Get the public client that belongs to the given orcid ID
-     * 
-     * @param ownerId
-     *            The user or group id
+     *
+     * @param ownerId The user or group id
      * @return the public client that belongs to the given user
      */
     @Override
@@ -216,9 +214,8 @@ public class ClientDetailsDaoImpl extends GenericDaoImpl<ClientDetailsEntity, St
 
     /**
      * Get member name
-     * 
-     * @param clientId
-     *            The client id
+     *
+     * @param clientId The client id
      * @return the name of the member owner of the given client
      */
     @Override
@@ -269,7 +266,7 @@ public class ClientDetailsDaoImpl extends GenericDaoImpl<ClientDetailsEntity, St
     @Transactional
     public void changePersistenceTokensProperty(String clientId, boolean isPersistenTokensEnabled) {
         Query updateQuery = entityManager
-            .createQuery("update ClientDetailsEntity c set c.lastModified = :lastModified, c.persistentTokensEnabled = :isPersistenTokensEnabled where c.id = :clientId");
+                .createQuery("update ClientDetailsEntity c set c.lastModified = :lastModified, c.persistentTokensEnabled = :isPersistenTokensEnabled where c.id = :clientId");
         updateQuery.setParameter("clientId", clientId);
         updateQuery.setParameter("lastModified", new Date());
         updateQuery.setParameter("isPersistenTokensEnabled", isPersistenTokensEnabled);
@@ -280,7 +277,7 @@ public class ClientDetailsDaoImpl extends GenericDaoImpl<ClientDetailsEntity, St
     @Transactional
     public void activateClient(String clientDetailsId) {
         Query updateQuery = entityManager
-            .createQuery("update ClientDetailsEntity c set c.lastModified = :lastModified, c.deactivatedDate = null, c.deactivatedBy = null where c.id = :clientId");
+                .createQuery("update ClientDetailsEntity c set c.lastModified = :lastModified, c.deactivatedDate = null, c.deactivatedBy = null where c.id = :clientId");
         updateQuery.setParameter("clientId", clientDetailsId);
         updateQuery.setParameter("lastModified", new Date());
         updateQuery.executeUpdate();
@@ -290,7 +287,7 @@ public class ClientDetailsDaoImpl extends GenericDaoImpl<ClientDetailsEntity, St
     @Transactional
     public void deactivateClient(String clientDetailsId, String deactivatedBy) {
         Query updateQuery = entityManager
-            .createQuery("update ClientDetailsEntity c set c.lastModified = :lastModified, c.deactivatedDate = :deactivatedDate, c.deactivatedBy = :deactivatedBy where c.id = :clientId");
+                .createQuery("update ClientDetailsEntity c set c.lastModified = :lastModified, c.deactivatedDate = :deactivatedDate, c.deactivatedBy = :deactivatedBy where c.id = :clientId");
         updateQuery.setParameter("clientId", clientDetailsId);
         Date now = new Date();
         updateQuery.setParameter("lastModified", now);
@@ -324,7 +321,7 @@ public class ClientDetailsDaoImpl extends GenericDaoImpl<ClientDetailsEntity, St
     @Transactional
     public boolean updateNotificationInfo(String clientId, boolean userNotificationEnabled, String notificationWebpageUrl, String notificationDomains) {
         Query updateNotificationInfoQuery = entityManager.createNativeQuery(
-                "UPDATE client_details SET user_notification_enabled= :userNotificationEnabled, notification_webpage_url= :notificationWebpageUrl, notification_domains= :notificationDomains  WHERE id = :clientId");
+                "UPDATE client_details SET user_notification_enabled= :userNotificationEnabled, notification_webpage_url= :notificationWebpageUrl, notification_domains= :notificationDomains  WHERE client_details_id = :clientId");
         updateNotificationInfoQuery.setParameter("clientId", clientId);
         updateNotificationInfoQuery.setParameter("userNotificationEnabled", userNotificationEnabled);
         updateNotificationInfoQuery.setParameter("notificationWebpageUrl", notificationWebpageUrl);
@@ -336,7 +333,7 @@ public class ClientDetailsDaoImpl extends GenericDaoImpl<ClientDetailsEntity, St
     @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     @SuppressWarnings("unchecked")
     public List<ClientDetailsEntity> findMVPEnabled() {
-        Query query = entityManager.createQuery("from ClientDetailsEntity where userNotificationEnabled = :userNotificationEnabled and client_type = :premiumUpdater" );
+        Query query = entityManager.createQuery("from ClientDetailsEntity where userNotificationEnabled = :userNotificationEnabled and clientType = :premiumUpdater");
         query.setParameter("userNotificationEnabled", true);
         query.setParameter("premiumUpdater", ClientType.PREMIUM_UPDATER.name());
         return query.getResultList();

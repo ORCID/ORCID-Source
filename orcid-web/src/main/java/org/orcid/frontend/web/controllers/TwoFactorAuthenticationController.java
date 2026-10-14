@@ -15,6 +15,7 @@ import org.orcid.core.togglz.Features;
 import org.orcid.frontend.email.RecordEmailSender;
 import org.orcid.frontend.recoveryphone.RecoveryPhoneChallengeSendCodeResponse;
 import org.orcid.frontend.recoveryphone.RecoveryPhoneChallengeVerifyRequest;
+import org.orcid.frontend.recoveryphone.RecoveryPhoneNumberResponse;
 import org.orcid.frontend.recoveryphone.RecoveryPhoneSaveRequest;
 import org.orcid.frontend.recoveryphone.RecoveryPhoneSaveResponse;
 import org.orcid.frontend.recoveryphone.RecoveryPhoneSendCodeRequest;
@@ -47,6 +48,13 @@ public class TwoFactorAuthenticationController extends BaseController {
     private static final String RECOVERY_PHONE_ELEVATION_ATTRIBUTE = "RECOVERY_PHONE_ELEVATION_TS";
 
     /**
+     * When the account verification challenge was last passed on this session.
+     * Kept apart from the elevation, which 2FA setup also grants, because only a
+     * passed challenge lets the number on file be read back (F4.2).
+     */
+    private static final String RECOVERY_PHONE_CHALLENGE_ATTRIBUTE = "RECOVERY_PHONE_CHALLENGE_TS";
+
+    /**
      * How long a passed authentication challenge, or the sign in the
      * interstitial rides on, lets the user keep working.
      *
@@ -77,6 +85,12 @@ public class TwoFactorAuthenticationController extends BaseController {
 
     /** The password given with a challenge is not the account's password. */
     static final String INVALID_PASSWORD = "INVALID_PASSWORD";
+
+    /**
+     * The session's real user is not the record's owner: a delegate, or an
+     * admin switched into the record.
+     */
+    static final String NOT_ACCOUNT_OWNER = "NOT_ACCOUNT_OWNER";
 
     /**
      * Where the recovery phone form is being shown. The context decides which
@@ -153,9 +167,45 @@ public class TwoFactorAuthenticationController extends BaseController {
             return form;
         }
 
-        request.getSession().setAttribute(RECOVERY_PHONE_ELEVATION_ATTRIBUTE, System.currentTimeMillis());
+        long passedAt = System.currentTimeMillis();
+        request.getSession().setAttribute(RECOVERY_PHONE_ELEVATION_ATTRIBUTE, passedAt);
+        request.getSession().setAttribute(RECOVERY_PHONE_CHALLENGE_ATTRIBUTE, passedAt);
         form.setSuccess(true);
         return form;
+    }
+
+    /**
+     * Hands the stored recovery number back in full for the manage page, whose
+     * phone field starts from the number on file rather than empty (F4.2).
+     *
+     * Who may see it is decided here and nowhere else. Only the account owner -
+     * never a delegate, never an admin switched into the record - and only on
+     * a session that passed the authentication challenge inside the elevation
+     * window. The interstitial's recent sign in does not count: the
+     * interstitial only ever adds a first number, so it has none to show. A
+     * POST, answered no-store, so no cache along the way keeps a copy.
+     */
+    @RequestMapping(value = "/recoveryPhone/number.json", method = RequestMethod.POST)
+    public @ResponseBody RecoveryPhoneNumberResponse getRecoveryPhoneNumber(HttpServletRequest request, HttpServletResponse response) {
+        response.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
+        String orcid = getCurrentUserOrcid();
+        if (!Features.TWO_FACTOR_RECOVERY_PHONE.isActive()) {
+            return RecoveryPhoneNumberResponse.failure(FEATURE_DISABLED);
+        }
+        if (!orcid.equals(getRealUserOrcid())) {
+            return RecoveryPhoneNumberResponse.failure(NOT_ACCOUNT_OWNER);
+        }
+        if (!twoFactorAuthenticationManager.userUsing2FA(orcid)) {
+            return RecoveryPhoneNumberResponse.failure(TWO_FACTOR_DISABLED);
+        }
+        if (!challengePassedRecently(request)) {
+            return RecoveryPhoneNumberResponse.failure(CHALLENGE_REQUIRED);
+        }
+        String phoneNumber = recoveryPhoneManager.getDecryptedPhoneNumber(orcid);
+        if (phoneNumber == null) {
+            return RecoveryPhoneNumberResponse.failure(NO_RECOVERY_PHONE);
+        }
+        return RecoveryPhoneNumberResponse.success(phoneNumber);
     }
 
     @RequestMapping(value = "/recoveryPhone/sendCode.json", method = RequestMethod.POST)
@@ -185,6 +235,7 @@ public class TwoFactorAuthenticationController extends BaseController {
         String phoneE164 = recoveryPhoneVerificationService.normalize(form.getPhoneNumber());
         RecoveryPhone saved = recoveryPhoneManager.saveRecoveryPhone(orcid, phoneE164);
         request.getSession().removeAttribute(RECOVERY_PHONE_ELEVATION_ATTRIBUTE);
+        request.getSession().removeAttribute(RECOVERY_PHONE_CHALLENGE_ATTRIBUTE);
 
         // The answer is built from the row the save wrote, not read back: a read goes to
         // the read-only pool, and on a deployed environment that is a replica which can
@@ -317,6 +368,7 @@ public class TwoFactorAuthenticationController extends BaseController {
         // 2FA is off, so the action this challenge was guarding proceeds on the
         // password alone; an elevation granted earlier has nothing left to guard
         request.getSession().removeAttribute(RECOVERY_PHONE_ELEVATION_ATTRIBUTE);
+        request.getSession().removeAttribute(RECOVERY_PHONE_CHALLENGE_ATTRIBUTE);
         result.setSuccess(true);
         return result;
     }
@@ -338,6 +390,19 @@ public class TwoFactorAuthenticationController extends BaseController {
             return null;
         }
         return CHALLENGE_REQUIRED;
+    }
+
+    /**
+     * The account verification challenge itself passed on this session within
+     * the window. Narrower than {@link #sessionIsElevated}: 2FA setup elevates
+     * the session too, and that grant must not read the number back (F4.2).
+     */
+    private boolean challengePassedRecently(HttpServletRequest request) {
+        Object passedAt = request.getSession().getAttribute(RECOVERY_PHONE_CHALLENGE_ATTRIBUTE);
+        if (!(passedAt instanceof Long)) {
+            return false;
+        }
+        return System.currentTimeMillis() - (Long) passedAt <= RECOVERY_PHONE_ELEVATION_TTL_MILLIS;
     }
 
     /** A challenge passed on this session within the elevation window. */
@@ -371,8 +436,12 @@ public class TwoFactorAuthenticationController extends BaseController {
         if (!CONTEXT_INTERSTITIAL.equals(resolveContext(context))) {
             return false;
         }
-        if (!Features.LOGIN_RECOVERY_PHONE_INTERSTITIAL.isActive()) {
-            // The relaxed path dies with the interstitial that justifies it (R7.4)
+        if (!Features.LOGIN_RECOVERY_PHONE_INTERSTITIAL.isActive() && !Features.OAUTH_RECOVERY_PHONE_INTERSTITIAL.isActive()) {
+            // The relaxed path dies with the interstitial that justifies it
+            // (R7.4). Either flow's flag keeps it open: which flow the form is
+            // in is as much a claim of the client's as the context is, so the
+            // server cannot tell the two apart, and both rest on the same
+            // proof - a sign in completed inside the window (F2.2)
             return false;
         }
         if (recoveryPhoneManager.getRecoveryPhone(orcid) != null) {

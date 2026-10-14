@@ -137,6 +137,12 @@ import org.springframework.test.util.ReflectionTestUtils;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.orcid.jaxb.model.common_v2.Contributor;
+import org.orcid.jaxb.model.common_v2.ContributorEmail;
+import org.orcid.jaxb.model.common_v2.ContributorOrcid;
+import org.orcid.jaxb.model.record_v2.WorkContributors;
+import static org.mockito.Mockito.doCallRealMethod;
+import static org.mockito.ArgumentMatchers.any;
 
 /**
  * The V2 twin of PublicV3ApiServiceDelegatorTest; the same reasoning applies.
@@ -280,7 +286,9 @@ public class PublicV2ApiServiceDelegatorTest {
     @Test
     public void testViewWork() {
         Work work = work(11L, Visibility.PUBLIC);
+        work.setWorkContributors(contributorWithEmail());
         when(workManagerReadOnly.getWork(ORCID, 11L)).thenReturn(work);
+        stripContributorEmailsForReal();
 
         Response response = serviceDelegator.viewWork(ORCID, 11L);
 
@@ -290,6 +298,10 @@ public class PublicV2ApiServiceDelegatorTest {
         assertEquals("/0000-0000-0000-0003/work/11", work.getPath());
         verify(publicAPISecurityManagerV2).checkIsPublic(work);
         verify(sourceUtilsReadOnly).setSourceName(work);
+        // PD-14292: the contributor email is write-only and never comes back on a read;
+        // ContributorUtilsTest proves the strip itself.
+        verify(contributorUtilsReadOnly).filterContributorPrivateData(work);
+        assertNull(work.getWorkContributors().getContributor().get(0).getContributorEmail());
     }
 
     @Test
@@ -317,9 +329,11 @@ public class PublicV2ApiServiceDelegatorTest {
     public void testViewBulkWorks() {
         WorkBulk bulk = new WorkBulk();
         Work work = work(11L, Visibility.PUBLIC);
+        work.setWorkContributors(contributorWithEmail());
         bulk.setBulk(new ArrayList<BulkElement>(Arrays.asList(work)));
         when(profileEntityManagerReadOnly.findByOrcid(ORCID)).thenReturn(new ProfileEntity());
         when(workManagerReadOnly.findWorkBulk(ORCID, "11,12,13")).thenReturn(bulk);
+        stripContributorEmailsForReal();
 
         Response response = serviceDelegator.viewBulkWorks(ORCID, "11,12,13");
 
@@ -332,6 +346,8 @@ public class PublicV2ApiServiceDelegatorTest {
         // note the OTHER SourceUtils: viewBulkWorks uses sourceUtils
         verify(sourceUtils).setSourceName(bulk);
         verifyNoInteractions(sourceUtilsReadOnly);
+        verify(contributorUtilsReadOnly).filterContributorPrivateData(bulk);
+        assertNull(work.getWorkContributors().getContributor().get(0).getContributorEmail());
     }
 
     @Test
@@ -1621,6 +1637,25 @@ public class PublicV2ApiServiceDelegatorTest {
     private static LastModifiedDate lastModified(long putCode) {
         // distinct per put code so a "latest wins" aggregation is observable
         return new LastModifiedDate(DateUtils.convertToXMLGregorianCalendar(1500000000000L + (putCode * 1000L)));
+    }
+
+    private static WorkContributors contributorWithEmail() {
+        Contributor contributor = new Contributor();
+        contributor.setContributorOrcid(new ContributorOrcid("0000-0000-0000-0000"));
+        contributor.setContributorEmail(new ContributorEmail("never@show.this"));
+        WorkContributors contributors = new WorkContributors();
+        contributors.getContributor().add(contributor);
+        return contributors;
+    }
+
+    /**
+     * The Work and WorkBulk overloads of filterContributorPrivateData touch no
+     * collaborator, so the real method can run on the mock: the email is then
+     * actually removed rather than merely asked for.
+     */
+    private void stripContributorEmailsForReal() {
+        doCallRealMethod().when(contributorUtilsReadOnly).filterContributorPrivateData(any(Work.class));
+        doCallRealMethod().when(contributorUtilsReadOnly).filterContributorPrivateData(any(WorkBulk.class));
     }
 
     private static Work work(Long putCode, Visibility visibility) {

@@ -17,6 +17,7 @@ import org.orcid.core.security.OrcidUserDetailsService;
 import org.orcid.core.togglz.Features;
 import org.orcid.frontend.web.exception.Bad2FARecoveryCodeException;
 import org.orcid.frontend.web.exception.Bad2FAVerificationCodeException;
+import org.orcid.frontend.web.exception.PasswordResetRequiredException;
 import org.orcid.frontend.web.exception.VerificationCodeFor2FARequiredException;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.utils.OrcidStringUtils;
@@ -127,6 +128,17 @@ public class OrcidAuthenticationProvider extends DaoAuthenticationProvider {
             if (profile == null) {
                 throw new BadCredentialsException("Invalid username or password");
             }
+        }
+
+        // A correct password on a record flagged for a mandatory password reset
+        // does not sign in. Checked after the password and the lock, so a wrong
+        // password still counts as a failed attempt, and before 2FA, so the user
+        // is not asked for a code first. The status is read from the primary,
+        // not the profile cache: the cache is keyed on last_modified, which
+        // setting or clearing the flag does not change.
+        if (Features.FORCE_PASSWORD_RESET.isActive() && profileEntityManager.isPasswordResetRequired(profile.getId())) {
+            LOGGER.info("Correct sign in refused, password reset required for: " + profile.getId());
+            throw new PasswordResetRequiredException();
         }
 
         if (profile.getUsing2FA()) {

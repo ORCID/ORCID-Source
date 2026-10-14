@@ -17,11 +17,15 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
+import org.orcid.frontend.spring.configuration.OrcidBeanClassLoaderAware;
 import org.springframework.data.redis.core.BoundHashOperations;
 import org.springframework.data.redis.core.BoundSetOperations;
 import org.springframework.data.redis.core.RedisOperations;
+import org.springframework.data.redis.serializer.RedisSerializer;
 import org.springframework.session.FindByIndexNameSessionRepository;
 import org.springframework.web.context.request.RequestContextHolder;
+
+import static org.junit.Assert.assertEquals;
 
 @RunWith(MockitoJUnitRunner.class)
 public class OrcidRedisIndexedSessionRepositoryTest {
@@ -82,5 +86,20 @@ public class OrcidRedisIndexedSessionRepositoryTest {
         verify(redisOperations, atLeastOnce()).delete(eq(expiredSessionKey));
         verify(principalSetOperations).remove(eq(SESSION_ID));
         verify(expirationSetOperations).remove(eq("expires:" + SESSION_ID));
+    }
+
+    @Test
+    public void springSessionSerializerShouldAllowJavaLongsForSessionDelta() {
+        OrcidBeanClassLoaderAware beanClassLoaderAware = new OrcidBeanClassLoaderAware();
+        beanClassLoaderAware.setBeanClassLoader(getClass().getClassLoader());
+
+        RedisSerializer<Object> serializer = beanClassLoaderAware.springSessionDefaultRedisSerializer();
+        Map<String, Object> sessionDelta = new HashMap<>();
+        sessionDelta.put("lastAccessedTime", 123456789L);
+
+        byte[] json = serializer.serialize(sessionDelta);
+        Map<String, Object> deserialized = (Map<String, Object>) serializer.deserialize(json);
+
+        assertEquals(Long.valueOf(123456789L), deserialized.get("lastAccessedTime"));
     }
 }

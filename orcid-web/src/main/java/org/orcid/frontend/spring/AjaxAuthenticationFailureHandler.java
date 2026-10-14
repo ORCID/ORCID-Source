@@ -12,6 +12,7 @@ import org.orcid.core.security.InvalidUserTypeException;
 import org.orcid.core.security.UnclaimedProfileExistsException;
 import org.orcid.frontend.web.exception.Bad2FARecoveryCodeException;
 import org.orcid.frontend.web.exception.Bad2FAVerificationCodeException;
+import org.orcid.frontend.web.exception.PasswordResetRequiredException;
 import org.orcid.frontend.web.exception.VerificationCodeFor2FARequiredException;
 import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.core.AuthenticationException;
@@ -60,6 +61,10 @@ public class AjaxAuthenticationFailureHandler extends SimpleUrlAuthenticationFai
         } else if (exception.getCause() instanceof InvalidUserTypeException) {
             writer.println(",");
             writer.println("\"invalidUserType\": true");
+        } else if (exception instanceof PasswordResetRequiredException) {
+            // Thrown by OrcidAuthenticationProvider after the password matched
+            writer.println(",");
+            writer.println("\"passwordResetRequired\": true");
         }
         writer.println("}");
     }

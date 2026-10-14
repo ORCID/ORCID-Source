@@ -25,14 +25,18 @@ import org.orcid.core.manager.ActivityManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.jaxb.model.common_v2.Contributor;
+import org.orcid.jaxb.model.common_v2.ContributorAttributes;
 import org.orcid.jaxb.model.common_v2.ContributorEmail;
 import org.orcid.jaxb.model.common_v2.ContributorOrcid;
+import org.orcid.jaxb.model.common_v2.ContributorRole;
 import org.orcid.jaxb.model.common_v2.CreditName;
 import org.orcid.jaxb.model.common_v2.Title;
+import org.orcid.jaxb.model.error_v2.OrcidError;
 import org.orcid.jaxb.model.record_v2.Funding;
 import org.orcid.jaxb.model.record_v2.FundingContributor;
 import org.orcid.jaxb.model.record_v2.FundingContributors;
 import org.orcid.jaxb.model.record_v2.FundingTitle;
+import org.orcid.jaxb.model.record_v2.SequenceType;
 import org.orcid.jaxb.model.record_v2.Work;
 import org.orcid.jaxb.model.record_v2.WorkBulk;
 import org.orcid.jaxb.model.record_v2.WorkContributors;
@@ -129,6 +133,60 @@ public class ContributorUtilsTest {
         Funding funding = getFundingWithoutContributors();
         contributorUtils.filterContributorPrivateData(funding);
         assertNotNull(funding); // test no failures
+    }
+
+    @Test
+    public void testFilterContributorPrivateDataForWork() {
+        // A public name is available, so a name replacement would be visible
+        when(profileEntityManager.orcidExists(anyString())).thenReturn(true);
+        when(cacheManager.getPublicCreditName(any(String.class))).thenReturn("a public name");
+
+        Work work = getWorkWithOrcidContributor();
+        ContributorAttributes attributes = new ContributorAttributes();
+        attributes.setContributorRole(ContributorRole.AUTHOR);
+        attributes.setContributorSequence(SequenceType.FIRST);
+        work.getWorkContributors().getContributor().get(0).setContributorAttributes(attributes);
+
+        contributorUtils.filterContributorPrivateData(work);
+
+        Contributor contributor = work.getWorkContributors().getContributor().get(0);
+        assertNull(contributor.getContributorEmail());
+        assertEquals("original credit name", contributor.getCreditName().getContent());
+        assertEquals("0000-0003-4902-6327", contributor.getContributorOrcid().getPath());
+        assertEquals(ContributorRole.AUTHOR, contributor.getContributorAttributes().getContributorRole());
+        assertEquals(SequenceType.FIRST, contributor.getContributorAttributes().getContributorSequence());
+    }
+
+    @Test
+    public void testFilterContributorPrivateDataForWorkWithNoOrcidRecord() {
+        Work work = getWorkWithContributorWithoutOrcid();
+        contributorUtils.filterContributorPrivateData(work);
+
+        Contributor contributor = work.getWorkContributors().getContributor().get(0);
+        assertNull(contributor.getContributorEmail());
+        assertEquals("original credit name", contributor.getCreditName().getContent());
+    }
+
+    @Test
+    public void testFilterContributorPrivateDataForWorkWithoutContributors() {
+        Work work = getWorkWithoutContributors();
+        contributorUtils.filterContributorPrivateData(work);
+        assertNull(work.getWorkContributors());
+    }
+
+    @Test
+    public void testFilterContributorPrivateDataForBulkWork() {
+        OrcidError error = new OrcidError();
+        error.setDeveloperMessage("not a work");
+        WorkBulk bulk = new WorkBulk();
+        bulk.setBulk(new ArrayList<>(Arrays.asList(getWorkWithOrcidContributor(), error, getWorkWithContributorWithoutOrcid())));
+
+        contributorUtils.filterContributorPrivateData(bulk);
+
+        assertEquals(3, bulk.getBulk().size());
+        assertNull(((Work) bulk.getBulk().get(0)).getWorkContributors().getContributor().get(0).getContributorEmail());
+        assertEquals("not a work", ((OrcidError) bulk.getBulk().get(1)).getDeveloperMessage());
+        assertNull(((Work) bulk.getBulk().get(2)).getWorkContributors().getContributor().get(0).getContributorEmail());
     }
 
     private Work getWorkWithoutContributors() {

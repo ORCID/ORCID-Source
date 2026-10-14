@@ -17,9 +17,12 @@ import org.orcid.frontend.recoveryphone.RecoveryPhoneSendCodeRequest;
 import org.orcid.frontend.recoveryphone.RecoveryPhoneSendCodeResponse;
 import org.orcid.frontend.recoveryphone.RecoveryPhoneSigninSendCodeRequest;
 import org.orcid.frontend.recoveryphone.RecoveryPhoneSigninSendCodeResponse;
+import org.orcid.frontend.recoveryphone.RecoveryPhoneSigninStatusRequest;
+import org.orcid.frontend.recoveryphone.RecoveryPhoneSigninStatusResponse;
 import org.orcid.frontend.recoveryphone.RecoveryPhoneSigninVerifyRequest;
 import org.orcid.frontend.recoveryphone.RecoveryPhoneSigninVerifyResponse;
 import org.orcid.frontend.recoveryphone.RecoveryPhoneVerificationService;
+import org.orcid.frontend.web.exception.PasswordResetRequiredException;
 import org.orcid.frontend.web.exception.VerificationCodeFor2FARequiredException;
 import org.orcid.utils.OrcidStringUtils;
 import org.slf4j.Logger;
@@ -97,6 +100,39 @@ public class RecoveryPhoneSigninController extends BaseController {
 
     @Resource
     private RecordEmailSender recordEmailSender;
+
+    /**
+     * Tells the 2FA step of sign in whether the account behind the credentials
+     * has a recovery number, so the step offers to text one only where there is
+     * a number to text, and the help centre everywhere else (F1.2).
+     *
+     * The answer goes only to a caller holding the password: the check is the
+     * one sendCode makes, through the same provider, so a wrong password here
+     * counts toward the sign in lockout like any other. The screen asks right
+     * after the sign in has accepted that password and said 2FA is on, so all
+     * this adds for the password holder is whether a number is stored.
+     */
+    @RequestMapping(value = "/status.json", method = RequestMethod.POST)
+    public @ResponseBody RecoveryPhoneSigninStatusResponse status(HttpServletRequest request,
+            @RequestBody RecoveryPhoneSigninStatusRequest form) {
+        if (!Features.TWO_FACTOR_RECOVERY_PHONE.isActive()) {
+            return RecoveryPhoneSigninStatusResponse.failure(FEATURE_DISABLED);
+        }
+
+        String credentialsFailure = verifyCredentials(request, form.getUsername(), form.getPassword());
+        if (credentialsFailure != null) {
+            return RecoveryPhoneSigninStatusResponse.failure(credentialsFailure);
+        }
+
+        String orcid = resolveOrcid(form.getUsername());
+        if (orcid == null) {
+            return RecoveryPhoneSigninStatusResponse.failure(BAD_CREDENTIALS);
+        }
+
+        // The read that costs no decryption: whether there is a number is all
+        // this answers
+        return RecoveryPhoneSigninStatusResponse.success(recoveryPhoneManager.getRecoveryPhone(orcid) != null);
+    }
 
     /**
      * Sends a fresh code to the recovery number stored on the account the given
@@ -246,6 +282,17 @@ public class RecoveryPhoneSigninController extends BaseController {
             // The password was accepted and the account is using 2FA: the one
             // state these endpoints exist to serve
             return null;
+        } catch (PasswordResetRequiredException e) {
+            // The password was accepted, but the record has to reset it before
+            // it can sign in, which the provider checks ahead of 2FA. A 2FA
+            // account must still be able to recover here: the password reset
+            // asks for a 2FA code too, so refusing would leave a user without
+            // their authenticator locked out of both
+            String orcid = resolveOrcid(username);
+            if (orcid == null) {
+                return BAD_CREDENTIALS;
+            }
+            return twoFactorAuthenticationManager.userUsing2FA(orcid) ? null : TWO_FACTOR_DISABLED;
         } catch (AuthenticationException e) {
             // Covers a wrong password, a locked account and the bad 2FA code
             // exceptions, none of which we distinguish for an anonymous caller

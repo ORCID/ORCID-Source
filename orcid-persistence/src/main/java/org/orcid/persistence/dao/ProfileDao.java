@@ -209,6 +209,17 @@ public interface ProfileDao extends GenericDao<ProfileEntity, String> {
     @Transactional(propagation = Propagation.REQUIRED)
     int updateForcePasswordReset(List<String> ids, Date forcePasswordResetDate);
 
+    /**
+     * Whether the record must reset its password before it can sign in with
+     * one: the force_password_reset date is set on a claimed record that is
+     * neither deactivated nor deprecated. A narrow, uncached read, because the
+     * profile entity cache is keyed on last_modified and setting or clearing
+     * the flag does not change it. Which database answers depends on the bean:
+     * profileDao reads the primary, profileDaoReadOnly the replica.
+     */
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
+    boolean isPasswordResetRequired(String orcid);
+
     @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     public List<String> registeredBetween(Date startDate, Date endDate);
 

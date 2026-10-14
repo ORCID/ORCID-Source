@@ -4,11 +4,14 @@ import org.apache.commons.lang3.StringUtils;
 import org.orcid.core.contributors.roles.credit.CreditRole;
 import org.orcid.core.manager.v3.ProfileEntityManager;
 import org.orcid.core.manager.v3.read_only.RecordNameManagerReadOnly;
+import org.orcid.jaxb.model.record.bulk.BulkElement;
 import org.orcid.jaxb.model.v3.release.common.Contributor;
 import org.orcid.jaxb.model.v3.release.common.ContributorAttributes;
 import org.orcid.jaxb.model.v3.release.common.CreditName;
 import org.orcid.jaxb.model.v3.release.record.Funding;
 import org.orcid.jaxb.model.v3.release.record.FundingContributor;
+import org.orcid.jaxb.model.v3.release.record.Work;
+import org.orcid.jaxb.model.v3.release.record.WorkBulk;
 import org.orcid.pojo.ContributorsRolesAndSequences;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 
@@ -38,6 +41,29 @@ public class ContributorUtils {
                         CreditName creditName = new CreditName(publicContributorCreditName != null ? publicContributorCreditName : "");
                         contributor.setCreditName(creditName);
                     }
+                }
+            }
+        }
+    }
+
+    /**
+     * The contributor email is write-only (work-3.0.xsd): it is never returned
+     * when reading a work. Unlike the Funding overload, credit names are left
+     * as deposited.
+     */
+    public void filterContributorPrivateData(Work work) {
+        if (work != null && work.getWorkContributors() != null && work.getWorkContributors().getContributor() != null) {
+            for (Contributor contributor : work.getWorkContributors().getContributor()) {
+                contributor.setContributorEmail(null);
+            }
+        }
+    }
+
+    public void filterContributorPrivateData(WorkBulk works) {
+        if (works != null && works.getBulk() != null) {
+            for (BulkElement element : works.getBulk()) {
+                if (element instanceof Work) {
+                    filterContributorPrivateData((Work) element);
                 }
             }
         }
