@@ -25,6 +25,7 @@ import java.util.Map;
 import jakarta.persistence.NoResultException;
 import jakarta.persistence.NonUniqueResultException;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -49,6 +50,8 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionTemplate;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
 @RunWith(MockitoJUnitRunner.class)
 public class EmailManagerTest {
@@ -100,6 +103,14 @@ public class EmailManagerTest {
             TransactionCallback<?> callback = i.getArgument(0);
             return callback.doInTransaction(null);
         });
+        // removeEmails reads the caller's IP from the request bound to the thread. Bind one
+        // here: this class must not depend on an earlier test having left one behind.
+        RequestContextHolder.setRequestAttributes(new ServletRequestAttributes(request("10.0.0.1")));
+    }
+
+    @After
+    public void tearDown() {
+        RequestContextHolder.resetRequestAttributes();
     }
 
     @Test
@@ -491,6 +502,7 @@ public class EmailManagerTest {
         verify(emailDao).removeEmail("orcid", "remove@x.com");
         verify(emailDao, never()).updatePrimary(anyString(), anyString());
         verify(profileEmailDomainManager).updateEmailDomains(eq("orcid"), isNull(), any(Emails.class));
+        verify(profileHistoryEventManager).recordAdminEmailUpdateEvent(eq("orcid"), eq("10.0.0.1"), anyString());
     }
 
     @Test

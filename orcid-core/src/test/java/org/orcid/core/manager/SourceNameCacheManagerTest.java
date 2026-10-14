@@ -150,6 +150,8 @@ public class SourceNameCacheManagerTest extends BaseTest {
         TargetProxyHelper.injectIntoProxy(sourceNameCacheManager, "recordNameDao", recordNameDao);
         TargetProxyHelper.injectIntoProxy(sourceNameCacheManager, "clientDetailsDao", clientDetailsDao);
         TargetProxyHelper.injectIntoProxy(recordNameManagerReadOnlyV3, "recordNameDao", recordNameDao);
+        // the request bound in before() is thread-wide; leaving it would hand it to later tests
+        RequestContextHolder.resetRequestAttributes();
     }
  
     @Test    
