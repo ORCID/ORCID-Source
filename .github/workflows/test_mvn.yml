@@ -79,6 +79,9 @@ on:
 jobs:
   test_mvn:
     strategy:
+      # One red module must not cancel the others: a cancelled leg reports
+      # nothing, and its coverage is missing from the report.
+      fail-fast: false
       matrix:
         include:
           - project: orcid-message-listener
