@@ -988,15 +988,15 @@ public class OrcidSecurityManager_PersonTest extends OrcidSecurityManagerTestBas
 
     /**
      * /email/read-private reveals every email, private ones included, and nothing else: every
-     * other section is cut back to what anyone could see. The member API delegator tests
-     * proved this end to end before they moved to mocks; it is enforced here, so it is proved
-     * here. All items are sourced by another client, so no source exemption applies.
+     * other section is cut back to what anyone could see, apart from what the calling client is
+     * itself the source of. The member API delegator tests proved this end to end before they
+     * moved to mocks; it is enforced here, so it is proved here.
      */
     @Test
     public void testPerson_When_MixedVisibility_EmailReadPrivateToken() {
         SecurityContextTestUtils.setUpSecurityContext(ORCID_1, CLIENT_1, ScopePathType.EMAIL_READ_PRIVATE);
         Name name = createName(Visibility.PUBLIC);
-        Biography bio = createBiography(Visibility.LIMITED);
+        Biography bio = createBiography(Visibility.PUBLIC);
 
         Email e1 = createEmail(Visibility.PUBLIC, CLIENT_2);
         Email e2 = createEmail(Visibility.LIMITED, CLIENT_2);
@@ -1007,8 +1007,10 @@ public class OrcidSecurityManager_PersonTest extends OrcidSecurityManagerTestBas
         Address a1 = createAddress(Visibility.PUBLIC, CLIENT_2);
         Address a2 = createAddress(Visibility.LIMITED, CLIENT_2);
         Address a3 = createAddress(Visibility.PRIVATE, CLIENT_2);
+        // private, but the calling client is its source
+        Address a4 = createAddress(Visibility.PRIVATE, CLIENT_1);
         Addresses addresses = new Addresses();
-        addresses.setAddress(new ArrayList<Address>(Arrays.asList(a1, a2, a3)));
+        addresses.setAddress(new ArrayList<Address>(Arrays.asList(a1, a2, a3, a4)));
 
         Keyword k1 = createKeyword(Visibility.PUBLIC, CLIENT_2);
         Keyword k2 = createKeyword(Visibility.LIMITED, CLIENT_2);
@@ -1051,8 +1053,8 @@ public class OrcidSecurityManager_PersonTest extends OrcidSecurityManagerTestBas
         assertTrue(p.getEmails().getEmails().containsAll(Arrays.asList(e1, e2, e3)));
         // and nothing else is widened by the email scope
         assertEquals(name, p.getName());
-        assertNull(p.getBiography());
-        assertEquals(Arrays.asList(a1), p.getAddresses().getAddress());
+        assertEquals(bio, p.getBiography());
+        assertEquals(Arrays.asList(a1, a4), p.getAddresses().getAddress());
         assertEquals(Arrays.asList(k1), p.getKeywords().getKeywords());
         assertEquals(Arrays.asList(o1), p.getOtherNames().getOtherNames());
         assertEquals(Arrays.asList(ext1), p.getExternalIdentifiers().getExternalIdentifiers());

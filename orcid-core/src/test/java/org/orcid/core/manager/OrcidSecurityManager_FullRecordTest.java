@@ -1750,9 +1750,9 @@ public class OrcidSecurityManager_FullRecordTest extends OrcidSecurityManagerTes
 
     /**
      * /email/read-private reveals every email, private ones included, and nothing else: every
-     * other section is cut back to what anyone could see. The member API delegator tests
-     * proved this end to end before they moved to mocks; it is enforced here, so it is proved
-     * here. All items are sourced by another client, so no source exemption applies.
+     * other section is cut back to what anyone could see, apart from what the calling client is
+     * itself the source of. The member API delegator tests proved this end to end before they
+     * moved to mocks; it is enforced here, so it is proved here.
      */
     @Test
     public void testRecord_When_MixedVisibility_EmailReadPrivateToken() {
@@ -1769,8 +1769,10 @@ public class OrcidSecurityManager_FullRecordTest extends OrcidSecurityManagerTes
         Address a1 = createAddress(Visibility.PUBLIC, CLIENT_2);
         Address a2 = createAddress(Visibility.LIMITED, CLIENT_2);
         Address a3 = createAddress(Visibility.PRIVATE, CLIENT_2);
+        // private, but the calling client is its source
+        Address a4 = createAddress(Visibility.PRIVATE, CLIENT_1);
         Addresses addresses = new Addresses();
-        addresses.setAddress(new ArrayList<Address>(Arrays.asList(a1, a2, a3)));
+        addresses.setAddress(new ArrayList<Address>(Arrays.asList(a1, a2, a3, a4)));
 
         Keyword k1 = createKeyword(Visibility.PUBLIC, CLIENT_2);
         Keyword k2 = createKeyword(Visibility.LIMITED, CLIENT_2);
@@ -1812,6 +1814,9 @@ public class OrcidSecurityManager_FullRecordTest extends OrcidSecurityManagerTes
         FundingSummary f1 = createFundingSummary(Visibility.PUBLIC, CLIENT_2, EXTID_1);
         FundingSummary f2 = createFundingSummary(Visibility.LIMITED, CLIENT_2, EXTID_2);
         FundingSummary f3 = createFundingSummary(Visibility.PRIVATE, CLIENT_2, EXTID_3);
+        PeerReviewSummary pr1 = createPeerReviewSummary(Visibility.PUBLIC, CLIENT_2, EXTID_1);
+        PeerReviewSummary pr2 = createPeerReviewSummary(Visibility.LIMITED, CLIENT_2, EXTID_2);
+        PeerReviewSummary pr3 = createPeerReviewSummary(Visibility.PRIVATE, CLIENT_2, EXTID_3);
         EducationSummary edu1 = createEducationSummary(Visibility.PUBLIC, CLIENT_2);
         EducationSummary edu2 = createEducationSummary(Visibility.LIMITED, CLIENT_2);
         EducationSummary edu3 = createEducationSummary(Visibility.PRIVATE, CLIENT_2);
@@ -1821,6 +1826,7 @@ public class OrcidSecurityManager_FullRecordTest extends OrcidSecurityManagerTes
         ActivitiesSummary as = new ActivitiesSummary();
         as.setWorks(createWorks(w1, w2, w3));
         as.setFundings(createFundings(f1, f2, f3));
+        as.setPeerReviews(createPeerReviews(pr1, pr2, pr3));
         as.setEducations(createEducations(edu1, edu2, edu3));
         as.setEmployments(createEmployments(em1, em2, em3));
 
@@ -1836,15 +1842,17 @@ public class OrcidSecurityManager_FullRecordTest extends OrcidSecurityManagerTes
         // and nothing else is widened by the email scope
         assertEquals(name, p.getName());
         assertNull(p.getBiography());
-        assertEquals(Arrays.asList(a1), p.getAddresses().getAddress());
+        assertEquals(Arrays.asList(a1, a4), p.getAddresses().getAddress());
         assertEquals(Arrays.asList(k1), p.getKeywords().getKeywords());
         assertEquals(Arrays.asList(o1), p.getOtherNames().getOtherNames());
         assertEquals(Arrays.asList(ext1), p.getExternalIdentifiers().getExternalIdentifiers());
         assertEquals(Arrays.asList(r1), p.getResearcherUrls().getResearcherUrls());
-        assertEquals(1, as.getWorks().getWorkGroup().size());
         assertEquals(Arrays.asList(w1), as.getWorks().getWorkGroup().get(0).getActivities());
-        assertEquals(1, as.getFundings().getFundingGroup().size());
+        assertEquals(1, as.getWorks().getWorkGroup().size());
         assertEquals(Arrays.asList(f1), as.getFundings().getFundingGroup().get(0).getActivities());
+        assertEquals(1, as.getFundings().getFundingGroup().size());
+        assertEquals(Arrays.asList(pr1), as.getPeerReviews().getPeerReviewGroup().get(0).getActivities());
+        assertEquals(1, as.getPeerReviews().getPeerReviewGroup().size());
         assertEquals(Arrays.asList(edu1), as.getEducations().getSummaries());
         assertEquals(Arrays.asList(em1), as.getEmployments().getSummaries());
     }
