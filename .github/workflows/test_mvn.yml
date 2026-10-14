@@ -98,6 +98,7 @@ jobs:
 
     runs-on: ubuntu-latest
     steps:
+# >>> shared setup: keep identical in test_mvn and db_tests (db_stage_drift diffs them)
       - name: Harden the runner (Audit all outbound calls)
         uses: step-security/harden-runner@fa2e9d605c4eeb9fcad4c99c224cee0c6c7f3594 # v2.16.0
         with:
@@ -130,7 +131,6 @@ jobs:
           distribution: 'temurin'
           java-version: ${{ inputs.java_version }}
 
-# >>> maven cache and dependencies: keep identical in test_mvn and db_tests (db_stage_drift diffs them)
 ########################################################################################
 # handle restoring a custom gha cache
 
@@ -176,7 +176,7 @@ jobs:
         with:
           version_tag_numeric: ${{ steps.version.outputs.version_tag_numeric }}
 
-# <<< maven cache and dependencies
+# <<< shared setup
 ########################################################################################
       - name: "Test ${{ matrix.project }}"
         run: |
@@ -254,6 +254,7 @@ jobs:
 
     runs-on: ubuntu-latest
     steps:
+# >>> shared setup: keep identical in test_mvn and db_tests (db_stage_drift diffs them)
       - name: Harden the runner (Audit all outbound calls)
         uses: step-security/harden-runner@fa2e9d605c4eeb9fcad4c99c224cee0c6c7f3594 # v2.16.0
         with:
@@ -269,6 +270,8 @@ jobs:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
         with:
           ref: ${{ steps.ref.outputs.ref }}
+          # checkout some history so we can scan commits for bump messages
+          # NOTE: history does not include tags!
           fetch-depth: 100
 
       - name: find next version
@@ -284,7 +287,6 @@ jobs:
           distribution: 'temurin'
           java-version: ${{ inputs.java_version }}
 
-# >>> maven cache and dependencies: keep identical in test_mvn and db_tests (db_stage_drift diffs them)
 ########################################################################################
 # handle restoring a custom gha cache
 
@@ -330,7 +332,7 @@ jobs:
         with:
           version_tag_numeric: ${{ steps.version.outputs.version_tag_numeric }}
 
-# <<< maven cache and dependencies
+# <<< shared setup
       - name: Run database tests
         run: |
           mvn -T 1C --batch-mode test -P db-tests \
@@ -413,9 +415,11 @@ jobs:
           drift=0
           for m in $reactor; do
             [ -d "$m/src/test" ] || continue
-            # Any mention of the class, not just a one-line @Category(...): the
-            # annotation may span lines or sit in an array.
-            if grep -rlqE 'DatabaseTest\.class' "$m/src/test"; then
+            # Any use of the class, not just a one-line @Category(...): the
+            # annotation may span lines or sit in an array. Comments do not count.
+            uses=$(grep -rhE '(^|[^A-Za-z0-9_])DatabaseTest\.class' "$m/src/test" \
+                   | grep -vE '^[[:space:]]*(//|\*|/\*)' || true)
+            if [ -n "$uses" ]; then
               case " $in_matrix " in
                 *" $m "*) ;;
                 *) echo "::error::$m has @Category(DatabaseTest.class) tests but is not in the db_tests matrix, so they never run. Add it."; drift=1 ;;
@@ -431,22 +435,22 @@ jobs:
           fi
           exit $drift
 
-      - name: Both stages must restore and install dependencies the same way
+      - name: Both stages must set up the same way
         run: |
           # The release pipeline calls this workflow with install_maven_dependencies
           # false: modules come from the cache the install job saved under the commit
           # sha, at the bumped version. A stage that restores anything else cannot
           # resolve its sibling modules there, and nothing on a pull request shows it.
           block() { sed -n "/^  $1:/,/^  $2:/p" .github/workflows/test_mvn.yml \
-                    | sed -n '/^# >>> maven cache and dependencies/,/^# <<< maven cache and dependencies/p'; }
+                    | sed -n '/^# >>> shared setup/,/^# <<< shared setup/p'; }
           unit=$(block test_mvn db_tests)
           db=$(block db_tests db_stage_drift)
           if [ -z "$unit" ] || [ "$unit" != "$db" ]; then
-            echo "::error::the maven cache and dependency steps differ between test_mvn and db_tests"
+            echo "::error::the setup steps differ between test_mvn and db_tests"
             diff <(echo "$unit") <(echo "$db") || true
             exit 1
           fi
-          echo "both stages share one cache and dependency block"
+          echo "both stages share one setup block"
 
   coverage_report:
     # Renders the JaCoCo results the matrix produced. Measures only: no
