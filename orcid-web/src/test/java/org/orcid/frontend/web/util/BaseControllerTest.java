@@ -5,6 +5,7 @@ import java.util.List;
 
 import jakarta.annotation.Resource;
 
+import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -61,6 +62,13 @@ public class BaseControllerTest extends DBUnitTest {
     public void beforeInstance() {
         SecurityContextHolder.getContext().setAuthentication(getAuthentication());
         MockitoAnnotations.initMocks(this);
+    }
+
+    @After
+    public void clearSecurityContext() {
+        // the login set in beforeInstance() is thread-wide; left in place it
+        // would authorise whichever test runs next in this JVM
+        SecurityContextHolder.clearContext();
     }
 
     @AfterClass
