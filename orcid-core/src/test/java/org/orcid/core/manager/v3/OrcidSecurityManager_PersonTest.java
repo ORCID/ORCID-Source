@@ -985,4 +985,77 @@ public class OrcidSecurityManager_PersonTest extends OrcidSecurityManagerTestBas
         orcidSecurityManager.checkAndFilter(ORCID_1, p);
         assertNotNull(p);
     }
+
+    /**
+     * /email/read-private reveals every email, private ones included, and nothing else: every
+     * other section is cut back to what anyone could see. The member API delegator tests
+     * proved this end to end before they moved to mocks; it is enforced here, so it is proved
+     * here. All items are sourced by another client, so no source exemption applies.
+     */
+    @Test
+    public void testPerson_When_MixedVisibility_EmailReadPrivateToken() {
+        SecurityContextTestUtils.setUpSecurityContext(ORCID_1, CLIENT_1, ScopePathType.EMAIL_READ_PRIVATE);
+        Name name = createName(Visibility.PUBLIC);
+        Biography bio = createBiography(Visibility.LIMITED);
+
+        Email e1 = createEmail(Visibility.PUBLIC, CLIENT_2);
+        Email e2 = createEmail(Visibility.LIMITED, CLIENT_2);
+        Email e3 = createEmail(Visibility.PRIVATE, CLIENT_2);
+        Emails emails = new Emails();
+        emails.setEmails(new ArrayList<Email>(Arrays.asList(e1, e2, e3)));
+
+        Address a1 = createAddress(Visibility.PUBLIC, CLIENT_2);
+        Address a2 = createAddress(Visibility.LIMITED, CLIENT_2);
+        Address a3 = createAddress(Visibility.PRIVATE, CLIENT_2);
+        Addresses addresses = new Addresses();
+        addresses.setAddress(new ArrayList<Address>(Arrays.asList(a1, a2, a3)));
+
+        Keyword k1 = createKeyword(Visibility.PUBLIC, CLIENT_2);
+        Keyword k2 = createKeyword(Visibility.LIMITED, CLIENT_2);
+        Keyword k3 = createKeyword(Visibility.PRIVATE, CLIENT_2);
+        Keywords keywords = new Keywords();
+        keywords.setKeywords(new ArrayList<Keyword>(Arrays.asList(k1, k2, k3)));
+
+        OtherName o1 = createOtherName(Visibility.PUBLIC, CLIENT_2);
+        OtherName o2 = createOtherName(Visibility.LIMITED, CLIENT_2);
+        OtherName o3 = createOtherName(Visibility.PRIVATE, CLIENT_2);
+        OtherNames otherNames = new OtherNames();
+        otherNames.setOtherNames(new ArrayList<OtherName>(Arrays.asList(o1, o2, o3)));
+
+        PersonExternalIdentifier ext1 = createPersonExternalIdentifier(Visibility.PUBLIC, CLIENT_2);
+        PersonExternalIdentifier ext2 = createPersonExternalIdentifier(Visibility.LIMITED, CLIENT_2);
+        PersonExternalIdentifier ext3 = createPersonExternalIdentifier(Visibility.PRIVATE, CLIENT_2);
+        PersonExternalIdentifiers personExternalIdentifiers = new PersonExternalIdentifiers();
+        personExternalIdentifiers.setExternalIdentifiers(new ArrayList<PersonExternalIdentifier>(Arrays.asList(ext1, ext2, ext3)));
+
+        ResearcherUrl r1 = createResearcherUrl(Visibility.PUBLIC, CLIENT_2);
+        ResearcherUrl r2 = createResearcherUrl(Visibility.LIMITED, CLIENT_2);
+        ResearcherUrl r3 = createResearcherUrl(Visibility.PRIVATE, CLIENT_2);
+        ResearcherUrls researcherUrls = new ResearcherUrls();
+        researcherUrls.setResearcherUrls(new ArrayList<ResearcherUrl>(Arrays.asList(r1, r2, r3)));
+
+        Person p = new Person();
+        p.setName(name);
+        p.setBiography(bio);
+        p.setEmails(emails);
+        p.setAddresses(addresses);
+        p.setKeywords(keywords);
+        p.setOtherNames(otherNames);
+        p.setExternalIdentifiers(personExternalIdentifiers);
+        p.setResearcherUrls(researcherUrls);
+
+        orcidSecurityManager.checkAndFilter(ORCID_1, p);
+
+        // every email survives, whatever its visibility
+        assertEquals(3, p.getEmails().getEmails().size());
+        assertTrue(p.getEmails().getEmails().containsAll(Arrays.asList(e1, e2, e3)));
+        // and nothing else is widened by the email scope
+        assertEquals(name, p.getName());
+        assertNull(p.getBiography());
+        assertEquals(Arrays.asList(a1), p.getAddresses().getAddress());
+        assertEquals(Arrays.asList(k1), p.getKeywords().getKeywords());
+        assertEquals(Arrays.asList(o1), p.getOtherNames().getOtherNames());
+        assertEquals(Arrays.asList(ext1), p.getExternalIdentifiers().getExternalIdentifiers());
+        assertEquals(Arrays.asList(r1), p.getResearcherUrls().getResearcherUrls());
+    }
 }
