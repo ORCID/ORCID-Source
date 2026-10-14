@@ -237,7 +237,7 @@ jobs:
     # 102s -- real, but paid in parallel, where the single job's 6m10s was not.
     #
     # Every leg runs in full on every push. Only the modules that hold database
-    # tests are listed: the other five would each pay ~100s of setup to run
+    # tests are listed: the other four would each pay ~100s of setup to run
     # nothing. The `db_stage_drift` job below fails if a module outside this
     # list ever gains one, so that omission cannot hide a test.
     strategy:
@@ -250,6 +250,7 @@ jobs:
           - project: orcid-web
           - project: orcid-core
           - project: orcid-persistence
+          - project: orcid-pub-web
 
     runs-on: ubuntu-latest
     steps:

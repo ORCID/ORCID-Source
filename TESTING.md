@@ -175,12 +175,12 @@ Two things `main` changed that are worth knowing:
 ## The database stage
 
 Both stages run in full on every push. The unit stage is eleven parallel jobs,
-one per module; the database stage is six, one per module that holds a test
+one per module; the database stage is seven, one per module that holds a test
 marked `@Category(DatabaseTest.class)`. The split exists so the unit stage can
 report in a couple of minutes without waiting on a database, not so that work
 can be skipped -- nothing selects which tests to run based on what changed.
 
-The other five reactor modules are absent from the database matrix because they
+The other four reactor modules are absent from the database matrix because they
 hold no database test, and each would pay about 100s of setup to run nothing.
 That is the one omission, and `db_stage_drift` guards it: it reads the matrix
 out of this workflow and the module list out of the root pom, and fails the
