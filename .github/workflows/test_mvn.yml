@@ -464,6 +464,10 @@ jobs:
           egress-policy: audit
 
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+        with:
+          # the pull request's merge commit and its first parent, the base it
+          # was merged into: enough to list the changed files below
+          fetch-depth: 2
 
       - name: Download coverage artifacts
         uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
@@ -474,11 +478,14 @@ jobs:
       - name: List changed files
         if: github.event_name == 'pull_request'
         run: |
-          git fetch --no-tags --depth=1 origin "$base"
-          git diff --name-only "origin/$base"...HEAD > changed-files.txt || : > changed-files.txt
+          # On a pull_request event HEAD is GitHub's merge of the head into the
+          # base, so its first parent is that base and the diff between the two
+          # is exactly this pull request's change.
+          if ! git diff --name-only HEAD^1 HEAD > changed-files.txt; then
+            echo "::warning::could not list the changed files; the report will omit that section"
+            : > changed-files.txt
+          fi
           wc -l < changed-files.txt
-        env:
-          base: ${{ github.base_ref }}
 
       - name: Render report
         run: |
