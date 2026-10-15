@@ -42,6 +42,9 @@ import org.orcid.jaxb.model.v3.release.record.summary.InvitedPositionSummary;
 import org.orcid.jaxb.model.v3.release.record.summary.MembershipSummary;
 import org.orcid.jaxb.model.v3.release.record.summary.PeerReviewSummary;
 import org.orcid.jaxb.model.v3.release.record.summary.QualificationSummary;
+import org.orcid.jaxb.model.v3.release.record.summary.ResearchResources;
+import org.orcid.jaxb.model.v3.release.record.summary.ResearchResourceSummary;
+import org.orcid.jaxb.model.v3.release.record.summary.ResearchResourceGroup;
 import org.orcid.jaxb.model.v3.release.record.summary.ServiceSummary;
 import org.orcid.jaxb.model.v3.release.record.summary.WorkSummary;
 import org.orcid.core.exception.OrcidUnauthorizedException;
@@ -2375,7 +2378,16 @@ public class OrcidSecurityManager_FullRecordTest extends OrcidSecurityManagerTes
         ServiceSummary sv1 = createServiceSummary(Visibility.PUBLIC, CLIENT_2);
         ServiceSummary sv2 = createServiceSummary(Visibility.LIMITED, CLIENT_2);
         ServiceSummary sv3 = createServiceSummary(Visibility.PRIVATE, CLIENT_2);
+        ResearchResources researchResources = new ResearchResources();
+        ResearchResourceSummary rr1 = researchResourceSummary(Visibility.PUBLIC, CLIENT_2);
+        for (ResearchResourceSummary rr : Arrays.asList(rr1, researchResourceSummary(Visibility.LIMITED, CLIENT_2),
+                researchResourceSummary(Visibility.PRIVATE, CLIENT_2))) {
+            ResearchResourceGroup group = new ResearchResourceGroup();
+            group.getResearchResourceSummary().add(rr);
+            researchResources.getResearchResourceGroup().add(group);
+        }
         ActivitiesSummary as = new ActivitiesSummary();
+        as.setResearchResources(researchResources);
         as.setWorks(createWorks(w1, w2, w3));
         as.setFundings(createFundings(f1, f2, f3));
         as.setPeerReviews(createPeerReviews(pr1, pr2, pr3));
@@ -2410,6 +2422,9 @@ public class OrcidSecurityManager_FullRecordTest extends OrcidSecurityManagerTes
         assertEquals(1, as.getFundings().getFundingGroup().size());
         assertEquals(Arrays.asList(pr1), as.getPeerReviews().getPeerReviewGroup().get(0).getPeerReviewGroup().get(0).getPeerReviewSummary());
         assertEquals(1, as.getPeerReviews().getPeerReviewGroup().size());
+        assertEquals(1, as.getPeerReviews().getPeerReviewGroup().get(0).getPeerReviewGroup().size());
+        assertEquals(1, as.getResearchResources().getResearchResourceGroup().size());
+        assertEquals(Arrays.asList(rr1), as.getResearchResources().getResearchResourceGroup().get(0).getResearchResourceSummary());
         assertEquals(1, as.getEducations().retrieveGroups().size());
         assertTrue(affiliationsContainSummary(as.getEducations(), edu1));
         assertEquals(1, as.getEmployments().retrieveGroups().size());
@@ -2424,5 +2439,12 @@ public class OrcidSecurityManager_FullRecordTest extends OrcidSecurityManagerTes
         assertTrue(affiliationsContainSummary(as.getQualifications(), q1));
         assertEquals(1, as.getServices().retrieveGroups().size());
         assertTrue(affiliationsContainSummary(as.getServices(), sv1));
+    }
+
+    private ResearchResourceSummary researchResourceSummary(Visibility v, String sourceId) {
+        ResearchResourceSummary summary = new ResearchResourceSummary();
+        summary.setVisibility(v);
+        setSource(summary, sourceId);
+        return summary;
     }
 }
