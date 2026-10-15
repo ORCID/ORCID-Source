@@ -45,6 +45,14 @@
             <artifactId>orcid-core</artifactId>
             <version>${project.parent.version}</version>
         </dependency>
+        <!-- Actors and SecurityContextTestUtils only; see orcid-core/pom.xml -->
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>orcid-core</artifactId>
+            <version>${project.parent.version}</version>
+            <type>test-jar</type>
+            <scope>test</scope>
+        </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>orcid-api-common</artifactId>

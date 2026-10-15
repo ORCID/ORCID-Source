@@ -32,7 +32,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.orcid.test.OrcidMockitoJUnitRunner;
 import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.BackupCodeManager;
 import org.orcid.core.manager.EncryptionManager;
@@ -71,7 +71,7 @@ import org.togglz.junit.TogglzRule;
 
 import com.nimbusds.jwt.JWTClaimsSet;
 
-@RunWith(MockitoJUnitRunner.class)
+@RunWith(OrcidMockitoJUnitRunner.class)
 public class PasswordResetControllerTest {
 
     private static final String ORCID = "0000-0000-0000-0000";
@@ -362,6 +362,24 @@ public class PasswordResetControllerTest {
         assertNotNull(result.getNewPassword().getErrors());
     }
 
+    /**
+     * The empty-string case above never reaches the null branches. An unpopulated form, and a form
+     * with one of the two password fields null, must both be handled rather than throw.
+     */
+    @Test
+    public void resetPasswordConfirmValidateHandlesNullFields() {
+        controller.resetPasswordConfirmValidate(new OneTimeResetPasswordForm());
+
+        OneTimeResetPasswordForm form = new OneTimeResetPasswordForm();
+        form.setNewPassword(Text.valueOf(""));
+        form.setRetypedPassword(null);
+        controller.resetPasswordConfirmValidate(form);
+
+        form.setPassword(null);
+        form.setRetypedPassword(Text.valueOf(""));
+        controller.resetPasswordConfirmValidate(form);
+    }
+
     @Test
     public void getResetPasswordReturnsForm() {
         OneTimeResetPasswordForm form = controller.getResetPassword();
@@ -416,6 +434,24 @@ public class PasswordResetControllerTest {
         assertEquals("expiredPasswordResetToken", result.getErrors().get(0));
     }
 
+    /**
+     * The guard is {@code entry == null || !token.equals(entry.getToken())}. The test above covers
+     * the right-hand side; this covers the left. A cryptographically valid, unexpired token whose
+     * entry has gone from redis must still be refused rather than accepted or thrown on.
+     */
+    @Test
+    public void submitPasswordEmailValidatePasswordMissingRedisEntryReturnsExpiredError() {
+        String token = "missing.entry.jwt";
+        mockValidJwt(token, ORCID);
+        when(redisClient.get("password-reset-token-" + ORCID)).thenReturn(null);
+        OneTimeResetPasswordForm form = new OneTimeResetPasswordForm();
+        form.setToken(token);
+
+        OneTimeResetPasswordForm result = controller.submitPasswordEmailValidatePassword(newRequest(), new MockHttpServletResponse(), form);
+
+        assertEquals("expiredPasswordResetToken", result.getErrors().get(0));
+    }
+
     @Test
     public void submitPasswordEmailValidatePasswordExpiredJwtDoesNotQueryRedis() {
         String token = "expired.jwt";
@@ -460,6 +496,9 @@ public class PasswordResetControllerTest {
         verify(profileEntityManager).updatePassword(ORCID, "Password#123");
         verify(redisClient).set(eq("password-reset-token-" + ORCID),
                 eq(new PasswordResetTokenEntry(token, true).serialize()), anyInt());
+        // A successful reset also clears the sign-in lock. Nothing else proves the reset path
+        // calls it, so a lockout surviving a password reset would otherwise go unnoticed.
+        verify(profileEntityManager).resetSigninLock(ORCID);
     }
 
     @Test

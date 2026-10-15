@@ -37,7 +37,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.orcid.test.OrcidMockitoJUnitRunner;
 import org.orcid.core.aop.ProfileLastModifiedAspect;
 import org.orcid.core.common.manager.EmailFrequencyManager;
 import org.orcid.core.constants.RevokeReason;
@@ -105,7 +105,7 @@ import org.springframework.transaction.support.TransactionTemplate;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
-@RunWith(MockitoJUnitRunner.class)
+@RunWith(OrcidMockitoJUnitRunner.class)
 public class ProfileEntityManagerImplTest {
 
     private ProfileEntityManagerImpl manager;
@@ -340,6 +340,9 @@ public class ProfileEntityManagerImplTest {
         verify(orcidOauth2TokenDetailDao, never()).disableAccessTokenByUserOrcid(anyString(), anyString());
         verify(profileHistoryEventManager).recordEvent(ProfileHistoryEventType.SET_DEFAULT_VIS_TO_PRIVATE, "d", "deactivated/deprecated");
         verify(profileLastModifiedDao).updateLastModifiedDateAndIndexingStatus("d", IndexingStatus.REINDEX);
+        // Same clearRecord claims as deactivation, for the same reason.
+        verify(userConnectionDao).deleteByOrcid("d");
+        verify(notificationManager).deleteNotificationsForRecord("d");
     }
 
     @Test
@@ -368,6 +371,11 @@ public class ProfileEntityManagerImplTest {
         verify(profileDao).deactivate("orcid");
         verify(orcidOauth2TokenDetailDao).disableAccessTokenByUserOrcid("orcid", RevokeReason.RECORD_DEACTIVATED.name());
         verify(profileHistoryEventManager).recordEvent(ProfileHistoryEventType.SET_DEFAULT_VIS_TO_PRIVATE, "orcid", "deactivated/deprecated");
+        // Deactivating a record drops its social sign-in links and its notifications. Both are
+        // privacy claims and neither is proved anywhere else, so they are asserted here rather
+        // than left to the integration test this class replaced.
+        verify(userConnectionDao).deleteByOrcid("orcid");
+        verify(notificationManager).deleteNotificationsForRecord("orcid");
     }
 
     /*

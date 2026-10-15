@@ -32,13 +32,13 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.orcid.test.OrcidMockitoJUnitRunner;
 import org.orcid.core.constants.OrcidOauth2Constants;
 import org.orcid.core.togglz.Features;
 import org.orcid.core.utils.http.HttpRequestUtils;
 import org.springframework.test.util.ReflectionTestUtils;
 
-@RunWith(MockitoJUnitRunner.class)
+@RunWith(OrcidMockitoJUnitRunner.class)
 public class AuthorizationServerUtilTest {
 
     private static final String AUTH_URL = "https://auth.example.org";

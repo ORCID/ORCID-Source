@@ -7,7 +7,6 @@ import static org.junit.Assert.assertNull;
 import java.io.InputStream;
 import java.util.Date;
 
-import jakarta.annotation.Resource;
 import jakarta.xml.bind.JAXBContext;
 import jakarta.xml.bind.JAXBException;
 import jakarta.xml.bind.Unmarshaller;
@@ -15,7 +14,6 @@ import jakarta.xml.bind.Unmarshaller;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.orcid.core.adapter.JpaJaxbEducationAdapter;
-import org.orcid.core.adapter.MockSourceNameCache;
 import org.orcid.jaxb.model.common_v2.Visibility;
 import org.orcid.jaxb.model.record.summary_v2.EducationSummary;
 import org.orcid.jaxb.model.record_v2.Education;
@@ -27,22 +25,33 @@ import org.orcid.persistence.jpa.entities.OrgEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.SourceEntity;
 import org.orcid.persistence.jpa.entities.StartDateEntity;
-import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.orcid.core.utils.DateFieldsOnBaseEntityUtils;
 import org.orcid.utils.DateUtils;
-import org.springframework.test.context.ContextConfiguration;
+import org.junit.Before;
+import org.mockito.junit.MockitoJUnitRunner;
+import org.orcid.core.adapter.mapstruct.impl.JpaJaxbEducationAdapterImpl;
+import org.orcid.core.adapter.MockedMapStructAdapters;
 
 /**
- * 
+ *
  * @author Angel Montenegro
- * 
+ *
  */
-@RunWith(OrcidJUnit4ClassRunner.class)
-@ContextConfiguration(locations = { "classpath:test-orcid-core-context.xml" })
-public class JpaJaxbEducationAdapterTest extends MockSourceNameCache {
+@RunWith(MockitoJUnitRunner.Silent.class)
+public class JpaJaxbEducationAdapterTest {
 
-    @Resource
+    private static final String CLIENT_SOURCE_ID = MockedMapStructAdapters.CLIENT_SOURCE_ID;
+
+    private final MockedMapStructAdapters adapters = new MockedMapStructAdapters();
+
     private JpaJaxbEducationAdapter jpaJaxbEducationAdapter;
+
+    @Before
+    public void setUpAdapter() throws Exception {
+        // REAL MapStruct mapper: the whole behaviour under test is the mapping configuration,
+        // so a mocked mapper would make every assertion below an assertion about a mock.
+        jpaJaxbEducationAdapter = adapters.get(JpaJaxbEducationAdapterImpl.class);
+    }
 
     @Test
     public void fromEducationToOrgAffiliationRelationEntityTest() throws JAXBException {
@@ -76,7 +85,7 @@ public class JpaJaxbEducationAdapterTest extends MockSourceNameCache {
         assertNull(oar.getClientSourceId());
         assertNull(oar.getElementSourceId());
     }
-    
+
     @Test
     public void fromOrgAffiliationRelationEntityToEducation() throws IllegalAccessException {
         OrgAffiliationRelationEntity entity = getEducationEntity();
@@ -104,11 +113,11 @@ public class JpaJaxbEducationAdapterTest extends MockSourceNameCache {
         assertEquals("org:city", education.getOrganization().getAddress().getCity());
         assertEquals("org:region", education.getOrganization().getAddress().getRegion());
         assertEquals(org.orcid.jaxb.model.common_v2.Iso3166Country.US, education.getOrganization().getAddress().getCountry());
-        assertNotNull(education.getSource());        
+        assertNotNull(education.getSource());
         assertNotNull(education.getSource().retrieveSourcePath());
         assertEquals(CLIENT_SOURCE_ID, education.getSource().retrieveSourcePath());
     }
-    
+
     @Test
     public void fromOrgAffiliationRelationEntityToEducationSummary() throws IllegalAccessException {
         OrgAffiliationRelationEntity entity = getEducationEntity();
@@ -129,7 +138,7 @@ public class JpaJaxbEducationAdapterTest extends MockSourceNameCache {
         assertEquals("01", educationSummary.getStartDate().getDay().getValue());
         assertEquals("2020", educationSummary.getEndDate().getYear().getValue());
         assertEquals("02", educationSummary.getEndDate().getMonth().getValue());
-        assertEquals("02", educationSummary.getEndDate().getDay().getValue());        
+        assertEquals("02", educationSummary.getEndDate().getDay().getValue());
         assertNotNull(educationSummary.getSource());
         assertNotNull(educationSummary.getSource().retrieveSourcePath());
         assertEquals(CLIENT_SOURCE_ID, educationSummary.getSource().retrieveSourcePath());
@@ -145,7 +154,7 @@ public class JpaJaxbEducationAdapterTest extends MockSourceNameCache {
         InputStream inputStream = getClass().getResourceAsStream(name);
         return (Education) unmarshaller.unmarshal(inputStream);
     }
-    
+
     private OrgAffiliationRelationEntity getEducationEntity() throws IllegalAccessException {
         OrgEntity orgEntity = new OrgEntity();
         orgEntity.setCity("org:city");
@@ -153,14 +162,14 @@ public class JpaJaxbEducationAdapterTest extends MockSourceNameCache {
         orgEntity.setName("org:name");
         orgEntity.setRegion("org:region");
         orgEntity.setUrl("org:url");
-        
+
         ClientDetailsEntity clientDetailsEntity = new ClientDetailsEntity();
         clientDetailsEntity.setId(CLIENT_SOURCE_ID);
 
         SourceEntity sourceEntity = new SourceEntity();
         sourceEntity.setSourceClient(clientDetailsEntity);
         orgEntity.setSource(sourceEntity);
-        
+
         Date date = DateUtils.convertToDate("2015-06-05T10:15:20");
         OrgAffiliationRelationEntity result = new OrgAffiliationRelationEntity();
         DateFieldsOnBaseEntityUtils.setDateFields(result, date);
@@ -172,9 +181,9 @@ public class JpaJaxbEducationAdapterTest extends MockSourceNameCache {
         result.setOrcid("0000-0001-0002-0003");
         result.setStartDate(new StartDateEntity(2000, 1, 1));
         result.setTitle("education:title");
-        result.setVisibility(Visibility.PRIVATE.name());   
+        result.setVisibility(Visibility.PRIVATE.name());
         result.setClientSourceId(CLIENT_SOURCE_ID);
-        
+
         return result;
     }
 }

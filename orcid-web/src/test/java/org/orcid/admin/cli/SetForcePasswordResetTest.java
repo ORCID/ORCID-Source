@@ -24,14 +24,14 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.orcid.test.OrcidMockitoJUnitRunner;
 import org.orcid.frontend.spring.session.redis.OrcidRedisIndexedSessionRepository;
 import org.orcid.persistence.dao.ProfileDao;
 import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.session.FindByIndexNameSessionRepository;
 import org.springframework.test.util.ReflectionTestUtils;
 
-@RunWith(MockitoJUnitRunner.class)
+@RunWith(OrcidMockitoJUnitRunner.class)
 public class SetForcePasswordResetTest {
 
     private static final String CONFIG_FILE_KEY = "org.orcid.config.file";

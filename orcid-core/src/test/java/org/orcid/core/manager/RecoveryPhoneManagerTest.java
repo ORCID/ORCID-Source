@@ -14,24 +14,20 @@ import static org.mockito.Mockito.when;
 
 import java.util.Date;
 
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.orcid.test.OrcidMockitoJUnitRunner;
 import org.orcid.core.manager.impl.RecoveryPhoneManagerImpl;
 import org.orcid.persistence.dao.ProfileEventDao;
 import org.orcid.persistence.dao.ProfileRecoveryPhoneDao;
 import org.orcid.persistence.jpa.entities.ProfileEventEntity;
 import org.orcid.persistence.jpa.entities.ProfileEventType;
 import org.orcid.persistence.jpa.entities.ProfileRecoveryPhoneEntity;
-import org.orcid.test.OrcidJUnit4ClassRunner;
-import org.springframework.test.context.ContextConfiguration;
 
-@RunWith(OrcidJUnit4ClassRunner.class)
-@ContextConfiguration(locations = { "classpath:test-orcid-core-context.xml" })
+@RunWith(OrcidMockitoJUnitRunner.class)
 public class RecoveryPhoneManagerTest {
 
     private static final String ORCID = "0000-0000-0000-0001";
@@ -51,11 +47,6 @@ public class RecoveryPhoneManagerTest {
 
     @InjectMocks
     private RecoveryPhoneManagerImpl recoveryPhoneManager;
-
-    @Before
-    public void init() {
-        MockitoAnnotations.initMocks(this);
-    }
 
     @Test
     public void getRecoveryPhoneReturnsNullWhenNoneStored() {
@@ -127,16 +118,16 @@ public class RecoveryPhoneManagerTest {
     }
 
     /*
-     * findByOrcid runs on the read-only pool. Here it says there is no row - the
-     * answer a lagging replica gives seconds after the primary stored one - while
-     * the upsert, on the primary, found the row and replaced it. The event follows
-     * the upsert: recording this as an "added" would be wrong in the audit trail.
+     * findByOrcid runs on the read-only pool, and a lagging replica can say there
+     * is no row seconds after the primary stored one. So the manager never asks it:
+     * the upsert, on the primary, says whether it replaced a row, and the event
+     * follows the upsert. Recording a replacement as an "added" would be wrong in
+     * the audit trail.
      */
     @Test
     public void savingOverAnExistingNumberIsRecordedAsAnUpdate() {
         Date created = new Date(System.currentTimeMillis() - 60_000L);
         Date modified = new Date();
-        when(profileRecoveryPhoneDao.findByOrcid(ORCID)).thenReturn(null);
         when(encryptionManager.encryptForInternalUse(anyString())).thenReturn("new-encrypted");
         when(profileRecoveryPhoneDao.upsert(ORCID, "new-encrypted", "7890"))
                 .thenReturn(new ProfileRecoveryPhoneDao.UpsertResult(entity("new-encrypted", "7890", created, modified), false));
@@ -146,6 +137,7 @@ public class RecoveryPhoneManagerTest {
         assertEquals(created, saved.getDateCreated());
         assertEquals(modified, saved.getLastModified());
         verify(profileRecoveryPhoneDao).upsert(ORCID, "new-encrypted", "7890");
+        verify(profileRecoveryPhoneDao, never()).findByOrcid(anyString());
         assertEquals(ProfileEventType.PROFILE_RECOVERY_PHONE_UPDATED, capturedEventType());
     }
 

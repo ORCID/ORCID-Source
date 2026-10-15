@@ -25,6 +25,8 @@ import org.orcid.test.TargetProxyHelper;
 import org.apache.hc.core5.http.ParseException;
 import org.orcid.core.solr.OrcidSolrResult;
 import org.orcid.core.solr.OrcidSolrResults;
+import org.junit.experimental.categories.Category;
+import org.orcid.test.DatabaseTest;
 
 /**
  * Tests for the invocation of Solr retrieval. This class isn't required to have
@@ -38,6 +40,7 @@ import org.orcid.core.solr.OrcidSolrResults;
  * @author jamesb
  * 
  */
+@Category(DatabaseTest.class)
 public class OrcidSearchManagerImplTest extends BaseTest {
 
     @Resource

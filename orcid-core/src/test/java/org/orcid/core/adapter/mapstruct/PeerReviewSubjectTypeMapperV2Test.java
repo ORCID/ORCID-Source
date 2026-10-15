@@ -3,14 +3,8 @@ package org.orcid.core.adapter.mapstruct;
 import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.orcid.core.adapter.mapstruct.PeerReviewSubjectTypeMapperV2;
 import org.orcid.jaxb.model.record_v2.WorkType;
-import org.orcid.test.OrcidJUnit4ClassRunner;
-import org.springframework.test.context.ContextConfiguration;
 
-@RunWith(OrcidJUnit4ClassRunner.class)
-@ContextConfiguration(locations = { "classpath:test-orcid-core-context.xml" })
 public class PeerReviewSubjectTypeMapperV2Test {
         
     private PeerReviewSubjectTypeMapperV2 peerReviewSubjectTypeConverter = PeerReviewSubjectTypeMapperV2.INSTANCE;

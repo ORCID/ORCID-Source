@@ -19,7 +19,7 @@ import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.invocation.InvocationOnMock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.orcid.test.OrcidMockitoJUnitRunner;
 import org.mockito.stubbing.Answer;
 import org.orcid.core.manager.v3.impl.GivenPermissionToManagerImpl;
 import org.orcid.persistence.dao.GivenPermissionToDao;
@@ -28,7 +28,7 @@ import org.orcid.persistence.jpa.entities.GivenPermissionToEntity;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
 
-@RunWith(MockitoJUnitRunner.class)
+@RunWith(OrcidMockitoJUnitRunner.class)
 public class GivenPermissionToManagerTest {
 
     private static final String GIVER = "0000-0000-0000-0006";

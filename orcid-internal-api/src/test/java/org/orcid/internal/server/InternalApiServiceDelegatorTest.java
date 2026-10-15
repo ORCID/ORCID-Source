@@ -24,7 +24,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.orcid.test.OrcidMockitoJUnitRunner;
 import org.orcid.core.exception.OrcidAccessControlException;
 import org.orcid.core.manager.v3.MembersManager;
 import org.orcid.core.manager.v3.OrcidSecurityManager;
@@ -53,7 +53,7 @@ import org.orcid.pojo.ajaxForm.Member;
 import org.orcid.pojo.ajaxForm.Text;
 import org.springframework.http.HttpStatus;
 
-@RunWith(MockitoJUnitRunner.class)
+@RunWith(OrcidMockitoJUnitRunner.class)
 public class InternalApiServiceDelegatorTest {
 
     private static final String USER_ORCID = "5555-5555-5555-5558";

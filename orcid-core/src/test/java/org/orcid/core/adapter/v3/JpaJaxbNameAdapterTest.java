@@ -6,12 +6,10 @@ import static org.junit.Assert.assertNull;
 
 import java.util.Date;
 
-import jakarta.annotation.Resource;
 import jakarta.xml.bind.JAXBException;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.orcid.core.adapter.MockSourceNameCache;
 import org.orcid.jaxb.model.v3.release.common.CreatedDate;
 import org.orcid.jaxb.model.v3.release.common.CreditName;
 import org.orcid.jaxb.model.v3.release.common.LastModifiedDate;
@@ -21,21 +19,30 @@ import org.orcid.jaxb.model.v3.release.record.FamilyName;
 import org.orcid.jaxb.model.v3.release.record.GivenNames;
 import org.orcid.jaxb.model.v3.release.record.Name;
 import org.orcid.persistence.jpa.entities.RecordNameEntity;
-import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.orcid.core.utils.DateFieldsOnBaseEntityUtils;
 import org.orcid.utils.DateUtils;
-import org.springframework.test.context.ContextConfiguration;
+import org.junit.Before;
+import org.mockito.junit.MockitoJUnitRunner;
+import org.orcid.core.adapter.mapstruct.v3.impl.JpaJaxbNameAdapterImpl;
+import org.orcid.core.adapter.MockedMapStructAdapters;
 
 /**
- * 
+ *
  * @author Angel Montenegro
- * 
+ *
  */
-@RunWith(OrcidJUnit4ClassRunner.class)
-@ContextConfiguration(locations = { "classpath:test-orcid-core-context.xml" })
-public class JpaJaxbNameAdapterTest extends MockSourceNameCache {
-    @Resource
+@RunWith(MockitoJUnitRunner.Silent.class)
+public class JpaJaxbNameAdapterTest {
+
+    private final MockedMapStructAdapters adapters = new MockedMapStructAdapters();
     private JpaJaxbNameAdapter adapter;
+
+    @Before
+    public void setUpAdapter() throws Exception {
+        // REAL MapStruct mapper: the whole behaviour under test is the mapping configuration,
+        // so a mocked mapper would make every assertion below an assertion about a mock.
+        adapter = adapters.get(JpaJaxbNameAdapterImpl.class);
+    }
 
     @Test
     public void fromNameToRecordNameEntityTest() throws JAXBException {
