@@ -1,0 +1,15 @@
+openapi: 3.0.3
+info:
+  title: ORCID Member API
+  version: "3.0"
+  description: >-
+    Read and update ORCID records on behalf of their owners. Generated from the
+    Registry's source; do not edit the generated file by hand.
+  license:
+    name: MIT
+    url: https://github.com/ORCID/ORCID-Source/blob/main/LICENSE
+servers:
+  - url: https://api.orcid.org
+    description: Production
+  - url: https://api.sandbox.orcid.org
+    description: Sandbox

@@ -1,0 +1,15 @@
+openapi: 3.0.3
+info:
+  title: ORCID Public API
+  version: "3.0"
+  description: >-
+    Read public ORCID record data and search the registry. Generated from the
+    Registry's source; do not edit the generated file by hand.
+  license:
+    name: MIT
+    url: https://github.com/ORCID/ORCID-Source/blob/main/LICENSE
+servers:
+  - url: https://pub.orcid.org
+    description: Production
+  - url: https://pub.sandbox.orcid.org
+    description: Sandbox
