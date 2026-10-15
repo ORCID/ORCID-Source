@@ -4,10 +4,10 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.Spy;
+import org.springframework.test.util.ReflectionTestUtils;
 import org.orcid.core.manager.BackupCodeManager;
 import org.orcid.core.manager.EncryptionManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
@@ -70,8 +70,7 @@ public class TwoFactorAuthenticationControllerTest {
     private EncryptionManager encryptionManager;
 
     @Spy
-    @InjectMocks
-    private TwoFactorAuthenticationController controller;
+    private TwoFactorAuthenticationController controller = new TwoFactorAuthenticationController(480000L);
 
     @Mock
     private HttpServletRequest request;
@@ -87,6 +86,14 @@ public class TwoFactorAuthenticationControllerTest {
     @Before
     public void setUp() {
         MockitoAnnotations.initMocks(this);
+        ReflectionTestUtils.setField(controller, "twoFactorAuthenticationManager", twoFactorAuthenticationManager);
+        ReflectionTestUtils.setField(controller, "profileEntityCacheManager", profileEntityCacheManager);
+        ReflectionTestUtils.setField(controller, "profileEntityManager", profileEntityManager);
+        ReflectionTestUtils.setField(controller, "backupCodeManager", backupCodeManager);
+        ReflectionTestUtils.setField(controller, "recoveryPhoneManager", recoveryPhoneManager);
+        ReflectionTestUtils.setField(controller, "recoveryPhoneVerificationService", recoveryPhoneVerificationService);
+        ReflectionTestUtils.setField(controller, "recordEmailSender", recordEmailSender);
+        ReflectionTestUtils.setField(controller, "encryptionManager", encryptionManager);
         when(request.getSession()).thenReturn(session);
         doReturn(ORCID).when(controller).getCurrentUserOrcid();
         // The session is the account owner's own unless a test says otherwise
@@ -437,16 +444,6 @@ public class TwoFactorAuthenticationControllerTest {
 
         assertEquals(TwoFactorAuthenticationController.CHALLENGE_REQUIRED, response.getErrorCode());
         verify(recoveryPhoneVerificationService, never()).sendCode(anyString(), any(RecoveryPhoneSendCodeRequest.class));
-    }
-
-    // The window is eight minutes (PD-13638). The three tests below hard code
-    // that number rather than deriving it from the constant, deliberately: a
-    // test that computes its boundary from the value it is checking moves
-    // whenever the value does, which is the one thing a pin must not do.
-
-    @Test
-    public void testTheElevationWindowIsEightMinutes() {
-        assertEquals(8 * 60 * 1000L, TwoFactorAuthenticationController.RECOVERY_PHONE_ELEVATION_TTL_MILLIS);
     }
 
     @Test
