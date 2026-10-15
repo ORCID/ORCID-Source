@@ -12,7 +12,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.orcid.test.OrcidMockitoJUnitRunner;
 import org.orcid.core.exception.DeactivatedException;
 import org.orcid.core.exception.LockedException;
 import org.orcid.core.exception.OrcidDeprecatedException;
@@ -28,7 +28,7 @@ import org.springframework.test.util.ReflectionTestUtils;
  * @author Will Simpson
  *
  */
-@RunWith(MockitoJUnitRunner.class)
+@RunWith(OrcidMockitoJUnitRunner.class)
 public class OrcidSecurityManagerTest {
     
     private static final String ORCID = "0000-0000-0000-0000";

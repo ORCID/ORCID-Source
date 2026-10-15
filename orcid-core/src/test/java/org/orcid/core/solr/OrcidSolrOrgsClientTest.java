@@ -21,7 +21,7 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.orcid.test.OrcidMockitoJUnitRunner;
 import org.orcid.utils.solr.entities.OrgDisambiguatedSolrDocument;
 import org.springframework.test.util.ReflectionTestUtils;
 
@@ -49,7 +49,7 @@ import org.springframework.test.util.ReflectionTestUtils;
  * than in {@code before}, because that is the only method that calls it and the
  * strict runner reports a stub the other two tests never reach.
  */
-@RunWith(MockitoJUnitRunner.class)
+@RunWith(OrcidMockitoJUnitRunner.class)
 public class OrcidSolrOrgsClientTest {
 
     private static final String ORGS_QUERY = "(org-disambiguated-name:\"%s\") ^100.0  (org-disambiguated-name:%s*) ^10.0";

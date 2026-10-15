@@ -12,7 +12,7 @@ import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.invocation.InvocationOnMock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.orcid.test.OrcidMockitoJUnitRunner;
 import org.mockito.stubbing.Answer;
 import org.orcid.core.utils.v3.identifiers.PIDResolverCache;
 import org.orcid.core.utils.v3.identifiers.normalizers.DOINormalizer;
@@ -52,7 +52,7 @@ import org.springframework.test.util.ReflectionTestUtils;
  * read them from; {@code find} returns an empty result unless all three are
  * present, so they are not decoration.
  */
-@RunWith(MockitoJUnitRunner.class)
+@RunWith(OrcidMockitoJUnitRunner.class)
 public class DataciteFinderTest {
 
     private static final String ENDPOINT = "https://api.datacite.org/works?query=";

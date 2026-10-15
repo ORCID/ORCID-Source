@@ -15,7 +15,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.orcid.test.OrcidMockitoJUnitRunner;
 import org.orcid.core.adapter.JpaJaxbPeerReviewAdapter;
 import org.orcid.core.exception.WrongSourceException;
 import org.orcid.core.manager.impl.PeerReviewManagerImpl;
@@ -40,7 +40,7 @@ import org.orcid.persistence.jpa.entities.PeerReviewEntity;
  * alone. The guard runs before the validator on both paths here, so no
  * validator is needed to reach it.
  */
-@RunWith(MockitoJUnitRunner.class)
+@RunWith(OrcidMockitoJUnitRunner.class)
 public class PeerReviewManagerImplMockTest {
 
     private static final String ORCID = Actors.USER_A;

@@ -32,7 +32,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.orcid.test.OrcidMockitoJUnitRunner;
 import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.BackupCodeManager;
 import org.orcid.core.manager.EncryptionManager;
@@ -71,7 +71,7 @@ import org.togglz.junit.TogglzRule;
 
 import com.nimbusds.jwt.JWTClaimsSet;
 
-@RunWith(MockitoJUnitRunner.class)
+@RunWith(OrcidMockitoJUnitRunner.class)
 public class PasswordResetControllerTest {
 
     private static final String ORCID = "0000-0000-0000-0000";

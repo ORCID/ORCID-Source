@@ -10,7 +10,7 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.orcid.test.OrcidMockitoJUnitRunner;
 import org.orcid.core.manager.v3.impl.ProfileHistoryEventManagerImpl;
 import org.orcid.core.profile.history.ProfileHistoryEventType;
 import org.orcid.persistence.dao.ProfileHistoryEventDao;
@@ -26,7 +26,7 @@ import org.orcid.persistence.jpa.entities.ProfileHistoryEventEntity;
  * {@code profileHistoryEventDao}; @InjectMocks matches it by type, which is unambiguous because
  * it is the only ProfileHistoryEventDao in play.
  */
-@RunWith(MockitoJUnitRunner.class)
+@RunWith(OrcidMockitoJUnitRunner.class)
 public class ProfileHistoryEventManagerTest {
 
     @Mock

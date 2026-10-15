@@ -19,7 +19,7 @@ import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.orcid.test.OrcidMockitoJUnitRunner;
 import org.orcid.core.manager.impl.RecoveryPhoneManagerImpl;
 import org.orcid.persistence.dao.ProfileEventDao;
 import org.orcid.persistence.dao.ProfileRecoveryPhoneDao;
@@ -27,7 +27,7 @@ import org.orcid.persistence.jpa.entities.ProfileEventEntity;
 import org.orcid.persistence.jpa.entities.ProfileEventType;
 import org.orcid.persistence.jpa.entities.ProfileRecoveryPhoneEntity;
 
-@RunWith(MockitoJUnitRunner.class)
+@RunWith(OrcidMockitoJUnitRunner.class)
 public class RecoveryPhoneManagerTest {
 
     private static final String ORCID = "0000-0000-0000-0001";

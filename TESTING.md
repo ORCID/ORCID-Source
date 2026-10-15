@@ -189,13 +189,23 @@ in the other direction, where a listed module no longer has any.
 
 ## Writing a unit test
 
-Use `@RunWith(MockitoJUnitRunner.class)`, put `@InjectMocks` on the production
-implementation class, and `@Mock` only the collaborators that class actually
-touches.
+Use `@RunWith(OrcidMockitoJUnitRunner.class)`, put `@InjectMocks` on the
+production implementation class, and `@Mock` only the collaborators that class
+actually touches.
+
+`org.orcid.test.OrcidMockitoJUnitRunner` is Mockito's strict runner with one
+change. Mockito skips its unused-stubbing check whenever a class is filtered,
+and surefire filters every class by category in both stages, so on the plain
+`MockitoJUnitRunner` the check never ran in CI or in a default `mvn test`. The
+ORCID runner ignores a filter that keeps every test of the class, so the check
+runs in CI as it does in an IDE. `MockitoJUnitRunner.Silent` opts out on
+purpose and is unaffected.
 
 ```java
-@RunWith(MockitoJUnitRunner.class)
+@RunWith(OrcidMockitoJUnitRunner.class)
 public class WorkManagerImplMockTest {
+
+    private static final Long WORK_ID = 11L;
 
     @Mock
     private WorkDao workDao;
@@ -205,6 +215,9 @@ public class WorkManagerImplMockTest {
 
     @Mock
     private NotificationManager notificationManager;
+
+    @Mock
+    private JpaJaxbWorkAdapter jpaJaxbWorkAdapter;
 
     @InjectMocks
     private WorkManagerImpl workManager = new WorkManagerImpl(100, 100);
@@ -236,8 +249,8 @@ public class WorkManagerImplMockTest {
 }
 ```
 
-Copied from `orcid-core/src/test/java/org/orcid/core/manager/v3/WorkManagerImplMockTest.java`,
-so it compiles and runs as written. Two details in it are the point of the whole
+Abridged from `orcid-core/src/test/java/org/orcid/core/manager/v3/WorkManagerImplMockTest.java`;
+it compiles and runs as written. Two details in it are the point of the whole
 example, and both were got wrong before:
 
 - **No actor is set.** At the manager layer nothing reads the security context:

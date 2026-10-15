@@ -20,7 +20,7 @@ import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.orcid.test.OrcidMockitoJUnitRunner;
 import org.orcid.core.adapter.JpaJaxbFundingAdapter;
 import org.orcid.core.aop.ProfileLastModifiedAspect;
 import org.orcid.core.exception.VisibilityMismatchException;
@@ -60,7 +60,7 @@ import org.springframework.test.util.ReflectionTestUtils;
  * value after the adapter, so the null-visibility test captures the entity
  * reaching the DAO.
  */
-@RunWith(MockitoJUnitRunner.class)
+@RunWith(OrcidMockitoJUnitRunner.class)
 public class ProfileFundingManagerImplMockTest {
 
     private static final String ORCID = Actors.USER_A;

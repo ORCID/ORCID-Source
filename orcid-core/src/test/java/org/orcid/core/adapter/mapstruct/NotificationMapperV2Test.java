@@ -14,7 +14,7 @@ import org.junit.runner.RunWith;
 import org.mapstruct.factory.Mappers;
 import org.mockito.InjectMocks;
 import org.mockito.Spy;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.orcid.test.OrcidMockitoJUnitRunner;
 import org.orcid.core.adapter.mapstruct.AdditionalInfoJsonMapper;
 import org.orcid.core.adapter.mapstruct.ExternalIdentifierTypeMapper;
 import org.orcid.core.adapter.mapstruct.NotificationMapperV2;
@@ -30,7 +30,7 @@ import org.orcid.persistence.jpa.entities.NotificationAddItemsEntity;
 import org.orcid.persistence.jpa.entities.NotificationAmendedEntity;
 import org.orcid.persistence.jpa.entities.NotificationItemEntity;
 
-@RunWith(MockitoJUnitRunner.class)
+@RunWith(OrcidMockitoJUnitRunner.class)
 public class NotificationMapperV2Test {
 
     @Spy

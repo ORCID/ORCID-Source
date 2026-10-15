@@ -16,7 +16,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.orcid.test.OrcidMockitoJUnitRunner;
 import org.orcid.core.adapter.v3.JpaJaxbKeywordAdapter;
 import org.orcid.core.aop.ProfileLastModifiedAspect;
 import org.orcid.core.exception.WrongSourceException;
@@ -54,7 +54,7 @@ import org.orcid.persistence.jpa.entities.SourceAwareEntity;
  *
  * @see OrcidSecurityManager_SourceTest the other half of TESTING.md R2
  */
-@RunWith(MockitoJUnitRunner.class)
+@RunWith(OrcidMockitoJUnitRunner.class)
 public class ProfileKeywordManagerImplMockTest {
 
     private static final Long KEYWORD_ID = 80L;

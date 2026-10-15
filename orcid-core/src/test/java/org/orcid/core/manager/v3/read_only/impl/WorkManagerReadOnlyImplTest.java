@@ -31,7 +31,7 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.orcid.test.OrcidMockitoJUnitRunner;
 import org.orcid.core.aop.ProfileLastModifiedAspect;
 import org.orcid.core.adapter.mapstruct.ContributorsRolesAndSequencesMapperV3;
 import org.orcid.core.adapter.v3.JpaJaxbWorkAdapter;
@@ -72,7 +72,7 @@ import org.orcid.pojo.ajaxForm.WorkForm;
 import org.orcid.pojo.grouping.WorkGroupingSuggestion;
 import org.springframework.test.util.ReflectionTestUtils;
 
-@RunWith(MockitoJUnitRunner.class)
+@RunWith(OrcidMockitoJUnitRunner.class)
 public class WorkManagerReadOnlyImplTest {
 
     private static final String ORCID_1 = "0000-0000-0000-0001";

@@ -16,7 +16,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.orcid.test.OrcidMockitoJUnitRunner;
 import org.orcid.api.common.filter.ApiVersionFilter;
 import org.orcid.api.common.util.ApiUtils;
 import org.orcid.core.locale.LocaleManager;
@@ -48,7 +48,7 @@ import org.springframework.web.context.request.ServletRequestAttributes;
  * one method cannot decide the outcome of another, here or in any test class
  * sharing the JVM.
  */
-@RunWith(MockitoJUnitRunner.class)
+@RunWith(OrcidMockitoJUnitRunner.class)
 public class ApiUtilsTest {
 
     @Mock

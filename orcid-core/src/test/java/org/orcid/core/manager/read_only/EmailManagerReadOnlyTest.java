@@ -23,7 +23,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.orcid.test.OrcidMockitoJUnitRunner;
 import org.orcid.core.adapter.JpaJaxbEmailAdapter;
 import org.orcid.core.aop.ProfileLastModifiedAspect;
 import org.orcid.core.manager.read_only.impl.EmailManagerReadOnlyImpl;
@@ -37,7 +37,7 @@ import org.orcid.persistence.jpa.entities.EmailEntity;
  * API email endpoint reads through. The rule under test is that the endpoint only ever hands
  * out addresses the record holder has verified.
  */
-@RunWith(MockitoJUnitRunner.class)
+@RunWith(OrcidMockitoJUnitRunner.class)
 public class EmailManagerReadOnlyTest {
 
     private static final String ORCID = "0000-0000-0000-0001";

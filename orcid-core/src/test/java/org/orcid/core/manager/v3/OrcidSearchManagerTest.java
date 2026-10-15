@@ -16,7 +16,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.orcid.test.OrcidMockitoJUnitRunner;
 import org.orcid.core.manager.impl.OrcidUrlManager;
 import org.orcid.core.manager.v3.impl.OrcidSearchManagerImpl;
 import org.orcid.core.manager.v3.read_only.RecordManagerReadOnly;
@@ -58,7 +58,7 @@ import org.springframework.test.util.ReflectionTestUtils;
  * @author jamesb
  * 
  */
-@RunWith(MockitoJUnitRunner.class)
+@RunWith(OrcidMockitoJUnitRunner.class)
 public class OrcidSearchManagerTest {
 
     @Mock

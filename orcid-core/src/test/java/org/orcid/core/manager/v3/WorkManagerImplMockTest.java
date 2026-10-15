@@ -18,7 +18,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.orcid.test.OrcidMockitoJUnitRunner;
 import org.orcid.core.adapter.v3.JpaJaxbWorkAdapter;
 import org.orcid.core.exception.WrongSourceException;
 import org.orcid.core.manager.v3.impl.WorkManagerImpl;
@@ -60,7 +60,7 @@ import org.orcid.persistence.jpa.entities.WorkEntity;
  * @see OrcidSecurityManager_SourceTest the other half of TESTING.md R2 -- that
  *      the guard itself throws for this input
  */
-@RunWith(MockitoJUnitRunner.class)
+@RunWith(OrcidMockitoJUnitRunner.class)
 public class WorkManagerImplMockTest {
 
     private static final Long WORK_ID = 11L;

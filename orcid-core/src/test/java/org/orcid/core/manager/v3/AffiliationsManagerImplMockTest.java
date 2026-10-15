@@ -18,7 +18,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.orcid.test.OrcidMockitoJUnitRunner;
 import org.orcid.core.exception.WrongSourceException;
 import org.orcid.core.manager.v3.impl.AffiliationsManagerImpl;
 import org.orcid.core.utils.Actors;
@@ -56,7 +56,7 @@ import org.orcid.persistence.jpa.entities.OrgAffiliationRelationEntity;
  *
  * @see OrcidSecurityManager_SourceTest the other half of TESTING.md R2
  */
-@RunWith(MockitoJUnitRunner.class)
+@RunWith(OrcidMockitoJUnitRunner.class)
 public class AffiliationsManagerImplMockTest {
 
     private static final Long AFFILIATION_ID = 20L;

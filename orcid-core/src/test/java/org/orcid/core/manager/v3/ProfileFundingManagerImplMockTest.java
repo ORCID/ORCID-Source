@@ -18,7 +18,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.orcid.test.OrcidMockitoJUnitRunner;
 import org.orcid.core.exception.WrongSourceException;
 import org.orcid.core.manager.v3.impl.ProfileFundingManagerImpl;
 import org.orcid.core.utils.Actors;
@@ -51,7 +51,7 @@ import org.orcid.persistence.jpa.entities.ProfileFundingEntity;
  *
  * @see OrcidSecurityManager_SourceTest the other half of TESTING.md R2
  */
-@RunWith(MockitoJUnitRunner.class)
+@RunWith(OrcidMockitoJUnitRunner.class)
 public class ProfileFundingManagerImplMockTest {
 
     private static final Long FUNDING_ID = 10L;

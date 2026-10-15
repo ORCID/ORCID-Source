@@ -15,7 +15,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.orcid.test.OrcidMockitoJUnitRunner;
 import org.orcid.core.adapter.JpaJaxbOtherNameAdapter;
 import org.orcid.core.aop.ProfileLastModifiedAspect;
 import org.orcid.core.exception.WrongSourceException;
@@ -33,7 +33,7 @@ import org.orcid.persistence.jpa.entities.OtherNameEntity;
  * A mocked sibling of the DBUnit {@code OtherNameManagerTest}, which is left
  * alone.
  */
-@RunWith(MockitoJUnitRunner.class)
+@RunWith(OrcidMockitoJUnitRunner.class)
 public class OtherNameManagerImplMockTest {
 
     private static final String ORCID = Actors.USER_A;

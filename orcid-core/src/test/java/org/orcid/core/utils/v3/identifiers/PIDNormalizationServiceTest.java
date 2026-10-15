@@ -15,7 +15,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.orcid.test.OrcidMockitoJUnitRunner;
 import org.orcid.core.manager.IdentifierTypeManager;
 import org.orcid.core.utils.v3.identifiers.normalizers.ArxivNormalizer;
 import org.orcid.core.utils.v3.identifiers.normalizers.BibcodeNormalizer;
@@ -64,7 +64,7 @@ import org.springframework.test.util.ReflectionTestUtils;
  * lowercased. What this test no longer proves is that those rows are still what
  * the database holds.
  */
-@RunWith(MockitoJUnitRunner.class)
+@RunWith(OrcidMockitoJUnitRunner.class)
 public class PIDNormalizationServiceTest {
 
     @Mock

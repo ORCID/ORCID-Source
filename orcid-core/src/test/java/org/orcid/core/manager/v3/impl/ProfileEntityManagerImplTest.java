@@ -37,7 +37,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.orcid.test.OrcidMockitoJUnitRunner;
 import org.orcid.core.aop.ProfileLastModifiedAspect;
 import org.orcid.core.common.manager.EmailFrequencyManager;
 import org.orcid.core.constants.RevokeReason;
@@ -105,7 +105,7 @@ import org.springframework.transaction.support.TransactionTemplate;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
-@RunWith(MockitoJUnitRunner.class)
+@RunWith(OrcidMockitoJUnitRunner.class)
 public class ProfileEntityManagerImplTest {
 
     private ProfileEntityManagerImpl manager;

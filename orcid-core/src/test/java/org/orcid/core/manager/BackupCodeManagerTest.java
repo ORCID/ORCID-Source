@@ -22,7 +22,7 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.invocation.InvocationOnMock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.orcid.test.OrcidMockitoJUnitRunner;
 import org.mockito.stubbing.Answer;
 import org.orcid.core.manager.impl.BackupCodeManagerImpl;
 import org.orcid.persistence.dao.BackupCodeDao;
@@ -41,7 +41,7 @@ import org.orcid.persistence.jpa.entities.BackupCodeEntity;
  * compares its two arguments for the same reason: with a constant true, verify() would report
  * success for the three codes the test expects it to reject.
  */
-@RunWith(MockitoJUnitRunner.class)
+@RunWith(OrcidMockitoJUnitRunner.class)
 public class BackupCodeManagerTest {
 
     @Mock

@@ -19,7 +19,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.orcid.test.OrcidMockitoJUnitRunner;
 import org.orcid.core.adapter.JpaJaxbWorkAdapter;
 import org.orcid.core.aop.ProfileLastModifiedAspect;
 import org.orcid.core.exception.WrongSourceException;
@@ -46,7 +46,7 @@ import org.springframework.test.util.ReflectionTestUtils;
  * two tests is the refusal, and in particular that the refusal happens before
  * anything is written.
  */
-@RunWith(MockitoJUnitRunner.class)
+@RunWith(OrcidMockitoJUnitRunner.class)
 public class WorkManagerImplMockTest {
 
     private static final String ORCID = Actors.USER_A;

@@ -19,7 +19,7 @@ import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.orcid.test.OrcidMockitoJUnitRunner;
 import org.orcid.core.adapter.JpaJaxbEducationAdapter;
 import org.orcid.core.adapter.JpaJaxbEmploymentAdapter;
 import org.orcid.core.exception.VisibilityMismatchException;
@@ -55,7 +55,7 @@ import org.springframework.test.util.ReflectionTestUtils;
  * That is why the null-visibility tests capture the entity reaching the DAO
  * rather than the model reaching the adapter.
  */
-@RunWith(MockitoJUnitRunner.class)
+@RunWith(OrcidMockitoJUnitRunner.class)
 public class AffiliationsManagerImplMockTest {
 
     private static final String ORCID = Actors.USER_A;

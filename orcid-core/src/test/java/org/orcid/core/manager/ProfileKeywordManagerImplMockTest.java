@@ -17,7 +17,7 @@ import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.orcid.test.OrcidMockitoJUnitRunner;
 import org.orcid.core.adapter.JpaJaxbKeywordAdapter;
 import org.orcid.core.aop.ProfileLastModifiedAspect;
 import org.orcid.core.exception.VisibilityMismatchException;
@@ -37,7 +37,7 @@ import org.orcid.persistence.jpa.entities.ProfileKeywordEntity;
  * A mocked sibling of the DBUnit {@code ProfileKeywordManagerTest}, which is
  * left alone. {@code PersonValidator} is static and therefore real here.
  */
-@RunWith(MockitoJUnitRunner.class)
+@RunWith(OrcidMockitoJUnitRunner.class)
 public class ProfileKeywordManagerImplMockTest {
 
     private static final String ORCID = Actors.USER_A;

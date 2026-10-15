@@ -18,7 +18,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.orcid.test.OrcidMockitoJUnitRunner;
 import org.orcid.core.exception.WrongSourceException;
 import org.orcid.core.manager.v3.impl.ExternalIdentifierManagerImpl;
 import org.orcid.core.utils.Actors;
@@ -53,7 +53,7 @@ import org.orcid.persistence.jpa.entities.SourceAwareEntity;
  *
  * @see OrcidSecurityManager_SourceTest the other half of TESTING.md R2
  */
-@RunWith(MockitoJUnitRunner.class)
+@RunWith(OrcidMockitoJUnitRunner.class)
 public class ExternalIdentifierManagerImplMockTest {
 
     private static final Long EXTERNAL_IDENTIFIER_ID = 70L;

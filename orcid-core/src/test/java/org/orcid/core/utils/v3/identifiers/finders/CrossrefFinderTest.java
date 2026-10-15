@@ -12,7 +12,7 @@ import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.invocation.InvocationOnMock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.orcid.test.OrcidMockitoJUnitRunner;
 import org.mockito.stubbing.Answer;
 import org.orcid.core.utils.v3.identifiers.PIDResolverCache;
 import org.orcid.core.utils.v3.identifiers.normalizers.DOINormalizer;
@@ -47,7 +47,7 @@ import org.springframework.test.util.ReflectionTestUtils;
  * The {@code cache.isHttp200} stub in the old setup is gone: {@code find} never
  * calls it.
  */
-@RunWith(MockitoJUnitRunner.class)
+@RunWith(OrcidMockitoJUnitRunner.class)
 public class CrossrefFinderTest {
 
     private static final String ENDPOINT = "https://api.crossref.org/works?filter=orcid:";

@@ -17,7 +17,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.orcid.test.OrcidMockitoJUnitRunner;
 import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.impl.OrcidUrlManager;
 import org.orcid.core.manager.impl.TemplateManagerImpl;
@@ -58,7 +58,7 @@ import org.togglz.junit.TogglzRule;
  * request bound returns the JVM default -- a real dependency on the machine's locale, which
  * pinning it to ENGLISH removes.
  */
-@RunWith(MockitoJUnitRunner.class)
+@RunWith(OrcidMockitoJUnitRunner.class)
 public class TemplateManagerTest {
 
     private static final String BASE_URL = "https://testserver.orcid.org";

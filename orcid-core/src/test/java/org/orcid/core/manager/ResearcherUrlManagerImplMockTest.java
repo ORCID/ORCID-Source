@@ -17,7 +17,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.orcid.test.OrcidMockitoJUnitRunner;
 import org.orcid.core.adapter.JpaJaxbResearcherUrlAdapter;
 import org.orcid.core.aop.ProfileLastModifiedAspect;
 import org.orcid.core.exception.WrongSourceException;
@@ -36,7 +36,7 @@ import org.orcid.persistence.jpa.entities.ResearcherUrlEntity;
  * A mocked sibling of the DBUnit {@code ResearcherUrlManagerTest}, which is left
  * alone.
  */
-@RunWith(MockitoJUnitRunner.class)
+@RunWith(OrcidMockitoJUnitRunner.class)
 public class ResearcherUrlManagerImplMockTest {
 
     private static final String ORCID = Actors.USER_A;

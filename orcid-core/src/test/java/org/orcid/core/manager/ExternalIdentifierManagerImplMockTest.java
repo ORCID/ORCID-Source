@@ -19,7 +19,7 @@ import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.orcid.test.OrcidMockitoJUnitRunner;
 import org.orcid.core.adapter.JpaJaxbExternalIdentifierAdapter;
 import org.orcid.core.aop.ProfileLastModifiedAspect;
 import org.orcid.core.exception.VisibilityMismatchException;
@@ -45,7 +45,7 @@ import org.orcid.persistence.jpa.entities.ExternalIdentifierEntity;
  * <p>
  * {@code PersonValidator} is static and therefore real here.
  */
-@RunWith(MockitoJUnitRunner.class)
+@RunWith(OrcidMockitoJUnitRunner.class)
 public class ExternalIdentifierManagerImplMockTest {
 
     private static final String ORCID = Actors.USER_A;

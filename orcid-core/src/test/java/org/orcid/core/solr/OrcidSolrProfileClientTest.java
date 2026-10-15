@@ -18,7 +18,7 @@ import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.orcid.test.OrcidMockitoJUnitRunner;
 
 /**
  * No Solr server is involved and none ever was: the {@link SolrClient} was
@@ -36,7 +36,7 @@ import org.mockito.junit.MockitoJUnitRunner;
  * the right properties of {@link OrcidSolrResult}. Whether the query string it
  * builds retrieves the right documents can only be shown against a real index.
  */
-@RunWith(MockitoJUnitRunner.class)
+@RunWith(OrcidMockitoJUnitRunner.class)
 public class OrcidSolrProfileClientTest {
 
     private final String ORCID = "0000-0000-0000-0000";
