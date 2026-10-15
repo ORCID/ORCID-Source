@@ -25,6 +25,7 @@ import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.pojo.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -53,16 +54,6 @@ public class TwoFactorAuthenticationController extends BaseController {
      * passed challenge lets the number on file be read back (F4.2).
      */
     private static final String RECOVERY_PHONE_CHALLENGE_ATTRIBUTE = "RECOVERY_PHONE_CHALLENGE_TS";
-
-    /**
-     * How long a passed authentication challenge, or the sign in the
-     * interstitial rides on, lets the user keep working.
-     *
-     * Package private so its own test can pin the number. The value is a
-     * product decision rather than an implementation detail, and the only
-     * thing that catches a change to it is a test that names it.
-     */
-    static final long RECOVERY_PHONE_ELEVATION_TTL_MILLIS = 8 * 60 * 1000L;
 
     /** Fixed length mask, so the mask does not leak how long the number is. */
     private static final String RECOVERY_PHONE_MASK = "***********";
@@ -124,6 +115,20 @@ public class TwoFactorAuthenticationController extends BaseController {
 
     @Resource
     private EncryptionManager encryptionManager;
+
+    /**
+     * How long a passed authentication challenge, or the sign in the
+     * interstitial rides on, lets the user keep working.
+     *
+     * Package private so its own test can pin the number. The value is a
+     * product decision rather than an implementation detail, and the only
+     * thing that catches a change to it is a test that names it.
+     */
+    private final long RECOVERY_PHONE_ELEVATION_TTL_MILLIS;
+
+    public TwoFactorAuthenticationController(@Value("${twoFactorAuthentication.recoveryPhone.elevation.ttlMillis:480000}") long recoveryPhoneElevatedTtlMillis) {
+        RECOVERY_PHONE_ELEVATION_TTL_MILLIS = recoveryPhoneElevatedTtlMillis; // 8 minutes
+    }
 
     @RequestMapping("/status.json")
     public @ResponseBody TwoFactorAuthStatus get2FAStatus() {

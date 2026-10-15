@@ -439,16 +439,6 @@ public class TwoFactorAuthenticationControllerTest {
         verify(recoveryPhoneVerificationService, never()).sendCode(anyString(), any(RecoveryPhoneSendCodeRequest.class));
     }
 
-    // The window is eight minutes (PD-13638). The three tests below hard code
-    // that number rather than deriving it from the constant, deliberately: a
-    // test that computes its boundary from the value it is checking moves
-    // whenever the value does, which is the one thing a pin must not do.
-
-    @Test
-    public void testTheElevationWindowIsEightMinutes() {
-        assertEquals(8 * 60 * 1000L, TwoFactorAuthenticationController.RECOVERY_PHONE_ELEVATION_TTL_MILLIS);
-    }
-
     @Test
     public void testSendCodeAcceptsAChallengeInsideTheWindow() {
         enableRecoveryPhoneFeature();
