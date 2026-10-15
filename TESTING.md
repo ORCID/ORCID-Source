@@ -59,7 +59,8 @@ The JaCoCo agent costs about 12% of test time (measured on `orcid-persistence`:
 
 Run on 2026-09-05 against `4c802f0c13`, rebased on `origin/main` at `5c67777e9a`
 (v3.0.54). Unit stage 3,597 tests, database stage 763, both green from a clean
-tree. Re-verified against v3.23.10 on 2026-09-21; see the section after the table.
+tree. Re-verified against v3.23.10 on 2026-09-21 and against v3.24.10 on 2026-10-14;
+see the sections after the table.
 
 Parity with `main` is not a claim here, it is a table. Each row is a proof `main`
 holds by running a real delegator, manager and security manager over fixtures.
@@ -105,7 +106,7 @@ assumed. Re-run on 2026-09-05 against `fd4dc071dd`:
 | Database stage, clean tree | 763 green |
 | Web modules built alone, as CI does | 383, 1,232, 405 green |
 | First three mutations above, control first | each red on its own test, production restored byte-identically |
-| `mockito-core` in all seven WARs | 592KB present in every one before, absent from every one after |
+| `mockito-core` in all seven WARs | 592KB present in every one before, absent from every one after, with its `objenesis` |
 | `orcid-core` test jar contents | the two helper classes, no test resources |
 | Release-path build, `-Dmaven.test.skip`, jar deleted first | green, jar reattached with both classes |
 | `actionlint`, `db_tests` matrix drift | both clean |
@@ -172,6 +173,36 @@ Two things `main` changed that are worth knowing:
   version drove no longer exists, so there is nothing to port; the filtering belongs
   in an `AffiliationsManagerReadOnly` database test. Worth a ticket.
 
+### Re-verified against v3.24.10
+
+`main` moved 71 commits after the 2026-09-24 merge, among them PD-14292 (the
+contributor email is withheld on reads), PD-13512 (v2.1 email flags) and PD-14448.
+Merged at `546dbc38eb`, then re-run from a clean tree on 2026-10-14 against `main`
+at `ffc60febf3`, sequentially, since two Spring test JVMs on one machine contend
+for ehcache's lock in the temp directory:
+
+| Check | Result |
+| --- | --- |
+| `main`, whole suite | 4,687 green |
+| Unit stage | 4,098 green |
+| Database stage | 742 green |
+| Both stages unfiltered, `-P all-tests` | 4,840 green |
+| Every test `main` runs, by class and method | 4,678 run under the same name, 4 moved class within their module, 5 mapped in the pull request |
+| All seven WARs against `main`'s | only `mockito-core` and `objenesis` gone, and `SecurityContextTestUtils` from the orcid-core jar; every other file byte-identical |
+| 13 production mutations, four rows of the table above among them | every one red on at least one test; production restored byte-identically |
+| `actionlint`, `db_stage_drift`, its negative cases | clean; drift fails on a multi-line category, and the setup parity check fails on any difference |
+
+Two things this pass found and fixed:
+
+- **A proof had been lost.** A token holding `/email/read-private` reveals every
+  email and nothing else. `main` proved it end to end in the member delegator read
+  tests, and their mocked versions only restated their stubs. It is now proved in
+  `OrcidSecurityManager_{Person,FullRecord}Test`, v2 and v3, against the real
+  security manager. Mutating the rule turns those tests red on this branch, and on
+  `main` it turns the two end-to-end tests red, which is how the loss was confirmed.
+- **The category split had switched off Mockito's unused-stub check in CI.** See
+  `OrcidMockitoJUnitRunner` under "Writing a unit test".
+
 ## The database stage
 
 Both stages run in full on every push. The unit stage is eleven parallel jobs,
@@ -180,7 +211,7 @@ marked `@Category(DatabaseTest.class)`. The split exists so the unit stage can
 report in a couple of minutes without waiting on a database, not so that work
 can be skipped -- nothing selects which tests to run based on what changed.
 
-The other four reactor modules are absent from the database matrix because they
+The other four modules that have tests are absent from the database matrix because they
 hold no database test, and each would pay about 100s of setup to run nothing.
 That is the one omission, and `db_stage_drift` guards it: it reads the matrix
 out of this workflow and the module list out of the root pom, and fails the
