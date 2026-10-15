@@ -1,3 +1,9 @@
+## v3.24.11 - 2026-10-15
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.24.10...v3.24.11)
+
+- [#7763](https://github.com/ORCID/ORCID-Source/pull/7763): PD-13638 Make the elevation ttl configurable
+
 ## v3.24.10 - 2026-10-13
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.24.9...v3.24.10)
