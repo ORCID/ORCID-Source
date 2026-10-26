@@ -30,11 +30,12 @@ the software.
         <security.version>6.5.11</security.version>
         <liquibase.version>4.9.1</liquibase.version>
         <jersey.version>3.1.10</jersey.version>
-        <jackson.version>2.15.4</jackson.version>
-        <activemq.version>6.2.4</activemq.version>
+        <jackson.version>2.22.4</jackson.version>
+        <jackson-annotations.version>2.22</jackson-annotations.version>
+        <activemq.version>6.2.10</activemq.version>
         <swagger.version>2.1.1</swagger.version>
         <aspectj.version>1.9.6</aspectj.version>
-        <jena.version>4.4.0</jena.version>
+        <jena.version>6.2.0</jena.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <servlet.port>9437</servlet.port>
@@ -619,65 +620,16 @@ the software.
             </dependency>
             
             <!-- Jersey Server -->
- <dependency>
-    <groupId>org.glassfish.jersey.containers</groupId>
-    <artifactId>jersey-container-servlet</artifactId>
-    <version>${jersey.version}</version>
-</dependency>
-<dependency>
-    <groupId>org.glassfish.jersey.media</groupId>
-    <artifactId>jersey-media-json-jackson</artifactId>
-    <version>${jersey.version}</version>
-</dependency>
-
-            <!-- http://mvnrepository.com/artifact/com.sun.jersey/jersey-server -->
-            <!-- dependency>
-                <groupId>com.sun.jersey</groupId>
-                <artifactId>jersey-server</artifactId>
-            <version>${jersey.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.sun.jersey.contribs</groupId>
-                <artifactId>jersey-spring</artifactId>
-                <version>${jersey.version}</version>
-                <exclusions>
-                    <exclusion>
-                        <artifactId>spring-web</artifactId>
-                        <groupId>org.springframework</groupId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>org.springframework</groupId>
-                        <artifactId>spring-core</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>org.springframework</groupId>
-                        <artifactId>spring-beans</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>org.springframework</groupId>
-                        <artifactId>spring-context</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>org.springframework</groupId>
-                        <artifactId>spring-web</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>org.springframework</groupId>
-                        <artifactId>spring-aop</artifactId>
-                    </exclusion>
-                </exclusions>
-            </dependency>
-
-            <dependency>
-                <groupId>com.sun.jersey.contribs</groupId>
-                <artifactId>jersey-apache-client</artifactId>
+             <dependency>
+                <groupId>org.glassfish.jersey.containers</groupId>
+                <artifactId>jersey-container-servlet</artifactId>
                 <version>${jersey.version}</version>
             </dependency>
             <dependency>
-                <groupId>com.sun.jersey</groupId>
-                <artifactId>jersey-client</artifactId>
+                <groupId>org.glassfish.jersey.media</groupId>
+                <artifactId>jersey-media-json-jackson</artifactId>
                 <version>${jersey.version}</version>
-            </dependency -->
+            </dependency>
 
             <!-- Web -->
             <dependency>
@@ -706,7 +658,7 @@ the software.
             <dependency>
                 <groupId>com.fasterxml.jackson.core</groupId>
                 <artifactId>jackson-annotations</artifactId>
-                <version>${jackson.version}</version>
+                <version>${jackson-annotations.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.fasterxml.jackson.core</groupId>
@@ -716,13 +668,13 @@ the software.
             <dependency>
                 <groupId>org.apache.httpcomponents.client5</groupId>
                 <artifactId>httpclient5</artifactId>
-                <version>5.3.1</version>
+                <version>5.6.5</version>
                 <scope>compile</scope>
             </dependency>
             <dependency>
                 <groupId>org.apache.httpcomponents.core5</groupId>
                 <artifactId>httpcore5</artifactId>
-                <version>5.3.6</version>
+                <version>5.4.4</version>
                 <scope>compile</scope>
             </dependency>
             <dependency>
