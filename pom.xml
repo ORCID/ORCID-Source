@@ -35,7 +35,7 @@ the software.
         <activemq.version>6.2.10</activemq.version>
         <swagger.version>2.1.1</swagger.version>
         <aspectj.version>1.9.6</aspectj.version>
-        <jena.version>4.4.0</jena.version>
+        <jena.version>6.2.0</jena.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <servlet.port>9437</servlet.port>
