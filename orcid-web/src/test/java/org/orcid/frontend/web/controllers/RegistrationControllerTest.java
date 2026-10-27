@@ -49,6 +49,7 @@ import org.orcid.core.security.OrcidRoles;
 import org.orcid.core.togglz.Features;
 import org.orcid.core.utils.SecurityContextTestUtils;
 import org.orcid.frontend.email.RecordEmailSender;
+import org.orcid.frontend.service.DisposableEmailsService;
 import org.orcid.jaxb.model.common.AvailableLocales;
 import org.orcid.jaxb.model.message.CreationMethod;
 import org.orcid.jaxb.model.v3.release.common.Visibility;
@@ -97,6 +98,9 @@ public class RegistrationControllerTest extends DBUnitTest {
     private EmailManager emailManager;
     
     @Mock
+    private DisposableEmailsService disposableEmailsService;
+    
+    @Mock
     private ProfileEntityManager profileEntityManager;
     
     @Mock
@@ -132,6 +136,7 @@ public class RegistrationControllerTest extends DBUnitTest {
         MockitoAnnotations.initMocks(this);        
         TargetProxyHelper.injectIntoProxy(registrationController, "registrationManager", registrationManager);        
         TargetProxyHelper.injectIntoProxy(registrationController, "emailManager", emailManager); 
+        TargetProxyHelper.injectIntoProxy(registrationController, "disposableEmailsService", disposableEmailsService);
         TargetProxyHelper.injectIntoProxy(registrationController, "profileEntityManager", profileEntityManager);        
         TargetProxyHelper.injectIntoProxy(registrationController, "encryptionManager", encryptionManagerMock);
         TargetProxyHelper.injectIntoProxy(registrationController, "emailManagerReadOnly", emailManagerReadOnlyMock);
@@ -489,7 +494,22 @@ public class RegistrationControllerTest extends DBUnitTest {
     	assertEquals(1, reg.getEmail().getErrors().size());
     	assertTrue(reg.getEmail().getErrors().get(0).startsWith("orcid.frontend.verify.duplicate_email"));    	
     }             
-    
+
+    @Test
+    public void regEmailValidateDisposableEmailTest() {
+        String email = "email1@disposable.example.com";
+        when(disposableEmailsService.isDisposableEmail(email)).thenReturn(true);
+
+        Registration reg = new Registration();
+        reg.setEmail(Text.valueOf(email));
+        reg.setEmailConfirm(Text.valueOf(email));
+        reg = registrationController.regEmailValidate(servletRequest, reg, false, true);
+
+        assertEquals(1, reg.getEmail().getErrors().size());
+        assertEquals("ORCID does not support temporary or disposable email addresses. Please try a different email address.", reg.getEmail().getErrors().get(0));
+        verify(emailManager, times(0)).emailExists(email);
+    }
+
     @Test
     public void verifyEmailTest() throws UnsupportedEncodingException {
         togglzRule.enable(Features.SEND_EMAIL_ON_EMAIL_LIST_CHANGE);

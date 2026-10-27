@@ -33,6 +33,7 @@ import org.orcid.core.profile.history.ProfileHistoryEventType;
 import org.orcid.core.togglz.Features;
 import org.orcid.core.utils.OrcidRequestUtil;
 import org.orcid.frontend.email.RecordEmailSender;
+import org.orcid.frontend.service.DisposableEmailsService;
 import org.orcid.frontend.spring.ShibbolethAjaxAuthenticationSuccessHandler;
 import org.orcid.frontend.spring.SocialAjaxAuthenticationSuccessHandler;
 import org.orcid.frontend.spring.web.social.config.SocialSignInUtils;
@@ -126,6 +127,9 @@ public class RegistrationController extends BaseController {
 
     @Resource
     private EventManager eventManager;
+
+    @Resource
+    private DisposableEmailsService disposableEmailsService;
 
     @RequestMapping(value = "/register.json", method = RequestMethod.GET)
     public @ResponseBody Registration getRegister(HttpServletRequest request, HttpServletResponse response) {
@@ -405,7 +409,10 @@ public class RegistrationController extends BaseController {
             return reg;
         }
 
-
+        if (disposableEmailsService.isDisposableEmail(emailAddress)) {
+            reg.getEmail().getErrors().add(getMessage("orcid.frontend.verify.disposable_email"));
+            return reg;
+        }
 
         if (!reg.isReactivation() && emailManager.emailExists(emailAddress)) {
             String orcid = emailManager.findOrcidIdByEmail(emailAddress);
