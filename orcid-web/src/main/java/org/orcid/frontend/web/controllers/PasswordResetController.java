@@ -29,6 +29,7 @@ import org.orcid.core.utils.OrcidRequestUtil;
 import org.orcid.core.utils.PasswordResetToken;
 import org.orcid.core.utils.cache.redis.RedisClient;
 import org.orcid.frontend.email.RecordEmailSender;
+import org.orcid.frontend.spring.session.redis.OrcidRedisIndexedSessionRepository;
 import org.orcid.frontend.spring.ShibbolethAjaxAuthenticationSuccessHandler;
 import org.orcid.frontend.spring.SocialAjaxAuthenticationSuccessHandler;
 import org.orcid.frontend.spring.web.social.config.SocialSignInUtils;
@@ -100,6 +101,9 @@ public class PasswordResetController extends BaseController {
     
     @Resource
     private RecordEmailSender recordEmailSender;
+
+    @Resource(name = "sessionRepository")
+    private OrcidRedisIndexedSessionRepository sessionRepository;
 
     @Resource
     private ExpiringLinkService expiringLinkService;
@@ -365,6 +369,7 @@ public class PasswordResetController extends BaseController {
         }
 
         profileEntityManager.updatePassword(orcid, oneTimeResetPasswordForm.getNewPassword().getValue());
+        sessionRepository.evictSessionsForOrcid(orcid);
         //send the security notification email on change password
         if(Features.SEND_EMAIL_ON_RESET_PASSWORD.isActive()) {
 			recordEmailSender.sendOrcidSecurityResetPasswordEmail(orcid);
