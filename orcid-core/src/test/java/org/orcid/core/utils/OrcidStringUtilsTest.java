@@ -105,6 +105,11 @@ public class OrcidStringUtilsTest {
             assertEquals("1@test1.com", OrcidStringUtils.filterEmailAddress(c + "1@test1.com"));
         }
 
+        char[] formatCharacters = { '\u061c', '\u200b', '\u200c', '\u200d', '\u200e', '\u200f', '\u202a', '\u202e', '\u2066', '\u2069', '\ufeff' };
+        for (char c : formatCharacters) {
+            assertEquals("1@test1.com", OrcidStringUtils.filterEmailAddress(c + "1" + c + "@test1" + c + ".com" + c));
+        }
+
     }
 
     @Test
