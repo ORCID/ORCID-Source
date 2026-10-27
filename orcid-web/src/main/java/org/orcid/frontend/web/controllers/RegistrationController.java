@@ -405,6 +405,8 @@ public class RegistrationController extends BaseController {
             return reg;
         }
 
+
+
         if (!reg.isReactivation() && emailManager.emailExists(emailAddress)) {
             String orcid = emailManager.findOrcidIdByEmail(emailAddress);
 
