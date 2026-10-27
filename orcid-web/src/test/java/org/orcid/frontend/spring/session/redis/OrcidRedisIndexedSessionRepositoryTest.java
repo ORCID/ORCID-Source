@@ -4,6 +4,9 @@ import static org.mockito.ArgumentMatchers.anyMap;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.atLeastOnce;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -16,6 +19,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.orcid.frontend.spring.configuration.OrcidBeanClassLoaderAware;
 import org.springframework.data.redis.core.BoundHashOperations;
@@ -86,6 +90,60 @@ public class OrcidRedisIndexedSessionRepositoryTest {
         verify(redisOperations, atLeastOnce()).delete(eq(expiredSessionKey));
         verify(principalSetOperations).remove(eq(SESSION_ID));
         verify(expirationSetOperations).remove(eq("expires:" + SESSION_ID));
+    }
+
+    @Test
+    public void evictSessionsForOrcidShouldDeleteAllIndexedSessions() {
+        Map<String, OrcidRedisIndexedSessionRepository.RedisSession> activeSessions = new HashMap<>();
+        activeSessions.put(SESSION_ID, null);
+        activeSessions.put("session-2", null);
+
+        OrcidRedisIndexedSessionRepository repository = Mockito.spy(sessionRepository);
+        doReturn(activeSessions).when(repository).findByIndexNameAndIndexValue(
+                FindByIndexNameSessionRepository.PRINCIPAL_NAME_INDEX_NAME, ORCID);
+        doNothing().when(repository).deleteById(anyString());
+
+        int evictedSessions = repository.evictSessionsForOrcid(ORCID);
+
+        assertEquals(2, evictedSessions);
+        verify(repository).deleteById(SESSION_ID);
+        verify(repository).deleteById("session-2");
+        verify(repository, times(2)).deleteById(anyString());
+    }
+
+    @Test
+    public void evictSessionsForOrcidShouldNotDeleteSessionsForOtherOrcids() {
+        String otherOrcid = "0000-0000-0000-000X";
+        String otherSessionId = "other-session";
+
+        Map<String, OrcidRedisIndexedSessionRepository.RedisSession> targetSessions = new HashMap<>();
+        targetSessions.put(SESSION_ID, null);
+        targetSessions.put("session-2", null);
+
+        OrcidRedisIndexedSessionRepository repository = Mockito.spy(sessionRepository);
+        doReturn(targetSessions).when(repository).findByIndexNameAndIndexValue(
+                FindByIndexNameSessionRepository.PRINCIPAL_NAME_INDEX_NAME, ORCID);
+        doNothing().when(repository).deleteById(anyString());
+
+        int evictedSessions = repository.evictSessionsForOrcid(ORCID);
+
+        assertEquals(2, evictedSessions);
+        verify(repository).deleteById(SESSION_ID);
+        verify(repository).deleteById("session-2");
+        verify(repository, Mockito.never()).deleteById(otherSessionId);
+        verify(repository, Mockito.never()).findByIndexNameAndIndexValue(
+                FindByIndexNameSessionRepository.PRINCIPAL_NAME_INDEX_NAME, otherOrcid);
+        verify(repository, times(2)).deleteById(anyString());
+    }
+
+    @Test
+    public void evictSessionsForOrcidShouldIgnoreBlankOrcid() {
+        OrcidRedisIndexedSessionRepository repository = Mockito.spy(sessionRepository);
+
+        assertEquals(0, repository.evictSessionsForOrcid(" "));
+
+        verify(repository, Mockito.never()).findByIndexNameAndIndexValue(
+                FindByIndexNameSessionRepository.PRINCIPAL_NAME_INDEX_NAME, " ");
     }
 
     @Test
