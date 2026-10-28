@@ -2,6 +2,7 @@ package org.orcid.api.memberV2.server.delegator;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
@@ -1982,6 +1983,26 @@ public class MemberV2ApiServiceVersionedDelegatorTest extends DBUnitTest {
     public void testDeactivatedRecordDeleteAddress() {
         serviceDelegator.deleteAddress(deactivatedUserOrcid, 0L);
         fail();
+    }
+    
+    /**
+     * The contributor email is write-only. The versioned beans run every work through the
+     * 2.0 <-> 2.1 converter, which copies every bean property, so check it stays out on both.
+     */
+    @Test
+    public void testViewWorkOmitsContributorEmailOnV2_0AndV2_1() {
+        SecurityContextTestUtils.setUpSecurityContext("0000-0000-0000-0003", ScopePathType.READ_LIMITED);
+        assertNoContributorEmail((Work) serviceDelegator.viewWork("0000-0000-0000-0003", 11L).getEntity());
+        assertNoContributorEmail((Work) serviceDelegator_v2_1.viewWork("0000-0000-0000-0003", 11L).getEntity());
+        assertNoContributorEmail((Work) ((WorkBulk) serviceDelegator.viewBulkWorks("0000-0000-0000-0003", "11").getEntity()).getBulk().get(0));
+        assertNoContributorEmail((Work) ((WorkBulk) serviceDelegator_v2_1.viewBulkWorks("0000-0000-0000-0003", "11").getEntity()).getBulk().get(0));
+    }
+
+    private void assertNoContributorEmail(Work work) {
+        assertEquals(Long.valueOf(11), work.getPutCode());
+        assertEquals(1, work.getWorkContributors().getContributor().size());
+        assertEquals("0000-0000-0000-0000", work.getWorkContributors().getContributor().get(0).getContributorOrcid().getPath());
+        assertNull(work.getWorkContributors().getContributor().get(0).getContributorEmail());
     }
     
     private void assertSourceElement(SourceAware element, boolean isHttps) {

@@ -187,6 +187,32 @@ public class EmailMessageSenderTest {
         assertTrue("stored markup should still render", html.contains("<p>Hello from <b>"));
     }
 
+    @Test
+    public void testPermissionNotificationEmail() {
+        NotificationPermission notification = new NotificationPermission();
+        notification.setPutCode(100L);
+        notification.setNotificationType(NotificationType.PERMISSION);
+        notification.setSubject("Connect with your organization");
+        notification.setNotificationSubject("Connect with your organization");
+        notification.setNotificationIntro("University of Testing");
+        notification.setAuthorizationUrl(new AuthorizationUrl("https://orcid.org/oauth/authorize?client_id=APP-1234"));
+        notification.setCreatedDate(DateUtils.convertToXMLGregorianCalendar("2026-10-01T12:00:00"));
+        Source source = new Source();
+        source.setSourceName(new SourceName("University of Testing"));
+        source.setSourceClientId(new SourceClientId("APP-1234567890123456"));
+        notification.setSource(source);
+
+        List<Notification> notifications = new ArrayList<>();
+        notifications.add(notification);
+
+        EmailMessage emailMessage = emailMessageSender.createDigest("0000-0000-0000-0000", notifications);
+        assertNotNull(emailMessage);
+        assertNotNull(emailMessage.getBodyHtml());
+        assertNotNull(emailMessage.getBodyText());
+        assertTrue(emailMessage.getBodyHtml().contains("University of Testing"));
+        assertTrue(emailMessage.getBodyText().contains("University of Testing"));
+    }
+
     private List<Notification> generateNotifications() {
         List<Notification> notifications = new ArrayList<>();
 

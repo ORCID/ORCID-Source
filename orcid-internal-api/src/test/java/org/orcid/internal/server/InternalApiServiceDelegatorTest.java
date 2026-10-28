@@ -5,14 +5,19 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 
 import org.junit.Before;
+import jakarta.persistence.NoResultException;
 import jakarta.ws.rs.core.Response;
 
 import org.junit.Test;
@@ -39,6 +44,9 @@ import org.orcid.internal.util.LastModifiedResponse;
 import org.orcid.internal.util.MemberInfo;
 import org.orcid.jaxb.model.error_v2.OrcidError;
 import org.orcid.jaxb.model.message.ScopePathType;
+import org.orcid.jaxb.model.v3.release.common.Visibility;
+import org.orcid.jaxb.model.v3.release.record.Email;
+import org.orcid.jaxb.model.v3.release.record.Emails;
 import org.orcid.utils.ExpiringLinkService;
 import org.orcid.pojo.ajaxForm.Client;
 import org.orcid.pojo.ajaxForm.Member;
@@ -189,24 +197,92 @@ public class InternalApiServiceDelegatorTest {
         return request;
     }
 
+    private static Email email(String address, boolean verified, Visibility visibility) {
+        Email email = new Email();
+        email.setEmail(address);
+        email.setVerified(verified);
+        email.setVisibility(visibility);
+        return email;
+    }
+
+    private static Emails emails(Email... emails) {
+        Emails result = new Emails();
+        result.setEmails(new ArrayList<>(Arrays.asList(emails)));
+        return result;
+    }
+
     @Test
     public void accountRecoveryMatchTest() {
         when(emailManagerReadOnly.findOrcidIdByEmail(USER_EMAIL)).thenReturn(USER_ORCID);
+        when(emailManagerReadOnly.getEmails(USER_ORCID)).thenReturn(emails(email(USER_EMAIL, true, Visibility.PUBLIC)));
         Response response = internalApiServiceDelegator.accountRecoveryMatch(matchRequest(USER_ORCID, USER_EMAIL));
         assertNotNull(response);
         AccountRecoveryMatchResponse info = (AccountRecoveryMatchResponse) response.getEntity();
         assertTrue(info.isMatch());
         assertEquals(AccountRecoveryMatchResponse.RecordStatus.ACTIVE, info.getRecordStatus());
+        assertEquals(Arrays.asList(USER_EMAIL), info.getEmails());
+    }
+
+    /**
+     * The recovery workflow probes every address the owner might still read, so a match lists all
+     * of them: unverified ones and private ones included, each once, and nothing that is not an
+     * address.
+     */
+    @Test
+    public void accountRecoveryMatchListsEveryEmailOnTheRecordTest() {
+        when(emailManagerReadOnly.findOrcidIdByEmail(USER_EMAIL)).thenReturn(USER_ORCID);
+        when(emailManagerReadOnly.getEmails(USER_ORCID)).thenReturn(emails(
+                email(USER_EMAIL, true, Visibility.PUBLIC),
+                email("unverified@user.com", false, Visibility.PUBLIC),
+                email("private@user.com", true, Visibility.PRIVATE),
+                email("limited@user.com", false, Visibility.LIMITED),
+                email(USER_EMAIL, true, Visibility.PUBLIC),
+                email("", true, Visibility.PUBLIC),
+                null));
+
+        Response response = internalApiServiceDelegator.accountRecoveryMatch(matchRequest(USER_ORCID, USER_EMAIL));
+
+        AccountRecoveryMatchResponse info = (AccountRecoveryMatchResponse) response.getEntity();
+        assertTrue(info.isMatch());
+        assertEquals(Arrays.asList(USER_EMAIL, "unverified@user.com", "private@user.com", "limited@user.com"), info.getEmails());
+    }
+
+    /**
+     * The email DAO answers a record with no rows with a null list. A match can still meet that -
+     * an address removed between the two reads - and it has to be an empty list, not a 500 and not
+     * a missing field the caller would read as an older registry.
+     */
+    @Test
+    public void accountRecoveryMatchWithNoEmailRowsListsNoneTest() {
+        when(emailManagerReadOnly.findOrcidIdByEmail(USER_EMAIL)).thenReturn(USER_ORCID);
+        Emails nullList = new Emails();
+        nullList.setEmails(null);
+        // First no Emails at all, then an Emails whose list is null.
+        when(emailManagerReadOnly.getEmails(USER_ORCID)).thenReturn(null, nullList);
+
+        AccountRecoveryMatchResponse noEmails = (AccountRecoveryMatchResponse) internalApiServiceDelegator
+                .accountRecoveryMatch(matchRequest(USER_ORCID, USER_EMAIL)).getEntity();
+        assertTrue(noEmails.isMatch());
+        assertNotNull(noEmails.getEmails());
+        assertTrue(noEmails.getEmails().isEmpty());
+
+        AccountRecoveryMatchResponse emptyEmails = (AccountRecoveryMatchResponse) internalApiServiceDelegator
+                .accountRecoveryMatch(matchRequest(USER_ORCID, USER_EMAIL)).getEntity();
+        assertTrue(emptyEmails.isMatch());
+        assertNotNull(emptyEmails.getEmails());
+        assertTrue(emptyEmails.getEmails().isEmpty());
     }
 
     /**
      * Every kind of non match has to look the same from the outside, otherwise the endpoint tells a
-     * caller whether an address is registered.
+     * caller whether an address is registered. And none of them may say anything about a record's
+     * addresses: they are not even read until a pair has matched.
      */
     @Test
     public void accountRecoveryMatchIsNotAnEmailOracleTest() {
         when(emailManagerReadOnly.findOrcidIdByEmail(USER_EMAIL)).thenReturn(USER_ORCID);
         when(emailManagerReadOnly.findOrcidIdByEmail("nobody@user.com")).thenReturn(null);
+        when(emailManagerReadOnly.findOrcidIdByEmail("unhashed@user.com")).thenThrow(new NoResultException());
 
         // A registered email, paired with the wrong iD
         Response wrongPair = internalApiServiceDelegator.accountRecoveryMatch(matchRequest("0000-0000-0000-0000", USER_EMAIL));
@@ -216,11 +292,18 @@ public class InternalApiServiceDelegatorTest {
         Response unknownEmail = internalApiServiceDelegator.accountRecoveryMatch(matchRequest(USER_ORCID, "nobody@user.com"));
         AccountRecoveryMatchResponse unknownEmailInfo = (AccountRecoveryMatchResponse) unknownEmail.getEntity();
 
+        // An address the lookup has no row for at all
+        Response noRow = internalApiServiceDelegator.accountRecoveryMatch(matchRequest(USER_ORCID, "unhashed@user.com"));
+        AccountRecoveryMatchResponse noRowInfo = (AccountRecoveryMatchResponse) noRow.getEntity();
+
         assertEquals(wrongPair.getStatus(), unknownEmail.getStatus());
-        assertFalse(wrongPairInfo.isMatch());
-        assertFalse(unknownEmailInfo.isMatch());
-        assertNull(wrongPairInfo.getRecordStatus());
-        assertNull(unknownEmailInfo.getRecordStatus());
+        assertEquals(wrongPair.getStatus(), noRow.getStatus());
+        for (AccountRecoveryMatchResponse info : Arrays.asList(wrongPairInfo, unknownEmailInfo, noRowInfo)) {
+            assertFalse(info.isMatch());
+            assertNull(info.getRecordStatus());
+            assertNull(info.getEmails());
+        }
+        verify(emailManagerReadOnly, never()).getEmails(anyString());
     }
 
     @Test(expected = OrcidAccessControlException.class)

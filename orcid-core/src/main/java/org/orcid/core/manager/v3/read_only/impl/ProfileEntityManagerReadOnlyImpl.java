@@ -77,6 +77,14 @@ public class ProfileEntityManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl im
     }
 
     @Override
+    public boolean isPasswordResetRequired(String orcid) {
+        if (PojoUtil.isEmpty(orcid)) {
+            return false;
+        }
+        return profileDao.isPasswordResetRequired(orcid);
+    }
+
+    @Override
     @Cacheable(value = "count-tokens", key = "#userName.concat('-').concat(#lastModified)")
     public Boolean hasToken(String userName, long lastModified) {
         return orcidOauth2TokenDetailDaoReadOnly.hasToken(userName);

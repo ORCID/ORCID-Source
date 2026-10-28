@@ -494,7 +494,8 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
     @Override
     @Transactional
     public void changeEncryptedPassword(String orcid, String encryptedPassword) {
-        Query updateQuery = entityManager.createQuery("update ProfileEntity p set p.encryptedPassword = :encryptedPassword where p.id = :orcid");
+        // A new password satisfies a mandatory password reset, whichever path set it
+        Query updateQuery = entityManager.createQuery("update ProfileEntity p set p.encryptedPassword = :encryptedPassword, p.forcePasswordReset = null where p.id = :orcid");
         updateQuery.setParameter("orcid", orcid);
         updateQuery.setParameter("encryptedPassword", encryptedPassword);
         updateQuery.executeUpdate();
@@ -846,6 +847,15 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
         query.setParameter("forcePasswordResetDate", forcePasswordResetDate);
         query.setHint("jakarta.persistence.query.timeout", queryTimeout);
         return query.executeUpdate();
+    }
+
+    @Override
+    @Transactional(value = "transactionManagerReadOnly", readOnly = true)
+    public boolean isPasswordResetRequired(String orcid) {
+        Query query = entityManager.createNativeQuery("SELECT count(*) FROM profile WHERE orcid = :orcid AND force_password_reset IS NOT NULL "
+                + "AND claimed = true AND profile_deactivation_date IS NULL AND primary_record IS NULL");
+        query.setParameter("orcid", orcid);
+        return ((Number) query.getSingleResult()).longValue() > 0;
     }
 
     @SuppressWarnings("unchecked")

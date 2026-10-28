@@ -300,6 +300,46 @@ public class ProfileDaoTest extends DBUnitTest {
     @Test
     @Rollback(true)
     @Transactional(propagation = Propagation.REQUIRES_NEW)
+    public void testIsPasswordResetRequired() {
+        // 4442 is claimed and active, 4447 is unclaimed, 444X is deprecated and
+        // 0000-0000-0000-0007 is deactivated: only the first one must answer true
+        List<String> flagged = Arrays.asList("4444-4444-4444-4442", "4444-4444-4444-4447", "4444-4444-4444-444X", "0000-0000-0000-0007");
+        assertEquals(4, profileDao.updateForcePasswordReset(flagged, new Date()));
+        entityManager.clear();
+
+        assertTrue(profileDao.isPasswordResetRequired("4444-4444-4444-4442"));
+        assertFalse(profileDao.isPasswordResetRequired("4444-4444-4444-4447"));
+        assertFalse(profileDao.isPasswordResetRequired("4444-4444-4444-444X"));
+        assertFalse(profileDao.isPasswordResetRequired("0000-0000-0000-0007"));
+        // Not flagged, and not a record at all
+        assertFalse(profileDao.isPasswordResetRequired("4444-4444-4444-4443"));
+        assertFalse(profileDao.isPasswordResetRequired("9999-9999-9999-9999"));
+    }
+
+    @Test
+    @Rollback(true)
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    public void testChangeEncryptedPasswordClearsForcePasswordReset() {
+        String orcid = "4444-4444-4444-4442";
+        String untouched = "4444-4444-4444-4443";
+        assertEquals(2, profileDao.updateForcePasswordReset(Arrays.asList(orcid, untouched), new Date()));
+        entityManager.clear();
+        assertTrue(profileDao.isPasswordResetRequired(orcid));
+
+        profileDao.changeEncryptedPassword(orcid, "new-encrypted-password");
+        entityManager.clear();
+
+        ProfileEntity profile = profileDao.find(orcid);
+        assertEquals("new-encrypted-password", profile.getEncryptedPassword());
+        assertNull(profile.getForcePasswordReset());
+        assertFalse(profileDao.isPasswordResetRequired(orcid));
+        // Only the record whose password changed is released
+        assertNotNull(profileDao.find(untouched).getForcePasswordReset());
+    }
+
+    @Test
+    @Rollback(true)
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void testGetConfirmedProfileCount() {
         String orcid = "4444-4444-4444-4446";
         Long confirmedProfileCount = profileDao.getConfirmedProfileCount();

@@ -1,3 +1,85 @@
+## v3.25.0 - 2026-10-26
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.24.11...v3.25.0)
+
+## v3.24.11 - 2026-10-15
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.24.10...v3.24.11)
+
+- [#7763](https://github.com/ORCID/ORCID-Source/pull/7763): PD-13638 Make the elevation ttl configurable
+
+## v3.24.10 - 2026-10-13
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.24.9...v3.24.10)
+
+- [#7762](https://github.com/ORCID/ORCID-Source/pull/7762): Fixed  OrcidAPIClient  that sent an incorrect Content-Type header instead of Accept when making GET requests to fetch activities, causing 500 errors during message processing.
+
+## v3.24.9 - 2026-10-13
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.24.8...v3.24.9)
+
+- [#7761](https://github.com/ORCID/ORCID-Source/pull/7761): PD-13696 Remove insecure url rewriting
+
+## v3.24.8 - 2026-10-08
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.24.7...v3.24.8)
+
+- [#7744](https://github.com/ORCID/ORCID-Source/pull/7744): Lmendoa/pd 14333 pd 14423 pd 14449 pd 14450 recovery phone
+
+## v3.24.7 - 2026-10-08
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.24.6...v3.24.7)
+
+- [#7735](https://github.com/ORCID/ORCID-Source/pull/7735): Bump org.freemarker:freemarker from 2.3.34 to 2.3.35
+
+## v3.24.6 - 2026-10-08
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.24.5...v3.24.6)
+
+- [#7756](https://github.com/ORCID/ORCID-Source/pull/7756): PD-14452 Refactored notification item mapping and post-processing logic into NotificationMapperV2 and NotificationMapperV3, aligning with the existing mapper architectural pattern.
+
+## v3.24.5 - 2026-10-08
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.24.4...v3.24.5)
+
+- [#7743](https://github.com/ORCID/ORCID-Source/pull/7743): PD-6002 remove old pw reset link logic
+
+## v3.24.4 - 2026-10-08
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.24.3...v3.24.4)
+
+- [#7755](https://github.com/ORCID/ORCID-Source/pull/7755): PD-14292 Omit contributor email from API work reads
+
+## v3.24.3 - 2026-10-08
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.24.2...v3.24.3)
+
+- [#7754](https://github.com/ORCID/ORCID-Source/pull/7754): PD-14448 Fixed the JPQL entity property mapping in ClientDetailsDaoImpl.findMVPEnabled() and corrected the client ID column identifier in ClientDetailsDaoImpl.updateNotificationInfo()
+
+## v3.24.2 - 2026-10-08
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.24.1...v3.24.2)
+
+- [#7741](https://github.com/ORCID/ORCID-Source/pull/7741): PD-5692
+
+## v3.24.1 - 2026-10-07
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.24.0...v3.24.1)
+
+- [#7753](https://github.com/ORCID/ORCID-Source/pull/7753): PD-14532 Allow any know class to be deserialized
+
+## v3.24.0 - 2026-10-07
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.23.22...v3.24.0)
+
+- [#7747](https://github.com/ORCID/ORCID-Source/pull/7747): Use the latest version of togglz-junit
+
+## v3.23.22 - 2026-10-05
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.23.21...v3.23.22)
+
+- [#7745](https://github.com/ORCID/ORCID-Source/pull/7745): PD-14421 list every record email on an account recovery match
+
 ## v3.23.21 - 2026-09-30
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.23.20...v3.23.21)

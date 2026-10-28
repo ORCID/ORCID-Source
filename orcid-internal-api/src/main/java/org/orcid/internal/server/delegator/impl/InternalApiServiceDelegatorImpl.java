@@ -2,9 +2,11 @@ package org.orcid.internal.server.delegator.impl;
 
 import static org.orcid.core.api.OrcidApiConstants.STATUS_OK_MESSAGE;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import jakarta.annotation.Resource;
@@ -36,6 +38,8 @@ import org.orcid.internal.util.LastModifiedResponse;
 import org.orcid.internal.util.MemberInfo;
 import org.orcid.jaxb.model.error_v2.OrcidError;
 import org.orcid.jaxb.model.message.ScopePathType;
+import org.orcid.jaxb.model.v3.release.record.Email;
+import org.orcid.jaxb.model.v3.release.record.Emails;
 import org.orcid.pojo.ajaxForm.Member;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.utils.ExpiringLinkService;
@@ -178,7 +182,29 @@ public class InternalApiServiceDelegatorImpl implements InternalApiServiceDelega
             return Response.ok(AccountRecoveryMatchResponse.noMatch()).build();
         }
 
-        return Response.ok(AccountRecoveryMatchResponse.match(recordStatusOf(orcidForEmail))).build();
+        return Response.ok(AccountRecoveryMatchResponse.match(recordStatusOf(orcidForEmail), recordEmails(orcidForEmail))).build();
+    }
+
+    /**
+     * Every address on the record, verified or not and whatever its visibility, each once.
+     *
+     * Deliberately unfiltered, like the lookup above: the recovery workflow tests every address
+     * the owner might still read before it releases the account, and an address the owner made
+     * private is still one they may read. Only ever called once the pair has matched. Never null:
+     * the email DAO answers a record with no rows with a null list, which is an empty answer here.
+     */
+    private List<String> recordEmails(String orcid) {
+        List<String> addresses = new ArrayList<>();
+        Emails emails = emailManagerReadOnly.getEmails(orcid);
+        if (emails == null || emails.getEmails() == null) {
+            return addresses;
+        }
+        for (Email email : emails.getEmails()) {
+            if (email != null && !PojoUtil.isEmpty(email.getEmail()) && !addresses.contains(email.getEmail())) {
+                addresses.add(email.getEmail());
+            }
+        }
+        return addresses;
     }
 
     private RecordStatus recordStatusOf(String orcid) {
