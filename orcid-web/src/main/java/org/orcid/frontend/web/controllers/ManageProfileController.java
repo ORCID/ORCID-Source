@@ -695,7 +695,7 @@ public class ManageProfileController extends BaseWorkspaceController {
             }
             if (isNewEmail) {
                 if (disposableEmailsService.isDisposableEmail(newJsonEmail.getValue())) {
-                    errors.add(getMessage("orcid.frontend.verify.disposable_email"));
+                    errors.add("disposable_email");
                     continue;
                 }
                 // List emails to be added

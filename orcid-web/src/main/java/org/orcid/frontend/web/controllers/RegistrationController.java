@@ -33,7 +33,6 @@ import org.orcid.core.profile.history.ProfileHistoryEventType;
 import org.orcid.core.togglz.Features;
 import org.orcid.core.utils.OrcidRequestUtil;
 import org.orcid.frontend.email.RecordEmailSender;
-import org.orcid.frontend.service.DisposableEmailsService;
 import org.orcid.frontend.spring.ShibbolethAjaxAuthenticationSuccessHandler;
 import org.orcid.frontend.spring.SocialAjaxAuthenticationSuccessHandler;
 import org.orcid.frontend.spring.web.social.config.SocialSignInUtils;
@@ -78,15 +77,7 @@ import org.springframework.web.servlet.support.RequestContextUtils;
  */
 @Controller
 public class RegistrationController extends BaseController {
-    public static Pattern givenNamesPattern = Pattern.compile("given_names=([^&]*)");
-    public static Pattern familyNamesPattern = Pattern.compile("family_names=([^&]*)");
-    public static Pattern emailPattern = Pattern.compile("email=([^&]*)");
-
     private static final Logger LOGGER = LoggerFactory.getLogger(RegistrationController.class);
-
-    final static Integer DUP_SEARCH_START = 0;
-
-    final static Integer DUP_SEARCH_ROWS = 25;
 
     public final static String GRECAPTCHA_SESSION_ATTRIBUTE_NAME = "verified-recaptcha";
 
@@ -119,17 +110,11 @@ public class RegistrationController extends BaseController {
     @Resource(name = "profileHistoryEventManagerV3")
     private ProfileHistoryEventManager profileHistoryEventManager;
 
-    @Resource(name = "recordNameManagerReadOnlyV3")
-    private RecordNameManagerReadOnly recordNameManagerReadOnly;
-
     @Resource
     private SocialSignInUtils socialSignInUtils;
 
     @Resource
     private EventManager eventManager;
-
-    @Resource
-    private DisposableEmailsService disposableEmailsService;
 
     @RequestMapping(value = "/register.json", method = RequestMethod.GET)
     public @ResponseBody Registration getRegister(HttpServletRequest request, HttpServletResponse response) {
@@ -410,7 +395,7 @@ public class RegistrationController extends BaseController {
         }
 
         if (disposableEmailsService.isDisposableEmail(emailAddress)) {
-            reg.getEmail().getErrors().add(getMessage("orcid.frontend.verify.disposable_email"));
+            reg.getEmail().getErrors().add("disposable_email");
             return reg;
         }
 
