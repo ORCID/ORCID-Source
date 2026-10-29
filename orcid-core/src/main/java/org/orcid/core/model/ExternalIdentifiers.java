@@ -15,7 +15,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(propOrder = { "externalIdentifiers" })
 @XmlRootElement(name = "external-identifiers", namespace = "http://www.orcid.org/ns/summary")
-@Schema(description = "External identifiers list")
+@Schema(name = "RecordSummaryExternalIdentifiers", description = "External identifiers list")
 public class ExternalIdentifiers implements Serializable {
     /**
      * 

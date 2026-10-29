@@ -33,6 +33,11 @@ the software.
         <jackson.version>2.15.4</jackson.version>
         <activemq.version>6.2.4</activemq.version>
         <swagger.version>2.1.1</swagger.version>
+        <!-- OpenAPI generation only (swagger-maven-plugin-jakarta and the helpers in orcid-api-common); never packaged in a war. -->
+        <swagger-jakarta.version>2.2.55</swagger-jakarta.version>
+        <!-- Jackson that swagger-jakarta ${swagger-jakarta.version} is built against; used by the generator plugin only. -->
+        <swagger-jakarta.jackson.version>2.22.1</swagger-jakarta.jackson.version>
+        <orcid-model.version>4.0.2</orcid-model.version>
         <aspectj.version>1.9.6</aspectj.version>
         <jena.version>4.4.0</jena.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -237,6 +242,37 @@ the software.
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-enforcer-plugin</artifactId>
                     <version>3.0.0-M3</version>
+                </plugin>
+                <!-- Generates the OpenAPI description of an API module from its JAX-RS resources (COMMS-5397).
+                     Modules set outputFileName, openapiFilePath and resourceClasses. -->
+                <plugin>
+                    <groupId>io.swagger.core.v3</groupId>
+                    <artifactId>swagger-maven-plugin-jakarta</artifactId>
+                    <version>${swagger-jakarta.version}</version>
+                    <configuration>
+                        <outputPath>${project.build.directory}/openapi</outputPath>
+                        <outputFormat>YAML</outputFormat>
+                        <prettyPrint>true</prettyPrint>
+                        <sortOutput>true</sortOutput>
+                        <objectMapperProcessorClass>org.orcid.api.common.openapi.OrcidObjectMapperProcessor</objectMapperProcessorClass>
+                        <filterClass>org.orcid.api.common.openapi.OrcidOpenApiFilter</filterClass>
+                    </configuration>
+                    <dependencies>
+                        <dependency>
+                            <groupId>com.fasterxml.jackson.module</groupId>
+                            <artifactId>jackson-module-jakarta-xmlbind-annotations</artifactId>
+                            <version>${swagger-jakarta.jackson.version}</version>
+                        </dependency>
+                    </dependencies>
+                    <executions>
+                        <execution>
+                            <id>generate-openapi</id>
+                            <phase>process-classes</phase>
+                            <goals>
+                                <goal>resolve</goal>
+                            </goals>
+                        </execution>
+                    </executions>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
@@ -1008,7 +1044,7 @@ the software.
             <dependency>
                <groupId>org.orcid</groupId>
                <artifactId>orcid-model</artifactId>
-               <version>4.0.2</version>
+               <version>${orcid-model.version}</version>
             </dependency>
             <dependency>
                <groupId>org.orcid</groupId>

@@ -14,7 +14,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(propOrder = { "peerReviewPublicationGrants", "selfAssertedCount", "total" })
 @XmlRootElement(name = "peer-reviews", namespace = "http://www.orcid.org/ns/summary")
-@Schema(description = "Peer reviews")
+@Schema(name = "RecordSummaryPeerReviews", description = "Peer reviews")
 public class PeerReviews implements Serializable {
     /**
      * 
