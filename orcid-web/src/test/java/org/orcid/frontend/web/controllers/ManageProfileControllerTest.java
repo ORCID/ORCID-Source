@@ -26,8 +26,10 @@ import com.nimbusds.jwt.JWTClaimsSet;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mockito.*;
 import org.mockito.invocation.InvocationOnMock;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.mockito.stubbing.Answer;
 import org.orcid.core.aop.ProfileLastModifiedAspect;
 import org.orcid.core.locale.LocaleManager;
@@ -53,6 +55,7 @@ import org.orcid.core.manager.v3.RecordNameManager;
 import org.orcid.core.utils.cache.redis.RedisClient;
 import org.orcid.core.manager.v3.read_only.*;
 import org.orcid.core.security.OrcidRoles;
+import org.orcid.frontend.service.DisposableEmailsService;
 import org.orcid.frontend.service.TrustedPartiesService;
 import org.orcid.utils.alerting.SlackManager;
 import org.orcid.jaxb.model.common_v2.Visibility;
@@ -93,6 +96,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 /**
  * @author Declan Newman (declan) Date: 23/02/2012
  */
+@RunWith(MockitoJUnitRunner.Silent.class)
 public class ManageProfileControllerTest {
 
     private ManageProfileController controller;
@@ -214,6 +218,9 @@ public class ManageProfileControllerTest {
     @Mock
     private BackupCodeManager mockBackupCodeManager;
 
+    @Mock
+    private DisposableEmailsService mockDisposableEmailsService;
+
     @Captor
     private ArgumentCaptor<EmailListChange> emailListChangeCaptor;
 
@@ -261,6 +268,8 @@ public class ManageProfileControllerTest {
         TargetProxyHelper.injectIntoProxy(controller, "expiringLinkService", mockExpiringLinkService);
         TargetProxyHelper.injectIntoProxy(controller, "redisClient", mockRedisClient);
         TargetProxyHelper.injectIntoProxy(controller, "backupCodeManager", mockBackupCodeManager);
+        TargetProxyHelper.injectIntoProxy(controller, "disposableEmailsService", mockDisposableEmailsService);
+        when(mockDisposableEmailsService.isDisposableEmail(anyString())).thenReturn(false);
 
 
         when(twoFactorAuthenticationManager.validateTwoFactorAuthForm(anyString(), any())).thenReturn(true);

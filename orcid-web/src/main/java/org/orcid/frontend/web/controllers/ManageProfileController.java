@@ -694,6 +694,10 @@ public class ManageProfileController extends BaseWorkspaceController {
                 }
             }
             if (isNewEmail) {
+                if (disposableEmailsService.isDisposableEmail(newJsonEmail.getValue())) {
+                    errors.add("disposable_email");
+                    continue;
+                }
                 // List emails to be added
                 newEmails.add(newJsonEmail);
                 emailListChange.getAddedEmails().add(newJsonEmail);
