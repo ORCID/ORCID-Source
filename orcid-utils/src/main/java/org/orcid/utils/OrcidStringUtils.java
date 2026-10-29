@@ -172,7 +172,7 @@ public class OrcidStringUtils {
             throw new RuntimeException("Unable to filter empty email address");
         }
 
-        return email.trim().replaceAll("((\\h)|(\\s))", "");
+        return email.trim().replaceAll("((\\h)|(\\s))", "").replaceAll("\\p{Cf}", "");
     }
 
     public static boolean isEmailValid(String email) {
