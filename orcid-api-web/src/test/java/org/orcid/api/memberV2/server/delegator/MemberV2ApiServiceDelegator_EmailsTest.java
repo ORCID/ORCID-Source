@@ -1,122 +1,120 @@
 package org.orcid.api.memberV2.server.delegator;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNotSame;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyList;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
-import jakarta.annotation.Resource;
 import jakarta.ws.rs.core.Response;
 
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
 import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.mockito.ArgumentCaptor;
+import org.orcid.core.exception.OrcidAccessControlException;
 import org.orcid.core.exception.OrcidUnauthorizedException;
-import org.orcid.core.utils.SecurityContextTestUtils;
+import org.orcid.jaxb.model.common_v2.Source;
 import org.orcid.jaxb.model.common_v2.Visibility;
-import org.orcid.jaxb.model.groupid_v2.GroupIdRecord;
 import org.orcid.jaxb.model.message.ScopePathType;
-import org.orcid.jaxb.model.record_v2.Address;
-import org.orcid.jaxb.model.record_v2.Education;
 import org.orcid.jaxb.model.record_v2.Email;
 import org.orcid.jaxb.model.record_v2.Emails;
-import org.orcid.jaxb.model.record_v2.Employment;
-import org.orcid.jaxb.model.record_v2.Funding;
-import org.orcid.jaxb.model.record_v2.Keyword;
-import org.orcid.jaxb.model.record_v2.OtherName;
-import org.orcid.jaxb.model.record_v2.PeerReview;
-import org.orcid.jaxb.model.record_v2.PersonExternalIdentifier;
-import org.orcid.jaxb.model.record_v2.ResearcherUrl;
-import org.orcid.jaxb.model.record_v2.Work;
-import org.orcid.jaxb.model.record_v2.WorkBulk;
-import org.orcid.test.DBUnitTest;
-import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.orcid.test.helper.Utils;
-import org.springframework.test.context.ContextConfiguration;
 
-import static org.junit.Assert.*;
+/**
+ * The email endpoint of the member v2 delegator, on mocks.
+ *
+ * <p>
+ * {@code viewEmails} is the one read in this family with a real branch of its
+ * own: it first asks for {@code /email/read-private}, and only if that is
+ * refused with an {@link OrcidAccessControlException} does it fall back to
+ * filtering the list through {@code checkAndFilter}. Both arms of that branch,
+ * and the fact that the catch is narrow enough to let an
+ * {@link OrcidUnauthorizedException} straight out, are asserted below.
+ *
+ * <p>
+ * Which emails survive the fallback is not: {@code checkAndFilter} edits the
+ * list in place and a mock does not, so the counts that the database version
+ * asserted (four for the source client, two for any other) belong to
+ * {@code OrcidSecurityManager_EmailTest}.
+ */
+public class MemberV2ApiServiceDelegator_EmailsTest extends MemberV2ApiServiceDelegatorMockBase {
 
-@RunWith(OrcidJUnit4ClassRunner.class)
-@ContextConfiguration(locations = { "classpath:test-orcid-api-web-context.xml" })
-public class MemberV2ApiServiceDelegator_EmailsTest extends DBUnitTest {
-    protected static final List<String> DATA_FILES = Arrays.asList("/data/EmptyEntityData.xml", "/data/SourceClientDetailsEntityData.xml", "/data/ProfileEntityData.xml",
-            "/data/ClientDetailsEntityData.xml", "/data/RecordNameEntityData.xml", "/data/BiographyEntityData.xml");
-
-    // Now on, for any new test, PLAESE USER THIS ORCID ID
-    protected final String ORCID = "0000-0000-0000-0003";
-
-    @Resource(name = "memberV2ApiServiceDelegator")
-    protected MemberV2ApiServiceDelegator<Education, Employment, PersonExternalIdentifier, Funding, GroupIdRecord, OtherName, PeerReview, ResearcherUrl, Work, WorkBulk, Address, Keyword> serviceDelegator;
-
-    @BeforeClass
-    public static void initDBUnitData() throws Exception {
-        initDBUnitData(DATA_FILES);
-    }
-
-    @AfterClass
-    public static void removeDBUnitData() throws Exception {
-        Collections.reverse(DATA_FILES);
-        removeDBUnitData(DATA_FILES);
-    }
+    private static final String PRIVATE_ORCID = "4444-4444-4444-4497";
+    private static final String OTHER_ORCID = "4444-4444-4444-4443";
 
     @Test(expected = OrcidUnauthorizedException.class)
     public void testViewEmailsWrongToken() {
-        SecurityContextTestUtils.setUpSecurityContext("some-other-user", ScopePathType.READ_LIMITED);
-        serviceDelegator.viewEmails(ORCID);
+        // The delegator catches OrcidAccessControlException only. A token for a
+        // different record fails with OrcidUnauthorizedException, which must come
+        // straight out rather than falling through to the filtered read.
+        doThrow(new OrcidUnauthorizedException("Access token is for a different record")).when(orcidSecurityManager).checkClientAccessAndScopes(ORCID,
+                ScopePathType.EMAIL_READ_PRIVATE);
+
+        try {
+            serviceDelegator.viewEmails(ORCID);
+        } finally {
+            verify(emailManagerReadOnly, never()).getVerifiedEmails(anyString());
+        }
     }
 
     @Test
     public void testViewEmailsReadPublic_withSourceClient() {
-        SecurityContextTestUtils.setUpSecurityContextForClientOnly("APP-5555555555555555", ScopePathType.READ_PUBLIC);
+        Emails stored = emails(email(1L, "public_0000-0000-0000-0003@test.orcid.org", Visibility.PUBLIC, clientSource(CLIENT_1)),
+                email(2L, "public_0000-0000-0000-0003@orcid.org", Visibility.PUBLIC, clientSource(CLIENT_1)),
+                email(3L, "limited_0000-0000-0000-0003@test.orcid.org", Visibility.LIMITED, clientSource(CLIENT_1)),
+                email(4L, "private_0000-0000-0000-0003@test.orcid.org", Visibility.PRIVATE, clientSource(CLIENT_1)));
+        when(emailManagerReadOnly.getVerifiedEmails(ORCID)).thenReturn(stored);
+        refuseReadPrivate(ORCID);
+
         Response r = serviceDelegator.viewEmails(ORCID);
+
         Emails element = (Emails) r.getEntity();
         assertNotNull(element);
         assertEquals("/0000-0000-0000-0003/email", element.getPath());
-        assertEquals(4, element.getEmails().size());
-
-        List<String> emails = new ArrayList<>();
-        emails.add("public_0000-0000-0000-0003@test.orcid.org");
-        emails.add("public_0000-0000-0000-0003@orcid.org");
-        emails.add("limited_0000-0000-0000-0003@test.orcid.org");
-        emails.add("private_0000-0000-0000-0003@test.orcid.org");
-
-        for(Email e : element.getEmails()) {
-            if(!emails.contains(e.getEmail())) {
-                fail(e.getEmail() + " is not in the email list");
-            }
-            emails.remove(e.getEmail());
-        }
-
-        assertTrue(emails.isEmpty());
+        // the cached list must be copied before it is handed to a filter that
+        // edits in place
+        ArgumentCaptor<List<Email>> filtered = emailListCaptor();
+        verify(orcidSecurityManager).checkAndFilter(eq(ORCID), filtered.capture(), eq(ScopePathType.ORCID_BIO_READ_LIMITED));
+        assertNotSame(stored.getEmails(), filtered.getValue());
     }
 
     @Test
     public void testViewEmailsReadPublic_withOtherClient() {
-        SecurityContextTestUtils.setUpSecurityContextForClientOnly("APP-5555555555555556", ScopePathType.READ_PUBLIC);
+        Emails stored = emails(email(1L, "public_0000-0000-0000-0003@test.orcid.org", Visibility.PUBLIC, clientSource(CLIENT_1)),
+                email(2L, "public_0000-0000-0000-0003@orcid.org", Visibility.PUBLIC, clientSource(CLIENT_1)));
+        when(emailManagerReadOnly.getVerifiedEmails(ORCID)).thenReturn(stored);
+        refuseReadPrivate(ORCID);
+
         Response r = serviceDelegator.viewEmails(ORCID);
+
         Emails element = (Emails) r.getEntity();
         assertNotNull(element);
         assertEquals("/0000-0000-0000-0003/email", element.getPath());
-        assertEquals(2, element.getEmails().size());
-
-        List<String> emails = new ArrayList<>();
-        emails.add("public_0000-0000-0000-0003@test.orcid.org");
-        emails.add("public_0000-0000-0000-0003@orcid.org");
-
-        for(Email e : element.getEmails()) {
-            if(!emails.contains(e.getEmail())) {
-                fail(e.getEmail() + " is not in the email list");
-            }
-            emails.remove(e.getEmail());
-        }
-
-        assertTrue(emails.isEmpty());
+        // A client that is not the source sees fewer emails than one that is,
+        // but that difference is produced by checkAndFilter, not here.
+        verify(orcidSecurityManager).checkAndFilter(eq(ORCID), anyList(), eq(ScopePathType.ORCID_BIO_READ_LIMITED));
     }
 
     @Test
     public void testReadPublicScope_Emails() {
-        SecurityContextTestUtils.setUpSecurityContext(ORCID, ScopePathType.READ_PUBLIC);
+        Emails stored = emails(email(1L, "public_0000-0000-0000-0003@test.orcid.org", Visibility.PUBLIC, clientSource(CLIENT_1)),
+                email(2L, "public_0000-0000-0000-0003@orcid.org", Visibility.PUBLIC, clientSource(CLIENT_1)),
+                email(3L, "limited_0000-0000-0000-0003@test.orcid.org", Visibility.LIMITED, clientSource(CLIENT_1)),
+                email(4L, "private_0000-0000-0000-0003@test.orcid.org", Visibility.PRIVATE, clientSource(CLIENT_1)));
+        when(emailManagerReadOnly.getVerifiedEmails(ORCID)).thenReturn(stored);
+        refuseReadPrivate(ORCID);
+
         Response r = serviceDelegator.viewEmails(ORCID);
         assertNotNull(r);
         assertEquals(Emails.class.getName(), r.getEntity().getClass().getName());
@@ -124,38 +122,22 @@ public class MemberV2ApiServiceDelegator_EmailsTest extends DBUnitTest {
         assertNotNull(email);
         assertEquals("/0000-0000-0000-0003/email", email.getPath());
         Utils.verifyLastModified(email.getLastModifiedDate());
-        assertEquals(4, email.getEmails().size());
-        boolean found1 = false;
-        boolean found2 = false;
-        boolean found3 = false;
-        boolean found4 = false;
-
         for (Email element : email.getEmails()) {
             Utils.verifyLastModified(element.getLastModifiedDate());
-            if (element.getEmail().equals("public_0000-0000-0000-0003@test.orcid.org")) {
-                found1 = true;
-            } else if (element.getEmail().equals("limited_0000-0000-0000-0003@test.orcid.org")) {
-                found2 = true;
-            } else if (element.getEmail().equals("private_0000-0000-0000-0003@test.orcid.org")) {
-                found3 = true;
-            } else if (element.getEmail().equals("public_0000-0000-0000-0003@orcid.org")) {
-                found4 = true;
-            }
-            else {
-                fail("Invalid put code " + element.getPutCode());
-            }
-
+            assertEquals(CLIENT_1_NAME, element.getSource().getSourceName().getContent());
         }
-        assertTrue(found1);
-        assertTrue(found2);
-        assertTrue(found3);
-        assertTrue(found4);
+        verify(orcidSecurityManager).checkAndFilter(eq(ORCID), anyList(), eq(ScopePathType.ORCID_BIO_READ_LIMITED));
     }
 
     @Test
     public void testReadEmailPrivate() {
-        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4497", ScopePathType.EMAIL_READ_PRIVATE);
-        Response r = serviceDelegator.viewEmails("4444-4444-4444-4497");
+        Emails stored = emails(email(1L, "public_4444-4444-4444-4497@test.orcid.org", Visibility.PUBLIC, clientSource(CLIENT_1)),
+                email(2L, "limited_4444-4444-4444-4497@test.orcid.org", Visibility.LIMITED, clientSource(CLIENT_1)),
+                email(3L, "private_4444-4444-4444-4497@test.orcid.org", Visibility.PRIVATE, clientSource(CLIENT_1)));
+        when(emailManagerReadOnly.getVerifiedEmails(PRIVATE_ORCID)).thenReturn(stored);
+
+        Response r = serviceDelegator.viewEmails(PRIVATE_ORCID);
+
         assertNotNull(r);
         assertEquals(Emails.class.getName(), r.getEntity().getClass().getName());
         Emails email = (Emails) r.getEntity();
@@ -169,12 +151,22 @@ public class MemberV2ApiServiceDelegator_EmailsTest extends DBUnitTest {
         assertEquals(Visibility.LIMITED, email.getEmails().get(1).getVisibility());
         assertEquals("private_4444-4444-4444-4497@test.orcid.org", email.getEmails().get(2).getEmail());
         assertEquals(Visibility.PRIVATE, email.getEmails().get(2).getVisibility());
+        // This is the point of the test: a token holding /email/read-private is
+        // not put through the visibility filter at all.
+        verify(orcidSecurityManager).checkClientAccessAndScopes(PRIVATE_ORCID, ScopePathType.EMAIL_READ_PRIVATE);
+        verify(orcidSecurityManager, never()).checkAndFilter(eq(PRIVATE_ORCID), anyList(), any(ScopePathType.class));
     }
 
     @Test
     public void testViewEmails() {
-        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4443", ScopePathType.PERSON_READ_LIMITED);
-        Response response = serviceDelegator.viewEmails("4444-4444-4444-4443");
+        Emails stored = emails(email(5L, "teddybass3private@semantico.com", Visibility.PRIVATE, clientSource(CLIENT_1)));
+        stored.getEmails().get(0).setVerified(Boolean.TRUE);
+        stored.getEmails().get(0).setPrimary(Boolean.FALSE);
+        when(emailManagerReadOnly.getVerifiedEmails(OTHER_ORCID)).thenReturn(stored);
+        refuseReadPrivate(OTHER_ORCID);
+
+        Response response = serviceDelegator.viewEmails(OTHER_ORCID);
+
         assertNotNull(response);
         Emails emails = (Emails) response.getEntity();
         assertNotNull(emails);
@@ -188,27 +180,43 @@ public class MemberV2ApiServiceDelegator_EmailsTest extends DBUnitTest {
         assertEquals(Visibility.PRIVATE, email.getVisibility());
         assertEquals("APP-5555555555555555", email.retrieveSourcePath());
         assertEquals(true, email.isVerified());
-        assertEquals(false, email.isPrimary());        
+        assertEquals(false, email.isPrimary());
+        verify(orcidSecurityManager).checkAndFilter(eq(OTHER_ORCID), anyList(), eq(ScopePathType.ORCID_BIO_READ_LIMITED));
     }
 
     @Test
     public void checkSourceOnEmail_EmailEndpointTest() {
         String orcid = "0000-0000-0000-0001";
-        SecurityContextTestUtils.setUpSecurityContextForClientOnly("APP-5555555555555555", ScopePathType.READ_LIMITED);
+        Emails stored = emails(email(1L, "limited_verified_0000-0000-0000-0001@test.orcid.org", Visibility.LIMITED, clientSource(CLIENT_1)),
+                email(2L, "verified_non_professional@nonprofessional.org", Visibility.LIMITED, clientSource(CLIENT_1)));
+        stored.getEmails().forEach(e -> e.setVerified(Boolean.TRUE));
+        when(emailManagerReadOnly.getVerifiedEmails(orcid)).thenReturn(stored);
+        refuseReadPrivate(orcid);
+
         Response r = serviceDelegator.viewEmails(orcid);
+
         Emails emails = (Emails) r.getEntity();
         checkEmails(emails);
     }
 
+    // ------------------------------------------------------------- helpers
+
+    /**
+     * A token without {@code /email/read-private}: the delegator's fallback arm.
+     */
+    private void refuseReadPrivate(String orcid) {
+        doThrow(new OrcidAccessControlException()).when(orcidSecurityManager).checkClientAccessAndScopes(orcid, ScopePathType.EMAIL_READ_PRIVATE);
+    }
+
     private void checkEmails(Emails emails) {
         assertEquals(2, emails.getEmails().size());
-        for(Email e : emails.getEmails()) {
-            if(e.getEmail().equals("limited_verified_0000-0000-0000-0001@test.orcid.org")) {
+        for (Email e : emails.getEmails()) {
+            if (e.getEmail().equals("limited_verified_0000-0000-0000-0001@test.orcid.org")) {
                 assertTrue(e.isVerified());
                 // The source and name on verified professional email addresses should change
                 assertEquals("APP-5555555555555555", e.getSource().retrieveSourcePath());
                 assertEquals("Source Client 1", e.getSource().getSourceName().getContent());
-            } else if(e.getEmail().equals("verified_non_professional@nonprofessional.org")) {
+            } else if (e.getEmail().equals("verified_non_professional@nonprofessional.org")) {
                 assertTrue(e.isVerified());
                 // The source and name on non professional email addresses should not change
                 assertEquals("APP-5555555555555555", e.getSource().retrieveSourcePath());
@@ -217,5 +225,28 @@ public class MemberV2ApiServiceDelegator_EmailsTest extends DBUnitTest {
                 fail("Unexpected email " + e.getEmail());
             }
         }
+    }
+
+    @SuppressWarnings("unchecked")
+    private ArgumentCaptor<List<Email>> emailListCaptor() {
+        return ArgumentCaptor.forClass(List.class);
+    }
+
+    private Email email(Long putCode, String address, Visibility visibility, Source source) {
+        Email email = new Email();
+        email.setPutCode(putCode);
+        email.setEmail(address);
+        email.setVisibility(visibility);
+        email.setSource(source);
+        email.setCreatedDate(createdDate());
+        email.setLastModifiedDate(lastModified());
+        return email;
+    }
+
+    private Emails emails(Email... elements) {
+        Emails emails = new Emails();
+        emails.setEmails(new ArrayList<>(Arrays.asList(elements)));
+        emails.setLastModifiedDate(lastModified());
+        return emails;
     }
 }

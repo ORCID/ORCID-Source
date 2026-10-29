@@ -30,12 +30,15 @@ import org.orcid.jaxb.model.v3.release.record.PersonalDetails;
 import org.orcid.persistence.dao.RecordNameDao;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.springframework.test.util.ReflectionTestUtils;
+import org.junit.experimental.categories.Category;
+import org.orcid.test.DatabaseTest;
 
 /**
 * 
 * @author Angel Montenegro
 * 
 */
+@Category(DatabaseTest.class)
 public class PersonalDetailsManagerTest extends BaseTest {
 
     private static final List<String> DATA_FILES = Arrays.asList(

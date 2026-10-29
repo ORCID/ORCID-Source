@@ -13,43 +13,85 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import jakarta.annotation.Resource;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentMatchers;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
 import org.mockito.invocation.InvocationOnMock;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.mockito.stubbing.Answer;
+import org.orcid.core.adapter.MockedMapStructAdapters;
+import org.orcid.core.adapter.mapstruct.impl.JpaJaxbInvalidRecordDataChangeAdapterImpl;
 import org.orcid.core.manager.read_only.RecordCorrectionsManagerReadOnly;
+import org.orcid.core.manager.read_only.impl.RecordCorrectionsManagerReadOnlyImpl;
 import org.orcid.model.record_correction.RecordCorrection;
 import org.orcid.model.record_correction.RecordCorrectionsPage;
 import org.orcid.persistence.dao.InvalidRecordDataChangeDao;
 import org.orcid.persistence.jpa.entities.InvalidRecordDataChangeEntity;
-import org.orcid.test.OrcidJUnit4ClassRunner;
-import org.orcid.test.TargetProxyHelper;
 import org.orcid.core.utils.DateFieldsOnBaseEntityUtils;
-import org.springframework.test.context.ContextConfiguration;
+import org.springframework.aop.framework.ProxyFactory;
+import org.springframework.cache.annotation.AnnotationCacheOperationSource;
+import org.springframework.cache.concurrent.ConcurrentMapCacheManager;
+import org.springframework.cache.interceptor.CacheInterceptor;
+import org.springframework.test.util.ReflectionTestUtils;
 
-@RunWith(OrcidJUnit4ClassRunner.class)
-@ContextConfiguration(locations = { "classpath:test-orcid-core-context.xml" })
+/**
+ * RecordCorrectionsManagerReadOnlyImpl is built here by hand instead of pulled from the
+ * orcid-core Spring context, but two of its collaborators stay real because they are what the
+ * assertions are about.
+ *
+ * <p>
+ * <b>The caching proxy is real.</b> Three of the seven tests -- cacheIsWorking1Test,
+ * cacheIsWorking2Test and cacheIsWorking3Test -- assert how many times the DAO is reached for a
+ * given sequence of calls, and the only thing that makes that number smaller than the number of
+ * calls is Spring's {@code @Cacheable} interception and the SpEL key on it. Calling the bare
+ * implementation would hit the DAO once per call and those three tests would fail; stubbing a
+ * cache would decide the answer they are asking for. So the object under test is wrapped in the
+ * same {@link CacheInterceptor} Spring's {@code <cache:annotation-driven/>} installs, reading the
+ * same annotations off the same class, over an in-memory {@link ConcurrentMapCacheManager}
+ * instead of the application's cache. What the context provided and this does not is a database
+ * and the other nine hundred beans.
+ *
+ * <p>
+ * {@code afterSingletonsInstantiated()} is not optional: CacheAspectSupport.execute falls
+ * straight through to the target method until that call flips its {@code initialized} flag, so
+ * without it the proxy would silently do no caching at all and the three cache tests would fail
+ * with a DAO call count equal to the call count.
+ *
+ * <p>
+ * <b>The adapter is real</b> too, over the real Orika facade from
+ * {@link MockedMapStructAdapters}: the paging assertions read
+ * {@code RecordCorrection.getSequence()}, which is produced by the entity-to-model mapping, and a
+ * mocked adapter would have to be handed the RecordCorrections the test then inspects.
+ *
+ * <p>
+ * Silent runner, and NOT because of the three stubs in {@code @Before}. Mockito groups stubbings
+ * by source location and counts a location as used when any one test method used it -- see
+ * {@code UnusedStubbingsFinder.getUnusedStubbingsByLocation} -- so getByDateCreated, haveNext and
+ * havePrevious are all covered by the two paging tests even though the two invalid-argument tests
+ * throw before reaching haveNext / havePrevious. What the strict runner WOULD report is the two
+ * stubs in the {@link MockedMapStructAdapters} constructor, sourceNameCacheManager.retrieve and
+ * clientDetailsEntityCacheManager.retrieve: they are created while the runner's listener is
+ * attached, and this mapping registers no source converters, so neither is ever called. Every
+ * test built on that factory runs Silent for this reason.
+ */
+@RunWith(MockitoJUnitRunner.Silent.class)
 public class RecordCorrectionsManagerReadOnlyTest {
 
-    @Resource
-    private RecordCorrectionsManagerReadOnly manager;
+    private final MockedMapStructAdapters adapters = new MockedMapStructAdapters();
 
     @Mock
     private InvalidRecordDataChangeDao dao;
+
+    private RecordCorrectionsManagerReadOnly manager;
 
     /**
      * Simulates a list of 10 record corrections from 1 to 10.     
      * */
     @Before
     public void before() {
-        MockitoAnnotations.initMocks(this);
-        TargetProxyHelper.injectIntoProxy(manager, "dao", dao);
+        manager = cachingProxyOver(newManager());
         when(dao.getByDateCreated(ArgumentMatchers.anyLong(), ArgumentMatchers.anyLong(), ArgumentMatchers.anyBoolean()))
                 .then(new Answer<List<InvalidRecordDataChangeEntity>>() {
                     @Override
@@ -300,5 +342,33 @@ public class RecordCorrectionsManagerReadOnlyTest {
     public void invalidValueOnPreviousTest() {
         manager.getInvalidRecordDataChangesAscending(11L, 5L);
         fail();
+    }
+
+    private RecordCorrectionsManagerReadOnlyImpl newManager() {
+        JpaJaxbInvalidRecordDataChangeAdapterImpl adapter = adapters.get(JpaJaxbInvalidRecordDataChangeAdapterImpl.class);
+
+        RecordCorrectionsManagerReadOnlyImpl impl = new RecordCorrectionsManagerReadOnlyImpl();
+        ReflectionTestUtils.setField(impl, "dao", dao);
+        ReflectionTestUtils.setField(impl, "adapter", adapter);
+        return impl;
+    }
+
+    /**
+     * The {@code @Cacheable} / {@code @CacheEvict} interception the three cache tests assert on,
+     * built standalone: the same interceptor and the same annotation-reading operation source
+     * Spring installs, over a fresh in-memory cache manager. Fresh per test, so no test can see
+     * another test's entries.
+     */
+    private RecordCorrectionsManagerReadOnly cachingProxyOver(RecordCorrectionsManagerReadOnlyImpl target) {
+        CacheInterceptor interceptor = new CacheInterceptor();
+        interceptor.setCacheOperationSource(new AnnotationCacheOperationSource());
+        interceptor.setCacheManager(new ConcurrentMapCacheManager("invalid-record-data-change-page-desc", "invalid-record-data-change-page-asc"));
+        interceptor.afterPropertiesSet();
+        // Flips CacheAspectSupport.initialized; until it is set the interceptor is a no-op.
+        interceptor.afterSingletonsInstantiated();
+
+        ProxyFactory proxyFactory = new ProxyFactory(target);
+        proxyFactory.addAdvice(interceptor);
+        return (RecordCorrectionsManagerReadOnly) proxyFactory.getProxy();
     }
 }

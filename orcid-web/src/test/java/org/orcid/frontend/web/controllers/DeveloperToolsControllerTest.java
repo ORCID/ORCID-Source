@@ -8,6 +8,10 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyBoolean;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -18,23 +22,23 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import jakarta.annotation.Resource;
-
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
-import org.mockito.Matchers;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
 import org.mockito.invocation.InvocationOnMock;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.mockito.stubbing.Answer;
+import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.v3.ClientManager;
+import org.orcid.core.manager.v3.ProfileEntityManager;
 import org.orcid.core.manager.v3.SourceManager;
 import org.orcid.core.manager.v3.read_only.ClientManagerReadOnly;
 import org.orcid.core.manager.v3.read_only.EmailManagerReadOnly;
+import org.orcid.core.utils.Actors;
 import org.orcid.core.utils.SecurityContextTestUtils;
 import org.orcid.jaxb.model.clientgroup.ClientType;
 import org.orcid.jaxb.model.clientgroup.RedirectUriType;
@@ -42,41 +46,19 @@ import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.pojo.ajaxForm.Client;
 import org.orcid.pojo.ajaxForm.RedirectUri;
 import org.orcid.pojo.ajaxForm.Text;
-import org.orcid.test.OrcidJUnit4ClassRunner;
-import org.orcid.test.TargetProxyHelper;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.util.ReflectionTestUtils;
 
-@RunWith(OrcidJUnit4ClassRunner.class)
-@WebAppConfiguration
-@ContextConfiguration(locations = { "classpath:test-frontend-web-servlet.xml" })
-@ActiveProfiles("unitTests")
+@RunWith(MockitoJUnitRunner.Silent.class)
 public class DeveloperToolsControllerTest {
 
     private final static String USER_ORCID = "0000-0000-0000-0000";
+    private final static String OTHER_USER_ORCID = "0000-0000-0000-0009";
     private final static String CLIENT_1 = "APP-000000001";
     private final static String CLIENT_2 = "APP-000000002";
     private final static String CLIENT_3 = "APP-000000003";
 
-    @Resource
     private DeveloperToolsController developerToolsController;
 
-    @Resource(name = "emailManagerReadOnlyV3")
-    private EmailManagerReadOnly emailManagerReadOnly;
-
-    @Resource
-    ProfileEntityCacheManager profileEntityCacheManager;
-
-    @Resource(name = "clientManagerV3")
-    private ClientManager clientManager;
-
-    @Resource(name = "clientManagerReadOnlyV3")
-    private ClientManagerReadOnly clientManagerReadOnly;
-
-    private SourceManager sourceManager;
-    
     @Mock
     private EmailManagerReadOnly mockEmailManagerReadOnly;
 
@@ -88,39 +70,70 @@ public class DeveloperToolsControllerTest {
 
     @Mock
     private ClientManagerReadOnly mockClientManagerReadOnly;
-    
+
     @Mock
     private SourceManager mockSourceManager;
 
-    @SuppressWarnings("deprecation")
+    @Mock
+    private ProfileEntityManager mockProfileEntityManager;
+
+    @Mock
+    private LocaleManager mockLocaleManager;
+
     @Before
     public void before() {
-        MockitoAnnotations.initMocks(this);
-        TargetProxyHelper.injectIntoProxy(developerToolsController, "emailManagerReadOnly", mockEmailManagerReadOnly);
-        TargetProxyHelper.injectIntoProxy(developerToolsController, "profileEntityCacheManager", mockProfileEntityCacheManager);
-        TargetProxyHelper.injectIntoProxy(developerToolsController, "clientManager", mockClientManager);
-        TargetProxyHelper.injectIntoProxy(developerToolsController, "clientManagerReadOnly", mockClientManagerReadOnly);
-        TargetProxyHelper.injectIntoProxy(developerToolsController, "sourceManager", mockSourceManager);
-        
-        when(mockClientManager.createPublicClient(Matchers.any(org.orcid.jaxb.model.v3.release.client.Client.class))).thenAnswer(new Answer<org.orcid.jaxb.model.v3.release.client.Client>() {
-            @Override
-            public org.orcid.jaxb.model.v3.release.client.Client answer(InvocationOnMock invocation) throws Throwable {
-                org.orcid.jaxb.model.v3.release.client.Client c = (org.orcid.jaxb.model.v3.release.client.Client) invocation.getArguments()[0];
-                c.setId(CLIENT_1);
-                c.setClientType(ClientType.PUBLIC_CLIENT);
-                return c;
-            }
-        });
+        developerToolsController = new DeveloperToolsController();
 
-        when(mockClientManager.edit(Matchers.any(org.orcid.jaxb.model.v3.release.client.Client.class), Matchers.eq(false))).thenAnswer(new Answer<org.orcid.jaxb.model.v3.release.client.Client>() {
-            @Override
-            public org.orcid.jaxb.model.v3.release.client.Client answer(InvocationOnMock invocation) throws Throwable {
-                org.orcid.jaxb.model.v3.release.client.Client c = (org.orcid.jaxb.model.v3.release.client.Client) invocation.getArguments()[0];
-                c.setId(CLIENT_2);
-                c.setClientType(ClientType.PUBLIC_CLIENT);
-                return c;
-            }
-        });
+        // emailManagerReadOnly and profileEntityManager are re-declared by
+        // DeveloperToolsController over the copies BaseController (and, for
+        // profileEntityManager, BaseWorkspaceController) declare. Spring's
+        // @Resource fills every copy; a single-field injection fills only the
+        // most derived one and the inherited helpers then NPE. Set each name
+        // once per declaring class.
+        ReflectionTestUtils.setField(developerToolsController, DeveloperToolsController.class, "emailManagerReadOnly", mockEmailManagerReadOnly,
+                EmailManagerReadOnly.class);
+        ReflectionTestUtils.setField(developerToolsController, BaseController.class, "emailManagerReadOnly", mockEmailManagerReadOnly, EmailManagerReadOnly.class);
+        ReflectionTestUtils.setField(developerToolsController, DeveloperToolsController.class, "profileEntityManager", mockProfileEntityManager,
+                ProfileEntityManager.class);
+        ReflectionTestUtils.setField(developerToolsController, BaseWorkspaceController.class, "profileEntityManager", mockProfileEntityManager,
+                ProfileEntityManager.class);
+        ReflectionTestUtils.setField(developerToolsController, BaseController.class, "profileEntityManager", mockProfileEntityManager, ProfileEntityManager.class);
+        ReflectionTestUtils.setField(developerToolsController, BaseController.class, "localeManager", mockLocaleManager, LocaleManager.class);
+        ReflectionTestUtils.setField(developerToolsController, BaseController.class, "sourceManager", mockSourceManager, SourceManager.class);
+        ReflectionTestUtils.setField(developerToolsController, "profileEntityCacheManager", mockProfileEntityCacheManager);
+        ReflectionTestUtils.setField(developerToolsController, "clientManager", mockClientManager);
+        ReflectionTestUtils.setField(developerToolsController, "clientManagerReadOnly", mockClientManagerReadOnly);
+
+        // getMessage() is compared against itself on both sides of every
+        // assertion below, so echoing the key back is enough and keeps the test
+        // independent of the message bundle.
+        when(mockLocaleManager.resolveMessage(anyString(), any())).thenAnswer(invocation -> invocation.getArgument(0));
+
+        // getEffectiveUserOrcid() reads the static SecurityContextHolder through
+        // BaseController's inline BaseControllerUtil, never through a mock.
+        SecurityContextTestUtils.setupSecurityContextForWebUser(USER_ORCID, USER_ORCID + "@test.orcid.org");
+
+        when(mockClientManager.createPublicClient(any(org.orcid.jaxb.model.v3.release.client.Client.class)))
+                .thenAnswer(new Answer<org.orcid.jaxb.model.v3.release.client.Client>() {
+                    @Override
+                    public org.orcid.jaxb.model.v3.release.client.Client answer(InvocationOnMock invocation) throws Throwable {
+                        org.orcid.jaxb.model.v3.release.client.Client c = (org.orcid.jaxb.model.v3.release.client.Client) invocation.getArguments()[0];
+                        c.setId(CLIENT_1);
+                        c.setClientType(ClientType.PUBLIC_CLIENT);
+                        return c;
+                    }
+                });
+
+        when(mockClientManager.edit(any(org.orcid.jaxb.model.v3.release.client.Client.class), eq(false)))
+                .thenAnswer(new Answer<org.orcid.jaxb.model.v3.release.client.Client>() {
+                    @Override
+                    public org.orcid.jaxb.model.v3.release.client.Client answer(InvocationOnMock invocation) throws Throwable {
+                        org.orcid.jaxb.model.v3.release.client.Client c = (org.orcid.jaxb.model.v3.release.client.Client) invocation.getArguments()[0];
+                        c.setId(CLIENT_2);
+                        c.setClientType(ClientType.PUBLIC_CLIENT);
+                        return c;
+                    }
+                });
 
         when(mockProfileEntityCacheManager.retrieve(USER_ORCID)).thenReturn(new ProfileEntity(USER_ORCID));
         Set<org.orcid.jaxb.model.v3.release.client.Client> clients = new HashSet<>();
@@ -139,8 +152,8 @@ public class DeveloperToolsControllerTest {
         c.setWebsite("http://ruri1.com");
         c.setDecryptedSecret("client-secret");
         clients.add(c);
-        when(mockClientManagerReadOnly.getClients(Matchers.anyString())).thenReturn(clients);
-        when(mockClientManagerReadOnly.get(Matchers.anyString())).thenAnswer(new Answer<org.orcid.jaxb.model.v3.release.client.Client>(){
+        when(mockClientManagerReadOnly.getClients(anyString())).thenReturn(clients);
+        when(mockClientManagerReadOnly.get(anyString())).thenAnswer(new Answer<org.orcid.jaxb.model.v3.release.client.Client>() {
             @Override
             public org.orcid.jaxb.model.v3.release.client.Client answer(InvocationOnMock invocation) throws Throwable {
                 String clientId = (String) invocation.getArguments()[0];
@@ -156,12 +169,9 @@ public class DeveloperToolsControllerTest {
 
     @After
     public void after() {
-        // Reset mocks
-        TargetProxyHelper.injectIntoProxy(developerToolsController, "emailManagerReadOnly", emailManagerReadOnly);
-        TargetProxyHelper.injectIntoProxy(developerToolsController, "profileEntityCacheManager", profileEntityCacheManager);
-        TargetProxyHelper.injectIntoProxy(developerToolsController, "clientManager", clientManager);
-        TargetProxyHelper.injectIntoProxy(developerToolsController, "clientManagerReadOnly", clientManagerReadOnly);
-        TargetProxyHelper.injectIntoProxy(developerToolsController, "sourceManager", sourceManager);
+        // SecurityContextHolder is static process state; leaving an actor behind
+        // silently authorises the next test in the same JVM.
+        Actors.clear();
     }
 
     @Test
@@ -255,7 +265,7 @@ public class DeveloperToolsControllerTest {
         result = developerToolsController.createClient(client);
         assertNotNull(result.getErrors());
         assertEquals(result.getErrors().size(), 1);
-        assertEquals(result.getErrors().get(0), developerToolsController.getMessage("manage.developer_tools.at_least_one"));                
+        assertEquals(result.getErrors().get(0), developerToolsController.getMessage("manage.developer_tools.at_least_one"));
     }
 
     @Test
@@ -286,7 +296,7 @@ public class DeveloperToolsControllerTest {
         redirectUris.add(rUri);
         client.setRedirectUris(redirectUris);
         Client result = developerToolsController.createClient(client);
-        verify(mockClientManager, times(1)).createPublicClient(Matchers.any(org.orcid.jaxb.model.v3.release.client.Client.class));
+        verify(mockClientManager, times(1)).createPublicClient(any(org.orcid.jaxb.model.v3.release.client.Client.class));
         assertEquals(CLIENT_1, result.getClientId().getValue());
     }
 
@@ -310,7 +320,7 @@ public class DeveloperToolsControllerTest {
         client.setClientId(Text.valueOf(CLIENT_2));
         SecurityContextTestUtils.setupSecurityContextForWebUser(USER_ORCID, "test@email.com");
         Client updatedClient = developerToolsController.updateClient(client);
-        verify(mockClientManager, times(1)).edit(Matchers.any(org.orcid.jaxb.model.v3.release.client.Client.class), Matchers.eq(false));
+        verify(mockClientManager, times(1)).edit(any(org.orcid.jaxb.model.v3.release.client.Client.class), eq(false));
         assertEquals(CLIENT_2, updatedClient.getClientId().getValue());
     }
 
@@ -350,7 +360,7 @@ public class DeveloperToolsControllerTest {
         Client result = developerToolsController.updateClient(client);
 
         assertFalse("the edit should be refused", result.getErrors().isEmpty());
-        verify(mockClientManager, never()).edit(Matchers.any(org.orcid.jaxb.model.v3.release.client.Client.class), Matchers.anyBoolean());
+        verify(mockClientManager, never()).edit(any(org.orcid.jaxb.model.v3.release.client.Client.class), anyBoolean());
         assertNull("the refusal must not disclose the client secret", result.getClientSecret());
     }
 
@@ -390,5 +400,37 @@ public class DeveloperToolsControllerTest {
         SecurityContextTestUtils.setupSecurityContextForWebUser(USER_ORCID, "test@email.com");
         assertTrue(developerToolsController.resetClientSecret(c));
         verify(mockClientManager, times(1)).resetClientSecret(clientId);
+    }
+
+    /**
+     * DeveloperToolsController.resetClientSecret compares the client's
+     * groupProfileId against the signed in record before delegating. Nothing
+     * exercised that branch negatively.
+     */
+    @Test
+    public void resetClientSecret_notMyClientTest() throws Exception {
+        org.orcid.jaxb.model.v3.release.client.Client someoneElses = new org.orcid.jaxb.model.v3.release.client.Client();
+        someoneElses.setId(CLIENT_3);
+        someoneElses.setGroupProfileId(OTHER_USER_ORCID);
+        when(mockClientManagerReadOnly.get(CLIENT_3)).thenReturn(someoneElses);
+
+        Actors.user(USER_ORCID);
+
+        Client c = new Client();
+        c.setClientId(Text.valueOf(CLIENT_3));
+
+        assertFalse(developerToolsController.resetClientSecret(c));
+        verify(mockClientManager, never()).resetClientSecret(anyString());
+    }
+
+    @Test
+    public void resetClientSecret_unknownClientTest() throws Exception {
+        when(mockClientManagerReadOnly.get(CLIENT_3)).thenReturn(null);
+
+        Client c = new Client();
+        c.setClientId(Text.valueOf(CLIENT_3));
+
+        assertFalse(developerToolsController.resetClientSecret(c));
+        verify(mockClientManager, never()).resetClientSecret(anyString());
     }
 }

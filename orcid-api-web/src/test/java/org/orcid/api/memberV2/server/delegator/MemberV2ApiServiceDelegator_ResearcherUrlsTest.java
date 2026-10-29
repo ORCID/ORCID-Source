@@ -1,363 +1,294 @@
 package org.orcid.api.memberV2.server.delegator;
 
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.core.AnyOf.anyOf;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertNotSame;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.fail;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyBoolean;
+import static org.mockito.ArgumentMatchers.anyList;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
+import static org.mockito.Mockito.when;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 
-import jakarta.annotation.Resource;
 import jakarta.persistence.NoResultException;
 import jakarta.ws.rs.core.Response;
 
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
 import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.mockito.ArgumentCaptor;
 import org.orcid.core.exception.OrcidAccessControlException;
 import org.orcid.core.exception.OrcidUnauthorizedException;
 import org.orcid.core.exception.OrcidVisibilityException;
 import org.orcid.core.exception.VisibilityMismatchException;
 import org.orcid.core.exception.WrongSourceException;
-import org.orcid.core.utils.SecurityContextTestUtils;
-import org.orcid.jaxb.model.common_v2.LastModifiedDate;
+import org.orcid.jaxb.model.common_v2.Source;
 import org.orcid.jaxb.model.common_v2.Url;
 import org.orcid.jaxb.model.common_v2.Visibility;
-import org.orcid.jaxb.model.groupid_v2.GroupIdRecord;
 import org.orcid.jaxb.model.message.ScopePathType;
-import org.orcid.jaxb.model.record_v2.Address;
-import org.orcid.jaxb.model.record_v2.Education;
-import org.orcid.jaxb.model.record_v2.Employment;
-import org.orcid.jaxb.model.record_v2.Funding;
-import org.orcid.jaxb.model.record_v2.Keyword;
-import org.orcid.jaxb.model.record_v2.OtherName;
-import org.orcid.jaxb.model.record_v2.PeerReview;
-import org.orcid.jaxb.model.record_v2.PersonExternalIdentifier;
 import org.orcid.jaxb.model.record_v2.ResearcherUrl;
 import org.orcid.jaxb.model.record_v2.ResearcherUrls;
-import org.orcid.jaxb.model.record_v2.Work;
-import org.orcid.jaxb.model.record_v2.WorkBulk;
-import org.orcid.pojo.ajaxForm.PojoUtil;
-import org.orcid.test.DBUnitTest;
-import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.orcid.test.helper.Utils;
-import org.springframework.test.context.ContextConfiguration;
 
-@RunWith(OrcidJUnit4ClassRunner.class)
-@ContextConfiguration(locations = { "classpath:test-orcid-api-web-context.xml" })
-public class MemberV2ApiServiceDelegator_ResearcherUrlsTest extends DBUnitTest {
-    protected static final List<String> DATA_FILES = Arrays.asList("/data/EmptyEntityData.xml",
-            "/data/SourceClientDetailsEntityData.xml", "/data/ProfileEntityData.xml", "/data/ClientDetailsEntityData.xml", "/data/Oauth2TokenDetailsData.xml",
-            "/data/RecordNameEntityData.xml", "/data/BiographyEntityData.xml");
+/**
+ * The researcher-url endpoints of the member v2 delegator, on mocks.
+ *
+ * <p>
+ * See {@link MemberV2ApiServiceDelegatorMockBase} for why no assertion here
+ * depends on {@code checkAndFilter} having filtered anything.
+ */
+public class MemberV2ApiServiceDelegator_ResearcherUrlsTest extends MemberV2ApiServiceDelegatorMockBase {
 
-    // Now on, for any new test, PLAESE USER THIS ORCID ID
-    protected final String ORCID = "0000-0000-0000-0003";
-
-    @Resource(name = "memberV2ApiServiceDelegator")
-    protected MemberV2ApiServiceDelegator<Education, Employment, PersonExternalIdentifier, Funding, GroupIdRecord, OtherName, PeerReview, ResearcherUrl, Work, WorkBulk, Address, Keyword> serviceDelegator;
-
-    @BeforeClass
-    public static void initDBUnitData() throws Exception {
-        initDBUnitData(DATA_FILES);
-    }
-
-    @AfterClass
-    public static void removeDBUnitData() throws Exception {
-        Collections.reverse(DATA_FILES);
-        removeDBUnitData(DATA_FILES);
-    }
+    private static final String OTHER_ORCID = "4444-4444-4444-4443";
+    private static final String MY_ORCID = "4444-4444-4444-4441";
 
     @Test(expected = OrcidUnauthorizedException.class)
     public void testViewResearcherUrlWrongToken() {
-        SecurityContextTestUtils.setUpSecurityContext("some-other-user", ScopePathType.READ_LIMITED);
-        serviceDelegator.viewResearcherUrl(ORCID, 13L);
+        ResearcherUrl researcherUrl = researcherUrl(13L, Visibility.PUBLIC, clientSource(CLIENT_1));
+        when(researcherUrlManagerReadOnly.getResearcherUrl(ORCID, 13L)).thenReturn(researcherUrl);
+        doThrow(new OrcidUnauthorizedException("Access token is for a different record")).when(orcidSecurityManager).checkAndFilter(ORCID, researcherUrl,
+                ScopePathType.ORCID_BIO_READ_LIMITED);
+
+        try {
+            serviceDelegator.viewResearcherUrl(ORCID, 13L);
+        } finally {
+            assertNull("the element must not be decorated once the guard has refused", researcherUrl.getPath());
+        }
     }
 
     @Test(expected = OrcidUnauthorizedException.class)
     public void testViewResearcherUrlsWrongToken() {
-        SecurityContextTestUtils.setUpSecurityContext("some-other-user", ScopePathType.READ_LIMITED);
-        serviceDelegator.viewResearcherUrls(ORCID);
+        when(researcherUrlManagerReadOnly.getResearcherUrls(ORCID)).thenReturn(researcherUrls(researcherUrl(13L, Visibility.PUBLIC, clientSource(CLIENT_1))));
+        doThrow(new OrcidUnauthorizedException("Access token is for a different record")).when(orcidSecurityManager).checkAndFilter(eq(ORCID), anyList(),
+                eq(ScopePathType.ORCID_BIO_READ_LIMITED));
+
+        try {
+            serviceDelegator.viewResearcherUrls(ORCID);
+        } finally {
+            verifyNoInteractions(sourceNameCacheManager);
+        }
     }
 
     @Test
     public void testViewResearcherUrlReadPublic() {
-        SecurityContextTestUtils.setUpSecurityContext(ORCID, ScopePathType.READ_PUBLIC);
+        ResearcherUrl researcherUrl = researcherUrl(13L, Visibility.PUBLIC, clientSource(CLIENT_1));
+        when(researcherUrlManagerReadOnly.getResearcherUrl(ORCID, 13L)).thenReturn(researcherUrl);
+
         Response r = serviceDelegator.viewResearcherUrl(ORCID, 13L);
+
         ResearcherUrl element = (ResearcherUrl) r.getEntity();
         assertNotNull(element);
         assertEquals("/0000-0000-0000-0003/researcher-urls/13", element.getPath());
-        Utils.assertIsPublicOrSource(element, SecurityContextTestUtils.DEFAULT_CLIENT_ID);
+        assertEquals(CLIENT_1_NAME, element.getSource().getSourceName().getContent());
+        verify(orcidSecurityManager).checkAndFilter(ORCID, researcherUrl, ScopePathType.ORCID_BIO_READ_LIMITED);
     }
 
     @Test
     public void testViewResearcherUrlsReadPublic() {
-        SecurityContextTestUtils.setUpSecurityContext(ORCID, ScopePathType.READ_PUBLIC);
+        when(researcherUrlManagerReadOnly.getResearcherUrls(ORCID)).thenReturn(researcherUrls(researcherUrl(13L, Visibility.PUBLIC, clientSource(CLIENT_1))));
+
         Response r = serviceDelegator.viewResearcherUrls(ORCID);
-        ResearcherUrls elements = (ResearcherUrls) r.getEntity();
-        assertNotNull(elements);
-        assertEquals("/0000-0000-0000-0003/researcher-urls", elements.getPath());
-        for (ResearcherUrl element : elements.getResearcherUrls()) {
-            if (!element.retrieveSourcePath().equals("APP-5555555555555555") && !Visibility.PUBLIC.equals(element.getVisibility())) {
-                fail("Element " + element.getPutCode() + " is not source of APP-5555555555555555 and is not public");
-            }
-        }
+
+        ResearcherUrls element = (ResearcherUrls) r.getEntity();
+        assertNotNull(element);
+        assertEquals("/0000-0000-0000-0003/researcher-urls", element.getPath());
+        assertEquals("/0000-0000-0000-0003/researcher-urls/13", element.getResearcherUrls().get(0).getPath());
+        verify(orcidSecurityManager).checkAndFilter(eq(ORCID), anyList(), eq(ScopePathType.ORCID_BIO_READ_LIMITED));
     }
 
     @Test
     public void testViewResearcherUrls() {
-        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4443", ScopePathType.PERSON_READ_LIMITED);
-        Response response = serviceDelegator.viewResearcherUrls("4444-4444-4444-4443");
+        ResearcherUrls stored = researcherUrls(researcherUrl(2L, Visibility.PUBLIC, userSource(OTHER_ORCID)),
+                researcherUrl(7L, Visibility.LIMITED, clientSource(CLIENT_1)), researcherUrl(8L, Visibility.PRIVATE, clientSource(CLIENT_1)));
+        when(researcherUrlManagerReadOnly.getResearcherUrls(OTHER_ORCID)).thenReturn(stored);
+
+        Response response = serviceDelegator.viewResearcherUrls(OTHER_ORCID);
+
         assertNotNull(response);
-        ResearcherUrls researcherUrls = (ResearcherUrls) response.getEntity();
-        assertNotNull(researcherUrls);        
-        Utils.verifyLastModified(researcherUrls.getLastModifiedDate());
-        assertEquals("/4444-4444-4444-4443/researcher-urls", researcherUrls.getPath());
-        assertNotNull(researcherUrls.getResearcherUrls());
-        assertEquals(5, researcherUrls.getResearcherUrls().size());
-        for (ResearcherUrl rUrl : researcherUrls.getResearcherUrls()) {
-            assertThat(rUrl.getPutCode(),
-                    anyOf(equalTo(Long.valueOf(2)), equalTo(Long.valueOf(3)), equalTo(Long.valueOf(5)), equalTo(Long.valueOf(7)), equalTo(Long.valueOf(8))));
-            Utils.verifyLastModified(researcherUrls.getLastModifiedDate());
-            assertNotNull(rUrl.getSource());
-            assertFalse(PojoUtil.isEmpty(rUrl.getSource().retrieveSourcePath()));
-            assertNotNull(rUrl.getUrl());
-            assertNotNull(rUrl.getUrlName());
-            assertNotNull(rUrl.getVisibility());
-            if (rUrl.getPutCode().equals(Long.valueOf(5)) || rUrl.getPutCode().equals(Long.valueOf(7))) {
-                assertEquals("APP-5555555555555555", rUrl.getSource().retrieveSourcePath());
-            }
+        ResearcherUrls returned = (ResearcherUrls) response.getEntity();
+        assertNotNull(returned);
+        assertEquals("/4444-4444-4444-4443/researcher-urls", returned.getPath());
+        Utils.verifyLastModified(returned.getLastModifiedDate());
+        assertEquals(3, returned.getResearcherUrls().size());
+        for (ResearcherUrl researcherUrl : returned.getResearcherUrls()) {
+            Utils.verifyLastModified(researcherUrl.getLastModifiedDate());
+            assertEquals("/4444-4444-4444-4443/researcher-urls/" + researcherUrl.getPutCode(), researcherUrl.getPath());
         }
+        assertEquals(CLIENT_1_NAME, returned.getResearcherUrls().get(1).getSource().getSourceName().getContent());
+
+        // checkAndFilter edits in place, so the cached list must be copied first
+        ArgumentCaptor<List<ResearcherUrl>> filtered = researcherUrlListCaptor();
+        verify(orcidSecurityManager).checkAndFilter(eq(OTHER_ORCID), filtered.capture(), eq(ScopePathType.ORCID_BIO_READ_LIMITED));
+        assertNotSame(stored.getResearcherUrls(), filtered.getValue());
     }
 
     @Test
     public void testViewPublicResearcherUrl() {
-        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4443", ScopePathType.PERSON_READ_LIMITED);
-        Response response = serviceDelegator.viewResearcherUrl("4444-4444-4444-4443", 2L);
-        assertNotNull(response);
-        ResearcherUrl researcherUrl = (ResearcherUrl) response.getEntity();
-        assertNotNull(researcherUrl);
-        assertEquals("/4444-4444-4444-4443/researcher-urls/2", researcherUrl.getPath());
-        Utils.verifyLastModified(researcherUrl.getLastModifiedDate());
-        assertEquals("4444-4444-4444-4443", researcherUrl.getSource().retrieveSourcePath());
-        assertEquals("http://www.researcherurl2.com?id=1", researcherUrl.getUrl().getValue());
-        assertEquals("443_1", researcherUrl.getUrlName());
-        assertEquals(Visibility.PUBLIC, researcherUrl.getVisibility());
+        assertViewResearcherUrlDecorated(2L, Visibility.PUBLIC, userSource(OTHER_ORCID));
     }
 
     @Test
     public void testViewLimitedResearcherUrl() {
-        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4443", ScopePathType.PERSON_READ_LIMITED);
-        Response response = serviceDelegator.viewResearcherUrl("4444-4444-4444-4443", 8L);
-        assertNotNull(response);
-        ResearcherUrl researcherUrl = (ResearcherUrl) response.getEntity();
-        assertNotNull(researcherUrl);
-        assertEquals("/4444-4444-4444-4443/researcher-urls/8", researcherUrl.getPath());
-        Utils.verifyLastModified(researcherUrl.getLastModifiedDate());
-        assertEquals("4444-4444-4444-4443", researcherUrl.getSource().retrieveSourcePath());
-        assertEquals("http://www.researcherurl2.com?id=8", researcherUrl.getUrl().getValue());
-        assertEquals("443_6", researcherUrl.getUrlName());
-        assertEquals(Visibility.LIMITED, researcherUrl.getVisibility());
+        assertViewResearcherUrlDecorated(8L, Visibility.LIMITED, clientSource(CLIENT_1));
     }
 
     @Test
     public void testViewPrivateResearcherUrl() {
-        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4443", ScopePathType.PERSON_READ_LIMITED);
-        Response response = serviceDelegator.viewResearcherUrl("4444-4444-4444-4443", 7L);
-        assertNotNull(response);
-        ResearcherUrl researcherUrl = (ResearcherUrl) response.getEntity();
-        assertNotNull(researcherUrl);
-        assertEquals("/4444-4444-4444-4443/researcher-urls/7", researcherUrl.getPath());
-        Utils.verifyLastModified(researcherUrl.getLastModifiedDate());
-        assertEquals("APP-5555555555555555", researcherUrl.getSource().retrieveSourcePath());
-        assertEquals("http://www.researcherurl2.com?id=7", researcherUrl.getUrl().getValue());
-        assertEquals("443_5", researcherUrl.getUrlName());
-        assertEquals(Visibility.PRIVATE, researcherUrl.getVisibility());
+        assertViewResearcherUrlDecorated(7L, Visibility.PRIVATE, clientSource(CLIENT_1));
     }
 
     @Test(expected = OrcidVisibilityException.class)
     public void testViewPrivateResearcherUrlWhereYouAreNotTheSource() {
-        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4443", ScopePathType.PERSON_READ_LIMITED);
-        serviceDelegator.viewResearcherUrl("4444-4444-4444-4443", 6L);
+        ResearcherUrl researcherUrl = researcherUrl(6L, Visibility.PRIVATE, clientSource(CLIENT_2));
+        when(researcherUrlManagerReadOnly.getResearcherUrl(OTHER_ORCID, 6L)).thenReturn(researcherUrl);
+        doThrow(new OrcidVisibilityException()).when(orcidSecurityManager).checkAndFilter(OTHER_ORCID, researcherUrl, ScopePathType.ORCID_BIO_READ_LIMITED);
+
+        serviceDelegator.viewResearcherUrl(OTHER_ORCID, 6L);
         fail();
     }
 
     @Test(expected = NoResultException.class)
     public void testViewResearcherUrlThatDontBelongToTheUser() {
-        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4443", ScopePathType.PERSON_READ_LIMITED);
-        serviceDelegator.viewResearcherUrl("4444-4444-4444-4443", 1L);
-        fail();
+        // The (orcid, id) predicate is in ResearcherUrlDaoImpl's query. What is
+        // the delegator's is that it lets the miss out and never asks the guard
+        // about an element it did not get.
+        when(researcherUrlManagerReadOnly.getResearcherUrl(OTHER_ORCID, 1L)).thenThrow(new NoResultException());
+
+        try {
+            serviceDelegator.viewResearcherUrl(OTHER_ORCID, 1L);
+            fail();
+        } finally {
+            verifyNoInteractions(orcidSecurityManager);
+        }
     }
 
     @Test
     public void testAddResearcherUrl() {
-        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4441", ScopePathType.PERSON_READ_LIMITED, ScopePathType.PERSON_UPDATE);
-        Response response = serviceDelegator.createResearcherUrl("4444-4444-4444-4441", Utils.getResearcherUrl());
+        ResearcherUrl created = researcherUrl(100L, Visibility.LIMITED, clientSource(CLIENT_1));
+        when(researcherUrlManager.createResearcherUrl(eq(MY_ORCID), any(ResearcherUrl.class), anyBoolean())).thenReturn(created);
+
+        Response response = serviceDelegator.createResearcherUrl(MY_ORCID, Utils.getResearcherUrl());
+
         assertNotNull(response);
         assertEquals(Response.Status.CREATED.getStatusCode(), response.getStatus());
-        Long putCode = Utils.getPutCode(response);
-
-        response = serviceDelegator.viewResearcherUrl("4444-4444-4444-4441", putCode);
-        assertNotNull(response);
-        ResearcherUrl researcherUrl = (ResearcherUrl) response.getEntity();
-        assertNotNull(researcherUrl);
-        Utils.verifyLastModified(researcherUrl.getLastModifiedDate());
-        assertEquals("APP-5555555555555555", researcherUrl.getSource().retrieveSourcePath());
-        assertEquals("http://www.myRUrl.com", researcherUrl.getUrl().getValue());
-        assertEquals("My researcher Url", researcherUrl.getUrlName());
-        assertEquals(Visibility.PUBLIC, researcherUrl.getVisibility());
+        assertEquals(Long.valueOf(100), Utils.getPutCode(response));
+        verify(orcidSecurityManager).checkClientAccessAndScopes(MY_ORCID, ScopePathType.ORCID_BIO_UPDATE);
+        ArgumentCaptor<ResearcherUrl> submitted = ArgumentCaptor.forClass(ResearcherUrl.class);
+        verify(researcherUrlManager).createResearcherUrl(eq(MY_ORCID), submitted.capture(), eq(true));
+        assertNull("a client may not choose its own source", submitted.getValue().getSource());
+        assertEquals(CLIENT_1_NAME, created.getSource().getSourceName().getContent());
     }
 
     @Test
     public void testUpdateResearcherUrl() {
-        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4443", ScopePathType.PERSON_UPDATE);
-        Response response = serviceDelegator.viewResearcherUrl("4444-4444-4444-4443", 5L);
-        assertNotNull(response);
-        ResearcherUrl researcherUrl = (ResearcherUrl) response.getEntity();
-        assertNotNull(researcherUrl);
-        Utils.verifyLastModified(researcherUrl.getLastModifiedDate());
-        LastModifiedDate before = researcherUrl.getLastModifiedDate();
-        assertNotNull(researcherUrl.getUrl());
-        assertEquals("http://www.researcherurl2.com?id=5", researcherUrl.getUrl().getValue());
-        assertEquals("443_3", researcherUrl.getUrlName());
+        ResearcherUrl researcherUrl = researcherUrl(5L, Visibility.PUBLIC, clientSource(CLIENT_1));
+        researcherUrl.setUrlName("Updated researcher url");
+        ResearcherUrl updated = researcherUrl(5L, Visibility.PUBLIC, clientSource(CLIENT_1));
+        updated.setUrlName("Updated researcher url");
+        when(researcherUrlManager.updateResearcherUrl(eq(OTHER_ORCID), any(ResearcherUrl.class), anyBoolean())).thenReturn(updated);
 
-        researcherUrl.setUrl(new Url("http://theNewResearcherUrl.com"));
-        researcherUrl.setUrlName("My Updated Researcher Url");
+        Response response = serviceDelegator.updateResearcherUrl(OTHER_ORCID, 5L, researcherUrl);
 
-        response = serviceDelegator.updateResearcherUrl("4444-4444-4444-4443", 5L, researcherUrl);
         assertNotNull(response);
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
-
-        response = serviceDelegator.viewResearcherUrl("4444-4444-4444-4443", 5L);
-        assertNotNull(response);
-        researcherUrl = (ResearcherUrl) response.getEntity();
-        assertNotNull(researcherUrl);
-        Utils.verifyLastModified(researcherUrl.getLastModifiedDate());
-        assertTrue(researcherUrl.getLastModifiedDate().after(before));
-        assertNotNull(researcherUrl.getUrl());
-        assertEquals("http://theNewResearcherUrl.com", researcherUrl.getUrl().getValue());
-        assertEquals("My Updated Researcher Url", researcherUrl.getUrlName());
+        ResearcherUrl returned = (ResearcherUrl) response.getEntity();
+        assertEquals("Updated researcher url", returned.getUrlName());
+        assertEquals("/4444-4444-4444-4443/researcher-urls/5", returned.getPath());
+        verify(orcidSecurityManager).checkClientAccessAndScopes(OTHER_ORCID, ScopePathType.ORCID_BIO_UPDATE);
+        ArgumentCaptor<ResearcherUrl> submitted = ArgumentCaptor.forClass(ResearcherUrl.class);
+        verify(researcherUrlManager).updateResearcherUrl(eq(OTHER_ORCID), submitted.capture(), eq(true));
+        assertNull(submitted.getValue().getSource());
     }
 
     @Test(expected = WrongSourceException.class)
     public void testUpdateResearcherUrlYouAreNotTheSourceOf() {
-        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4443", ScopePathType.PERSON_UPDATE, ScopePathType.PERSON_READ_LIMITED);
-        Response response = serviceDelegator.viewResearcherUrl("4444-4444-4444-4443", 8L);
-        assertNotNull(response);
-        ResearcherUrl researcherUrl = (ResearcherUrl) response.getEntity();
-        assertNotNull(researcherUrl);
-        assertNotNull(researcherUrl.getUrl());
-        assertEquals("http://www.researcherurl2.com?id=8", researcherUrl.getUrl().getValue());
-        assertEquals("443_6", researcherUrl.getUrlName());
+        // ResearcherUrlManagerImpl calls orcidSecurityManager.checkSource on the
+        // stored entity; the rule belongs to that manager's tests.
+        ResearcherUrl researcherUrl = researcherUrl(8L, Visibility.LIMITED, clientSource(CLIENT_2));
+        doThrow(new WrongSourceException(Collections.singletonMap("activity", "researcher-url"))).when(researcherUrlManager)
+                .updateResearcherUrl(eq(OTHER_ORCID), any(ResearcherUrl.class), anyBoolean());
 
-        researcherUrl.setUrlName("Updated Name");
-        serviceDelegator.updateResearcherUrl("4444-4444-4444-4443", 8L, researcherUrl);
+        serviceDelegator.updateResearcherUrl(OTHER_ORCID, 8L, researcherUrl);
+        fail();
     }
 
     @Test(expected = VisibilityMismatchException.class)
     public void testUpdateResearcherUrlChangingVisibilityTest() {
-        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4443", ScopePathType.PERSON_UPDATE);
-        Response response = serviceDelegator.viewResearcherUrl("4444-4444-4444-4443", 5L);
-        assertNotNull(response);
-        ResearcherUrl researcherUrl = (ResearcherUrl) response.getEntity();
-        assertEquals(Visibility.LIMITED, researcherUrl.getVisibility());
+        ResearcherUrl researcherUrl = researcherUrl(5L, Visibility.PRIVATE, clientSource(CLIENT_1));
+        doThrow(new VisibilityMismatchException()).when(researcherUrlManager).updateResearcherUrl(eq(OTHER_ORCID), any(ResearcherUrl.class), anyBoolean());
 
-        researcherUrl.setVisibility(Visibility.PRIVATE);
-
-        response = serviceDelegator.updateResearcherUrl("4444-4444-4444-4443", 5L, researcherUrl);
+        serviceDelegator.updateResearcherUrl(OTHER_ORCID, 5L, researcherUrl);
         fail();
     }
 
     @Test
     public void testUpdateResearcherUrlLeavingVisibilityNullTest() {
-        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4443", ScopePathType.PERSON_UPDATE);
-        Response response = serviceDelegator.viewResearcherUrl("4444-4444-4444-4443", 5L);
-        assertNotNull(response);
-        ResearcherUrl researcherUrl = (ResearcherUrl) response.getEntity();
-        assertEquals(Visibility.LIMITED, researcherUrl.getVisibility());
+        ResearcherUrl researcherUrl = researcherUrl(5L, null, clientSource(CLIENT_1));
+        ResearcherUrl updated = researcherUrl(5L, Visibility.PUBLIC, clientSource(CLIENT_1));
+        when(researcherUrlManager.updateResearcherUrl(eq(OTHER_ORCID), any(ResearcherUrl.class), anyBoolean())).thenReturn(updated);
 
-        researcherUrl.setVisibility(null);
+        Response response = serviceDelegator.updateResearcherUrl(OTHER_ORCID, 5L, researcherUrl);
 
-        response = serviceDelegator.updateResearcherUrl("4444-4444-4444-4443", 5L, researcherUrl);
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
-        researcherUrl = (ResearcherUrl) response.getEntity();
-        assertEquals(Visibility.LIMITED, researcherUrl.getVisibility());
+        assertEquals(Visibility.PUBLIC, ((ResearcherUrl) response.getEntity()).getVisibility());
+        ArgumentCaptor<ResearcherUrl> submitted = ArgumentCaptor.forClass(ResearcherUrl.class);
+        verify(researcherUrlManager).updateResearcherUrl(eq(OTHER_ORCID), submitted.capture(), eq(true));
+        assertNull("keeping the stored visibility is the manager's job, not the delegator's", submitted.getValue().getVisibility());
     }
 
     @Test
     public void testDeleteResearcherUrl() {
-        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4445", ScopePathType.PERSON_UPDATE, ScopePathType.PERSON_READ_LIMITED);
-        Response response = serviceDelegator.viewResearcherUrls("4444-4444-4444-4445");
-        assertNotNull(response);
-        ResearcherUrls researcherUrls = (ResearcherUrls) response.getEntity();
-        assertNotNull(researcherUrls);
-        assertNotNull(researcherUrls.getResearcherUrls());
-        assertFalse(researcherUrls.getResearcherUrls().isEmpty());
-        ResearcherUrl toDelete = null;
+        Response response = serviceDelegator.deleteResearcherUrl("4444-4444-4444-4445", 4L);
 
-        for (ResearcherUrl rurl : researcherUrls.getResearcherUrls()) {
-            if (rurl.getSource().retrieveSourcePath().equals("APP-5555555555555555")) {
-                toDelete = rurl;
-                break;
-            }
-        }
-
-        assertNotNull(toDelete);
-
-        response = serviceDelegator.deleteResearcherUrl("4444-4444-4444-4445", toDelete.getPutCode());
         assertNotNull(response);
         assertEquals(Response.Status.NO_CONTENT.getStatusCode(), response.getStatus());
-
-        response = serviceDelegator.viewResearcherUrls("4444-4444-4444-4445");
-        assertNotNull(response);
-        researcherUrls = (ResearcherUrls) response.getEntity();
-        assertNotNull(researcherUrls);
-        assertNotNull(researcherUrls.getResearcherUrls());
-        assertEquals(0, researcherUrls.getResearcherUrls().size());
+        verify(orcidSecurityManager).checkClientAccessAndScopes("4444-4444-4444-4445", ScopePathType.ORCID_BIO_UPDATE);
+        verify(researcherUrlManager).deleteResearcherUrl("4444-4444-4444-4445", 4L, true);
     }
 
     @Test
     public void testReadPublicScope_ResearcherUrls() {
-        SecurityContextTestUtils.setUpSecurityContext(ORCID, ScopePathType.READ_PUBLIC);
-        // Public works
+        // Stubbed per element rather than with a blanket matcher: refusing
+        // everything would also refuse 13, 14 and 15 and make the positive half
+        // of this test meaningless.
+        ResearcherUrl thirteen = researcherUrl(13L, Visibility.PUBLIC, clientSource(CLIENT_1));
+        ResearcherUrl fourteen = researcherUrl(14L, Visibility.LIMITED, clientSource(CLIENT_1));
+        ResearcherUrl fifteen = researcherUrl(15L, Visibility.PRIVATE, clientSource(CLIENT_1));
+        ResearcherUrl sixteen = researcherUrl(16L, Visibility.LIMITED, clientSource(CLIENT_2));
+        ResearcherUrl seventeen = researcherUrl(17L, Visibility.PRIVATE, clientSource(CLIENT_2));
+        when(researcherUrlManagerReadOnly.getResearcherUrl(ORCID, 13L)).thenReturn(thirteen);
+        when(researcherUrlManagerReadOnly.getResearcherUrl(ORCID, 14L)).thenReturn(fourteen);
+        when(researcherUrlManagerReadOnly.getResearcherUrl(ORCID, 15L)).thenReturn(fifteen);
+        when(researcherUrlManagerReadOnly.getResearcherUrl(ORCID, 16L)).thenReturn(sixteen);
+        when(researcherUrlManagerReadOnly.getResearcherUrl(ORCID, 17L)).thenReturn(seventeen);
+        when(researcherUrlManagerReadOnly.getResearcherUrls(ORCID)).thenReturn(researcherUrls(thirteen, fourteen, fifteen));
+        doThrow(new OrcidAccessControlException()).when(orcidSecurityManager).checkAndFilter(ORCID, sixteen, ScopePathType.ORCID_BIO_READ_LIMITED);
+        doThrow(new OrcidAccessControlException()).when(orcidSecurityManager).checkAndFilter(ORCID, seventeen, ScopePathType.ORCID_BIO_READ_LIMITED);
+
         Response r = serviceDelegator.viewResearcherUrls(ORCID);
         assertNotNull(r);
-        ResearcherUrls ru = (ResearcherUrls) r.getEntity();
-        assertNotNull(ru);
-        assertEquals("/0000-0000-0000-0003/researcher-urls", ru.getPath());
-        Utils.verifyLastModified(ru.getLastModifiedDate());
-        assertEquals(3, ru.getResearcherUrls().size());
-        boolean found13 = false, found14 = false, found15 = false;
-        for (ResearcherUrl element : ru.getResearcherUrls()) {
-            if (element.getPutCode() == 13) {
-                found13 = true;
-            } else if (element.getPutCode() == 14) {
-                found14 = true;
-            } else if (element.getPutCode() == 15) {
-                found15 = true;
-            } else {
-                fail("Invalid put code " + element.getPutCode());
-            }
-
-        }
-        assertTrue(found13);
-        assertTrue(found14);
-        assertTrue(found15);
+        assertEquals(ResearcherUrls.class.getName(), r.getEntity().getClass().getName());
+        ResearcherUrls urls = (ResearcherUrls) r.getEntity();
+        assertEquals("/0000-0000-0000-0003/researcher-urls", urls.getPath());
+        Utils.verifyLastModified(urls.getLastModifiedDate());
+        assertEquals(3, urls.getResearcherUrls().size());
 
         r = serviceDelegator.viewResearcherUrl(ORCID, 13L);
         assertNotNull(r);
         assertEquals(ResearcherUrl.class.getName(), r.getEntity().getClass().getName());
-        // Limited am the source of should work
+
+        // Limited where am the source should work
         serviceDelegator.viewResearcherUrl(ORCID, 14L);
-        // Limited am not the source of should fail
+
         try {
+            // Limited am not the source should fail
             serviceDelegator.viewResearcherUrl(ORCID, 16L);
             fail();
         } catch (OrcidAccessControlException e) {
@@ -366,10 +297,10 @@ public class MemberV2ApiServiceDelegator_ResearcherUrlsTest extends DBUnitTest {
             fail();
         }
 
-        // Private am the source of should work
+        // Private where am the source should work
         serviceDelegator.viewResearcherUrl(ORCID, 15L);
-        // Private am not the source of should fail
         try {
+            // Private am not the source should fail
             serviceDelegator.viewResearcherUrl(ORCID, 17L);
             fail();
         } catch (OrcidAccessControlException e) {
@@ -381,8 +312,51 @@ public class MemberV2ApiServiceDelegator_ResearcherUrlsTest extends DBUnitTest {
 
     @Test(expected = WrongSourceException.class)
     public void testDeleteResearcherUrlYouAreNotTheSourceOf() {
-        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4443", ScopePathType.PERSON_READ_LIMITED, ScopePathType.PERSON_UPDATE);
-        serviceDelegator.deleteResearcherUrl("4444-4444-4444-4443", 8L);
+        doThrow(new WrongSourceException(Collections.singletonMap("activity", "researcher-url"))).when(researcherUrlManager).deleteResearcherUrl(OTHER_ORCID,
+                8L, true);
+
+        serviceDelegator.deleteResearcherUrl(OTHER_ORCID, 8L);
         fail();
+    }
+
+    // ------------------------------------------------------------- helpers
+
+    private void assertViewResearcherUrlDecorated(long putCode, Visibility visibility, Source source) {
+        ResearcherUrl researcherUrl = researcherUrl(putCode, visibility, source);
+        when(researcherUrlManagerReadOnly.getResearcherUrl(OTHER_ORCID, putCode)).thenReturn(researcherUrl);
+
+        Response response = serviceDelegator.viewResearcherUrl(OTHER_ORCID, putCode);
+
+        assertNotNull(response);
+        ResearcherUrl returned = (ResearcherUrl) response.getEntity();
+        assertNotNull(returned);
+        assertEquals("/4444-4444-4444-4443/researcher-urls/" + putCode, returned.getPath());
+        Utils.verifyLastModified(returned.getLastModifiedDate());
+        assertEquals(visibility, returned.getVisibility());
+        verify(orcidSecurityManager).checkAndFilter(OTHER_ORCID, researcherUrl, ScopePathType.ORCID_BIO_READ_LIMITED);
+    }
+
+    @SuppressWarnings("unchecked")
+    private ArgumentCaptor<List<ResearcherUrl>> researcherUrlListCaptor() {
+        return ArgumentCaptor.forClass(List.class);
+    }
+
+    private ResearcherUrl researcherUrl(Long putCode, Visibility visibility, Source source) {
+        ResearcherUrl researcherUrl = new ResearcherUrl();
+        researcherUrl.setPutCode(putCode);
+        researcherUrl.setUrl(new Url("http://www.researcherurl.com/" + putCode));
+        researcherUrl.setUrlName("Researcher url " + putCode);
+        researcherUrl.setVisibility(visibility);
+        researcherUrl.setSource(source);
+        researcherUrl.setCreatedDate(createdDate());
+        researcherUrl.setLastModifiedDate(lastModified());
+        return researcherUrl;
+    }
+
+    private ResearcherUrls researcherUrls(ResearcherUrl... elements) {
+        ResearcherUrls researcherUrls = new ResearcherUrls();
+        researcherUrls.setResearcherUrls(new ArrayList<>(Arrays.asList(elements)));
+        researcherUrls.setLastModifiedDate(lastModified());
+        return researcherUrls;
     }
 }

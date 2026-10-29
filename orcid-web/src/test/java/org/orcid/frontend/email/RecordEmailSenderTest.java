@@ -57,11 +57,14 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.util.ReflectionTestUtils;
+import org.junit.experimental.categories.Category;
+import org.orcid.test.DatabaseTest;
 
 @RunWith(OrcidJUnit4ClassRunner.class)
 @WebAppConfiguration
 @ContextConfiguration(locations = { "classpath:test-frontend-web-servlet.xml" })
 @ActiveProfiles("unitTests")
+@Category(DatabaseTest.class)
 public class RecordEmailSenderTest {
 
     @Mock

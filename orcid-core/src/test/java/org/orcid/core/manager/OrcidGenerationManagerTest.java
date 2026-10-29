@@ -16,11 +16,11 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.orcid.test.OrcidMockitoJUnitRunner;
 import org.orcid.core.crypto.OrcidCheckDigitGenerator;
 import org.orcid.core.manager.impl.OrcidGenerationManagerImpl;
 
-@RunWith(MockitoJUnitRunner.class)
+@RunWith(OrcidMockitoJUnitRunner.class)
 public class OrcidGenerationManagerTest {
 
     private static final int SAMPLE_SIZE = 2000;

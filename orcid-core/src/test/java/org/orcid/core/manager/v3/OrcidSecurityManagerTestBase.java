@@ -1,6 +1,7 @@
 package org.orcid.core.manager.v3;
 
 import static org.junit.Assert.fail;
+import static org.mockito.ArgumentMatchers.isA;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
@@ -8,22 +9,31 @@ import java.util.Arrays;
 import java.util.GregorianCalendar;
 import java.util.Random;
 
-import jakarta.annotation.Resource;
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
 
 import org.junit.After;
 import org.junit.Before;
 import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.mockito.junit.MockitoJUnitRunner;
+import org.orcid.core.common.util.AuthenticationUtils;
 import org.orcid.core.exception.OrcidAccessControlException;
+import org.orcid.core.exception.OrcidCoreExceptionMapper;
+import org.orcid.core.exception.OrcidVisibilityException;
 import org.orcid.core.manager.ClientDetailsEntityCacheManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
+import org.orcid.core.manager.v3.impl.OrcidSecurityManagerImpl;
 import org.orcid.core.manager.v3.read_only.PeerReviewManagerReadOnly;
 import org.orcid.core.manager.v3.read_only.ProfileFundingManagerReadOnly;
 import org.orcid.core.manager.v3.read_only.WorkManagerReadOnly;
+import org.orcid.core.manager.v3.read_only.impl.PeerReviewManagerReadOnlyImpl;
+import org.orcid.core.manager.v3.read_only.impl.ProfileFundingManagerReadOnlyImpl;
+import org.orcid.core.manager.v3.read_only.impl.WorkManagerReadOnlyImpl;
+import org.orcid.core.security.OrcidUserDetailsService;
 import org.orcid.core.utils.SecurityContextTestUtils;
+import org.orcid.core.utils.SourceEntityUtils;
 import org.orcid.jaxb.model.clientgroup.ClientType;
 import org.orcid.jaxb.model.common.Iso3166Country;
 import org.orcid.jaxb.model.message.ScopePathType;
@@ -34,6 +44,7 @@ import org.orcid.jaxb.model.v3.release.common.Source;
 import org.orcid.jaxb.model.v3.release.common.SourceClientId;
 import org.orcid.jaxb.model.v3.release.common.Url;
 import org.orcid.jaxb.model.v3.release.common.Visibility;
+import org.orcid.jaxb.model.v3.release.error.OrcidError;
 import org.orcid.jaxb.model.v3.release.record.Address;
 import org.orcid.jaxb.model.v3.release.record.Biography;
 import org.orcid.jaxb.model.v3.release.record.Email;
@@ -71,21 +82,23 @@ import org.orcid.jaxb.model.v3.release.record.summary.WorkSummary;
 import org.orcid.jaxb.model.v3.release.record.summary.Works;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
-import org.orcid.test.OrcidJUnit4ClassRunner;
-import org.orcid.test.TargetProxyHelper;
-import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.util.ReflectionTestUtils;
 
 /**
  * 
  * @author Will Simpson
  *
  */
-@RunWith(OrcidJUnit4ClassRunner.class)
-@ContextConfiguration(locations = { "classpath:test-orcid-core-context.xml" })
+@RunWith(MockitoJUnitRunner.Silent.class)
 public abstract class OrcidSecurityManagerTestBase {
 
-    @Resource(name = "orcidSecurityManagerV3")
-    protected OrcidSecurityManager orcidSecurityManager;
+    /**
+     * The class under test. It is declared as the implementation rather than the
+     * interface because {@code @InjectMocks} needs a concrete type; every call
+     * site below and in the subclasses uses interface methods only.
+     */
+    @InjectMocks
+    protected OrcidSecurityManagerImpl orcidSecurityManager = new OrcidSecurityManagerImpl();
 
     protected final String ORCID_1 = "0000-0000-0000-0001";
     protected final String ORCID_2 = "0000-0000-0000-0002";
@@ -99,63 +112,88 @@ public abstract class OrcidSecurityManagerTestBase {
     protected final String EXTID_3 = "extId3";
     protected final String EXTID_SHARED = "shared";
 
-    @Resource(name = "workManagerReadOnlyV3")
-    protected WorkManagerReadOnly workManagerReadOnly;
+    /*
+     * These three are NOT collaborators of the class under test. They are used
+     * only by the create*(...) helpers at the bottom of this file, to build the
+     * expected grouping of an activities summary. groupWorks/groupFundings/
+     * groupPeerReviews each build a local group generator and read nothing that
+     * is injected, so real instances are correct here and a mock would return
+     * null and collapse every grouping assertion in the subclasses.
+     */
+    protected WorkManagerReadOnly workManagerReadOnly = new WorkManagerReadOnlyImpl(100);
 
-    @Resource(name = "profileFundingManagerReadOnlyV3")
-    protected ProfileFundingManagerReadOnly profileFundingManagerReadOnly;
+    protected ProfileFundingManagerReadOnly profileFundingManagerReadOnly = new ProfileFundingManagerReadOnlyImpl();
 
-    @Resource(name = "peerReviewManagerReadOnlyV3")
-    protected PeerReviewManagerReadOnly peerReviewManagerReadOnly;
+    protected PeerReviewManagerReadOnly peerReviewManagerReadOnly = new PeerReviewManagerReadOnlyImpl();
 
-    @Resource
+    @Mock
     protected ProfileEntityCacheManager profileEntityCacheManager;
 
-    @Resource
-    protected ClientDetailsEntityCacheManager clientDetailsEntityCacheManager;
-    
     @Mock
-    protected ProfileEntityCacheManager mockProfileEntityCacheManager;
+    protected ClientDetailsEntityCacheManager clientDetailsEntityCacheManager;
 
     @Mock
-    protected ClientDetailsEntityCacheManager mockClientDetailsEntityCacheManager;
-    
+    protected SourceManager sourceManager;
+
+    @Mock
+    protected OrcidCoreExceptionMapper orcidCoreExceptionMapper;
+
+    @Mock
+    protected OrcidUserDetailsService orcidUserDetailsService;
+
+    @Mock
+    protected SourceEntityUtils sourceEntityUtils;
+
     @Before
     public void before() {
-        MockitoAnnotations.initMocks(this);
-        TargetProxyHelper.injectIntoProxy(orcidSecurityManager, "profileEntityCacheManager", mockProfileEntityCacheManager);
-        TargetProxyHelper.injectIntoProxy(orcidSecurityManager, "clientDetailsEntityCacheManager", mockClientDetailsEntityCacheManager);
-        ProfileEntity p1 = new ProfileEntity();
-        p1.setClaimed(true);
-        p1.setId(ORCID_1);
+        // @InjectMocks does not resolve @Value fields, so they are set here.
+        // claimWaitPeriodDays in particular must stay non-zero: at 0,
+        // DateUtils.olderThan(justCreatedDate, 0) is already true a millisecond
+        // later, and the "record not claimed and not old enough" guard silently
+        // stops throwing.
+        ReflectionTestUtils.setField(orcidSecurityManager, "writeValiditySeconds", 3600);
+        ReflectionTestUtils.setField(orcidSecurityManager, "claimWaitPeriodDays", 10);
+        ReflectionTestUtils.setField(orcidSecurityManager, "baseUrl", "https://testserver.orcid.org");
 
-        ProfileEntity p2 = new ProfileEntity();
-        p2.setClaimed(true);
-        p2.setId(ORCID_2);
-        when(mockProfileEntityCacheManager.retrieve(ORCID_1)).thenReturn(p1);
-        when(mockProfileEntityCacheManager.retrieve(ORCID_2)).thenReturn(p2);
-        
         ClientDetailsEntity client1 = new ClientDetailsEntity();
         client1.setId(CLIENT_1);
         client1.setClientType(ClientType.CREATOR.name());
-        
+
         ClientDetailsEntity client2 = new ClientDetailsEntity();
         client2.setId(CLIENT_2);
         client2.setClientType(ClientType.UPDATER.name());
-        
+
         ClientDetailsEntity publicClient = new ClientDetailsEntity();
         publicClient.setId(PUBLIC_CLIENT);
         publicClient.setClientType(ClientType.PUBLIC_CLIENT.name());
-        
-        when(mockClientDetailsEntityCacheManager.retrieve(CLIENT_1)).thenReturn(client1);
-        when(mockClientDetailsEntityCacheManager.retrieve(CLIENT_2)).thenReturn(client2);
-        when(mockClientDetailsEntityCacheManager.retrieve(PUBLIC_CLIENT)).thenReturn(publicClient);
+
+        // One stub per client id, deliberately. A blanket any(String) stub
+        // returning a non-public client would erase the public client guard and
+        // make every testPublicClient_* test pass for the wrong reason.
+        when(clientDetailsEntityCacheManager.retrieve(CLIENT_1)).thenReturn(client1);
+        when(clientDetailsEntityCacheManager.retrieve(CLIENT_2)).thenReturn(client2);
+        when(clientDetailsEntityCacheManager.retrieve(PUBLIC_CLIENT)).thenReturn(publicClient);
+
+        // The acting client has to follow whatever SecurityContext the
+        // individual test installed. This delegation is byte for byte what
+        // SourceManagerImpl.retrieveActiveSourceId() does; a constant here would
+        // decouple the acting client from the test's own setup.
+        when(sourceManager.retrieveActiveSourceId()).thenAnswer(invocation -> AuthenticationUtils.retrieveActiveSourceId());
+
+        // WorkBulk filtering replaces a rejected work with the mapped error, and
+        // asserts on its type, so this must return a fresh non-null OrcidError.
+        // Deliberately narrowed to the one throwable that actually reaches the
+        // mapper from these tests: checkAndFilter wraps its per-element body in
+        // catch (Exception), so a broad any(Throwable.class) stub would turn an
+        // NPE from some future null collaborator into a value that still
+        // satisfies `instanceof OrcidError` and the test would stay green while
+        // proving nothing.
+        when(orcidCoreExceptionMapper.getV3OrcidError(isA(OrcidVisibilityException.class)))
+                .thenAnswer(invocation -> new OrcidError());
     }
 
     @After
     public void after() {
-        TargetProxyHelper.injectIntoProxy(orcidSecurityManager, "profileEntityCacheManager", profileEntityCacheManager);
-        TargetProxyHelper.injectIntoProxy(orcidSecurityManager, "clientDetailsEntityCacheManager", clientDetailsEntityCacheManager);
         SecurityContextTestUtils.setUpSecurityContextForAnonymous();
     }
 

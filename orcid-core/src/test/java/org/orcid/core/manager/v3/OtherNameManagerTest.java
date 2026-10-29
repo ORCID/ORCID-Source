@@ -37,7 +37,10 @@ import org.orcid.persistence.dao.RecordNameDao;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.test.TargetProxyHelper;
 import org.springframework.test.util.ReflectionTestUtils;
+import org.junit.experimental.categories.Category;
+import org.orcid.test.DatabaseTest;
 
+@Category(DatabaseTest.class)
 public class OtherNameManagerTest extends BaseTest {
     private static final List<String> DATA_FILES = Arrays.asList("/data/SourceClientDetailsEntityData.xml",
             "/data/ProfileEntityData.xml", "/data/ClientDetailsEntityData.xml", "/data/RecordNameEntityData.xml");

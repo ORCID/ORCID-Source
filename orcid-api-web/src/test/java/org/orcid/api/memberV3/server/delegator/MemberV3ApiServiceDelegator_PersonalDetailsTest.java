@@ -5,89 +5,137 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.doAnswer;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
+import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
 
-import jakarta.annotation.Resource;
 import jakarta.ws.rs.core.Response;
 
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.orcid.core.exception.OrcidUnauthorizedException;
-import org.orcid.core.utils.SecurityContextTestUtils;
-import org.orcid.jaxb.model.groupid_v2.GroupIdRecord;
-import org.orcid.jaxb.model.message.ScopePathType;
+import org.orcid.jaxb.model.v3.release.common.CreditName;
+import org.orcid.jaxb.model.v3.release.common.Source;
 import org.orcid.jaxb.model.v3.release.common.Visibility;
-import org.orcid.jaxb.model.v3.release.record.Address;
-import org.orcid.jaxb.model.v3.release.record.Distinction;
-import org.orcid.jaxb.model.v3.release.record.Education;
-import org.orcid.jaxb.model.v3.release.record.Employment;
-import org.orcid.jaxb.model.v3.release.record.Funding;
-import org.orcid.jaxb.model.v3.release.record.InvitedPosition;
-import org.orcid.jaxb.model.v3.release.record.Keyword;
-import org.orcid.jaxb.model.v3.release.record.Membership;
+import org.orcid.jaxb.model.v3.release.record.Biography;
+import org.orcid.jaxb.model.v3.release.record.FamilyName;
+import org.orcid.jaxb.model.v3.release.record.GivenNames;
+import org.orcid.jaxb.model.v3.release.record.Name;
 import org.orcid.jaxb.model.v3.release.record.OtherName;
-import org.orcid.jaxb.model.v3.release.record.PeerReview;
-import org.orcid.jaxb.model.v3.release.record.PersonExternalIdentifier;
+import org.orcid.jaxb.model.v3.release.record.OtherNames;
 import org.orcid.jaxb.model.v3.release.record.PersonalDetails;
-import org.orcid.jaxb.model.v3.release.record.Qualification;
-import org.orcid.jaxb.model.v3.release.record.ResearchResource;
-import org.orcid.jaxb.model.v3.release.record.ResearcherUrl;
-import org.orcid.jaxb.model.v3.release.record.Service;
-import org.orcid.jaxb.model.v3.release.record.Work;
-import org.orcid.jaxb.model.v3.release.record.WorkBulk;
-import org.orcid.test.DBUnitTest;
-import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.orcid.test.helper.v3.Utils;
-import org.springframework.test.context.ContextConfiguration;
 
-@RunWith(OrcidJUnit4ClassRunner.class)
-@ContextConfiguration(locations = { "classpath:test-orcid-api-web-context.xml" })
-public class MemberV3ApiServiceDelegator_PersonalDetailsTest extends DBUnitTest {
-    protected static final List<String> DATA_FILES = Arrays.asList("/data/EmptyEntityData.xml",
-            "/data/SourceClientDetailsEntityData.xml", "/data/ProfileEntityData.xml", "/data/ClientDetailsEntityData.xml", "/data/Oauth2TokenDetailsData.xml",
-            "/data/RecordNameEntityData.xml", "/data/BiographyEntityData.xml");
+/**
+ * Mocked boundary tests for the personal-details endpoint of the member V3 API.
+ *
+ * <p>
+ * {@code checkAndFilter(orcid, personalDetails)} nulls the biography and name
+ * and prunes the other names in place; which of them a caller may see is the
+ * security manager's table and is proved by orcid-core's
+ * {@code OrcidSecurityManager_PersonTest}. Here the filter is stood in for where
+ * a test needs one, and what is asserted is the delegator's own work: which
+ * manager it asks, the paths it stamps, and that it returns the object the
+ * filter mutated.
+ */
+public class MemberV3ApiServiceDelegator_PersonalDetailsTest extends MemberV3ApiServiceDelegatorMockTestBase {
 
-    // Now on, for any new test, PLAESE USER THIS ORCID ID
-    protected final String ORCID = "0000-0000-0000-0003";
+    private static final String OTHER_ORCID = "0000-0000-0000-0002";
 
-    @Resource(name = "memberV3ApiServiceDelegator")
-    protected MemberV3ApiServiceDelegator<Distinction, Education, Employment, PersonExternalIdentifier, InvitedPosition, Funding, GroupIdRecord, Membership, OtherName, PeerReview, Qualification, ResearcherUrl, Service, Work, WorkBulk, Address, Keyword, ResearchResource> serviceDelegator;
+    private PersonalDetails personalDetails(Source source) {
+        PersonalDetails personalDetails = new PersonalDetails();
 
-    @BeforeClass
-    public static void initDBUnitData() throws Exception {
-        initDBUnitData(DATA_FILES);
+        Biography biography = new Biography();
+        biography.setContent("Biography for 0000-0000-0000-0003");
+        biography.setVisibility(Visibility.PUBLIC);
+        biography.setLastModifiedDate(lastModified());
+        personalDetails.setBiography(biography);
+
+        Name name = new Name();
+        name.setCreditName(new CreditName("Credit Name"));
+        name.setGivenNames(new GivenNames("Given Names"));
+        name.setFamilyName(new FamilyName("Family Name"));
+        name.setVisibility(Visibility.PUBLIC);
+        name.setCreatedDate(created());
+        name.setLastModifiedDate(lastModified());
+        personalDetails.setName(name);
+
+        OtherNames otherNames = new OtherNames();
+        otherNames.setOtherNames(new ArrayList<>(Arrays.asList(otherName(13L, "Other Name PUBLIC", 0L, Visibility.PUBLIC, source),
+                otherName(14L, "Other Name LIMITED", 1L, Visibility.LIMITED, source), otherName(15L, "Other Name PRIVATE", 2L, Visibility.PRIVATE, source),
+                otherName(16L, "Other Name SELF LIMITED", 3L, Visibility.LIMITED, userSource(ORCID)))));
+        personalDetails.setOtherNames(otherNames);
+
+        return personalDetails;
     }
 
-    @AfterClass
-    public static void removeDBUnitData() throws Exception {
-        Collections.reverse(DATA_FILES);
-        removeDBUnitData(DATA_FILES);
+    private OtherName otherName(long putCode, String content, Long displayIndex, Visibility visibility, Source source) {
+        OtherName element = new OtherName();
+        element.setPutCode(putCode);
+        element.setContent(content);
+        element.setDisplayIndex(displayIndex);
+        element.setVisibility(visibility);
+        element.setSource(source);
+        element.setLastModifiedDate(lastModified());
+        return element;
+    }
+
+    /**
+     * Stands in for {@code OrcidSecurityManagerImpl}'s in-place filter over
+     * personal details: it drops everything that is not public. The rule is
+     * proved in orcid-core.
+     */
+    private void keepOnlyPublic(String orcid) {
+        doAnswer(invocation -> {
+            PersonalDetails personalDetails = invocation.getArgument(1);
+            personalDetails.getOtherNames().getOtherNames().removeIf(e -> !Visibility.PUBLIC.equals(e.getVisibility()));
+            return null;
+        }).when(orcidSecurityManager).checkAndFilter(eq(orcid), any(PersonalDetails.class));
     }
 
     @Test
     public void testViewPersonalDetailsReadPublic() {
-        SecurityContextTestUtils.setUpSecurityContextForClientOnly("APP-5555555555555555", ScopePathType.READ_PUBLIC);
+        when(personalDetailsManagerReadOnly.getPersonalDetails(ORCID)).thenReturn(personalDetails(clientSource(CLIENT_1)));
+        keepOnlyPublic(ORCID);
+
         Response r = serviceDelegator.viewPersonalDetails(ORCID);
         PersonalDetails element = (PersonalDetails) r.getEntity();
         assertNotNull(element);
         assertEquals("/0000-0000-0000-0003/personal-details", element.getPath());
-        Utils.assertIsPublicOrSource(element, "APP-5555555555555555");
+        assertEquals("/0000-0000-0000-0003/other-names", element.getOtherNames().getPath());
+        assertEquals("/0000-0000-0000-0003/biography", element.getBiography().getPath());
+        // Only the public other name survives the filter, and it is the filtered
+        // list that comes back.
+        assertEquals(1, element.getOtherNames().getOtherNames().size());
+        assertEquals(Visibility.PUBLIC, element.getOtherNames().getOtherNames().get(0).getVisibility());
+        verify(orcidSecurityManager).checkAndFilter(ORCID, element);
     }
 
     @Test(expected = OrcidUnauthorizedException.class)
     public void testViewPersonalDetailsWrongToken() {
-        SecurityContextTestUtils.setUpSecurityContext("some-other-user", ScopePathType.READ_LIMITED);
+        when(personalDetailsManagerReadOnly.getPersonalDetails(ORCID)).thenReturn(personalDetails(clientSource(CLIENT_1)));
+        doThrow(new OrcidUnauthorizedException("Access token is for a different record")).when(orcidSecurityManager).checkAndFilter(eq(ORCID),
+                any(PersonalDetails.class));
+
         serviceDelegator.viewPersonalDetails(ORCID);
     }
 
     @Test
     public void testReadPublicScope_PersonalDetails() {
-        SecurityContextTestUtils.setUpSecurityContext(ORCID, ScopePathType.READ_PUBLIC);
+        when(personalDetailsManagerReadOnly.getPersonalDetails(ORCID)).thenReturn(personalDetails(clientSource(CLIENT_1)));
+        // The read-public scope leaves the public biography, name and other names
+        // in place; the three private-ish other names are dropped.
+        doAnswer(invocation -> {
+            PersonalDetails details = invocation.getArgument(1);
+            details.getOtherNames().getOtherNames().removeIf(e -> e.getPutCode() > 15L);
+            return null;
+        }).when(orcidSecurityManager).checkAndFilter(eq(ORCID), any(PersonalDetails.class));
+
         Response r = serviceDelegator.viewPersonalDetails(ORCID);
         assertNotNull(r);
         assertEquals(PersonalDetails.class.getName(), r.getEntity().getClass().getName());
@@ -120,9 +168,20 @@ public class MemberV3ApiServiceDelegator_PersonalDetailsTest extends DBUnitTest 
         assertTrue(found14);
         assertTrue(found15);
 
-        String otherOrcid = "0000-0000-0000-0002";
-        SecurityContextTestUtils.setUpSecurityContext(otherOrcid, ScopePathType.READ_PUBLIC);
-        r = serviceDelegator.viewPersonalDetails(otherOrcid);
+        // A record whose name and biography are not public comes back with them
+        // removed; the delegator must return what the filter left, not the
+        // object it read.
+        PersonalDetails otherRecord = personalDetails(clientSource(CLIENT_1));
+        when(personalDetailsManagerReadOnly.getPersonalDetails(OTHER_ORCID)).thenReturn(otherRecord);
+        doAnswer(invocation -> {
+            PersonalDetails details = invocation.getArgument(1);
+            details.setBiography(null);
+            details.setName(null);
+            details.getOtherNames().getOtherNames().clear();
+            return null;
+        }).when(orcidSecurityManager).checkAndFilter(eq(OTHER_ORCID), any(PersonalDetails.class));
+
+        r = serviceDelegator.viewPersonalDetails(OTHER_ORCID);
         assertNotNull(r);
         assertEquals(PersonalDetails.class.getName(), r.getEntity().getClass().getName());
         p = (PersonalDetails) r.getEntity();
@@ -134,7 +193,8 @@ public class MemberV3ApiServiceDelegator_PersonalDetailsTest extends DBUnitTest 
 
     @Test
     public void testViewPersonalDetails() {
-        SecurityContextTestUtils.setUpSecurityContext(ORCID, ScopePathType.PERSON_READ_LIMITED);
+        when(personalDetailsManagerReadOnly.getPersonalDetails(ORCID)).thenReturn(personalDetails(clientSource(CLIENT_1)));
+
         Response response = serviceDelegator.viewPersonalDetails(ORCID);
         assertNotNull(response);
         PersonalDetails personalDetails = (PersonalDetails) response.getEntity();
@@ -163,25 +223,25 @@ public class MemberV3ApiServiceDelegator_PersonalDetailsTest extends DBUnitTest 
                 assertEquals("Other Name PUBLIC", otherName.getContent());
                 assertEquals(Long.valueOf(0), otherName.getDisplayIndex());
                 assertEquals("/0000-0000-0000-0003/other-names/13", otherName.getPath());
-                assertEquals("APP-5555555555555555", otherName.getSource().retrieveSourcePath());
+                assertEquals(CLIENT_1, otherName.getSource().retrieveSourcePath());
                 assertEquals(Visibility.PUBLIC.value(), otherName.getVisibility().value());
             } else if (otherName.getPutCode().equals(Long.valueOf(14))) {
                 assertEquals("Other Name LIMITED", otherName.getContent());
                 assertEquals(Long.valueOf(1), otherName.getDisplayIndex());
                 assertEquals("/0000-0000-0000-0003/other-names/14", otherName.getPath());
-                assertEquals("APP-5555555555555555", otherName.getSource().retrieveSourcePath());
+                assertEquals(CLIENT_1, otherName.getSource().retrieveSourcePath());
                 assertEquals(Visibility.LIMITED.value(), otherName.getVisibility().value());
             } else if (otherName.getPutCode().equals(Long.valueOf(15))) {
                 assertEquals("Other Name PRIVATE", otherName.getContent());
                 assertEquals(Long.valueOf(2), otherName.getDisplayIndex());
                 assertEquals("/0000-0000-0000-0003/other-names/15", otherName.getPath());
-                assertEquals("APP-5555555555555555", otherName.getSource().retrieveSourcePath());
+                assertEquals(CLIENT_1, otherName.getSource().retrieveSourcePath());
                 assertEquals(Visibility.PRIVATE.value(), otherName.getVisibility().value());
             } else if (otherName.getPutCode().equals(Long.valueOf(16))) {
                 assertEquals("Other Name SELF LIMITED", otherName.getContent());
                 assertEquals(Long.valueOf(3), otherName.getDisplayIndex());
                 assertEquals("/0000-0000-0000-0003/other-names/16", otherName.getPath());
-                assertEquals("0000-0000-0000-0003", otherName.getSource().retrieveSourcePath());
+                assertEquals(ORCID, otherName.getSource().retrieveSourcePath());
                 assertEquals(Visibility.LIMITED.value(), otherName.getVisibility().value());
             } else {
                 fail("Invalid put code found: " + otherName.getPutCode());
@@ -189,6 +249,7 @@ public class MemberV3ApiServiceDelegator_PersonalDetailsTest extends DBUnitTest 
         }
 
         assertEquals("/0000-0000-0000-0003/other-names", personalDetails.getOtherNames().getPath());
-        assertEquals("/0000-0000-0000-0003/personal-details", personalDetails.getPath());
+        verify(orcidSecurityManager).checkProfile(ORCID);
+        verify(orcidSecurityManager).checkAndFilter(ORCID, personalDetails);
     }
 }

@@ -344,6 +344,73 @@
                         </path>
                     </annotationProcessorPaths>
                 </configuration>
+                <executions>
+                    <!--
+                        The two shared helpers are compiled even under
+                        -Dmaven.test.skip, which the release path uses. Without
+                        this the jar below would be attached empty, and the next
+                        build to resolve it from the local repository would fail
+                        to compile the web modules' tests against helpers that
+                        are no longer in it. Two files; the flag stays fast.
+                    -->
+                    <execution>
+                        <id>shared-security-context-helpers</id>
+                        <phase>test-compile</phase>
+                        <goals>
+                            <goal>testCompile</goal>
+                        </goals>
+                        <configuration>
+                            <skip>false</skip>
+                            <testIncludes>
+                                <testInclude>org/orcid/core/utils/Actors.java</testInclude>
+                                <testInclude>org/orcid/core/utils/SecurityContextTestUtils.java</testInclude>
+                            </testIncludes>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <!--
+                The security-context helpers, Actors and SecurityContextTestUtils, are
+                shared with the web modules' tests. They cannot live in orcid-test
+                because they need OrcidBearerTokenAuthentication from this module and
+                orcid-core already depends on orcid-test.
+
+                Only those two classes go in the jar. This module's test tree also
+                holds a test-core-context.xml and a log4j.xml that the web modules
+                define themselves, so shipping the whole tree would put a second copy
+                of each on their classpath and leave which one DBUnitTest's
+                classpath:test-core-context.xml resolves to a matter of classpath
+                order. It would also put this module's test classes there, which the
+                db_stage_drift guard in test_mvn.yml assumes does not happen.
+
+                skip is false because the goal otherwise honours maven.test.skip,
+                which the release path passes; the three web poms require this
+                artifact, so a build that does not attach it cannot resolve them.
+            -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>shared-security-context-helpers</id>
+                        <goals>
+                            <goal>test-jar</goal>
+                        </goals>
+                        <configuration>
+                            <skip>false</skip>
+                            <!--
+                                Exact names, not Actors*.class: that glob also
+                                matches ActorsTest.class.
+                            -->
+                            <includes>
+                                <include>org/orcid/core/utils/Actors.class</include>
+                                <include>org/orcid/core/utils/Actors$*.class</include>
+                                <include>org/orcid/core/utils/SecurityContextTestUtils.class</include>
+                                <include>org/orcid/core/utils/SecurityContextTestUtils$*.class</include>
+                            </includes>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>

@@ -20,9 +20,12 @@ import org.orcid.persistence.jpa.entities.ProfileFundingEntity;
 import org.orcid.test.DBUnitTest;
 import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.springframework.test.context.ContextConfiguration;
+import org.junit.experimental.categories.Category;
+import org.orcid.test.DatabaseTest;
 
 @RunWith(OrcidJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:test-orcid-persistence-context.xml" })
+@Category(DatabaseTest.class)
 public class ProfileFundingDaoTest extends DBUnitTest {
 
     private static String USER_ORCID = "4444-4444-4444-4443";

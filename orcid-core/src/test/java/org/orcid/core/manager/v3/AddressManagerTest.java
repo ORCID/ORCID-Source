@@ -42,12 +42,15 @@ import org.orcid.test.TargetProxyHelper;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.support.TransactionTemplate;
+import org.junit.experimental.categories.Category;
+import org.orcid.test.DatabaseTest;
 
 /**
  * 
  * @author Angel Montenegro
  * 
  */
+@Category(DatabaseTest.class)
 public class AddressManagerTest extends BaseTest {
     private static final List<String> DATA_FILES = Arrays.asList("/data/SourceClientDetailsEntityData.xml", "/data/ProfileEntityData.xml",
             "/data/ClientDetailsEntityData.xml", "/data/RecordNameEntityData.xml");

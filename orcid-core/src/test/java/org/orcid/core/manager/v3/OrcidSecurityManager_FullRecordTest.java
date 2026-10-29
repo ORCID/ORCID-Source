@@ -42,6 +42,9 @@ import org.orcid.jaxb.model.v3.release.record.summary.InvitedPositionSummary;
 import org.orcid.jaxb.model.v3.release.record.summary.MembershipSummary;
 import org.orcid.jaxb.model.v3.release.record.summary.PeerReviewSummary;
 import org.orcid.jaxb.model.v3.release.record.summary.QualificationSummary;
+import org.orcid.jaxb.model.v3.release.record.summary.ResearchResources;
+import org.orcid.jaxb.model.v3.release.record.summary.ResearchResourceSummary;
+import org.orcid.jaxb.model.v3.release.record.summary.ResearchResourceGroup;
 import org.orcid.jaxb.model.v3.release.record.summary.ServiceSummary;
 import org.orcid.jaxb.model.v3.release.record.summary.WorkSummary;
 import org.orcid.core.exception.OrcidUnauthorizedException;
@@ -2283,5 +2286,165 @@ public class OrcidSecurityManager_FullRecordTest extends OrcidSecurityManagerTes
             }
         }
         return false;
+    }
+
+    /**
+     * /email/read-private reveals every email, private ones included, and nothing else: every
+     * other section is cut back to what anyone could see, apart from what the calling client is
+     * itself the source of. The member API delegator tests proved this end to end before they
+     * moved to mocks; it is enforced here, so it is proved here.
+     */
+    @Test
+    public void testRecord_When_MixedVisibility_EmailReadPrivateToken() {
+        SecurityContextTestUtils.setUpSecurityContext(ORCID_1, CLIENT_1, ScopePathType.EMAIL_READ_PRIVATE);
+        Name name = createName(Visibility.PUBLIC);
+        Biography bio = createBiography(Visibility.LIMITED);
+
+        Email e1 = createEmail(Visibility.PUBLIC, CLIENT_2);
+        Email e2 = createEmail(Visibility.LIMITED, CLIENT_2);
+        Email e3 = createEmail(Visibility.PRIVATE, CLIENT_2);
+        Emails emails = new Emails();
+        emails.setEmails(new ArrayList<Email>(Arrays.asList(e1, e2, e3)));
+
+        Address a1 = createAddress(Visibility.PUBLIC, CLIENT_2);
+        Address a2 = createAddress(Visibility.LIMITED, CLIENT_2);
+        Address a3 = createAddress(Visibility.PRIVATE, CLIENT_2);
+        // private, but the calling client is its source
+        Address a4 = createAddress(Visibility.PRIVATE, CLIENT_1);
+        Addresses addresses = new Addresses();
+        addresses.setAddress(new ArrayList<Address>(Arrays.asList(a1, a2, a3, a4)));
+
+        Keyword k1 = createKeyword(Visibility.PUBLIC, CLIENT_2);
+        Keyword k2 = createKeyword(Visibility.LIMITED, CLIENT_2);
+        Keyword k3 = createKeyword(Visibility.PRIVATE, CLIENT_2);
+        Keywords keywords = new Keywords();
+        keywords.setKeywords(new ArrayList<Keyword>(Arrays.asList(k1, k2, k3)));
+
+        OtherName o1 = createOtherName(Visibility.PUBLIC, CLIENT_2);
+        OtherName o2 = createOtherName(Visibility.LIMITED, CLIENT_2);
+        OtherName o3 = createOtherName(Visibility.PRIVATE, CLIENT_2);
+        OtherNames otherNames = new OtherNames();
+        otherNames.setOtherNames(new ArrayList<OtherName>(Arrays.asList(o1, o2, o3)));
+
+        PersonExternalIdentifier ext1 = createPersonExternalIdentifier(Visibility.PUBLIC, CLIENT_2);
+        PersonExternalIdentifier ext2 = createPersonExternalIdentifier(Visibility.LIMITED, CLIENT_2);
+        PersonExternalIdentifier ext3 = createPersonExternalIdentifier(Visibility.PRIVATE, CLIENT_2);
+        PersonExternalIdentifiers personExternalIdentifiers = new PersonExternalIdentifiers();
+        personExternalIdentifiers.setExternalIdentifiers(new ArrayList<PersonExternalIdentifier>(Arrays.asList(ext1, ext2, ext3)));
+
+        ResearcherUrl r1 = createResearcherUrl(Visibility.PUBLIC, CLIENT_2);
+        ResearcherUrl r2 = createResearcherUrl(Visibility.LIMITED, CLIENT_2);
+        ResearcherUrl r3 = createResearcherUrl(Visibility.PRIVATE, CLIENT_2);
+        ResearcherUrls researcherUrls = new ResearcherUrls();
+        researcherUrls.setResearcherUrls(new ArrayList<ResearcherUrl>(Arrays.asList(r1, r2, r3)));
+
+        Person p = new Person();
+        p.setName(name);
+        p.setBiography(bio);
+        p.setEmails(emails);
+        p.setAddresses(addresses);
+        p.setKeywords(keywords);
+        p.setOtherNames(otherNames);
+        p.setExternalIdentifiers(personExternalIdentifiers);
+        p.setResearcherUrls(researcherUrls);
+
+        WorkSummary w1 = createWorkSummary(Visibility.PUBLIC, CLIENT_2, EXTID_1);
+        WorkSummary w2 = createWorkSummary(Visibility.LIMITED, CLIENT_2, EXTID_2);
+        WorkSummary w3 = createWorkSummary(Visibility.PRIVATE, CLIENT_2, EXTID_3);
+        FundingSummary f1 = createFundingSummary(Visibility.PUBLIC, CLIENT_2, EXTID_1);
+        FundingSummary f2 = createFundingSummary(Visibility.LIMITED, CLIENT_2, EXTID_2);
+        FundingSummary f3 = createFundingSummary(Visibility.PRIVATE, CLIENT_2, EXTID_3);
+        PeerReviewSummary pr1 = createPeerReviewSummary(Visibility.PUBLIC, CLIENT_2, EXTID_1);
+        PeerReviewSummary pr2 = createPeerReviewSummary(Visibility.LIMITED, CLIENT_2, EXTID_2);
+        PeerReviewSummary pr3 = createPeerReviewSummary(Visibility.PRIVATE, CLIENT_2, EXTID_3);
+        EducationSummary edu1 = createEducationSummary(Visibility.PUBLIC, CLIENT_2);
+        EducationSummary edu2 = createEducationSummary(Visibility.LIMITED, CLIENT_2);
+        EducationSummary edu3 = createEducationSummary(Visibility.PRIVATE, CLIENT_2);
+        EmploymentSummary em1 = createEmploymentSummary(Visibility.PUBLIC, CLIENT_2);
+        EmploymentSummary em2 = createEmploymentSummary(Visibility.LIMITED, CLIENT_2);
+        EmploymentSummary em3 = createEmploymentSummary(Visibility.PRIVATE, CLIENT_2);
+        DistinctionSummary d1 = createDistinctionSummary(Visibility.PUBLIC, CLIENT_2);
+        DistinctionSummary d2 = createDistinctionSummary(Visibility.LIMITED, CLIENT_2);
+        DistinctionSummary d3 = createDistinctionSummary(Visibility.PRIVATE, CLIENT_2);
+        InvitedPositionSummary ip1 = createInvitedPositionSummary(Visibility.PUBLIC, CLIENT_2);
+        InvitedPositionSummary ip2 = createInvitedPositionSummary(Visibility.LIMITED, CLIENT_2);
+        InvitedPositionSummary ip3 = createInvitedPositionSummary(Visibility.PRIVATE, CLIENT_2);
+        MembershipSummary m1 = createMembershipSummary(Visibility.PUBLIC, CLIENT_2);
+        MembershipSummary m2 = createMembershipSummary(Visibility.LIMITED, CLIENT_2);
+        MembershipSummary m3 = createMembershipSummary(Visibility.PRIVATE, CLIENT_2);
+        QualificationSummary q1 = createQualificationSummary(Visibility.PUBLIC, CLIENT_2);
+        QualificationSummary q2 = createQualificationSummary(Visibility.LIMITED, CLIENT_2);
+        QualificationSummary q3 = createQualificationSummary(Visibility.PRIVATE, CLIENT_2);
+        ServiceSummary sv1 = createServiceSummary(Visibility.PUBLIC, CLIENT_2);
+        ServiceSummary sv2 = createServiceSummary(Visibility.LIMITED, CLIENT_2);
+        ServiceSummary sv3 = createServiceSummary(Visibility.PRIVATE, CLIENT_2);
+        ResearchResources researchResources = new ResearchResources();
+        ResearchResourceSummary rr1 = researchResourceSummary(Visibility.PUBLIC, CLIENT_2);
+        for (ResearchResourceSummary rr : Arrays.asList(rr1, researchResourceSummary(Visibility.LIMITED, CLIENT_2),
+                researchResourceSummary(Visibility.PRIVATE, CLIENT_2))) {
+            ResearchResourceGroup group = new ResearchResourceGroup();
+            group.getResearchResourceSummary().add(rr);
+            researchResources.getResearchResourceGroup().add(group);
+        }
+        ActivitiesSummary as = new ActivitiesSummary();
+        as.setResearchResources(researchResources);
+        as.setWorks(createWorks(w1, w2, w3));
+        as.setFundings(createFundings(f1, f2, f3));
+        as.setPeerReviews(createPeerReviews(pr1, pr2, pr3));
+        as.setEducations(createEducations(edu1, edu2, edu3));
+        as.setEmployments(createEmployments(em1, em2, em3));
+        as.setDistinctions(createDistinctions(d1, d2, d3));
+        as.setInvitedPositions(createInvitedPositions(ip1, ip2, ip3));
+        as.setMemberships(createMemberships(m1, m2, m3));
+        as.setQualifications(createQualifications(q1, q2, q3));
+        as.setServices(createServices(sv1, sv2, sv3));
+
+        Record record = new Record();
+        record.setPerson(p);
+        record.setActivitiesSummary(as);
+
+        orcidSecurityManager.checkAndFilter(ORCID_1, record);
+
+        // every email survives, whatever its visibility
+        assertEquals(3, p.getEmails().getEmails().size());
+        assertTrue(p.getEmails().getEmails().containsAll(Arrays.asList(e1, e2, e3)));
+        // and nothing else is widened by the email scope
+        assertEquals(name, p.getName());
+        assertNull(p.getBiography());
+        assertEquals(Arrays.asList(a1, a4), p.getAddresses().getAddress());
+        assertEquals(Arrays.asList(k1), p.getKeywords().getKeywords());
+        assertEquals(Arrays.asList(o1), p.getOtherNames().getOtherNames());
+        assertEquals(Arrays.asList(ext1), p.getExternalIdentifiers().getExternalIdentifiers());
+        assertEquals(Arrays.asList(r1), p.getResearcherUrls().getResearcherUrls());
+        assertEquals(Arrays.asList(w1), as.getWorks().getWorkGroup().get(0).getActivities());
+        assertEquals(1, as.getWorks().getWorkGroup().size());
+        assertEquals(Arrays.asList(f1), as.getFundings().getFundingGroup().get(0).getActivities());
+        assertEquals(1, as.getFundings().getFundingGroup().size());
+        assertEquals(Arrays.asList(pr1), as.getPeerReviews().getPeerReviewGroup().get(0).getPeerReviewGroup().get(0).getPeerReviewSummary());
+        assertEquals(1, as.getPeerReviews().getPeerReviewGroup().size());
+        assertEquals(1, as.getPeerReviews().getPeerReviewGroup().get(0).getPeerReviewGroup().size());
+        assertEquals(1, as.getResearchResources().getResearchResourceGroup().size());
+        assertEquals(Arrays.asList(rr1), as.getResearchResources().getResearchResourceGroup().get(0).getResearchResourceSummary());
+        assertEquals(1, as.getEducations().retrieveGroups().size());
+        assertTrue(affiliationsContainSummary(as.getEducations(), edu1));
+        assertEquals(1, as.getEmployments().retrieveGroups().size());
+        assertTrue(affiliationsContainSummary(as.getEmployments(), em1));
+        assertEquals(1, as.getDistinctions().retrieveGroups().size());
+        assertTrue(affiliationsContainSummary(as.getDistinctions(), d1));
+        assertEquals(1, as.getInvitedPositions().retrieveGroups().size());
+        assertTrue(affiliationsContainSummary(as.getInvitedPositions(), ip1));
+        assertEquals(1, as.getMemberships().retrieveGroups().size());
+        assertTrue(affiliationsContainSummary(as.getMemberships(), m1));
+        assertEquals(1, as.getQualifications().retrieveGroups().size());
+        assertTrue(affiliationsContainSummary(as.getQualifications(), q1));
+        assertEquals(1, as.getServices().retrieveGroups().size());
+        assertTrue(affiliationsContainSummary(as.getServices(), sv1));
+    }
+
+    private ResearchResourceSummary researchResourceSummary(Visibility v, String sourceId) {
+        ResearchResourceSummary summary = new ResearchResourceSummary();
+        summary.setVisibility(v);
+        setSource(summary, sourceId);
+        return summary;
     }
 }

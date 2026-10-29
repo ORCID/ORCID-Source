@@ -20,9 +20,12 @@ import org.orcid.persistence.jpa.entities.OtherNameEntity;
 import org.orcid.test.DBUnitTest;
 import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.springframework.test.context.ContextConfiguration;
+import org.junit.experimental.categories.Category;
+import org.orcid.test.DatabaseTest;
 
 @RunWith(OrcidJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:test-orcid-persistence-context.xml" })
+@Category(DatabaseTest.class)
 public class OtherNameDaoTest extends DBUnitTest {
 
     private static String USER_ORCID = "0000-0000-0000-0003";
