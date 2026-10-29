@@ -506,7 +506,7 @@ public class RegistrationControllerTest extends DBUnitTest {
         reg = registrationController.regEmailValidate(servletRequest, reg, false, true);
 
         assertEquals(1, reg.getEmail().getErrors().size());
-        assertEquals("ORCID does not support temporary or disposable email addresses. Please try a different email address.", reg.getEmail().getErrors().get(0));
+        assertEquals("disposable_email", reg.getEmail().getErrors().get(0));
         verify(emailManager, times(0)).emailExists(email);
     }
 
