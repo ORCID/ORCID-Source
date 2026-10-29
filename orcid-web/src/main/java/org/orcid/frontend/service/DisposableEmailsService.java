@@ -33,6 +33,10 @@ public class DisposableEmailsService {
 
     private volatile Set<String> disposableDomains = Collections.emptySet();
 
+    public void enable() {
+        this.enabled = true;
+    }
+
     @PostConstruct
     public void init() {
         refreshCache();
@@ -40,6 +44,10 @@ public class DisposableEmailsService {
 
     @Scheduled(initialDelay = REFRESH_INTERVAL_MS, fixedDelay = REFRESH_INTERVAL_MS)
     public void refreshCache() {
+        if(!enabled) {
+            LOGGER.info("Disposable emails service is disabled, keeping the current cache");
+            return;
+        }
         try {
             List<String> domains = redisClient.getList(REDIS_LIST_KEY);
             if (domains == null || domains.isEmpty()) {

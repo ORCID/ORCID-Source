@@ -27,6 +27,7 @@ public class DisposableEmailsServiceTest {
     @Before
     public void before() {
         when(redisClient.getList("disposable-domains")).thenReturn(Arrays.asList("mailinator.com", "Trashmail.NET"));
+        service.enable();
         service.init();
     }
 
