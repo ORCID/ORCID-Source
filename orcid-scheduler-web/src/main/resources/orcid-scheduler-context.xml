@@ -50,7 +50,7 @@
         <task:scheduled ref="orcidIntegrationMvp" method="createOrcidIntegrationNotifications" cron="${org.orcid.scheduler.mvp.orcidIntegration:0 0 23 * * WED}"/>
         <task:scheduled ref="redisExpiredMainIndexCleanup" method="execute" cron="${org.orcid.scheduler.cleanup.RedisExpiredMainIndexCleanup.cron:0 35 18 * * SAT}" />
         <task:scheduled ref="authorizationCodeCleaner" method="removeArchivedAuthorizationCodes" cron="${org.orcid.scheduler.cleanup.AuthorizationCodeCleanerCronJob.cron:35 35 1 * * SAT}" />
-        <task:scheduled ref="disposableDomainLoader" method="execute" cron="${org.orcid.scheduler.loader.DisposableDomainLoader.cron:23 17 2 * * *}" />
+        <task:scheduled ref="disposableDomainLoader" method="execute" fixed-delay="${org.orcid.scheduler.loader.DisposableDomainLoader.secs:86400}000" />
     </task:scheduled-tasks>
 
 	<task:scheduler id="scheduler" pool-size="${org.orcid.scheduler.tasks.pool_size:60}"/>

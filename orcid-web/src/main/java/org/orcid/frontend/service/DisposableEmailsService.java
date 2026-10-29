@@ -6,9 +6,11 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 
+import org.apache.commons.lang3.StringUtils;
 import org.orcid.core.utils.cache.redis.RedisClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
@@ -22,6 +24,9 @@ public class DisposableEmailsService {
 
     private static final String REDIS_LIST_KEY = "disposable-domains";
     private static final long REFRESH_INTERVAL_MS = 6L * 60 * 60 * 1000;
+
+    @Value("${org.orcid.frontend.service.DisposableEmailsService.enabled:true}")
+    private boolean enabled;
 
     @Resource(name = "redisClient")
     private RedisClient redisClient;
@@ -55,7 +60,7 @@ public class DisposableEmailsService {
     }
 
     public boolean isDisposableEmail(String email) {
-        if (email == null) {
+        if (!enabled || StringUtils.isBlank(email)) {
             return false;
         }
         int at = email.lastIndexOf('@');

@@ -791,6 +791,8 @@ public class BaseController {
         // Validate the email address is ok        
         if(!validateEmailAddress(emailAddressAdditional)) {
             email.getErrors().add(getMessage("Email.personalInfoForm.email", emailAddressAdditional));
+        } else if (disposableEmailsService.isDisposableEmail(emailAddressAdditional)) {
+            email.getErrors().add("disposable_email");
         } else if(emailAddressAdditional.equalsIgnoreCase(reg.getEmail().getValue())){
             email.getErrors().add(getMessage("Email.personalInfoForm.additionalEmailCannotMatchPrimary"));
         } else if (duplicateAdditionalEmails(reg, emailAddressAdditional)){
