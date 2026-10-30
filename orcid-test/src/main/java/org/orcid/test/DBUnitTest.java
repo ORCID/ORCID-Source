@@ -3,6 +3,7 @@ package org.orcid.test;
 import static org.junit.Assert.fail;
 
 import java.io.File;
+import java.io.Serializable;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
@@ -17,14 +18,13 @@ import org.dbunit.database.QueryDataSet;
 import org.dbunit.dataset.IDataSet;
 import org.dbunit.operation.DatabaseOperation;
 import org.dbunit.util.fileloader.FlatXmlDataFileLoader;
-import org.ehcache.Cache;
-import org.ehcache.CacheManager;
 import org.junit.Ignore;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.cache.jcache.JCacheCacheManager;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.GenericXmlApplicationContext;
 import javax.sql.DataSource;
+import javax.cache.CacheManager;
 import org.springframework.test.context.ActiveProfiles;
 
 /**
@@ -128,12 +128,12 @@ public class DBUnitTest {
     }
 
     private static void clearCaches(CacheManager cacheManager) {
-        cacheManager.getRuntimeConfiguration().getCacheConfigurations().forEach((alias, config) -> {
-            Cache<?, ?> cache = cacheManager.getCache(alias, config.getKeyType(), config.getValueType());
+        for (String alias : cacheManager.getCacheNames()) {
+            javax.cache.Cache<Serializable, Serializable> cache = cacheManager.getCache(alias, Serializable.class, Serializable.class);
             if (cache != null) {
-                cache.clear(); 
+                cache.clear();
             }
-        });
+        }
     }
 
     private static void cleanClientSourcedProfiles(IDatabaseConnection connection) throws AmbiguousTableNameException, DatabaseUnitException, SQLException {

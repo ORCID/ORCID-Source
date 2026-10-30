@@ -24,6 +24,26 @@ JMX_OPTS=" -Dcom.sun.management.jmxremote  -Dcom.sun.management.jmxremote.port=8
 MEM_OPTS=" -Xmx2G "
 
 JAVA_AGENT_OPTS="-javaagent:${CATALINA_HOME}/newrelic/newrelic.jar"
+# === Jolokia JVM agent (conditional) ===
+if [ "${ENABLE_JOLOKIA:-false}" = "true" ]; then
+    if [ ! -f ${CATALINA_HOME}/jolokia/jolokia-agent-jvm.jar ]; then
+        echo "Jolokia agent requested but ${CATALINA_HOME}/jolokia/jolokia-agent-jvm.jar was not found." >&2
+        exit 1
+    fi
+
+    JOLOKIA_HOST=${JOLOKIA_HOST:-127.0.0.1}
+    JOLOKIA_PORT=${JOLOKIA_PORT:-8778}
+    JOLOKIA_CONFIG="host=${JOLOKIA_HOST},port=${JOLOKIA_PORT}"
+
+    if [ -n "${JOLOKIA_OPTS:-discoveryEnabled=false}" ]; then
+        JOLOKIA_CONFIG="${JOLOKIA_CONFIG},${JOLOKIA_OPTS:-discoveryEnabled=false}"
+    fi
+
+    JAVA_AGENT_OPTS="${JAVA_AGENT_OPTS} -javaagent:${CATALINA_HOME}/jolokia/jolokia-agent-jvm.jar=${JOLOKIA_CONFIG}"
+    echo "Jolokia agent enabled on ${JOLOKIA_HOST}:${JOLOKIA_PORT}."
+else
+    echo "Jolokia agent disabled."
+fi
 
 
 /usr/bin/env java \

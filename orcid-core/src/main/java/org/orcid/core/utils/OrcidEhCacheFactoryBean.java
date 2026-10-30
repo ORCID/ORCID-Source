@@ -4,13 +4,15 @@ import java.io.Serializable;
 import java.time.Duration;
 import java.time.temporal.ChronoUnit;
 
+import javax.cache.CacheManager;
+
 import org.ehcache.Cache;
-import org.ehcache.CacheManager;
 import org.ehcache.config.builders.CacheConfigurationBuilder;
 import org.ehcache.config.builders.ExpiryPolicyBuilder;
 import org.ehcache.config.builders.ResourcePoolsBuilder;
 import org.ehcache.config.units.EntryUnit;
 import org.ehcache.config.units.MemoryUnit;
+import org.ehcache.jsr107.Eh107Configuration;
 import org.ehcache.spi.loaderwriter.CacheLoaderWriter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -121,8 +123,8 @@ public class OrcidEhCacheFactoryBean implements FactoryBean<Cache<?, ?>>, Initia
 
     @Override
     public void afterPropertiesSet() throws Exception {
-        Cache<Serializable, Serializable> existingCache = cacheManager.getCache(cacheName, Serializable.class, Serializable.class);
-        if (existingCache == null) {
+        javax.cache.Cache<Serializable, Serializable> c = cacheManager.getCache(cacheName, Serializable.class, Serializable.class);
+        if (c == null) {
             // https://www.ehcache.org/documentation/3.3/caching-concepts.html#storage-tiers
             ResourcePoolsBuilder resourcePoolsBuilder = ResourcePoolsBuilder.newResourcePoolsBuilder();
             if (this.maxMegaBytesInMemory > 0) {
@@ -142,10 +144,15 @@ public class OrcidEhCacheFactoryBean implements FactoryBean<Cache<?, ?>>, Initia
             if (this.cacheLoaderWriter != null) {
                 cacheConfigurationBuilder = cacheConfigurationBuilder.withLoaderWriter(this.cacheLoaderWriter);
             }
-            this.cache = cacheManager.createCache(cacheName, cacheConfigurationBuilder.build());
-        } else {
-            this.cache = existingCache;
+            // Creating from the native configuration keeps expiry, copier, loader-writer and resource
+            // pools verbatim, and puts the cache on the same path that registers the JMX statistics bean.
+            c = cacheManager.createCache(cacheName,
+                    Eh107Configuration.<Serializable, Serializable> fromEhcacheCacheConfiguration(cacheConfigurationBuilder));
         }
+        // Redundant today: the loadCache path defaults statistics on. Explicit so a future Ehcache
+        // upgrade cannot silently turn our only hit-rate signal off.
+        cacheManager.enableStatistics(cacheName, true);
+        this.cache = c.unwrap(Cache.class);
     }
 
 }
