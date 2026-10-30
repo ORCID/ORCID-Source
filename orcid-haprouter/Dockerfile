@@ -16,13 +16,18 @@ RUN printf 'Types: deb\nURIs: https://www.haproxy.com/download/haproxy/performan
 
 COPY orcid-haprouter/haproxy.cfg /etc/haproxy/haproxy.cfg
 
+USER haproxy
+
 STOPSIGNAL SIGUSR1
 CMD ["haproxy", "-W", "-db", "-f", "/etc/haproxy/haproxy.cfg"]
 
 FROM base AS dev
 
+USER root
 RUN apt-get update \
- && apt-get install -y --no-install-recommends curl dnsutils iputils-ping less procps socat vim-tiny \
+ && apt-get install -y --no-install-recommends \
+      bsdmainutils curl dnsutils iproute2 iputils-ping jq less net-tools procps socat unzip vim-tiny \
  && rm -rf /var/lib/apt/lists/*
+USER haproxy
 
 FROM base AS release
