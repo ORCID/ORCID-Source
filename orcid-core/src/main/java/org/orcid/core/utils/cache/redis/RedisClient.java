@@ -4,6 +4,8 @@ import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.SocketException;
 import java.net.UnknownHostException;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -173,6 +175,37 @@ public class RedisClient {
             }
         }
         return null;
+    }
+
+    /**
+     * Replaces the redis list stored under the key with the given values. The
+     * list is built in a temporary key and renamed, so the existing list is
+     * replaced atomically.
+     * 
+     * @return true if the list was replaced, false if the client is not enabled
+     */
+    public boolean replaceList(String key, Collection<String> values, int batchSize) {
+        if (enabled && pool != null) {
+            String tempKey = key + ":loading";
+            try (Jedis jedis = pool.getResource()) {
+                LOG.debug("Replacing List: {}", key);
+                jedis.del(tempKey);
+                List<String> batch = new ArrayList<>(batchSize);
+                for (String value : values) {
+                    batch.add(value);
+                    if (batch.size() == batchSize) {
+                        jedis.rpush(tempKey, batch.toArray(new String[0]));
+                        batch.clear();
+                    }
+                }
+                if (!batch.isEmpty()) {
+                    jedis.rpush(tempKey, batch.toArray(new String[0]));
+                }
+                jedis.rename(tempKey, key);
+                return true;
+            }
+        }
+        return false;
     }
 
     public boolean remove(String key) {
