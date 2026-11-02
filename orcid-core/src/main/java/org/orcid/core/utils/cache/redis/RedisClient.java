@@ -161,6 +161,20 @@ public class RedisClient {
         return null;
     }
 
+    /**
+     * @return all the elements of the redis list stored under the key, or null
+     *         if the client is not enabled
+     */
+    public List<String> getList(String key) {
+        if (enabled && pool != null) {
+            try (Jedis jedis = pool.getResource()) {
+                LOG.debug("Reading List: {}", key);
+                return jedis.lrange(key, 0, -1);
+            }
+        }
+        return null;
+    }
+
     public boolean remove(String key) {
         if (enabled && pool != null) {
             try (Jedis jedis = pool.getResource()) {
