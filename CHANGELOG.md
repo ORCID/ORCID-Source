@@ -1,3 +1,9 @@
+## v3.25.3 - 2026-11-02
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.25.2...v3.25.3)
+
+- [#7770](https://github.com/ORCID/ORCID-Source/pull/7770): Use the general redis instance, not the one with the sessions
+
 ## v3.25.2 - 2026-11-02
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.25.1...v3.25.2)
