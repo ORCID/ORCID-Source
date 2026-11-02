@@ -1,3 +1,9 @@
+## v3.25.2 - 2026-11-02
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.25.1...v3.25.2)
+
+- [#7769](https://github.com/ORCID/ORCID-Source/pull/7769): PD-4737 Disposable email domains
+
 ## v3.25.1 - 2026-10-29
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.25.0...v3.25.1)
