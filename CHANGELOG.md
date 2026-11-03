@@ -1,3 +1,9 @@
+## v3.26.0 - 2026-11-03
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.25.3...v3.26.0)
+
+- [#7768](https://github.com/ORCID/ORCID-Source/pull/7768): PD-14694 ehcache jmx beans
+
 ## v3.25.3 - 2026-11-02
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.25.2...v3.25.3)
