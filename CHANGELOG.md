@@ -1,3 +1,21 @@
+## v3.25.3 - 2026-11-02
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.25.2...v3.25.3)
+
+- [#7770](https://github.com/ORCID/ORCID-Source/pull/7770): Use the general redis instance, not the one with the sessions
+
+## v3.25.2 - 2026-11-02
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.25.1...v3.25.2)
+
+- [#7769](https://github.com/ORCID/ORCID-Source/pull/7769): PD-4737 Disposable email domains
+
+## v3.25.1 - 2026-10-29
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.25.0...v3.25.1)
+
+- [#7765](https://github.com/ORCID/ORCID-Source/pull/7765): PD-14679  Skip the unicode general category format  when filtering email address
+
 ## v3.25.0 - 2026-10-26
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.24.11...v3.25.0)
