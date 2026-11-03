@@ -32,7 +32,6 @@ import org.springframework.data.redis.connection.jedis.JedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.serializer.RedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
-import org.springframework.session.FindByIndexNameSessionRepository;
 import org.springframework.session.FlushMode;
 import org.springframework.session.SaveMode;
 
@@ -320,12 +319,7 @@ public class SetForcePasswordReset {
     private int evictSessions(List<String> orcidIds) {
         int evictedSessions = 0;
         for (String orcidId : orcidIds) {
-            Map<String, ?> activeSessions = sessionRepository.findByIndexNameAndIndexValue(
-                    FindByIndexNameSessionRepository.PRINCIPAL_NAME_INDEX_NAME, orcidId);
-            for (String sessionId : activeSessions.keySet()) {
-                sessionRepository.deleteById(sessionId);
-                evictedSessions++;
-            }
+            evictedSessions += sessionRepository.evictSessionsForOrcid(orcidId);
         }
         return evictedSessions;
     }
