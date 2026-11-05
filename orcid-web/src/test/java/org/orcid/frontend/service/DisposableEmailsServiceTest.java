@@ -57,6 +57,20 @@ public class DisposableEmailsServiceTest {
     }
 
     @Test
+    public void emptyOrNullAllowedDomainsRejectsAllDisposableDomainsTest() {
+        for (String config : new String[] { null, "", "   " }) {
+            DisposableEmailsService noAllowList = new DisposableEmailsService(config);
+            ReflectionTestUtils.setField(noAllowList, "redisClient", redisClient);
+            noAllowList.enable();
+            noAllowList.init();
+
+            assertTrue(noAllowList.isDisposableEmail("user@mailinator.com"));
+            assertTrue(noAllowList.isDisposableEmail("user@trashmail.net"));
+            assertFalse(noAllowList.isDisposableEmail("user@orcid.org"));
+        }
+    }
+
+    @Test
     public void invalidEmailsReturnFalseTest() {
         assertFalse(service.isDisposableEmail(null));
         assertFalse(service.isDisposableEmail("no-at-sign"));
