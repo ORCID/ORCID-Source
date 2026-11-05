@@ -10,10 +10,10 @@ import java.util.Collections;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.orcid.core.utils.cache.redis.RedisClient;
+import org.springframework.test.util.ReflectionTestUtils;
 
 @RunWith(MockitoJUnitRunner.Silent.class)
 public class DisposableEmailsServiceTest {
@@ -21,12 +21,13 @@ public class DisposableEmailsServiceTest {
     @Mock
     private RedisClient redisClient;
 
-    @InjectMocks
     private DisposableEmailsService service;
 
     @Before
     public void before() {
         when(redisClient.getList("disposable-domains")).thenReturn(Arrays.asList("mailinator.com", "Trashmail.NET"));
+        service = new DisposableEmailsService("mailinator.com");
+        ReflectionTestUtils.setField(service, "redisClient", redisClient);
         service.enable();
         service.init();
     }
@@ -39,15 +40,20 @@ public class DisposableEmailsServiceTest {
 
     @Test
     public void domainInListReturnsTrueTest() {
-        assertTrue(service.isDisposableEmail("user@mailinator.com"));
-        assertTrue(service.isDisposableEmail("USER@MAILINATOR.COM"));
         assertTrue(service.isDisposableEmail("user@trashmail.net"));
+        assertTrue(service.isDisposableEmail("USER@TRASHMAIL.NET"));
+    }
+
+    @Test
+    public void allowedDomainIsNotDisposableTest() {
+        assertFalse(service.isDisposableEmail("user@mailinator.com"));
+        assertFalse(service.isDisposableEmail("USER@MAILINATOR.COM"));
     }
 
     @Test
     public void subdomainOfDomainInListReturnsTrueTest() {
-        assertTrue(service.isDisposableEmail("user@sub.mailinator.com"));
-        assertTrue(service.isDisposableEmail("user@a.b.mailinator.com"));
+        assertTrue(service.isDisposableEmail("user@sub.trashmail.net"));
+        assertTrue(service.isDisposableEmail("user@a.b.trashmail.net"));
     }
 
     @Test
@@ -61,7 +67,7 @@ public class DisposableEmailsServiceTest {
     public void refreshKeepsCurrentCacheWhenRedisReturnsNothingTest() {
         when(redisClient.getList("disposable-domains")).thenReturn(Collections.emptyList());
         service.refreshCache();
-        assertTrue(service.isDisposableEmail("user@mailinator.com"));
+        assertTrue(service.isDisposableEmail("user@trashmail.net"));
     }
 
     @Test
@@ -69,6 +75,6 @@ public class DisposableEmailsServiceTest {
         when(redisClient.getList("disposable-domains")).thenReturn(Arrays.asList("example.org"));
         service.refreshCache();
         assertTrue(service.isDisposableEmail("user@example.org"));
-        assertFalse(service.isDisposableEmail("user@mailinator.com"));
+        assertFalse(service.isDisposableEmail("user@trashmail.net"));
     }
 }
