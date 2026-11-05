@@ -31,10 +31,24 @@ public class DisposableEmailsService {
     @Resource(name = "redisClient")
     private RedisClient redisClient;
 
+    private final Set<String> allowedDomains;
+
     private volatile Set<String> disposableDomains = Collections.emptySet();
 
     public void enable() {
         this.enabled = true;
+    }
+
+    public DisposableEmailsService(@Value("${org.orcid.frontend.service.DisposableEmailsService.allowedDomains:}") String allowedDomainsConfig) {
+        Set<String> allowed = new HashSet<>();
+        if (StringUtils.isNotBlank(allowedDomainsConfig)) {
+            for (String domain : allowedDomainsConfig.split(",")) {
+                if (StringUtils.isNotBlank(domain)) {
+                    allowed.add(domain.trim().toLowerCase(Locale.ROOT));
+                }
+            }
+        }
+        allowedDomains = Collections.unmodifiableSet(allowed);
     }
 
     @PostConstruct
@@ -76,6 +90,9 @@ public class DisposableEmailsService {
             return false;
         }
         String domain = email.substring(at + 1).trim().toLowerCase(Locale.ROOT);
+        if (allowedDomains.contains(domain)) {
+            return false;
+        }
         Set<String> cache = disposableDomains;
         // Match the domain itself or any parent domain, so sub.mailinator.com matches mailinator.com
         String candidate = domain;
