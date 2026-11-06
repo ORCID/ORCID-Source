@@ -341,10 +341,6 @@
 			access="ROLE_USER"/>
 		<sec:intercept-url pattern="/developer-tools/.*"
 			access="ROLE_USER"/>
-		<sec:intercept-url pattern="/sms-poc/send.json(\?.*)?"
-			access="ROLE_USER"/>
-		<sec:intercept-url pattern="/sms-poc/verify.json(\?.*)?"
-			access="ROLE_USER"/>
 		<sec:intercept-url pattern="/2FA/recoveryPhone/.*"
 			access="ROLE_USER"/>
 		<sec:intercept-url pattern="/eula/accept(\?.*)?"
