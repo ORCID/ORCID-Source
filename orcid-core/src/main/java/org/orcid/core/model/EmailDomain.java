@@ -18,7 +18,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(propOrder = { "value", "verificationDate"})
 @XmlRootElement(name = "email-domain", namespace = "http://www.orcid.org/ns/summary")
-@Schema(description = "Email Domain")
+@Schema(name = "RecordSummaryEmailDomain", description = "Email Domain")
 public class EmailDomain {
     @XmlElement(name = "value", namespace = "http://www.orcid.org/ns/summary")
     protected String value;

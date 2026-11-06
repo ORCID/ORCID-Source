@@ -7,7 +7,7 @@ import jakarta.xml.bind.annotation.XmlRootElement;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 @XmlRootElement(name = "research-resources", namespace = "http://www.orcid.org/ns/summary")
-@Schema(description = "Research resources")
+@Schema(name = "RecordSummaryResearchResources", description = "Research resources")
 public class ResearchResources extends ItemsCount implements Serializable {
 
     /**

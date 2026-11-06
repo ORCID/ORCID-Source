@@ -93,6 +93,18 @@
                    <update>true</update>
                 </configuration>
             </plugin>
+            <plugin>
+                <groupId>io.swagger.core.v3</groupId>
+                <artifactId>swagger-maven-plugin-jakarta</artifactId>
+                <configuration>
+                    <outputFileName>member-v3.0</outputFileName>
+                    <openapiFilePath>${project.basedir}/../openapi/base/member-v3.0.yaml</openapiFilePath>
+                    <resourceClasses>
+                        <resourceClass>org.orcid.api.memberV3.server.MemberV3ApiServiceImplV3_0</resourceClass>
+                        <resourceClass>org.orcid.api.member.common.WebhooksService</resourceClass>
+                    </resourceClasses>
+                </configuration>
+            </plugin>
             <!-- plugin>
                 <groupId>com.mycila.maven-license-plugin</groupId>
                 <artifactId>maven-license-plugin</artifactId>

@@ -15,7 +15,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(propOrder = { "count", "employments" })
 @XmlRootElement(name = "employments", namespace = "http://www.orcid.org/ns/summary")
-@Schema(description = "Employments list")
+@Schema(name = "RecordSummaryEmployments", description = "Employments list")
 public class Employments implements Serializable {
     /**
      * 
