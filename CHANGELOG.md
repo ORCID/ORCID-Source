@@ -1,3 +1,9 @@
+## v3.25.6 - 2026-11-06
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.25.5...v3.25.6)
+
+- [#7774](https://github.com/ORCID/ORCID-Source/pull/7774): Ingore profile and email scopes when POST or PUT
+
 ## v3.25.5 - 2026-11-05
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.25.4...v3.25.5)
