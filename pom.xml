@@ -680,7 +680,7 @@ the software.
             <dependency>
                 <groupId>commons-codec</groupId>
                 <artifactId>commons-codec</artifactId>
-                <version>1.9</version>
+                <version>1.22.1</version>
             </dependency>
             <dependency>
                 <groupId>com.sun.jersey.contribs</groupId>
@@ -702,8 +702,6 @@ the software.
                 <artifactId>postgresql</artifactId>
                 <version>42.7.2</version>
             </dependency>
-
-
 
             <dependency>
                 <groupId>org.hibernate.orm</groupId>
@@ -954,7 +952,7 @@ the software.
             <dependency>
                 <groupId>com.google.guava</groupId>
                 <artifactId>guava</artifactId>
-                <version>32.0.0-jre</version>
+                <version>33.7.2-jre</version>
             </dependency>
 
             <dependency>
