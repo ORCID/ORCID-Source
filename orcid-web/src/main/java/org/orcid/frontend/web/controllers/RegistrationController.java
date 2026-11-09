@@ -77,15 +77,7 @@ import org.springframework.web.servlet.support.RequestContextUtils;
  */
 @Controller
 public class RegistrationController extends BaseController {
-    public static Pattern givenNamesPattern = Pattern.compile("given_names=([^&]*)");
-    public static Pattern familyNamesPattern = Pattern.compile("family_names=([^&]*)");
-    public static Pattern emailPattern = Pattern.compile("email=([^&]*)");
-
     private static final Logger LOGGER = LoggerFactory.getLogger(RegistrationController.class);
-
-    final static Integer DUP_SEARCH_START = 0;
-
-    final static Integer DUP_SEARCH_ROWS = 25;
 
     public final static String GRECAPTCHA_SESSION_ATTRIBUTE_NAME = "verified-recaptcha";
 
@@ -117,9 +109,6 @@ public class RegistrationController extends BaseController {
 
     @Resource(name = "profileHistoryEventManagerV3")
     private ProfileHistoryEventManager profileHistoryEventManager;
-
-    @Resource(name = "recordNameManagerReadOnlyV3")
-    private RecordNameManagerReadOnly recordNameManagerReadOnly;
 
     @Resource
     private SocialSignInUtils socialSignInUtils;
@@ -402,6 +391,11 @@ public class RegistrationController extends BaseController {
         // Validate the email address is ok
         if (!validateEmailAddress(emailAddress)) {
             reg.getEmail().getErrors().add(getMessage("Email.personalInfoForm.email", emailAddress));
+            return reg;
+        }
+
+        if (disposableEmailsService.isDisposableEmail(emailAddress)) {
+            reg.getEmail().getErrors().add("disposable_email");
             return reg;
         }
 
