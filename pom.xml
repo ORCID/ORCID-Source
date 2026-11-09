@@ -710,11 +710,6 @@ the software.
             </dependency>
             <dependency>
                 <groupId>org.hibernate.orm</groupId>
-                <artifactId>hibernate-agroal</artifactId>
-                <version>6.4.4.Final</version>
-            </dependency>
-            <dependency>
-                <groupId>org.hibernate.orm</groupId>
                 <artifactId>hibernate-hikaricp</artifactId>
                 <version>6.4.4.Final</version>
             </dependency>
@@ -929,12 +924,6 @@ the software.
                 <groupId>xmlunit</groupId>
                 <artifactId>xmlunit</artifactId>
                 <version>1.3</version>
-                <scope>test</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.seleniumhq.selenium</groupId>
-                <artifactId>selenium-java</artifactId>
-                <version>3.14.0</version>
                 <scope>test</scope>
             </dependency>
             <dependency>

@@ -151,10 +151,6 @@
             </dependency>
             <dependency>
                 <groupId>org.hibernate.orm</groupId>
-                <artifactId>hibernate-agroal</artifactId>
-            </dependency>
-            <dependency>
-                <groupId>org.hibernate.orm</groupId>
                 <artifactId>hibernate-hikaricp</artifactId>
             </dependency>
             <dependency>
@@ -209,19 +205,10 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>org.seleniumhq.selenium</groupId>
-            <artifactId>selenium-java</artifactId>
-        </dependency>
-        <dependency>
             <groupId>org.hsqldb</groupId>
             <artifactId>hsqldb</artifactId>
             <scope>test</scope>
         </dependency>
-        <dependency>
-            <groupId>org.neo4j</groupId>
-            <artifactId>neo4j-cypher-commons</artifactId>
-            <version>2.1.2</version>
-        </dependency>        
         <dependency>
             <groupId>org.togglz</groupId>
             <artifactId>togglz-junit</artifactId>
