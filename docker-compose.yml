@@ -48,6 +48,7 @@ services:
     build:
       context: .
       dockerfile: orcid-haprouter/Dockerfile
+      target: ${PROXY_TARGET:-dev}
     env_file:
       - orcid-haprouter/default.env
       - orcid-haprouter/deployment.env
@@ -68,6 +69,7 @@ services:
     build:
       context: .
       dockerfile: orcid-lb/Dockerfile
+      target: ${PROXY_TARGET:-dev}
     ports:
       - 0.0.0.0:891:1936 # stats
       - 0.0.0.0:80:80
@@ -110,6 +112,7 @@ services:
     build:
       context: .
       dockerfile: orcid-pub-web-proxy/Dockerfile
+      target: ${PROXY_TARGET:-dev}
     ports:
       - 0.0.0.0:13109:80
       - 0.0.0.0:13110:443
@@ -140,6 +143,7 @@ services:
     build:
       context: .
       dockerfile: orcid-web-proxy/Dockerfile
+      target: ${PROXY_TARGET:-dev}
     ports:
       - 0.0.0.0:13107:80
       - 0.0.0.0:13108:443
