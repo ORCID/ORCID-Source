@@ -111,10 +111,6 @@
             </dependency>
             <dependency>
                 <groupId>org.hibernate.orm</groupId>
-                <artifactId>hibernate-agroal</artifactId>
-            </dependency>
-            <dependency>
-                <groupId>org.hibernate.orm</groupId>
                 <artifactId>hibernate-hikaricp</artifactId>
             </dependency>
             <dependency>
@@ -184,17 +180,6 @@
         <dependency>
             <groupId>org.jasypt</groupId>
             <artifactId>jasypt-hibernate5</artifactId>
-        </dependency>
-         <!-- Messaging -->
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-jms</artifactId>
-            <version>${spring.version}</version>            
-        </dependency>
-        <dependency>
-            <groupId>org.apache.activemq</groupId>
-            <artifactId>activemq-broker</artifactId>
-            <version>${activemq.version}</version>
         </dependency>
         
         <!-- javax.xml -->

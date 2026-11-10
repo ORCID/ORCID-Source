@@ -30,26 +30,27 @@ the software.
         <security.version>6.5.11</security.version>
         <liquibase.version>4.9.1</liquibase.version>
         <jersey.version>3.1.10</jersey.version>
-        <jackson.version>2.15.4</jackson.version>
-        <activemq.version>6.2.4</activemq.version>
+        <jackson.version>2.23.0</jackson.version>
+        <jackson-annotations.version>2.22</jackson-annotations.version>
+        <activemq.version>6.2.10</activemq.version>
         <swagger.version>2.1.1</swagger.version>
-        <aspectj.version>1.9.6</aspectj.version>
-        <jena.version>4.4.0</jena.version>
+        <aspectj.version>1.9.27</aspectj.version>
+        <jena.version>6.2.0</jena.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <servlet.port>9437</servlet.port>
         <ajp.port>9438</ajp.port>
-        <aws.version>1.12.261</aws.version>
+        <aws.version>1.12.797</aws.version>
         <!-- AWS SDK v2, required for AWS End User Messaging Notify (pinpoint-sms-voice-v2 SendNotifyTextMessage).
              Must be a release that includes Notify (GA March 2026). Verify against the artifacts available to the build. -->
-        <awssdk.version>2.46.21</awssdk.version>
-        <libphonenumber.version>9.0.30</libphonenumber.version>
+        <awssdk.version>2.57.11</awssdk.version>
+        <libphonenumber.version>9.0.43</libphonenumber.version>
         <twilio.version>12.1.1</twilio.version>
         <solr.version>8.0.0</solr.version>
         <junit.version>4.13.2</junit.version>
         <main.basedir>${project.basedir}</main.basedir>
         <branchVersion>1.1.5-SNAPSHOT</branchVersion>
-        <togglz.version>4.4.0</togglz.version>
+        <togglz.version>4.6.4</togglz.version>
         <slf4j.version>2.0.17</slf4j.version>
     </properties>
 
@@ -121,7 +122,7 @@ the software.
              <plugin>
                <groupId>org.apache.maven.plugins</groupId>
                <artifactId>maven-deploy-plugin</artifactId>
-               <version>3.0.0-M2</version>
+               <version>3.2.0</version>
                <configuration>
                    <failOnMissingWebXml>false</failOnMissingWebXml>
               </configuration>
@@ -187,48 +188,6 @@ the software.
                     <propertyFile>src/main/resources/liquibase.properties</propertyFile>
                 </configuration>
             </plugin>
-            <!-- plugin>
-                <groupId>com.mycila.maven-license-plugin</groupId>
-                <artifactId>maven-license-plugin</artifactId>
-            </plugin -->
-    <plugin>
-    <groupId>org.openrewrite.maven</groupId>
-    <artifactId>rewrite-maven-plugin</artifactId>
-    <version>5.43.0</version> 
-    <configuration>
-        <activeRecipes>
-        	<recipe>org.openrewrite.java.migrate.UpgradeToJava17</recipe>
-        	<recipe>org.openrewrite.java.migrate.jakarta.JavaxMigrationToJakarta</recipe>
-        	<recipe>org.openrewrite.java.spring.framework.UpgradeSpringFramework_6_0</recipe>
-            <recipe>org.openrewrite.hibernate.MigrateToHibernate62</recipe>
-            <recipe>org.openrewrite.apache.httpclient5.UpgradeApacheHttpClient_5</recipe>
-        </activeRecipes>
-    </configuration>
-    <dependencies>
-        <dependency>
-            <groupId>org.openrewrite.recipe</groupId>
-            <artifactId>rewrite-migrate-java</artifactId>
-            <version>2.20.0</version> 
-        </dependency>
-         <dependency>
-		            <groupId>org.openrewrite.recipe</groupId>
-		            <artifactId>rewrite-spring</artifactId> 
-		            <version>5.18.0</version> 
-		            <!--artifactId>rewrite-migrate-java</artifactId>
-            		<version>2.20.0</version-->
-            	   </dependency>
-        <dependency>
-            <groupId>org.openrewrite.recipe</groupId>
-            <artifactId>rewrite-hibernate</artifactId>
-            <version>2.19.1</version> 
-        </dependency>
-        <dependency>
-            <groupId>org.openrewrite.recipe</groupId>
-            <artifactId>rewrite-apache</artifactId>
-            <version>1.4.2</version> 
-        </dependency>
-    </dependencies>
-</plugin>
         </plugins>
 
         <pluginManagement>
@@ -236,17 +195,17 @@ the software.
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-enforcer-plugin</artifactId>
-                    <version>3.0.0-M3</version>
+                    <version>3.7.0</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-compiler-plugin</artifactId>
-                    <version>3.8.1</version>
+                    <version>3.16.0</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-surefire-plugin</artifactId>
-                    <version>3.0.0-M5</version>
+                    <version>3.6.1</version>
                 </plugin>
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>
@@ -289,41 +248,6 @@ the software.
                             <goals>
                                 <goal>stop</goal>
                             </goals>
-                        </execution>
-                    </executions>
-                </plugin>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-failsafe-plugin</artifactId>
-                    <version>3.0.0-M5</version>
-                    <executions>
-                        <execution>
-                            <id>perform-it</id>
-                            <goals>
-                                <goal>integration-test</goal>
-                            </goals>
-                            <configuration>
-                                <systemProperties>
-                                    <property>
-                                        <name>servlet.port</name>
-                                        <value>${servlet.port}</value>
-                                    </property>
-                                </systemProperties>
-                                <includes>
-                                    <include>**/**ITest.java</include>
-                                </includes>
-                            </configuration>
-                        </execution>
-                        <execution>
-                            <id>verify-it</id>
-                            <goals>
-                                <goal>verify</goal>
-                            </goals>
-                            <configuration>
-                                <includes>
-                                    <include>**/**ITest.java</include>
-                                </includes>
-                            </configuration>
                         </execution>
                     </executions>
                 </plugin>
@@ -619,65 +543,16 @@ the software.
             </dependency>
             
             <!-- Jersey Server -->
- <dependency>
-    <groupId>org.glassfish.jersey.containers</groupId>
-    <artifactId>jersey-container-servlet</artifactId>
-    <version>${jersey.version}</version>
-</dependency>
-<dependency>
-    <groupId>org.glassfish.jersey.media</groupId>
-    <artifactId>jersey-media-json-jackson</artifactId>
-    <version>${jersey.version}</version>
-</dependency>
-
-            <!-- http://mvnrepository.com/artifact/com.sun.jersey/jersey-server -->
-            <!-- dependency>
-                <groupId>com.sun.jersey</groupId>
-                <artifactId>jersey-server</artifactId>
-            <version>${jersey.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.sun.jersey.contribs</groupId>
-                <artifactId>jersey-spring</artifactId>
-                <version>${jersey.version}</version>
-                <exclusions>
-                    <exclusion>
-                        <artifactId>spring-web</artifactId>
-                        <groupId>org.springframework</groupId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>org.springframework</groupId>
-                        <artifactId>spring-core</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>org.springframework</groupId>
-                        <artifactId>spring-beans</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>org.springframework</groupId>
-                        <artifactId>spring-context</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>org.springframework</groupId>
-                        <artifactId>spring-web</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>org.springframework</groupId>
-                        <artifactId>spring-aop</artifactId>
-                    </exclusion>
-                </exclusions>
-            </dependency>
-
-            <dependency>
-                <groupId>com.sun.jersey.contribs</groupId>
-                <artifactId>jersey-apache-client</artifactId>
+             <dependency>
+                <groupId>org.glassfish.jersey.containers</groupId>
+                <artifactId>jersey-container-servlet</artifactId>
                 <version>${jersey.version}</version>
             </dependency>
             <dependency>
-                <groupId>com.sun.jersey</groupId>
-                <artifactId>jersey-client</artifactId>
+                <groupId>org.glassfish.jersey.media</groupId>
+                <artifactId>jersey-media-json-jackson</artifactId>
                 <version>${jersey.version}</version>
-            </dependency -->
+            </dependency>
 
             <!-- Web -->
             <dependency>
@@ -706,7 +581,7 @@ the software.
             <dependency>
                 <groupId>com.fasterxml.jackson.core</groupId>
                 <artifactId>jackson-annotations</artifactId>
-                <version>${jackson.version}</version>
+                <version>${jackson-annotations.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.fasterxml.jackson.core</groupId>
@@ -716,19 +591,19 @@ the software.
             <dependency>
                 <groupId>org.apache.httpcomponents.client5</groupId>
                 <artifactId>httpclient5</artifactId>
-                <version>5.3.1</version>
+                <version>5.6.5</version>
                 <scope>compile</scope>
             </dependency>
             <dependency>
                 <groupId>org.apache.httpcomponents.core5</groupId>
                 <artifactId>httpcore5</artifactId>
-                <version>5.3.6</version>
+                <version>5.4.4</version>
                 <scope>compile</scope>
             </dependency>
             <dependency>
                 <groupId>commons-codec</groupId>
                 <artifactId>commons-codec</artifactId>
-                <version>1.9</version>
+                <version>1.23.0</version>
             </dependency>
             <dependency>
                 <groupId>com.sun.jersey.contribs</groupId>
@@ -748,19 +623,12 @@ the software.
             <dependency>
                 <groupId>org.postgresql</groupId>
                 <artifactId>postgresql</artifactId>
-                <version>42.7.2</version>
+                <version>42.7.14</version>
             </dependency>
-
-
 
             <dependency>
                 <groupId>org.hibernate.orm</groupId>
                 <artifactId>hibernate-core</artifactId>
-                <version>6.4.4.Final</version>
-            </dependency>
-            <dependency>
-                <groupId>org.hibernate.orm</groupId>
-                <artifactId>hibernate-agroal</artifactId>
                 <version>6.4.4.Final</version>
             </dependency>
             <dependency>
@@ -801,7 +669,7 @@ the software.
             <dependency>
                 <groupId>org.ehcache</groupId>
                 <artifactId>ehcache</artifactId>
-                <version>3.11.1</version>
+                <version>3.12.0</version>
                 <classifier>jakarta</classifier>
                 <exclusions>
                     <exclusion>
@@ -853,13 +721,13 @@ the software.
             <dependency>
                 <groupId>commons-io</groupId>
                 <artifactId>commons-io</artifactId>
-                <version>2.14.0</version>
+                <version>2.22.0</version>
                 <scope>compile</scope>
             </dependency>
             <dependency>
                 <groupId>org.apache.commons</groupId>
                 <artifactId>commons-lang3</artifactId>
-                <version>3.2</version>
+                <version>3.21.0</version>
                 <scope>compile</scope>
             </dependency>
             <dependency>
@@ -907,7 +775,7 @@ the software.
             <dependency>
                 <groupId>org.bouncycastle</groupId>
                 <artifactId>bcprov-jdk15on</artifactId>
-                <version>1.67</version>
+                <version>1.70</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.jena</groupId>
@@ -967,7 +835,7 @@ the software.
         <dependency>
             <groupId>net.bytebuddy</groupId>
             <artifactId>byte-buddy</artifactId>
-            <version>1.14.12</version>
+            <version>1.18.17</version>
         </dependency>
             <dependency>
                 <groupId>org.hsqldb</groupId>
@@ -979,12 +847,6 @@ the software.
                 <groupId>xmlunit</groupId>
                 <artifactId>xmlunit</artifactId>
                 <version>1.3</version>
-                <scope>test</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.seleniumhq.selenium</groupId>
-                <artifactId>selenium-java</artifactId>
-                <version>3.14.0</version>
                 <scope>test</scope>
             </dependency>
             <dependency>
@@ -1002,7 +864,7 @@ the software.
             <dependency>
                 <groupId>com.google.guava</groupId>
                 <artifactId>guava</artifactId>
-                <version>32.0.0-jre</version>
+                <version>33.8.0-jre</version>
             </dependency>
 
             <dependency>
