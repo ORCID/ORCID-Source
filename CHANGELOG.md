@@ -1,3 +1,9 @@
+## v3.25.7 - 2026-11-10
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.25.6...v3.25.7)
+
+- [#7766](https://github.com/ORCID/ORCID-Source/pull/7766): PD-5531 PD-5532 PD-5533 Implemented evict session for orcid in the OrcidRedisIndexedSessionRepository
+
 ## v3.25.6 - 2026-11-06
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.25.5...v3.25.6)
