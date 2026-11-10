@@ -52,6 +52,12 @@ public class Registration implements ErrorsInterface, Serializable {
 
     private Text grecaptchaWidgetId;
 
+    private String captchaProvider;
+
+    private String captchaRegistrationId;
+
+    private String captchaSiteKey;
+
     private String linkType;
 
     private AffiliationForm affiliationForm;
@@ -83,6 +89,30 @@ public class Registration implements ErrorsInterface, Serializable {
 
     public List<String> getErrors() {
         return errors;
+    }
+
+    public String getCaptchaProvider() {
+        return captchaProvider;
+    }
+
+    public void setCaptchaProvider(String captchaProvider) {
+        this.captchaProvider = captchaProvider;
+    }
+
+    public String getCaptchaRegistrationId() {
+        return captchaRegistrationId;
+    }
+
+    public void setCaptchaRegistrationId(String captchaRegistrationId) {
+        this.captchaRegistrationId = captchaRegistrationId;
+    }
+
+    public String getCaptchaSiteKey() {
+        return captchaSiteKey;
+    }
+
+    public void setCaptchaSiteKey(String captchaSiteKey) {
+        this.captchaSiteKey = captchaSiteKey;
     }
 
     public void setErrors(List<String> errors) {

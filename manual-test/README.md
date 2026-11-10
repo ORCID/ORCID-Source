@@ -19,7 +19,7 @@
     * Password: test1234
     * Subscribe to quarterly emails about new features
     * Default privacy for new activities: Everyone
-    * accept the Terms of Use and complete the reCaptcha challenge
+    * accept the Terms of Use and complete the selected verification challenge
 1. A modal window is displayed in my-orcid containing an email verification reminder; click the button to resend the verification email.
 1. Click the button "Resend verification email" located inside the yellow banner above the biography section. The content of the banner will change to indicate a verification email has been sent.
 1. Click the pencil icon in the biography section, then click the button "resend verification email" in the modal window that comes up.
@@ -30,6 +30,22 @@
 1. When redirected to https://qa.orcid.org/signin, ensure there is a banner confirming the email address was verified successfully, and sign in using the credentials created at the start (ma_test_[DD][month][YYYY]@mailinator.com).
 1. Replace [orcid id] in this document with the 16 digit iD from the record.
 14. Visit https://qa.orcid.org/signout
+
+### Registration CAPTCHA rollout and checks
+
+Do not enable `USE_TURNSTILE_REGISTRATION` until the backend and registration interfaces are deployed together and verified. `GET /register.json` returns the session-bound provider, registration ID and selected public site key without caching. Existing non-English `registrationForm.recaptcha.error` translations need provider-neutral wording before rollout.
+
+Provision a Turnstile widget and allowed hostnames for each environment. Set `ORG_ORCID_TURNSTILE_WEB_SITE_KEY`, `ORG_ORCID_TURNSTILE_SECRET`, and `ORG_ORCID_TURNSTILE_VERIFY_URL` in the frontend deployment environment; keep the secret server-side and retain the Google settings. The committed development and UI-test keys are Cloudflare's public always-pass test keys and must never be used in production. See [Cloudflare's test keys](https://developers.cloudflare.com/turnstile/troubleshooting/testing/). Confirm browser responses contain only public keys, never secrets or the Siteverify URL.
+
+The toggle defaults to reCAPTCHA when absent or disabled. Togglz state is cached per instance (`org.orcid.persistence.togglz.cache.ttl`, default 60000 ms), so allow for propagation and verify every instance. To roll back, disable the toggle, keep both providers and credentials deployed, and allow existing sessions to finish with their originally selected provider; new sessions select reCAPTCHA after propagation. Coordinate deployments and rollback with `orcid-angular` rather than removing either integration.
+
+In a non-production environment, exercise the following on direct registration and OAuth-linked registration, including the duplicate-record confirmation and Shibboleth confirmation paths where applicable:
+
+1. With the toggle absent/off and then on, start a fresh registration and confirm only the selected widget appears. Complete registration and check linking and confirmation still work.
+1. Test a loaded widget with a missing, invalid, expired or rejected token and a Siteverify network failure. Confirm a localized error appears, no account is created, and a fresh challenge can be retried. Cloudflare's test keys include failure and duplicate-token scenarios.
+1. Block the widget script before it loads and confirm the existing unloaded-widget bypass; test `DISABLE_RECAPTCHA` separately. This client-reported load failure is a compatibility bypass, not reliable bot protection.
+1. Change the toggle in both directions after form initialization and between validation and confirmation. Confirm the in-flight form keeps its provider and a fresh registration uses the new setting after cache propagation; repeated validation and confirmation must not reverify a single-use token.
+1. Open a second registration tab or clear the session, then submit the stale first form. Confirm it requires a fresh challenge; also check a mismatched provider or token is rejected. Test error/reset and expiration handling, keyboard accessibility, and translated error text.
 
 ## Reset password and ORCID iD recovery
 
@@ -101,7 +117,7 @@
     * Default privacy for new activities: Only me
     * Do not subscribe to quarterly emails
     * Accept the Terms of use
-    * Complete the reCaptcha challenge
+    * Complete the selected verification challenge
 
 1. Check you are prompted with a window "Could this be you?" asking if the record you created earlier is you. Click "Continue to registration".
 
