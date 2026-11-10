@@ -7,7 +7,6 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -21,7 +20,6 @@ import java.util.Locale;
 import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpSession;
 
 import org.apache.commons.codec.binary.Base64;
 import org.jasypt.exceptions.EncryptionOperationNotPossibleException;
@@ -50,6 +48,8 @@ import org.orcid.core.togglz.Features;
 import org.orcid.core.utils.SecurityContextTestUtils;
 import org.orcid.frontend.email.RecordEmailSender;
 import org.orcid.frontend.service.DisposableEmailsService;
+import org.orcid.frontend.web.util.RecaptchaVerifier;
+import org.orcid.frontend.web.util.TurnstileVerifier;
 import org.orcid.jaxb.model.common.AvailableLocales;
 import org.orcid.jaxb.model.message.CreationMethod;
 import org.orcid.jaxb.model.v3.release.common.Visibility;
@@ -61,6 +61,7 @@ import org.orcid.pojo.ajaxForm.Text;
 import org.orcid.test.DBUnitTest;
 import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.orcid.test.TargetProxyHelper;
+import org.springframework.mock.web.MockHttpSession;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -117,6 +118,14 @@ public class RegistrationControllerTest extends DBUnitTest {
     
     @Mock
     private AuthenticationManager authenticationManagerMock; 
+
+    @Mock
+    private RecaptchaVerifier recaptchaVerifier;
+
+    @Mock
+    private TurnstileVerifier turnstileVerifier;
+
+    private MockHttpSession session;
     
     @Rule
     public TogglzRule togglzRule = TogglzRule.allDisabled(Features.class);
@@ -143,10 +152,12 @@ public class RegistrationControllerTest extends DBUnitTest {
         TargetProxyHelper.injectIntoProxy(registrationController, "authenticationManager", authenticationManagerMock); 
         TargetProxyHelper.injectIntoProxy(registrationController, "profileHistoryEventManager", profileHistoryEventManager); 
         TargetProxyHelper.injectIntoProxy(registrationController, "recordEmailSender", recordEmailSender);         
+        TargetProxyHelper.injectIntoProxy(registrationController, "recaptchaVerifier", recaptchaVerifier);
+        TargetProxyHelper.injectIntoProxy(registrationController, "turnstileVerifier", turnstileVerifier);
         
         when(servletRequest.getLocale()).thenReturn(Locale.ENGLISH);
         
-        HttpSession session = mock(HttpSession.class);
+        session = new MockHttpSession();
         when(servletRequest.getSession()).thenReturn(session);
         
         when(authenticationManagerMock.authenticate(Mockito.any())).thenAnswer(new Answer<UsernamePasswordAuthenticationToken>() {
@@ -164,9 +175,18 @@ public class RegistrationControllerTest extends DBUnitTest {
     
     @Test
     public void testStripHtmlFromNames() throws UnsupportedEncodingException {
+        confirmRegistration(false);
+    }
+
+    @Test
+    public void confirmRegistrationWithVerifiedCaptcha() throws UnsupportedEncodingException {
+        confirmRegistration(true);
+    }
+
+    private void confirmRegistration(boolean loaded) throws UnsupportedEncodingException {
         Text email = Text.valueOf(System.currentTimeMillis() + "@test.orcid.org");
         
-        when(registrationManager.createMinimalRegistration(Mockito.any(Registration.class), eq(false), Mockito.any(java.util.Locale.class), Mockito.anyString())).thenAnswer(new Answer<String>(){
+        when(registrationManager.createMinimalRegistration(Mockito.any(Registration.class), eq(loaded), Mockito.any(java.util.Locale.class), Mockito.anyString())).thenAnswer(new Answer<String>(){
             @Override
             public String answer(InvocationOnMock invocation) throws Throwable {
                 return "0000-0000-0000-0000";                
@@ -189,6 +209,17 @@ public class RegistrationControllerTest extends DBUnitTest {
         reg.setTermsOfUse(c);
         reg.setCreationType(Text.valueOf(CreationMethod.API.value()));
 
+        Registration issued = registrationController.getRegister(servletRequest, servletResponse);
+        reg.setCaptchaProvider(issued.getCaptchaProvider());
+        reg.setCaptchaRegistrationId(issued.getCaptchaRegistrationId());
+        if (loaded) {
+            reg.setGrecaptchaWidgetId(Text.valueOf("widget"));
+            reg.setGrecaptcha(Text.valueOf("token"));
+            when(recaptchaVerifier.verify("token")).thenReturn(true);
+            registrationController.validateGrcaptcha(servletRequest, reg);
+            assertTrue(reg.getGrecaptcha().getErrors().isEmpty());
+        }
+
         Redirect redirect = registrationController.setRegisterConfirm(servletRequest, servletResponse, reg);
         assertTrue(redirect.getUrl().endsWith("?justRegistered"));
         
@@ -200,7 +231,140 @@ public class RegistrationControllerTest extends DBUnitTest {
         assertNotNull(argument1.getValue());
         Registration form = argument1.getValue();
         assertEquals("Given Names", form.getGivenNames().getValue());
-        assertEquals("Family Name", form.getFamilyNames().getValue());      
+        assertEquals("Family Name", form.getFamilyNames().getValue());
+        assertEquals(loaded, argument2.getValue());
+        assertNull(session.getAttribute(RegistrationController.GRECAPTCHA_SESSION_ATTRIBUTE_NAME));
+        assertTrue(registrationController.setRegisterConfirm(servletRequest, servletResponse, reg).getUrl().endsWith("/register"));
+    }
+
+    @Test
+    public void registrationExposesOnlySelectedSiteKeyAndIsNotCacheable() {
+        TargetProxyHelper.injectIntoProxy(registrationController, "recaptchaSiteKey", "google-public");
+        TargetProxyHelper.injectIntoProxy(registrationController, "turnstileSiteKey", "cloudflare-public");
+        togglzRule.disable(Features.USE_TURNSTILE_REGISTRATION);
+        assertEquals("google-public", registrationController.getRegister(servletRequest, servletResponse).getCaptchaSiteKey());
+        togglzRule.enable(Features.USE_TURNSTILE_REGISTRATION);
+        assertEquals("cloudflare-public", registrationController.getRegister(servletRequest, servletResponse).getCaptchaSiteKey());
+        verify(servletResponse, times(2)).setHeader("Cache-Control", "no-store");
+    }
+
+    @Test
+    public void captchaProvidersVerifyOnceAndRemainBoundAcrossToggleChanges() {
+        for (boolean turnstile : new boolean[] { false, true }) {
+            if (turnstile) {
+                togglzRule.enable(Features.USE_TURNSTILE_REGISTRATION);
+            } else {
+                togglzRule.disable(Features.USE_TURNSTILE_REGISTRATION);
+            }
+            Registration reg = registrationController.getRegister(servletRequest, servletResponse);
+            assertEquals(turnstile ? "turnstile" : "recaptcha", reg.getCaptchaProvider());
+            assertNotNull(reg.getCaptchaRegistrationId());
+            reg.setGrecaptchaWidgetId(Text.valueOf("widget"));
+            reg.setGrecaptcha(Text.valueOf(turnstile ? "turnstile-token" : "recaptcha-token"));
+            when(recaptchaVerifier.verify("recaptcha-token")).thenReturn(true);
+            when(turnstileVerifier.verify("turnstile-token")).thenReturn(true);
+            if (turnstile) {
+                togglzRule.disable(Features.USE_TURNSTILE_REGISTRATION);
+            } else {
+                togglzRule.enable(Features.USE_TURNSTILE_REGISTRATION);
+            }
+            registrationController.validateGrcaptcha(servletRequest, reg);
+            assertTrue(reg.getGrecaptcha().getErrors().isEmpty());
+            registrationController.validateGrcaptcha(servletRequest, reg);
+            assertTrue(reg.getGrecaptcha().getErrors().isEmpty());
+            assertEquals(reg.getGrecaptcha().getValue(), session.getAttribute(RegistrationController.GRECAPTCHA_SESSION_ATTRIBUTE_NAME));
+        }
+        verify(recaptchaVerifier, times(1)).verify("recaptcha-token");
+        verify(turnstileVerifier, times(1)).verify("turnstile-token");
+    }
+
+    @Test
+    public void captchaRejectsMismatchesAndFailedOrBlankTokens() {
+        Registration reg = registrationController.getRegister(servletRequest, servletResponse);
+        reg.setGrecaptchaWidgetId(Text.valueOf("widget"));
+        reg.setGrecaptcha(Text.valueOf("bad"));
+        registrationController.validateGrcaptcha(servletRequest, reg);
+        assertFalse(reg.getGrecaptcha().getErrors().isEmpty());
+        assertNull(session.getAttribute(RegistrationController.GRECAPTCHA_SESSION_ATTRIBUTE_NAME));
+        verify(recaptchaVerifier).verify("bad");
+
+        reg.setGrecaptcha(Text.valueOf(" "));
+        registrationController.validateGrcaptcha(servletRequest, reg);
+        assertFalse(reg.getGrecaptcha().getErrors().isEmpty());
+        verify(recaptchaVerifier, times(0)).verify(" ");
+
+        reg.setCaptchaProvider("turnstile");
+        reg.setGrecaptcha(Text.valueOf("other"));
+        registrationController.validateGrcaptcha(servletRequest, reg);
+        assertFalse(reg.getGrecaptcha().getErrors().isEmpty());
+        verify(turnstileVerifier, times(0)).verify("other");
+        reg.setCaptchaProvider("recaptcha");
+        reg.setCaptchaRegistrationId("wrong");
+        registrationController.validateGrcaptcha(servletRequest, reg);
+        assertFalse(reg.getGrecaptcha().getErrors().isEmpty());
+        verify(recaptchaVerifier, times(0)).verify("other");
+    }
+
+    @Test
+    public void turnstileFailureAndMissingSessionAreRejected() throws UnsupportedEncodingException {
+        togglzRule.enable(Features.USE_TURNSTILE_REGISTRATION);
+        Registration reg = registrationController.getRegister(servletRequest, servletResponse);
+        reg.setGrecaptchaWidgetId(Text.valueOf("widget"));
+        reg.setGrecaptcha(Text.valueOf("bad-turnstile"));
+        registrationController.validateGrcaptcha(servletRequest, reg);
+        assertFalse(reg.getGrecaptcha().getErrors().isEmpty());
+        assertNull(session.getAttribute(RegistrationController.GRECAPTCHA_SESSION_ATTRIBUTE_NAME));
+        verify(turnstileVerifier).verify("bad-turnstile");
+        assertTrue(registrationController.setRegisterConfirm(servletRequest, servletResponse, reg).getUrl().endsWith("/register"));
+
+        when(servletRequest.getSession()).thenReturn(new MockHttpSession());
+        registrationController.validateGrcaptcha(servletRequest, reg);
+        assertFalse(reg.getGrecaptcha().getErrors().isEmpty());
+        assertTrue(registrationController.setRegisterConfirm(servletRequest, servletResponse, reg).getUrl().endsWith("/register"));
+        verify(turnstileVerifier, times(1)).verify("bad-turnstile");
+        verify(registrationManager, times(0)).createMinimalRegistration(Mockito.any(), Mockito.anyBoolean(), Mockito.any(), Mockito.anyString());
+    }
+
+    @Test
+    public void captchaCannotBeRemovedOrChangedAfterVerification() throws UnsupportedEncodingException {
+        Registration reg = registrationController.getRegister(servletRequest, servletResponse);
+        reg.setGrecaptchaWidgetId(Text.valueOf("widget"));
+        reg.setGrecaptcha(Text.valueOf("verified"));
+        when(recaptchaVerifier.verify("verified")).thenReturn(true);
+        registrationController.validateGrcaptcha(servletRequest, reg);
+        assertTrue(reg.getGrecaptcha().getErrors().isEmpty());
+
+        reg.setGrecaptcha(Text.valueOf("changed"));
+        registrationController.validateGrcaptcha(servletRequest, reg);
+        assertFalse(reg.getGrecaptcha().getErrors().isEmpty());
+        assertTrue(registrationController.setRegisterConfirm(servletRequest, servletResponse, reg).getUrl().endsWith("/register"));
+        verify(recaptchaVerifier, times(0)).verify("changed");
+
+        reg.setGrecaptchaWidgetId(null);
+        reg.setGrecaptcha(Text.valueOf("verified"));
+        registrationController.validateGrcaptcha(servletRequest, reg);
+        assertFalse(reg.getGrecaptcha().getErrors().isEmpty());
+        reg.setGrecaptcha(null);
+        assertTrue(registrationController.setRegisterConfirm(servletRequest, servletResponse, reg).getUrl().endsWith("/register"));
+        verify(registrationManager, times(0)).createMinimalRegistration(Mockito.any(), Mockito.anyBoolean(), Mockito.any(), Mockito.anyString());
+    }
+
+    @Test
+    public void captchaBypassRequiresCurrentRegistrationAndNewFormClearsVerification() throws UnsupportedEncodingException {
+        Registration reg = registrationController.getRegister(servletRequest, servletResponse);
+        registrationController.validateGrcaptcha(servletRequest, reg);
+        assertTrue(reg.getGrecaptcha().getErrors().isEmpty());
+        verify(recaptchaVerifier, times(0)).verify(Mockito.anyString());
+        verify(turnstileVerifier, times(0)).verify(Mockito.anyString());
+
+        session.setAttribute(RegistrationController.GRECAPTCHA_SESSION_ATTRIBUTE_NAME, "old-token");
+        Registration next = registrationController.getRegister(servletRequest, servletResponse);
+        assertNull(session.getAttribute(RegistrationController.GRECAPTCHA_SESSION_ATTRIBUTE_NAME));
+        assertFalse(reg.getCaptchaRegistrationId().equals(next.getCaptchaRegistrationId()));
+        registrationController.validateGrcaptcha(servletRequest, reg);
+        assertFalse(reg.getGrecaptcha().getErrors().isEmpty());
+        assertTrue(registrationController.setRegisterConfirm(servletRequest, servletResponse, reg).getUrl().endsWith("/register"));
+        verify(registrationManager, times(0)).createMinimalRegistration(Mockito.any(), Mockito.anyBoolean(), Mockito.any(), Mockito.anyString());
     }
     
     @Test

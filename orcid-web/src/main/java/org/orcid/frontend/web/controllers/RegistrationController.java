@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Random;
+import java.util.UUID;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
@@ -37,6 +38,7 @@ import org.orcid.frontend.spring.ShibbolethAjaxAuthenticationSuccessHandler;
 import org.orcid.frontend.spring.SocialAjaxAuthenticationSuccessHandler;
 import org.orcid.frontend.spring.web.social.config.SocialSignInUtils;
 import org.orcid.frontend.web.util.RecaptchaVerifier;
+import org.orcid.frontend.web.util.TurnstileVerifier;
 import org.orcid.jaxb.model.common.AvailableLocales;
 import org.orcid.jaxb.model.message.CreationMethod;
 import org.orcid.jaxb.model.v3.release.common.Visibility;
@@ -53,6 +55,7 @@ import org.orcid.pojo.ajaxForm.Text;
 import org.orcid.utils.OrcidStringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -81,7 +84,19 @@ public class RegistrationController extends BaseController {
 
     public final static String GRECAPTCHA_SESSION_ATTRIBUTE_NAME = "verified-recaptcha";
 
+    private static final String CAPTCHA_PROVIDER = "registration-captcha-provider";
+    private static final String CAPTCHA_REGISTRATION_ID = "registration-captcha-id";
+    private static final String CAPTCHA_LOADED = "registration-captcha-loaded";
+    private static final String TURNSTILE = "turnstile";
+    private static final String RECAPTCHA = "recaptcha";
+
     private static Random rand = new Random();
+
+    @Value("${org.orcid.recaptcha.web_site_key:}")
+    private String recaptchaSiteKey;
+
+    @Value("${org.orcid.turnstile.web_site_key:}")
+    private String turnstileSiteKey;
 
     @Resource
     private RegistrationManager registrationManager;
@@ -97,6 +112,9 @@ public class RegistrationController extends BaseController {
 
     @Resource
     private RecaptchaVerifier recaptchaVerifier;
+
+    @Resource
+    private TurnstileVerifier turnstileVerifier;
 
     @Resource
     private SocialAjaxAuthenticationSuccessHandler ajaxAuthenticationSuccessHandlerSocial;
@@ -118,11 +136,21 @@ public class RegistrationController extends BaseController {
 
     @RequestMapping(value = "/register.json", method = RequestMethod.GET)
     public @ResponseBody Registration getRegister(HttpServletRequest request, HttpServletResponse response) {
+        response.setHeader("Cache-Control", "no-store");
         // Remove the session hash if needed
         if (request.getSession().getAttribute(GRECAPTCHA_SESSION_ATTRIBUTE_NAME) != null) {
             request.getSession().removeAttribute(GRECAPTCHA_SESSION_ATTRIBUTE_NAME);
         }
         Registration reg = new Registration();
+
+        String provider = Features.USE_TURNSTILE_REGISTRATION.isActive() ? TURNSTILE : RECAPTCHA;
+        String registrationId = UUID.randomUUID().toString();
+        request.getSession().setAttribute(CAPTCHA_PROVIDER, provider);
+        request.getSession().setAttribute(CAPTCHA_REGISTRATION_ID, registrationId);
+        request.getSession().removeAttribute(CAPTCHA_LOADED);
+        reg.setCaptchaProvider(provider);
+        reg.setCaptchaRegistrationId(registrationId);
+        reg.setCaptchaSiteKey(TURNSTILE.equals(provider) ? turnstileSiteKey : recaptchaSiteKey);
 
         reg.getEmail().setRequired(true);
         reg.getEmailConfirm().setRequired(true);
@@ -167,31 +195,45 @@ public class RegistrationController extends BaseController {
     }
 
     public void validateGrcaptcha(HttpServletRequest request, @RequestBody Registration reg) {
-        // If recatcha wasn't loaded do nothing. This is for countries that
-        // block google.
-        if (reg.getGrecaptchaWidgetId().getValue() != null) {
-            if (reg.getGrecaptcha() == null) {
-                reg.setGrecaptcha(new Text());
-                reg.getGrecaptcha().setErrors(new ArrayList<String>());
-                setError(reg.getGrecaptcha(), "registrationForm.recaptcha.error");
-                setError(reg, "registrationForm.recaptcha.error");
+        if (reg.getGrecaptcha() == null) {
+            reg.setGrecaptcha(new Text());
+        }
+        reg.getGrecaptcha().setErrors(new ArrayList<String>());
+        boolean valid = matchesCaptchaRegistration(request, reg);
+        if (valid && captchaLoaded(reg)) {
+            request.getSession().setAttribute(CAPTCHA_LOADED, Boolean.TRUE);
+        } else if (valid && Boolean.TRUE.equals(request.getSession().getAttribute(CAPTCHA_LOADED))) {
+            valid = false;
+        }
+        if (valid && captchaLoaded(reg)) {
+            String token = reg.getGrecaptcha().getValue();
+            Object verified = request.getSession().getAttribute(GRECAPTCHA_SESSION_ATTRIBUTE_NAME);
+            if (StringUtils.isBlank(token)) {
+                valid = false;
+            } else if (verified != null) {
+                valid = token.equals(verified);
             } else {
-                reg.getGrecaptcha().setErrors(new ArrayList<String>());
-            }
-
-            if (request.getSession().getAttribute(GRECAPTCHA_SESSION_ATTRIBUTE_NAME) != null) {
-                if (!reg.getGrecaptcha().getValue().equals(request.getSession().getAttribute(GRECAPTCHA_SESSION_ATTRIBUTE_NAME))) {
-                    setError(reg.getGrecaptcha(), "registrationForm.recaptcha.error");
-                    setError(reg, "registrationForm.recaptcha.error");
+                valid = TURNSTILE.equals(request.getSession().getAttribute(CAPTCHA_PROVIDER))
+                        ? turnstileVerifier.verify(token) : recaptchaVerifier.verify(token);
+                if (valid) {
+                    request.getSession().setAttribute(GRECAPTCHA_SESSION_ATTRIBUTE_NAME, token);
                 }
-            } else if (!recaptchaVerifier.verify(reg.getGrecaptcha().getValue())) {
-                reg.getGrecaptcha().setErrors(new ArrayList<String>());
-                setError(reg.getGrecaptcha(), "registrationForm.recaptcha.error");
-                setError(reg, "registrationForm.recaptcha.error");
-            } else {
-                request.getSession().setAttribute(GRECAPTCHA_SESSION_ATTRIBUTE_NAME, reg.getGrecaptcha().getValue());
             }
         }
+        if (!valid) {
+            setError(reg.getGrecaptcha(), "registrationForm.recaptcha.error");
+            setError(reg, "registrationForm.recaptcha.error");
+        }
+    }
+
+    private boolean matchesCaptchaRegistration(HttpServletRequest request, Registration reg) {
+        Object id = request.getSession().getAttribute(CAPTCHA_REGISTRATION_ID);
+        Object provider = request.getSession().getAttribute(CAPTCHA_PROVIDER);
+        return id != null && id.equals(reg.getCaptchaRegistrationId()) && provider != null && provider.equals(reg.getCaptchaProvider());
+    }
+
+    private boolean captchaLoaded(Registration reg) {
+        return reg.getGrecaptchaWidgetId() != null && reg.getGrecaptchaWidgetId().getValue() != null;
     }
 
     @RequestMapping(value = { "/registerConfirm.json", "/shibboleth/registerConfirm.json" }, method = RequestMethod.POST)
@@ -203,7 +245,11 @@ public class RegistrationController extends BaseController {
 
         // If recatcha wasn't loaded do nothing. This is for countries that
         // block google.
-        if (reg.getGrecaptchaWidgetId().getValue() != null) {
+        if (!matchesCaptchaRegistration(request, reg)) {
+            r.setUrl(getBaseUri() + "/register");
+            return r;
+        }
+        if (captchaLoaded(reg) || Boolean.TRUE.equals(request.getSession().getAttribute(CAPTCHA_LOADED))) {
             // If the captcha verified key is not in the session, redirect to
             // the login page
             if (request.getSession().getAttribute(GRECAPTCHA_SESSION_ATTRIBUTE_NAME) == null || PojoUtil.isEmpty(reg.getGrecaptcha())
@@ -215,10 +261,6 @@ public class RegistrationController extends BaseController {
             usedCaptcha = true;
         }
 
-        // Remove the session hash if needed
-        if (request.getSession().getAttribute(GRECAPTCHA_SESSION_ATTRIBUTE_NAME) != null) {
-            request.getSession().removeAttribute(GRECAPTCHA_SESSION_ATTRIBUTE_NAME);
-        }
 
         // Strip any html code from names before validating them
         if (!PojoUtil.isEmpty(reg.getFamilyNames())) {
@@ -255,6 +297,11 @@ public class RegistrationController extends BaseController {
             r.getErrors().add(getMessage("register.error.generalError"));
             return r;
         }
+
+        request.getSession().removeAttribute(GRECAPTCHA_SESSION_ATTRIBUTE_NAME);
+        request.getSession().removeAttribute(CAPTCHA_PROVIDER);
+        request.getSession().removeAttribute(CAPTCHA_REGISTRATION_ID);
+        request.getSession().removeAttribute(CAPTCHA_LOADED);
 
         if (OrcidOauth2Constants.SOCIAL.equals(reg.getLinkType())) {
             Map<String, String> signedInData = socialSignInUtils.getSignedInData(request, response);
