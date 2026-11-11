@@ -407,6 +407,38 @@ public class ManageProfileControllerTest {
         when(mockProfileEntityManagerReadOnly.findByOrcid(eq(DEPRECATED_USER_ORCID))).thenReturn(u2);
     }
 
+    @Test
+    public void testChangePasswordKeepsCurrentSession() {
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        MockHttpSession session = new MockHttpSession();
+        request.setSession(session);
+        ChangePassword form = new ChangePassword();
+        form.setOldPassword("old password");
+        form.setPassword("A-long-unique-password-248!");
+        form.setRetypedPassword("A-long-unique-password-248!");
+
+        controller.changedPasswordJson(request, form);
+
+        assertTrue(form.isSuccess());
+        verify(mockSessionRepository).evictSessionsKeepCurrent(USER_ORCID, session.getId());
+        verify(mockSessionRepository, Mockito.never()).evictSessionsForOrcid(USER_ORCID);
+    }
+
+    @Test
+    public void testChangePasswordDoesNotEvictOnInvalidPassword() {
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        ChangePassword form = new ChangePassword();
+        form.setOldPassword("invalid password");
+        form.setPassword("A-long-unique-password-248!");
+        form.setRetypedPassword("A-long-unique-password-248!");
+
+        controller.changedPasswordJson(request, form);
+
+        assertFalse(form.isSuccess());
+        verify(mockSessionRepository, Mockito.never()).evictSessionsKeepCurrent(anyString(), any());
+        verify(mockSessionRepository, Mockito.never()).evictSessionsForOrcid(anyString());
+    }
+
     private void mocksForDeprecatedAccounts() {
         when(mockProfileEntityCacheManager.retrieve(eq(DEPRECATED_USER_ORCID))).then(new Answer<ProfileEntity>() {
             @Override
@@ -1763,7 +1795,7 @@ public class ManageProfileControllerTest {
         ChangePassword result = controller.changedPasswordJson(new MockHttpServletRequest(), cp);
         assertTrue(result.isSuccess());
         verify(mockProfileEntityManager, times(1)).updatePassword(eq(USER_ORCID), eq("NewPassword123!"));
-        verify(mockSessionRepository).evictSessionsForOrcid(USER_ORCID);
+        verify(mockSessionRepository).evictSessionsKeepCurrent(USER_ORCID, null);
     }
 
     @Test
