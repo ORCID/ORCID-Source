@@ -2,15 +2,27 @@ package org.orcid.utils.sms;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 import java.lang.reflect.Proxy;
 import java.net.URI;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.atomic.AtomicReference;
 
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.core.LogEvent;
+import org.apache.logging.log4j.core.Logger;
+import org.apache.logging.log4j.core.appender.AbstractAppender;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import software.amazon.awssdk.services.pinpointsmsvoicev2.PinpointSmsVoiceV2Client;
+import software.amazon.awssdk.services.pinpointsmsvoicev2.model.SendNotifyTextMessageRequest;
+import software.amazon.awssdk.services.pinpointsmsvoicev2.model.SendNotifyTextMessageResponse;
 
 public class AwsNotifySmsSenderTest {
 
@@ -56,6 +68,69 @@ public class AwsNotifySmsSenderTest {
         SmsSendResult result = sender.reportResult(PHONE_NUMBER, "123456", "message-id", true);
         assertFalse(result.isSuccess());
         assertEquals("NoClassDefFoundError", result.getErrorCode());
+    }
+
+    @Test
+    public void sendsWithDeliveryConfigurationAndFiveMinuteValidity() {
+        ReflectionTestUtils.setField(sender, "configurationSetName", "delivery-events");
+        AtomicReference<SendNotifyTextMessageRequest> captured = captureRequest();
+
+        SmsSendResult result = sender.sendCode(PHONE_NUMBER, "123456", "es-419");
+
+        assertTrue(result.isSuccess());
+        assertEquals("delivery-events", captured.get().configurationSetName());
+        assertEquals(Integer.valueOf(300), captured.get().timeToLive());
+        assertEquals("notify-code-verification-spanish-001", captured.get().templateId());
+        assertEquals("123456", captured.get().templateVariables().get("code"));
+        assertEquals(Boolean.TRUE, captured.get().messageFeedbackEnabled());
+    }
+
+    @Test
+    public void omitsBlankDeliveryConfiguration() {
+        ReflectionTestUtils.setField(sender, "configurationSetName", "  ");
+        AtomicReference<SendNotifyTextMessageRequest> captured = captureRequest();
+
+        assertTrue(sender.sendCode(PHONE_NUMBER, "123456", "en").isSuccess());
+        assertNull(captured.get().configurationSetName());
+        assertEquals(Integer.valueOf(300), captured.get().timeToLive());
+    }
+
+    @Test
+    public void successfulSendLogsMessageIdWithoutPhoneOrCode() {
+        Logger logger = (Logger) LogManager.getLogger(AwsNotifySmsSender.class);
+        Level previousLevel = logger.getLevel();
+        List<String> messages = new ArrayList<>();
+        AbstractAppender appender = new AbstractAppender("sms-test", null, null, false, null) {
+            @Override
+            public void append(LogEvent event) {
+                messages.add(event.getMessage().getFormattedMessage());
+            }
+        };
+        appender.start();
+        logger.addAppender(appender);
+        logger.setLevel(Level.INFO);
+        try {
+            captureRequest();
+            assertTrue(sender.sendCode(PHONE_NUMBER, "123456", "en").isSuccess());
+            assertEquals(1, messages.size());
+            assertTrue(messages.get(0).contains("message-id"));
+            assertFalse(messages.get(0).contains(PHONE_NUMBER));
+            assertFalse(messages.get(0).contains("123456"));
+        } finally {
+            logger.removeAppender(appender);
+            logger.setLevel(previousLevel);
+            appender.stop();
+        }
+    }
+
+    private AtomicReference<SendNotifyTextMessageRequest> captureRequest() {
+        AtomicReference<SendNotifyTextMessageRequest> captured = new AtomicReference<>();
+        sender.setClient((PinpointSmsVoiceV2Client) Proxy.newProxyInstance(getClass().getClassLoader(),
+                new Class<?>[] { PinpointSmsVoiceV2Client.class }, (proxy, method, args) -> {
+                    captured.set((SendNotifyTextMessageRequest) args[0]);
+                    return SendNotifyTextMessageResponse.builder().messageId("message-id").build();
+                }));
+        return captured;
     }
 
     private static PinpointSmsVoiceV2Client clientThrowing(Error error) {
