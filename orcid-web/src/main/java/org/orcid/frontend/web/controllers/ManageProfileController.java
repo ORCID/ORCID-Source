@@ -707,7 +707,6 @@ public class ManageProfileController extends BaseWorkspaceController {
                 }
                 // List emails to be added
                 newEmails.add(newJsonEmail);
-                emailListChange.getAddedEmails().add(newJsonEmail);
             }
         }
         
@@ -721,8 +720,6 @@ public class ManageProfileController extends BaseWorkspaceController {
             if (emailWasDeleted) {
                 // List emails to be deleted
                 deletedEmails.add(oldJsonEmail);
-                // Add emails to email notification
-                emailListChange.getRemovedEmails().add(oldJsonEmail);
             }
         }
                       
@@ -735,7 +732,10 @@ public class ManageProfileController extends BaseWorkspaceController {
             newEmailCasted.setVerified(false);
             org.orcid.pojo.ajaxForm.Email response = addEmails(request, newEmailCasted);
             errors.addAll(response.getErrors());
-            if (newEmail.isPrimary() != null &&  newEmail.isPrimary()) {
+            if (response.getErrors().isEmpty()) {
+                emailListChange.getAddedEmails().add(response);
+            }
+            if (response.getErrors().isEmpty() && newEmail.isPrimary() != null &&  newEmail.isPrimary()) {
                 org.orcid.pojo.ajaxForm.Email setAsPrimaryResponse = setPrimary(request, newEmail);
                 errors.addAll(setAsPrimaryResponse.getErrors());
             }
@@ -743,7 +743,13 @@ public class ManageProfileController extends BaseWorkspaceController {
         }
         
         for (org.orcid.jaxb.model.v3.release.record.Email deletedEmail : deletedEmails) {
-            deleteEmailJson(request, deletedEmail.getEmail());
+            if (errors.isEmpty()) {
+                Errors deleteResponse = deleteEmailJson(request, deletedEmail.getEmail());
+                errors.addAll(deleteResponse.getErrors());
+                if (deleteResponse.getErrors().isEmpty()) {
+                    emailListChange.getRemovedEmails().add(deletedEmail);
+                }
+            }
         }
 
         // send security email
@@ -774,7 +780,7 @@ public class ManageProfileController extends BaseWorkspaceController {
         }
 
         // if blank
-        if (PojoUtil.isEmpty(email.getValue())) {
+        if (StringUtils.isBlank(email.getValue())) {
             errors.add(getMessage("Email.personalInfoForm.email"));
         }
         
@@ -786,7 +792,12 @@ public class ManageProfileController extends BaseWorkspaceController {
 
         MapBindingResult mbr = new MapBindingResult(new HashMap<String, String>(), "Email");
         // Clean the email address so it doesn't contains any horizontal white spaces
-        email.setValue(OrcidStringUtils.filterEmailAddress(email.getValue()));
+        if (StringUtils.isNotBlank(email.getValue())) {
+            email.setValue(OrcidStringUtils.filterEmailAddress(email.getValue()));
+            if (PojoUtil.isEmpty(email.getValue())) {
+                errors.add(getMessage("Email.personalInfoForm.email"));
+            }
+        }
         
         // make sure there are no dups
         validateEmailAddress(email.getValue(), false, false, request, mbr);
@@ -824,9 +835,14 @@ public class ManageProfileController extends BaseWorkspaceController {
 
         MapBindingResult mbr = new MapBindingResult(new HashMap<String, String>(), "Email");
         // Clean the email address so it doesn't contains any horizontal white spaces
-        email.setValue(OrcidStringUtils.filterEmailAddress(email.getValue()));
-        
-        validateEmailAddress(email.getValue(), true, false, request, mbr);
+        if (StringUtils.isNotBlank(email.getValue())) {
+            email.setValue(OrcidStringUtils.filterEmailAddress(email.getValue()));
+        }
+        if (StringUtils.isBlank(email.getValue())) {
+            errors.add(getMessage("Email.personalInfoForm.email"));
+        } else {
+            validateEmailAddress(email.getValue(), false, false, request, mbr);
+        }
         
         for (ObjectError oe : mbr.getAllErrors()) {
             if (oe.getCode() != null) {
