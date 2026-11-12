@@ -6,6 +6,8 @@ import java.util.Locale;
 import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -29,6 +31,11 @@ public class AwsNotifySmsSender implements VerificationCodeSender {
 
     public static final String PROVIDER = "aws";
 
+    private static final Logger LOG = LoggerFactory.getLogger(AwsNotifySmsSender.class);
+
+    @Value("${org.orcid.sms.aws.deliveryValiditySeconds:300}")
+    private int deliveryValiditySeconds = 300;
+
     @Value("${org.orcid.sms.aws.region:us-east-2}")
     private String region;
 
@@ -40,6 +47,9 @@ public class AwsNotifySmsSender implements VerificationCodeSender {
 
     @Value("${org.orcid.sms.aws.notifyConfigurationId:}")
     private String notifyConfigurationId;
+
+    @Value("${org.orcid.sms.aws.configurationSetName:}")
+    private String configurationSetName;
 
     // AWS-managed per-language code-verification templates. The -001 series supports the US (-005/-006 do not).
     // {{brandName}} is system-managed (taken from the Notify configuration's registered brand) and must NOT be sent
@@ -89,9 +99,12 @@ public class AwsNotifySmsSender implements VerificationCodeSender {
                     .destinationPhoneNumber(toE164Number)
                     .templateId(resolveTemplateId(locale))
                     .templateVariables(Collections.singletonMap(codeVariable, code))
+                    .configurationSetName(StringUtils.trimToNull(configurationSetName))
+                    .timeToLive(deliveryValiditySeconds)
                     .messageFeedbackEnabled(true)
                     .build();
             SendNotifyTextMessageResponse response = getClient().sendNotifyTextMessage(request);
+            LOG.info("AWS Notify accepted SMS messageId={}", response.messageId());
             return SmsSendResult.success(PROVIDER, response.messageId(), "SENT");
         } catch (Exception | LinkageError e) {
             // LinkageError too: a classpath the SDK cannot run on fails every send, and

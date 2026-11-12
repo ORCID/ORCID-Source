@@ -13,6 +13,7 @@ import org.orcid.core.manager.RecoveryPhoneManager;
 import org.orcid.core.manager.TwoFactorAuthenticationManager;
 import org.orcid.core.togglz.Features;
 import org.orcid.frontend.email.RecordEmailSender;
+import org.orcid.frontend.recoveryphone.RecoveryPhoneAuthChallengeResponse;
 import org.orcid.frontend.recoveryphone.RecoveryPhoneChallengeSendCodeResponse;
 import org.orcid.frontend.recoveryphone.RecoveryPhoneChallengeVerifyRequest;
 import org.orcid.frontend.recoveryphone.RecoveryPhoneNumberResponse;
@@ -156,27 +157,24 @@ public class TwoFactorAuthenticationController extends BaseController {
      * window instead of being replayed on the final save.
      */
     @RequestMapping(value = "/recoveryPhone/verifyAuthChallenge.json", method = RequestMethod.POST)
-    public @ResponseBody AuthChallenge verifyRecoveryPhoneAuthChallenge(HttpServletRequest request, @RequestBody AuthChallenge form) {
+    public @ResponseBody RecoveryPhoneAuthChallengeResponse verifyRecoveryPhoneAuthChallenge(HttpServletRequest request, @RequestBody AuthChallenge form) {
         String orcid = getCurrentUserOrcid();
         if (!Features.TWO_FACTOR_RECOVERY_PHONE.isActive() || !twoFactorAuthenticationManager.userUsing2FA(orcid)) {
-            form.setSuccess(false);
-            return form;
+            return new RecoveryPhoneAuthChallengeResponse(false);
         }
 
         ProfileEntity profile = profileEntityCacheManager.retrieve(orcid);
         if (form.getPassword() == null || !encryptionManager.hashMatches(form.getPassword(), profile.getEncryptedPassword())) {
-            form.setInvalidPassword(true);
-            return form;
+            return new RecoveryPhoneAuthChallengeResponse(false);
         }
         if (!twoFactorAuthenticationManager.validateTwoFactorAuthForm(orcid, form)) {
-            return form;
+            return new RecoveryPhoneAuthChallengeResponse(false);
         }
 
         long passedAt = System.currentTimeMillis();
         request.getSession().setAttribute(RECOVERY_PHONE_ELEVATION_ATTRIBUTE, passedAt);
         request.getSession().setAttribute(RECOVERY_PHONE_CHALLENGE_ATTRIBUTE, passedAt);
-        form.setSuccess(true);
-        return form;
+        return new RecoveryPhoneAuthChallengeResponse(true);
     }
 
     /**
@@ -309,10 +307,7 @@ public class TwoFactorAuthenticationController extends BaseController {
      * costs the user their 2FA: the number is a one time way back in, and
      * using it disables 2FA and resets every 2FA backup option (R5.3).
      *
-     * It answers with {@link AuthChallenge}, as
-     * {@link #verifyRecoveryPhoneAuthChallenge} does, so the frontend's
-     * challenge component keeps one response shape across both ways of
-     * passing the same challenge.
+     * It answers with an {@link AuthChallenge} containing the outcome and any errors.
      */
     @RequestMapping(value = "/recoveryPhone/challenge/verify.json", method = RequestMethod.POST)
     public @ResponseBody AuthChallenge verifyRecoveryPhoneChallengeCode(HttpServletRequest request, @RequestBody RecoveryPhoneChallengeVerifyRequest form) {
