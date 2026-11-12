@@ -1,3 +1,9 @@
+## v3.25.10 - 2026-11-12
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.25.9...v3.25.10)
+
+- [#7783](https://github.com/ORCID/ORCID-Source/pull/7783): PD-14736 Harden recovery phone auth and SMS delivery, add logging
+
 ## v3.25.9 - 2026-11-12
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.25.8...v3.25.9)
