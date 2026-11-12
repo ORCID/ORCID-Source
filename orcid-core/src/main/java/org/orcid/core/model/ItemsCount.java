@@ -11,7 +11,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(propOrder = { "selfAssertedCount", "validatedCount" })
-@Schema(description = "Items count abstract class")
+@Schema(name = "RecordSummaryItemsCount", description = "Items count abstract class")
 public abstract class ItemsCount {
     @XmlElement(name = "self-asserted-count", namespace = "http://www.orcid.org/ns/summary")
     private Integer selfAssertedCount;
