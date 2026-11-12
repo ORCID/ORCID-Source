@@ -112,6 +112,50 @@ public class OrcidRedisIndexedSessionRepositoryTest {
     }
 
     @Test
+    public void evictSessionsKeepCurrentShouldKeepMatchingSession() {
+        Map<String, OrcidRedisIndexedSessionRepository.RedisSession> activeSessions = new HashMap<>();
+        activeSessions.put(SESSION_ID, null);
+        activeSessions.put("session-2", null);
+        OrcidRedisIndexedSessionRepository repository = Mockito.spy(sessionRepository);
+        doReturn(activeSessions).when(repository).findByIndexNameAndIndexValue(
+                FindByIndexNameSessionRepository.PRINCIPAL_NAME_INDEX_NAME, ORCID);
+        doNothing().when(repository).deleteById(anyString());
+
+        assertEquals(1, repository.evictSessionsKeepCurrent(ORCID, SESSION_ID));
+        verify(repository, Mockito.never()).deleteById(SESSION_ID);
+        verify(repository).deleteById("session-2");
+        verify(repository, times(1)).deleteById(anyString());
+    }
+
+    @Test
+    public void evictSessionsKeepCurrentShouldEvictAllWhenCurrentIsNullOrNotFound() {
+        Map<String, OrcidRedisIndexedSessionRepository.RedisSession> activeSessions = new HashMap<>();
+        activeSessions.put(SESSION_ID, null);
+        activeSessions.put("session-2", null);
+        OrcidRedisIndexedSessionRepository repository = Mockito.spy(sessionRepository);
+        doReturn(activeSessions).when(repository).findByIndexNameAndIndexValue(
+                FindByIndexNameSessionRepository.PRINCIPAL_NAME_INDEX_NAME, ORCID);
+        doNothing().when(repository).deleteById(anyString());
+
+        assertEquals(2, repository.evictSessionsKeepCurrent(ORCID, null));
+        assertEquals(2, repository.evictSessionsKeepCurrent(ORCID, "unknown"));
+        verify(repository, times(2)).deleteById(SESSION_ID);
+        verify(repository, times(2)).deleteById("session-2");
+        verify(repository, times(4)).deleteById(anyString());
+    }
+
+    @Test
+    public void evictSessionsKeepCurrentShouldHandleNoSessionsOrBlankOrcid() {
+        OrcidRedisIndexedSessionRepository repository = Mockito.spy(sessionRepository);
+        doReturn(new HashMap<String, OrcidRedisIndexedSessionRepository.RedisSession>()).when(repository)
+                .findByIndexNameAndIndexValue(FindByIndexNameSessionRepository.PRINCIPAL_NAME_INDEX_NAME, ORCID);
+
+        assertEquals(0, repository.evictSessionsKeepCurrent(ORCID, SESSION_ID));
+        assertEquals(0, repository.evictSessionsKeepCurrent(" ", SESSION_ID));
+        verify(repository, Mockito.never()).deleteById(anyString());
+    }
+
+    @Test
     public void evictSessionsForOrcidShouldNotDeleteSessionsForOtherOrcids() {
         String otherOrcid = "0000-0000-0000-000X";
         String otherSessionId = "other-session";

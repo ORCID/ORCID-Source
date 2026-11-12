@@ -179,6 +179,10 @@ public class OrcidRedisIndexedSessionRepository implements FindByIndexNameSessio
     }
 
     public int evictSessionsForOrcid(String orcidId) {
+        return evictSessionsKeepCurrent(orcidId, null);
+    }
+
+    public int evictSessionsKeepCurrent(String orcidId, String currentSessionId) {
         if (!StringUtils.hasText(orcidId)) {
             return 0;
         }
@@ -188,10 +192,14 @@ public class OrcidRedisIndexedSessionRepository implements FindByIndexNameSessio
             return 0;
         }
 
+        int evictedSessions = 0;
         for (String sessionId : activeSessions.keySet()) {
-            deleteById(sessionId);
+            if (!Objects.equals(sessionId, currentSessionId)) {
+                deleteById(sessionId);
+                evictedSessions++;
+            }
         }
-        return activeSessions.size();
+        return evictedSessions;
     }
 
     private OrcidRedisIndexedSessionRepository.RedisSession getSession(String id, boolean allowExpired) {

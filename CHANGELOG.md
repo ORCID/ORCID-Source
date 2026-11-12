@@ -1,3 +1,9 @@
+## v3.25.8 - 2026-11-12
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.25.7...v3.25.8)
+
+- [#7782](https://github.com/ORCID/ORCID-Source/pull/7782): PD-14559 Resolve PubMed preprints using DOI fallback
+
 ## v3.25.7 - 2026-11-10
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.25.6...v3.25.7)

@@ -45,3 +45,4 @@ orcid-api-web/.factorypath
 orcid-core/.factorypath
 orcid-integration-test/.factorypath
 env.json
+properties/development_oauth.properties
