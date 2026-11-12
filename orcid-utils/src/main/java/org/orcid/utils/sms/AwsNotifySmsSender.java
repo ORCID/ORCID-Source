@@ -33,7 +33,8 @@ public class AwsNotifySmsSender implements VerificationCodeSender {
 
     private static final Logger LOG = LoggerFactory.getLogger(AwsNotifySmsSender.class);
 
-    private static final int DELIVERY_VALIDITY_SECONDS = 300;
+    @Value("${org.orcid.sms.aws.deliveryValiditySeconds:300}")
+    private int deliveryValiditySeconds = 300;
 
     @Value("${org.orcid.sms.aws.region:us-east-2}")
     private String region;
@@ -99,7 +100,7 @@ public class AwsNotifySmsSender implements VerificationCodeSender {
                     .templateId(resolveTemplateId(locale))
                     .templateVariables(Collections.singletonMap(codeVariable, code))
                     .configurationSetName(StringUtils.trimToNull(configurationSetName))
-                    .timeToLive(DELIVERY_VALIDITY_SECONDS)
+                    .timeToLive(deliveryValiditySeconds)
                     .messageFeedbackEnabled(true)
                     .build();
             SendNotifyTextMessageResponse response = getClient().sendNotifyTextMessage(request);

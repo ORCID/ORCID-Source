@@ -9,6 +9,7 @@ import java.lang.reflect.Proxy;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
 
 import org.apache.logging.log4j.Level;
@@ -18,6 +19,8 @@ import org.apache.logging.log4j.core.Logger;
 import org.apache.logging.log4j.core.appender.AbstractAppender;
 import org.junit.Before;
 import org.junit.Test;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.springframework.core.env.MapPropertySource;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import software.amazon.awssdk.services.pinpointsmsvoicev2.PinpointSmsVoiceV2Client;
@@ -93,6 +96,30 @@ public class AwsNotifySmsSenderTest {
         assertTrue(sender.sendCode(PHONE_NUMBER, "123456", "en").isSuccess());
         assertNull(captured.get().configurationSetName());
         assertEquals(Integer.valueOf(300), captured.get().timeToLive());
+    }
+
+    @Test
+    public void injectsDefaultDeliveryValidity() {
+        assertInjectedDeliveryValidity(Map.of(), 300);
+    }
+
+    @Test
+    public void injectsConfiguredDeliveryValidity() {
+        assertInjectedDeliveryValidity(Map.of("org.orcid.sms.aws.deliveryValiditySeconds", "120"), 120);
+    }
+
+    private void assertInjectedDeliveryValidity(Map<String, Object> properties, int expected) {
+        try (AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext()) {
+            context.getEnvironment().getPropertySources().addFirst(new MapPropertySource("test", properties));
+            context.register(AwsNotifySmsSender.class);
+            context.refresh();
+            sender = context.getBean(AwsNotifySmsSender.class);
+            ReflectionTestUtils.setField(sender, "notifyConfigurationId", "notify-test");
+            AtomicReference<SendNotifyTextMessageRequest> captured = captureRequest();
+
+            assertTrue(sender.sendCode(PHONE_NUMBER, "123456", "en").isSuccess());
+            assertEquals(Integer.valueOf(expected), captured.get().timeToLive());
+        }
     }
 
     @Test
