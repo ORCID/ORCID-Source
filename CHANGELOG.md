@@ -1,3 +1,9 @@
+## v3.25.9 - 2026-11-12
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.25.8...v3.25.9)
+
+- [#7781](https://github.com/ORCID/ORCID-Source/pull/7781): PD-14808 Keep current session after password change in settings
+
 ## v3.25.8 - 2026-11-12
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.25.7...v3.25.8)
