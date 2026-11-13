@@ -74,6 +74,9 @@ public class PubMedResolver implements LinkResolver, MetadataResolver {
     private PIDResolverCache cache;
 
     @Autowired
+    private DOIResolver doiResolver;
+
+    @Autowired
     @Lazy
     private IdentifierTypeManager identifierTypeManager;
 
@@ -145,6 +148,14 @@ public class PubMedResolver implements LinkResolver, MetadataResolver {
             json = fetchPreprintMetadata(apiTypeName, value);
             if (hasResults(json)) {
                 WorkExtended work = getWork(json);
+                work.setWorkType(WorkType.PREPRINT);
+                String doi = json.getJSONObject("resultList").getJSONArray("result").getJSONObject(0).optString("doi", null);
+                if (StringUtils.isNotBlank(doi)) {
+                    WorkExtended doiWork = doiResolver.resolveMetadata("doi", doi);
+                    if (doiWork != null && doiWork.getWorkType() != null) {
+                        work.setWorkType(doiWork.getWorkType());
+                    }
+                }
                 String identifier = normalizationService.normalise(apiTypeName, value);
                 if (apiTypeName.equals("pmc")) {
                     identifier = "PMC" + identifier;

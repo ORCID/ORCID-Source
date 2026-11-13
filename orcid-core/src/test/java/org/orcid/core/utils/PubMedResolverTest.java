@@ -31,6 +31,7 @@ import org.orcid.core.manager.IdentifierTypeManager;
 import org.orcid.core.togglz.Features;
 import org.orcid.core.utils.v3.identifiers.PIDNormalizationService;
 import org.orcid.core.utils.v3.identifiers.PIDResolverCache;
+import org.orcid.core.utils.v3.identifiers.resolvers.DOIResolver;
 import org.orcid.core.utils.v3.identifiers.resolvers.PubMedResolver;
 import org.orcid.jaxb.model.common.Relationship;
 import org.orcid.jaxb.model.common.WorkType;
@@ -52,6 +53,9 @@ public class PubMedResolverTest {
     PIDResolverCache cache;
 
     @Mock
+    DOIResolver doiResolver;
+
+    @Mock
     private IdentifierTypeManager identifierTypeManager;
 
     @Mock
@@ -67,6 +71,7 @@ public class PubMedResolverTest {
         MockitoAnnotations.initMocks(this);
         TargetProxyHelper.injectIntoProxy(resolver, "normalizationService", normalizationService);
         TargetProxyHelper.injectIntoProxy(resolver, "cache", cache);
+        TargetProxyHelper.injectIntoProxy(resolver, "doiResolver", doiResolver);
         TargetProxyHelper.injectIntoProxy(resolver, "identifierTypeManager", identifierTypeManager);
         TargetProxyHelper.injectIntoProxy(resolver, "localeManager", localeManager);
         ReflectionTestUtils.setField(resolver, "maxContributorsForUI", 50);
@@ -342,6 +347,20 @@ public class PubMedResolverTest {
     }
 
     @Test
+    public void doiFallbackUsesDoiResolverWorkTypeTest() throws IOException {
+        stubJson(PMC_SEARCH, NO_RESULTS);
+        stubJson(PMC_CONVERTER, PMC_WITH_DOI);
+        stubJson(DOI_SEARCH, PREPRINT);
+        WorkExtended doiWork = new WorkExtended();
+        doiWork.setWorkType(WorkType.JOURNAL_ARTICLE);
+        when(doiResolver.resolveMetadata("doi", "10.1101/2024.06.10.597395")).thenReturn(doiWork);
+
+        Work work = resolver.resolveMetadata("pmc", "11195135");
+        assertEquals(WorkType.JOURNAL_ARTICLE, work.getWorkType());
+        Mockito.verify(doiResolver).resolveMetadata("doi", "10.1101/2024.06.10.597395");
+    }
+
+    @Test
     public void resolveMetadataWithoutDoiDoesNotSearchPreprintsTest() throws IOException {
         stubJson(PMC_SEARCH, NO_RESULTS);
         stubJson(PMC_CONVERTER, "{\"status\":\"ok\",\"records\":[{\"pmcid\":\"PMC11195135\",\"requested-id\":\"PMC11195135\"}]}");
@@ -394,6 +413,7 @@ public class PubMedResolverTest {
 
     private void assertPreprint(Work work) {
         assertNotNull(work);
+        assertEquals(WorkType.PREPRINT, work.getWorkType());
         assertEquals("C-LTMRs mediate wet dog shakes via the spinoparabrachial pathway", work.getWorkTitle().getTitle().getContent());
         assertEquals("10.1101/2024.06.10.597395", work.getExternalIdentifiers().getExternalIdentifier().get(0).getValue());
         assertEquals("doi", work.getExternalIdentifiers().getExternalIdentifier().get(0).getType());
