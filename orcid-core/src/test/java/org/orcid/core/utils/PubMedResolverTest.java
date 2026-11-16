@@ -328,6 +328,7 @@ public class PubMedResolverTest {
         assertPreprint(work);
         assertEquals("pmc", work.getExternalIdentifiers().getExternalIdentifier().get(1).getType());
         assertEquals("PMC11195135", work.getExternalIdentifiers().getExternalIdentifier().get(1).getValue());
+        assertEquals("https://europepmc.org/article/PPR/PPR865278", work.getExternalIdentifiers().getExternalIdentifier().get(1).getUrl().getValue());
         Mockito.verify(cache).get(PMC_CONVERTER, MediaType.APPLICATION_JSON);
         Mockito.verify(cache).get(DOI_SEARCH, MediaType.APPLICATION_JSON);
     }
@@ -342,6 +343,7 @@ public class PubMedResolverTest {
         assertPreprint(work);
         assertEquals("pmid", work.getExternalIdentifiers().getExternalIdentifier().get(1).getType());
         assertEquals("38915692", work.getExternalIdentifiers().getExternalIdentifier().get(1).getValue());
+        assertEquals("https://europepmc.org/article/PPR/PPR865278", work.getExternalIdentifiers().getExternalIdentifier().get(1).getUrl().getValue());
         Mockito.verify(cache).get(PMID_SUMMARY, MediaType.APPLICATION_JSON);
         Mockito.verify(cache).get(DOI_SEARCH, MediaType.APPLICATION_JSON);
     }
@@ -402,8 +404,24 @@ public class PubMedResolverTest {
         stubJson(PMID_SUMMARY, PMID_WITH_DOI);
         stubJson(DOI_SEARCH, PREPRINT);
 
-        assertTrue(resolver.resolve("pmc", "11195135").isResolved());
-        assertTrue(resolver.resolve("pmid", "38915692").isResolved());
+        PIDResolutionResult pmc = resolver.resolve("pmc", "11195135");
+        PIDResolutionResult pmid = resolver.resolve("pmid", "38915692");
+        assertTrue(pmc.isResolved());
+        assertTrue(pmid.isResolved());
+        assertEquals("https://europepmc.org/article/PPR/PPR865278", pmc.getGeneratedUrl());
+        assertEquals("https://europepmc.org/article/PPR/PPR865278", pmid.getGeneratedUrl());
+    }
+
+    @Test
+    public void preprintWithoutValidPprIdDoesNotGenerateBrokenUrlTest() throws IOException {
+        stubJson(PMC_SEARCH, NO_RESULTS);
+        stubJson(PMC_CONVERTER, PMC_WITH_DOI);
+        stubJson(DOI_SEARCH, PREPRINT.replace("PPR865278", "invalid"));
+
+        assertNull(resolver.resolveMetadata("pmc", "11195135").getExternalIdentifiers().getExternalIdentifier().get(1).getUrl());
+        PIDResolutionResult result = resolver.resolve("pmc", "11195135");
+        assertFalse(result.isResolved());
+        assertNull(result.getGeneratedUrl());
     }
 
     private void stubJson(String url, String json) throws IOException {

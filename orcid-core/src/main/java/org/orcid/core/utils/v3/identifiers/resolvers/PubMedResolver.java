@@ -125,11 +125,18 @@ public class PubMedResolver implements LinkResolver, MetadataResolver {
 
         String normUrl = normalizationService.generateNormalisedURL(apiTypeName, value);
         if (!StringUtils.isEmpty(normUrl)) {
-            if (exists(apiTypeName, value)) {
-                return new PIDResolutionResult(true, true, true, normUrl);
-            } else {
-                return new PIDResolutionResult(false, true, true, null);
+            try {
+                if (existsInEuropePmc.get(getPubMedEndpoint(apiTypeName, value))) {
+                    return new PIDResolutionResult(true, true, true, normUrl);
+                }
+                String preprintUrl = getPreprintUrl(fetchPreprintMetadata(apiTypeName, value));
+                if (preprintUrl != null) {
+                    return new PIDResolutionResult(true, true, true, preprintUrl);
+                }
+            } catch (ExecutionException | IOException | JSONException e) {
+                LOG.warn(String.format("Error resolving %s %s against EuropePMC", apiTypeName, value), e);
             }
+            return new PIDResolutionResult(false, true, true, null);
         }
 
         return new PIDResolutionResult(false, false, true, null);// unreachable?
@@ -164,6 +171,12 @@ public class PubMedResolver implements LinkResolver, MetadataResolver {
                         .noneMatch(extId -> apiTypeName.equals(extId.getType()))) {
                     addExternalIdentifier(work, apiTypeName, identifier, localeManager.getLocale());
                 }
+                String preprintUrl = getPreprintUrl(json);
+                for (ExternalID extId : work.getExternalIdentifiers().getExternalIdentifier()) {
+                    if ("pmc".equals(extId.getType()) || "pmid".equals(extId.getType())) {
+                        extId.setUrl(preprintUrl == null ? null : new Url(preprintUrl));
+                    }
+                }
                 return work;
             }
         } catch (UnexpectedResponseCodeException e) {
@@ -180,16 +193,16 @@ public class PubMedResolver implements LinkResolver, MetadataResolver {
         return null;
     }
 
-    private boolean exists(String apiTypeName, String value) {
-        try {
-            return existsInEuropePmc.get(getPubMedEndpoint(apiTypeName, value)) || hasResults(fetchPreprintMetadata(apiTypeName, value));
-        } catch (ExecutionException e) {
-            LOG.warn(String.format("Error resolving %s %s against EuropePMC", apiTypeName, value), e.getCause());
-            return false;
-        } catch (IOException | JSONException e) {
-            LOG.warn(String.format("Error resolving %s %s against EuropePMC", apiTypeName, value), e);
-            return false;
+    private String getPreprintUrl(JSONObject json) throws JSONException {
+        if (!hasResults(json)) {
+            return null;
         }
+        JSONObject result = json.getJSONObject("resultList").getJSONArray("result").getJSONObject(0);
+        String id = result.optString("id", "");
+        if (!"PPR".equals(result.optString("source")) || !id.matches("PPR[0-9]+")) {
+            return null;
+        }
+        return "https://europepmc.org/article/PPR/" + id;
     }
 
     private JSONObject fetchPreprintMetadata(String apiTypeName, String value) throws IOException, JSONException {
