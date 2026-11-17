@@ -150,7 +150,7 @@ public class PubMedResolverTest {
             }
         });
 
-        when(cache.get("https://www.ebi.ac.uk/europepmc/webservices/rest/search?query=PMCID:PMC1&resultType=core&format=json", MediaType.APPLICATION_JSON))
+        when(cache.get(PubMedResolver.EUROPE_PMC_SEARCH_URL + "PMCID:PMC1&resultType=core&format=json", MediaType.APPLICATION_JSON))
                 .thenAnswer(new Answer<InputStream>() {
 
                     @Override
@@ -160,7 +160,7 @@ public class PubMedResolverTest {
 
                 });
 
-        when(cache.get("https://www.ebi.ac.uk/europepmc/webservices/rest/search?query=EXT_ID:pmid1&resultType=core&format=json", MediaType.APPLICATION_JSON))
+        when(cache.get(PubMedResolver.EUROPE_PMC_SEARCH_URL + "EXT_ID:pmid1&resultType=core&format=json", MediaType.APPLICATION_JSON))
                 .thenAnswer(new Answer<InputStream>() {
 
                     @Override
@@ -170,7 +170,7 @@ public class PubMedResolverTest {
 
                 });
 
-        when(cache.get("https://www.ebi.ac.uk/europepmc/webservices/rest/search?query=EXT_ID:pmid404&resultType=core&format=json", MediaType.APPLICATION_JSON))
+        when(cache.get(PubMedResolver.EUROPE_PMC_SEARCH_URL + "EXT_ID:pmid404&resultType=core&format=json", MediaType.APPLICATION_JSON))
                 .thenAnswer(new Answer<InputStream>() {
 
                     @Override
@@ -308,11 +308,11 @@ public class PubMedResolverTest {
         Mockito.verify(cache, Mockito.times(1)).get(anyString(), anyString());
     }
 
-    private static final String PMC_SEARCH = "https://www.ebi.ac.uk/europepmc/webservices/rest/search?query=PMCID:PMC11195135&resultType=core&format=json";
-    private static final String PMID_SEARCH = "https://www.ebi.ac.uk/europepmc/webservices/rest/search?query=EXT_ID:38915692&resultType=core&format=json";
-    private static final String PMC_CONVERTER = "https://pmc.ncbi.nlm.nih.gov/tools/idconv/api/v1/articles/?ids=PMC11195135&format=json";
-    private static final String PMID_SUMMARY = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esummary.fcgi?db=pubmed&id=38915692&retmode=json";
-    private static final String DOI_SEARCH = "https://www.ebi.ac.uk/europepmc/webservices/rest/search?query=DOI%3A%2210.1101%2F2024.06.10.597395%22%20AND%20SRC%3APPR&resultType=core&format=json";
+    private static final String PMC_SEARCH = PubMedResolver.EUROPE_PMC_SEARCH_URL + "PMCID:PMC11195135&resultType=core&format=json";
+    private static final String PMID_SEARCH = PubMedResolver.EUROPE_PMC_SEARCH_URL + "EXT_ID:38915692&resultType=core&format=json";
+    private static final String PMC_CONVERTER = PubMedResolver.PMC_ID_CONVERSION_URL + "11195135&format=json";
+    private static final String PMID_SUMMARY = PubMedResolver.PUBMED_SUMMARY_URL + "38915692&retmode=json";
+    private static final String DOI_SEARCH = PubMedResolver.EUROPE_PMC_SEARCH_URL + "DOI%3A%2210.1101%2F2024.06.10.597395%22%20AND%20SRC%3APPR&resultType=core&format=json";
     private static final String NO_RESULTS = "{\"version\":\"6.9\",\"hitCount\":0,\"resultList\":{\"result\":[]}}";
     private static final String PMC_WITH_DOI = "{\"status\":\"ok\",\"records\":[{\"doi\":\"10.1101/2024.06.10.597395\",\"pmcid\":\"PMC11195135\",\"pmid\":38915692,\"requested-id\":\"PMC11195135\"}]}";
     private static final String PMID_WITH_DOI = "{\"header\":{\"type\":\"esummary\",\"version\":\"0.3\"},\"result\":{\"uids\":[\"38915692\"],\"38915692\":{\"uid\":\"38915692\",\"articleids\":[{\"idtype\":\"pubmed\",\"idtypen\":1,\"value\":\"38915692\"},{\"idtype\":\"doi\",\"idtypen\":3,\"value\":\"10.1101/2024.06.10.597395\"}]}}}";
@@ -328,7 +328,7 @@ public class PubMedResolverTest {
         assertPreprint(work);
         assertEquals("pmc", work.getExternalIdentifiers().getExternalIdentifier().get(1).getType());
         assertEquals("PMC11195135", work.getExternalIdentifiers().getExternalIdentifier().get(1).getValue());
-        assertEquals("https://europepmc.org/article/PPR/PPR865278", work.getExternalIdentifiers().getExternalIdentifier().get(1).getUrl().getValue());
+        assertEquals(PubMedResolver.PREPRINT_URL + "PPR865278", work.getExternalIdentifiers().getExternalIdentifier().get(1).getUrl().getValue());
         Mockito.verify(cache).get(PMC_CONVERTER, MediaType.APPLICATION_JSON);
         Mockito.verify(cache).get(DOI_SEARCH, MediaType.APPLICATION_JSON);
     }
@@ -343,7 +343,7 @@ public class PubMedResolverTest {
         assertPreprint(work);
         assertEquals("pmid", work.getExternalIdentifiers().getExternalIdentifier().get(1).getType());
         assertEquals("38915692", work.getExternalIdentifiers().getExternalIdentifier().get(1).getValue());
-        assertEquals("https://europepmc.org/article/PPR/PPR865278", work.getExternalIdentifiers().getExternalIdentifier().get(1).getUrl().getValue());
+        assertEquals(PubMedResolver.PREPRINT_URL + "PPR865278", work.getExternalIdentifiers().getExternalIdentifier().get(1).getUrl().getValue());
         Mockito.verify(cache).get(PMID_SUMMARY, MediaType.APPLICATION_JSON);
         Mockito.verify(cache).get(DOI_SEARCH, MediaType.APPLICATION_JSON);
     }
@@ -408,8 +408,8 @@ public class PubMedResolverTest {
         PIDResolutionResult pmid = resolver.resolve("pmid", "38915692");
         assertTrue(pmc.isResolved());
         assertTrue(pmid.isResolved());
-        assertEquals("https://europepmc.org/article/PPR/PPR865278", pmc.getGeneratedUrl());
-        assertEquals("https://europepmc.org/article/PPR/PPR865278", pmid.getGeneratedUrl());
+        assertEquals(PubMedResolver.PREPRINT_URL + "PPR865278", pmc.getGeneratedUrl());
+        assertEquals(PubMedResolver.PREPRINT_URL + "PPR865278", pmid.getGeneratedUrl());
     }
 
     @Test

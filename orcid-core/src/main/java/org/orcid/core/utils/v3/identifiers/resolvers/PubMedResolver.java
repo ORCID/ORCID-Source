@@ -67,6 +67,11 @@ public class PubMedResolver implements LinkResolver, MetadataResolver {
 
     private static final Logger LOG = LoggerFactory.getLogger(PubMedResolver.class);
 
+    public static final String PREPRINT_URL = "https://europepmc.org/article/PPR/";
+    public static final String PMC_ID_CONVERSION_URL = "https://pmc.ncbi.nlm.nih.gov/tools/idconv/api/v1/articles/?ids=PMC";
+    public static final String PUBMED_SUMMARY_URL = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esummary.fcgi?db=pubmed&id=";
+    public static final String EUROPE_PMC_SEARCH_URL = "https://www.ebi.ac.uk/europepmc/webservices/rest/search?query=";
+
     @Autowired
     private PIDNormalizationService normalizationService;
 
@@ -90,7 +95,7 @@ public class PubMedResolver implements LinkResolver, MetadataResolver {
 
     List<String> types = List.of("pmc", "pmid");
 
-    private String metadataEndpoint = "https://www.ebi.ac.uk/europepmc/webservices/rest/search?query={type}:{id}&resultType=core&format=json";
+    private static final String metadataEndpoint = EUROPE_PMC_SEARCH_URL + "{type}:{id}&resultType=core&format=json";
 
     /**
      * Existence of an identifier is decided by EuropePMC, never by fetching the
@@ -202,7 +207,7 @@ public class PubMedResolver implements LinkResolver, MetadataResolver {
         if (!"PPR".equals(result.optString("source")) || !id.matches("PPR[0-9]+")) {
             return null;
         }
-        return "https://europepmc.org/article/PPR/" + id;
+        return PREPRINT_URL + id;
     }
 
     private JSONObject fetchPreprintMetadata(String apiTypeName, String value) throws IOException, JSONException {
@@ -212,13 +217,13 @@ public class PubMedResolver implements LinkResolver, MetadataResolver {
         }
         String doi = null;
         if (apiTypeName.equals("pmc")) {
-            JSONObject conversion = fetchMetadata("https://pmc.ncbi.nlm.nih.gov/tools/idconv/api/v1/articles/?ids=PMC" + id + "&format=json");
+            JSONObject conversion = fetchMetadata(PMC_ID_CONVERSION_URL + id + "&format=json");
             JSONArray records = conversion.optJSONArray("records");
             if (records != null && records.length() > 0) {
                 doi = records.getJSONObject(0).optString("doi", null);
             }
         } else if (apiTypeName.equals("pmid")) {
-            JSONObject summary = fetchMetadata("https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esummary.fcgi?db=pubmed&id=" + id + "&retmode=json");
+            JSONObject summary = fetchMetadata(PUBMED_SUMMARY_URL + id + "&retmode=json");
             JSONObject result = summary.optJSONObject("result");
             JSONObject article = result == null ? null : result.optJSONObject(id);
             JSONArray ids = article == null ? null : article.optJSONArray("articleids");
@@ -236,7 +241,7 @@ public class PubMedResolver implements LinkResolver, MetadataResolver {
             return null;
         }
         String query = "DOI:\"" + doi + "\" AND SRC:PPR";
-        String endpoint = "https://www.ebi.ac.uk/europepmc/webservices/rest/search?query="
+        String endpoint = EUROPE_PMC_SEARCH_URL
                 + URLEncoder.encode(query, StandardCharsets.UTF_8.name()).replace("+", "%20") + "&resultType=core&format=json";
         return fetchMetadata(endpoint);
     }
