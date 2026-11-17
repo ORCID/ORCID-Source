@@ -363,6 +363,32 @@ public class PubMedResolverTest {
     }
 
     @Test
+    public void doiFallbackWithoutResultDoiKeepsPreprintTypeTest() throws IOException {
+        stubJson(PMC_SEARCH, NO_RESULTS);
+        stubJson(PMC_CONVERTER, PMC_WITH_DOI);
+        for (String doiField : new String[] {"", ",\"doi\":null"}) {
+            stubJson(DOI_SEARCH, "{\"resultList\":{\"result\":[{\"id\":\"PPR865278\",\"source\":\"PPR\"" + doiField + "}]}}");
+            Work work = resolver.resolveMetadata("pmc", "11195135");
+            assertNotNull(work);
+            assertEquals(WorkType.PREPRINT, work.getWorkType());
+        }
+        Mockito.verify(doiResolver, Mockito.never()).resolveMetadata(anyString(), anyString());
+    }
+
+    @Test
+    public void doiFallbackRejectsMalformedResultsTest() throws IOException {
+        stubJson(PMC_SEARCH, NO_RESULTS);
+        stubJson(PMC_CONVERTER, PMC_WITH_DOI);
+        for (String response : new String[] {"{}", "{\"resultList\":null}", "{\"resultList\":\"invalid\"}", "{\"resultList\":{}}",
+                "{\"resultList\":{\"result\":null}}", "{\"resultList\":{\"result\":\"invalid\"}}", "{\"resultList\":{\"result\":[]}}",
+                "{\"resultList\":{\"result\":[null]}}", "{\"resultList\":{\"result\":[\"invalid\"]}}"}) {
+            stubJson(DOI_SEARCH, response);
+            assertNull(resolver.resolveMetadata("pmc", "11195135"));
+        }
+        Mockito.verify(doiResolver, Mockito.never()).resolveMetadata(anyString(), anyString());
+    }
+
+    @Test
     public void resolveMetadataWithoutDoiDoesNotSearchPreprintsTest() throws IOException {
         stubJson(PMC_SEARCH, NO_RESULTS);
         stubJson(PMC_CONVERTER, "{\"status\":\"ok\",\"records\":[{\"pmcid\":\"PMC11195135\",\"requested-id\":\"PMC11195135\"}]}");

@@ -161,7 +161,8 @@ public class PubMedResolver implements LinkResolver, MetadataResolver {
             if (hasResults(json)) {
                 WorkExtended work = getWork(json);
                 work.setWorkType(WorkType.PREPRINT);
-                String doi = json.getJSONObject("resultList").getJSONArray("result").getJSONObject(0).optString("doi", null);
+                JSONObject result = getFirstResult(json);
+                String doi = result == null ? null : result.optString("doi", null);
                 if (StringUtils.isNotBlank(doi)) {
                     WorkExtended doiWork = doiResolver.resolveMetadata("doi", doi);
                     if (doiWork != null && doiWork.getWorkType() != null) {
@@ -199,10 +200,10 @@ public class PubMedResolver implements LinkResolver, MetadataResolver {
     }
 
     private String getPreprintUrl(JSONObject json) throws JSONException {
-        if (!hasResults(json)) {
+        JSONObject result = getFirstResult(json);
+        if (result == null) {
             return null;
         }
-        JSONObject result = json.getJSONObject("resultList").getJSONArray("result").getJSONObject(0);
         String id = result.optString("id", "");
         if (!"PPR".equals(result.optString("source")) || !id.matches("PPR[0-9]+")) {
             return null;
@@ -256,11 +257,13 @@ public class PubMedResolver implements LinkResolver, MetadataResolver {
     }
 
     private boolean hasResults(JSONObject json) throws JSONException {
-        if (json == null || !json.has("resultList")) {
-            return false;
-        }
-        JSONObject resultList = json.getJSONObject("resultList");
-        return resultList != null && resultList.has("result") && resultList.getJSONArray("result").length() > 0;
+        return getFirstResult(json) != null;
+    }
+
+    private JSONObject getFirstResult(JSONObject json) {
+        JSONObject resultList = json == null ? null : json.optJSONObject("resultList");
+        JSONArray results = resultList == null ? null : resultList.optJSONArray("result");
+        return results == null ? null : results.optJSONObject(0);
     }
 
     // returns PID without prefix or URL etc
@@ -281,13 +284,13 @@ public class PubMedResolver implements LinkResolver, MetadataResolver {
         work.setWorkType(WorkType.JOURNAL_ARTICLE); // default for pubMed
         
         Locale locale = localeManager.getLocale();
-        JSONObject resultsList = json.getJSONObject("resultList");
+        JSONObject resultsList = json == null ? null : json.optJSONObject("resultList");
 
-        if (resultsList != null && resultsList.has("result")) {
-            JSONArray results = resultsList.getJSONArray("result");
-            if (results != null && results.length() > 0) {
+        if (resultsList != null) {
+            JSONArray results = resultsList.optJSONArray("result");
+            if (results != null && results.optJSONObject(0) != null) {
                 // Pick the first element always
-                JSONObject workMetadata = results.getJSONObject(0);
+                JSONObject workMetadata = results.optJSONObject(0);
 
                 if (workMetadata.has("title")) {
                     String titleStr = workMetadata.getString("title");
