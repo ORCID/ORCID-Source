@@ -870,7 +870,7 @@ the software.
             <dependency>
                <groupId>org.orcid</groupId>
                <artifactId>orcid-model</artifactId>
-               <version>4.0.2</version>
+               <version>4.0.3</version>
             </dependency>
             <dependency>
                <groupId>org.orcid</groupId>
