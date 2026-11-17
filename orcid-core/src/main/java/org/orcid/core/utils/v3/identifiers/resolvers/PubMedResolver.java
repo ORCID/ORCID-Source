@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -141,6 +142,19 @@ public class PubMedResolver implements LinkResolver, MetadataResolver {
             if (hasResults(json)) {
                 return getWork(json);
             }
+            json = fetchPreprintMetadata(apiTypeName, value);
+            if (hasResults(json)) {
+                WorkExtended work = getWork(json);
+                String identifier = normalizationService.normalise(apiTypeName, value);
+                if (apiTypeName.equals("pmc")) {
+                    identifier = "PMC" + identifier;
+                }
+                if (work.getExternalIdentifiers() == null || work.getExternalIdentifiers().getExternalIdentifier().stream()
+                        .noneMatch(extId -> apiTypeName.equals(extId.getType()))) {
+                    addExternalIdentifier(work, apiTypeName, identifier, localeManager.getLocale());
+                }
+                return work;
+            }
         } catch (UnexpectedResponseCodeException e) {
             // TODO: For future projects, we might want to retry when
             // e.getReceivedCode() tell us that we can retry later, like 503 or
@@ -157,11 +171,50 @@ public class PubMedResolver implements LinkResolver, MetadataResolver {
 
     private boolean exists(String apiTypeName, String value) {
         try {
-            return existsInEuropePmc.get(getPubMedEndpoint(apiTypeName, value));
+            return existsInEuropePmc.get(getPubMedEndpoint(apiTypeName, value)) || hasResults(fetchPreprintMetadata(apiTypeName, value));
         } catch (ExecutionException e) {
             LOG.warn(String.format("Error resolving %s %s against EuropePMC", apiTypeName, value), e.getCause());
             return false;
+        } catch (IOException | JSONException e) {
+            LOG.warn(String.format("Error resolving %s %s against EuropePMC", apiTypeName, value), e);
+            return false;
         }
+    }
+
+    private JSONObject fetchPreprintMetadata(String apiTypeName, String value) throws IOException, JSONException {
+        String id = normalizationService.normalise(apiTypeName, value);
+        if (!StringUtils.isNumeric(id)) {
+            return null;
+        }
+        String doi = null;
+        if (apiTypeName.equals("pmc")) {
+            JSONObject conversion = fetchMetadata("https://pmc.ncbi.nlm.nih.gov/tools/idconv/api/v1/articles/?ids=PMC" + id + "&format=json");
+            JSONArray records = conversion.optJSONArray("records");
+            if (records != null && records.length() > 0) {
+                doi = records.getJSONObject(0).optString("doi", null);
+            }
+        } else if (apiTypeName.equals("pmid")) {
+            JSONObject summary = fetchMetadata("https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esummary.fcgi?db=pubmed&id=" + id + "&retmode=json");
+            JSONObject result = summary.optJSONObject("result");
+            JSONObject article = result == null ? null : result.optJSONObject(id);
+            JSONArray ids = article == null ? null : article.optJSONArray("articleids");
+            if (ids != null) {
+                for (int i = 0; i < ids.length(); i++) {
+                    JSONObject articleId = ids.getJSONObject(i);
+                    if ("doi".equalsIgnoreCase(articleId.optString("idtype"))) {
+                        doi = articleId.optString("value", null);
+                        break;
+                    }
+                }
+            }
+        }
+        if (StringUtils.isBlank(doi)) {
+            return null;
+        }
+        String query = "DOI:\"" + doi + "\" AND SRC:PPR";
+        String endpoint = "https://www.ebi.ac.uk/europepmc/webservices/rest/search?query="
+                + URLEncoder.encode(query, StandardCharsets.UTF_8.name()).replace("+", "%20") + "&resultType=core&format=json";
+        return fetchMetadata(endpoint);
     }
 
     private JSONObject fetchMetadata(String endpoint) throws IOException, JSONException {

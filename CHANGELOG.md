@@ -1,3 +1,27 @@
+## v3.25.10 - 2026-11-12
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.25.9...v3.25.10)
+
+- [#7783](https://github.com/ORCID/ORCID-Source/pull/7783): PD-14736 Harden recovery phone auth and SMS delivery, add logging
+
+## v3.25.9 - 2026-11-12
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.25.8...v3.25.9)
+
+- [#7781](https://github.com/ORCID/ORCID-Source/pull/7781): PD-14808 Keep current session after password change in settings
+
+## v3.25.8 - 2026-11-12
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.25.7...v3.25.8)
+
+- [#7782](https://github.com/ORCID/ORCID-Source/pull/7782): PD-14559 Resolve PubMed preprints using DOI fallback
+
+## v3.25.7 - 2026-11-10
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.25.6...v3.25.7)
+
+- [#7766](https://github.com/ORCID/ORCID-Source/pull/7766): PD-5531 PD-5532 PD-5533 Implemented evict session for orcid in the OrcidRedisIndexedSessionRepository
+
 ## v3.25.6 - 2026-11-06
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.25.5...v3.25.6)

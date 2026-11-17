@@ -19,6 +19,7 @@ import org.orcid.core.utils.VerifyEmailUtils;
 import org.orcid.core.utils.cache.redis.RedisClient;
 import org.orcid.frontend.email.RecordEmailSender;
 import org.orcid.core.utils.cache.redis.PasswordResetTokenEntry;
+import org.orcid.frontend.spring.session.redis.OrcidRedisIndexedSessionRepository;
 import org.orcid.jaxb.model.clientgroup.ClientType;
 import org.orcid.jaxb.model.clientgroup.MemberType;
 import org.orcid.jaxb.model.common.OrcidType;
@@ -135,6 +136,9 @@ public class AdminControllerTest {
     @Mock
     private ProfileHistoryEventManager profileHistoryEventManagerMock;
 
+    @Mock
+    private OrcidRedisIndexedSessionRepository sessionRepositoryMock;
+
     @InjectMocks
     private AdminController adminController = new AdminController() {
         @Override
@@ -201,6 +205,7 @@ public class AdminControllerTest {
         assertNotNull(result);
         assertTrue(result.getErrors().isEmpty());
         assertEquals("admin.profile_deprecation.deprecate_account.success_message", result.getSuccessMessage());
+        verify(sessionRepositoryMock).evictSessionsForOrcid(MEMBER_ID);
     }
 
     @Test
@@ -506,6 +511,7 @@ public class AdminControllerTest {
         assertNotNull(result);
         assertTrue(result.get("success").contains(MEMBER_ID));
         verify(profileEntityManagerMock).deactivateRecord(eq(MEMBER_ID));
+        verify(sessionRepositoryMock).evictSessionsForOrcid(MEMBER_ID);
     }
 
     @Test
