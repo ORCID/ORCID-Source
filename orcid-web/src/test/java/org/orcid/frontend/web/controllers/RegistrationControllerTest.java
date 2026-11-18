@@ -338,7 +338,7 @@ public class RegistrationControllerTest extends DBUnitTest {
         registrationController.validateGrcaptcha(servletRequest, reg);
         assertFalse(reg.getGrecaptcha().getErrors().isEmpty());
         assertTrue(registrationController.setRegisterConfirm(servletRequest, servletResponse, reg).getUrl().endsWith("/register"));
-        verify(recaptchaVerifier, times(0)).verify("changed");
+        verify(recaptchaVerifier, times(1)).verify("changed");
 
         reg.setGrecaptchaWidgetId(null);
         reg.setGrecaptcha(Text.valueOf("verified"));
@@ -347,6 +347,29 @@ public class RegistrationControllerTest extends DBUnitTest {
         reg.setGrecaptcha(null);
         assertTrue(registrationController.setRegisterConfirm(servletRequest, servletResponse, reg).getUrl().endsWith("/register"));
         verify(registrationManager, times(0)).createMinimalRegistration(Mockito.any(), Mockito.anyBoolean(), Mockito.any(), Mockito.anyString());
+    }
+
+    @Test
+    public void turnstileAcceptsNewVerifiedTokenAfterEarlierValidation() {
+        togglzRule.enable(Features.USE_TURNSTILE_REGISTRATION);
+        Registration reg = registrationController.getRegister(servletRequest, servletResponse);
+        reg.setGrecaptchaWidgetId(Text.valueOf("widget"));
+        reg.setGrecaptcha(Text.valueOf("first"));
+        when(turnstileVerifier.verify("first")).thenReturn(true);
+        when(turnstileVerifier.verify("second")).thenReturn(true);
+        registrationController.validateGrcaptcha(servletRequest, reg);
+        registrationController.validateGrcaptcha(servletRequest, reg);
+        verify(turnstileVerifier, times(1)).verify("first");
+
+        reg.setGrecaptcha(Text.valueOf("second"));
+        registrationController.validateGrcaptcha(servletRequest, reg);
+        assertTrue(reg.getGrecaptcha().getErrors().isEmpty());
+        assertEquals("second", session.getAttribute(RegistrationController.GRECAPTCHA_SESSION_ATTRIBUTE_NAME));
+
+        reg.setGrecaptcha(Text.valueOf("invalid"));
+        registrationController.validateGrcaptcha(servletRequest, reg);
+        assertFalse(reg.getGrecaptcha().getErrors().isEmpty());
+        assertEquals("second", session.getAttribute(RegistrationController.GRECAPTCHA_SESSION_ATTRIBUTE_NAME));
     }
 
     @Test

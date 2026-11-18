@@ -210,8 +210,8 @@ public class RegistrationController extends BaseController {
             Object verified = request.getSession().getAttribute(GRECAPTCHA_SESSION_ATTRIBUTE_NAME);
             if (StringUtils.isBlank(token)) {
                 valid = false;
-            } else if (verified != null) {
-                valid = token.equals(verified);
+            } else if (token.equals(verified)) {
+                valid = true;
             } else {
                 valid = TURNSTILE.equals(request.getSession().getAttribute(CAPTCHA_PROVIDER))
                         ? turnstileVerifier.verify(token) : recaptchaVerifier.verify(token);

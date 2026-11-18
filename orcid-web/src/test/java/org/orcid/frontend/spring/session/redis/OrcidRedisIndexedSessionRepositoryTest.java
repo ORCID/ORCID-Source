@@ -10,6 +10,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.time.Duration;
 import java.time.Instant;
 import java.util.HashMap;
 import java.util.Map;
@@ -26,8 +27,11 @@ import org.springframework.data.redis.core.BoundHashOperations;
 import org.springframework.data.redis.core.BoundSetOperations;
 import org.springframework.data.redis.core.RedisOperations;
 import org.springframework.data.redis.serializer.RedisSerializer;
+import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.session.FindByIndexNameSessionRepository;
+import org.springframework.session.MapSession;
 import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
 import static org.junit.Assert.assertEquals;
 
@@ -60,6 +64,25 @@ public class OrcidRedisIndexedSessionRepositoryTest {
     @After
     public void tearDown() {
         RequestContextHolder.resetRequestAttributes();
+    }
+
+    @Test
+    public void registrationGetPersistsCaptchaSessionAttributes() {
+        MockHttpServletRequest request = new MockHttpServletRequest("GET", "/register.json");
+        RequestContextHolder.setRequestAttributes(new ServletRequestAttributes(request));
+        MapSession mapSession = new MapSession(SESSION_ID);
+        mapSession.setMaxInactiveInterval(Duration.ZERO);
+        OrcidRedisIndexedSessionRepository.RedisSession session = sessionRepository.new RedisSession(mapSession, false);
+        session.setAttribute("captchaProvider", "turnstile");
+        session.setAttribute("captchaRegistrationId", "registration-id");
+        Mockito.lenient().when(redisOperations.boundHashOps(anyString())).thenReturn(sessionHashOperations);
+        Mockito.lenient().when(redisOperations.boundSetOps(anyString())).thenReturn(expirationSetOperations);
+
+        sessionRepository.save(session);
+
+        verify(sessionHashOperations).putAll(Mockito.argThat(delta ->
+                "turnstile".equals(delta.get("sessionAttr:captchaProvider"))
+                && "registration-id".equals(delta.get("sessionAttr:captchaRegistrationId"))));
     }
 
     @Test
