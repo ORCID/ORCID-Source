@@ -1,10 +1,5 @@
 package org.orcid.persistence.dao;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
@@ -27,6 +22,8 @@ import org.springframework.test.context.ContextConfiguration;
 
 import com.google.common.collect.Lists;
 
+import static org.junit.Assert.*;
+
 @RunWith(OrcidJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:test-orcid-persistence-context.xml" })
 public class ResearchResourceDaoTest extends DBUnitTest{
@@ -34,8 +31,8 @@ public class ResearchResourceDaoTest extends DBUnitTest{
     @Resource(name = "researchResourceDao")
     private ResearchResourceDao dao;
 
-    @Resource(name = "profileDao")
-    private ProfileDao pDao;
+    @Resource(name = "orgDao")
+    private OrgDao orgDao;
 
     private static String USER_ORCID = "0000-0000-0000-0003";
     private static String OTHER_USER_ORCID = "4444-4444-4444-4446";
@@ -210,4 +207,42 @@ public class ResearchResourceDaoTest extends DBUnitTest{
         assertEquals(e.getDateCreated(), e2.getDateCreated());
         assertEquals(e2.getDateCreated(), e2.getLastModified());
     }
+
+    @Test
+    public void removeResearchResourceOfAnotherRecordKeepsItsItemsTest() {
+        assertFalse(dao.removeResearchResource(USER_ORCID, 1L));
+
+        ResearchResourceEntity rr = dao.find(1L);
+        assertNotNull(rr);
+        assertEquals(OTHER_USER_ORCID, rr.getOrcid());
+        assertEquals(2, rr.getResourceItems().size());
+        int itemHosts = 0;
+        for (ResearchResourceItemEntity item : rr.getResourceItems()) {
+            itemHosts += item.getHosts().size();
+        }
+        assertEquals(2, itemHosts);
+    }
+
+    @Test
+    public void removeResearchResourceWithItemsTest() {
+        ResearchResourceEntity e = new ResearchResourceEntity();
+        e.setOrcid(USER_ORCID);
+        e.setVisibility("PRIVATE");
+        e.setTitle("TITLE");
+        e.setProposalType("PROPOSAL_TYPE");
+        e.setExternalIdentifiersJson("{&quot;workExternalIdentifier&quot;:[{&quot;workExternalIdentifierType&quot;:&quot;AGR&quot;,&quot;workExternalIdentifierId&quot;:{&quot;content&quot;:&quot;work:external-identifier-id#7&quot;}}]}");
+        ResearchResourceItemEntity item = new ResearchResourceItemEntity();
+        item.setResourceName("the resource name");
+        item.setResourceType("infrastructures");
+        item.setExternalIdentifiersJson("{&quot;workExternalIdentifier&quot;:[{&quot;workExternalIdentifierType&quot;:&quot;AGR&quot;,&quot;workExternalIdentifierId&quot;:{&quot;content&quot;:&quot;work:external-identifier-id#7&quot;}}]}");
+        item.setHosts(Lists.newArrayList(orgDao.find(1L)));
+        item.setResearchResourceEntity(e);
+        e.setResourceItems(Lists.newArrayList(item));
+        dao.persist(e);
+        assertEquals(1, dao.find(e.getId()).getResourceItems().size());
+
+        assertTrue(dao.removeResearchResource(USER_ORCID, e.getId()));
+        assertNull(dao.find(e.getId()));
+    }
+
 }

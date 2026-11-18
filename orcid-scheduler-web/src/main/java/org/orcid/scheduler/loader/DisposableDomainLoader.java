@@ -9,6 +9,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
+import org.apache.commons.validator.routines.DomainValidator;
 import org.orcid.core.utils.cache.redis.RedisClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,14 +22,22 @@ public class DisposableDomainLoader {
 
     private static final String REDIS_LIST_KEY = "disposable-domains";
     private static final int BATCH_SIZE = 1000;
+    private static final DomainValidator DOMAIN_VALIDATOR = DomainValidator.getInstance();
 
     @Autowired
     private RedisClient redisClient;
 
-    @Value("${org.orcid.scheduler.disposableDomains.url:https://raw.githubusercontent.com/disposable/disposable-email-domains/master/domains_strict.txt}")
+    @Value("${org.orcid.frontend.service.DisposableEmailsService.enabled:true}")
+    private boolean enabled;
+
+    @Value("${org.orcid.scheduler.disposableDomains.url:https://raw.githubusercontent.com/disposable/disposable-email-domains/master/domains.txt}")
     private String domainsUrl;
 
     public void execute() throws IOException {
+        if (!enabled) {
+            LOGGER.warn("Disposable email domain loader is disabled, skipping execution");
+            return;
+        }
         LOGGER.info("Process to load disposable email domains started");
         Set<String> domains = readDomains();
         storeDomains(domains);
@@ -48,12 +57,20 @@ public class DisposableDomainLoader {
                     LOGGER.warn("Skipping empty line {}", lineNumber);
                     continue;
                 }
+                if (!isValidEmailDomain(domain)) {
+                    LOGGER.warn("Skipping invalid email domain '{}' at line {}", domain, lineNumber);
+                    continue;
+                }
                 if (!domains.add(domain)) {
                     LOGGER.warn("Skipping duplicate domain '{}' at line {}", domain, lineNumber);
                 }
             }
         }
         return domains;
+    }
+
+    private boolean isValidEmailDomain(String domain) {
+        return DOMAIN_VALIDATOR.isValid(domain);
     }
 
     private void storeDomains(Set<String> domains) {
