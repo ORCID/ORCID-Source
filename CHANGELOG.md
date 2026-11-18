@@ -1,3 +1,9 @@
+## v3.25.12 - 2026-11-18
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.25.10...v3.25.12)
+
+- [#7786](https://github.com/ORCID/ORCID-Source/pull/7786): PD-4737 Use the normal list and add a flag to disable the functionality
+
 ## v3.25.10 - 2026-11-12
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.25.9...v3.25.10)
