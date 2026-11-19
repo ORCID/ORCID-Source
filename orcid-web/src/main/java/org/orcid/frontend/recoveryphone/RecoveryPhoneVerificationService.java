@@ -9,6 +9,7 @@ import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.orcid.utils.phone.PhoneNumberValidationResult;
 import org.orcid.utils.phone.PhoneNumberValidator;
+import org.orcid.utils.sms.AwsNotifySmsSender;
 import org.orcid.utils.sms.SmsSendResult;
 import org.orcid.utils.sms.VerificationCodeSender;
 import org.slf4j.Logger;
@@ -42,6 +43,7 @@ public class RecoveryPhoneVerificationService {
     public static final String SMS_PROVIDER_NOT_CONFIGURED = "SMS_PROVIDER_NOT_CONFIGURED";
     public static final String CODE_STORAGE_UNAVAILABLE = "CODE_STORAGE_UNAVAILABLE";
     public static final String SEND_LIMIT_REACHED = "SEND_LIMIT_REACHED";
+
 
     /**
      * The window both caps are counted over. A constant rather than a property:
@@ -170,6 +172,10 @@ public class RecoveryPhoneVerificationService {
             // Nothing reached anyone, so nothing is recorded against the record:
             // a provider outage is not something to spend a user's allowance on
             LOG.warn("Unable to send a recovery phone verification code for {}: {}", orcid, result.getErrorCode());
+            if(result.getErrorCode() != null && result.getErrorCode().equals(AwsNotifySmsSender.COUNTRY_NOT_ENABLED)) {
+                return RecoveryPhoneSendCodeResponse.failure(AwsNotifySmsSender.COUNTRY_NOT_ENABLED);
+            }
+
             return RecoveryPhoneSendCodeResponse.failure(SMS_SEND_FAILED);
         }
 
