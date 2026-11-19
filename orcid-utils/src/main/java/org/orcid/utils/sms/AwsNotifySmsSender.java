@@ -34,6 +34,8 @@ public class AwsNotifySmsSender implements VerificationCodeSender {
 
     public static final String PROVIDER = "aws";
 
+    public static final String COUNTRY_NOT_ENABLED = "COUNTRY_NOT_ENABLED";
+
     private static final Logger LOG = LoggerFactory.getLogger(AwsNotifySmsSender.class);
 
     @Value("${org.orcid.sms.aws.deliveryValiditySeconds:300}")
@@ -112,7 +114,18 @@ public class AwsNotifySmsSender implements VerificationCodeSender {
         } catch (Exception | LinkageError e) {
             // LinkageError too: a classpath the SDK cannot run on fails every send, and
             // it must come back as a failed send rather than escape as a 500
-            logSendFailure(toE164Number, locale, e);
+            if (e instanceof AwsServiceException) {
+                AwsErrorDetails details = ((AwsServiceException) e).awsErrorDetails();
+                LOG.warn("AWS Notify failed to send SMS to {}: {} ({}): {}", toE164Number, details.errorCode(),
+                        details.errorMessage(), e.getClass().getSimpleName());
+                if(details.errorMessage() != null && details.errorMessage().contains(COUNTRY_NOT_ENABLED)) {
+                    return SmsSendResult.failure(PROVIDER, COUNTRY_NOT_ENABLED, details.errorMessage());
+                }
+            } else if (e instanceof SdkException) {
+                LOG.warn("AWS Notify failed to send SMS to {}: {}", toE164Number, e.getMessage(), e);
+            } else {
+                LOG.warn("AWS Notify failed to send SMS to {}: {}", toE164Number, e.getMessage(), e);
+            }
             return SmsSendResult.failure(PROVIDER, e.getClass().getSimpleName(), e.getMessage());
         }
     }
@@ -129,57 +142,6 @@ public class AwsNotifySmsSender implements VerificationCodeSender {
         } catch (Exception | LinkageError e) {
             return SmsSendResult.failure(PROVIDER, e.getClass().getSimpleName(), e.getMessage());
         }
-    }
-
-    private void logSendFailure(String toE164Number, String locale, Throwable e) {
-        StringBuilder details = new StringBuilder("AWS Notify SMS send failed")
-                .append(" | to=").append(maskPhone(toE164Number))
-                .append(" | locale=").append(locale)
-                .append(" | templateId=").append(resolveTemplateId(locale))
-                .append(" | notifyConfigurationId=").append(notifyConfigurationId)
-                .append(" | configurationSetName=").append(configurationSetName)
-                .append(" | region=").append(region)
-                .append(" | exceptionType=").append(e.getClass().getName())
-                .append(" | message=").append(e.getMessage());
-        if (e instanceof AwsServiceException) {
-            AwsServiceException ase = (AwsServiceException) e;
-            details.append(" | statusCode=").append(ase.statusCode())
-                    .append(" | requestId=").append(ase.requestId())
-                    .append(" | extendedRequestId=").append(ase.extendedRequestId())
-                    .append(" | retryable=").append(ase.retryable())
-                    .append(" | throttling=").append(ase.isThrottlingException());
-            AwsErrorDetails errorDetails = ase.awsErrorDetails();
-            if (errorDetails != null) {
-                details.append(" | awsServiceName=").append(errorDetails.serviceName())
-                        .append(" | awsErrorCode=").append(errorDetails.errorCode())
-                        .append(" | awsErrorMessage=").append(errorDetails.errorMessage());
-                try {
-                    if (errorDetails.rawResponse() != null) {
-                        details.append(" | awsRawResponse=").append(errorDetails.rawResponse().asUtf8String());
-                    }
-                } catch (Exception ignored) {
-                    details.append(" | awsRawResponse=<unreadable>");
-                }
-                if (errorDetails.sdkHttpResponse() != null) {
-                    details.append(" | awsHttpStatusText=").append(errorDetails.sdkHttpResponse().statusText().orElse(null))
-                            .append(" | awsHttpHeaders=").append(errorDetails.sdkHttpResponse().headers());
-                }
-            }
-        } else if (e instanceof SdkException) {
-            details.append(" | retryable=").append(((SdkException) e).retryable());
-        }
-        if (e.getCause() != null) {
-            details.append(" | cause=").append(e.getCause().getClass().getName())
-                    .append(": ").append(e.getCause().getMessage());
-        }
-        LOG.error(details.toString(), e);
-    }
-
-    private static String maskPhone(String phone) {
-        if (StringUtils.isBlank(phone) || phone.length() <= 4) {
-            return phone;
-        }
-        return StringUtils.repeat('*', phone.length() - 4) + phone.substring(phone.length() - 4);
     }
 
     /**
