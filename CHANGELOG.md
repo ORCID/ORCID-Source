@@ -1,3 +1,9 @@
+## v3.25.13 - 2026-11-19
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.25.12...v3.25.13)
+
+- [#7787](https://github.com/ORCID/ORCID-Source/pull/7787): Add detailed error message for QA
+
 ## v3.25.12 - 2026-11-18
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.25.10...v3.25.12)
