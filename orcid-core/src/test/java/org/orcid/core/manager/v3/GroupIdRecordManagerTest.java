@@ -166,7 +166,7 @@ public class GroupIdRecordManagerTest extends BaseTest  {
     }
     
     @Test
-    public void testUpdateDuplicateGroupIdRecords() {
+    public void testUpdateDuplicateGroupIdRecords() throws InterruptedException {
         String groupName = "Group # " + System.currentTimeMillis(); 
         GroupIdRecord g1 = new GroupIdRecord();
         g1.setDescription("Description");
@@ -240,6 +240,7 @@ public class GroupIdRecordManagerTest extends BaseTest  {
         GroupIdRecord existingOne = groupIdRecordManager.findByGroupId("orcid-generated:valid-group-id#1").get();
         existingOne.setGroupId("orcid-generated:valid-group-id#1-updated");
         existingOne.setDescription("updated-description");
+        waitUntilAfter(DateUtils.convertToDate(g1Modified.getValue()));
         existingOne = groupIdRecordManager.updateGroupIdRecord(existingOne.getPutCode(), existingOne);
         assertNotNull(existingOne);
         assertEquals(putCode1, existingOne.getPutCode());
@@ -262,7 +263,7 @@ public class GroupIdRecordManagerTest extends BaseTest  {
     }
     
     @Test
-    public void testCreateUpdateGetDeleteGroupIdRecord(){
+    public void testCreateUpdateGetDeleteGroupIdRecord() throws InterruptedException {
         GroupIdRecord g1 = new GroupIdRecord();
         g1.setDescription("Description");
         g1.setGroupId("orcid-generated:valid-group-id");
@@ -319,6 +320,7 @@ public class GroupIdRecordManagerTest extends BaseTest  {
         }
         
         //Test update with valid value
+        waitUntilAfter(g1Modified);
         try {
             g1.setGroupId("orcid-generated:other-valid-group-id");
             g1 = groupIdRecordManager.updateGroupIdRecord(g1.getPutCode(), g1);
@@ -363,6 +365,12 @@ public class GroupIdRecordManagerTest extends BaseTest  {
             
         } catch(Exception e) {
             fail();
+        }
+    }
+
+    private void waitUntilAfter(Date timestamp) throws InterruptedException {
+        while (System.currentTimeMillis() <= timestamp.getTime()) {
+            Thread.sleep(1);
         }
     }
 }
