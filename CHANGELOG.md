@@ -1,3 +1,9 @@
+## v3.25.14 - 2026-11-20
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.25.13...v3.25.14)
+
+- [#7789](https://github.com/ORCID/ORCID-Source/pull/7789): PD-14919 Return a different error code if the country is not supported
+
 ## v3.25.13 - 2026-11-19
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.25.12...v3.25.13)
