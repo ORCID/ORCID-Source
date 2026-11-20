@@ -256,6 +256,7 @@ public class ManageProfileControllerTest {
         TargetProxyHelper.injectIntoProxy(controller, "orcidUrlManager", mockOrcidUrlManager);
         TargetProxyHelper.injectIntoProxy(controller, "localeManager", mockLocaleManager);
         TargetProxyHelper.injectIntoProxy(controller, "profileEntityManager", mockProfileEntityManager);
+        ((BaseController) controller).profileEntityManager = mockProfileEntityManager;
         TargetProxyHelper.injectIntoProxy(controller, "givenPermissionToManager", mockGivenPermissionToManager);
         TargetProxyHelper.injectIntoProxy(controller, "givenPermissionToManagerReadOnly", mockGivenPermissionToManagerReadOnly);
         TargetProxyHelper.injectIntoProxy(controller, "orcidSecurityManager", mockOrcidSecurityManager);
@@ -1209,6 +1210,76 @@ public class ManageProfileControllerTest {
         controller.verifyEmail(mockRequest, "email@email.com");
 
         verify(mockRecordEmailSender, Mockito.times(1)).sendVerificationEmail(eq(USER_ORCID), eq("email@email.com"), eq(false));
+    }
+
+    @Test
+    public void testValidateEmailRejectsNormalizedCurrentUserDuplicate() {
+        String existing = USER_ORCID + "_1@test.orcid.org";
+        when(mockEmailManager.emailExists(eq(existing))).thenReturn(true);
+        when(mockProfileEntityManager.isProfileClaimedByEmail(eq(existing))).thenReturn(true);
+        AddEmail email = new AddEmail();
+        email.setValue("\u200b" + existing + "\u00a0");
+
+        org.orcid.pojo.ajaxForm.Email result = controller.validatEmail(new MockHttpServletRequest(), email);
+
+        assertEquals(existing, result.getValue());
+        assertFalse(result.getErrors().isEmpty());
+        verify(mockEmailManager).emailExists(eq(existing));
+    }
+
+    @Test
+    public void testValidateEmailRejectsEmptyAfterFiltering() {
+        for (String value : Arrays.asList("", "  ", "\u2003", "\u200b\ufeff")) {
+            AddEmail email = new AddEmail();
+            email.setValue(value);
+            assertFalse(controller.validatEmail(new MockHttpServletRequest(), email).getErrors().isEmpty());
+        }
+        verify(mockEmailManager, Mockito.never()).emailExists(anyString());
+    }
+
+    @Test
+    public void testValidateEmailChecksOtherOwnersAndAcceptsNewAddress() {
+        String existing = "other@example.org";
+        when(mockEmailManager.emailExists(eq(existing))).thenReturn(true);
+        when(mockProfileEntityManager.isProfileClaimedByEmail(eq(existing))).thenReturn(true);
+        AddEmail duplicate = new AddEmail();
+        duplicate.setValue("other\u200b@example.org");
+        assertFalse(controller.validatEmail(new MockHttpServletRequest(), duplicate).getErrors().isEmpty());
+
+        AddEmail fresh = new AddEmail();
+        fresh.setValue("new\u200b@example.org");
+        assertTrue(controller.validatEmail(new MockHttpServletRequest(), fresh).getErrors().isEmpty());
+        assertEquals("new@example.org", fresh.getValue());
+    }
+
+    @Test
+    public void testAddEmailRejectsEmptyAfterFiltering() {
+        when(mockOrcidSecurityManager.isPasswordConfirmationRequired()).thenReturn(false);
+        AddEmail email = new AddEmail();
+        email.setValue("\u200b\ufeff");
+        assertFalse(controller.addEmails(new MockHttpServletRequest(), email).getErrors().isEmpty());
+        verify(mockEmailManager, Mockito.never()).addEmail(anyString(), any());
+        verify(mockRecordEmailSender, Mockito.never()).sendVerificationEmail(anyString(), anyString(), any());
+    }
+
+    @Test
+    public void testSetEmailsDuplicateDoesNotDeleteExistingEmails() {
+        String existing = USER_ORCID + "_1@test.orcid.org";
+        when(mockOrcidSecurityManager.isPasswordConfirmationRequired()).thenReturn(false);
+        when(mockEmailManager.emailExists(eq(existing))).thenReturn(true);
+        when(mockProfileEntityManager.isProfileClaimedByEmail(eq(existing))).thenReturn(true);
+        org.orcid.pojo.ajaxForm.Email email = new org.orcid.pojo.ajaxForm.Email();
+        email.setValue("\u200b" + existing);
+        email.setPrimary(true);
+        org.orcid.pojo.ajaxForm.Emails emails = new org.orcid.pojo.ajaxForm.Emails();
+        emails.setEmails(Arrays.asList(email));
+
+        org.orcid.pojo.ajaxForm.Emails result = controller.setEmails(new MockHttpServletRequest(), emails);
+
+        assertFalse(result.getErrors().isEmpty());
+        verify(mockEmailManager, Mockito.never()).removeEmail(anyString(), anyString());
+        verify(mockEmailManager, Mockito.never()).setPrimary(anyString(), anyString(), any());
+        verify(mockRecordEmailSender, Mockito.never()).sendVerificationEmail(anyString(), anyString(), any());
     }
 
     @Test
