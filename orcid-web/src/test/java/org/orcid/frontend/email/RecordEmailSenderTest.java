@@ -1,6 +1,7 @@
 package org.orcid.frontend.email;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
@@ -53,6 +54,7 @@ import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.pojo.EmailListChange;
 import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.orcid.utils.email.MailGunManager;
+import org.springframework.context.ApplicationContext;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.web.WebAppConfiguration;
@@ -84,6 +86,17 @@ public class RecordEmailSenderTest {
     
     @Resource
     RecordEmailSender recordEmailSender;
+
+    @Resource
+    private ApplicationContext applicationContext;
+
+    @Test
+    public void sessionRepositoryIsAvailableToControllers() {
+        Object repository = applicationContext.getBean("sessionRepository");
+        for (String controller : new String[] { "adminController", "manageProfileController", "passwordResetController" }) {
+            assertSame(repository, ReflectionTestUtils.getField(applicationContext.getBean(controller), "sessionRepository"));
+        }
+    }
     
     @Before
     public void before() {

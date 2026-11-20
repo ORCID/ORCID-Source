@@ -53,6 +53,7 @@ import org.orcid.core.manager.v3.ProfileHistoryEventManager;
 import org.orcid.core.manager.v3.ProfileInterstitialFlagManager;
 import org.orcid.core.manager.v3.RecordNameManager;
 import org.orcid.core.utils.cache.redis.RedisClient;
+import org.orcid.frontend.spring.session.redis.OrcidRedisIndexedSessionRepository;
 import org.orcid.core.manager.v3.read_only.*;
 import org.orcid.core.security.OrcidRoles;
 import org.orcid.frontend.service.DisposableEmailsService;
@@ -142,6 +143,9 @@ public class ManageProfileControllerTest {
 
     @Mock
     private RedisClient mockRedisClient;
+
+    @Mock
+    private OrcidRedisIndexedSessionRepository mockSessionRepository;
 
     @Mock
     private TrustedPartiesService mockTrustedPartiesService;
@@ -242,6 +246,7 @@ public class ManageProfileControllerTest {
         TargetProxyHelper.injectIntoProxy(controller, "profileInterstitialFlagManagerReadOnly", mockProfileInterstitialFlagManagerReadOnly);
         TargetProxyHelper.injectIntoProxy(controller, "profileInterstitialFlagManager", mockProfileInterstitialFlagManager);
         TargetProxyHelper.injectIntoProxy(controller, "redisClient", mockRedisClient);
+        TargetProxyHelper.injectIntoProxy(controller, "sessionRepository", mockSessionRepository);
         TargetProxyHelper.injectIntoProxy(controller, "trustedPartiesService", mockTrustedPartiesService);
         TargetProxyHelper.injectIntoProxy(controller, "institutionalSignInManager", mockInstitutionalSignInManager);
         TargetProxyHelper.injectIntoProxy(controller, "expiringLinkService", mockExpiringLinkService);
@@ -400,6 +405,38 @@ public class ManageProfileControllerTest {
         u2.setEncryptedPassword("password");
 
         when(mockProfileEntityManagerReadOnly.findByOrcid(eq(DEPRECATED_USER_ORCID))).thenReturn(u2);
+    }
+
+    @Test
+    public void testChangePasswordKeepsCurrentSession() {
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        MockHttpSession session = new MockHttpSession();
+        request.setSession(session);
+        ChangePassword form = new ChangePassword();
+        form.setOldPassword("old password");
+        form.setPassword("A-long-unique-password-248!");
+        form.setRetypedPassword("A-long-unique-password-248!");
+
+        controller.changedPasswordJson(request, form);
+
+        assertTrue(form.isSuccess());
+        verify(mockSessionRepository).evictSessionsKeepCurrent(USER_ORCID, session.getId());
+        verify(mockSessionRepository, Mockito.never()).evictSessionsForOrcid(USER_ORCID);
+    }
+
+    @Test
+    public void testChangePasswordDoesNotEvictOnInvalidPassword() {
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        ChangePassword form = new ChangePassword();
+        form.setOldPassword("invalid password");
+        form.setPassword("A-long-unique-password-248!");
+        form.setRetypedPassword("A-long-unique-password-248!");
+
+        controller.changedPasswordJson(request, form);
+
+        assertFalse(form.isSuccess());
+        verify(mockSessionRepository, Mockito.never()).evictSessionsKeepCurrent(anyString(), any());
+        verify(mockSessionRepository, Mockito.never()).evictSessionsForOrcid(anyString());
     }
 
     private void mocksForDeprecatedAccounts() {
@@ -750,11 +787,14 @@ public class ManageProfileControllerTest {
         deprecateProfile.setTwoFactorToken("token");
 
         when(mockRedisClient.get(DEPRECATED_USER_ORCID + "_two-factor-token")).thenReturn("token");
+        when(mockProfileEntityManager.deprecateProfile(eq(DEPRECATED_USER_ORCID), eq(USER_ORCID),
+                eq(ProfileEntity.USER_DRIVEN_DEPRECATION), any())).thenReturn(true);
 
         deprecateProfile = controller.confirmDeprecateProfile(deprecateProfile);
         assertNotNull(deprecateProfile);
         assertTrue(deprecateProfile.getErrors().isEmpty());
         verify(mockRecordEmailSender, Mockito.times(0)).sendEmailListChangeEmail(eq(USER_ORCID), emailListChangeCaptor.capture());
+        verify(mockSessionRepository).evictSessionsForOrcid(DEPRECATED_USER_ORCID);
     }
 
     @Test
@@ -1755,6 +1795,7 @@ public class ManageProfileControllerTest {
         ChangePassword result = controller.changedPasswordJson(new MockHttpServletRequest(), cp);
         assertTrue(result.isSuccess());
         verify(mockProfileEntityManager, times(1)).updatePassword(eq(USER_ORCID), eq("NewPassword123!"));
+        verify(mockSessionRepository).evictSessionsKeepCurrent(USER_ORCID, null);
     }
 
     @Test

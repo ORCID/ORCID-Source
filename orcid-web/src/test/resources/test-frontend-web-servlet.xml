@@ -12,4 +12,10 @@
         ignore-unresolvable="true" />
 
 	<import resource="classpath*:orcid-frontend-web-servlet.xml"/>
+
+    <beans profile="unitTests">
+        <bean id="sessionRepository" class="org.mockito.Mockito" factory-method="mock">
+            <constructor-arg type="java.lang.Class" value="org.orcid.frontend.spring.session.redis.OrcidRedisIndexedSessionRepository" />
+        </bean>
+    </beans>
 </beans>

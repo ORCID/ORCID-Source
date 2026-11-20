@@ -46,6 +46,7 @@ import org.orcid.core.manager.v3.read_only.EmailManagerReadOnly;
 import org.orcid.core.togglz.Features;
 import org.orcid.core.utils.cache.redis.RedisClient;
 import org.orcid.frontend.email.RecordEmailSender;
+import org.orcid.frontend.spring.session.redis.OrcidRedisIndexedSessionRepository;
 import org.orcid.frontend.web.forms.OneTimeResetPasswordForm;
 import org.orcid.core.utils.cache.redis.PasswordResetTokenEntry;
 import org.orcid.jaxb.model.v3.release.record.Email;
@@ -94,6 +95,8 @@ public class PasswordResetControllerTest {
     @Mock
     private ProfileEntityManager profileEntityManager;
     @Mock
+    private OrcidRedisIndexedSessionRepository sessionRepository;
+    @Mock
     private ProfileEntityCacheManager profileEntityCacheManager;
     @Mock
     private EmailManagerReadOnly emailManagerReadOnly;
@@ -119,6 +122,7 @@ public class PasswordResetControllerTest {
         inject(PasswordResetController.class, "twoFactorAuthenticationManager", twoFactorAuthenticationManager);
         inject(PasswordResetController.class, "backupCodeManager", backupCodeManager);
         inject(PasswordResetController.class, "profileEntityManager", profileEntityManager);
+        inject(PasswordResetController.class, "sessionRepository", sessionRepository);
         inject(PasswordResetController.class, "registrationController", registrationController);
         inject(PasswordResetController.class, "profileEntityCacheManager", profileEntityCacheManager);
         inject(PasswordResetController.class, "emailManagerReadOnly", emailManagerReadOnly);
@@ -458,6 +462,7 @@ public class PasswordResetControllerTest {
         assertTrue(result.getErrors().isEmpty());
         assertEquals(BASE_URL + "/my-orcid", result.getSuccessRedirectLocation());
         verify(profileEntityManager).updatePassword(ORCID, "Password#123");
+        verify(sessionRepository).evictSessionsForOrcid(ORCID);
         verify(redisClient).set(eq("password-reset-token-" + ORCID),
                 eq(new PasswordResetTokenEntry(token, true).serialize()), anyInt());
     }

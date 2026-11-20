@@ -19,6 +19,7 @@ import org.orcid.core.utils.OrcidRequestUtil;
 import org.orcid.core.utils.VerifyEmailUtils;
 import org.orcid.core.utils.cache.redis.RedisClient;
 import org.orcid.frontend.email.RecordEmailSender;
+import org.orcid.frontend.spring.session.redis.OrcidRedisIndexedSessionRepository;
 import org.orcid.frontend.web.util.PasswordConstants;
 import org.orcid.core.utils.cache.redis.PasswordResetTokenEntry;
 import org.orcid.jaxb.model.clientgroup.ClientType;
@@ -66,6 +67,9 @@ public class AdminController extends BaseController {
 
     @Resource(name = "profileEntityManagerV3")
     ProfileEntityManager profileEntityManager;
+
+    @Resource(name = "sessionRepository")
+    private OrcidRedisIndexedSessionRepository sessionRepository;
 
     @Resource
     private AdminManager adminManager;
@@ -176,6 +180,7 @@ public class AdminController extends BaseController {
             	
                 boolean wasDeprecated = adminManager.deprecateProfile(request, deprecatedOrcid, primaryOrcid, getCurrentUserOrcid());
                 if (wasDeprecated) {
+                    sessionRepository.evictSessionsForOrcid(deprecatedOrcid);
                     //send the security notification email on change password
                 	if(Features.SEND_EMAIL_ON_DEPRECATE_RECORD.isActive()) {
             			recordEmailSender.sendOrcidSecurityDeprecatedEmail(primaryOrcid, deprecatedOrcid, deprecatedAccountEmails);
@@ -564,6 +569,7 @@ public class AdminController extends BaseController {
                                 recordEmailSender.sendOrcidDeactivatedEmail(orcidId);
                             }
                             profileEntityManager.deactivateRecord(orcidId);
+                            sessionRepository.evictSessionsForOrcid(orcidId);
                             successIds.add(nextToken);
                         }
                     }

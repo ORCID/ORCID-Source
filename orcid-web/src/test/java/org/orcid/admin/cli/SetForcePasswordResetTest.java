@@ -28,7 +28,6 @@ import org.mockito.junit.MockitoJUnitRunner;
 import org.orcid.frontend.spring.session.redis.OrcidRedisIndexedSessionRepository;
 import org.orcid.persistence.dao.ProfileDao;
 import org.springframework.core.env.ConfigurableEnvironment;
-import org.springframework.session.FindByIndexNameSessionRepository;
 import org.springframework.test.util.ReflectionTestUtils;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -85,14 +84,13 @@ public class SetForcePasswordResetTest {
 
         when(profileDao.orcidExists(anyString())).thenReturn(true);
         when(profileDao.updateForcePasswordReset(any(List.class), any(Date.class))).thenAnswer(invocation -> ((List<?>) invocation.getArgument(0)).size());
-        when(sessionRepository.findByIndexNameAndIndexValue(eq(FindByIndexNameSessionRepository.PRINCIPAL_NAME_INDEX_NAME), anyString()))
-                .thenReturn(Collections.emptyMap());
+        when(sessionRepository.evictSessionsForOrcid(anyString())).thenReturn(0);
 
         setForcePasswordReset.execute();
 
         ArgumentCaptor<List> batchCaptor = ArgumentCaptor.forClass(List.class);
         verify(profileDao, times(3)).updateForcePasswordReset(batchCaptor.capture(), any(Date.class));
-        verify(sessionRepository, times(25001)).findByIndexNameAndIndexValue(eq(FindByIndexNameSessionRepository.PRINCIPAL_NAME_INDEX_NAME), anyString());
+        verify(sessionRepository, times(25001)).evictSessionsForOrcid(anyString());
 
         List<List> batches = batchCaptor.getAllValues();
         assertEquals(10000, batches.get(0).size());
