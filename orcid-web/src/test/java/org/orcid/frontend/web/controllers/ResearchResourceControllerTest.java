@@ -29,6 +29,7 @@ import org.orcid.frontend.web.util.BaseControllerTest;
 import org.orcid.jaxb.model.v3.release.common.Visibility;
 import org.orcid.pojo.ResearchResourceGroupPojo;
 import org.orcid.test.OrcidJUnit4ClassRunner;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.web.WebAppConfiguration;
 
@@ -192,7 +193,19 @@ public class ResearchResourceControllerTest extends BaseControllerTest {
         page1 = controller.getresearchResourcePage(0, 0, ResearchResourcePaginator.DATE_SORT_KEY, false);
         assertEquals("the title2", page1.getGroups().get(0).getDefaultResearchResource().getTitle());
         assertEquals("the title3", page1.getGroups().get(1).getDefaultResearchResource().getTitle());
+    }
 
+    @Test
+    public void removeResearchResourceOfAnotherRecordKeepsItsItemsTest() {
+        HttpSession session = mock(HttpSession.class);
+        when(servletRequest.getSession()).thenReturn(session);
+        SecurityContextHolder.getContext().setAuthentication(getAuthentication("0000-0000-0000-0003"));
+        controller.removeWork("1");
+
+        SecurityContextHolder.getContext().setAuthentication(getAuthentication());
+        org.orcid.pojo.ResearchResource rr = controller.getResearchResource(1);
+        assertEquals(2, rr.getItems().size());
+        assertEquals(2, rr.getItems().get(0).getHosts().size());
     }
 
     // note, invoked by testReadPage to prevent ordering issues

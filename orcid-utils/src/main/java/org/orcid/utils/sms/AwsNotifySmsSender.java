@@ -12,6 +12,9 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
+import software.amazon.awssdk.awscore.exception.AwsErrorDetails;
+import software.amazon.awssdk.awscore.exception.AwsServiceException;
+import software.amazon.awssdk.core.exception.SdkException;
 import software.amazon.awssdk.auth.credentials.DefaultCredentialsProvider;
 import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
 import software.amazon.awssdk.http.urlconnection.UrlConnectionHttpClient;
@@ -30,6 +33,8 @@ import software.amazon.awssdk.services.pinpointsmsvoicev2.model.SendNotifyTextMe
 public class AwsNotifySmsSender implements VerificationCodeSender {
 
     public static final String PROVIDER = "aws";
+
+    public static final String COUNTRY_NOT_ENABLED = "COUNTRY_NOT_ENABLED";
 
     private static final Logger LOG = LoggerFactory.getLogger(AwsNotifySmsSender.class);
 
@@ -109,6 +114,18 @@ public class AwsNotifySmsSender implements VerificationCodeSender {
         } catch (Exception | LinkageError e) {
             // LinkageError too: a classpath the SDK cannot run on fails every send, and
             // it must come back as a failed send rather than escape as a 500
+            if (e instanceof AwsServiceException) {
+                AwsErrorDetails details = ((AwsServiceException) e).awsErrorDetails();
+                LOG.warn("AWS Notify failed to send SMS to {}: {} ({}): {}", toE164Number, details.errorCode(),
+                        details.errorMessage(), e.getClass().getSimpleName());
+                if(details.errorMessage() != null && details.errorMessage().contains(COUNTRY_NOT_ENABLED)) {
+                    return SmsSendResult.failure(PROVIDER, COUNTRY_NOT_ENABLED, details.errorMessage());
+                }
+            } else if (e instanceof SdkException) {
+                LOG.warn("AWS Notify failed to send SMS to {}: {}", toE164Number, e.getMessage(), e);
+            } else {
+                LOG.warn("AWS Notify failed to send SMS to {}: {}", toE164Number, e.getMessage(), e);
+            }
             return SmsSendResult.failure(PROVIDER, e.getClass().getSimpleName(), e.getMessage());
         }
     }
