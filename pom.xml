@@ -143,7 +143,8 @@ the software.
                 <artifactId>maven-surefire-plugin</artifactId>
                 <configuration>
                     <!-- argLine>-Duser.timezone=America/Los_Angeles</argLine -->
-                    <argLine>-Duser.timezone=GMT --add-opens java.base/java.lang=ALL-UNNAMED --add-opens java.base/java.nio=ALL-UNNAMED --add-opens java.base/java.util=ALL-UNNAMED</argLine>
+                    <!-- per-module tmpdir: ehcache locks a fixed ${java.io.tmpdir} path, which collides when modules test in parallel -->
+                    <argLine>-Duser.timezone=GMT -Djava.io.tmpdir=${project.build.directory} --add-opens java.base/java.lang=ALL-UNNAMED --add-opens java.base/java.nio=ALL-UNNAMED --add-opens java.base/java.util=ALL-UNNAMED</argLine>
                     <runOrder>alphabetical</runOrder>
                     <!-- we need to rewrite our unit test
                     to be runOrder random and take avantage 
