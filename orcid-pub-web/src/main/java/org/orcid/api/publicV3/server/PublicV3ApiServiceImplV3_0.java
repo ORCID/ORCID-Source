@@ -107,11 +107,9 @@ public class PublicV3ApiServiceImplV3_0 {
   @Resource(name="publicV3ApiServiceDelegator")  
   protected PublicV3ApiServiceDelegator<Distinction, Education, Employment, PersonExternalIdentifier, InvitedPosition, Funding, GroupIdRecord, Membership, OtherName, PeerReview, Qualification, ResearcherUrl, Service, Work> serviceDelegator;
 
-  
   @Resource
   protected SwaggerUIBuilder swaggerUIBuilder;
-  
-  
+
   @Context
   private HttpServletRequest httpRequest;  
   
