@@ -6,10 +6,15 @@ import java.util.Locale;
 import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
+import software.amazon.awssdk.awscore.exception.AwsErrorDetails;
+import software.amazon.awssdk.awscore.exception.AwsServiceException;
+import software.amazon.awssdk.core.exception.SdkException;
 import software.amazon.awssdk.auth.credentials.DefaultCredentialsProvider;
 import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
 import software.amazon.awssdk.http.urlconnection.UrlConnectionHttpClient;
@@ -29,6 +34,13 @@ public class AwsNotifySmsSender implements VerificationCodeSender {
 
     public static final String PROVIDER = "aws";
 
+    public static final String COUNTRY_NOT_ENABLED = "COUNTRY_NOT_ENABLED";
+
+    private static final Logger LOG = LoggerFactory.getLogger(AwsNotifySmsSender.class);
+
+    @Value("${org.orcid.sms.aws.deliveryValiditySeconds:300}")
+    private int deliveryValiditySeconds = 300;
+
     @Value("${org.orcid.sms.aws.region:us-east-2}")
     private String region;
 
@@ -40,6 +52,9 @@ public class AwsNotifySmsSender implements VerificationCodeSender {
 
     @Value("${org.orcid.sms.aws.notifyConfigurationId:}")
     private String notifyConfigurationId;
+
+    @Value("${org.orcid.sms.aws.configurationSetName:}")
+    private String configurationSetName;
 
     // AWS-managed per-language code-verification templates. The -001 series supports the US (-005/-006 do not).
     // {{brandName}} is system-managed (taken from the Notify configuration's registered brand) and must NOT be sent
@@ -89,13 +104,28 @@ public class AwsNotifySmsSender implements VerificationCodeSender {
                     .destinationPhoneNumber(toE164Number)
                     .templateId(resolveTemplateId(locale))
                     .templateVariables(Collections.singletonMap(codeVariable, code))
+                    .configurationSetName(StringUtils.trimToNull(configurationSetName))
+                    .timeToLive(deliveryValiditySeconds)
                     .messageFeedbackEnabled(true)
                     .build();
             SendNotifyTextMessageResponse response = getClient().sendNotifyTextMessage(request);
+            LOG.info("AWS Notify accepted SMS messageId={}", response.messageId());
             return SmsSendResult.success(PROVIDER, response.messageId(), "SENT");
         } catch (Exception | LinkageError e) {
             // LinkageError too: a classpath the SDK cannot run on fails every send, and
             // it must come back as a failed send rather than escape as a 500
+            if (e instanceof AwsServiceException) {
+                AwsErrorDetails details = ((AwsServiceException) e).awsErrorDetails();
+                LOG.warn("AWS Notify failed to send SMS to {}: {} ({}): {}", toE164Number, details.errorCode(),
+                        details.errorMessage(), e.getClass().getSimpleName());
+                if(details.errorMessage() != null && details.errorMessage().contains(COUNTRY_NOT_ENABLED)) {
+                    return SmsSendResult.failure(PROVIDER, COUNTRY_NOT_ENABLED, details.errorMessage());
+                }
+            } else if (e instanceof SdkException) {
+                LOG.warn("AWS Notify failed to send SMS to {}: {}", toE164Number, e.getMessage(), e);
+            } else {
+                LOG.warn("AWS Notify failed to send SMS to {}: {}", toE164Number, e.getMessage(), e);
+            }
             return SmsSendResult.failure(PROVIDER, e.getClass().getSimpleName(), e.getMessage());
         }
     }

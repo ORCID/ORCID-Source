@@ -80,9 +80,14 @@ COPY --from=maven /build/*/target/*.war /usr/local/tomcat/webapps/orcid-pub-web.
 # custom server.xml with encodedSolidusHandling and compression settings
 COPY orcid-web/server.xml /usr/local/tomcat/conf/server.xml
 
+ARG JOLOKIA_VERSION=2.3.0
+
 RUN mkdir -p /usr/local/tomcat/newrelic
+RUN mkdir -p /usr/local/tomcat/jolokia
+
 COPY newrelic.yml /usr/local/tomcat/newrelic/newrelic.yml
 RUN curl -L -s https://download.newrelic.com/newrelic/java-agent/newrelic-agent/8.13.0/newrelic-agent-8.13.0.jar -o /usr/local/tomcat/newrelic/newrelic.jar
+RUN curl -L -s https://repo1.maven.org/maven2/org/jolokia/jolokia-agent-jvm/${JOLOKIA_VERSION}/jolokia-agent-jvm-${JOLOKIA_VERSION}-javaagent.jar -o /usr/local/tomcat/jolokia/jolokia-agent-jvm.jar
 
 RUN apt-get update
 RUN apt-get install -y j2cli

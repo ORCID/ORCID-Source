@@ -38,6 +38,7 @@ import org.orcid.jaxb.model.v3.release.record.Name;
 import org.orcid.persistence.jpa.entities.*;
 import org.orcid.pojo.*;
 import org.orcid.pojo.ajaxForm.*;
+import org.orcid.frontend.spring.session.redis.OrcidRedisIndexedSessionRepository;
 import org.orcid.utils.ExpiringLinkService;
 import org.orcid.utils.OrcidStringUtils;
 import org.orcid.utils.alerting.SlackManager;
@@ -135,6 +136,9 @@ public class ManageProfileController extends BaseWorkspaceController {
 
     @Resource
     private RedisClient redisClient;
+
+    @Resource(name = "sessionRepository")
+    private OrcidRedisIndexedSessionRepository sessionRepository;
 
     @Resource
     private TrustedPartiesService trustedPartiesService;
@@ -353,6 +357,8 @@ public class ManageProfileController extends BaseWorkspaceController {
 
         if (errors.size() == 0) {            
             profileEntityManager.updatePassword(getCurrentUserOrcid(), cp.getPassword());
+            jakarta.servlet.http.HttpSession currentSession = request.getSession(false);
+            sessionRepository.evictSessionsKeepCurrent(getCurrentUserOrcid(), currentSession == null ? null : currentSession.getId());
             if(Features.SEND_EMAIL_ON_RESET_PASSWORD.isActive()) {
                 recordEmailSender.sendOrcidSecurityResetPasswordEmail(getCurrentUserOrcid());
             }
@@ -473,6 +479,7 @@ public class ManageProfileController extends BaseWorkspaceController {
         }
 
         if (deprecated) {
+            sessionRepository.evictSessionsForOrcid(deprecatingEntity.getId());
             redisClient.remove(deprecatingEntity.getId() + "_two-factor-token");
             if (Features.SEND_EMAIL_ON_DEPRECATE_RECORD.isActive()) {
                 recordEmailSender.sendOrcidSecurityDeprecatedEmail(deprecateProfile.getPrimaryOrcid(), deprecateProfile.getDeprecatingOrcid(), deprecatedAccountEmails);
@@ -600,6 +607,7 @@ public class ManageProfileController extends BaseWorkspaceController {
             recordEmailSender.sendOrcidDeactivatedEmail(orcid);
         }
         profileEntityManager.deactivateRecord(orcid);
+        sessionRepository.evictSessionsForOrcid(orcid);
         deactivateResponse.setDeactivationSuccessful(true);
         return deactivateResponse;
     }
@@ -694,6 +702,10 @@ public class ManageProfileController extends BaseWorkspaceController {
                 }
             }
             if (isNewEmail) {
+                if (disposableEmailsService.isDisposableEmail(newJsonEmail.getValue())) {
+                    errors.add("disposable_email");
+                    continue;
+                }
                 // List emails to be added
                 newEmails.add(newJsonEmail);
                 emailListChange.getAddedEmails().add(newJsonEmail);

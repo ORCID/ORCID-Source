@@ -41,6 +41,7 @@ import org.orcid.core.manager.v3.read_only.ProfileKeywordManagerReadOnly;
 import org.orcid.core.manager.v3.read_only.ResearcherUrlManagerReadOnly;
 import org.orcid.core.togglz.Features;
 import org.orcid.core.utils.ReleaseNameUtils;
+import org.orcid.frontend.service.DisposableEmailsService;
 import org.orcid.frontend.web.forms.validate.OrcidUrlValidator;
 import org.orcid.frontend.web.forms.validate.RedirectUriValidator;
 import org.orcid.frontend.web.util.CommonPasswords;
@@ -121,6 +122,9 @@ public class BaseController {
     
     @Resource
     protected OrcidUrlManager orcidUrlManager;
+
+    @Resource
+    protected DisposableEmailsService disposableEmailsService;
 
     @Resource(name = "sourceManagerV3")
     protected SourceManager sourceManager;
@@ -244,6 +248,10 @@ public class BaseController {
                 String[] codes = { "Email.personalInfoForm.email" };
                 String[] args = { email };
                 bindingResult.addError(new FieldError("email", "email", email, false, codes, args, "Not vaild"));
+                return;
+            } else if (disposableEmailsService.isDisposableEmail(email)) {
+                bindingResult.addError(new FieldError("email", "email", email, false, null, null, "disposable_email"));
+                return;
             }
             if (!(ignoreCurrentUser && emailMatchesCurrentUser(email)) && emailManager.emailExists(email)) {
                 if (profileEntityManager.isProfileClaimedByEmail(email)) {
@@ -783,6 +791,8 @@ public class BaseController {
         // Validate the email address is ok        
         if(!validateEmailAddress(emailAddressAdditional)) {
             email.getErrors().add(getMessage("Email.personalInfoForm.email", emailAddressAdditional));
+        } else if (disposableEmailsService.isDisposableEmail(emailAddressAdditional)) {
+            email.getErrors().add("disposable_email");
         } else if(emailAddressAdditional.equalsIgnoreCase(reg.getEmail().getValue())){
             email.getErrors().add(getMessage("Email.personalInfoForm.additionalEmailCannotMatchPrimary"));
         } else if (duplicateAdditionalEmails(reg, emailAddressAdditional)){

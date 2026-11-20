@@ -1,3 +1,97 @@
+## v3.26.2 - 2026-11-20
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.26.1...v3.26.2)
+
+- [#7785](https://github.com/ORCID/ORCID-Source/pull/7785): Infer PubMed preprint type from DOI metadata
+
+## v3.26.1 - 2026-11-20
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.26.0...v3.26.1)
+
+- [#7780](https://github.com/ORCID/ORCID-Source/pull/7780): Add Turnstile option for registration CAPTCHA
+
+## v3.25.14 - 2026-11-20
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.25.13...v3.25.14)
+
+- [#7789](https://github.com/ORCID/ORCID-Source/pull/7789): PD-14919 Return a different error code if the country is not supported
+
+## v3.25.13 - 2026-11-19
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.25.12...v3.25.13)
+
+- [#7787](https://github.com/ORCID/ORCID-Source/pull/7787): Add detailed error message for QA
+
+## v3.25.12 - 2026-11-18
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.25.10...v3.25.12)
+
+- [#7786](https://github.com/ORCID/ORCID-Source/pull/7786): PD-4737 Use the normal list and add a flag to disable the functionality
+
+## v3.25.10 - 2026-11-12
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.25.9...v3.25.10)
+
+- [#7783](https://github.com/ORCID/ORCID-Source/pull/7783): PD-14736 Harden recovery phone auth and SMS delivery, add logging
+
+## v3.25.9 - 2026-11-12
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.25.8...v3.25.9)
+
+- [#7781](https://github.com/ORCID/ORCID-Source/pull/7781): PD-14808 Keep current session after password change in settings
+
+## v3.25.8 - 2026-11-12
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.25.7...v3.25.8)
+
+- [#7782](https://github.com/ORCID/ORCID-Source/pull/7782): PD-14559 Resolve PubMed preprints using DOI fallback
+
+## v3.25.7 - 2026-11-10
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.25.6...v3.25.7)
+
+- [#7766](https://github.com/ORCID/ORCID-Source/pull/7766): PD-5531 PD-5532 PD-5533 Implemented evict session for orcid in the OrcidRedisIndexedSessionRepository
+
+## v3.25.6 - 2026-11-06
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.25.5...v3.25.6)
+
+- [#7774](https://github.com/ORCID/ORCID-Source/pull/7774): Ingore profile and email scopes when POST or PUT
+
+## v3.25.5 - 2026-11-05
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.25.4...v3.25.5)
+
+- [#7775](https://github.com/ORCID/ORCID-Source/pull/7775): Amontenegro/pd 14774
+
+## v3.25.4 - 2026-11-03
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.26.0...v3.25.4)
+
+## v3.26.0 - 2026-11-03
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.25.3...v3.26.0)
+
+- [#7768](https://github.com/ORCID/ORCID-Source/pull/7768): PD-14694 ehcache jmx beans
+
+## v3.25.3 - 2026-11-02
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.25.2...v3.25.3)
+
+- [#7770](https://github.com/ORCID/ORCID-Source/pull/7770): Use the general redis instance, not the one with the sessions
+
+## v3.25.2 - 2026-11-02
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.25.1...v3.25.2)
+
+- [#7769](https://github.com/ORCID/ORCID-Source/pull/7769): PD-4737 Disposable email domains
+
+## v3.25.1 - 2026-10-29
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.25.0...v3.25.1)
+
+- [#7765](https://github.com/ORCID/ORCID-Source/pull/7765): PD-14679  Skip the unicode general category format  when filtering email address
+
 ## v3.25.0 - 2026-10-26
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.24.11...v3.25.0)

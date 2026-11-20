@@ -27,6 +27,7 @@ import org.orcid.core.manager.ClientDetailsEntityCacheManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.v3.OrcidSecurityManager;
 import org.orcid.core.manager.v3.SourceManager;
+import org.orcid.core.manager.v3.validator.ScopeValidator;
 import org.orcid.core.oauth.OrcidBearerTokenAuthentication;
 import org.orcid.core.security.OrcidUserDetailsService;
 import org.orcid.core.utils.SourceEntityUtils;
@@ -240,19 +241,8 @@ public class OrcidSecurityManagerImpl implements OrcidSecurityManager {
         }
 
         Authentication authentication = getAuthentication();
-        if (authentication != null) {
-            Set<String> allowedScopes = ((OrcidBearerTokenAuthentication) authentication).getScopes();
-            for (String scope : allowedScopes) {
-                ScopePathType allowed = ScopePathType.fromValue(scope);
-                for (ScopePathType requiredScope : requiredScopes) {
-                    if (allowed.hasScope(requiredScope)) {
-                        return;
-                    }
-                }
-            }
-        }
-
-        throw new OrcidAccessControlException();
+        // Check you have the required scopes, throws OrcidAccessControlException otherwise
+        ScopeValidator.validateRequiredScopes(authentication, requiredScopes);
     }
 
     @Override
