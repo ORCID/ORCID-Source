@@ -125,7 +125,10 @@ public enum Features implements Feature {
     OAUTH_RECOVERY_PHONE_INTERSTITIAL,
 
     @Label("Mandatory password reset: block password sign in and show the reset notice for records flagged with force_password_reset")
-    FORCE_PASSWORD_RESET;
+    FORCE_PASSWORD_RESET,
+
+    @Label("Use Turnstile for registration")
+    USE_TURNSTILE_REGISTRATION;
     public boolean isActive() {
         return FeatureContext.getFeatureManager().isActive(this);
     }
