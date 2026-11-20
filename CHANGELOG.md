@@ -1,3 +1,9 @@
+## v3.26.1 - 2026-11-20
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.26.0...v3.26.1)
+
+- [#7780](https://github.com/ORCID/ORCID-Source/pull/7780): Add Turnstile option for registration CAPTCHA
+
 ## v3.25.14 - 2026-11-20
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.25.13...v3.25.14)
