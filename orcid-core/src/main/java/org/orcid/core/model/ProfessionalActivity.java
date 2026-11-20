@@ -15,7 +15,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(propOrder = { "putCode", "type", "organizationName", "role", "url", "startDate", "endDate", "validated" })
 @XmlRootElement(name = "professional-activity", namespace = "http://www.orcid.org/ns/summary")
-@Schema(description = "Professional activity")
+@Schema(name = "RecordSummaryProfessionalActivity", description = "Professional activity")
 public class ProfessionalActivity {
     @XmlElement(name = "put-code", namespace = "http://www.orcid.org/ns/summary")
     protected Long putCode;

@@ -22,7 +22,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 @XmlType(propOrder = { "createdDate", "lastModifiedDate", "creditName", "orcidIdentifier", "externalIdentifiers", "employments", "professionalActivities", "fundings",
         "works", "peerReviews", "emailDomains", "educationQualifications", "researchResources" })
 @XmlRootElement(name = "record-summary", namespace = "http://www.orcid.org/ns/summary")
-@Schema(description = "Record summary")
+@Schema(name = "RecordSummary", description = "Record summary")
 public class RecordSummary implements Serializable {
     /**
      * 

@@ -13,7 +13,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(propOrder = { "putCode", "externalIdType", "externalIdValue", "externalIdUrl", "validated" })
 @XmlRootElement(name = "external-identifier", namespace = "http://www.orcid.org/ns/summary")
-@Schema(description = "External identifier")
+@Schema(name = "RecordSummaryExternalIdentifier", description = "External identifier")
 public class ExternalIdentifier {
     @XmlElement(name = "put-code", namespace = "http://www.orcid.org/ns/summary")
     private Long putCode;
