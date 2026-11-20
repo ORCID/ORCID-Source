@@ -93,9 +93,19 @@
         <ehcache:heap unit="entries">20000</ehcache:heap>
     </ehcache:cache>
     
-    <ehcache:cache alias="fundings" uses-template="activitiesTemplate" />
+    <ehcache:cache alias="fundings" uses-template="activitiesTemplate">
+        <ehcache:resources>
+            <ehcache:heap unit="entries">9000</ehcache:heap>
+            <ehcache:disk unit="MB" persistent="false">256</ehcache:disk>
+        </ehcache:resources>
+    </ehcache:cache>
     
-    <ehcache:cache alias="peer-reviews" uses-template="activitiesTemplate" />
+    <ehcache:cache alias="peer-reviews" uses-template="activitiesTemplate">
+        <ehcache:resources>
+            <ehcache:heap unit="entries">9000</ehcache:heap>
+            <ehcache:disk unit="MB" persistent="false">256</ehcache:disk>
+        </ehcache:resources>
+    </ehcache:cache>
     
     <ehcache:cache alias="distinctions-summaries" uses-template="activitiesTemplate" />
     
@@ -111,15 +121,30 @@
     
     <ehcache:cache alias="services-summaries" uses-template="activitiesTemplate" />
     
-    <ehcache:cache alias="public-keywords" uses-template="bioTemplate" />
+    <ehcache:cache alias="public-keywords" uses-template="bioTemplate">
+        <ehcache:resources>
+            <ehcache:heap unit="entries">9000</ehcache:heap>
+            <ehcache:disk unit="MB" persistent="false">128</ehcache:disk>
+        </ehcache:resources>
+    </ehcache:cache>
     
     <ehcache:cache alias="dao-keywords" uses-template="bioTemplate" />
     
-    <ehcache:cache alias="public-other-names" uses-template="bioTemplate" />
+    <ehcache:cache alias="public-other-names" uses-template="bioTemplate">
+        <ehcache:resources>
+            <ehcache:heap unit="entries">9000</ehcache:heap>
+            <ehcache:disk unit="MB" persistent="false">128</ehcache:disk>
+        </ehcache:resources>
+    </ehcache:cache>
     
     <ehcache:cache alias="dao-other-names" uses-template="bioTemplate" />
     
-    <ehcache:cache alias="public-address" uses-template="bioTemplate" />
+    <ehcache:cache alias="public-address" uses-template="bioTemplate">
+        <ehcache:resources>
+            <ehcache:heap unit="entries">9000</ehcache:heap>
+            <ehcache:disk unit="MB" persistent="false">128</ehcache:disk>
+        </ehcache:resources>
+    </ehcache:cache>
     
     <ehcache:cache alias="primary-address" uses-template="bioTemplate" />
     
@@ -127,9 +152,19 @@
     
     <ehcache:cache alias="researcher-urls" uses-template="bioTemplate" />
     
-    <ehcache:cache alias="public-researcher-urls" uses-template="bioTemplate" />
+    <ehcache:cache alias="public-researcher-urls" uses-template="bioTemplate">
+        <ehcache:resources>
+            <ehcache:heap unit="entries">9000</ehcache:heap>
+            <ehcache:disk unit="MB" persistent="false">128</ehcache:disk>
+        </ehcache:resources>
+    </ehcache:cache>
     
-    <ehcache:cache alias="public-external-identifiers" uses-template="bioTemplate" />
+    <ehcache:cache alias="public-external-identifiers" uses-template="bioTemplate">
+        <ehcache:resources>
+            <ehcache:heap unit="entries">9000</ehcache:heap>
+            <ehcache:disk unit="MB" persistent="false">128</ehcache:disk>
+        </ehcache:resources>
+    </ehcache:cache>
     
     <ehcache:cache alias="dao-external-identifiers" uses-template="bioTemplate" />
     
@@ -139,7 +174,12 @@
     
     <ehcache:cache alias="emails" uses-template="bioTemplate" />
     
-    <ehcache:cache alias="public-emails" uses-template="bioTemplate" />
+    <ehcache:cache alias="public-emails" uses-template="bioTemplate">
+        <ehcache:resources>
+            <ehcache:heap unit="entries">9000</ehcache:heap>
+            <ehcache:disk unit="MB" persistent="false">128</ehcache:disk>
+        </ehcache:resources>
+    </ehcache:cache>
 
     <ehcache:cache alias="primary-email-value" uses-template="defaultTemplate">
         <ehcache:value-type copier="org.ehcache.impl.copy.IdentityCopier"/>
