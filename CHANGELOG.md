@@ -1,3 +1,9 @@
+## v3.26.2 - 2026-11-20
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.26.1...v3.26.2)
+
+- [#7785](https://github.com/ORCID/ORCID-Source/pull/7785): Infer PubMed preprint type from DOI metadata
+
 ## v3.26.1 - 2026-11-20
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.26.0...v3.26.1)
