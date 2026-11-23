@@ -53,7 +53,7 @@ public class BasicSearchServiceDelegator {
     @Value("${org.orcid.papi.basicSearch.bq:current-institution-affiliation-name:[* TO *]^100.0 past-institution-affiliation-name:[* TO *]^70}")
     private String basicSearchBq;
 
-    @Value("${org.orcid.papi.basicSearch.mm:3<-1 6<80%}")
+    @Value("${org.orcid.papi.basicSearch.mm:3<70%}")
     private String basicSearchMm;
 
     @Value("${org.orcid.papi.basicSearch.rows:50}")
