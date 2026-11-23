@@ -1,3 +1,9 @@
+## v3.26.5 - 2026-11-23
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.26.4...v3.26.5)
+
+- [#7784](https://github.com/ORCID/ORCID-Source/pull/7784): PD-14805 Fix email validation and update error handling
+
 ## v3.26.4 - 2026-11-23
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.26.3...v3.26.4)
