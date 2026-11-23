@@ -1,5 +1,7 @@
 package org.orcid.core.solr;
 
+import org.orcid.utils.solr.entities.SolrConstants;
+
 public abstract class OrcidSolrClient {
 
     // generate or filter specified fl param to only include allowed values
@@ -9,7 +11,7 @@ public abstract class OrcidSolrClient {
         if (requestedFieldList != null) {
             specifiedFields = requestedFieldList.split(",");
             for (String specifiedField : specifiedFields) {
-                if (SolrConstants.ALLOWED_FIELDS.contains(specifiedField)) {
+                if (SolrConstants.DEFAULT_SEARCH_ALLOWED_FIELDS.contains(specifiedField)) {
                     fl.append(specifiedField).append(",");
                 }
             }
@@ -21,8 +23,8 @@ public abstract class OrcidSolrClient {
     }
 
     private String getDefaultFieldList() {
-        StringBuilder defaultFieldList = new StringBuilder(SolrConstants.ALLOWED_FIELDS.get(0));
-        SolrConstants.ALLOWED_FIELDS.subList(1, SolrConstants.ALLOWED_FIELDS.size()).forEach(s -> defaultFieldList.append(",").append(s));
+        StringBuilder defaultFieldList = new StringBuilder(SolrConstants.DEFAULT_SEARCH_ALLOWED_FIELDS.get(0));
+        SolrConstants.DEFAULT_SEARCH_ALLOWED_FIELDS.subList(1, SolrConstants.DEFAULT_SEARCH_ALLOWED_FIELDS.size()).forEach(s -> defaultFieldList.append(",").append(s));
         return defaultFieldList.toString();
     }
 
