@@ -1,63 +1,5 @@
 package org.orcid.api.publicV3.server;
 
-import static org.orcid.core.api.OrcidApiConstants.ACTIVITIES;
-import static org.orcid.core.api.OrcidApiConstants.ADDRESS;
-import static org.orcid.core.api.OrcidApiConstants.BIOGRAPHY;
-import static org.orcid.core.api.OrcidApiConstants.BULK_WORKS;
-import static org.orcid.core.api.OrcidApiConstants.CLIENT_PATH;
-import static org.orcid.core.api.OrcidApiConstants.CSV_SEARCH_PATH;
-import static org.orcid.core.api.OrcidApiConstants.DISTINCTION;
-import static org.orcid.core.api.OrcidApiConstants.DISTINCTIONS;
-import static org.orcid.core.api.OrcidApiConstants.DISTINCTION_SUMMARY;
-import static org.orcid.core.api.OrcidApiConstants.EDUCATION;
-import static org.orcid.core.api.OrcidApiConstants.EDUCATIONS;
-import static org.orcid.core.api.OrcidApiConstants.EDUCATION_SUMMARY;
-import static org.orcid.core.api.OrcidApiConstants.EMAIL;
-import static org.orcid.core.api.OrcidApiConstants.EMPLOYMENT;
-import static org.orcid.core.api.OrcidApiConstants.EMPLOYMENTS;
-import static org.orcid.core.api.OrcidApiConstants.EMPLOYMENT_SUMMARY;
-import static org.orcid.core.api.OrcidApiConstants.EXPANDED_SEARCH_PATH;
-import static org.orcid.core.api.OrcidApiConstants.EXTERNAL_IDENTIFIERS;
-import static org.orcid.core.api.OrcidApiConstants.FUNDING;
-import static org.orcid.core.api.OrcidApiConstants.FUNDINGS;
-import static org.orcid.core.api.OrcidApiConstants.FUNDING_SUMMARY;
-import static org.orcid.core.api.OrcidApiConstants.INVITED_POSITION;
-import static org.orcid.core.api.OrcidApiConstants.INVITED_POSITIONS;
-import static org.orcid.core.api.OrcidApiConstants.INVITED_POSITION_SUMMARY;
-import static org.orcid.core.api.OrcidApiConstants.JSON_LD;
-import static org.orcid.core.api.OrcidApiConstants.KEYWORDS;
-import static org.orcid.core.api.OrcidApiConstants.MEMBERSHIP;
-import static org.orcid.core.api.OrcidApiConstants.MEMBERSHIPS;
-import static org.orcid.core.api.OrcidApiConstants.MEMBERSHIP_SUMMARY;
-import static org.orcid.core.api.OrcidApiConstants.ORCID_JSON;
-import static org.orcid.core.api.OrcidApiConstants.ORCID_XML;
-import static org.orcid.core.api.OrcidApiConstants.OTHER_NAMES;
-import static org.orcid.core.api.OrcidApiConstants.PEER_REVIEW;
-import static org.orcid.core.api.OrcidApiConstants.PEER_REVIEWS;
-import static org.orcid.core.api.OrcidApiConstants.PEER_REVIEW_SUMMARY;
-import static org.orcid.core.api.OrcidApiConstants.PERSON;
-import static org.orcid.core.api.OrcidApiConstants.PERSONAL_DETAILS;
-import static org.orcid.core.api.OrcidApiConstants.PUB_STATUS_PATH;
-import static org.orcid.core.api.OrcidApiConstants.PUTCODE;
-import static org.orcid.core.api.OrcidApiConstants.QUALIFICATION;
-import static org.orcid.core.api.OrcidApiConstants.QUALIFICATIONS;
-import static org.orcid.core.api.OrcidApiConstants.QUALIFICATION_SUMMARY;
-import static org.orcid.core.api.OrcidApiConstants.RESEARCHER_URLS;
-import static org.orcid.core.api.OrcidApiConstants.RESEARCH_RESOURCE;
-import static org.orcid.core.api.OrcidApiConstants.RESEARCH_RESOURCES;
-import static org.orcid.core.api.OrcidApiConstants.RESEARCH_RESOURCE_SUMMARY;
-import static org.orcid.core.api.OrcidApiConstants.SEARCH_PATH;
-import static org.orcid.core.api.OrcidApiConstants.SERVICE;
-import static org.orcid.core.api.OrcidApiConstants.SERVICES;
-import static org.orcid.core.api.OrcidApiConstants.SERVICE_SUMMARY;
-import static org.orcid.core.api.OrcidApiConstants.STATUS_PATH;
-import static org.orcid.core.api.OrcidApiConstants.TEXT_CSV;
-import static org.orcid.core.api.OrcidApiConstants.VND_ORCID_JSON;
-import static org.orcid.core.api.OrcidApiConstants.VND_ORCID_XML;
-import static org.orcid.core.api.OrcidApiConstants.WORK;
-import static org.orcid.core.api.OrcidApiConstants.WORKS;
-import static org.orcid.core.api.OrcidApiConstants.WORK_SUMMARY;
-
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -78,6 +20,7 @@ import jakarta.ws.rs.core.UriInfo;
 import org.apache.hc.core5.http.ParseException;
 import org.orcid.api.common.swagger.SwaggerUIBuilder;
 import org.orcid.api.publicV3.server.delegator.PublicV3ApiServiceDelegator;
+import org.orcid.api.search.BasicSearchServiceDelegator;
 import org.orcid.core.api.OrcidApiConstants;
 import org.orcid.jaxb.model.v3.release.groupid.GroupIdRecord;
 import org.orcid.jaxb.model.v3.release.record.Distinction;
@@ -93,7 +36,11 @@ import org.orcid.jaxb.model.v3.release.record.Qualification;
 import org.orcid.jaxb.model.v3.release.record.ResearcherUrl;
 import org.orcid.jaxb.model.v3.release.record.Service;
 import org.orcid.jaxb.model.v3.release.record.Work;
+import org.orcid.jaxb.model.v3.release.search.Search;
+import org.orcid.jaxb.model.v3.release.search.expanded.ExpandedSearch;
 import org.springframework.stereotype.Component;
+
+import static org.orcid.core.api.OrcidApiConstants.*;
 
 /**
 * 
@@ -109,6 +56,9 @@ public class PublicV3ApiServiceImplV3_0 {
 
   @Resource
   protected SwaggerUIBuilder swaggerUIBuilder;
+
+  @Resource
+    protected BasicSearchServiceDelegator basicSearchServiceDelegator;
 
   @Context
   private HttpServletRequest httpRequest;  
@@ -421,7 +371,7 @@ public class PublicV3ApiServiceImplV3_0 {
       Response jsonQueryResults = serviceDelegator.searchByQuery(solrParams);
       return jsonQueryResults;
   }
-  
+
   @GET
   @Produces(TEXT_CSV)
   @Path(CSV_SEARCH_PATH)
@@ -438,9 +388,19 @@ public class PublicV3ApiServiceImplV3_0 {
   public Response expandedSearchByQuery(@QueryParam("q") @DefaultValue("") String query, @Context UriInfo uriInfo) throws ParseException{
       serviceDelegator.trackEvents(httpRequest);
       Map<String, List<String>> solrParams = new HashMap<>(uriInfo.getQueryParameters());
-      Response queryResults = serviceDelegator.expandedSearchByQuery(solrParams);
-      return queryResults;
+      return serviceDelegator.expandedSearchByQuery(solrParams);
   }
+
+    @GET
+    @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
+    @Path(BASIC_SEARCH_PATH)
+    public Response basicSearchByQuery(@QueryParam("q") @DefaultValue("") String query, @QueryParam("start") @DefaultValue("0") String start, @QueryParam("rows") @DefaultValue("50") String rows) throws ParseException{
+        serviceDelegator.trackEvents(httpRequest);
+        ExpandedSearch queryResults = basicSearchServiceDelegator.searchByQuery(query, start, rows);
+        return Response.ok(queryResults).build();
+    }
+
+
   @GET
   @Path(CLIENT_PATH)
   @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
