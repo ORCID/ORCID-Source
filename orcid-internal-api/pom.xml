@@ -68,11 +68,6 @@
             <scope>test</scope>
             <version>${project.version}</version>
         </dependency>
-        <dependency>
-            <groupId>org.seleniumhq.selenium</groupId>
-            <artifactId>selenium-java</artifactId>
-            <scope>test</scope>
-        </dependency>
         <!-- Togglz testing support -->        
         <dependency>
             <groupId>org.togglz</groupId>

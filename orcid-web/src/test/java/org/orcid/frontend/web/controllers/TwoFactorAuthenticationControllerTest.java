@@ -3,6 +3,7 @@ package org.orcid.frontend.web.controllers;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
@@ -401,7 +402,7 @@ public class TwoFactorAuthenticationControllerTest {
     }
 
     @Test
-    public void testAuthChallengeRejectsAWrongPassword() {
+    public void testAuthChallengeRejectsAWrongPassword() throws Exception {
         enableRecoveryPhoneFeature();
         ProfileEntity profile = new ProfileEntity();
         profile.setEncryptedPassword("hashed");
@@ -410,15 +411,16 @@ public class TwoFactorAuthenticationControllerTest {
 
         AuthChallenge form = new AuthChallenge();
         form.setPassword("nope");
-        AuthChallenge result = controller.verifyRecoveryPhoneAuthChallenge(request, form);
+        form.setSuccess(true);
+        Object result = controller.verifyRecoveryPhoneAuthChallenge(request, form);
 
-        assertTrue(result.isInvalidPassword());
+        assertEquals("{\"success\":false}", new ObjectMapper().writeValueAsString(result));
         assertNull(session.getAttribute("RECOVERY_PHONE_ELEVATION_TS"));
         assertNull(session.getAttribute("RECOVERY_PHONE_CHALLENGE_TS"));
     }
 
     @Test
-    public void testAuthChallengeElevatesTheSessionOnSuccess() {
+    public void testAuthChallengeElevatesTheSessionOnSuccess() throws Exception {
         enableRecoveryPhoneFeature();
         ProfileEntity profile = new ProfileEntity();
         profile.setEncryptedPassword("hashed");
@@ -428,12 +430,43 @@ public class TwoFactorAuthenticationControllerTest {
 
         AuthChallenge form = new AuthChallenge();
         form.setPassword("correct");
-        AuthChallenge result = controller.verifyRecoveryPhoneAuthChallenge(request, form);
+        Object result = controller.verifyRecoveryPhoneAuthChallenge(request, form);
 
-        assertTrue(result.isSuccess());
+        assertEquals("{\"success\":true}", new ObjectMapper().writeValueAsString(result));
         assertNotNull(session.getAttribute("RECOVERY_PHONE_ELEVATION_TS"));
         // and the narrower grant only a passed challenge gives (F4.2)
         assertNotNull(session.getAttribute("RECOVERY_PHONE_CHALLENGE_TS"));
+    }
+
+    @Test
+    public void testAuthChallengeRejectsInvalidCodeWithoutDisclosure() throws Exception {
+        enableRecoveryPhoneFeature();
+        ProfileEntity profile = new ProfileEntity();
+        profile.setEncryptedPassword("hashed");
+        when(profileEntityCacheManager.retrieve(ORCID)).thenReturn(profile);
+        when(encryptionManager.hashMatches("correct", "hashed")).thenReturn(true);
+        AuthChallenge form = new AuthChallenge();
+        form.setPassword("correct");
+        form.setTwoFactorCode("secret-code");
+        form.setSuccess(true);
+
+        assertEquals("{\"success\":false}", new ObjectMapper().writeValueAsString(controller.verifyRecoveryPhoneAuthChallenge(request, form)));
+        assertNull(session.getAttribute("RECOVERY_PHONE_ELEVATION_TS"));
+        assertNull(session.getAttribute("RECOVERY_PHONE_CHALLENGE_TS"));
+    }
+
+    @Test
+    public void testAuthChallengeFailsClosedWhenUnavailable() throws Exception {
+        AuthChallenge form = new AuthChallenge();
+        form.setPassword("secret");
+        form.setSuccess(true);
+        assertEquals("{\"success\":false}", new ObjectMapper().writeValueAsString(controller.verifyRecoveryPhoneAuthChallenge(request, form)));
+        togglzRule.enable(Features.TWO_FACTOR_RECOVERY_PHONE);
+        when(twoFactorAuthenticationManager.userUsing2FA(ORCID)).thenReturn(false);
+        assertEquals("{\"success\":false}", new ObjectMapper().writeValueAsString(controller.verifyRecoveryPhoneAuthChallenge(request, form)));
+        assertNull(session.getAttribute("RECOVERY_PHONE_ELEVATION_TS"));
+        assertNull(session.getAttribute("RECOVERY_PHONE_CHALLENGE_TS"));
+        verify(profileEntityCacheManager, never()).retrieve(ORCID);
     }
 
     @Test

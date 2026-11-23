@@ -357,7 +357,8 @@ public class ManageProfileController extends BaseWorkspaceController {
 
         if (errors.size() == 0) {            
             profileEntityManager.updatePassword(getCurrentUserOrcid(), cp.getPassword());
-            sessionRepository.evictSessionsForOrcid(getCurrentUserOrcid());
+            jakarta.servlet.http.HttpSession currentSession = request.getSession(false);
+            sessionRepository.evictSessionsKeepCurrent(getCurrentUserOrcid(), currentSession == null ? null : currentSession.getId());
             if(Features.SEND_EMAIL_ON_RESET_PASSWORD.isActive()) {
                 recordEmailSender.sendOrcidSecurityResetPasswordEmail(getCurrentUserOrcid());
             }

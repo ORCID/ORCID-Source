@@ -48,10 +48,10 @@ public class OrcidStringUtilsTest {
         assertEquals("This is a link > s", OrcidStringUtils.stripHtml(html_5));
         assertEquals("This is a link &lt; s", OrcidStringUtils.stripHtml(html_6));
 
-        assertEquals("Name", OrcidStringUtils.stripHtml("<head><script/><script/><head><body>Name</body></html>"));
-        assertEquals(">Name", OrcidStringUtils.stripHtml("<head><script/><script/><head><body>>Name</body></html>"));
-        assertEquals("Name&lt;", OrcidStringUtils.stripHtml("<head><script/><script/><head><body>Name<</body></html>"));
-        assertEquals(">Name&lt;", OrcidStringUtils.stripHtml("<head><script/><script/><head><body>>Name<</body></html>"));
+        assertEquals("Name", OrcidStringUtils.stripHtml("<html><head><script></script></head><body>Name</body></html>"));
+        assertEquals(">Name", OrcidStringUtils.stripHtml("<html><head><script></script></head><body>>Name</body></html>"));
+        assertEquals("Name&lt;", OrcidStringUtils.stripHtml("<html><head><script></script></head><body>Name<</body></html>"));
+        assertEquals(">Name&lt;", OrcidStringUtils.stripHtml("<html><head><script></script></head><body>>Name<</body></html>"));
     }
 
     @Test

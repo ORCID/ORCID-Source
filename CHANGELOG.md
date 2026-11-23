@@ -1,3 +1,58 @@
+## v3.26.3 - 2026-11-20
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.26.2...v3.26.3)
+
+- [#7764](https://github.com/ORCID/ORCID-Source/pull/7764): PD-14786: dependency cleanup
+- [#7767](https://github.com/ORCID/ORCID-Source/pull/7767): fix/local-build-fixes
+
+## v3.26.2 - 2026-11-20
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.26.1...v3.26.2)
+
+- [#7785](https://github.com/ORCID/ORCID-Source/pull/7785): Infer PubMed preprint type from DOI metadata
+
+## v3.26.1 - 2026-11-20
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.26.0...v3.26.1)
+
+- [#7780](https://github.com/ORCID/ORCID-Source/pull/7780): Add Turnstile option for registration CAPTCHA
+
+## v3.25.14 - 2026-11-20
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.25.13...v3.25.14)
+
+- [#7789](https://github.com/ORCID/ORCID-Source/pull/7789): PD-14919 Return a different error code if the country is not supported
+
+## v3.25.13 - 2026-11-19
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.25.12...v3.25.13)
+
+- [#7787](https://github.com/ORCID/ORCID-Source/pull/7787): Add detailed error message for QA
+
+## v3.25.12 - 2026-11-18
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.25.10...v3.25.12)
+
+- [#7786](https://github.com/ORCID/ORCID-Source/pull/7786): PD-4737 Use the normal list and add a flag to disable the functionality
+
+## v3.25.10 - 2026-11-12
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.25.9...v3.25.10)
+
+- [#7783](https://github.com/ORCID/ORCID-Source/pull/7783): PD-14736 Harden recovery phone auth and SMS delivery, add logging
+
+## v3.25.9 - 2026-11-12
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.25.8...v3.25.9)
+
+- [#7781](https://github.com/ORCID/ORCID-Source/pull/7781): PD-14808 Keep current session after password change in settings
+
+## v3.25.8 - 2026-11-12
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.25.7...v3.25.8)
+
+- [#7782](https://github.com/ORCID/ORCID-Source/pull/7782): PD-14559 Resolve PubMed preprints using DOI fallback
+
 ## v3.25.7 - 2026-11-10
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.25.6...v3.25.7)

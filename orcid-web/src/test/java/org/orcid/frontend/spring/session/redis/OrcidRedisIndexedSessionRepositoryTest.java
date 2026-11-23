@@ -10,6 +10,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.time.Duration;
 import java.time.Instant;
 import java.util.HashMap;
 import java.util.Map;
@@ -26,8 +27,11 @@ import org.springframework.data.redis.core.BoundHashOperations;
 import org.springframework.data.redis.core.BoundSetOperations;
 import org.springframework.data.redis.core.RedisOperations;
 import org.springframework.data.redis.serializer.RedisSerializer;
+import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.session.FindByIndexNameSessionRepository;
+import org.springframework.session.MapSession;
 import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
 import static org.junit.Assert.assertEquals;
 
@@ -60,6 +64,25 @@ public class OrcidRedisIndexedSessionRepositoryTest {
     @After
     public void tearDown() {
         RequestContextHolder.resetRequestAttributes();
+    }
+
+    @Test
+    public void registrationGetPersistsCaptchaSessionAttributes() {
+        MockHttpServletRequest request = new MockHttpServletRequest("GET", "/register.json");
+        RequestContextHolder.setRequestAttributes(new ServletRequestAttributes(request));
+        MapSession mapSession = new MapSession(SESSION_ID);
+        mapSession.setMaxInactiveInterval(Duration.ZERO);
+        OrcidRedisIndexedSessionRepository.RedisSession session = sessionRepository.new RedisSession(mapSession, false);
+        session.setAttribute("captchaProvider", "turnstile");
+        session.setAttribute("captchaRegistrationId", "registration-id");
+        Mockito.lenient().when(redisOperations.boundHashOps(anyString())).thenReturn(sessionHashOperations);
+        Mockito.lenient().when(redisOperations.boundSetOps(anyString())).thenReturn(expirationSetOperations);
+
+        sessionRepository.save(session);
+
+        verify(sessionHashOperations).putAll(Mockito.argThat(delta ->
+                "turnstile".equals(delta.get("sessionAttr:captchaProvider"))
+                && "registration-id".equals(delta.get("sessionAttr:captchaRegistrationId"))));
     }
 
     @Test
@@ -109,6 +132,50 @@ public class OrcidRedisIndexedSessionRepositoryTest {
         verify(repository).deleteById(SESSION_ID);
         verify(repository).deleteById("session-2");
         verify(repository, times(2)).deleteById(anyString());
+    }
+
+    @Test
+    public void evictSessionsKeepCurrentShouldKeepMatchingSession() {
+        Map<String, OrcidRedisIndexedSessionRepository.RedisSession> activeSessions = new HashMap<>();
+        activeSessions.put(SESSION_ID, null);
+        activeSessions.put("session-2", null);
+        OrcidRedisIndexedSessionRepository repository = Mockito.spy(sessionRepository);
+        doReturn(activeSessions).when(repository).findByIndexNameAndIndexValue(
+                FindByIndexNameSessionRepository.PRINCIPAL_NAME_INDEX_NAME, ORCID);
+        doNothing().when(repository).deleteById(anyString());
+
+        assertEquals(1, repository.evictSessionsKeepCurrent(ORCID, SESSION_ID));
+        verify(repository, Mockito.never()).deleteById(SESSION_ID);
+        verify(repository).deleteById("session-2");
+        verify(repository, times(1)).deleteById(anyString());
+    }
+
+    @Test
+    public void evictSessionsKeepCurrentShouldEvictAllWhenCurrentIsNullOrNotFound() {
+        Map<String, OrcidRedisIndexedSessionRepository.RedisSession> activeSessions = new HashMap<>();
+        activeSessions.put(SESSION_ID, null);
+        activeSessions.put("session-2", null);
+        OrcidRedisIndexedSessionRepository repository = Mockito.spy(sessionRepository);
+        doReturn(activeSessions).when(repository).findByIndexNameAndIndexValue(
+                FindByIndexNameSessionRepository.PRINCIPAL_NAME_INDEX_NAME, ORCID);
+        doNothing().when(repository).deleteById(anyString());
+
+        assertEquals(2, repository.evictSessionsKeepCurrent(ORCID, null));
+        assertEquals(2, repository.evictSessionsKeepCurrent(ORCID, "unknown"));
+        verify(repository, times(2)).deleteById(SESSION_ID);
+        verify(repository, times(2)).deleteById("session-2");
+        verify(repository, times(4)).deleteById(anyString());
+    }
+
+    @Test
+    public void evictSessionsKeepCurrentShouldHandleNoSessionsOrBlankOrcid() {
+        OrcidRedisIndexedSessionRepository repository = Mockito.spy(sessionRepository);
+        doReturn(new HashMap<String, OrcidRedisIndexedSessionRepository.RedisSession>()).when(repository)
+                .findByIndexNameAndIndexValue(FindByIndexNameSessionRepository.PRINCIPAL_NAME_INDEX_NAME, ORCID);
+
+        assertEquals(0, repository.evictSessionsKeepCurrent(ORCID, SESSION_ID));
+        assertEquals(0, repository.evictSessionsKeepCurrent(" ", SESSION_ID));
+        verify(repository, Mockito.never()).deleteById(anyString());
     }
 
     @Test
