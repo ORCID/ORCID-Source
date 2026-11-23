@@ -1,3 +1,9 @@
+## v3.26.4 - 2026-11-23
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.26.3...v3.26.4)
+
+- [#7791](https://github.com/ORCID/ORCID-Source/pull/7791): Amontenegro/pd 14431
+
 ## v3.26.3 - 2026-11-20
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.26.2...v3.26.3)
