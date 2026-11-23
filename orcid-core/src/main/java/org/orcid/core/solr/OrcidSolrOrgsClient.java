@@ -1,6 +1,6 @@
 package org.orcid.core.solr;
 
-import static org.orcid.core.solr.SolrConstants.ORG_DISAMBIGUATED_ID;
+import org.orcid.utils.solr.entities.SolrConstants;
 
 import java.io.IOException;
 import java.text.MessageFormat;
@@ -40,7 +40,7 @@ public class OrcidSolrOrgsClient {
 
     public OrgDisambiguatedSolrDocument findById(Long id) {
         SolrQuery query = new SolrQuery();
-        query.setQuery(ORG_DISAMBIGUATED_ID + ":" + id).setFields("*");
+        query.setQuery(SolrConstants.ORG_DISAMBIGUATED_ID + ":" + id).setFields("*");
         try {
             QueryResponse queryResponse = solrReadOnlyOrgsClient.query(query);
             if (!queryResponse.getResults().isEmpty()) {

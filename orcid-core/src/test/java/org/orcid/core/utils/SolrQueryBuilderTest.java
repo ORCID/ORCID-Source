@@ -2,11 +2,12 @@ package org.orcid.core.utils;
 
 import static org.junit.Assert.assertEquals;
 
+import org.orcid.utils.solr.entities.SolrConstants;
+
 import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.Test;
-import org.orcid.core.solr.SolrConstants;
 
 public class SolrQueryBuilderTest {
 

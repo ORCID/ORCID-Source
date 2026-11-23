@@ -128,7 +128,11 @@ public enum Features implements Feature {
     FORCE_PASSWORD_RESET,
 
     @Label("Use Turnstile for registration")
-    USE_TURNSTILE_REGISTRATION;
+    USE_TURNSTILE_REGISTRATION,
+
+    @Label("Disable UI search")
+    DISABLE_UI_SEARCH;
+
     public boolean isActive() {
         return FeatureContext.getFeatureManager().isActive(this);
     }
