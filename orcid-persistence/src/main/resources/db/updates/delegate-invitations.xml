@@ -1,0 +1,97 @@
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
+
+    <changeSet id="CREATE-DELEGATE-INVITATION-TABLE" author="ORCID">
+        <createTable tableName="delegate_invitation">
+            <column name="delegate_invitation_id" type="bigint">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="delegate_invitation_pkey"/>
+            </column>
+            <column name="date_created" type="TIMESTAMP WITH TIME ZONE"/>
+            <column name="last_modified" type="TIMESTAMP WITH TIME ZONE"/>
+            <column name="invitation_token" type="VARCHAR(36)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="sender_orcid" type="VARCHAR(19)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="recipient_orcid" type="VARCHAR(19)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="lookup_type" type="VARCHAR(10)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="entered_email" type="VARCHAR(320)"/>
+            <column name="sent_date" type="TIMESTAMP WITH TIME ZONE">
+                <constraints nullable="false"/>
+            </column>
+            <column name="expires_at" type="TIMESTAMP WITH TIME ZONE">
+                <constraints nullable="false"/>
+            </column>
+            <column name="responded_at" type="TIMESTAMP WITH TIME ZONE"/>
+            <column name="status" type="VARCHAR(10)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="actionable_notification_id" type="bigint"/>
+            <column name="sender_notice_acknowledged" type="BOOLEAN" defaultValueBoolean="false">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <addForeignKeyConstraint constraintName="delegate_invitation_sender_fk" baseTableName="delegate_invitation"
+                                 baseColumnNames="sender_orcid" referencedTableName="profile" referencedColumnNames="orcid"/>
+        <addForeignKeyConstraint constraintName="delegate_invitation_recipient_fk" baseTableName="delegate_invitation"
+                                 baseColumnNames="recipient_orcid" referencedTableName="profile" referencedColumnNames="orcid"/>
+        <addForeignKeyConstraint constraintName="delegate_invitation_notification_fk" baseTableName="delegate_invitation"
+                                 baseColumnNames="actionable_notification_id" referencedTableName="notification" referencedColumnNames="id"/>
+        <createIndex tableName="delegate_invitation" indexName="delegate_invitation_sender_recipient_status_idx">
+            <column name="sender_orcid"/>
+            <column name="recipient_orcid"/>
+            <column name="status"/>
+        </createIndex>
+        <createIndex tableName="delegate_invitation" indexName="delegate_invitation_expiry_idx">
+            <column name="status"/>
+            <column name="expires_at"/>
+        </createIndex>
+        <createIndex tableName="delegate_invitation" indexName="delegate_invitation_token_idx" unique="true">
+            <column name="invitation_token"/>
+        </createIndex>
+    </changeSet>
+
+    <changeSet id="CREATE-DELEGATE-INVITATION-SEQUENCE" author="ORCID" dbms="postgresql">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <sequenceExists sequenceName="delegate_invitation_seq"/>
+            </not>
+        </preConditions>
+        <createSequence sequenceName="delegate_invitation_seq" startValue="100000"/>
+    </changeSet>
+
+    <changeSet id="CREATE-DELEGATE-INVITATION-AUTO-INCREMENT" author="ORCID" dbms="hsqldb">
+        <addAutoIncrement tableName="delegate_invitation" columnName="delegate_invitation_id" columnDataType="bigint" startWith="100000"/>
+    </changeSet>
+
+    <changeSet id="CREATE-DELEGATE-INVITATION-HSQL-SEQUENCE" author="ORCID" dbms="hsqldb">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <sequenceExists sequenceName="delegate_invitation_seq"/>
+            </not>
+        </preConditions>
+        <createSequence sequenceName="delegate_invitation_seq" startValue="100000"/>
+    </changeSet>
+    <changeSet id="ENFORCE-ONE-PENDING-DELEGATE-INVITATION" author="ORCID">
+        <addColumn tableName="delegate_invitation">
+            <column name="pending_recipient_orcid" type="VARCHAR(19)"/>
+        </addColumn>
+        <update tableName="delegate_invitation">
+            <column name="pending_recipient_orcid" valueComputed="recipient_orcid"/>
+            <where>status = 'PENDING'</where>
+        </update>
+        <addUniqueConstraint tableName="delegate_invitation" columnNames="sender_orcid,pending_recipient_orcid"
+                             constraintName="delegate_invitation_one_pending"/>
+    </changeSet>
+    <changeSet id="ALLOW-DELETING-DELEGATE-NOTIFICATIONS" author="ORCID">
+        <dropForeignKeyConstraint baseTableName="delegate_invitation" constraintName="delegate_invitation_notification_fk"/>
+        <addForeignKeyConstraint constraintName="delegate_invitation_notification_fk" baseTableName="delegate_invitation"
+                                 baseColumnNames="actionable_notification_id" referencedTableName="notification" referencedColumnNames="id"
+                                 onDelete="SET NULL"/>
+    </changeSet>
+</databaseChangeLog>

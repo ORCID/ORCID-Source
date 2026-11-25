@@ -234,6 +234,24 @@ public class NotificationManagerTest extends DBUnitTest {
         notificationManager.sendDelegationRequestEmail("0000-0000-0000-0003", "0000-0000-0000-0003", "http://test.orcid.org");
     }
 
+    @Test
+    public void revocationUsesDelegateEmailChannel() {
+        String orcid = "0000-0000-0000-0003";
+        ProfileEntity profile = new ProfileEntity();
+        profile.setLocale("EN");
+        when(mockProfileEntityCacheManager.retrieve(orcid)).thenReturn(profile);
+        Email email = new Email();
+        email.setEmail("owner@example.org");
+        when(mockEmailManager.findPrimaryEmail(orcid)).thenReturn(email);
+        NotificationAdministrativeEntity entity = new NotificationAdministrativeEntity();
+        when(mockNotificationAdapter.toNotificationEntity(Mockito.any(Notification.class))).thenReturn(entity);
+
+        notificationManager.sendRevokeNotificationToUserGrantingPermission(orcid, "0000-0000-0000-0002");
+
+        verify(mockNotificationDao).persist(entity);
+        assertEquals(orcid, entity.getOrcid());
+    }
+
     /**
      * 0000-0000-0000-0003 Must have notifications enabled
      */

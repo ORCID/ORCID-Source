@@ -895,6 +895,15 @@
 	<bean id="bibtexManager" class="org.orcid.core.manager.impl.BibtexManagerImpl" />
 	
 	<bean id="givenPermissionToManager" class="org.orcid.core.manager.v3.impl.GivenPermissionToManagerImpl"/>
+
+    <bean id="delegateInvitationManager" class="org.orcid.core.manager.v3.impl.DelegateInvitationManagerImpl"/>
+
+    <bean id="delegateInvitationMessaging" class="org.orcid.core.manager.v3.impl.DelegateInvitationMessaging"/>
+    <bean id="delegateInvitationMessages" class="org.springframework.context.support.ReloadableResourceBundleMessageSource">
+        <property name="basename" value="classpath:i18n/notification_delegate_invitation" />
+        <property name="defaultEncoding" value="UTF-8" />
+        <property name="fallbackToSystemLocale" value="false" />
+    </bean>
 	
 	<bean id="givenPermissionToManagerReadOnly" class="org.orcid.core.manager.v3.read_only.impl.GivenPermissionToManagerReadOnlyImpl"/>
 	

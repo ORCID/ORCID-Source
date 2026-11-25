@@ -65,6 +65,7 @@ abstract public class NotificationEntity extends SourceAwareEntity<Long> impleme
     public static final String FIND_ORCIDS_WITH_UNSENT_NOTIFICATIONS_ON_EMAIL_FREQUENCIES_TABLE = "findOrcidsWithUnsentNotificationsOnEmailFrequenciesTable";
     
     public static final String FIND_NOTIFICATIONS_TO_SEND_BY_ORCID = "findNotificationsToSendByOrcid";
+
     
     private static final long serialVersionUID = 1L;
 

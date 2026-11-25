@@ -28,6 +28,7 @@ import org.orcid.persistence.constants.SendEmailFrequency;
 import org.orcid.persistence.jpa.entities.NotificationAddItemsEntity;
 import org.orcid.persistence.jpa.entities.NotificationAmendedEntity;
 import org.orcid.persistence.jpa.entities.NotificationCustomEntity;
+import org.orcid.persistence.jpa.entities.NotificationDelegateEntity;
 import org.orcid.persistence.jpa.entities.NotificationEntity;
 import org.orcid.persistence.jpa.entities.NotificationItemEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
@@ -602,5 +603,29 @@ public class NotificationDaoTest extends DBUnitTest {
         assertEquals(e.getLastModified(), e2.getLastModified());
         assertEquals(e.getDateCreated(), e2.getDateCreated());
         assertEquals(e2.getDateCreated(), e2.getLastModified());
+    }
+
+    @Test
+    public void persistDelegateNotificationUsesDelegateDiscriminatorAndAdministrativeFields() {
+        NotificationDelegateEntity notification = new NotificationDelegateEntity();
+        notification.setOrcid("0000-0000-0000-0003");
+        notification.setNotificationSubject("Delegate invitation");
+        notification.setSubject("Delegate invitation subject");
+        notification.setBodyText("Delegate invitation text");
+        notification.setBodyHtml("<p>Delegate invitation html</p>");
+        notification.setLang("en");
+        notification.setSendable(true);
+
+        notificationDao.persist(notification);
+        notificationDao.flush();
+        notificationDao.detatch(notification);
+
+        NotificationEntity persisted = notificationDao.find(notification.getId());
+        assertTrue(persisted instanceof NotificationDelegateEntity);
+        NotificationDelegateEntity delegateNotification = (NotificationDelegateEntity) persisted;
+        assertEquals("Delegate invitation subject", delegateNotification.getSubject());
+        assertEquals("Delegate invitation text", delegateNotification.getBodyText());
+        assertEquals("<p>Delegate invitation html</p>", delegateNotification.getBodyHtml());
+        assertEquals("en", delegateNotification.getLang());
     }
 }

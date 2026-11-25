@@ -3,6 +3,7 @@ package org.orcid.frontend.web.controllers;
 import java.io.UnsupportedEncodingException;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.regex.Pattern;
 
 import jakarta.annotation.Resource;
 import jakarta.persistence.NoResultException;
@@ -15,6 +16,7 @@ import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.jasypt.exceptions.EncryptionOperationNotPossibleException;
 import org.orcid.core.constants.EmailConstants;
+import org.orcid.core.crypto.OrcidCheckDigitGenerator;
 import org.orcid.core.manager.*;
 import org.orcid.core.manager.v3.*;
 import org.orcid.core.manager.v3.AddressManager;
@@ -35,6 +37,7 @@ import org.orcid.jaxb.model.v3.release.record.Addresses;
 import org.orcid.jaxb.model.v3.release.record.Biography;
 import org.orcid.jaxb.model.v3.release.record.Emails;
 import org.orcid.jaxb.model.v3.release.record.Name;
+import org.orcid.jaxb.model.v3.release.record.Affiliation;
 import org.orcid.persistence.jpa.entities.*;
 import org.orcid.pojo.*;
 import org.orcid.pojo.ajaxForm.*;
@@ -64,18 +67,23 @@ import org.springframework.web.servlet.ModelAndView;
 @RequestMapping(value = { "/account" })
 public class ManageProfileController extends BaseWorkspaceController {
 
-    private static final String IS_SELF = "isSelf";
-
-    private static final String FOUND = "found";   
-
-    private static final String IS_ALREADY_ADDED = "isAlreadyAdded";
     private static final Logger log = LoggerFactory.getLogger(ManageProfileController.class);
+    private static final Pattern ORCID_ID_PATTERN = Pattern.compile("^\\d{4}-\\d{4}-\\d{4}-\\d{3}[\\dX]$", Pattern.CASE_INSENSITIVE);
+    private static final Pattern EMAIL_ADDRESS_PATTERN = Pattern.compile(
+            "^(?=.{1,254}$)(?=.{1,64}@)[A-Z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[A-Z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[A-Z0-9](?:[A-Z0-9-]{0,61}[A-Z0-9])?\\.)+[A-Z]{2,63}$",
+            Pattern.CASE_INSENSITIVE);
 
     @Resource
     private EncryptionManager encryptionManager;
 
     @Resource(name = "profileEntityManagerReadOnlyV3")
     private ProfileEntityManagerReadOnly profileEntityManagerReadOnly;
+
+    @Resource(name = "affiliationsManagerReadOnlyV3")
+    private AffiliationsManagerReadOnly affiliationsManagerReadOnly;
+
+    @Resource(name = "delegateInvitationManager")
+    private DelegateInvitationManager delegateInvitationManager;
     
     @Resource
     private GivenPermissionToManager givenPermissionToManager;
@@ -156,52 +164,178 @@ public class ManageProfileController extends BaseWorkspaceController {
     @Value("${org.orcid.security.two_factor.token_ttl:1800}")
     private int twoFactorTokenTtl;
     
-    @RequestMapping(value = "/search-for-delegate-by-email/{email}/")
-    public @ResponseBody Map<String, Boolean> searchForDelegateByEmail(@PathVariable String email) {
+    @RequestMapping(value = "/delegate-invitations/search.json", method = RequestMethod.POST)
+    public @ResponseBody DelegateInvitationSearchResult searchDelegateInvitation(@RequestBody DelegateInvitationSearchRequest request) {
+        return resolveDelegateInvitationTarget(request, getCurrentUserOrcid()).getSearchResult();
+    }
 
-        Map<String, Boolean> map = new HashMap<>();
-        String effectiveOrcid = getEffectiveUserOrcid();
-        List<DelegateForm> delegates = new ArrayList<DelegateForm>();
-
-        EmailEntity emailEntity = emailManager.find(email);
-        delegates = givenPermissionToManagerReadOnly.findByGiver(effectiveOrcid, getLastModified(effectiveOrcid));            
-
-
-        if (emailEntity == null) {
-            map.put(FOUND, Boolean.FALSE);
-            return map;
-        } else {
-            map.put(IS_ALREADY_ADDED, delegates.removeIf(e -> 
-             e.getReceiverOrcid().getPath().equals(emailEntity.getOrcid())
-            ));
-            map.put(FOUND,  Boolean.TRUE);
-            map.put(IS_SELF, emailEntity.getOrcid().equals(getCurrentUserOrcid()));
-            return map;
+    @RequestMapping(value = "/delegate-invitations/send.json", method = RequestMethod.POST)
+    public @ResponseBody DelegateInvitationActionResult sendDelegateInvitation(@RequestBody DelegateInvitationSearchRequest request) {
+        DelegateInvitationTarget target = resolveDelegateInvitationTarget(request, getCurrentUserOrcid());
+        if (!"FOUND".equals(target.getSearchResult().getStatus())) {
+            return new DelegateInvitationActionResult(target.getSearchResult().getStatus());
         }
-    }    
-    
-    @RequestMapping(value = "/search-for-delegate-by-orcid/{orcid}/")
-    public @ResponseBody Map<String, Boolean> searchForDelegateByOrcid(@PathVariable String orcid) {
-        Map<String, Boolean> map = new HashMap<>();
-        String effectiveOrcid = getEffectiveUserOrcid();
-        List<DelegateForm> delegates = new ArrayList<DelegateForm>();
 
-        delegates = givenPermissionToManagerReadOnly.findByGiver(effectiveOrcid, getLastModified(effectiveOrcid));            
+        DelegateInvitationEntity.LookupType lookupType = DelegateInvitationEntity.LookupType.valueOf(target.getSearchResult().getLookupType());
+        DelegateInvitationManager.CreationResult result = delegateInvitationManager.createInvitation(getCurrentUserOrcid(), target.getRecipientOrcid(), lookupType,
+                lookupType == DelegateInvitationEntity.LookupType.EMAIL ? target.getSearchResult().getEmailAddress() : null);
+        return new DelegateInvitationActionResult(result.getStatus() == DelegateInvitationManager.CreationStatus.CREATED ? "SENT" : result.getStatus().name());
+    }
 
-        
-        Boolean isValidForDelegate = profileEntityManagerReadOnly.isOrcidValidAsDelegate(orcid);
-        if (isValidForDelegate == null || isValidForDelegate.booleanValue() == false) {
-            map.put(FOUND, Boolean.FALSE);
-            return map;
-        } else {
-            map.put(FOUND, Boolean.TRUE);
-            map.put(IS_SELF, orcid.equals(getCurrentUserOrcid()));
-            map.put(IS_ALREADY_ADDED, delegates.removeIf(e -> 
-            e.getReceiverOrcid().getPath().equals(orcid)
-           ));
-            return map;
+    @RequestMapping(value = "/delegate-invitations/respond.json", method = RequestMethod.POST)
+    public @ResponseBody DelegateInvitationActionResult respondToDelegateInvitation(@RequestBody DelegateInvitationActionRequest request) {
+        if (request == null || StringUtils.isBlank(request.getDecision())) {
+            return new DelegateInvitationActionResult("INVALID");
         }
-    } 
+        DelegateInvitationManager.Decision decision;
+        try {
+            decision = DelegateInvitationManager.Decision.valueOf(request.getDecision().trim().toUpperCase(Locale.ROOT));
+        } catch (IllegalArgumentException e) {
+            return new DelegateInvitationActionResult("INVALID");
+        }
+        return new DelegateInvitationActionResult(delegateInvitationManager.respond(request.getInvitationToken(), getCurrentUserOrcid(), decision).name());
+    }
+
+    @RequestMapping(value = "/delegate-invitations/notices.json", method = RequestMethod.GET)
+    public @ResponseBody List<DelegateInvitationNotice> getDelegateInvitationNotices() {
+        List<DelegateInvitationNotice> notices = new ArrayList<>();
+        for (DelegateInvitationEntity invitation : delegateInvitationManager.getUnacknowledgedNotices(getCurrentUserOrcid())) {
+            DelegateInvitationNotice notice = new DelegateInvitationNotice();
+            notice.setInvitationToken(invitation.getInvitationToken());
+            notice.setStatus(invitation.getStatus().name());
+            notice.setLookupType(invitation.getLookupType().name());
+            notice.setEnteredEmail(invitation.getEnteredEmail());
+            notice.setRespondedAt(invitation.getRespondedAt());
+            notices.add(notice);
+        }
+        return notices;
+    }
+
+    @RequestMapping(value = "/delegate-invitations/notices/acknowledge.json", method = RequestMethod.POST)
+    public @ResponseBody DelegateInvitationActionResult acknowledgeDelegateInvitationNotice(@RequestBody DelegateInvitationActionRequest request) {
+        if (request == null || !delegateInvitationManager.acknowledgeNotice(getCurrentUserOrcid(), request.getInvitationToken())) {
+            return new DelegateInvitationActionResult("NOT_FOUND");
+        }
+        return new DelegateInvitationActionResult("ACKNOWLEDGED");
+    }
+
+    private DelegateInvitationTarget resolveDelegateInvitationTarget(DelegateInvitationSearchRequest request, String senderOrcid) {
+        DelegateInvitationSearchResult searchResult = new DelegateInvitationSearchResult();
+        if (request == null || StringUtils.isBlank(request.getLookupType()) || StringUtils.isBlank(request.getValue())) {
+            searchResult.setStatus("INVALID");
+            return new DelegateInvitationTarget(searchResult, null);
+        }
+
+        String lookupTypeValue = request.getLookupType().trim().toUpperCase(Locale.ROOT);
+        String value = request.getValue().trim();
+        String recipientOrcid;
+        DelegateInvitationEntity.LookupType lookupType;
+        if (DelegateInvitationEntity.LookupType.ORCID.name().equals(lookupTypeValue)) {
+            String normalizedOrcid = value.toUpperCase(Locale.ROOT);
+            if (!ORCID_ID_PATTERN.matcher(normalizedOrcid).matches() || !OrcidCheckDigitGenerator.validate(normalizedOrcid)) {
+                searchResult.setStatus("INVALID");
+                return new DelegateInvitationTarget(searchResult, null);
+            }
+            lookupType = DelegateInvitationEntity.LookupType.ORCID;
+            recipientOrcid = normalizedOrcid;
+        } else if (DelegateInvitationEntity.LookupType.EMAIL.name().equals(lookupTypeValue)) {
+            if (!EMAIL_ADDRESS_PATTERN.matcher(value).matches()) {
+                searchResult.setStatus("INVALID");
+                return new DelegateInvitationTarget(searchResult, null);
+            }
+            EmailEntity emailEntity = emailManager.find(value);
+            if (emailEntity == null || StringUtils.isBlank(emailEntity.getOrcid())) {
+                searchResult.setStatus("NOT_FOUND");
+                return new DelegateInvitationTarget(searchResult, null);
+            }
+            lookupType = DelegateInvitationEntity.LookupType.EMAIL;
+            recipientOrcid = emailEntity.getOrcid();
+        } else {
+            searchResult.setStatus("INVALID");
+            return new DelegateInvitationTarget(searchResult, null);
+        }
+
+        if (!Boolean.TRUE.equals(profileEntityManagerReadOnly.isOrcidValidAsDelegate(recipientOrcid))) {
+            searchResult.setStatus("NOT_FOUND");
+            return new DelegateInvitationTarget(searchResult, null);
+        }
+
+        searchResult.setLookupType(lookupType.name());
+        DelegateInvitationManager.Eligibility eligibility = delegateInvitationManager.checkEligibility(senderOrcid, recipientOrcid);
+        if (eligibility != DelegateInvitationManager.Eligibility.AVAILABLE) {
+            searchResult.setStatus(eligibility.name());
+            return new DelegateInvitationTarget(searchResult, null);
+        }
+
+        searchResult.setStatus("FOUND");
+        if (lookupType == DelegateInvitationEntity.LookupType.EMAIL) {
+            searchResult.setEmailAddress(value);
+        } else {
+            searchResult.setOrcid(recipientOrcid);
+            searchResult.setPublicName(getPublicName(recipientOrcid));
+            searchResult.setHighlightedAffiliation(getPublicFeaturedAffiliation(recipientOrcid));
+            searchResult.setPublicRecordUrl(orcidUrlManager.getPubBaseUrl().replaceAll("/+$", "") + "/" + recipientOrcid);
+        }
+        return new DelegateInvitationTarget(searchResult, recipientOrcid);
+    }
+
+    private String getPublicName(String orcid) {
+        Name name = recordNameManagerReadOnlyV3.getRecordName(orcid);
+        if (name == null || name.getVisibility() != org.orcid.jaxb.model.v3.release.common.Visibility.PUBLIC) {
+            return null;
+        }
+        if (name.getCreditName() != null && StringUtils.isNotBlank(name.getCreditName().getContent())) {
+            return name.getCreditName().getContent();
+        }
+        List<String> nameParts = new ArrayList<>();
+        if (name.getGivenNames() != null && StringUtils.isNotBlank(name.getGivenNames().getContent())) {
+            nameParts.add(name.getGivenNames().getContent());
+        }
+        if (name.getFamilyName() != null && StringUtils.isNotBlank(name.getFamilyName().getContent())) {
+            nameParts.add(name.getFamilyName().getContent());
+        }
+        return String.join(" ", nameParts);
+    }
+
+    private String getPublicFeaturedAffiliation(String orcid) {
+        Long featuredPutCode = affiliationsManagerReadOnly.getFeaturedFlag(orcid);
+        if (featuredPutCode == null) {
+            return null;
+        }
+        for (Affiliation affiliation : affiliationsManagerReadOnly.getAffiliations(orcid)) {
+            if (featuredPutCode.equals(affiliation.getPutCode()) && affiliation.getVisibility() == org.orcid.jaxb.model.v3.release.common.Visibility.PUBLIC
+                    && affiliation.getOrganization() != null && StringUtils.isNotBlank(affiliation.getOrganization().getName())) {
+                List<String> affiliationParts = new ArrayList<>();
+                if (StringUtils.isNotBlank(affiliation.getRoleTitle())) {
+                    affiliationParts.add(affiliation.getRoleTitle());
+                }
+                if (StringUtils.isNotBlank(affiliation.getDepartmentName())) {
+                    affiliationParts.add(affiliation.getDepartmentName());
+                }
+                affiliationParts.add(affiliation.getOrganization().getName());
+                return String.join(", ", affiliationParts);
+            }
+        }
+        return null;
+    }
+
+    private static class DelegateInvitationTarget {
+        private final DelegateInvitationSearchResult searchResult;
+        private final String recipientOrcid;
+
+        private DelegateInvitationTarget(DelegateInvitationSearchResult searchResult, String recipientOrcid) {
+            this.searchResult = searchResult;
+            this.recipientOrcid = recipientOrcid;
+        }
+
+        private DelegateInvitationSearchResult getSearchResult() {
+            return searchResult;
+        }
+
+        private String getRecipientOrcid() {
+            return recipientOrcid;
+        }
+    }
 
     @RequestMapping(value = "/delegates.json", method = RequestMethod.GET)
     public @ResponseBody List<DelegateForm>  getDelegates() {
@@ -209,24 +343,6 @@ public class ManageProfileController extends BaseWorkspaceController {
         return givenPermissionToManagerReadOnly.findByGiver(currentOrcid, getLastModified(currentOrcid));
     }
     
-    @RequestMapping(value = "/addDelegate.json")
-    public @ResponseBody ManageDelegate addDelegate(@RequestBody ManageDelegate addDelegate) {
-        givenPermissionToManager.create(getCurrentUserOrcid(), addDelegate.getDelegateToManage());
-        return addDelegate;
-    }
-
-    @RequestMapping(value = "/addDelegateByEmail.json")
-    public @ResponseBody ManageDelegate addDelegateByEmail(@RequestBody ManageDelegate addDelegate) {
-        EmailEntity emailEntity = emailManager.find(addDelegate.getDelegateEmail());
-        addDelegate.setDelegateToManage(emailEntity.getOrcid());
-        return addDelegate(addDelegate);
-    }
-
-    @RequestMapping(value = "/addDelegateByOrcid.json")
-    public @ResponseBody ManageDelegate addDelegateByOrcid(@RequestBody ManageDelegate addDelegate) {
-        addDelegate.setDelegateToManage(addDelegate.getDelegateToManage());
-        return addDelegate(addDelegate);
-    }
     
     @RequestMapping(value = "/revokeDelegate.json", method = RequestMethod.POST)
     public @ResponseBody ManageDelegate revokeDelegate(@RequestBody ManageDelegate manageDelegate) {
