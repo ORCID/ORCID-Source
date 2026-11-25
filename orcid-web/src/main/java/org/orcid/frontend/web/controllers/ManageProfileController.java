@@ -3,7 +3,6 @@ package org.orcid.frontend.web.controllers;
 import java.io.UnsupportedEncodingException;
 import java.util.*;
 import java.util.stream.Collectors;
-import java.util.regex.Pattern;
 
 import jakarta.annotation.Resource;
 import jakarta.persistence.NoResultException;
@@ -68,10 +67,6 @@ import org.springframework.web.servlet.ModelAndView;
 public class ManageProfileController extends BaseWorkspaceController {
 
     private static final Logger log = LoggerFactory.getLogger(ManageProfileController.class);
-    private static final Pattern ORCID_ID_PATTERN = Pattern.compile("^\\d{4}-\\d{4}-\\d{4}-\\d{3}[\\dX]$", Pattern.CASE_INSENSITIVE);
-    private static final Pattern EMAIL_ADDRESS_PATTERN = Pattern.compile(
-            "^(?=.{1,254}$)(?=.{1,64}@)[A-Z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[A-Z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[A-Z0-9](?:[A-Z0-9-]{0,61}[A-Z0-9])?\\.)+[A-Z]{2,63}$",
-            Pattern.CASE_INSENSITIVE);
 
     @Resource
     private EncryptionManager encryptionManager;
@@ -201,11 +196,11 @@ public class ManageProfileController extends BaseWorkspaceController {
         List<DelegateInvitationNotice> notices = new ArrayList<>();
         for (DelegateInvitationEntity invitation : delegateInvitationManager.getUnacknowledgedNotices(getCurrentUserOrcid())) {
             DelegateInvitationNotice notice = new DelegateInvitationNotice();
-            notice.setInvitationToken(invitation.getInvitationToken());
+            notice.setInvitationId(invitation.getId());
             notice.setStatus(invitation.getStatus().name());
             notice.setLookupType(invitation.getLookupType().name());
             notice.setEnteredEmail(invitation.getEnteredEmail());
-            notice.setRespondedAt(invitation.getRespondedAt());
+            notice.setLastModified(invitation.getLastModified());
             notices.add(notice);
         }
         return notices;
@@ -213,7 +208,7 @@ public class ManageProfileController extends BaseWorkspaceController {
 
     @RequestMapping(value = "/delegate-invitations/notices/acknowledge.json", method = RequestMethod.POST)
     public @ResponseBody DelegateInvitationActionResult acknowledgeDelegateInvitationNotice(@RequestBody DelegateInvitationActionRequest request) {
-        if (request == null || !delegateInvitationManager.acknowledgeNotice(getCurrentUserOrcid(), request.getInvitationToken())) {
+        if (request == null || !delegateInvitationManager.acknowledgeNotice(getCurrentUserOrcid(), request.getInvitationId())) {
             return new DelegateInvitationActionResult("NOT_FOUND");
         }
         return new DelegateInvitationActionResult("ACKNOWLEDGED");
@@ -232,14 +227,14 @@ public class ManageProfileController extends BaseWorkspaceController {
         DelegateInvitationEntity.LookupType lookupType;
         if (DelegateInvitationEntity.LookupType.ORCID.name().equals(lookupTypeValue)) {
             String normalizedOrcid = value.toUpperCase(Locale.ROOT);
-            if (!ORCID_ID_PATTERN.matcher(normalizedOrcid).matches() || !OrcidCheckDigitGenerator.validate(normalizedOrcid)) {
+            if (!OrcidStringUtils.isValidOrcid(normalizedOrcid) || !OrcidCheckDigitGenerator.validate(normalizedOrcid)) {
                 searchResult.setStatus("INVALID");
                 return new DelegateInvitationTarget(searchResult, null);
             }
             lookupType = DelegateInvitationEntity.LookupType.ORCID;
             recipientOrcid = normalizedOrcid;
         } else if (DelegateInvitationEntity.LookupType.EMAIL.name().equals(lookupTypeValue)) {
-            if (!EMAIL_ADDRESS_PATTERN.matcher(value).matches()) {
+            if (!OrcidStringUtils.isEmailValid(value)) {
                 searchResult.setStatus("INVALID");
                 return new DelegateInvitationTarget(searchResult, null);
             }

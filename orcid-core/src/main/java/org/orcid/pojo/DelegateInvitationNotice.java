@@ -4,18 +4,18 @@ import java.util.Date;
 
 public class DelegateInvitationNotice {
 
-    private String invitationToken;
+    private Long invitationId;
     private String status;
     private String lookupType;
     private String enteredEmail;
-    private Date respondedAt;
+    private Date lastModified;
 
-    public String getInvitationToken() {
-        return invitationToken;
+    public Long getInvitationId() {
+        return invitationId;
     }
 
-    public void setInvitationToken(String invitationToken) {
-        this.invitationToken = invitationToken;
+    public void setInvitationId(Long invitationId) {
+        this.invitationId = invitationId;
     }
 
     public String getStatus() {
@@ -42,11 +42,11 @@ public class DelegateInvitationNotice {
         this.enteredEmail = enteredEmail;
     }
 
-    public Date getRespondedAt() {
-        return respondedAt;
+    public Date getLastModified() {
+        return lastModified;
     }
 
-    public void setRespondedAt(Date respondedAt) {
-        this.respondedAt = respondedAt;
+    public void setLastModified(Date lastModified) {
+        this.lastModified = lastModified;
     }
 }

@@ -8,29 +8,17 @@
             </column>
             <column name="date_created" type="TIMESTAMP WITH TIME ZONE"/>
             <column name="last_modified" type="TIMESTAMP WITH TIME ZONE"/>
-            <column name="invitation_token" type="VARCHAR(36)">
-                <constraints nullable="false"/>
-            </column>
             <column name="sender_orcid" type="VARCHAR(19)">
                 <constraints nullable="false"/>
             </column>
             <column name="recipient_orcid" type="VARCHAR(19)">
                 <constraints nullable="false"/>
             </column>
-            <column name="lookup_type" type="VARCHAR(10)">
-                <constraints nullable="false"/>
-            </column>
             <column name="entered_email" type="VARCHAR(320)"/>
-            <column name="sent_date" type="TIMESTAMP WITH TIME ZONE">
-                <constraints nullable="false"/>
-            </column>
-            <column name="expires_at" type="TIMESTAMP WITH TIME ZONE">
-                <constraints nullable="false"/>
-            </column>
-            <column name="responded_at" type="TIMESTAMP WITH TIME ZONE"/>
             <column name="status" type="VARCHAR(10)">
                 <constraints nullable="false"/>
             </column>
+            <column name="pending_recipient_orcid" type="VARCHAR(19)"/>
             <column name="actionable_notification_id" type="bigint"/>
             <column name="sender_notice_acknowledged" type="BOOLEAN" defaultValueBoolean="false">
                 <constraints nullable="false"/>
@@ -41,7 +29,8 @@
         <addForeignKeyConstraint constraintName="delegate_invitation_recipient_fk" baseTableName="delegate_invitation"
                                  baseColumnNames="recipient_orcid" referencedTableName="profile" referencedColumnNames="orcid"/>
         <addForeignKeyConstraint constraintName="delegate_invitation_notification_fk" baseTableName="delegate_invitation"
-                                 baseColumnNames="actionable_notification_id" referencedTableName="notification" referencedColumnNames="id"/>
+                                 baseColumnNames="actionable_notification_id" referencedTableName="notification" referencedColumnNames="id"
+                                 onDelete="SET NULL"/>
         <createIndex tableName="delegate_invitation" indexName="delegate_invitation_sender_recipient_status_idx">
             <column name="sender_orcid"/>
             <column name="recipient_orcid"/>
@@ -49,11 +38,10 @@
         </createIndex>
         <createIndex tableName="delegate_invitation" indexName="delegate_invitation_expiry_idx">
             <column name="status"/>
-            <column name="expires_at"/>
+            <column name="date_created"/>
         </createIndex>
-        <createIndex tableName="delegate_invitation" indexName="delegate_invitation_token_idx" unique="true">
-            <column name="invitation_token"/>
-        </createIndex>
+        <addUniqueConstraint tableName="delegate_invitation" columnNames="sender_orcid,pending_recipient_orcid"
+                             constraintName="delegate_invitation_one_pending"/>
     </changeSet>
 
     <changeSet id="CREATE-DELEGATE-INVITATION-SEQUENCE" author="ORCID" dbms="postgresql">
@@ -77,21 +65,13 @@
         </preConditions>
         <createSequence sequenceName="delegate_invitation_seq" startValue="100000"/>
     </changeSet>
-    <changeSet id="ENFORCE-ONE-PENDING-DELEGATE-INVITATION" author="ORCID">
-        <addColumn tableName="delegate_invitation">
-            <column name="pending_recipient_orcid" type="VARCHAR(19)"/>
-        </addColumn>
-        <update tableName="delegate_invitation">
-            <column name="pending_recipient_orcid" valueComputed="recipient_orcid"/>
-            <where>status = 'PENDING'</where>
-        </update>
-        <addUniqueConstraint tableName="delegate_invitation" columnNames="sender_orcid,pending_recipient_orcid"
-                             constraintName="delegate_invitation_one_pending"/>
+
+    <changeSet id="REMOVE-DELEGATE-INVITATION-PENDING-RECIPIENT-COLUMN" author="ORCID">
+        <dropUniqueConstraint tableName="delegate_invitation" constraintName="delegate_invitation_one_pending"/>
+        <dropColumn tableName="delegate_invitation" columnName="pending_recipient_orcid"/>
     </changeSet>
-    <changeSet id="ALLOW-DELETING-DELEGATE-NOTIFICATIONS" author="ORCID">
-        <dropForeignKeyConstraint baseTableName="delegate_invitation" constraintName="delegate_invitation_notification_fk"/>
-        <addForeignKeyConstraint constraintName="delegate_invitation_notification_fk" baseTableName="delegate_invitation"
-                                 baseColumnNames="actionable_notification_id" referencedTableName="notification" referencedColumnNames="id"
-                                 onDelete="SET NULL"/>
+
+    <changeSet id="CREATE-DELEGATE-INVITATION-POSTGRES-PENDING-INDEX" author="ORCID" dbms="postgresql">
+        <sql>CREATE UNIQUE INDEX delegate_invitation_one_pending ON delegate_invitation (sender_orcid, recipient_orcid) WHERE status = 'PENDING'</sql>
     </changeSet>
 </databaseChangeLog>

@@ -31,10 +31,14 @@ public class DelegateInvitationMessagingTest {
     private static final String RECIPIENT = "0000-0000-0000-0003";
     private static final String TOKEN = "7e7d2ab1-0cf9-4c65-99ed-1809af5d5e75";
 
-    @Mock private NotificationDao notificationDao;
-    @Mock private ProfileEntityCacheManager profileEntityCacheManager;
-    @Mock private OrcidUrlManager orcidUrlManager;
-    @InjectMocks private DelegateInvitationMessaging messaging;
+    @Mock
+    private NotificationDao notificationDao;
+    @Mock
+    private ProfileEntityCacheManager profileEntityCacheManager;
+    @Mock
+    private OrcidUrlManager orcidUrlManager;
+    @InjectMocks
+    private DelegateInvitationMessaging messaging;
 
     private final List<NotificationDelegateEntity> saved = new ArrayList<>();
 
@@ -63,7 +67,7 @@ public class DelegateInvitationMessagingTest {
         ProfileEntity profile = new ProfileEntity();
         profile.setLocale("FR");
         when(profileEntityCacheManager.retrieve(RECIPIENT)).thenReturn(profile);
-        messaging.created(invitation);
+        messaging.created(invitation, TOKEN);
 
         assertEquals(2, saved.size());
         NotificationDelegateEntity sender = saved.get(0);
@@ -87,8 +91,8 @@ public class DelegateInvitationMessagingTest {
 
     @Test
     public void responsesProduceTwoNonActionableMessages() {
-        for (DelegateInvitationEntity.Status status : new DelegateInvitationEntity.Status[] {
-                DelegateInvitationEntity.Status.ACCEPTED, DelegateInvitationEntity.Status.DECLINED }) {
+        for (DelegateInvitationEntity.Status status : new DelegateInvitationEntity.Status[]{
+                DelegateInvitationEntity.Status.ACCEPTED, DelegateInvitationEntity.Status.DECLINED}) {
             saved.clear();
             DelegateInvitationEntity invitation = invitation("other@example.org");
             invitation.setStatus(status);
@@ -105,15 +109,14 @@ public class DelegateInvitationMessagingTest {
     public void senderCreationAndDeclineUseLookupSpecificIdentity() {
         String entered = "other+<tag>@example.org";
         for (DelegateInvitationEntity.LookupType type : DelegateInvitationEntity.LookupType.values()) {
-            DelegateInvitationEntity invitation = invitation(entered);
-            invitation.setLookupType(type);
-            for (boolean decline : new boolean[] { false, true }) {
+            DelegateInvitationEntity invitation = invitation(type == DelegateInvitationEntity.LookupType.EMAIL ? entered : null);
+            for (boolean decline : new boolean[]{false, true}) {
                 saved.clear();
                 if (decline) {
                     invitation.setStatus(DelegateInvitationEntity.Status.DECLINED);
                     messaging.responded(invitation);
                 } else {
-                    messaging.created(invitation);
+                    messaging.created(invitation, TOKEN);
                 }
                 NotificationDelegateEntity sender = saved.get(0);
                 String expected = type == DelegateInvitationEntity.LookupType.EMAIL ? entered : RECIPIENT;
@@ -138,8 +141,6 @@ public class DelegateInvitationMessagingTest {
         DelegateInvitationEntity invitation = new DelegateInvitationEntity();
         invitation.setSenderOrcid(SENDER);
         invitation.setRecipientOrcid(RECIPIENT);
-        invitation.setLookupType(DelegateInvitationEntity.LookupType.EMAIL);
-        invitation.setInvitationToken(TOKEN);
         invitation.setEnteredEmail(enteredEmail);
         invitation.setStatus(DelegateInvitationEntity.Status.PENDING);
         return invitation;

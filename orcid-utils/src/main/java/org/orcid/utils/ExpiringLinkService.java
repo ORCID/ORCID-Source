@@ -1,6 +1,7 @@
 package org.orcid.utils;
 
 import org.apache.commons.lang.StringUtils;
+
 import java.nio.charset.StandardCharsets;
 
 import com.nimbusds.jose.*;
@@ -23,7 +24,7 @@ public class ExpiringLinkService {
     private final JWSAlgorithm algorithm = JWSAlgorithm.HS256;
 
     public enum ExpiringLinkType {
-        ACCOUNT_DEACTIVATION, PASSWORD_RESET
+        ACCOUNT_DEACTIVATION, PASSWORD_RESET, DELEGATE_INVITATION
     }
 
     public enum VerificationStatus {
@@ -45,8 +46,12 @@ public class ExpiringLinkService {
             return new VerificationResult(VerificationStatus.VALID, claims);
         }
 
+        public static VerificationResult expired(JWTClaimsSet claims) {
+            return new VerificationResult(VerificationStatus.EXPIRED, claims);
+        }
+
         public static VerificationResult expired() {
-            return new VerificationResult(VerificationStatus.EXPIRED, null);
+            return expired(null);
         }
 
         public static VerificationResult invalid() {
@@ -69,6 +74,7 @@ public class ExpiringLinkService {
         public String getKey() {
             return key;
         }
+
         public void setKey(String key) {
             this.key = key;
         }
@@ -90,9 +96,9 @@ public class ExpiringLinkService {
     /**
      * Generates a complete, expiring link containing a JWT.
      *
-     * @param subject The primary identifier, such as a user ID.
+     * @param subject           The primary identifier, such as a user ID.
      * @param durationInMinutes The number of minutes until the link expires.
-     * @param type The purpose of the link (e.g., "ACCOUNT_DEACTIVATION").
+     * @param type              The purpose of the link (e.g., "ACCOUNT_DEACTIVATION").
      * @return A JWT string.
      * @throws JOSEException if there is an error signing the token.
      */
@@ -128,12 +134,16 @@ public class ExpiringLinkService {
                 return VerificationResult.invalid();
             }
 
-            Date expirationTime = signedJWT.getJWTClaimsSet().getExpirationTime();
+            JWTClaimsSet claims = signedJWT.getJWTClaimsSet();
+            Date expirationTime = claims.getExpirationTime();
+            if (expirationTime == null) {
+                return VerificationResult.invalid();
+            }
             if (new Date().after(expirationTime)) {
-                return VerificationResult.expired();
+                return VerificationResult.expired(claims);
             }
 
-            return VerificationResult.valid(signedJWT.getJWTClaimsSet());
+            return VerificationResult.valid(claims);
 
         } catch (ParseException | JOSEException e) {
             LOGGER.error("Error parsing or verifying token", e);

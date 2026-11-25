@@ -1,6 +1,7 @@
 package org.orcid.core.manager.v3;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
@@ -31,11 +32,15 @@ import org.orcid.persistence.jpa.entities.GivenPermissionToEntity;
 import org.orcid.persistence.jpa.entities.NotificationEntity;
 import org.orcid.test.DBUnitTest;
 import org.orcid.test.OrcidJUnit4ClassRunner;
+import org.orcid.utils.ExpiringLinkService;
+import org.orcid.utils.ExpiringLinkService.ExpiringLinkType;
+import com.nimbusds.jose.JOSEException;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.transaction.support.TransactionTemplate;
 
 @RunWith(OrcidJUnit4ClassRunner.class)
-@ContextConfiguration(locations = { "classpath:test-orcid-core-context.xml" })
+@ContextConfiguration(locations = {"classpath:test-orcid-core-context.xml"})
 public class DelegateInvitationConcurrencyTest extends DBUnitTest {
 
     private static final String SENDER = "0000-0000-0000-0006";
@@ -55,6 +60,9 @@ public class DelegateInvitationConcurrencyTest extends DBUnitTest {
 
     @Resource
     private TransactionTemplate transactionTemplate;
+
+    @Resource
+    private ExpiringLinkService expiringLinkService;
 
     private Set<Long> existingNotifications;
 
@@ -114,11 +122,27 @@ public class DelegateInvitationConcurrencyTest extends DBUnitTest {
     }
 
     @Test
+    public void declinedInvitationCanBeReissued() throws Exception {
+        DelegateInvitationEntity first = delegateInvitationManager.createInvitation(SENDER, RECIPIENT,
+                DelegateInvitationEntity.LookupType.ORCID, null).getInvitation();
+        assertEquals(DelegateInvitationManager.ResponseResult.DECLINED,
+                delegateInvitationManager.respond(invitationToken(first.getId()), RECIPIENT, DelegateInvitationManager.Decision.DECLINE));
+
+        DelegateInvitationManager.CreationResult second = delegateInvitationManager.createInvitation(SENDER, RECIPIENT,
+                DelegateInvitationEntity.LookupType.EMAIL, "recipient@example.org");
+
+        assertEquals(DelegateInvitationManager.CreationStatus.CREATED, second.getStatus());
+        assertNotNull(second.getInvitation());
+        assertFalse(first.getId().equals(second.getInvitation().getId()));
+        assertEquals(DelegateInvitationEntity.Status.DECLINED, delegateInvitationDao.find(first.getId()).getStatus());
+    }
+
+    @Test
     public void concurrentDeclinesOnlyTransitionOnce() throws Exception {
         DelegateInvitationManager.CreationResult created = delegateInvitationManager.createInvitation(SENDER, RECIPIENT,
                 DelegateInvitationEntity.LookupType.ORCID, null);
         assertEquals(DelegateInvitationManager.CreationStatus.CREATED, created.getStatus());
-        String token = created.getInvitation().getInvitationToken();
+        String token = invitationToken(created.getInvitation().getId());
         ExecutorService executor = Executors.newFixedThreadPool(2);
         CountDownLatch start = new CountDownLatch(1);
         try {
@@ -149,14 +173,15 @@ public class DelegateInvitationConcurrencyTest extends DBUnitTest {
                 DelegateInvitationEntity.LookupType.ORCID, null);
         assertEquals(DelegateInvitationManager.CreationStatus.CREATED, created.getStatus());
         DelegateInvitationEntity invitation = created.getInvitation();
-        invitation.setExpiresAt(new Date(System.currentTimeMillis() - 1));
+        ReflectionTestUtils.setField(invitation, "dateCreated", new Date(System.currentTimeMillis() - 29L * 24 * 60 * 60 * 1000));
         delegateInvitationDao.merge(invitation);
+        String token = invitationToken(invitation.getId());
         ExecutorService executor = Executors.newFixedThreadPool(2);
         CountDownLatch start = new CountDownLatch(1);
         try {
             Future<DelegateInvitationManager.ResponseResult> response = executor.submit(() -> {
                 start.await();
-                return delegateInvitationManager.respond(invitation.getInvitationToken(), RECIPIENT, DelegateInvitationManager.Decision.ACCEPT);
+                return delegateInvitationManager.respond(token, RECIPIENT, DelegateInvitationManager.Decision.ACCEPT);
             });
             Future<Integer> expiration = executor.submit(() -> {
                 start.await();
@@ -191,19 +216,20 @@ public class DelegateInvitationConcurrencyTest extends DBUnitTest {
     }
 
     @Test
-    public void rolledBackResponseCanBeRetriedWithoutDuplicateMessages() {
+    public void rolledBackResponseCanBeRetriedWithoutDuplicateMessages() throws Exception {
         DelegateInvitationEntity invitation = delegateInvitationManager.createInvitation(SENDER, RECIPIENT,
                 DelegateInvitationEntity.LookupType.ORCID, null).getInvitation();
+        String token = invitationToken(invitation.getId());
         transactionTemplate.execute(status -> {
             assertEquals(DelegateInvitationManager.ResponseResult.DECLINED,
-                    delegateInvitationManager.respond(invitation.getInvitationToken(), RECIPIENT, DelegateInvitationManager.Decision.DECLINE));
+                    delegateInvitationManager.respond(token, RECIPIENT, DelegateInvitationManager.Decision.DECLINE));
             status.setRollbackOnly();
             return null;
         });
         assertEquals(DelegateInvitationEntity.Status.PENDING, delegateInvitationDao.find(invitation.getId()).getStatus());
         assertEquals(2, notificationIds().size() - existingNotifications.size());
         assertEquals(DelegateInvitationManager.ResponseResult.DECLINED,
-                delegateInvitationManager.respond(invitation.getInvitationToken(), RECIPIENT, DelegateInvitationManager.Decision.DECLINE));
+                delegateInvitationManager.respond(token, RECIPIENT, DelegateInvitationManager.Decision.DECLINE));
         assertEquals(4, notificationIds().size() - existingNotifications.size());
     }
 
@@ -215,6 +241,10 @@ public class DelegateInvitationConcurrencyTest extends DBUnitTest {
             }
         }
         return ids;
+    }
+
+    private String invitationToken(Long invitationId) throws JOSEException {
+        return expiringLinkService.generateExpiringToken(invitationId.toString(), 28L * 24 * 60, ExpiringLinkType.DELEGATE_INVITATION);
     }
 
     @Test

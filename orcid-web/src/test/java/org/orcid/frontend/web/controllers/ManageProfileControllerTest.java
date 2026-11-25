@@ -1647,6 +1647,47 @@ public class ManageProfileControllerTest {
     }
 
     @Test
+    public void invalidOrcidDelegateSearchIsRejectedBeforeLookup() {
+        DelegateInvitationSearchRequest request = new DelegateInvitationSearchRequest();
+        request.setLookupType("ORCID");
+        request.setValue("1234-5678-9");
+
+        DelegateInvitationSearchResult result = controller.searchDelegateInvitation(request);
+
+        assertEquals("INVALID", result.getStatus());
+        verify(mockProfileEntityManagerReadOnly, times(0)).isOrcidValidAsDelegate(anyString());
+        verify(mockDelegateInvitationManager, times(0)).checkEligibility(anyString(), anyString());
+    }
+
+    @Test
+    public void delegateInvitationNoticesUseInvitationIds() {
+        DelegateInvitationEntity invitation = new DelegateInvitationEntity();
+        invitation.setId(42L);
+        invitation.setStatus(DelegateInvitationEntity.Status.DECLINED);
+        invitation.setEnteredEmail("delegate@example.org");
+        when(mockDelegateInvitationManager.getUnacknowledgedNotices(USER_ORCID)).thenReturn(Arrays.asList(invitation));
+
+        List<DelegateInvitationNotice> notices = controller.getDelegateInvitationNotices();
+
+        assertEquals(1, notices.size());
+        assertEquals(Long.valueOf(42L), notices.get(0).getInvitationId());
+        assertEquals("EMAIL", notices.get(0).getLookupType());
+        assertEquals("delegate@example.org", notices.get(0).getEnteredEmail());
+    }
+
+    @Test
+    public void acknowledgeDelegateInvitationNoticePassesInvitationId() {
+        DelegateInvitationActionRequest request = new DelegateInvitationActionRequest();
+        request.setInvitationId(42L);
+        when(mockDelegateInvitationManager.acknowledgeNotice(USER_ORCID, 42L)).thenReturn(true);
+
+        DelegateInvitationActionResult result = controller.acknowledgeDelegateInvitationNotice(request);
+
+        assertEquals("ACKNOWLEDGED", result.getStatus());
+        verify(mockDelegateInvitationManager).acknowledgeNotice(USER_ORCID, 42L);
+    }
+
+    @Test
     public void emailDelegateSearchDoesNotExposeResolvedOrcid() {
         String recipientOrcid = "0000-0000-0000-0005";
         EmailEntity emailEntity = new EmailEntity();

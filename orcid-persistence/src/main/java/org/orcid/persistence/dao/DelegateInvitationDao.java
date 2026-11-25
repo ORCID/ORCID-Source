@@ -13,13 +13,11 @@ public interface DelegateInvitationDao extends GenericDao<DelegateInvitationEnti
 
     DelegateInvitationEntity findByIdForUpdate(Long invitationId);
 
-    String findSenderByToken(String invitationToken);
-
-    DelegateInvitationEntity findByTokenForUpdate(String invitationToken);
+    String findSenderById(Long invitationId);
 
     boolean hasDelegatePermission(String senderOrcid, String recipientOrcid);
 
     List<DelegateInvitationEntity> findUnacknowledgedNotices(String senderOrcid);
 
-    List<Long> findExpiredPendingIds(Date now, int limit);
+    List<Long> findExpiredPendingIds(Date cutoff, int limit);
 }

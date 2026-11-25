@@ -60,7 +60,7 @@ public interface DelegateInvitationManager {
 
     List<DelegateInvitationEntity> getUnacknowledgedNotices(String senderOrcid);
 
-    boolean acknowledgeNotice(String senderOrcid, String invitationToken);
+    boolean acknowledgeNotice(String senderOrcid, Long invitationId);
 
     int expirePendingInvitations();
 }

@@ -3,7 +3,7 @@ package org.orcid.core.manager.v3.impl;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
-import java.util.UUID;
+import java.util.concurrent.locks.ReentrantLock;
 
 import jakarta.annotation.Resource;
 
@@ -16,12 +16,28 @@ import org.orcid.persistence.dao.GivenPermissionToDao;
 import org.orcid.persistence.dao.NotificationDao;
 import org.orcid.persistence.jpa.entities.DelegateInvitationEntity;
 import org.orcid.persistence.jpa.entities.GivenPermissionToEntity;
+import org.orcid.utils.ExpiringLinkService;
+import org.orcid.utils.ExpiringLinkService.ExpiringLinkType;
+import org.orcid.utils.ExpiringLinkService.VerificationResult;
+import org.orcid.utils.ExpiringLinkService.VerificationStatus;
+import com.nimbusds.jose.JOSEException;
+import com.nimbusds.jwt.JWTClaimsSet;
 import org.springframework.transaction.support.TransactionTemplate;
 
 public class DelegateInvitationManagerImpl implements DelegateInvitationManager {
 
-    private static final long INVITATION_LIFETIME_MILLIS = 28L * 24 * 60 * 60 * 1000;
+    private static final long MILLIS_PER_DAY = 24L * 60 * 60 * 1000;
+    private static final long MINUTES_PER_DAY = 24L * 60;
     private static final int EXPIRATION_BATCH_SIZE = 200;
+    private static final ReentrantLock[] SENDER_INVITATION_LOCKS = new ReentrantLock[256];
+
+    static {
+        for (int i = 0; i < SENDER_INVITATION_LOCKS.length; i++) {
+            SENDER_INVITATION_LOCKS[i] = new ReentrantLock();
+        }
+    }
+
+    private int invitationLifetimeInDays = 28;
 
     @Resource
     private DelegateInvitationDao delegateInvitationDao;
@@ -41,6 +57,16 @@ public class DelegateInvitationManagerImpl implements DelegateInvitationManager 
     @Resource
     private NotificationDao notificationDao;
 
+    @Resource
+    private ExpiringLinkService expiringLinkService;
+
+    public void setInvitationLifetimeInDays(int invitationLifetimeInDays) {
+        if (invitationLifetimeInDays <= 0) {
+            throw new IllegalArgumentException("Invitation lifetime must be greater than zero");
+        }
+        this.invitationLifetimeInDays = invitationLifetimeInDays;
+    }
+
     @Override
     public Eligibility checkEligibility(String senderOrcid, String recipientOrcid) {
         return transactionTemplate.execute(status -> checkEligibilityInTransaction(senderOrcid, recipientOrcid));
@@ -55,34 +81,35 @@ public class DelegateInvitationManagerImpl implements DelegateInvitationManager 
             throw new IllegalArgumentException("Email lookup requires the entered email address");
         }
 
+        ReentrantLock senderLock = SENDER_INVITATION_LOCKS[Math.floorMod(senderOrcid.hashCode(), SENDER_INVITATION_LOCKS.length)];
+        senderLock.lock();
         try {
-            return transactionTemplate.execute(status -> {
-            Eligibility eligibility = checkEligibilityInTransaction(senderOrcid, recipientOrcid);
-            if (eligibility != Eligibility.AVAILABLE) {
-                return new CreationResult(toCreationStatus(eligibility), null);
-            }
+            try {
+                return transactionTemplate.execute(status -> {
+                    Eligibility eligibility = checkEligibilityInTransaction(senderOrcid, recipientOrcid);
+                    if (eligibility != Eligibility.AVAILABLE) {
+                        return new CreationResult(toCreationStatus(eligibility), null);
+                    }
 
-            Date now = new Date();
-            DelegateInvitationEntity invitation = new DelegateInvitationEntity();
-            invitation.setInvitationToken(UUID.randomUUID().toString());
-            invitation.setSenderOrcid(senderOrcid);
-            invitation.setRecipientOrcid(recipientOrcid);
-            invitation.setLookupType(lookupType);
-            invitation.setEnteredEmail(lookupType == DelegateInvitationEntity.LookupType.EMAIL ? enteredEmail.trim() : null);
-            invitation.setSentDate(now);
-            invitation.setExpiresAt(new Date(now.getTime() + INVITATION_LIFETIME_MILLIS));
-            invitation.setStatus(DelegateInvitationEntity.Status.PENDING);
-            invitation.setSenderNoticeAcknowledged(false);
-            delegateInvitationDao.persist(invitation);
-            delegateInvitationDao.flush();
-            delegateInvitationMessaging.created(invitation);
-            return new CreationResult(CreationStatus.CREATED, invitation);
-            });
-        } catch (RuntimeException e) {
-            if (isPendingInvitationConflict(e)) {
-                return new CreationResult(CreationStatus.ACTIVE_INVITATION, null);
+                    DelegateInvitationEntity invitation = new DelegateInvitationEntity();
+                    invitation.setSenderOrcid(senderOrcid);
+                    invitation.setRecipientOrcid(recipientOrcid);
+                    invitation.setEnteredEmail(lookupType == DelegateInvitationEntity.LookupType.EMAIL ? enteredEmail.trim() : null);
+                    invitation.setStatus(DelegateInvitationEntity.Status.PENDING);
+                    invitation.setSenderNoticeAcknowledged(false);
+                    delegateInvitationDao.persist(invitation);
+                    delegateInvitationDao.flush();
+                    delegateInvitationMessaging.created(invitation, createInvitationToken(invitation.getId()));
+                    return new CreationResult(CreationStatus.CREATED, invitation);
+                });
+            } catch (RuntimeException e) {
+                if (isPendingInvitationConflict(e)) {
+                    return new CreationResult(CreationStatus.ACTIVE_INVITATION, null);
+                }
+                throw e;
             }
-            throw e;
+        } finally {
+            senderLock.unlock();
         }
     }
 
@@ -91,12 +118,17 @@ public class DelegateInvitationManagerImpl implements DelegateInvitationManager 
         if (invitationToken == null || authenticatedRecipientOrcid == null || decision == null) {
             return ResponseResult.NOT_FOUND;
         }
+        VerificationResult verification = expiringLinkService.verifyToken(invitationToken);
+        Long invitationId = getInvitationId(verification);
+        if (invitationId == null) {
+            return ResponseResult.NOT_FOUND;
+        }
         return transactionTemplate.execute(status -> {
-            String senderOrcid = delegateInvitationDao.findSenderByToken(invitationToken);
+            String senderOrcid = delegateInvitationDao.findSenderById(invitationId);
             if (senderOrcid == null || !delegateInvitationDao.lockSender(senderOrcid)) {
                 return ResponseResult.NOT_FOUND;
             }
-            DelegateInvitationEntity invitation = delegateInvitationDao.findByTokenForUpdate(invitationToken);
+            DelegateInvitationEntity invitation = delegateInvitationDao.findByIdForUpdate(invitationId);
             if (invitation == null) {
                 return ResponseResult.NOT_FOUND;
             }
@@ -108,8 +140,8 @@ public class DelegateInvitationManagerImpl implements DelegateInvitationManager 
             }
 
             Date now = new Date();
-            if (!now.before(invitation.getExpiresAt())) {
-                expire(invitation, now);
+            if (verification.getStatus() == VerificationStatus.EXPIRED || isExpired(invitation, now)) {
+                expire(invitation);
                 return ResponseResult.EXPIRED;
             }
 
@@ -124,14 +156,12 @@ public class DelegateInvitationManagerImpl implements DelegateInvitationManager 
                     profileEntityManager.updateLastModifed(invitation.getRecipientOrcid());
                 }
                 invitation.setStatus(DelegateInvitationEntity.Status.ACCEPTED);
-                invitation.setRespondedAt(now);
                 invitation.setSenderNoticeAcknowledged(false);
                 delegateInvitationMessaging.responded(invitation);
                 return ResponseResult.ACCEPTED;
             }
 
             invitation.setStatus(DelegateInvitationEntity.Status.DECLINED);
-            invitation.setRespondedAt(now);
             invitation.setSenderNoticeAcknowledged(false);
             delegateInvitationMessaging.responded(invitation);
             return ResponseResult.DECLINED;
@@ -144,12 +174,12 @@ public class DelegateInvitationManagerImpl implements DelegateInvitationManager 
     }
 
     @Override
-    public boolean acknowledgeNotice(String senderOrcid, String invitationToken) {
-        if (senderOrcid == null || invitationToken == null) {
+    public boolean acknowledgeNotice(String senderOrcid, Long invitationId) {
+        if (senderOrcid == null || invitationId == null) {
             return false;
         }
         return transactionTemplate.execute(status -> {
-            DelegateInvitationEntity invitation = delegateInvitationDao.findByTokenForUpdate(invitationToken);
+            DelegateInvitationEntity invitation = delegateInvitationDao.findByIdForUpdate(invitationId);
             if (invitation == null || !senderOrcid.equals(invitation.getSenderOrcid()) || invitation.getStatus() == DelegateInvitationEntity.Status.PENDING) {
                 return false;
             }
@@ -164,7 +194,7 @@ public class DelegateInvitationManagerImpl implements DelegateInvitationManager 
         List<Long> expiredIds;
         do {
             Date now = new Date();
-            expiredIds = delegateInvitationDao.findExpiredPendingIds(now, EXPIRATION_BATCH_SIZE);
+            expiredIds = delegateInvitationDao.findExpiredPendingIds(new Date(now.getTime() - invitationLifetimeMillis()), EXPIRATION_BATCH_SIZE);
             for (Long invitationId : expiredIds) {
                 if (expireInvitation(invitationId, now)) {
                     expiredCount++;
@@ -185,10 +215,10 @@ public class DelegateInvitationManagerImpl implements DelegateInvitationManager 
         DelegateInvitationEntity existing = delegateInvitationDao.findPendingBySenderAndRecipient(senderOrcid, recipientOrcid);
         if (existing != null) {
             Date now = new Date();
-            if (now.before(existing.getExpiresAt())) {
+            if (!isExpired(existing, now)) {
                 return Eligibility.ACTIVE_INVITATION;
             }
-            expire(existing, now);
+            expire(existing);
             delegateInvitationDao.flush();
         }
         if (delegateInvitationDao.hasDelegatePermission(senderOrcid, recipientOrcid)) {
@@ -200,22 +230,53 @@ public class DelegateInvitationManagerImpl implements DelegateInvitationManager 
     private boolean expireInvitation(Long invitationId, Date now) {
         return transactionTemplate.execute(status -> {
             DelegateInvitationEntity invitation = delegateInvitationDao.findByIdForUpdate(invitationId);
-            if (invitation == null || invitation.getStatus() != DelegateInvitationEntity.Status.PENDING || now.before(invitation.getExpiresAt())) {
+            if (invitation == null || invitation.getStatus() != DelegateInvitationEntity.Status.PENDING || !isExpired(invitation, now)) {
                 return false;
             }
-            expire(invitation, now);
+            expire(invitation);
             return true;
         });
     }
 
-    private void expire(DelegateInvitationEntity invitation, Date now) {
+    private void expire(DelegateInvitationEntity invitation) {
         invitation.setStatus(DelegateInvitationEntity.Status.EXPIRED);
-        invitation.setRespondedAt(now);
         invitation.setSenderNoticeAcknowledged(false);
         if (invitation.getActionableNotificationId() != null) {
             notificationDao.flagAsArchived(invitation.getRecipientOrcid(), invitation.getActionableNotificationId());
             notificationDao.flagAsNonSendable(invitation.getRecipientOrcid(), invitation.getActionableNotificationId());
         }
+    }
+
+    private String createInvitationToken(Long invitationId) {
+        try {
+            return expiringLinkService.generateExpiringToken(invitationId.toString(), invitationLifetimeInDays * MINUTES_PER_DAY, ExpiringLinkType.DELEGATE_INVITATION);
+        } catch (JOSEException e) {
+            throw new IllegalStateException("Unable to create delegate invitation token", e);
+        }
+    }
+
+    private Long getInvitationId(VerificationResult verification) {
+        if (verification == null || verification.getStatus() == VerificationStatus.INVALID || verification.getClaims() == null) {
+            return null;
+        }
+        JWTClaimsSet claims = verification.getClaims();
+        if (!ExpiringLinkType.DELEGATE_INVITATION.name().equals(claims.getClaim("type"))) {
+            return null;
+        }
+        try {
+            return Long.valueOf(claims.getSubject());
+        } catch (NumberFormatException | NullPointerException e) {
+            return null;
+        }
+    }
+
+    private boolean isExpired(DelegateInvitationEntity invitation, Date now) {
+        Date dateCreated = invitation.getDateCreated();
+        return dateCreated == null || !now.before(new Date(dateCreated.getTime() + invitationLifetimeMillis()));
+    }
+
+    private long invitationLifetimeMillis() {
+        return invitationLifetimeInDays * MILLIS_PER_DAY;
     }
 
     private boolean isPendingInvitationConflict(Throwable error) {
@@ -238,14 +299,14 @@ public class DelegateInvitationManagerImpl implements DelegateInvitationManager 
 
     private CreationStatus toCreationStatus(Eligibility eligibility) {
         switch (eligibility) {
-        case SELF:
-            return CreationStatus.SELF;
-        case ACTIVE_INVITATION:
-            return CreationStatus.ACTIVE_INVITATION;
-        case ALREADY_DELEGATE:
-            return CreationStatus.ALREADY_DELEGATE;
-        default:
-            return CreationStatus.CREATED;
+            case SELF:
+                return CreationStatus.SELF;
+            case ACTIVE_INVITATION:
+                return CreationStatus.ACTIVE_INVITATION;
+            case ALREADY_DELEGATE:
+                return CreationStatus.ALREADY_DELEGATE;
+            default:
+                return CreationStatus.CREATED;
         }
     }
 }

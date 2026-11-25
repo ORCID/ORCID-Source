@@ -896,7 +896,9 @@
 	
 	<bean id="givenPermissionToManager" class="org.orcid.core.manager.v3.impl.GivenPermissionToManagerImpl"/>
 
-    <bean id="delegateInvitationManager" class="org.orcid.core.manager.v3.impl.DelegateInvitationManagerImpl"/>
+    <bean id="delegateInvitationManager" class="org.orcid.core.manager.v3.impl.DelegateInvitationManagerImpl">
+        <property name="invitationLifetimeInDays" value="${org.orcid.core.delegateInvitation.expirationInDays:28}" />
+    </bean>
 
     <bean id="delegateInvitationMessaging" class="org.orcid.core.manager.v3.impl.DelegateInvitationMessaging"/>
     <bean id="delegateInvitationMessages" class="org.springframework.context.support.ReloadableResourceBundleMessageSource">

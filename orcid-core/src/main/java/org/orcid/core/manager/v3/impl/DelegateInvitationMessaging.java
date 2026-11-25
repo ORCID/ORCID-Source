@@ -35,36 +35,36 @@ public class DelegateInvitationMessaging {
     @Resource(name = "delegateInvitationMessages")
     private MessageSource messages;
 
-    public void created(DelegateInvitationEntity invitation) {
-        create(invitation, invitation.getSenderOrcid(), senderLookupKey("created", invitation), false);
-        NotificationDelegateEntity actionable = create(invitation, invitation.getRecipientOrcid(), "created.recipient", true);
+    public void created(DelegateInvitationEntity invitation, String invitationToken) {
+        create(invitation, invitation.getSenderOrcid(), senderLookupKey("created", invitation), false, null);
+        NotificationDelegateEntity actionable = create(invitation, invitation.getRecipientOrcid(), "created.recipient", true, invitationToken);
         invitation.setActionableNotificationId(actionable.getId());
     }
 
     public void responded(DelegateInvitationEntity invitation) {
         String event = invitation.getStatus() == DelegateInvitationEntity.Status.ACCEPTED ? "accepted" : "declined";
         String senderKey = invitation.getStatus() == DelegateInvitationEntity.Status.DECLINED ? senderLookupKey(event, invitation) : event + ".sender";
-        create(invitation, invitation.getSenderOrcid(), senderKey, false);
-        create(invitation, invitation.getRecipientOrcid(), event + ".recipient", false);
+        create(invitation, invitation.getSenderOrcid(), senderKey, false, null);
+        create(invitation, invitation.getRecipientOrcid(), event + ".recipient", false, null);
     }
 
     private String senderLookupKey(String event, DelegateInvitationEntity invitation) {
         return event + ".sender." + (invitation.getLookupType() == DelegateInvitationEntity.LookupType.EMAIL ? "email" : "orcid");
     }
 
-    private NotificationDelegateEntity create(DelegateInvitationEntity invitation, String owner, String key, boolean actionable) {
+    private NotificationDelegateEntity create(DelegateInvitationEntity invitation, String owner, String key, boolean actionable, String invitationToken) {
         Locale locale = localeFor(owner);
         String subject = messages.getMessage("delegate.invitation." + key + ".subject", null, locale);
         String otherOrcid = owner.equals(invitation.getSenderOrcid()) ? invitation.getRecipientOrcid() : invitation.getSenderOrcid();
         String identity = key.endsWith(".sender.email") ? invitation.getEnteredEmail() : otherOrcid;
-        String body = messages.getMessage("delegate.invitation." + key + ".body", new Object[] { identity }, locale);
+        String body = messages.getMessage("delegate.invitation." + key + ".body", new Object[]{identity}, locale);
         Map<String, Object> params = new HashMap<>();
         params.put("subject", subject);
         params.put("body", body);
         params.put("actionable", actionable);
         if (actionable) {
             String base = orcidUrlManager.getBaseUrl().replaceAll("/+$", "");
-            String link = base + "/delegate-invitation?token=" + invitation.getInvitationToken() + "&decision=";
+            String link = base + "/delegate-invitation?token=" + invitationToken + "&decision=";
             params.put("acceptUrl", link + "ACCEPT");
             params.put("declineUrl", link + "DECLINE");
             params.put("acceptLabel", messages.getMessage("delegate.invitation.accept", null, locale));

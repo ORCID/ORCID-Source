@@ -1,7 +1,5 @@
 package org.orcid.persistence.jpa.entities;
 
-import java.util.Date;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -11,6 +9,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
 
 @Entity
 @Table(name = "delegate_invitation")
@@ -31,16 +30,10 @@ public class DelegateInvitationEntity extends BaseEntity<Long> {
     }
 
     private Long id;
-    private String invitationToken;
     private String senderOrcid;
     private String recipientOrcid;
-    private LookupType lookupType;
     private String enteredEmail;
-    private Date sentDate;
-    private Date expiresAt;
-    private Date respondedAt;
     private Status status;
-    private String pendingRecipientOrcid;
     private Long actionableNotificationId;
     private boolean senderNoticeAcknowledged;
 
@@ -55,15 +48,6 @@ public class DelegateInvitationEntity extends BaseEntity<Long> {
 
     public void setId(Long id) {
         this.id = id;
-    }
-
-    @Column(name = "invitation_token", nullable = false, length = 36)
-    public String getInvitationToken() {
-        return invitationToken;
-    }
-
-    public void setInvitationToken(String invitationToken) {
-        this.invitationToken = invitationToken;
     }
 
     @Column(name = "sender_orcid", nullable = false, length = 19)
@@ -84,14 +68,9 @@ public class DelegateInvitationEntity extends BaseEntity<Long> {
         this.recipientOrcid = recipientOrcid;
     }
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "lookup_type", nullable = false, length = 10)
+    @Transient
     public LookupType getLookupType() {
-        return lookupType;
-    }
-
-    public void setLookupType(LookupType lookupType) {
-        this.lookupType = lookupType;
+        return enteredEmail == null ? LookupType.ORCID : LookupType.EMAIL;
     }
 
     @Column(name = "entered_email", length = 320)
@@ -103,33 +82,6 @@ public class DelegateInvitationEntity extends BaseEntity<Long> {
         this.enteredEmail = enteredEmail;
     }
 
-    @Column(name = "sent_date", nullable = false)
-    public Date getSentDate() {
-        return sentDate;
-    }
-
-    public void setSentDate(Date sentDate) {
-        this.sentDate = sentDate;
-    }
-
-    @Column(name = "expires_at", nullable = false)
-    public Date getExpiresAt() {
-        return expiresAt;
-    }
-
-    public void setExpiresAt(Date expiresAt) {
-        this.expiresAt = expiresAt;
-    }
-
-    @Column(name = "responded_at")
-    public Date getRespondedAt() {
-        return respondedAt;
-    }
-
-    public void setRespondedAt(Date respondedAt) {
-        this.respondedAt = respondedAt;
-    }
-
     @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false, length = 10)
     public Status getStatus() {
@@ -138,16 +90,6 @@ public class DelegateInvitationEntity extends BaseEntity<Long> {
 
     public void setStatus(Status status) {
         this.status = status;
-        this.pendingRecipientOrcid = status == Status.PENDING ? recipientOrcid : null;
-    }
-
-    @Column(name = "pending_recipient_orcid", length = 19)
-    public String getPendingRecipientOrcid() {
-        return pendingRecipientOrcid;
-    }
-
-    public void setPendingRecipientOrcid(String pendingRecipientOrcid) {
-        this.pendingRecipientOrcid = pendingRecipientOrcid;
     }
 
     @Column(name = "actionable_notification_id")

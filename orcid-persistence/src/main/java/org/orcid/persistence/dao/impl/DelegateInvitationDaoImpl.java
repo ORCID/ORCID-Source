@@ -50,22 +50,11 @@ public class DelegateInvitationDaoImpl extends GenericDaoImpl<DelegateInvitation
 
     @Override
     @Transactional
-    public String findSenderByToken(String invitationToken) {
+    public String findSenderById(Long invitationId) {
         TypedQuery<String> query = entityManager.createQuery(
-                "select invitation.senderOrcid from DelegateInvitationEntity invitation where invitation.invitationToken = :invitationToken", String.class);
-        query.setParameter("invitationToken", invitationToken);
+                "select invitation.senderOrcid from DelegateInvitationEntity invitation where invitation.id = :invitationId", String.class);
+        query.setParameter("invitationId", invitationId);
         List<String> results = query.getResultList();
-        return results.isEmpty() ? null : results.get(0);
-    }
-
-    @Override
-    @Transactional
-    public DelegateInvitationEntity findByTokenForUpdate(String invitationToken) {
-        TypedQuery<DelegateInvitationEntity> query = entityManager.createQuery(
-                "from DelegateInvitationEntity where invitationToken = :invitationToken", DelegateInvitationEntity.class);
-        query.setParameter("invitationToken", invitationToken);
-        query.setLockMode(LockModeType.PESSIMISTIC_WRITE);
-        List<DelegateInvitationEntity> results = query.getResultList();
         return results.isEmpty() ? null : results.get(0);
     }
 
@@ -84,7 +73,7 @@ public class DelegateInvitationDaoImpl extends GenericDaoImpl<DelegateInvitation
     @Transactional
     public List<DelegateInvitationEntity> findUnacknowledgedNotices(String senderOrcid) {
         TypedQuery<DelegateInvitationEntity> query = entityManager.createQuery(
-                "from DelegateInvitationEntity where senderOrcid = :senderOrcid and status in :statuses and senderNoticeAcknowledged = false order by respondedAt",
+                "from DelegateInvitationEntity where senderOrcid = :senderOrcid and status in :statuses and senderNoticeAcknowledged = false order by lastModified",
                 DelegateInvitationEntity.class);
         query.setParameter("senderOrcid", senderOrcid);
         query.setParameter("statuses", Arrays.asList(DelegateInvitationEntity.Status.ACCEPTED, DelegateInvitationEntity.Status.DECLINED,
@@ -94,12 +83,12 @@ public class DelegateInvitationDaoImpl extends GenericDaoImpl<DelegateInvitation
 
     @Override
     @Transactional
-    public List<Long> findExpiredPendingIds(Date now, int limit) {
+    public List<Long> findExpiredPendingIds(Date cutoff, int limit) {
         TypedQuery<Long> query = entityManager.createQuery(
-                "select invitation.id from DelegateInvitationEntity invitation where invitation.status = :status and invitation.expiresAt <= :now order by invitation.expiresAt",
+                "select invitation.id from DelegateInvitationEntity invitation where invitation.status = :status and invitation.dateCreated <= :cutoff order by invitation.dateCreated",
                 Long.class);
         query.setParameter("status", DelegateInvitationEntity.Status.PENDING);
-        query.setParameter("now", now);
+        query.setParameter("cutoff", cutoff);
         query.setMaxResults(limit);
         return query.getResultList();
     }
