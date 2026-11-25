@@ -3,7 +3,6 @@ package org.orcid.core.manager.v3.impl;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
-import java.util.concurrent.locks.ReentrantLock;
 
 import jakarta.annotation.Resource;
 
@@ -29,13 +28,6 @@ public class DelegateInvitationManagerImpl implements DelegateInvitationManager 
     private static final long MILLIS_PER_DAY = 24L * 60 * 60 * 1000;
     private static final long MINUTES_PER_DAY = 24L * 60;
     private static final int EXPIRATION_BATCH_SIZE = 200;
-    private static final ReentrantLock[] SENDER_INVITATION_LOCKS = new ReentrantLock[256];
-
-    static {
-        for (int i = 0; i < SENDER_INVITATION_LOCKS.length; i++) {
-            SENDER_INVITATION_LOCKS[i] = new ReentrantLock();
-        }
-    }
 
     private int invitationLifetimeInDays = 28;
 
@@ -81,35 +73,29 @@ public class DelegateInvitationManagerImpl implements DelegateInvitationManager 
             throw new IllegalArgumentException("Email lookup requires the entered email address");
         }
 
-        ReentrantLock senderLock = SENDER_INVITATION_LOCKS[Math.floorMod(senderOrcid.hashCode(), SENDER_INVITATION_LOCKS.length)];
-        senderLock.lock();
         try {
-            try {
-                return transactionTemplate.execute(status -> {
-                    Eligibility eligibility = checkEligibilityInTransaction(senderOrcid, recipientOrcid);
-                    if (eligibility != Eligibility.AVAILABLE) {
-                        return new CreationResult(toCreationStatus(eligibility), null);
-                    }
-
-                    DelegateInvitationEntity invitation = new DelegateInvitationEntity();
-                    invitation.setSenderOrcid(senderOrcid);
-                    invitation.setRecipientOrcid(recipientOrcid);
-                    invitation.setEnteredEmail(lookupType == DelegateInvitationEntity.LookupType.EMAIL ? enteredEmail.trim() : null);
-                    invitation.setStatus(DelegateInvitationEntity.Status.PENDING);
-                    invitation.setSenderNoticeAcknowledged(false);
-                    delegateInvitationDao.persist(invitation);
-                    delegateInvitationDao.flush();
-                    delegateInvitationMessaging.created(invitation, createInvitationToken(invitation.getId()));
-                    return new CreationResult(CreationStatus.CREATED, invitation);
-                });
-            } catch (RuntimeException e) {
-                if (isPendingInvitationConflict(e)) {
-                    return new CreationResult(CreationStatus.ACTIVE_INVITATION, null);
+            return transactionTemplate.execute(status -> {
+                Eligibility eligibility = checkEligibilityInTransaction(senderOrcid, recipientOrcid);
+                if (eligibility != Eligibility.AVAILABLE) {
+                    return new CreationResult(toCreationStatus(eligibility), null);
                 }
-                throw e;
+
+                DelegateInvitationEntity invitation = new DelegateInvitationEntity();
+                invitation.setSenderOrcid(senderOrcid);
+                invitation.setRecipientOrcid(recipientOrcid);
+                invitation.setEnteredEmail(lookupType == DelegateInvitationEntity.LookupType.EMAIL ? enteredEmail.trim() : null);
+                invitation.setStatus(DelegateInvitationEntity.Status.PENDING);
+                invitation.setSenderNoticeAcknowledged(false);
+                delegateInvitationDao.persist(invitation);
+                delegateInvitationDao.flush();
+                delegateInvitationMessaging.created(invitation, createInvitationToken(invitation.getId()));
+                return new CreationResult(CreationStatus.CREATED, invitation);
+            });
+        } catch (RuntimeException e) {
+            if (isPendingInvitationConflict(e)) {
+                return new CreationResult(CreationStatus.ACTIVE_INVITATION, null);
             }
-        } finally {
-            senderLock.unlock();
+            throw e;
         }
     }
 
