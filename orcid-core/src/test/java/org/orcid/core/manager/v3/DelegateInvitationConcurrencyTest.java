@@ -18,7 +18,10 @@ import java.util.concurrent.TimeUnit;
 
 import jakarta.annotation.Resource;
 
+import javax.sql.DataSource;
+
 import org.junit.After;
+import org.junit.Assume;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -64,6 +67,9 @@ public class DelegateInvitationConcurrencyTest extends DBUnitTest {
     @Resource
     private ExpiringLinkService expiringLinkService;
 
+    @Resource(name = "pooledDataSource")
+    private DataSource dataSource;
+
     private Set<Long> existingNotifications;
 
     @BeforeClass
@@ -95,6 +101,11 @@ public class DelegateInvitationConcurrencyTest extends DBUnitTest {
 
     @Test
     public void concurrentSendsCreateOnlyOnePendingInvitation() throws Exception {
+        // Duplicate pending invitations are blocked by a PostgreSQL partial unique index, which HSQLDB cannot provide.
+        try (java.sql.Connection connection = dataSource.getConnection()) {
+            Assume.assumeTrue("Requires PostgreSQL partial unique index",
+                    connection.getMetaData().getDatabaseProductName().toLowerCase().contains("postgres"));
+        }
         ExecutorService executor = Executors.newFixedThreadPool(2);
         CountDownLatch start = new CountDownLatch(1);
         try {
