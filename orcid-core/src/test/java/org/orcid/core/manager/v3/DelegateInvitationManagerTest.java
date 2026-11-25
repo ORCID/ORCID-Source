@@ -116,12 +116,12 @@ public class DelegateInvitationManagerTest {
         assertEquals(DelegateInvitationManager.ResponseResult.NOT_RECIPIENT,
                 delegateInvitationManager.respond(TOKEN, SENDER, DelegateInvitationManager.Decision.ACCEPT));
         assertEquals(DelegateInvitationEntity.Status.PENDING, invitation.getStatus());
-        verify(givenPermissionToDao, never()).persist(any(GivenPermissionToEntity.class));
+        verify(givenPermissionToDao, never()).merge(any(GivenPermissionToEntity.class));
 
         assertEquals(DelegateInvitationManager.ResponseResult.ACCEPTED,
                 delegateInvitationManager.respond(TOKEN, RECIPIENT, DelegateInvitationManager.Decision.ACCEPT));
         assertEquals(DelegateInvitationEntity.Status.ACCEPTED, invitation.getStatus());
-        verify(givenPermissionToDao).persist(any(GivenPermissionToEntity.class));
+        verify(givenPermissionToDao).merge(any(GivenPermissionToEntity.class));
         verify(delegateInvitationMessaging).responded(invitation);
         verify(profileEntityManager).updateLastModifed(SENDER);
         verify(profileEntityManager).updateLastModifed(RECIPIENT);
@@ -129,7 +129,7 @@ public class DelegateInvitationManagerTest {
 
         assertEquals(DelegateInvitationManager.ResponseResult.ALREADY_RESPONDED,
                 delegateInvitationManager.respond(TOKEN, RECIPIENT, DelegateInvitationManager.Decision.ACCEPT));
-        verify(givenPermissionToDao).persist(any(GivenPermissionToEntity.class));
+        verify(givenPermissionToDao).merge(any(GivenPermissionToEntity.class));
         verify(delegateInvitationMessaging).responded(invitation);
     }
 
@@ -142,7 +142,7 @@ public class DelegateInvitationManagerTest {
         assertEquals(DelegateInvitationManager.ResponseResult.DECLINED,
                 delegateInvitationManager.respond(TOKEN, RECIPIENT, DelegateInvitationManager.Decision.DECLINE));
         assertEquals(DelegateInvitationEntity.Status.DECLINED, invitation.getStatus());
-        verify(givenPermissionToDao, never()).persist(any(GivenPermissionToEntity.class));
+        verify(givenPermissionToDao, never()).merge(any(GivenPermissionToEntity.class));
         verify(delegateInvitationMessaging).responded(invitation);
     }
 
@@ -171,7 +171,7 @@ public class DelegateInvitationManagerTest {
         assertEquals(DelegateInvitationManager.ResponseResult.EXPIRED,
                 delegateInvitationManager.respond(TOKEN, RECIPIENT, DelegateInvitationManager.Decision.ACCEPT));
         assertEquals(DelegateInvitationEntity.Status.EXPIRED, invitation.getStatus());
-        verify(givenPermissionToDao, never()).persist(any(GivenPermissionToEntity.class));
+        verify(givenPermissionToDao, never()).merge(any(GivenPermissionToEntity.class));
         verify(notificationDao).flagAsArchived(RECIPIENT, 100L);
         verify(notificationDao).flagAsNonSendable(RECIPIENT, 100L);
         verify(delegateInvitationMessaging, never()).responded(any());
@@ -189,7 +189,7 @@ public class DelegateInvitationManagerTest {
 
         assertEquals(DelegateInvitationManager.ResponseResult.EXPIRED,
                 delegateInvitationManager.respond(TOKEN, RECIPIENT, DelegateInvitationManager.Decision.ACCEPT));
-        verify(givenPermissionToDao, never()).persist(any(GivenPermissionToEntity.class));
+        verify(givenPermissionToDao, never()).merge(any(GivenPermissionToEntity.class));
     }
 
     @Test

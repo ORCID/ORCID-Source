@@ -58,6 +58,8 @@ public interface DelegateInvitationManager {
 
     ResponseResult respond(String invitationToken, String authenticatedRecipientOrcid, Decision decision);
 
+    String findSenderOrcidByToken(String invitationToken, String recipientOrcid);
+
     List<DelegateInvitationEntity> getUnacknowledgedNotices(String senderOrcid);
 
     boolean acknowledgeNotice(String senderOrcid, Long invitationId);

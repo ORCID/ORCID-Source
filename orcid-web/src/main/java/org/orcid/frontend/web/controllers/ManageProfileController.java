@@ -188,7 +188,16 @@ public class ManageProfileController extends BaseWorkspaceController {
         } catch (IllegalArgumentException e) {
             return new DelegateInvitationActionResult("INVALID");
         }
-        return new DelegateInvitationActionResult(delegateInvitationManager.respond(request.getInvitationToken(), getCurrentUserOrcid(), decision).name());
+        String currentOrcid = getCurrentUserOrcid();
+        String senderOrcid = delegateInvitationManager.findSenderOrcidByToken(request.getInvitationToken(), currentOrcid);
+        DelegateInvitationManager.ResponseResult responseResult = delegateInvitationManager.respond(request.getInvitationToken(), currentOrcid, decision);
+        DelegateInvitationActionResult result = new DelegateInvitationActionResult(responseResult.name());
+        if (senderOrcid != null && (responseResult == DelegateInvitationManager.ResponseResult.ACCEPTED
+                || responseResult == DelegateInvitationManager.ResponseResult.DECLINED)) {
+            result.setSenderOrcid(senderOrcid);
+            result.setSenderName(getPublicName(senderOrcid));
+        }
+        return result;
     }
 
     @RequestMapping(value = "/delegate-invitations/notices.json", method = RequestMethod.GET)

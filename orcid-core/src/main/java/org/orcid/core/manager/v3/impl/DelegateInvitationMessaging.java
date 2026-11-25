@@ -15,9 +15,13 @@ import org.orcid.persistence.dao.NotificationDao;
 import org.orcid.persistence.jpa.entities.DelegateInvitationEntity;
 import org.orcid.persistence.jpa.entities.NotificationDelegateEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.MessageSource;
 
 public class DelegateInvitationMessaging {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(DelegateInvitationMessaging.class);
 
     @Resource
     private NotificationDao notificationDao;
@@ -67,6 +71,8 @@ public class DelegateInvitationMessaging {
             String link = base + "/delegate-invitation?token=" + invitationToken + "&decision=";
             params.put("acceptUrl", link + "ACCEPT");
             params.put("declineUrl", link + "DECLINE");
+            LOGGER.debug("Delegate invitation {} for recipient {}: accept link {} decline link {}", invitation.getId(), owner,
+                    link + "ACCEPT", link + "DECLINE");
             params.put("acceptLabel", messages.getMessage("delegate.invitation.accept", null, locale));
             params.put("declineLabel", messages.getMessage("delegate.invitation.decline", null, locale));
         }

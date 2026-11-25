@@ -137,7 +137,8 @@ public class DelegateInvitationManagerImpl implements DelegateInvitationManager 
                     permission.setGiver(invitation.getSenderOrcid());
                     permission.setReceiver(invitation.getRecipientOrcid());
                     permission.setApprovalDate(now);
-                    givenPermissionToDao.persist(permission);
+                    givenPermissionToDao.merge(permission);
+                    givenPermissionToDao.flush();
                     profileEntityManager.updateLastModifed(invitation.getSenderOrcid());
                     profileEntityManager.updateLastModifed(invitation.getRecipientOrcid());
                 }
@@ -239,6 +240,21 @@ public class DelegateInvitationManagerImpl implements DelegateInvitationManager 
         } catch (JOSEException e) {
             throw new IllegalStateException("Unable to create delegate invitation token", e);
         }
+    }
+
+    @Override
+    public String findSenderOrcidByToken(String invitationToken, String recipientOrcid) {
+        if (invitationToken == null || recipientOrcid == null) {
+            return null;
+        }
+        Long invitationId = getInvitationId(expiringLinkService.verifyToken(invitationToken));
+        if (invitationId == null) {
+            return null;
+        }
+        return transactionTemplate.execute(status -> {
+            DelegateInvitationEntity invitation = delegateInvitationDao.find(invitationId);
+            return invitation != null && recipientOrcid.equals(invitation.getRecipientOrcid()) ? invitation.getSenderOrcid() : null;
+        });
     }
 
     private Long getInvitationId(VerificationResult verification) {
