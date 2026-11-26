@@ -306,6 +306,21 @@ public class RegistrationControllerTest extends DBUnitTest {
     }
 
     @Test
+    public void confirmationReportsCaptchaErrorsForMissingAndRejectedTokens() throws UnsupportedEncodingException {
+        togglzRule.enable(Features.USE_TURNSTILE_REGISTRATION);
+        Registration reg = registrationController.getRegister(servletRequest, servletResponse);
+        reg.setGrecaptchaWidgetId(Text.valueOf("widget"));
+        for (String token : new String[] { null, "", "bad-token" }) {
+            reg.setGrecaptcha(token == null ? null : Text.valueOf(token));
+            Redirect result = registrationController.setRegisterConfirm(servletRequest, servletResponse, reg);
+            assertFalse(result.getErrors().isEmpty());
+        }
+        reg.setCaptchaRegistrationId("wrong");
+        assertFalse(registrationController.setRegisterConfirm(servletRequest, servletResponse, reg).getErrors().isEmpty());
+        verify(registrationManager, times(0)).createMinimalRegistration(Mockito.any(), Mockito.anyBoolean(), Mockito.any(), Mockito.anyString());
+    }
+
+    @Test
     public void turnstileFailureAndMissingSessionAreRejected() throws UnsupportedEncodingException {
         togglzRule.enable(Features.USE_TURNSTILE_REGISTRATION);
         Registration reg = registrationController.getRegister(servletRequest, servletResponse);

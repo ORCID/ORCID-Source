@@ -247,6 +247,7 @@ public class RegistrationController extends BaseController {
         // block google.
         if (!matchesCaptchaRegistration(request, reg)) {
             r.setUrl(getBaseUri() + "/register");
+            setError(r, "registrationForm.recaptcha.error");
             return r;
         }
         if (captchaLoaded(reg) || Boolean.TRUE.equals(request.getSession().getAttribute(CAPTCHA_LOADED))) {
@@ -255,6 +256,7 @@ public class RegistrationController extends BaseController {
             if (request.getSession().getAttribute(GRECAPTCHA_SESSION_ATTRIBUTE_NAME) == null || PojoUtil.isEmpty(reg.getGrecaptcha())
                     || !reg.getGrecaptcha().getValue().equals(request.getSession().getAttribute(GRECAPTCHA_SESSION_ATTRIBUTE_NAME))) {
                 r.setUrl(getBaseUri() + "/register");
+                setError(r, "registrationForm.recaptcha.error");
                 return r;
             }
 
