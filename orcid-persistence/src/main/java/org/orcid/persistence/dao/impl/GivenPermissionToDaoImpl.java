@@ -48,7 +48,7 @@ public class GivenPermissionToDaoImpl extends GenericDaoImpl<GivenPermissionToEn
     @Override
     @Transactional(value = "transactionManagerReadOnly", readOnly = true)
     public List<GivenPermissionToEntity> findByGiver(String giverOrcid) {
-        TypedQuery<GivenPermissionToEntity> query = entityManager.createQuery("from GivenPermissionToEntity where giver = :giverOrcid",
+        TypedQuery<GivenPermissionToEntity> query = entityManager.createQuery("from GivenPermissionToEntity where giver = :giverOrcid order by approvalDate asc, receiver asc",
                 GivenPermissionToEntity.class);
         query.setParameter("giverOrcid", giverOrcid);
         return query.getResultList();

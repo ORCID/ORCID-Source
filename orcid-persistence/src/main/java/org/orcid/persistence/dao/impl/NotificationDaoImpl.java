@@ -256,6 +256,7 @@ public class NotificationDaoImpl extends GenericDaoImpl<NotificationEntity, Long
         query.setParameter("record_active_date", recordActiveDate);
         return query.getResultList();
     }
+
         
     @Override
     @Transactional

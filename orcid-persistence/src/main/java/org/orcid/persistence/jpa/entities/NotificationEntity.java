@@ -39,7 +39,7 @@ import jakarta.persistence.Table;
                 " AND p.record_locked = false " +
                 " AND (" +
                 "   (n.notification_type IN ('ADMINISTRATIVE', 'CUSTOM') AND f.send_administrative_change_notifications < :never) " +
-                "   OR (n.notification_type = 'AMENDED' AND f.send_change_notifications < :never) " +
+                "   OR (n.notification_type IN ('AMENDED', 'DELEGATE') AND f.send_change_notifications < :never) " +
                 "   OR (n.notification_type IN ('PERMISSION', 'INSTITUTIONAL_CONNECTION') AND f.send_member_update_requests < :never)" +
                 " );"
     ),
@@ -65,6 +65,7 @@ abstract public class NotificationEntity extends SourceAwareEntity<Long> impleme
     public static final String FIND_ORCIDS_WITH_UNSENT_NOTIFICATIONS_ON_EMAIL_FREQUENCIES_TABLE = "findOrcidsWithUnsentNotificationsOnEmailFrequenciesTable";
     
     public static final String FIND_NOTIFICATIONS_TO_SEND_BY_ORCID = "findNotificationsToSendByOrcid";
+
     
     private static final long serialVersionUID = 1L;
 

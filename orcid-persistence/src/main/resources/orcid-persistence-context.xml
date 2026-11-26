@@ -187,6 +187,8 @@
 
     <bean id="givenPermissionToDao" class="org.orcid.persistence.dao.impl.GivenPermissionToDaoImpl" />
 
+    <bean id="delegateInvitationDao" class="org.orcid.persistence.dao.impl.DelegateInvitationDaoImpl" />
+
 	<bean id="givenPermissionToDaoReadOnly" class="org.orcid.persistence.dao.impl.GivenPermissionToDaoImpl">
 		<property name="entityManager" ref="entityManagerReadOnly" />
 	</bean>	

@@ -40,6 +40,7 @@ import org.orcid.persistence.dao.NotificationDao;
 import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.dao.ProfileEventDao;
 import org.orcid.persistence.jpa.entities.*;
+import org.orcid.pojo.DigestNotifications;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -748,6 +749,25 @@ public class NotificationManagerImpl extends ManagerReadOnlyBaseImpl implements 
         List<NotificationEntity> notifications = new ArrayList<NotificationEntity>();
         notifications = notificationDao.findNotificationsToSend(new Date(), orcid, recordActiveDate);
         return notificationAdapter.toNotification(notifications);
+    }
+
+    @Override
+    public DigestNotifications findDigestNotificationsToSend(String orcid, Date recordActiveDate) {
+        DigestNotifications result = new DigestNotifications();
+        for (NotificationEntity notification : notificationDao.findNotificationsToSend(new Date(), orcid, recordActiveDate)) {
+            result.getNotificationIds().add(notification.getId());
+            if (notification instanceof NotificationDelegateEntity) {
+                NotificationDelegateEntity delegate = (NotificationDelegateEntity) notification;
+                Map<String, String> fields = new HashMap<>();
+                fields.put("subject", delegate.getSubject());
+                fields.put("bodyHtml", delegate.getBodyHtml());
+                fields.put("bodyText", delegate.getBodyText());
+                result.getDelegateNotifications().add(fields);
+            } else {
+                result.getNotifications().add(notificationAdapter.toNotification(notification));
+            }
+        }
+        return result;
     }
 
     private String getAssetsUrl() {

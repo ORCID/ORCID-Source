@@ -147,6 +147,7 @@ public abstract class JpaJaxbNotificationAdapterImpl implements JpaJaxbNotificat
     @Mapping(source = "id", target = "putCode")
     @Mapping(source = "dateCreated", target = "createdDate")
     @Mapping(source = ".", target = "source")
+    @Mapping(target = "notificationType", expression = "java(org.orcid.jaxb.model.v3.release.notification.NotificationType.ADMINISTRATIVE)")
     protected abstract NotificationAdministrative map(NotificationAdministrativeEntity e);
 
     // 5. Notification Permission

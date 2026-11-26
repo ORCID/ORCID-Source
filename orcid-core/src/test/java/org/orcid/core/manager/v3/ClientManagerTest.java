@@ -13,8 +13,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import jakarta.annotation.Resource;
@@ -154,6 +156,7 @@ public class ClientManagerTest extends BaseTest {
         // Create the client
         Client client = clientManager.create(originalClient);
         String initialClientSecret = client.getDecryptedSecret();
+        Map<String, List<Date>> configDates = configDates(clientDetailsDao.find(client.getId()));
         
         //Update some fields
         client.setAllowAutoDeprecate(false);
@@ -183,7 +186,6 @@ public class ClientManagerTest extends BaseTest {
         client.getClientRedirectUris().add(rUri);
         
         //Edit the client
-        Date editTime = new Date();
         clientManager.edit(client, false);
         
         //Verify new data is there
@@ -204,7 +206,8 @@ public class ClientManagerTest extends BaseTest {
         assertEquals(originalClient.isPersistentTokensEnabled(), entityClient.isPersistentTokensEnabled());
         
         //Verify config data doesn't changed
-        validateClientConfigSettings(entityClient, editTime);
+        validateClientConfigSettings(entityClient, null);
+        assertEquals(configDates, configDates(entityClient));
     }
     
     @Test
@@ -215,6 +218,7 @@ public class ClientManagerTest extends BaseTest {
         // Create the client
         Client client = clientManager.create(originalClient);
         String initialClientSecret = client.getDecryptedSecret();
+        Map<String, List<Date>> configDates = configDates(clientDetailsDao.find(client.getId()));
         
         //Update some fields
         client.setAllowAutoDeprecate(false);
@@ -244,7 +248,6 @@ public class ClientManagerTest extends BaseTest {
         client.getClientRedirectUris().add(rUri);
         
         //Edit the client
-        Date editTime = new Date();
         clientManager.edit(client, true);
         
         //Verify new data is there
@@ -265,7 +268,8 @@ public class ClientManagerTest extends BaseTest {
         assertEquals(client.isPersistentTokensEnabled(), entityClient.isPersistentTokensEnabled());
         
         //Verify config data doesn't changed
-        validateClientConfigSettings(entityClient, editTime);
+        validateClientConfigSettings(entityClient, null);
+        assertEquals(configDates, configDates(entityClient));
     }
     
     @Test
@@ -453,6 +457,26 @@ public class ClientManagerTest extends BaseTest {
         assertFalse(PojoUtil.isEmpty(client.getDecryptedSecret()));
         assertTrue(client.getDecryptedSecret().length() > 1);
         assertEquals(secret3, client.getDecryptedSecret());
+    }
+
+    private Map<String, List<Date>> configDates(ClientDetailsEntity entity) {
+        Map<String, List<Date>> dates = new HashMap<>();
+        for (ClientAuthorisedGrantTypeEntity grant : entity.getClientAuthorizedGrantTypes()) {
+            dates.put("grant:" + grant.getGrantType(), Arrays.asList(grant.getDateCreated(), grant.getLastModified()));
+        }
+        for (ClientGrantedAuthorityEntity authority : entity.getClientGrantedAuthorities()) {
+            dates.put("authority:" + authority.getAuthority(), Arrays.asList(authority.getDateCreated(), authority.getLastModified()));
+        }
+        for (ClientResourceIdEntity resource : entity.getClientResourceIds()) {
+            dates.put("resource:" + resource.getResourceId(), Arrays.asList(resource.getDateCreated(), resource.getLastModified()));
+        }
+        for (ClientScopeEntity scope : entity.getClientScopes()) {
+            dates.put("scope:" + scope.getScopeType(), Arrays.asList(scope.getDateCreated(), scope.getLastModified()));
+        }
+        for (ClientSecretEntity secret : entity.getClientSecrets()) {
+            dates.put("secret:" + secret.getClientSecret(), Arrays.asList(secret.getDateCreated(), secret.getLastModified()));
+        }
+        return dates;
     }
 
     private void validateClientConfigSettings(ClientDetailsEntity entity, Date lastTimeEntityWasModified) {

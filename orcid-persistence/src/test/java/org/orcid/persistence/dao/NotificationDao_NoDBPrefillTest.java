@@ -6,6 +6,7 @@ import static org.junit.Assert.assertTrue;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 
 import jakarta.annotation.Resource;
@@ -56,6 +57,22 @@ public class NotificationDao_NoDBPrefillTest extends DBUnitTest {
         List<String> reversedDataFiles = new ArrayList<String>(DATA_FILES);
         Collections.reverse(reversedDataFiles);
         removeDBUnitData(reversedDataFiles);
+    }
+
+    @Test
+    public void administrativeNotificationsUseStandardDeliveryQueries() {
+        String orcid = "0000-0000-0000-0003";
+        emailFrequencyDao.updateSendAdministrativeChangeNotifications(orcid, SendEmailFrequency.WEEKLY);
+        NotificationEntity notification = new NotificationAdministrativeEntity();
+        notification.setOrcid(orcid);
+        notificationDao.persist(notification);
+        notificationDao.flush();
+
+        Date now = new Date();
+        Date activeDate = new Date(now.getTime() - 30L * 24 * 60 * 60 * 1000);
+        assertTrue(notificationDao.findRecordsWithUnsentNotifications().stream().anyMatch(row -> orcid.equals(row[0])));
+        assertTrue(notificationDao.findNotificationsToSend(now, orcid, activeDate).stream().anyMatch(n -> n.getId().equals(notification.getId())));
+        assertTrue(notificationDao.findNotificationsToSendLegacy(now, orcid, 7f, activeDate).stream().anyMatch(n -> n.getId().equals(notification.getId())));
     }
 
     @Test

@@ -43,6 +43,7 @@ import org.orcid.core.manager.TwoFactorAuthenticationManager;
 import org.orcid.core.manager.UserConnectionManager;
 import org.orcid.core.manager.v3.AddressManager;
 import org.orcid.core.manager.v3.BiographyManager;
+import org.orcid.core.manager.v3.DelegateInvitationManager;
 import org.orcid.core.manager.v3.EmailManager;
 import org.orcid.core.manager.v3.GivenPermissionToManager;
 import org.orcid.core.manager.v3.NotificationManager;
@@ -175,6 +176,9 @@ public class ManageProfileControllerTest {
     private GivenPermissionToManager mockGivenPermissionToManager;
 
     @Mock
+    private DelegateInvitationManager mockDelegateInvitationManager;
+
+    @Mock
     private GivenPermissionToManagerReadOnly mockGivenPermissionToManagerReadOnly;
 
     @Mock
@@ -200,6 +204,9 @@ public class ManageProfileControllerTest {
 
     @Mock(name="profileEntityManagerReadOnlyV3")
     private ProfileEntityManagerReadOnly mockProfileEntityManagerReadOnly;
+
+    @Mock(name="affiliationsManagerReadOnlyV3")
+    private AffiliationsManagerReadOnly mockAffiliationsManagerReadOnly;
 
     @Mock
     private PersonalDetailsManagerReadOnly mockPersonalDetailsManagerReadOnly;
@@ -266,6 +273,8 @@ public class ManageProfileControllerTest {
         TargetProxyHelper.injectIntoProxy(controller, "recordEmailSender", mockRecordEmailSender);
         TargetProxyHelper.injectIntoProxy(controller, "profileHistoryEventManager", mockProfileHistoryEventManager);
         TargetProxyHelper.injectIntoProxy(controller, "profileEntityManagerReadOnly", mockProfileEntityManagerReadOnly);
+        TargetProxyHelper.injectIntoProxy(controller, "affiliationsManagerReadOnly", mockAffiliationsManagerReadOnly);
+        TargetProxyHelper.injectIntoProxy(controller, "delegateInvitationManager", mockDelegateInvitationManager);
         TargetProxyHelper.injectIntoProxy(controller, "personalDetailsManagerReadOnly", mockPersonalDetailsManagerReadOnly);
         TargetProxyHelper.injectIntoProxy(controller, "addressManagerReadOnly", mockAddressManagerReadOnly);
         TargetProxyHelper.injectIntoProxy(controller, "keywordManagerReadOnly", mockKeywordManagerReadOnly);
@@ -297,6 +306,7 @@ public class ManageProfileControllerTest {
             }
 
         });
+        when(mockOrcidUrlManager.getPubBaseUrl()).thenReturn("https://orcid.org");
 
         when(mockLocaleManager.resolveMessage(Mockito.anyString(), any())).thenAnswer(new Answer<String>() {
 
@@ -982,28 +992,6 @@ public class ManageProfileControllerTest {
         assertEquals("deprecate_orcid.profile_matches_current", deprecateProfile.getErrors().get(0));
     }
 
-    @Test
-    public void testAddDelegate() throws Exception {
-        SecurityContextHolder.getContext().setAuthentication(getAuthentication(USER_ORCID));
-
-        when(mockProfileEntityCacheManager.retrieve(Mockito.anyString())).then(new Answer<ProfileEntity>() {
-            @Override
-            public ProfileEntity answer(InvocationOnMock invocation) throws Throwable {
-                ProfileEntity entity = new ProfileEntity();
-                entity.setId(invocation.getArgument(0));
-                // Mark it as deactivated
-                entity.setDeactivationDate(new Date());
-                entity.setEncryptedPassword("password");
-                return entity;
-            }
-        });
-
-        ManageDelegate addDelegate = new ManageDelegate();
-        addDelegate.setDelegateToManage("0000-0000-0000-0000");
-        addDelegate.setPassword("password");
-        controller.addDelegate(addDelegate);
-        verify(mockGivenPermissionToManager, times(1)).create(USER_ORCID, "0000-0000-0000-0000");
-    }
 
     @Test
     public void testStripHtmlFromNames() {
@@ -1717,36 +1705,149 @@ public class ManageProfileControllerTest {
     }
 
     @Test
-    public void testSearchForDelegateByEmail_Found() {
+    public void invalidEmailDelegateSearchIsRejectedBeforeLookup() {
+        DelegateInvitationSearchRequest request = new DelegateInvitationSearchRequest();
+        request.setLookupType("EMAIL");
+        request.setValue("dan@jhgjh");
+
+        DelegateInvitationSearchResult result = controller.searchDelegateInvitation(request);
+
+        assertEquals("INVALID", result.getStatus());
+        verify(mockEmailManager, times(0)).find(anyString());
+        verify(mockDelegateInvitationManager, times(0)).checkEligibility(anyString(), anyString());
+    }
+
+    @Test
+    public void invalidOrcidDelegateSearchIsRejectedBeforeLookup() {
+        DelegateInvitationSearchRequest request = new DelegateInvitationSearchRequest();
+        request.setLookupType("ORCID");
+        request.setValue("1234-5678-9");
+
+        DelegateInvitationSearchResult result = controller.searchDelegateInvitation(request);
+
+        assertEquals("INVALID", result.getStatus());
+        verify(mockProfileEntityManagerReadOnly, times(0)).isOrcidValidAsDelegate(anyString());
+        verify(mockDelegateInvitationManager, times(0)).checkEligibility(anyString(), anyString());
+    }
+
+    @Test
+    public void delegateInvitationNoticesUseInvitationIds() {
+        DelegateInvitationEntity invitation = new DelegateInvitationEntity();
+        invitation.setId(42L);
+        invitation.setStatus(DelegateInvitationEntity.Status.DECLINED);
+        invitation.setEnteredEmail("delegate@example.org");
+        when(mockDelegateInvitationManager.getUnacknowledgedNotices(USER_ORCID)).thenReturn(Arrays.asList(invitation));
+
+        List<DelegateInvitationNotice> notices = controller.getDelegateInvitationNotices();
+
+        assertEquals(1, notices.size());
+        assertEquals(Long.valueOf(42L), notices.get(0).getInvitationId());
+        assertEquals("EMAIL", notices.get(0).getLookupType());
+        assertEquals("delegate@example.org", notices.get(0).getEnteredEmail());
+    }
+
+    @Test
+    public void declinedOrcidNoticeContainsPublicRecipientDetails() {
+        String orcid = "0000-0002-1825-0097";
+        DelegateInvitationEntity invitation = new DelegateInvitationEntity();
+        invitation.setStatus(DelegateInvitationEntity.Status.DECLINED);
+        invitation.setRecipientOrcid(orcid);
+        when(mockDelegateInvitationManager.getUnacknowledgedNotices(USER_ORCID)).thenReturn(Arrays.asList(invitation));
+        when(mockRecordNameManagerReadOnlyV3.fetchDisplayablePublicName(orcid)).thenReturn("Public Person");
+
+        DelegateInvitationNotice notice = controller.getDelegateInvitationNotices().get(0);
+
+        assertEquals(orcid, notice.getRecipientOrcid());
+        assertEquals("Public Person", notice.getRecipientName());
+    }
+
+    @Test
+    public void declinedEmailNoticeDoesNotExposeRecipientIdentity() {
+        DelegateInvitationEntity invitation = new DelegateInvitationEntity();
+        invitation.setStatus(DelegateInvitationEntity.Status.DECLINED);
+        invitation.setRecipientOrcid("0000-0002-1825-0097");
+        invitation.setEnteredEmail("delegate@example.org");
+        when(mockDelegateInvitationManager.getUnacknowledgedNotices(USER_ORCID)).thenReturn(Arrays.asList(invitation));
+
+        DelegateInvitationNotice notice = controller.getDelegateInvitationNotices().get(0);
+
+        assertEquals("delegate@example.org", notice.getEnteredEmail());
+        assertNull(notice.getRecipientOrcid());
+        assertNull(notice.getRecipientName());
+    }
+
+    @Test
+    public void acknowledgeDelegateInvitationNoticePassesInvitationId() {
+        DelegateInvitationActionRequest request = new DelegateInvitationActionRequest();
+        request.setInvitationId(42L);
+        when(mockDelegateInvitationManager.acknowledgeNotice(USER_ORCID, 42L)).thenReturn(true);
+
+        DelegateInvitationActionResult result = controller.acknowledgeDelegateInvitationNotice(request);
+
+        assertEquals("ACKNOWLEDGED", result.getStatus());
+        verify(mockDelegateInvitationManager).acknowledgeNotice(USER_ORCID, 42L);
+    }
+
+    @Test
+    public void emailDelegateSearchDoesNotExposeResolvedOrcid() {
+        String recipientOrcid = "0000-0000-0000-0005";
         EmailEntity emailEntity = new EmailEntity();
-        emailEntity.setOrcid("0000-0000-0000-0005");
-        when(mockEmailManager.find(eq("delegate@test.com"))).thenReturn(emailEntity);
-        when(mockGivenPermissionToManagerReadOnly.findByGiver(eq(USER_ORCID), anyLong())).thenReturn(new ArrayList<>());
+        emailEntity.setOrcid(recipientOrcid);
+        when(mockEmailManager.find(eq("delegate@example.org"))).thenReturn(emailEntity);
+        when(mockProfileEntityManagerReadOnly.isOrcidValidAsDelegate(eq(recipientOrcid))).thenReturn(true);
+        when(mockDelegateInvitationManager.checkEligibility(eq(USER_ORCID), eq(recipientOrcid))).thenReturn(DelegateInvitationManager.Eligibility.AVAILABLE);
 
-        Map<String, Boolean> result = controller.searchForDelegateByEmail("delegate@test.com");
-        assertEquals(Boolean.TRUE, result.get("found"));
-        assertEquals(Boolean.FALSE, result.get("isSelf"));
-        assertEquals(Boolean.FALSE, result.get("isAlreadyAdded"));
+        DelegateInvitationSearchRequest request = new DelegateInvitationSearchRequest();
+        request.setLookupType("EMAIL");
+        request.setValue("delegate@example.org");
+        DelegateInvitationSearchResult result = controller.searchDelegateInvitation(request);
+
+        assertEquals("FOUND", result.getStatus());
+        assertEquals("delegate@example.org", result.getEmailAddress());
+        assertNull(result.getOrcid());
+        assertNull(result.getPublicName());
+        assertNull(result.getPublicRecordUrl());
+        verify(mockDelegateInvitationManager, times(0)).createInvitation(anyString(), anyString(), any(), any());
     }
 
     @Test
-    public void testSearchForDelegateByOrcid_Found() {
-        when(mockProfileEntityManagerReadOnly.isOrcidValidAsDelegate(eq("0000-0000-0000-0005"))).thenReturn(true);
-        when(mockGivenPermissionToManagerReadOnly.findByGiver(eq(USER_ORCID), anyLong())).thenReturn(new ArrayList<>());
+    public void orcidDelegateSearchReturnsPublicRecordDetails() {
+        String recipientOrcid = "0000-0002-1825-0097";
+        when(mockProfileEntityManagerReadOnly.isOrcidValidAsDelegate(eq(recipientOrcid))).thenReturn(true);
+        when(mockDelegateInvitationManager.checkEligibility(eq(USER_ORCID), eq(recipientOrcid))).thenReturn(DelegateInvitationManager.Eligibility.AVAILABLE);
+        when(mockRecordNameManagerReadOnlyV3.fetchDisplayablePublicName(eq(recipientOrcid))).thenReturn("Public Person");
 
-        Map<String, Boolean> result = controller.searchForDelegateByOrcid("0000-0000-0000-0005");
-        assertEquals(Boolean.TRUE, result.get("found"));
-        assertEquals(Boolean.FALSE, result.get("isSelf"));
+        DelegateInvitationSearchRequest request = new DelegateInvitationSearchRequest();
+        request.setLookupType("ORCID");
+        request.setValue(recipientOrcid);
+        DelegateInvitationSearchResult result = controller.searchDelegateInvitation(request);
+
+        assertEquals("FOUND", result.getStatus());
+        assertEquals(recipientOrcid, result.getOrcid());
+        assertEquals("Public Person", result.getPublicName());
+        assertEquals("https://orcid.org/" + recipientOrcid, result.getPublicRecordUrl());
     }
 
     @Test
-    public void testAddDelegateByOrcid() {
-        ManageDelegate manageDelegate = new ManageDelegate();
-        manageDelegate.setDelegateToManage("0000-0000-0000-0005");
-        
-        ManageDelegate result = controller.addDelegateByOrcid(manageDelegate);
-        assertNotNull(result);
-        verify(mockGivenPermissionToManager, times(1)).create(eq(USER_ORCID), eq("0000-0000-0000-0005"));
+    public void sendDelegateInvitationCreatesPendingInvitationOnlyAfterRevalidation() {
+        String recipientOrcid = "0000-0000-0000-0005";
+        EmailEntity emailEntity = new EmailEntity();
+        emailEntity.setOrcid(recipientOrcid);
+        when(mockEmailManager.find(eq("delegate@example.org"))).thenReturn(emailEntity);
+        when(mockProfileEntityManagerReadOnly.isOrcidValidAsDelegate(eq(recipientOrcid))).thenReturn(true);
+        when(mockDelegateInvitationManager.checkEligibility(eq(USER_ORCID), eq(recipientOrcid))).thenReturn(DelegateInvitationManager.Eligibility.AVAILABLE);
+        when(mockDelegateInvitationManager.createInvitation(eq(USER_ORCID), eq(recipientOrcid), eq(DelegateInvitationEntity.LookupType.EMAIL),
+                eq("delegate@example.org"))).thenReturn(new DelegateInvitationManager.CreationResult(DelegateInvitationManager.CreationStatus.CREATED, null));
+
+        DelegateInvitationSearchRequest request = new DelegateInvitationSearchRequest();
+        request.setLookupType("EMAIL");
+        request.setValue("delegate@example.org");
+        DelegateInvitationActionResult result = controller.sendDelegateInvitation(request);
+
+        assertEquals("SENT", result.getStatus());
+        verify(mockDelegateInvitationManager).createInvitation(eq(USER_ORCID), eq(recipientOrcid), eq(DelegateInvitationEntity.LookupType.EMAIL),
+                eq("delegate@example.org"));
+        verify(mockGivenPermissionToManager, times(0)).create(anyString(), anyString());
     }
 
     @Test
