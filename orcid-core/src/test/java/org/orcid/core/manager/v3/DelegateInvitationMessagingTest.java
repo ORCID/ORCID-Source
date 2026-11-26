@@ -109,6 +109,34 @@ public class DelegateInvitationMessagingTest {
     }
 
     @Test
+    public void acceptedRecipientConfirmationShowsSenderAndDelegateInformationSafely() {
+        when(recordNameManagerReadOnly.fetchDisplayablePublicName(SENDER)).thenReturn("Alice <Example>");
+        DelegateInvitationEntity invitation = invitation(null);
+        invitation.setStatus(DelegateInvitationEntity.Status.ACCEPTED);
+        messaging.responded(invitation);
+
+        NotificationDelegateEntity recipient = saved.get(1);
+        assertEquals("You have accepted an account delegate invitation from Alice <Example>", recipient.getSubject());
+        assertTrue(recipient.getBodyText().contains("You have accepted an account delegate invitation from Alice <Example> (https://orcid.org/" + SENDER + ")."));
+        assertTrue(recipient.getBodyText().contains("change Alice <Example>'s ORCID record"));
+        assertTrue(recipient.getBodyText().contains("https://support.orcid.org/hc/articles/360006973613"));
+        assertTrue(recipient.getBodyHtml().contains("<strong>Alice &lt;Example&gt;</strong>"));
+        assertTrue(recipient.getBodyHtml().contains("<a href=\"https://orcid.org/" + SENDER + "\">https://orcid.org/" + SENDER + "</a>"));
+        assertTrue(recipient.getBodyHtml().contains("<a href=\"https://support.orcid.org/hc/articles/360006973613\">"));
+        assertFalse(recipient.getBodyHtml().contains("Alice <Example>"));
+    }
+
+    @Test
+    public void acceptedRecipientConfirmationFallsBackToOrcidForPrivateName() {
+        DelegateInvitationEntity invitation = invitation(null);
+        invitation.setStatus(DelegateInvitationEntity.Status.ACCEPTED);
+        messaging.responded(invitation);
+
+        assertTrue(saved.get(1).getSubject().contains(SENDER));
+        assertTrue(saved.get(1).getBodyHtml().contains("href=\"https://orcid.org/" + SENDER + "\""));
+    }
+
+    @Test
     public void declinedRecipientConfirmationShowsSenderSafely() {
         when(recordNameManagerReadOnly.fetchDisplayablePublicName(SENDER)).thenReturn("Alice <Example>");
         DelegateInvitationEntity invitation = invitation(null);
