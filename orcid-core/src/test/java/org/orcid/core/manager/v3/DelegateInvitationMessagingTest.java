@@ -107,6 +107,28 @@ public class DelegateInvitationMessagingTest {
     }
 
     @Test
+    public void invitationLinksOpenInNewTabs() {
+        for (String email : new String[] { null, "other@example.org" }) {
+            DelegateInvitationEntity invitation = invitation(email);
+            messaging.created(invitation, TOKEN);
+            invitation.setStatus(DelegateInvitationEntity.Status.ACCEPTED);
+            messaging.responded(invitation);
+            invitation.setStatus(DelegateInvitationEntity.Status.DECLINED);
+            messaging.responded(invitation);
+        }
+        int links = 0;
+        for (NotificationDelegateEntity notification : saved) {
+            java.util.regex.Matcher anchors = java.util.regex.Pattern.compile("<a\\s+[^>]*>").matcher(notification.getBodyHtml());
+            while (anchors.find()) {
+                links++;
+                assertTrue(anchors.group().contains("target=\"_blank\""));
+                assertTrue(anchors.group().contains("rel=\"noopener noreferrer\""));
+            }
+        }
+        assertTrue(links >= 12);
+    }
+
+    @Test
     public void creationRendersActionLinksAndKeepsEmailAddressesPrivate() {
         DelegateInvitationEntity invitation = invitation("other@example.org");
         ProfileEntity profile = new ProfileEntity();
@@ -163,7 +185,7 @@ public class DelegateInvitationMessagingTest {
         assertTrue(sender.getBodyText().contains("Tom <Sawyer> (https://orcid.org/" + RECIPIENT + ") has accepted your invitation to become an account delegate for your ORCID record."));
         assertTrue(sender.getBodyText().contains("They have been added to your list of trusted individuals"));
         assertTrue(sender.getBodyHtml().contains("<strong>Tom &lt;Sawyer&gt;</strong>"));
-        assertTrue(sender.getBodyHtml().contains("<a href=\"https://orcid.org/" + RECIPIENT + "\">https://orcid.org/" + RECIPIENT + "</a>"));
+        assertTrue(sender.getBodyHtml().contains("href=\"https://orcid.org/" + RECIPIENT + "\">https://orcid.org/" + RECIPIENT + "</a>"));
         assertFalse(sender.getBodyHtml().contains("Tom <Sawyer>"));
     }
 
@@ -190,8 +212,8 @@ public class DelegateInvitationMessagingTest {
         assertTrue(recipient.getBodyText().contains("change Alice <Example>'s ORCID record"));
         assertTrue(recipient.getBodyText().contains("https://support.orcid.org/hc/articles/360006973613"));
         assertTrue(recipient.getBodyHtml().contains("<strong>Alice &lt;Example&gt;</strong>"));
-        assertTrue(recipient.getBodyHtml().contains("<a href=\"https://orcid.org/" + SENDER + "\">https://orcid.org/" + SENDER + "</a>"));
-        assertTrue(recipient.getBodyHtml().contains("<a href=\"https://support.orcid.org/hc/articles/360006973613\">"));
+        assertTrue(recipient.getBodyHtml().contains("href=\"https://orcid.org/" + SENDER + "\">https://orcid.org/" + SENDER + "</a>"));
+        assertTrue(recipient.getBodyHtml().contains("href=\"https://support.orcid.org/hc/articles/360006973613\">"));
         assertFalse(recipient.getBodyHtml().contains("Alice <Example>"));
     }
 
@@ -217,7 +239,7 @@ public class DelegateInvitationMessagingTest {
         assertTrue(recipient.getBodyText().contains("Alice <Example> (https://orcid.org/" + SENDER + ")"));
         assertTrue(recipient.getBodyText().contains("They have been informed that you have declined."));
         assertTrue(recipient.getBodyHtml().contains("<strong>Alice &lt;Example&gt;</strong>"));
-        assertTrue(recipient.getBodyHtml().contains("<a href=\"https://orcid.org/" + SENDER + "\">https://orcid.org/" + SENDER + "</a>"));
+        assertTrue(recipient.getBodyHtml().contains("href=\"https://orcid.org/" + SENDER + "\">https://orcid.org/" + SENDER + "</a>"));
         assertFalse(recipient.getBodyHtml().contains("Alice <Example>"));
     }
 
@@ -243,7 +265,7 @@ public class DelegateInvitationMessagingTest {
         assertEquals("Tom <Sawyer> has declined your account delegate invitation", sender.getSubject());
         assertTrue(sender.getBodyText().contains("Tom <Sawyer> (https://orcid.org/" + RECIPIENT + ") has declined your invitation to become an account delegate for your ORCID record."));
         assertTrue(sender.getBodyHtml().contains("<strong>Tom &lt;Sawyer&gt;</strong>"));
-        assertTrue(sender.getBodyHtml().contains("<a href=\"https://orcid.org/" + RECIPIENT + "\">https://orcid.org/" + RECIPIENT + "</a>"));
+        assertTrue(sender.getBodyHtml().contains("href=\"https://orcid.org/" + RECIPIENT + "\">https://orcid.org/" + RECIPIENT + "</a>"));
         assertFalse(sender.getBodyHtml().contains("Tom <Sawyer>"));
     }
 
