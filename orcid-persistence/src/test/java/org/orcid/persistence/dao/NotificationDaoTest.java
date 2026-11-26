@@ -606,6 +606,32 @@ public class NotificationDaoTest extends DBUnitTest {
     }
 
     @Test
+    public void delegateUsesAmendedFrequencyAndSharesLastSentDate() {
+        String orcid = "0000-0000-0000-0003";
+        emailFrequencyDao.updateSendChangeNotifications(orcid, SendEmailFrequency.WEEKLY);
+        NotificationDelegateEntity delegate = new NotificationDelegateEntity();
+        delegate.setOrcid(orcid);
+        delegate.setSubject("delegate");
+        notificationDao.persist(delegate);
+        notificationDao.flush();
+        Date now = new Date();
+        Date old = new Date(now.getTime() - 30L * 86400000);
+        assertTrue(notificationDao.findNotificationsToSend(now, orcid, old).stream().anyMatch(n -> n.getId().equals(delegate.getId())));
+        delegate.setSentDate(now);
+        notificationDao.merge(delegate);
+        notificationDao.flush();
+        assertTrue(notificationDao.findNotificationsToSend(new Date(now.getTime() + 86400000), orcid, old).stream()
+                .noneMatch(n -> n instanceof NotificationAmendedEntity));
+        emailFrequencyDao.updateSendChangeNotifications(orcid, SendEmailFrequency.NEVER);
+        NotificationDelegateEntity another = new NotificationDelegateEntity();
+        another.setOrcid(orcid);
+        notificationDao.persist(another);
+        notificationDao.flush();
+        assertTrue(notificationDao.findNotificationsToSend(new Date(now.getTime() + 30L * 86400000), orcid, old).stream()
+                .noneMatch(n -> n.getId().equals(another.getId())));
+    }
+
+    @Test
     public void persistDelegateNotificationUsesDelegateDiscriminatorAndAdministrativeFields() {
         NotificationDelegateEntity notification = new NotificationDelegateEntity();
         notification.setOrcid("0000-0000-0000-0003");

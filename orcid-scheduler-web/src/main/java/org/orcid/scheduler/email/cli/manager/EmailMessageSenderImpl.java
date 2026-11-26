@@ -65,6 +65,7 @@ import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.ProfileEventEntity;
 import org.orcid.persistence.jpa.entities.ProfileEventType;
 import org.orcid.pojo.DigestEmail;
+import org.orcid.pojo.DigestNotifications;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.utils.alerting.SlackManager;
 import org.orcid.utils.email.MailGunManager;
@@ -186,6 +187,10 @@ public class EmailMessageSenderImpl implements EmailMessageSender {
 
     @Override
     public EmailMessage createDigest(String orcid, Collection<Notification> notifications) {
+        return createDigest(orcid, notifications, Collections.emptyList());
+    }
+
+    EmailMessage createDigest(String orcid, Collection<Notification> notifications, List<Map<String, String>> delegateNotifications) {
         ProfileEntity record = profileEntityCacheManager.retrieve(orcid);
         Locale locale = getUserLocaleFromProfileEntity(record);
         int orcidMessageCount = 0;
@@ -258,6 +263,7 @@ public class EmailMessageSenderImpl implements EmailMessageSender {
         params.put("messageArgs", new Object[0]);
         params.put("emailName", emailName);
         params.put("digestEmail", digestEmail);
+        params.put("delegateNotifications", delegateNotifications);
         params.put("orcidMessageCount", orcidMessageCount);
         params.put("baseUri", orcidUrlManager.getBaseUrl());
         params.put("subject", subject);
@@ -316,27 +322,26 @@ public class EmailMessageSenderImpl implements EmailMessageSender {
         for (final Object[] element : orcidsWithUnsentNotifications) {
             String orcid = (String) element[0];
             try {
-                Float emailFrequencyDays = null;
                 Date recordActiveDate = null;
                 recordActiveDate = (Date) element[1];
 
-                List<Notification> notifications = notificationManager.findNotificationsToSend(orcid, emailFrequencyDays, recordActiveDate);
+                DigestNotifications notifications = notificationManager.findDigestNotificationsToSend(orcid, recordActiveDate);
 
                 EmailEntity primaryEmail = null;
                 try {
-                    if (notifications != null && !notifications.isEmpty()) {
+                    if (notifications != null && !notifications.getNotificationIds().isEmpty()) {
                         primaryEmail = emailDao.findPrimaryEmail(orcid);
                         if (primaryEmail != null) {
-                            LOGGER.info("Found {} messages to send for orcid: {}", notifications.size(), orcid);
-                            EmailMessage digestMessage = createDigest(orcid, notifications);
+                            LOGGER.info("Found {} messages to send for orcid: {}", notifications.getNotificationIds().size(), orcid);
+                            EmailMessage digestMessage = createDigest(orcid, notifications.getNotifications(), notifications.getDelegateNotifications());
                             digestMessage.setFrom(EmailConstants.DO_NOT_REPLY_NOTIFY_ORCID_ORG);
                             digestMessage.setTo(primaryEmail.getEmail());
 
                             boolean successfullySent = mailGunManager.sendEmail(digestMessage.getFrom(), digestMessage.getTo(), digestMessage.getSubject(),
                                     digestMessage.getBodyText(), digestMessage.getBodyHtml());
                             if (successfullySent) {
-                                for (Notification notification : notifications) {
-                                    notificationDao.flagAsSent(notification.getPutCode());
+                                for (Long notificationId : notifications.getNotificationIds()) {
+                                    notificationDao.flagAsSent(notificationId);
                                 }
                             }
                         }

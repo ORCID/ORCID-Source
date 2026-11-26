@@ -16,6 +16,21 @@
                 line-height: 1.5;
             ">
         <#include "notification_header_html.ftl"/>
+        <#list (delegateNotifications![]) as delegateNotification>
+            <hr style="color: #447405;background-color: #447405;border-style: solid;border-width: 2px;"/>
+            <div style="font-weight: bold;display: flex;align-items: center;text-align: start;letter-spacing: 0.5px;">
+                <span style="background-color:#447405;height: 8px;width: 8px;border-radius: 50%;display: inline-block;margin-right: 8px;margin-top: 10px;"></span>
+                <p style="color: #447405;margin: 6px 0;font-size: 12px;font-weight: bold;"><@emailMacros.msg "notification.share.record" /></p>
+            </div>
+            <p style="margin: 15px 0;font-weight: bold;">${delegateNotification.subject}</p>
+            <hr style="color: #447405;background-color: #447405;border-style: solid;border-width: 2px;"/>
+            <#assign delegateBody = delegateNotification.bodyHtml!"" />
+            <#if delegateBody?contains("<body>") && delegateBody?contains("</body>")>
+                <#noescape>${delegateBody?keep_after("<body>")?keep_before("</body>")}</#noescape>
+            <#else>
+                <#noescape>${delegateBody}</#noescape>
+            </#if>
+        </#list>
         <#list digestEmail.notificationsBySourceId?keys?sort as sourceId>
             <#if sourceId != 'ORCID'>
                 <#list digestEmail.notificationsBySourceId[sourceId].notificationsByType?keys?sort as notificationType>

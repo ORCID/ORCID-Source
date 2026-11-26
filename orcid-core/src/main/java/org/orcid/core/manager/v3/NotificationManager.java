@@ -15,6 +15,7 @@ import org.orcid.persistence.jpa.entities.ActionableNotificationEntity;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.NotificationEntity;
 import org.orcid.persistence.jpa.entities.NotificationFindMyStuffEntity;
+import org.orcid.pojo.DigestNotifications;
 
 public interface NotificationManager {
    
@@ -35,6 +36,8 @@ public interface NotificationManager {
     public List<Notification> findNotificationAlertsByOrcid(String orcid);
     
     public List<Notification> findNotificationsToSend(String orcid, Float emailFrequencyDays, Date recordActiveDate);
+
+    DigestNotifications findDigestNotificationsToSend(String orcid, Date recordActiveDate);
     
     /**
      * Filters the list of notification alerts by archiving any that have
