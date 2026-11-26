@@ -8,6 +8,7 @@ import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.InOrder;
 import org.orcid.core.constants.EmailConstants;
 import org.orcid.core.manager.EmailMessage;
 import org.orcid.core.manager.v3.NotificationManager;
@@ -17,6 +18,7 @@ import org.orcid.jaxb.model.v3.release.notification.custom.NotificationAdministr
 import org.orcid.persistence.dao.EmailDao;
 import org.orcid.persistence.dao.NotificationDao;
 import org.orcid.persistence.jpa.entities.EmailEntity;
+import org.orcid.pojo.DigestNotifications;
 import org.orcid.utils.email.MailGunManager;
 import org.springframework.test.util.ReflectionTestUtils;
 
@@ -46,7 +48,10 @@ public class AdministrativeEmailDeliveryTest {
         notification.setNotificationType(NotificationType.ADMINISTRATIVE);
         notification.setPutCode(7L);
         List<Notification> notifications = Collections.singletonList(notification);
-        when(manager.findNotificationsToSend(orcid, null, activeDate)).thenReturn(notifications);
+        DigestNotifications digestNotifications = new DigestNotifications();
+        digestNotifications.getNotifications().addAll(notifications);
+        digestNotifications.getNotificationIds().add(7L);
+        when(manager.findDigestNotificationsToSend(orcid, activeDate)).thenReturn(digestNotifications);
         EmailEntity primary = new EmailEntity();
         primary.setEmail("primary@example.org");
         when(emailDao.findPrimaryEmail(orcid)).thenReturn(primary);
@@ -54,15 +59,17 @@ public class AdministrativeEmailDeliveryTest {
         digest.setSubject("digest");
         digest.setBodyText("text");
         digest.setBodyHtml("html");
-        doReturn(digest).when(sender).createDigest(orcid, notifications);
+        doReturn(digest).when(sender).createDigest(orcid, digestNotifications.getNotifications(), digestNotifications.getDelegateNotifications());
     }
 
     @Test
     public void successfulDigestFlagsAdministrativeNotificationAsSent() {
         when(mail.sendEmail(EmailConstants.DO_NOT_REPLY_NOTIFY_ORCID_ORG, "primary@example.org", "digest", "text", "html")).thenReturn(true);
         sender.sendEmailMessages();
-        verify(mail).sendEmail(EmailConstants.DO_NOT_REPLY_NOTIFY_ORCID_ORG, "primary@example.org", "digest", "text", "html");
-        verify(dao).flagAsSent(7L);
+        InOrder deliveryOrder = inOrder(mail, dao);
+        deliveryOrder.verify(mail).sendEmail(EmailConstants.DO_NOT_REPLY_NOTIFY_ORCID_ORG, "primary@example.org", "digest", "text", "html");
+        deliveryOrder.verify(dao).flagAsSent(7L);
+        verifyNoMoreInteractions(mail, dao);
     }
 
     @Test
@@ -70,6 +77,6 @@ public class AdministrativeEmailDeliveryTest {
         when(mail.sendEmail(EmailConstants.DO_NOT_REPLY_NOTIFY_ORCID_ORG, "primary@example.org", "digest", "text", "html")).thenReturn(false);
         sender.sendEmailMessages();
         verify(mail).sendEmail(EmailConstants.DO_NOT_REPLY_NOTIFY_ORCID_ORG, "primary@example.org", "digest", "text", "html");
-        verify(dao, never()).flagAsSent(7L);
+        verify(dao, never()).flagAsSent(anyLong());
     }
 }

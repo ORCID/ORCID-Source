@@ -9,7 +9,6 @@ ${'\n'}<@emailMacros.msg "notification.share.record" />
 ${delegateNotification.subject}
 ${delegateNotification.bodyText!""}
 </#list>
-
 <#if digestEmail.notificationsBySourceId['ORCID']??>
     <@emailMacros.msg "email.digest.orcidwouldlikeyoutoknow" />
 
