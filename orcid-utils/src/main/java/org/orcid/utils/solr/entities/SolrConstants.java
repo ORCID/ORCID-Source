@@ -104,12 +104,11 @@ public class SolrConstants {
     public static final String RESEARCH_RESOURCE_ITEM_NAME = "research-resource-item-name";
     public static final String RESEARCH_RESOURCE_ITEM_HOSTS_NAME = "research-resource-item-org-name";
 
-    /**
-     * Fields client is allowed to specify
-     * 
-     **/
-    public static final List<String> ALLOWED_FIELDS = Arrays.asList(SolrConstants.ORCID, SolrConstants.EMAIL_ADDRESS, SolrConstants.GIVEN_NAMES,
+    public static final List<String> BASIC_SEARCH_ALLOWED_FIELDS = Arrays.asList(SolrConstants.ORCID, SolrConstants.GIVEN_NAMES,
+            SolrConstants.FAMILY_NAME, SolrConstants.OTHER_NAMES, SolrConstants.AFFILIATE_CURRENT_INSTITUTION_NAME,
+            SolrConstants.AFFILIATE_PAST_INSTITUTION_NAMES);
+
+    public static final List<String> DEFAULT_SEARCH_ALLOWED_FIELDS = Arrays.asList(SolrConstants.ORCID, SolrConstants.EMAIL_ADDRESS, SolrConstants.GIVEN_NAMES,
             SolrConstants.FAMILY_NAME, SolrConstants.GIVEN_AND_FAMILY_NAMES, SolrConstants.AFFILIATE_CURRENT_INSTITUTION_NAME,
             SolrConstants.AFFILIATE_PAST_INSTITUTION_NAMES, SolrConstants.CREDIT_NAME, SolrConstants.OTHER_NAMES);
-
 }

@@ -1,12 +1,10 @@
 package org.orcid.core.solr;
 
-import static org.orcid.core.solr.SolrConstants.*;
-
 import java.io.IOException;
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -18,8 +16,11 @@ import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.response.QueryResponse;
 
 import org.apache.solr.common.SolrDocument;
+import org.orcid.utils.solr.entities.SolrConstants;
 import org.springframework.dao.NonTransientDataAccessResourceException;
 import org.springframework.stereotype.Component;
+
+import static org.orcid.utils.solr.entities.SolrConstants.*;
 
 @Component
 public class OrcidSolrProfileClient extends OrcidSolrClient {
@@ -48,24 +49,6 @@ public class OrcidSolrProfileClient extends OrcidSolrClient {
         return orcidSolrResult;
     }
 
-    public Date retrieveLastModified(String orcid) {
-        SolrQuery query = new SolrQuery();
-        query.setQuery(ORCID + ":\"" + orcid + "\"");
-        query.setFields(PROFILE_LAST_MODIFIED_DATE);
-        try {
-            QueryResponse response = solrReadOnlyProfileClient.query(query);
-            List<SolrDocument> results = response.getResults();
-            if (results.isEmpty()) {
-                return null;
-            } else {
-                return (Date) results.get(0).getFieldValue(PROFILE_LAST_MODIFIED_DATE);
-            }
-
-        } catch (SolrServerException | IOException e) {
-            throw new NonTransientDataAccessResourceException("Error retrieving last modified date from SOLR Server", e);
-        }
-    }
-
     public OrcidSolrResults findByDocumentCriteria(String queryString, Integer start, Integer rows) {
         SolrQuery query = new SolrQuery(queryString).setFields(SCORE, ORCID, PUBLIC_PROFILE);
         if (start != null)
@@ -80,16 +63,24 @@ public class OrcidSolrProfileClient extends OrcidSolrClient {
     }
     
     public OrcidSolrResults findExpandedByDocumentCriteria(Map<String, List<String>> queryMap) {
-        String requestedFieldList = queryMap.get("fl") != null ? queryMap.get("fl").get(0) : null;
+        List<String> requestedFields = queryMap.get("fl");
         List<String> fieldList = new ArrayList<>();
-        if (requestedFieldList != null) {
-            String fields = getFieldList(requestedFieldList);
-            fieldList = new ArrayList<>();
-            for (String field : fields.split(",")) {
-                fieldList.add(field);
+        if (requestedFields != null && !requestedFields.isEmpty()) {
+            // A single value may be a CSV list; multiple values are used as-is
+            List<String> candidates = requestedFields.size() == 1 ? Arrays.asList(requestedFields.get(0).split(",")) : requestedFields;
+            for (String candidate : candidates) {
+                if (candidate != null && !candidate.isBlank()) {
+                    // Ignore if it is not in the allowed list; trim whitespace
+                    if(SolrConstants.DEFAULT_SEARCH_ALLOWED_FIELDS.contains(candidate)) {
+                        fieldList.add(candidate.trim());
+                    }
+                }
             }
         } else {
-            fieldList.addAll(ALLOWED_FIELDS);
+            fieldList.addAll(DEFAULT_SEARCH_ALLOWED_FIELDS);
+        }
+        if(fieldList.isEmpty()) {
+            fieldList.add(ORCID);
         }
         fieldList.add(SCORE);
         return findByDocumentCriteria(queryMap, fieldList.toArray(new String[0]));
@@ -129,7 +120,6 @@ public class OrcidSolrProfileClient extends OrcidSolrClient {
                 orcidSolrResultsList.add(orcidSolrResult);
             }
             orcidSolrResults.setNumFound(queryResponse.getResults().getNumFound());
-
         } catch (SolrServerException | IOException se) {
             throw new NonTransientDataAccessResourceException("Error retrieving from SOLR Server", se);
         }
