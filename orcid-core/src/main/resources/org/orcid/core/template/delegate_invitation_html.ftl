@@ -17,7 +17,8 @@
 <p><@m.msg "recipient.declineDescription.prefix"/> ${display} <@m.msg "recipient.declineDescription.suffix"/></p>
 <p><a href="${declineUrl}" style="display:inline-block;background:#c43c39;color:#fff;padding:12px 16px;border-radius:4px;text-decoration:none;"><@m.msg "decline"/></a></p>
 <#elseif key == "accepted.sender">
-<p>${display} <@m.msg "accepted.sender.body"/></p>
+<p><strong>${display}</strong> (<a href="${recordUrl}">${recordUrl}</a>) <@m.msg "accepted.sender.body"/></p>
+<p><@m.msg "accepted.sender.info"/></p>
 <#elseif key == "accepted.recipient">
 <p><@m.msg "accepted.recipient.prefix"/> <strong>${display}</strong> (<a href="${recordUrl}">${recordUrl}</a>).</p>
 <p><@m.msg "accepted.recipient.info.prefix"/> ${display}<@m.msg "accepted.recipient.info.suffix"/></p>

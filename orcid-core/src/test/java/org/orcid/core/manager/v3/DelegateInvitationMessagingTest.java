@@ -125,6 +125,32 @@ public class DelegateInvitationMessagingTest {
     }
 
     @Test
+    public void acceptedSenderNotificationShowsPublicNameAndLinkedOrcid() {
+        when(recordNameManagerReadOnly.fetchDisplayablePublicName(RECIPIENT)).thenReturn("Tom <Sawyer>");
+        DelegateInvitationEntity invitation = invitation("tom@example.org");
+        invitation.setStatus(DelegateInvitationEntity.Status.ACCEPTED);
+        messaging.responded(invitation);
+
+        NotificationDelegateEntity sender = saved.get(0);
+        assertEquals("Tom <Sawyer> has accepted your account delegate invitation", sender.getSubject());
+        assertTrue(sender.getBodyText().contains("Tom <Sawyer> (https://orcid.org/" + RECIPIENT + ") has accepted your invitation to become an account delegate for your ORCID record."));
+        assertTrue(sender.getBodyText().contains("They have been added to your list of trusted individuals"));
+        assertTrue(sender.getBodyHtml().contains("<strong>Tom &lt;Sawyer&gt;</strong>"));
+        assertTrue(sender.getBodyHtml().contains("<a href=\"https://orcid.org/" + RECIPIENT + "\">https://orcid.org/" + RECIPIENT + "</a>"));
+        assertFalse(sender.getBodyHtml().contains("Tom <Sawyer>"));
+    }
+
+    @Test
+    public void acceptedSenderNotificationFallsBackToOrcidForPrivateName() {
+        DelegateInvitationEntity invitation = invitation(null);
+        invitation.setStatus(DelegateInvitationEntity.Status.ACCEPTED);
+        messaging.responded(invitation);
+
+        assertTrue(saved.get(0).getSubject().startsWith(RECIPIENT));
+        assertTrue(saved.get(0).getBodyHtml().contains("href=\"https://orcid.org/" + RECIPIENT + "\""));
+    }
+
+    @Test
     public void acceptedRecipientConfirmationShowsSenderAndDelegateInformationSafely() {
         when(recordNameManagerReadOnly.fetchDisplayablePublicName(SENDER)).thenReturn("Alice <Example>");
         DelegateInvitationEntity invitation = invitation(null);

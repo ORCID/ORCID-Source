@@ -68,7 +68,7 @@ public class DelegateInvitationMessaging {
         String identity = invitedByEmail ? invitation.getEnteredEmail() : otherOrcid;
         Map<String, Object> params = new HashMap<>();
         String display = identity;
-        if (!invitedByEmail && !"accepted.sender".equals(key)) {
+        if (!invitedByEmail) {
             String name = publicName(otherOrcid);
             if (StringUtils.isNotBlank(name)) {
                 display = name;

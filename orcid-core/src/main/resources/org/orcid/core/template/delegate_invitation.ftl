@@ -13,7 +13,9 @@ ${display} (${recordUrl}) <@m.msg "recipient.intro"/>
 <@m.msg "accept"/>: ${acceptUrl}
 <@m.msg "decline"/>: ${declineUrl}
 <#elseif key == "accepted.sender">
-${display} <@m.msg "accepted.sender.body"/>
+${display} (${recordUrl}) <@m.msg "accepted.sender.body"/>
+
+<@m.msg "accepted.sender.info"/>
 <#elseif key == "accepted.recipient">
 <@m.msg "accepted.recipient.prefix"/> ${display} (${recordUrl}).
 
