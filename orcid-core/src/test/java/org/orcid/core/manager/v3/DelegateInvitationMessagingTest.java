@@ -53,6 +53,7 @@ public class DelegateInvitationMessagingTest {
         messages.setBasename("classpath:i18n/notification_delegate_invitation");
         messages.setDefaultEncoding("UTF-8");
         messages.setFallbackToSystemLocale(false);
+        messages.setDefaultLocale(java.util.Locale.ENGLISH);
         ReflectionTestUtils.setField(messaging, "templateManager", templates);
         ReflectionTestUtils.setField(messaging, "messages", messages);
         lenient().when(orcidUrlManager.getBaseUrl()).thenReturn("https://orcid.org/");
@@ -67,7 +68,7 @@ public class DelegateInvitationMessagingTest {
     @Test
     public void invitationTranslationsContainNoParametersOrHtml() throws Exception {
         Properties properties = new Properties();
-        try (java.io.InputStream input = getClass().getResourceAsStream("/i18n/notification_delegate_invitation.properties")) {
+        try (java.io.InputStream input = getClass().getResourceAsStream("/i18n/notification_delegate_invitation_en.properties")) {
             assertNotNull(input);
             properties.load(new java.io.InputStreamReader(input, java.nio.charset.StandardCharsets.UTF_8));
         }
@@ -77,6 +78,32 @@ public class DelegateInvitationMessagingTest {
             assertFalse(key + " contains a parameter", text.matches("(?s).*\\{\\d+[^}]*}.*"));
             assertFalse(key + " contains HTML", text.matches("(?s).*<[^>]+>.*"));
         });
+    }
+
+    @Test
+    public void invitationBundlesHaveMatchingKeysAndEnglishFallback() throws Exception {
+        Properties english = new Properties();
+        try (java.io.InputStream input = getClass().getResourceAsStream("/i18n/notification_delegate_invitation_en.properties")) {
+            assertNotNull(input);
+            english.load(new java.io.InputStreamReader(input, java.nio.charset.StandardCharsets.UTF_8));
+        }
+        ReloadableResourceBundleMessageSource messages = new ReloadableResourceBundleMessageSource();
+        messages.setBasename("classpath:i18n/notification_delegate_invitation");
+        messages.setDefaultEncoding("UTF-8");
+        messages.setFallbackToSystemLocale(false);
+        messages.setDefaultLocale(java.util.Locale.ENGLISH);
+        for (String language : new String[] { "xx", "lr", "rl" }) {
+            Properties localized = new Properties();
+            try (java.io.InputStream input = getClass().getResourceAsStream("/i18n/notification_delegate_invitation_" + language + ".properties")) {
+                assertNotNull(input);
+                localized.load(new java.io.InputStreamReader(input, java.nio.charset.StandardCharsets.UTF_8));
+            }
+            assertEquals(english.stringPropertyNames(), localized.stringPropertyNames());
+            for (String key : english.stringPropertyNames()) {
+                assertEquals(language.toUpperCase(java.util.Locale.ROOT), messages.getMessage(key, null, new java.util.Locale(language)));
+                assertEquals(english.getProperty(key), messages.getMessage(key, null, java.util.Locale.FRENCH));
+            }
+        }
     }
 
     @Test
