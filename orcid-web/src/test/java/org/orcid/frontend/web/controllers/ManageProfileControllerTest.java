@@ -1676,6 +1676,36 @@ public class ManageProfileControllerTest {
     }
 
     @Test
+    public void declinedOrcidNoticeContainsPublicRecipientDetails() {
+        String orcid = "0000-0002-1825-0097";
+        DelegateInvitationEntity invitation = new DelegateInvitationEntity();
+        invitation.setStatus(DelegateInvitationEntity.Status.DECLINED);
+        invitation.setRecipientOrcid(orcid);
+        when(mockDelegateInvitationManager.getUnacknowledgedNotices(USER_ORCID)).thenReturn(Arrays.asList(invitation));
+        when(mockRecordNameManagerReadOnlyV3.fetchDisplayablePublicName(orcid)).thenReturn("Public Person");
+
+        DelegateInvitationNotice notice = controller.getDelegateInvitationNotices().get(0);
+
+        assertEquals(orcid, notice.getRecipientOrcid());
+        assertEquals("Public Person", notice.getRecipientName());
+    }
+
+    @Test
+    public void declinedEmailNoticeDoesNotExposeRecipientIdentity() {
+        DelegateInvitationEntity invitation = new DelegateInvitationEntity();
+        invitation.setStatus(DelegateInvitationEntity.Status.DECLINED);
+        invitation.setRecipientOrcid("0000-0002-1825-0097");
+        invitation.setEnteredEmail("delegate@example.org");
+        when(mockDelegateInvitationManager.getUnacknowledgedNotices(USER_ORCID)).thenReturn(Arrays.asList(invitation));
+
+        DelegateInvitationNotice notice = controller.getDelegateInvitationNotices().get(0);
+
+        assertEquals("delegate@example.org", notice.getEnteredEmail());
+        assertNull(notice.getRecipientOrcid());
+        assertNull(notice.getRecipientName());
+    }
+
+    @Test
     public void acknowledgeDelegateInvitationNoticePassesInvitationId() {
         DelegateInvitationActionRequest request = new DelegateInvitationActionRequest();
         request.setInvitationId(42L);

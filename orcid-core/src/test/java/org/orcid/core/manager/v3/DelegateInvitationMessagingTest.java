@@ -92,6 +92,23 @@ public class DelegateInvitationMessagingTest {
 
 
     @Test
+    public void recipientInvitationShowsPublicNameAndStyledActionsSafely() {
+        when(recordNameManagerReadOnly.fetchDisplayablePublicName(SENDER)).thenReturn("Alice <Example>");
+        messaging.created(invitation("other@example.org"), TOKEN);
+
+        NotificationDelegateEntity recipient = saved.get(1);
+        assertEquals("Alice <Example> has invited you to be an account delegate", recipient.getSubject());
+        String html = recipient.getBodyHtml();
+        assertTrue(html.contains("<strong>Alice &lt;Example&gt;</strong>"));
+        assertTrue(html.contains("href=\"https://orcid.org/" + SENDER + "\""));
+        assertTrue(html.contains("Accept the invitation"));
+        assertTrue(html.contains("Reject the invitation"));
+        assertTrue(html.contains("&amp;decision=ACCEPT"));
+        assertTrue(html.contains("&amp;decision=DECLINE"));
+        assertFalse(html.contains("Alice <Example>"));
+    }
+
+    @Test
     public void responsesProduceTwoNonActionableMessages() {
         for (DelegateInvitationEntity.Status status : new DelegateInvitationEntity.Status[]{
                 DelegateInvitationEntity.Status.ACCEPTED, DelegateInvitationEntity.Status.DECLINED}) {

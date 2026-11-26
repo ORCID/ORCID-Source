@@ -89,6 +89,23 @@ public class DelegateInvitationMessaging {
             String html = messages.getMessage("delegate.invitation." + key + ".bodyhtml", htmlArgs, locale);
             // brackets already come from the message pattern, avoid doubling them
             params.put("bodyHtml", html.replace("((<a", "(<a").replace("</a>))", "</a>)"));
+        } else if (actionable) {
+            String name = publicName(otherOrcid);
+            String display = StringUtils.isNotBlank(name) ? name : otherOrcid;
+            String recordUrl = orcidUrlManager.getBaseUrl().replaceAll("/+$", "") + "/" + otherOrcid;
+            Object[] args = new Object[]{display, recordUrl};
+            subject = messages.getMessage("delegate.invitation.created.recipient.subject", args, locale);
+            body = messages.getMessage("delegate.invitation.created.recipient.body", args, locale);
+            params.put("senderName", display);
+            params.put("senderUrl", recordUrl);
+            params.put("recipientIntro", messages.getMessage("delegate.invitation.recipient.intro", null, locale));
+            params.put("recipientInfo", messages.getMessage("delegate.invitation.recipient.info", null, locale));
+            params.put("recipientDeadline", messages.getMessage("delegate.invitation.recipient.deadline", null, locale));
+            params.put("recipientExpired", messages.getMessage("delegate.invitation.recipient.expired", null, locale));
+            params.put("acceptHeading", messages.getMessage("delegate.invitation.recipient.acceptHeading", null, locale));
+            params.put("acceptDescription", messages.getMessage("delegate.invitation.recipient.acceptDescription", new Object[]{display}, locale));
+            params.put("declineHeading", messages.getMessage("delegate.invitation.recipient.declineHeading", null, locale));
+            params.put("declineDescription", messages.getMessage("delegate.invitation.recipient.declineDescription", new Object[]{display}, locale));
         } else {
             subject = messages.getMessage("delegate.invitation." + key + ".subject", null, locale);
             body = messages.getMessage("delegate.invitation." + key + ".body", new Object[]{identity}, locale);
