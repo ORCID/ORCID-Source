@@ -1,3 +1,9 @@
+## v3.26.6 - 2026-11-26
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.26.5...v3.26.6)
+
+- [#7792](https://github.com/ORCID/ORCID-Source/pull/7792): PD-14467 Allow ORCID users to accept or decline an invitation to become an account delegate for another user's record. A user can search for a potential delegate and issue a single invitation
+
 ## v3.26.5 - 2026-11-23
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.26.4...v3.26.5)
