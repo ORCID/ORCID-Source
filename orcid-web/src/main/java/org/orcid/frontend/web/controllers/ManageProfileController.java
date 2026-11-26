@@ -288,21 +288,7 @@ public class ManageProfileController extends BaseWorkspaceController {
     }
 
     private String getPublicName(String orcid) {
-        Name name = recordNameManagerReadOnlyV3.getRecordName(orcid);
-        if (name == null || name.getVisibility() != org.orcid.jaxb.model.v3.release.common.Visibility.PUBLIC) {
-            return null;
-        }
-        if (name.getCreditName() != null && StringUtils.isNotBlank(name.getCreditName().getContent())) {
-            return name.getCreditName().getContent();
-        }
-        List<String> nameParts = new ArrayList<>();
-        if (name.getGivenNames() != null && StringUtils.isNotBlank(name.getGivenNames().getContent())) {
-            nameParts.add(name.getGivenNames().getContent());
-        }
-        if (name.getFamilyName() != null && StringUtils.isNotBlank(name.getFamilyName().getContent())) {
-            nameParts.add(name.getFamilyName().getContent());
-        }
-        return String.join(" ", nameParts);
+        return recordNameManagerReadOnlyV3.fetchDisplayablePublicName(orcid);
     }
 
     private String getPublicFeaturedAffiliation(String orcid) {

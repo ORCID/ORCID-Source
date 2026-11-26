@@ -10,7 +10,10 @@ import org.apache.commons.lang3.LocaleUtils;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.TemplateManager;
 import org.orcid.core.manager.impl.OrcidUrlManager;
+import org.orcid.core.manager.v3.read_only.RecordNameManagerReadOnly;
 import org.orcid.jaxb.model.common.AvailableLocales;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.web.util.HtmlUtils;
 import org.orcid.persistence.dao.NotificationDao;
 import org.orcid.persistence.jpa.entities.DelegateInvitationEntity;
 import org.orcid.persistence.jpa.entities.NotificationDelegateEntity;
@@ -36,6 +39,9 @@ public class DelegateInvitationMessaging {
     @Resource
     private OrcidUrlManager orcidUrlManager;
 
+    @Resource(name = "recordNameManagerReadOnlyV3")
+    private RecordNameManagerReadOnly recordNameManagerReadOnly;
+
     @Resource(name = "delegateInvitationMessages")
     private MessageSource messages;
 
@@ -58,11 +64,35 @@ public class DelegateInvitationMessaging {
 
     private NotificationDelegateEntity create(DelegateInvitationEntity invitation, String owner, String key, boolean actionable, String invitationToken) {
         Locale locale = localeFor(owner);
-        String subject = messages.getMessage("delegate.invitation." + key + ".subject", null, locale);
         String otherOrcid = owner.equals(invitation.getSenderOrcid()) ? invitation.getRecipientOrcid() : invitation.getSenderOrcid();
-        String identity = key.endsWith(".sender.email") ? invitation.getEnteredEmail() : otherOrcid;
-        String body = messages.getMessage("delegate.invitation." + key + ".body", new Object[]{identity}, locale);
+        boolean invitedByEmail = key.endsWith(".sender.email");
+        String identity = invitedByEmail ? invitation.getEnteredEmail() : otherOrcid;
         Map<String, Object> params = new HashMap<>();
+        String subject;
+        String body;
+        if (key.startsWith("created.sender.")) {
+            String display = identity;
+            String link = "";
+            if (!invitedByEmail) {
+                String name = publicName(otherOrcid);
+                if (StringUtils.isNotBlank(name)) {
+                    display = name;
+                }
+                link = orcidUrlManager.getBaseUrl().replaceAll("/+$", "") + "/" + otherOrcid;
+            }
+            Object[] args = new Object[]{display, link};
+            subject = messages.getMessage("delegate.invitation." + key + ".subject", args, locale);
+            body = messages.getMessage("delegate.invitation." + key + ".body", args, locale);
+            String safeLink = HtmlUtils.htmlEscape(link);
+            Object[] htmlArgs = new Object[]{"<strong>" + HtmlUtils.htmlEscape(display) + "</strong>",
+                    "(<a href=\"" + safeLink + "\">" + safeLink + "</a>)"};
+            String html = messages.getMessage("delegate.invitation." + key + ".bodyhtml", htmlArgs, locale);
+            // brackets already come from the message pattern, avoid doubling them
+            params.put("bodyHtml", html.replace("((<a", "(<a").replace("</a>))", "</a>)"));
+        } else {
+            subject = messages.getMessage("delegate.invitation." + key + ".subject", null, locale);
+            body = messages.getMessage("delegate.invitation." + key + ".body", new Object[]{identity}, locale);
+        }
         params.put("subject", subject);
         params.put("body", body);
         params.put("actionable", actionable);
@@ -88,6 +118,10 @@ public class DelegateInvitationMessaging {
         notification.setSendable(true);
         notificationDao.persist(notification);
         return notification;
+    }
+
+    private String publicName(String orcid) {
+        return recordNameManagerReadOnly.fetchDisplayablePublicName(orcid);
     }
 
     private Locale localeFor(String orcid) {

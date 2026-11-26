@@ -37,6 +37,8 @@ public class DelegateInvitationMessagingTest {
     private ProfileEntityCacheManager profileEntityCacheManager;
     @Mock
     private OrcidUrlManager orcidUrlManager;
+    @Mock
+    private org.orcid.core.manager.v3.read_only.RecordNameManagerReadOnly recordNameManagerReadOnly;
     @InjectMocks
     private DelegateInvitationMessaging messaging;
 
