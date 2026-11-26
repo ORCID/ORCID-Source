@@ -70,7 +70,7 @@ public class DelegateInvitationMessaging {
         Map<String, Object> params = new HashMap<>();
         String subject;
         String body;
-        if (key.startsWith("created.sender.")) {
+        if (key.startsWith("created.sender.") || key.startsWith("declined.sender.")) {
             String display = identity;
             String link = "";
             if (!invitedByEmail) {
@@ -106,6 +106,16 @@ public class DelegateInvitationMessaging {
             params.put("acceptDescription", messages.getMessage("delegate.invitation.recipient.acceptDescription", new Object[]{display}, locale));
             params.put("declineHeading", messages.getMessage("delegate.invitation.recipient.declineHeading", null, locale));
             params.put("declineDescription", messages.getMessage("delegate.invitation.recipient.declineDescription", new Object[]{display}, locale));
+        } else if ("declined.recipient".equals(key)) {
+            String name = publicName(otherOrcid);
+            String display = StringUtils.isNotBlank(name) ? name : otherOrcid;
+            String recordUrl = orcidUrlManager.getBaseUrl().replaceAll("/+$", "") + "/" + otherOrcid;
+            subject = messages.getMessage("delegate.invitation.declined.recipient.subject", new Object[]{display}, locale);
+            body = messages.getMessage("delegate.invitation.declined.recipient.body", new Object[]{display, recordUrl}, locale);
+            String safeUrl = HtmlUtils.htmlEscape(recordUrl);
+            Object[] htmlArgs = new Object[]{"<strong>" + HtmlUtils.htmlEscape(display) + "</strong>",
+                    "<a href=\"" + safeUrl + "\">" + safeUrl + "</a>"};
+            params.put("bodyHtml", messages.getMessage("delegate.invitation.declined.recipient.body", htmlArgs, locale));
         } else {
             subject = messages.getMessage("delegate.invitation." + key + ".subject", null, locale);
             body = messages.getMessage("delegate.invitation." + key + ".body", new Object[]{identity}, locale);

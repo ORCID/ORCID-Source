@@ -109,6 +109,72 @@ public class DelegateInvitationMessagingTest {
     }
 
     @Test
+    public void declinedRecipientConfirmationShowsSenderSafely() {
+        when(recordNameManagerReadOnly.fetchDisplayablePublicName(SENDER)).thenReturn("Alice <Example>");
+        DelegateInvitationEntity invitation = invitation(null);
+        invitation.setStatus(DelegateInvitationEntity.Status.DECLINED);
+        messaging.responded(invitation);
+
+        NotificationDelegateEntity recipient = saved.get(1);
+        assertEquals("You have declined an account delegate invitation from Alice <Example>", recipient.getSubject());
+        assertTrue(recipient.getBodyText().contains("Alice <Example> (https://orcid.org/" + SENDER + ")"));
+        assertTrue(recipient.getBodyText().contains("They have been informed that you have declined."));
+        assertTrue(recipient.getBodyHtml().contains("<strong>Alice &lt;Example&gt;</strong>"));
+        assertTrue(recipient.getBodyHtml().contains("<a href=\"https://orcid.org/" + SENDER + "\">https://orcid.org/" + SENDER + "</a>"));
+        assertFalse(recipient.getBodyHtml().contains("Alice <Example>"));
+    }
+
+    @Test
+    public void declinedRecipientConfirmationFallsBackToOrcidWhenNameIsPrivate() {
+        DelegateInvitationEntity invitation = invitation(null);
+        invitation.setStatus(DelegateInvitationEntity.Status.DECLINED);
+        messaging.responded(invitation);
+
+        NotificationDelegateEntity recipient = saved.get(1);
+        assertTrue(recipient.getSubject().contains(SENDER));
+        assertTrue(recipient.getBodyHtml().contains("href=\"https://orcid.org/" + SENDER + "\""));
+    }
+
+    @Test
+    public void declinedSenderNotificationShowsPublicNameAndLinkedOrcid() {
+        when(recordNameManagerReadOnly.fetchDisplayablePublicName(RECIPIENT)).thenReturn("Tom <Sawyer>");
+        DelegateInvitationEntity invitation = invitation(null);
+        invitation.setStatus(DelegateInvitationEntity.Status.DECLINED);
+        messaging.responded(invitation);
+
+        NotificationDelegateEntity sender = saved.get(0);
+        assertEquals("Tom <Sawyer> has declined your account delegate invitation", sender.getSubject());
+        assertTrue(sender.getBodyText().contains("Tom <Sawyer> (https://orcid.org/" + RECIPIENT + ") has declined your invitation to become an account delegate for your ORCID record."));
+        assertTrue(sender.getBodyHtml().contains("<strong>Tom &lt;Sawyer&gt;</strong>"));
+        assertTrue(sender.getBodyHtml().contains("<a href=\"https://orcid.org/" + RECIPIENT + "\">https://orcid.org/" + RECIPIENT + "</a>"));
+        assertFalse(sender.getBodyHtml().contains("Tom <Sawyer>"));
+    }
+
+    @Test
+    public void declinedSenderEmailNotificationDoesNotExposeRecipientIdentity() {
+        DelegateInvitationEntity invitation = invitation("tom+<test>@example.org");
+        invitation.setStatus(DelegateInvitationEntity.Status.DECLINED);
+        messaging.responded(invitation);
+
+        NotificationDelegateEntity sender = saved.get(0);
+        assertEquals("tom+<test>@example.org has declined your account delegate invitation", sender.getSubject());
+        assertTrue(sender.getBodyText().contains("tom+<test>@example.org has declined your invitation to become an account delegate for your ORCID record."));
+        assertTrue(sender.getBodyHtml().contains("<strong>tom+&lt;test&gt;@example.org</strong>"));
+        assertFalse(sender.getBodyHtml().contains(RECIPIENT));
+        assertFalse(sender.getBodyText().contains(RECIPIENT));
+    }
+
+    @Test
+    public void declinedSenderNotificationFallsBackToOrcidForPrivateName() {
+        DelegateInvitationEntity invitation = invitation(null);
+        invitation.setStatus(DelegateInvitationEntity.Status.DECLINED);
+        messaging.responded(invitation);
+
+        assertTrue(saved.get(0).getSubject().startsWith(RECIPIENT));
+        assertTrue(saved.get(0).getBodyHtml().contains("href=\"https://orcid.org/" + RECIPIENT + "\""));
+    }
+
+    @Test
     public void responsesProduceTwoNonActionableMessages() {
         for (DelegateInvitationEntity.Status status : new DelegateInvitationEntity.Status[]{
                 DelegateInvitationEntity.Status.ACCEPTED, DelegateInvitationEntity.Status.DECLINED}) {
