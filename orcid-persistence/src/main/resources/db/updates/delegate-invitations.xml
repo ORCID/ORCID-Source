@@ -18,7 +18,6 @@
             <column name="status" type="VARCHAR(10)">
                 <constraints nullable="false"/>
             </column>
-            <column name="pending_recipient_orcid" type="VARCHAR(19)"/>
             <column name="actionable_notification_id" type="bigint"/>
             <column name="sender_notice_acknowledged" type="BOOLEAN" defaultValueBoolean="false">
                 <constraints nullable="false"/>
@@ -40,8 +39,6 @@
             <column name="status"/>
             <column name="date_created"/>
         </createIndex>
-        <addUniqueConstraint tableName="delegate_invitation" columnNames="sender_orcid,pending_recipient_orcid"
-                             constraintName="delegate_invitation_one_pending"/>
     </changeSet>
 
     <changeSet id="CREATE-DELEGATE-INVITATION-SEQUENCE" author="Camelia Dumitru" dbms="postgresql">
@@ -64,11 +61,6 @@
             </not>
         </preConditions>
         <createSequence sequenceName="delegate_invitation_seq" startValue="100000"/>
-    </changeSet>
-
-    <changeSet id="REMOVE-DELEGATE-INVITATION-PENDING-RECIPIENT-COLUMN" author="Camelia Dumitru">
-        <dropUniqueConstraint tableName="delegate_invitation" constraintName="delegate_invitation_one_pending"/>
-        <dropColumn tableName="delegate_invitation" columnName="pending_recipient_orcid"/>
     </changeSet>
 
     <changeSet id="CREATE-DELEGATE-INVITATION-POSTGRES-PENDING-INDEX" author="Camelia Dumitru" dbms="postgresql">
