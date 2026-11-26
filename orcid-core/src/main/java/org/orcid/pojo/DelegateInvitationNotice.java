@@ -9,6 +9,24 @@ public class DelegateInvitationNotice {
     private String lookupType;
     private String enteredEmail;
     private Date lastModified;
+    private String recipientOrcid;
+    private String recipientName;
+
+    public String getRecipientOrcid() {
+        return recipientOrcid;
+    }
+
+    public void setRecipientOrcid(String recipientOrcid) {
+        this.recipientOrcid = recipientOrcid;
+    }
+
+    public String getRecipientName() {
+        return recipientName;
+    }
+
+    public void setRecipientName(String recipientName) {
+        this.recipientName = recipientName;
+    }
 
     public Long getInvitationId() {
         return invitationId;

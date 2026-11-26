@@ -209,6 +209,10 @@ public class ManageProfileController extends BaseWorkspaceController {
             notice.setStatus(invitation.getStatus().name());
             notice.setLookupType(invitation.getLookupType().name());
             notice.setEnteredEmail(invitation.getEnteredEmail());
+            if (invitation.getStatus() == DelegateInvitationEntity.Status.ACCEPTED) {
+                notice.setRecipientOrcid(invitation.getRecipientOrcid());
+                notice.setRecipientName(getPublicName(invitation.getRecipientOrcid()));
+            }
             notice.setLastModified(invitation.getLastModified());
             notices.add(notice);
         }
