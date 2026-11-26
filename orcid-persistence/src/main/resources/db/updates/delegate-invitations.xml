@@ -1,7 +1,7 @@
 <databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
 
-    <changeSet id="CREATE-DELEGATE-INVITATION-TABLE" author="ORCID">
+    <changeSet id="CREATE-DELEGATE-INVITATION-TABLE" author="Camelia Dumitru">
         <createTable tableName="delegate_invitation">
             <column name="delegate_invitation_id" type="bigint">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="delegate_invitation_pkey"/>
@@ -44,7 +44,7 @@
                              constraintName="delegate_invitation_one_pending"/>
     </changeSet>
 
-    <changeSet id="CREATE-DELEGATE-INVITATION-SEQUENCE" author="ORCID" dbms="postgresql">
+    <changeSet id="CREATE-DELEGATE-INVITATION-SEQUENCE" author="Camelia Dumitru" dbms="postgresql">
         <preConditions onFail="MARK_RAN">
             <not>
                 <sequenceExists sequenceName="delegate_invitation_seq"/>
@@ -53,11 +53,11 @@
         <createSequence sequenceName="delegate_invitation_seq" startValue="100000"/>
     </changeSet>
 
-    <changeSet id="CREATE-DELEGATE-INVITATION-AUTO-INCREMENT" author="ORCID" dbms="hsqldb">
+    <changeSet id="CREATE-DELEGATE-INVITATION-AUTO-INCREMENT" author="Camelia Dumitru" dbms="hsqldb">
         <addAutoIncrement tableName="delegate_invitation" columnName="delegate_invitation_id" columnDataType="bigint" startWith="100000"/>
     </changeSet>
 
-    <changeSet id="CREATE-DELEGATE-INVITATION-HSQL-SEQUENCE" author="ORCID" dbms="hsqldb">
+    <changeSet id="CREATE-DELEGATE-INVITATION-HSQL-SEQUENCE" author="Camelia Dumitru" dbms="hsqldb">
         <preConditions onFail="MARK_RAN">
             <not>
                 <sequenceExists sequenceName="delegate_invitation_seq"/>
@@ -66,12 +66,12 @@
         <createSequence sequenceName="delegate_invitation_seq" startValue="100000"/>
     </changeSet>
 
-    <changeSet id="REMOVE-DELEGATE-INVITATION-PENDING-RECIPIENT-COLUMN" author="ORCID">
+    <changeSet id="REMOVE-DELEGATE-INVITATION-PENDING-RECIPIENT-COLUMN" author="Camelia Dumitru">
         <dropUniqueConstraint tableName="delegate_invitation" constraintName="delegate_invitation_one_pending"/>
         <dropColumn tableName="delegate_invitation" columnName="pending_recipient_orcid"/>
     </changeSet>
 
-    <changeSet id="CREATE-DELEGATE-INVITATION-POSTGRES-PENDING-INDEX" author="ORCID" dbms="postgresql">
+    <changeSet id="CREATE-DELEGATE-INVITATION-POSTGRES-PENDING-INDEX" author="Camelia Dumitru" dbms="postgresql">
         <sql>CREATE UNIQUE INDEX delegate_invitation_one_pending ON delegate_invitation (sender_orcid, recipient_orcid) WHERE status = 'PENDING'</sql>
     </changeSet>
 </databaseChangeLog>
