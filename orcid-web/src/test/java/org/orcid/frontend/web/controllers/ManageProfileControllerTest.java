@@ -1744,11 +1744,7 @@ public class ManageProfileControllerTest {
         String recipientOrcid = "0000-0002-1825-0097";
         when(mockProfileEntityManagerReadOnly.isOrcidValidAsDelegate(eq(recipientOrcid))).thenReturn(true);
         when(mockDelegateInvitationManager.checkEligibility(eq(USER_ORCID), eq(recipientOrcid))).thenReturn(DelegateInvitationManager.Eligibility.AVAILABLE);
-        Name publicName = new Name();
-        publicName.setGivenNames(new GivenNames("Public"));
-        publicName.setFamilyName(new FamilyName("Person"));
-        publicName.setVisibility(org.orcid.jaxb.model.v3.release.common.Visibility.PUBLIC);
-        when(mockRecordNameManagerReadOnlyV3.getRecordName(eq(recipientOrcid))).thenReturn(publicName);
+        when(mockRecordNameManagerReadOnlyV3.fetchDisplayablePublicName(eq(recipientOrcid))).thenReturn("Public Person");
 
         DelegateInvitationSearchRequest request = new DelegateInvitationSearchRequest();
         request.setLookupType("ORCID");
