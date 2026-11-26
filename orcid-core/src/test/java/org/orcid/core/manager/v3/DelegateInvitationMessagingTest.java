@@ -6,6 +6,7 @@ import static org.mockito.Mockito.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -61,6 +62,21 @@ public class DelegateInvitationMessagingTest {
             saved.add(entity);
             return null;
         }).when(notificationDao).persist(any(NotificationEntity.class));
+    }
+
+    @Test
+    public void invitationTranslationsContainNoParametersOrHtml() throws Exception {
+        Properties properties = new Properties();
+        try (java.io.InputStream input = getClass().getResourceAsStream("/i18n/notification_delegate_invitation.properties")) {
+            assertNotNull(input);
+            properties.load(new java.io.InputStreamReader(input, java.nio.charset.StandardCharsets.UTF_8));
+        }
+        assertFalse(properties.isEmpty());
+        properties.forEach((key, value) -> {
+            String text = (String) value;
+            assertFalse(key + " contains a parameter", text.matches("(?s).*\\{\\d+[^}]*}.*"));
+            assertFalse(key + " contains HTML", text.matches("(?s).*<[^>]+>.*"));
+        });
     }
 
     @Test

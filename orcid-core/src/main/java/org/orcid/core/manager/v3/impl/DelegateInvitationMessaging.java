@@ -13,7 +13,6 @@ import org.orcid.core.manager.impl.OrcidUrlManager;
 import org.orcid.core.manager.v3.read_only.RecordNameManagerReadOnly;
 import org.orcid.jaxb.model.common.AvailableLocales;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.web.util.HtmlUtils;
 import org.orcid.persistence.dao.NotificationDao;
 import org.orcid.persistence.jpa.entities.DelegateInvitationEntity;
 import org.orcid.persistence.jpa.entities.NotificationDelegateEntity;
@@ -68,61 +67,19 @@ public class DelegateInvitationMessaging {
         boolean invitedByEmail = key.endsWith(".sender.email");
         String identity = invitedByEmail ? invitation.getEnteredEmail() : otherOrcid;
         Map<String, Object> params = new HashMap<>();
-        String subject;
-        String body;
-        if (key.startsWith("created.sender.") || key.startsWith("declined.sender.")) {
-            String display = identity;
-            String link = "";
-            if (!invitedByEmail) {
-                String name = publicName(otherOrcid);
-                if (StringUtils.isNotBlank(name)) {
-                    display = name;
-                }
-                link = orcidUrlManager.getBaseUrl().replaceAll("/+$", "") + "/" + otherOrcid;
+        String display = identity;
+        if (!invitedByEmail && !"accepted.sender".equals(key)) {
+            String name = publicName(otherOrcid);
+            if (StringUtils.isNotBlank(name)) {
+                display = name;
             }
-            Object[] args = new Object[]{display, link};
-            subject = messages.getMessage("delegate.invitation." + key + ".subject", args, locale);
-            body = messages.getMessage("delegate.invitation." + key + ".body", args, locale);
-            String safeLink = HtmlUtils.htmlEscape(link);
-            Object[] htmlArgs = new Object[]{"<strong>" + HtmlUtils.htmlEscape(display) + "</strong>",
-                    "(<a href=\"" + safeLink + "\">" + safeLink + "</a>)"};
-            String html = messages.getMessage("delegate.invitation." + key + ".bodyhtml", htmlArgs, locale);
-            // brackets already come from the message pattern, avoid doubling them
-            params.put("bodyHtml", html.replace("((<a", "(<a").replace("</a>))", "</a>)"));
-        } else if (actionable) {
-            String name = publicName(otherOrcid);
-            String display = StringUtils.isNotBlank(name) ? name : otherOrcid;
-            String recordUrl = orcidUrlManager.getBaseUrl().replaceAll("/+$", "") + "/" + otherOrcid;
-            Object[] args = new Object[]{display, recordUrl};
-            subject = messages.getMessage("delegate.invitation.created.recipient.subject", args, locale);
-            body = messages.getMessage("delegate.invitation.created.recipient.body", args, locale);
-            params.put("senderName", display);
-            params.put("senderUrl", recordUrl);
-            params.put("recipientIntro", messages.getMessage("delegate.invitation.recipient.intro", null, locale));
-            params.put("recipientInfo", messages.getMessage("delegate.invitation.recipient.info", null, locale));
-            params.put("recipientDeadline", messages.getMessage("delegate.invitation.recipient.deadline", null, locale));
-            params.put("recipientExpired", messages.getMessage("delegate.invitation.recipient.expired", null, locale));
-            params.put("acceptHeading", messages.getMessage("delegate.invitation.recipient.acceptHeading", null, locale));
-            params.put("acceptDescription", messages.getMessage("delegate.invitation.recipient.acceptDescription", new Object[]{display}, locale));
-            params.put("declineHeading", messages.getMessage("delegate.invitation.recipient.declineHeading", null, locale));
-            params.put("declineDescription", messages.getMessage("delegate.invitation.recipient.declineDescription", new Object[]{display}, locale));
-        } else if ("declined.recipient".equals(key) || "accepted.recipient".equals(key)) {
-            String name = publicName(otherOrcid);
-            String display = StringUtils.isNotBlank(name) ? name : otherOrcid;
-            String recordUrl = orcidUrlManager.getBaseUrl().replaceAll("/+$", "") + "/" + otherOrcid;
-            String messageKey = "delegate.invitation." + key;
-            subject = messages.getMessage(messageKey + ".subject", new Object[]{display}, locale);
-            body = messages.getMessage(messageKey + ".body", new Object[]{display, recordUrl, display}, locale);
-            String safeUrl = HtmlUtils.htmlEscape(recordUrl);
-            Object[] htmlArgs = new Object[]{"<strong>" + HtmlUtils.htmlEscape(display) + "</strong>",
-                    "<a href=\"" + safeUrl + "\">" + safeUrl + "</a>", HtmlUtils.htmlEscape(display)};
-            params.put("bodyHtml", messages.getMessage(messageKey + ("accepted.recipient".equals(key) ? ".bodyhtml" : ".body"), htmlArgs, locale));
-        } else {
-            subject = messages.getMessage("delegate.invitation." + key + ".subject", null, locale);
-            body = messages.getMessage("delegate.invitation." + key + ".body", new Object[]{identity}, locale);
         }
-        params.put("subject", subject);
-        params.put("body", body);
+        params.put("display", display);
+        params.put("recordUrl", orcidUrlManager.getBaseUrl().replaceAll("/+$", "") + "/" + otherOrcid);
+        params.put("invitedByEmail", invitedByEmail);
+        params.put("key", key);
+        params.put("invitationMessages", messages);
+        params.put("invitationLocale", locale);
         params.put("actionable", actionable);
         if (actionable) {
             String base = orcidUrlManager.getBaseUrl().replaceAll("/+$", "");
@@ -131,9 +88,10 @@ public class DelegateInvitationMessaging {
             params.put("declineUrl", link + "DECLINE");
             LOGGER.debug("Delegate invitation {} for recipient {}: accept link {} decline link {}", invitation.getId(), owner,
                     link + "ACCEPT", link + "DECLINE");
-            params.put("acceptLabel", messages.getMessage("delegate.invitation.accept", null, locale));
-            params.put("declineLabel", messages.getMessage("delegate.invitation.decline", null, locale));
         }
+
+        String subject = templateManager.processTemplate("delegate_invitation_subject.ftl", params, locale).trim();
+        params.put("subject", subject);
 
         NotificationDelegateEntity notification = new NotificationDelegateEntity();
         notification.setOrcid(owner);
