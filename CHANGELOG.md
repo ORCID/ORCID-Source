@@ -1,3 +1,9 @@
+## v3.26.7 - 2026-11-26
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.26.6...v3.26.7)
+
+- [#7793](https://github.com/ORCID/ORCID-Source/pull/7793): PD-15065 Report CAPTCHA errors during registration
+
 ## v3.26.6 - 2026-11-26
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.26.5...v3.26.6)
