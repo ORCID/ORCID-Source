@@ -86,7 +86,9 @@ public class ExpiringLinkServiceTest {
         VerificationResult result = expiringLinkService.verifyToken(token);
 
         assertEquals("Token should be expired", VerificationStatus.EXPIRED, result.getStatus());
-        assertNull("Claims should be null for an expired token", result.getClaims());
+        assertNotNull("Claims should be available for a verified expired token", result.getClaims());
+        assertEquals(subject, result.getClaims().getSubject());
+        assertEquals(type.name(), result.getClaims().getClaim("type"));
     }
 
     @Test

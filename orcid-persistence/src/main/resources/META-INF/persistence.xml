@@ -14,6 +14,7 @@
         <class>org.orcid.persistence.jpa.entities.FuzzyDateEntity</class>
         <class>org.orcid.persistence.jpa.entities.GivenPermissionByEntity</class>
         <class>org.orcid.persistence.jpa.entities.GivenPermissionToEntity</class>
+        <class>org.orcid.persistence.jpa.entities.DelegateInvitationEntity</class>
         <class>org.orcid.persistence.jpa.entities.IdentityProviderEntity</class>
         <class>org.orcid.persistence.jpa.entities.IdentityProviderNameEntity</class>
         <class>org.orcid.persistence.jpa.entities.MinimizedWorkEntity</class>
@@ -21,6 +22,7 @@
         <class>org.orcid.persistence.jpa.entities.NotificationItemEntity</class>
         <class>org.orcid.persistence.jpa.entities.NotificationAddItemsEntity</class>
         <class>org.orcid.persistence.jpa.entities.NotificationAdministrativeEntity</class>
+        <class>org.orcid.persistence.jpa.entities.NotificationDelegateEntity</class>
         <class>org.orcid.persistence.jpa.entities.NotificationAmendedEntity</class>
         <class>org.orcid.persistence.jpa.entities.NotificationServiceAnnouncementEntity</class>
         <class>org.orcid.persistence.jpa.entities.NotificationTipEntity</class>

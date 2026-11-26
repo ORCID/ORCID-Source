@@ -4,6 +4,11 @@
 ${'\n'}<@emailMacros.msg "notification.share.record" />
 ${'\n'}${emailName}<@emailMacros.space /><@emailMacros.msg "notification.digest.hasChanges" />
 
+<#list (delegateNotifications![]) as delegateNotification>
+${'\n'}<@emailMacros.msg "notification.share.record" />
+${delegateNotification.subject}
+${delegateNotification.bodyText!""}
+</#list>
 <#if digestEmail.notificationsBySourceId['ORCID']??>
     <@emailMacros.msg "email.digest.orcidwouldlikeyoutoknow" />
 

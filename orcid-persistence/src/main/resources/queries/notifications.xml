@@ -13,7 +13,7 @@
 	),
 	user_sent_stats AS (
 	    SELECT 
-	        MAX(sent_date) FILTER (WHERE notification_type = 'AMENDED') AS amend_max,
+	        MAX(sent_date) FILTER (WHERE notification_type IN ('AMENDED', 'DELEGATE')) AS amend_max,
 	        MAX(sent_date) FILTER (WHERE notification_type IN ('ADMINISTRATIVE', 'CUSTOM')) AS admin_max,
 	        MAX(sent_date) FILTER (WHERE notification_type IN ('PERMISSION', 'INSTITUTIONAL_CONNECTION')) AS perm_max
 	    FROM notification 
@@ -32,7 +32,7 @@
 	        )       
 	    )
 	    OR
-	    (n.notification_type = 'AMENDED' 
+	    (n.notification_type IN ('AMENDED', 'DELEGATE') 
 	        AND ( 
 	            unix_timestamp(:effective_date) > (unix_timestamp(s.amend_max) + f.amend_freq)
 	            OR (s.amend_max IS NULL AND unix_timestamp(:effective_date) > (unix_timestamp(:record_active_date) + f.amend_freq))
